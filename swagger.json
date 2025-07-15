@@ -1,0 +1,8 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Documentación",
+    "version": "1.0.0"
+  },
+  "paths": {}
+}
