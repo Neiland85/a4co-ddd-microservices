@@ -44,6 +44,28 @@ Dashboard visual (Copilot Prompts) accesible desde VS Code
 Prompts incluyen:
 ✦ prisma-schema, ✦ test-e2e, ✦ generate-adr, ✦ revisar-ui, ✦ deploy-pipeline, etc.
 
+## Prompts recomendados para Copilot
+
+### Frontend
+- **✦ frontend-styles**: ¿Cómo implementar un diseño responsive con Tailwind y shadcn/ui?
+  - *Descripción*: Guía para diseño responsive usando Tailwind y shadcn/ui.
+
+### Backend
+- **✦ backend-dtos**: ¿Cómo estructurar DTOs validados con class-validator en NestJS?
+  - *Descripción*: Estructuración de DTOs con validación en NestJS.
+
+### DevOps
+- **✦ devops-docker**: ¿Cómo optimizar este Dockerfile para reducir el tamaño de la imagen?
+  - *Descripción*: Optimización de Dockerfile para imágenes más pequeñas.
+
+### QA
+- **✦ qa-tests**: ¿Cómo escribir pruebas e2e efectivas con Jest y Supertest?
+  - *Descripción*: Guía para pruebas e2e usando Jest y Supertest.
+
+### Documentación
+- **✦ docs-jsdoc**: ¿Cómo documentar esta función con JSDoc para claridad y mantenimiento?
+  - *Descripción*: Documentación de funciones con JSDoc.
+
 ##### 📚 Documentación técnica
 
 📌 ADRs: docs/adr/

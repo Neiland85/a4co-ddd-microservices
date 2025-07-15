@@ -1,0 +1,27 @@
+[
+  {
+    "prefix": "✦ frontend-styles",
+    "body": "¿Cómo implementar un diseño responsive con Tailwind y shadcn/ui?",
+    "description": "Guía para diseño responsive usando Tailwind y shadcn/ui."
+  },
+  {
+    "prefix": "✦ backend-dtos",
+    "body": "¿Cómo estructurar DTOs validados con class-validator en NestJS?",
+    "description": "Estructuración de DTOs con validación en NestJS."
+  },
+  {
+    "prefix": "✦ devops-docker",
+    "body": "¿Cómo optimizar este Dockerfile para reducir el tamaño de la imagen?",
+    "description": "Optimización de Dockerfile para imágenes más pequeñas."
+  },
+  {
+    "prefix": "✦ qa-tests",
+    "body": "¿Cómo escribir pruebas e2e efectivas con Jest y Supertest?",
+    "description": "Guía para pruebas e2e usando Jest y Supertest."
+  },
+  {
+    "prefix": "✦ docs-jsdoc",
+    "body": "¿Cómo documentar esta función con JSDoc para claridad y mantenimiento?",
+    "description": "Documentación de funciones con JSDoc."
+  }
+]

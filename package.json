@@ -1,10 +1,11 @@
 {
   "name": "a4co-ddd-microservices",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Extensión para gestionar prompts de Copilot organizados por rol técnico.",
+  "main": "dist/extension.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild src/extension.ts --bundle --outdir=dist --platform=node --external:vscode"
   },
   "keywords": [],
   "author": "",
@@ -17,12 +18,25 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
+    "esbuild": "^0.25.6",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "jest": "^30.0.4",
     "prettier": "^3.6.2",
-    "ts-jest": "^29.4.0"
+    "ts-jest": "^29.4.0",
+    "vsce": "^2.15.0"
+  },
+  "engines": {
+    "vscode": ">=1.102.0"
+  },
+  "activationEvents": [
+    "onCommand:copilotPrompts.openDashboard"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Neiland85/a4co-ddd-microservices"
   }
 }
