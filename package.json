@@ -1,14 +1,19 @@
 {
   "name": "a4co-ddd-microservices",
   "version": "1.0.0",
+    feature/copilot-prompts-dashboard
+
     develop
 
     feature/copilot-prompts-dashboard
+     main
   "description": "Extensión para gestionar prompts de Copilot organizados por rol técnico.",
   "main": "dist/extension.js",
   "scripts": {
     "test": "jest",
     "build": "esbuild src/extension.ts --bundle --outdir=dist --platform=node --external:vscode"
+     feature/copilot-prompts-dashboard
+
 
     develop
        main
@@ -26,15 +31,19 @@
      main
      main
        main
+      main
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.9.0",
   "dependencies": {
+    feature/copilot-prompts-dashboard
+
        develop
 
     feature/copilot-prompts-dashboard
+     main
     "@vscode/vsce": "^3.6.0",
     "autoprefixer": "^10.4.21",
     "babel-plugin-istanbul": "^7.0.0",
@@ -46,6 +55,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    feature/copilot-prompts-dashboard
 
        main
     "autoprefixer": "^10.4.21",
@@ -59,10 +69,13 @@
      develop
      main
        main
+        main
     "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
     "esbuild": "^0.25.6",
+    feature/copilot-prompts-dashboard
+
        develop
 
        feature/copilot-prompts-dashboard
@@ -72,16 +85,20 @@
       main
       main
        main
+       main
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "jest": "^30.0.4",
     "prettier": "^3.6.2",
+    feature/copilot-prompts-dashboard
+
        develop
 
        feature/copilot-prompts-dashboard
 
       develop
        main
+         main
          main
     "ts-jest": "^29.4.0",
     "vsce": "^2.15.0"
@@ -95,6 +112,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Neiland85/a4co-ddd-microservices"
+    feature/copilot-prompts-dashboard
+
       develop
 
       feature/copilot-prompts-dashboard
@@ -103,5 +122,6 @@
        main
       main
        main
+     main
   }
 }
