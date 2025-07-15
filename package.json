@@ -1,6 +1,8 @@
 {
   "name": "a4co-ddd-microservices",
   "version": "1.0.0",
+    develop
+
     feature/copilot-prompts-dashboard
   "description": "Extensión para gestionar prompts de Copilot organizados por rol técnico.",
   "main": "dist/extension.js",
@@ -9,23 +11,29 @@
     "build": "esbuild src/extension.ts --bundle --outdir=dist --platform=node --external:vscode"
 
     develop
+       main
   "description": "Extensión para gestionar prompts de Copilot organizados por rol técnico.",
   "main": "dist/extension.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild src/extension.ts --bundle --outdir=dist --platform=node --external:vscode"
+      develop
+
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
      main
      main
+       main
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.9.0",
   "dependencies": {
+       develop
+
     feature/copilot-prompts-dashboard
     "@vscode/vsce": "^3.6.0",
     "autoprefixer": "^10.4.21",
@@ -39,32 +47,42 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
 
+       main
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+      develop
+
      develop
      main
+       main
     "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
     "esbuild": "^0.25.6",
+       develop
+
        feature/copilot-prompts-dashboard
 
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
       main
       main
+       main
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "jest": "^30.0.4",
     "prettier": "^3.6.2",
+       develop
+
        feature/copilot-prompts-dashboard
 
       develop
        main
+         main
     "ts-jest": "^29.4.0",
     "vsce": "^2.15.0"
   },
@@ -77,10 +95,13 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Neiland85/a4co-ddd-microservices"
+      develop
+
       feature/copilot-prompts-dashboard
 
     "ts-jest": "^29.4.0"
        main
       main
+       main
   }
 }
