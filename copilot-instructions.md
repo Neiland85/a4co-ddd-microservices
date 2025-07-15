@@ -19,7 +19,7 @@ Estas instrucciones definen el estilo, las convenciones y los criterios técnico
 - La estructura debe respetar el patrón modular de NestJS
 - Los DTOs deben estar en archivos separados, documentados y validados
 - Cada handler debe seguir el **principio SRP** (responsabilidad única)
-- El ORM oficial es **Prisma** (nunca sugerir TypeORM) — ver [ADR-0003](./docs/adr/adr-0003-prisma.md)
+- El ORM oficial es **Prisma** (nunca sugerir TypeORM) — ver [ADR-0003](./adr/adr-0003-prisma.md)
 - Los servicios deben estar desacoplados, inyectados por constructor y ser testeables
 
 ---
