@@ -13,6 +13,7 @@
       "**/.DS_Store": true,
     },
     "typescript.tsdk": "node_modules/typescript/lib",
+    "i18n-ally.localesPaths": [],
   },
   "extensions": {
     "recommendations": [

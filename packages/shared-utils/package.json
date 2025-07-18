@@ -1,0 +1,39 @@
+{
+  "name": "@a4co/shared-utils",
+  "version": "1.0.0",
+  "description": "Utilidades compartidas para el monorepo a4co-ddd-microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
+  },
+  "keywords": [
+    "shared",
+    "utils",
+    "microservices",
+    "ddd"
+  ],
+  "author": "Neil Muñoz Lago <neiland85@gmail.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "class-validator": "^0.14.1",
+    "class-transformer": "^0.5.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
