@@ -1,4 +1,4 @@
-import { AggregateRoot } from '@shared/index';
+import { AggregateRoot } from '@a4co/shared-utils';
 import { Email, Password, UserName } from '../value-objects/user-value-objects';
 import {
   UserRegisteredEvent,
@@ -17,8 +17,8 @@ export enum UserStatus {
 export class User extends AggregateRoot {
   private constructor(
     id: string,
-    private _email: Email,
-    private _name: UserName,
+    private readonly _email: Email,
+    private readonly _name: UserName,
     private _hashedPassword: string,
     private _status: UserStatus = UserStatus.ACTIVE,
     private _emailVerified: boolean = false,
@@ -67,28 +67,57 @@ export class User extends AggregateRoot {
     return user;
   }
 
-  // Factory method para reconstruir desde persistencia
-  public static reconstruct(
-    id: string,
+  // Factory method para crear usuario con password ya hasheada (para adapters)
+  public static async createWithHashedPassword(
     email: string,
     name: string,
     hashedPassword: string,
-    status: UserStatus,
-    emailVerified: boolean,
-    lastLoginAt?: Date,
-    createdAt?: Date,
-    updatedAt?: Date
-  ): User {
+    id?: string
+  ): Promise<User> {
+    const emailVO = new Email(email);
+    const nameVO = new UserName(name);
+
+    const user = new User(
+      id || require('uuid').v4(),
+      emailVO,
+      nameVO,
+      hashedPassword
+    );
+
+    // Emitir evento de dominio
+    user.addDomainEvent(
+      new UserRegisteredEvent(user.id, {
+        email: emailVO.value,
+        name: nameVO.value,
+        registeredAt: user.createdAt,
+      })
+    );
+
+    return user;
+  }
+
+  // Factory method para reconstruir desde persistencia
+  public static reconstruct(p0: string, p1: string, p2: string, p3: string, ACTIVE: UserStatus, p4: boolean, undefined: undefined, p5: Date, p6: Date, data: {
+  id: string;
+  email: string;
+  name: string;
+  hashedPassword: string;
+  status: UserStatus;
+  emailVerified: boolean;
+  lastLoginAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}): User {
     return new User(
-      id,
-      new Email(email),
-      new UserName(name),
-      hashedPassword,
-      status,
-      emailVerified,
-      lastLoginAt,
-      createdAt,
-      updatedAt
+      data.id,
+      new Email(data.email),
+      new UserName(data.name),
+      data.hashedPassword,
+      data.status,
+      data.emailVerified,
+      data.lastLoginAt,
+      data.createdAt,
+      data.updatedAt
     );
   }
 
@@ -141,21 +170,28 @@ export class User extends AggregateRoot {
     newPassword: string,
     changedBy: string
   ): Promise<void> {
-    const isCurrentPasswordValid = await this.validatePassword(currentPassword);
-    if (!isCurrentPasswordValid) {
-      throw new Error('Password actual incorrecto');
+    try {
+      const isCurrentPasswordValid =
+        await this.validatePassword(currentPassword);
+      if (!isCurrentPasswordValid) {
+        throw new Error('Password actual incorrecto');
+      }
+
+      const newPasswordVO = new Password(newPassword);
+      this._hashedPassword = await bcrypt.hash(newPasswordVO.value, 12);
+      this.touch();
+
+      this.addDomainEvent(
+        new UserPasswordChangedEvent(this.id, {
+          changedAt: new Date(),
+          changedBy,
+        })
+      );
+    } catch (error) {
+      const err = error as Error;
+      console.error(`Error en changePassword: ${err.message}`);
+      throw err;
     }
-
-    const newPasswordVO = new Password(newPassword);
-    this._hashedPassword = await bcrypt.hash(newPasswordVO.value, 12);
-    this.touch();
-
-    this.addDomainEvent(
-      new UserPasswordChangedEvent(this.id, {
-        changedAt: new Date(),
-        changedBy,
-      })
-    );
   }
 
   public verifyEmail(): void {
@@ -219,6 +255,10 @@ export class User extends AggregateRoot {
       emailVerified: this._emailVerified,
       lastLoginAt: this._lastLoginAt,
       createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
+}
       updatedAt: this.updatedAt,
     };
   }

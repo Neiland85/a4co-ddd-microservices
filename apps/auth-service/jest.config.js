@@ -4,16 +4,27 @@ module.exports = {
   testEnvironment: 'node',
   rootDir: '.',
   testMatch: ['<rootDir>/test/**/*.spec.ts'],
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/main.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/main.ts',
+    '!src/**/*.interface.ts',
+  ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  moduleNameMapping: {
-    '^@shared/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1',
-    '^@shared$': '<rootDir>/../../packages/shared-utils/index.ts',
+  moduleNameMapper: {
+    '^@a4co/shared-utils$': '<rootDir>/../../packages/shared-utils/index.ts',
+    '^@a4co/shared-utils/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1',
   },
   moduleFileExtensions: ['js', 'json', 'ts'],
+  modulePaths: ['<rootDir>'],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.spec.json',
+      },
+    ],
   },
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   clearMocks: true,
@@ -21,12 +32,7 @@ module.exports = {
   restoreMocks: true,
   verbose: true,
   testTimeout: 30000,
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        experimentalDecorators: true,
-        emitDecoratorMetadata: true,
-      },
-    },
-  },
+  maxWorkers: 1,
+  forceExit: true,
+  detectOpenHandles: true,
 };

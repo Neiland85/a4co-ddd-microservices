@@ -47,6 +47,7 @@ export class AuthController {
     try {
       return await this.registerUserUseCase.execute(registerDto);
     } catch (error: any) {
+      console.error(`Error en registro: ${error.message}`);
       if (error.message?.includes('ya está registrado')) {
         throw new Error('CONFLICT: Email ya registrado');
       }
