@@ -16,6 +16,14 @@ export abstract class AggregateRoot extends BaseEntity {
     this._domainEvents.push(event);
   }
 
+  public getUncommittedEvents(): DomainEvent[] {
+    return this._domainEvents.slice();
+  }
+
+  public clearEvents(): void {
+    this._domainEvents = [];
+  }
+
   public clearDomainEvents(): void {
     this._domainEvents = [];
   }

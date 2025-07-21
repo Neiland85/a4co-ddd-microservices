@@ -1,4 +1,4 @@
-import { UseCase } from '@shared/index';
+import { UseCase } from '@a4co/shared-utils';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { LoginUserDto } from '../dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
