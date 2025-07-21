@@ -42,9 +42,12 @@ describe('RegisterUserUseCase', () => {
       update: jest.fn(),
       delete: jest.fn(),
       exists: jest.fn(),
+      existsByEmail: jest.fn(),
+      findActiveUsers: jest.fn(),
+      findPaginated: jest.fn(),
       findAll: jest.fn(),
       count: jest.fn(),
-    } as any;
+    } as UserRepository;
 
     // Mock del servicio de dominio
     userDomainService = {
@@ -53,8 +56,22 @@ describe('RegisterUserUseCase', () => {
       canUserPerformAction: jest.fn(),
     } as any;
 
+    const eventBus = {
+      publish: jest.fn(),
+    } as any;
+
+    const logger = {
+      log: jest.fn(),
+      error: jest.fn(),
+    } as any;
+
     // Crear la instancia del use case
-    useCase = new RegisterUserUseCase(userRepository, userDomainService);
+    useCase = new RegisterUserUseCase(
+      userRepository,
+      userDomainService,
+      eventBus,
+      logger
+    );
   });
 
   afterEach(() => {

@@ -26,6 +26,7 @@ describe('RegisterUserUseCase', () => {
       isEmailUnique: jest.fn(),
       validateUniqueEmail: jest.fn(),
       canUserPerformAction: jest.fn(),
+      userRepository: jest.fn(), // Se agrega la propiedad faltante
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -44,7 +45,8 @@ describe('RegisterUserUseCase', () => {
 
     useCase = module.get<RegisterUserUseCase>(RegisterUserUseCase);
     userRepository = module.get('UserRepository');
-    userDomainService = module.get<UserDomainService>(UserDomainService);
+    userDomainService =
+      mockUserDomainService as unknown as jest.Mocked<UserDomainService>; // Ajustar la conversión
   });
 
   it('should be defined', () => {
@@ -70,7 +72,18 @@ describe('RegisterUserUseCase', () => {
       false,
       undefined,
       new Date(),
-      new Date()
+      new Date(),
+      {
+        id: 'additional-id',
+        email: 'additional-email',
+        name: 'additional-name',
+        hashedPassword: 'additional-password',
+        status: UserStatus.ACTIVE,
+        emailVerified: false,
+        lastLoginAt: undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
     );
 
     userRepository.save.mockResolvedValue(mockUser);
