@@ -19,7 +19,7 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": ["coverage/**"]
     },
     "test:watch": {
@@ -36,6 +36,10 @@
       "cache": false
     },
     "db:migrate": {
+      "cache": false
+    },
+    "deploy": {
+      "dependsOn": ["build"],
       "cache": false
     }
   }

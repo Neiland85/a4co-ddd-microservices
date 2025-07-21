@@ -5,7 +5,7 @@ import {
   MaxLength,
   IsNotEmpty,
 } from 'class-validator';
-import { BaseDto } from '@shared/index';
+import { BaseDto } from '@a4co/shared-utils';
 
 export class RegisterUserDto extends BaseDto {
   @IsEmail({}, { message: 'Debe ser un email válido' })

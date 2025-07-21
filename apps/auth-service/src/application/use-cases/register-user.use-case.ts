@@ -1,6 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { UseCase } from '@shared/index';
-import { UserRepository } from '../../domain/repositories/user.repository';
+import { UseCase } from '@a4co/shared-utils';
+import { UserRepositoryPort } from '../ports/user-repository.port';
+import { CryptographyServicePort } from '../ports/cryptography-service.port';
+import { EventBusPort } from '../ports/event-bus.port';
 import { UserDomainService } from '../../domain/services/user-domain.service';
 import { User } from '../../domain/aggregates/user.aggregate';
 import { RegisterUserDto, UserResponseDto } from '../dto/user.dto';
@@ -10,27 +12,47 @@ export class RegisterUserUseCase
   implements UseCase<RegisterUserDto, UserResponseDto>
 {
   constructor(
-    @Inject('UserRepository')
-    private readonly userRepository: UserRepository,
+    @Inject('UserRepositoryPort')
+    private readonly userRepository: UserRepositoryPort,
+    @Inject('CryptographyServicePort')
+    private readonly cryptographyService: CryptographyServicePort,
+    @Inject('EventBusPort')
+    private readonly eventBus: EventBusPort,
     private readonly userDomainService: UserDomainService
   ) {}
 
   async execute(request: RegisterUserDto): Promise<UserResponseDto> {
-    // Validar que el email sea único
-    await this.userDomainService.validateUniqueEmail(request.email);
+    try {
+      // Validar que el email sea único usando el dominio service
+      await this.userDomainService.validateUniqueEmail(request.email);
 
-    // Crear el usuario
-    const user = await User.create(
-      request.email,
-      request.name,
-      request.password
-    );
+      // Hash de la contraseña usando el adapter
+      const hashedPassword = await this.cryptographyService.hashPassword(
+        request.password
+      );
 
-    // Persistir el usuario
-    const savedUser = await this.userRepository.save(user);
+      // Crear el usuario con contraseña ya hasheada
+      const user = await User.createWithHashedPassword(
+        request.email,
+        request.name,
+        hashedPassword
+      );
 
-    // Mapear a DTO de respuesta
-    return this.mapToDto(savedUser);
+      // Persistir el usuario usando el adapter
+      const savedUser = await this.userRepository.save(user);
+
+      // Publicar eventos de dominio
+      const domainEvents = savedUser.getUncommittedEvents();
+      await this.eventBus.publishAll(domainEvents);
+      savedUser.clearEvents();
+
+      // Mapear a DTO de respuesta
+      return this.mapToDto(savedUser);
+    } catch (error) {
+      const err = error as Error;
+      console.error(`Error en RegisterUserUseCase: ${err.message}`);
+      throw err;
+    }
   }
 
   private mapToDto(user: User): UserResponseDto {

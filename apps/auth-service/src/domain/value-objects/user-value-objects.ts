@@ -1,4 +1,5 @@
-import { ValueObject } from '@shared/index';
+// prompt: ✦ gen-service
+import { ValueObject } from '../../../../../packages/shared-utils';
 
 export class Email extends ValueObject<string> {
   constructor(value: string) {
@@ -75,7 +76,7 @@ export class UserName extends ValueObject<string> {
     }
 
     // Solo letras, espacios y algunos caracteres especiales
-    const nameRegex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s'-]+$/;
+    const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/;
     if (!nameRegex.test(name)) {
       throw new Error('Nombre contiene caracteres inválidos');
     }

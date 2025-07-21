@@ -1,4 +1,4 @@
-import { DomainEvent } from '@shared/index';
+import { DomainEvent } from '@a4co/shared-utils/src/domain/domain-event';
 
 export class UserRegisteredEvent extends DomainEvent {
   constructor(
@@ -48,7 +48,6 @@ export class UserDeactivatedEvent extends DomainEvent {
     public readonly deactivationData: {
       deactivatedAt: Date;
       reason?: string;
-      deactivatedBy: string;
     },
     eventVersion?: number
   ) {

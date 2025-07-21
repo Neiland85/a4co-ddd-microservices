@@ -1,15 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { UserRepository } from '../repositories/user.repository';
+import { UserRepositoryPort } from '../../application/ports/user-repository.port';
 
 @Injectable()
 export class UserDomainService {
   constructor(
-    @Inject('UserRepository')
-    private readonly userRepository: UserRepository
+    @Inject('UserRepositoryPort')
+    private readonly userRepository: UserRepositoryPort
   ) {}
 
   async isEmailUnique(email: string): Promise<boolean> {
-    const exists = await this.userRepository.exists(email);
+    const exists = await this.userRepository.existsByEmail(email);
     return !exists;
   }
 
