@@ -2,11 +2,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo } from 'react';
-
-// Función utilitaria simple para clases CSS
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(' ');
-}
+import { cn } from '../../lib/utils';
 
 // Interfaces de tipos comunes para v0 components
 interface BaseComponentProps {
@@ -29,18 +25,18 @@ interface V0ComponentTemplateProps extends BaseComponentProps {
 interface LoadingState {
   isLoading: boolean;
   error: string | null;
-  data: { [key: string]: any } | null;
+  data: { success?: boolean } | null; // Cambiado para incluir la propiedad 'success'
 }
 
 // Hook personalizado para manejo de estado de loading
-const useLoadingState = (initialData?: {
-  [key: string]: any;
-}): [
+const useLoadingState = (
+  initialData?: unknown // Cambiado de 'any' a 'unknown'
+): [
   LoadingState,
   {
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
-    setData: (data: { [key: string]: any }) => void;
+    setData: (data: unknown) => void; // Cambiado de 'any' a 'unknown'
     reset: () => void;
   },
 ] => {
@@ -58,8 +54,13 @@ const useLoadingState = (initialData?: {
     setState((prev) => ({ ...prev, error, isLoading: false }));
   }, []);
 
-  const setData = useCallback((data: { [key: string]: any }) => {
-    setState((prev) => ({ ...prev, data, isLoading: false, error: null }));
+  const setData = useCallback((data: unknown) => {
+    setState((prev) => ({
+      ...prev,
+      data: data as { success?: boolean } | null, // Type assertion para cumplir con el tipo esperado
+      isLoading: false,
+      error: null,
+    }));
   }, []);
 
   const reset = useCallback(() => {
@@ -138,7 +139,6 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
   className,
   children,
 }) => {
-  // Estados locales
   const [loadingState, { setLoading, setError, setData, reset }] =
     useLoadingState();
 
@@ -172,7 +172,7 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (onAction) {
-        onAction();
+        await Promise.resolve(onAction());
       }
 
       setData({ success: true });
@@ -203,8 +203,7 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
     );
   }
 
-  // Renderizado del contenido principal
-  const renderContent = (): React.ReactNode => {
+  const renderContent = () => {
     if (loading || loadingState.isLoading) {
       return (
         <div className="flex items-center justify-center py-8">
@@ -337,20 +336,13 @@ export const V0ModalTemplate: React.FC<
 
   if (!isOpen) return null;
 
-  const handleBackdropClick = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onClose();
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
         <button
           className="fixed inset-0 bg-black bg-opacity-25"
           onClick={onClose}
-          onKeyDown={handleBackdropClick}
-          aria-label="Cerrar modal"
+          aria-label="Cerrar modal" // Proporciona un nombre accesible
         />
         <div
           className={cn(
@@ -364,7 +356,6 @@ export const V0ModalTemplate: React.FC<
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
-              aria-label="Cerrar"
             >
               ✕
             </button>
