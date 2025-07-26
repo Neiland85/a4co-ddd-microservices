@@ -1,6 +1,13 @@
 {
   "name": "a4co-ddd-microservices",
   "version": "1.0.0",
+    develop
+  "description": "Extensión para gestionar prompts de Copilot organizados por rol técnico.",
+  "main": "dist/extension.js",
+  "scripts": {
+    "test": "jest",
+    "build": "esbuild src/extension.ts --bundle --outdir=dist --platform=node --external:vscode"
+
   "description": "Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para una plataforma colaborativa de venta y logística del pequeño comercio andaluz.",
   "private": true,
   "main": "index.js",
@@ -19,6 +26,7 @@
     "start:dev": "concurrently \"pnpm run dev\"",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down"
+     main
   },
   "keywords": [
     "microservices",
@@ -42,19 +50,36 @@
     "concurrently": "^8.2.2"
   },
   "devDependencies": {
+       develop
+    "@types/jest": "^30.0.0",
+    "@types/vscode": "^1.102.0",
+
     "@types/node": "^20.17.10",
+      main
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
     "esbuild": "^0.25.6",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "prettier": "^3.6.2",
+      develop
+    "ts-jest": "^29.4.0",
+    "vsce": "^2.15.0"
+  },
+  "engines": {
+    "vscode": ">=1.102.0"
+  },
+  "activationEvents": [
+    "onCommand:copilotPrompts.openDashboard"
+  ],
+
     "typescript": "^5.7.3"
   },
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
+       main
   "repository": {
     "type": "git",
     "url": "https://github.com/Neiland85/a4co-ddd-microservices"
