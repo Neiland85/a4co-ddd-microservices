@@ -29,6 +29,121 @@ interface GeolocationState {
   permission: PermissionState | null;
 }
 
+// Función auxiliar para reverse geocoding (extraída para reducir anidación)
+async function reverseGeocode(
+  lat: number,
+  lng: number
+): Promise<{ municipality?: string; province?: string }> {
+  // En una implementación real, aquí usarías un servicio como Google Maps, OpenStreetMap, etc.
+  // Por ahora, simulamos algunos municipios de Jaén basados en coordenadas aproximadas
+
+  const jaenMunicipalities = [
+    { name: 'Jaén', lat: 37.7796, lng: -3.7849, bounds: 0.05 },
+    { name: 'Úbeda', lat: 38.0138, lng: -3.3706, bounds: 0.03 },
+    { name: 'Baeza', lat: 37.9915, lng: -3.4698, bounds: 0.03 },
+    { name: 'Linares', lat: 38.0937, lng: -3.6335, bounds: 0.04 },
+    { name: 'Andújar', lat: 38.0384, lng: -4.0517, bounds: 0.04 },
+    { name: 'Martos', lat: 37.7211, lng: -3.9717, bounds: 0.03 },
+    { name: 'Cazorla', lat: 37.9105, lng: -2.9745, bounds: 0.03 },
+    { name: 'Alcaudete', lat: 37.5914, lng: -4.0894, bounds: 0.03 },
+    { name: 'La Carolina', lat: 38.2833, lng: -3.6167, bounds: 0.03 },
+    { name: 'Villacarrillo', lat: 38.1117, lng: -2.9967, bounds: 0.03 },
+  ];
+
+  // Buscar municipio más cercano
+  for (const municipality of jaenMunicipalities) {
+    const distance = Math.sqrt(
+      Math.pow(lat - municipality.lat, 2) + Math.pow(lng - municipality.lng, 2)
+    );
+
+    if (distance <= municipality.bounds) {
+      return {
+        municipality: municipality.name,
+        province: 'Jaén',
+      };
+    }
+  }
+
+  // Si no encuentra municipio específico pero está en Jaén
+  if (lat >= 37.3 && lat <= 38.5 && lng >= -4.0 && lng <= -2.7) {
+    return {
+      province: 'Jaén',
+    };
+  }
+
+  return {};
+}
+
+// Función auxiliar para procesar posición exitosa
+function processSuccessfulPosition(
+  position: GeolocationPosition,
+  setState: React.Dispatch<React.SetStateAction<GeolocationState>>
+): Promise<LocationData> {
+  const { latitude, longitude, accuracy } = position.coords;
+
+  return reverseGeocode(latitude, longitude)
+    .then((locationInfo) => {
+      const locationData: LocationData = {
+        coordinates: { latitude, longitude },
+        accuracy,
+        ...locationInfo,
+      };
+
+      setState((prev) => ({
+        ...prev,
+        location: locationData,
+        loading: false,
+      }));
+
+      return locationData;
+    })
+    .catch(() => {
+      // Si falla el reverse geocoding, aún devolvemos las coordenadas
+      const locationData: LocationData = {
+        coordinates: { latitude, longitude },
+        accuracy,
+      };
+
+      setState((prev) => ({
+        ...prev,
+        location: locationData,
+        loading: false,
+      }));
+
+      return locationData;
+    });
+}
+
+// Función auxiliar para procesar errores de geolocalización
+function processGeolocationError(
+  error: GeolocationPositionError,
+  setState: React.Dispatch<React.SetStateAction<GeolocationState>>
+): string {
+  let errorMessage = 'Error obteniendo ubicación';
+
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      errorMessage = 'Permisos de ubicación denegados';
+      break;
+    case error.POSITION_UNAVAILABLE:
+      errorMessage = 'Ubicación no disponible';
+      break;
+    case error.TIMEOUT:
+      errorMessage = 'Tiempo de espera agotado';
+      break;
+    default:
+      errorMessage = 'Error desconocido de geolocalización';
+  }
+
+  setState((prev) => ({
+    ...prev,
+    loading: false,
+    error: errorMessage,
+  }));
+
+  return errorMessage;
+}
+
 export function useGeolocation(options: UseGeolocationOptions = {}) {
   const {
     enableHighAccuracy = true,
@@ -79,74 +194,28 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       return new Promise((resolve) => {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const { latitude, longitude, accuracy } = position.coords;
-
-            try {
-              // Intentar obtener información del municipio usando reverse geocoding
-              const locationInfo = await reverseGeocode(latitude, longitude);
-
-              const locationData: LocationData = {
-                coordinates: { latitude, longitude },
-                accuracy,
-                ...locationInfo,
-              };
-
-              setState((prev) => ({
-                ...prev,
-                location: locationData,
-                loading: false,
-              }));
-
-              resolve(locationData);
-            } catch (error) {
-              // Si falla el reverse geocoding, aún devolvemos las coordenadas
-              const locationData: LocationData = {
-                coordinates: { latitude, longitude },
-                accuracy,
-              };
-
-              setState((prev) => ({
-                ...prev,
-                location: locationData,
-                loading: false,
-              }));
-
-              resolve(locationData);
-            }
-          },
-          (error) => {
-            let errorMessage = 'Error obteniendo ubicación';
-
-            switch (error.code) {
-              case error.PERMISSION_DENIED:
-                errorMessage = 'Permisos de ubicación denegados';
-                break;
-              case error.POSITION_UNAVAILABLE:
-                errorMessage = 'Ubicación no disponible';
-                break;
-              case error.TIMEOUT:
-                errorMessage = 'Tiempo de espera agotado';
-                break;
-              default:
-                errorMessage = 'Error desconocido de geolocalización';
-            }
-
-            setState((prev) => ({
-              ...prev,
-              loading: false,
-              error: errorMessage,
-            }));
-
+        const onSuccess = async (position: GeolocationPosition) => {
+          try {
+            const locationData = await processSuccessfulPosition(
+              position,
+              setState
+            );
+            resolve(locationData);
+          } catch {
             resolve(null);
-          },
-          {
-            enableHighAccuracy,
-            timeout,
-            maximumAge,
           }
-        );
+        };
+
+        const onError = (error: GeolocationPositionError) => {
+          processGeolocationError(error, setState);
+          resolve(null);
+        };
+
+        navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+          enableHighAccuracy,
+          timeout,
+          maximumAge,
+        });
       });
     }, [enableHighAccuracy, timeout, maximumAge]);
 
@@ -239,51 +308,6 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
       ? isInJaen(state.location.coordinates)
       : false,
   };
-}
-
-// Función auxiliar para reverse geocoding (simulada)
-async function reverseGeocode(
-  lat: number,
-  lng: number
-): Promise<{ municipality?: string; province?: string }> {
-  // En una implementación real, aquí usarías un servicio como Google Maps, OpenStreetMap, etc.
-  // Por ahora, simulamos algunos municipios de Jaén basados en coordenadas aproximadas
-
-  const jaenMunicipalities = [
-    { name: 'Jaén', lat: 37.7796, lng: -3.7849, bounds: 0.05 },
-    { name: 'Úbeda', lat: 38.0138, lng: -3.3706, bounds: 0.03 },
-    { name: 'Baeza', lat: 37.9915, lng: -3.4698, bounds: 0.03 },
-    { name: 'Linares', lat: 38.0937, lng: -3.6335, bounds: 0.04 },
-    { name: 'Andújar', lat: 38.0384, lng: -4.0517, bounds: 0.04 },
-    { name: 'Martos', lat: 37.7211, lng: -3.9717, bounds: 0.03 },
-    { name: 'Cazorla', lat: 37.9105, lng: -2.9745, bounds: 0.03 },
-    { name: 'Alcaudete', lat: 37.5914, lng: -4.0894, bounds: 0.03 },
-    { name: 'La Carolina', lat: 38.2833, lng: -3.6167, bounds: 0.03 },
-    { name: 'Villacarrillo', lat: 38.1117, lng: -2.9967, bounds: 0.03 },
-  ];
-
-  // Buscar municipio más cercano
-  for (const municipality of jaenMunicipalities) {
-    const distance = Math.sqrt(
-      Math.pow(lat - municipality.lat, 2) + Math.pow(lng - municipality.lng, 2)
-    );
-
-    if (distance <= municipality.bounds) {
-      return {
-        municipality: municipality.name,
-        province: 'Jaén',
-      };
-    }
-  }
-
-  // Si no encuentra municipio específico pero está en Jaén
-  if (lat >= 37.3 && lat <= 38.5 && lng >= -4.0 && lng <= -2.7) {
-    return {
-      province: 'Jaén',
-    };
-  }
-
-  return {};
 }
 
 // Hook específico para ubicaciones del mercado local
