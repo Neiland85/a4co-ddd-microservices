@@ -213,7 +213,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="space-y-2">
           <label
             htmlFor="category-select"
-            className="block text-sm font-semibold text-amber-800 mb-2 flex items-center gap-2"
+            className="text-sm font-semibold text-amber-800 mb-2 flex items-center gap-2"
           >
             🏷️ Categoría
           </label>
@@ -234,7 +234,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="space-y-2">
           <label
             htmlFor="location-select"
-            className="block text-sm font-semibold text-amber-800 mb-2 flex items-center gap-2"
+            className="text-sm font-semibold text-amber-800 mb-2 flex items-center gap-2"
           >
             📍 Ubicación
           </label>
