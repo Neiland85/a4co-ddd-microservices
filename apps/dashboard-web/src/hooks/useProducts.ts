@@ -1,7 +1,7 @@
 // Hook para gestión de productos locales
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { LocalProduct } from '../app/api/sales-opportunities/route';
 
 interface UseProductsOptions {
@@ -34,7 +34,25 @@ interface ProductsState {
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
-  const { autoFetch = true } = options;
+  // Estabilizamos las opciones para evitar renders infinitos
+  const optionsRef = useRef(options);
+  const stableOptions = useMemo(() => {
+    // Solo actualizamos si hay cambios reales en las opciones
+    const current = optionsRef.current;
+    const hasChanged = Object.keys({ ...current, ...options }).some(
+      (key) =>
+        current[key as keyof UseProductsOptions] !==
+        options[key as keyof UseProductsOptions]
+    );
+
+    if (hasChanged) {
+      optionsRef.current = options;
+    }
+
+    return optionsRef.current;
+  }, [JSON.stringify(options)]);
+
+  const { autoFetch = true } = stableOptions;
 
   const [state, setState] = useState<ProductsState>({
     products: [],
@@ -54,7 +72,7 @@ export function useProducts(options: UseProductsOptions = {}) {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
-        const finalOptions = { ...options, ...customOptions };
+        const finalOptions = { ...stableOptions, ...customOptions };
         const params = new URLSearchParams();
 
         if (finalOptions.category)
@@ -101,19 +119,21 @@ export function useProducts(options: UseProductsOptions = {}) {
         }));
       }
     },
-    [options]
+    [stableOptions]
   );
 
   const loadMore = useCallback(async () => {
-    setState((prev) => {
-      if (prev.pagination.hasMore && !prev.loading) {
-        const offset = prev.products.length;
-        // Hacemos la llamada dentro del setState para tener acceso al estado actual
-        fetchProducts({ limit: prev.pagination.limit, offset }, true);
-      }
-      return prev;
-    });
-  }, [fetchProducts]);
+    if (state.pagination.hasMore && !state.loading) {
+      const offset = state.products.length;
+      await fetchProducts({ limit: state.pagination.limit, offset }, true);
+    }
+  }, [
+    state.pagination.hasMore,
+    state.loading,
+    state.products.length,
+    state.pagination.limit,
+    fetchProducts,
+  ]);
 
   const searchProducts = useCallback(
     async (searchTerm: string) => {
@@ -172,7 +192,8 @@ export function useProducts(options: UseProductsOptions = {}) {
     if (autoFetch) {
       fetchProducts();
     }
-  }, [fetchProducts, autoFetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoFetch]); // Solo dependemos de autoFetch, no de fetchProducts para evitar loops
 
   return {
     ...state,
@@ -245,6 +266,9 @@ export function useProductSearch() {
   const clearSearch = useCallback(() => {
     setSearchTerm('');
     setDebouncedSearchTerm('');
+  }, []);
+
+  const resetProducts = useCallback(() => {
     productsResult.reset();
   }, [productsResult.reset]);
 
@@ -253,6 +277,7 @@ export function useProductSearch() {
     searchTerm,
     setSearchTerm,
     clearSearch,
+    resetProducts,
     isSearching: !!debouncedSearchTerm,
   };
 }
