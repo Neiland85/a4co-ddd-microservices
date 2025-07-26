@@ -26,7 +26,8 @@
       "@apps/*": [
         "apps/*"
       ]
-    }
+    },
+    "jsx": "react-jsx"
   },
   "include": [
     "apps/**/*",
