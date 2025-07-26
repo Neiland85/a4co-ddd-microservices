@@ -3,10 +3,7 @@
 
 import React, { useState } from 'react';
 import { useMarketLocations } from '../../hooks/useGeolocation';
-import {
-  useSalesOpportunities,
-  useHighPriorityOpportunities,
-} from '../../hooks/useSalesOpportunities';
+import { useHighPriorityOpportunities } from '../../hooks/useSalesOpportunities';
 import {
   useSeasonalProducts,
   useAvailableProducts,
@@ -322,21 +319,22 @@ const MarketplaceDashboard: React.FC = () => {
                   📍 Lugares de Interés Cercanos
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {geolocation.nearbyLocations
-                    .slice(0, 4)
-                    .map((location, index) => (
-                      <div key={index} className="bg-white p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-800">
-                          {location.name}
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-1">
-                          {location.description}
-                        </p>
-                        <p className="text-xs text-blue-600">
-                          📍 {location.distance?.toFixed(1)} km de distancia
-                        </p>
-                      </div>
-                    ))}
+                  {geolocation.nearbyLocations.slice(0, 4).map((location) => (
+                    <div
+                      key={location.name}
+                      className="bg-white p-4 rounded-lg"
+                    >
+                      <h4 className="font-medium text-gray-800">
+                        {location.name}
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-1">
+                        {location.type}
+                      </p>
+                      <p className="text-xs text-blue-600">
+                        📍 {location.distance?.toFixed(1)} km de distancia
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
