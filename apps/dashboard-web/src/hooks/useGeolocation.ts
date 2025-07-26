@@ -15,6 +15,18 @@ interface LocationData {
   accuracy?: number;
 }
 
+interface MarketLocation {
+  coordinates: [number, number];
+  name: string;
+  type: string;
+  description?: string;
+  address?: string;
+}
+
+export interface NearbyLocation extends MarketLocation {
+  distance: number;
+}
+
 interface UseGeolocationOptions {
   enableHighAccuracy?: boolean;
   timeout?: number;
@@ -258,13 +270,9 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
   // Encontrar productores/artesanos cercanos
   const findNearbyLocations = useCallback(
     (
-      locations: Array<{
-        coordinates: [number, number];
-        name: string;
-        type: string;
-      }>,
+      locations: MarketLocation[],
       maxDistance: number = 20 // km
-    ) => {
+    ): NearbyLocation[] => {
       if (!state.location) return [];
 
       return locations
@@ -315,7 +323,48 @@ export function useMarketLocations() {
   const geolocation = useGeolocation({ autoStart: true });
 
   // Ubicaciones predefinidas de interés en Jaén
-  const marketLocations = [
+  const marketLocations: MarketLocation[] = [
+    {
+      name: 'Mercado de Abastos - Jaén Capital',
+      coordinates: [37.7796, -3.7849] as [number, number],
+      type: 'market',
+      description: 'Mercado principal de productos frescos y locales',
+      address: 'Plaza del Mercado, s/n, 23001 Jaén',
+    },
+    {
+      name: 'Cooperativa Olivarera San José - Úbeda',
+      coordinates: [38.0138, -3.3706] as [number, number],
+      type: 'producer',
+      description: 'Aceite de oliva virgen extra',
+      address: 'Carretera de Córdoba, Km 12, Úbeda',
+    },
+    {
+      name: 'Quesería Los Olivos - Cazorla',
+      coordinates: [37.9105, -2.9745] as [number, number],
+      type: 'producer',
+      description: 'Quesos artesanales de cabra',
+      address: 'Parque Natural de Cazorla, Finca Los Olivos',
+    },
+    {
+      name: 'Plaza de Santa María - Úbeda',
+      coordinates: [38.015, -3.37] as [number, number],
+      type: 'event',
+      description: 'Mercado de productos locales los sábados',
+      address: 'Plaza Vázquez de Molina, Úbeda',
+    },
+  ];
+
+  const nearbyLocations: NearbyLocation[] = geolocation.findNearbyLocations(marketLocations, 30);
+
+  return {
+    ...geolocation,
+    marketLocations,
+    nearbyLocations,
+    nearbyMarkets: nearbyLocations.filter((loc) => loc.type === 'market'),
+    nearbyProducers: nearbyLocations.filter((loc) => loc.type === 'producer'),
+    nearbyEvents: nearbyLocations.filter((loc) => loc.type === 'event'),
+  };
+}
     {
       name: 'Mercado de Abastos - Jaén Capital',
       coordinates: [37.7796, -3.7849] as [number, number],
