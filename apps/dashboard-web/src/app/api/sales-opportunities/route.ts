@@ -204,6 +204,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    console.error('Error al obtener oportunidades de venta:', error);
     return NextResponse.json(
       {
         success: false,
@@ -258,6 +259,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    console.error('Error al crear oportunidad de venta:', error);
     return NextResponse.json(
       {
         success: false,
