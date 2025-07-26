@@ -26,7 +26,7 @@ interface SalesOpportunitiesState {
 export function useSalesOpportunities(
   options: UseSalesOpportunitiesOptions = {}
 ) {
-  const { type, location, category, autoFetch = true } = options;
+  const { autoFetch = true } = options;
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
