@@ -48,6 +48,7 @@ export class UserDeactivatedEvent extends DomainEvent {
     public readonly deactivationData: {
       deactivatedAt: Date;
       reason?: string;
+      deactivatedBy?: string;
     },
     eventVersion?: number
   ) {

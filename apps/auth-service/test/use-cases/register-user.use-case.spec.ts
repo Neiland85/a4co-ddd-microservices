@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { RegisterUserUseCase } from '../../src/application/use-cases/register-user.use-case';
 import { UserRepository } from '../../src/domain/repositories/user.repository';
 import { UserDomainService } from '../../src/domain/services/user-domain.service';
-import { User, UserStatus } from '../../src/domain/aggregates/user.aggregate';
+import { UserStatus } from '../../src/domain/aggregates/user.aggregate';
 import { RegisterUserDto } from '../../src/application/dto/user.dto';
+import { createRegisterUserDto, createUser } from '../factories';
 
 describe('RegisterUserUseCase', () => {
   let useCase: RegisterUserUseCase;
@@ -11,82 +11,58 @@ describe('RegisterUserUseCase', () => {
   let userDomainService: jest.Mocked<UserDomainService>;
 
   beforeEach(async () => {
-    const mockUserRepository = {
+    userRepository = {
       findById: jest.fn(),
       findByEmail: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
       exists: jest.fn(),
+      existsByEmail: jest.fn(),
+      findActiveUsers: jest.fn(),
+      findPaginated: jest.fn(),
       findAll: jest.fn(),
       count: jest.fn(),
-    };
+    } as unknown as jest.Mocked<UserRepository>;
 
-    const mockUserDomainService = {
+    userDomainService = {
       isEmailUnique: jest.fn(),
       validateUniqueEmail: jest.fn(),
       canUserPerformAction: jest.fn(),
-      userRepository: jest.fn(), // Se agrega la propiedad faltante
+      userRepository: jest.fn(),
+    } as unknown as jest.Mocked<UserDomainService>;
+
+    const mockEventBus = {
+      publish: jest.fn(),
+      publishAll: jest.fn(),
     };
 
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        RegisterUserUseCase,
-        {
-          provide: 'UserRepository',
-          useValue: mockUserRepository,
-        },
-        {
-          provide: UserDomainService,
-          useValue: mockUserDomainService,
-        },
-      ],
-    }).compile();
+    const mockCryptographyService = {
+      hashPassword: jest.fn(),
+      comparePassword: jest.fn(),
+      validatePassword: jest.fn(),
+      generateSecureToken: jest.fn(),
+    };
 
-    useCase = module.get<RegisterUserUseCase>(RegisterUserUseCase);
-    userRepository = module.get('UserRepository');
-    userDomainService =
-      mockUserDomainService as unknown as jest.Mocked<UserDomainService>; // Ajustar la conversión
+    useCase = new RegisterUserUseCase(
+      userRepository,
+      mockCryptographyService,
+      mockEventBus,
+      userDomainService
+    );
   });
 
   it('should be defined', () => {
     expect(useCase).toBeDefined();
   });
 
-  it('should register a new user successfully', async () => {
+  it('should register a user successfully', async () => {
     // Arrange
-    const registerDto = new RegisterUserDto();
-    registerDto.email = 'test@example.com';
-    registerDto.name = 'Test User';
-    registerDto.password = 'Password123';
+    const registerDto = createRegisterUserDto();
+    const user = createUser();
 
     userDomainService.validateUniqueEmail.mockResolvedValue(undefined);
-
-    // Mock del usuario creado usando el método reconstruct
-    const mockUser = User.reconstruct(
-      'test-id',
-      'test@example.com',
-      'Test User',
-      'hashed-password',
-      UserStatus.ACTIVE,
-      false,
-      undefined,
-      new Date(),
-      new Date(),
-      {
-        id: 'additional-id',
-        email: 'additional-email',
-        name: 'additional-name',
-        hashedPassword: 'additional-password',
-        status: UserStatus.ACTIVE,
-        emailVerified: false,
-        lastLoginAt: undefined,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-    );
-
-    userRepository.save.mockResolvedValue(mockUser);
+    userRepository.save.mockResolvedValue(user);
 
     // Act
     const result = await useCase.execute(registerDto);
@@ -95,7 +71,7 @@ describe('RegisterUserUseCase', () => {
     expect(userDomainService.validateUniqueEmail).toHaveBeenCalledWith(
       registerDto.email
     );
-    expect(userRepository.save).toHaveBeenCalled();
+    expect(userRepository.save).toHaveBeenCalledWith(expect.any(Object));
     expect(result.email).toBe(registerDto.email);
     expect(result.name).toBe(registerDto.name);
     expect(result.id).toBeDefined();
