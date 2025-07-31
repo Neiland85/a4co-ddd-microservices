@@ -97,17 +97,26 @@ export class User extends AggregateRoot {
   }
 
   // Factory method para reconstruir desde persistencia
-  public static reconstruct(p0: string, p1: string, p2: string, p3: string, ACTIVE: UserStatus, p4: boolean, undefined: undefined, p5: Date, p6: Date, data: {
-  id: string;
-  email: string;
-  name: string;
-  hashedPassword: string;
-  status: UserStatus;
-  emailVerified: boolean;
-  lastLoginAt?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}): User {
+  public static reconstruct(
+    identifiers: { id: string; email: string; name: string },
+    credentials: {
+      hashedPassword: string;
+      status: UserStatus;
+      emailVerified: boolean;
+    },
+    timestamps: { lastLoginAt?: Date; createdAt?: Date; updatedAt?: Date },
+    data: {
+      id: string;
+      email: string;
+      name: string;
+      hashedPassword: string;
+      status: UserStatus;
+      emailVerified: boolean;
+      lastLoginAt?: Date;
+      createdAt?: Date;
+      updatedAt?: Date;
+    }
+  ): User {
     return new User(
       data.id,
       new Email(data.email),
@@ -255,10 +264,6 @@ export class User extends AggregateRoot {
       emailVerified: this._emailVerified,
       lastLoginAt: this._lastLoginAt,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
-  }
-}
       updatedAt: this.updatedAt,
     };
   }
