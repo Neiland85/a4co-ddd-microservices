@@ -13,6 +13,17 @@ if [ -z "$SERVICE" ] || [ -z "$ENV" ]; then
   exit 1
 fi
 
+# Validar entradas
+if [[ ! "$SERVICE" =~ ^(auth|user|order|payment|product)$ ]]; then
+  echo "Error: Servicio no válido. Opciones: auth, user, order, payment, product."
+  exit 1
+fi
+
+if [[ ! "$ENV" =~ ^(dev|staging|prod)$ ]]; then
+  echo "Error: Entorno no válido. Opciones: dev, staging, prod."
+  exit 1
+fi
+
 # Debug: Mostrar valores de las variables
 echo "Servicio: $SERVICE"
 echo "Entorno: $ENV"
@@ -23,15 +34,12 @@ if [ ! -d "apps/$SERVICE-service" ]; then
   exit 1
 fi
 
-# Debug: Confirmar acceso al directorio
-ls -la "apps/$SERVICE-service"
-
 # Construir el servicio
 cd apps/$SERVICE-service
 pnpm run build
 
 # Desplegar
-echo "Desplegando $SERVICE en entorno $ENV..."
-# Aquí puedes agregar comandos específicos de despliegue, como subir artefactos a un servidor o ejecutar scripts de infraestructura
+echo "Subiendo artefactos a S3..."
+aws s3 cp dist/ s3://mi-bucket/$SERVICE/$ENV/ --recursive
 
 echo "Despliegue completado para $SERVICE en entorno $ENV."

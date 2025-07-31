@@ -6,14 +6,15 @@
 import { RegisterUserUseCase } from '../../src/application/use-cases/register-user.use-case';
 import { UserDomainService } from '../../src/domain/services/user-domain.service';
 import { RegisterUserDto } from '../../src/application/dto/user.dto';
+import { createRegisterUserDto, createUser } from '../factories';
 
 describe('RegisterUserUseCase - Unit Test', () => {
   let useCase: RegisterUserUseCase;
   let mockUserRepository: any;
   let mockUserDomainService: any;
+  let mockCryptographyService: any;
 
   beforeEach(() => {
-    // Mock simple del repositorio
     mockUserRepository = {
       save: jest.fn(),
       findByEmail: jest.fn(),
@@ -21,7 +22,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
       existsByEmail: jest.fn(),
     };
 
-    const mockCryptographyService = {
+    mockCryptographyService = {
       hashPassword: jest.fn(),
       comparePassword: jest.fn(),
       validatePassword: jest.fn(),
@@ -135,6 +136,96 @@ describe('RegisterUserUseCase - Unit Test', () => {
       registerDto.email
     );
   });
+
+  it('should create a user successfully', async () => {
+    const registerDto = createRegisterUserDto();
+    const user = createUser();
+
+    mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
+    mockUserRepository.save.mockResolvedValue(user);
+
+    const result = await useCase.execute(registerDto);
+
+    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(
+      registerDto.email
+    );
+    expect(mockUserRepository.save).toHaveBeenCalledWith(user);
+    expect(result.email).toBe(registerDto.email);
+  });
+
+  it('should hash the password before saving the user', async () => {
+    // Arrange
+    const registerDto = createRegisterUserDto();
+    const hashedPassword = 'hashed-password';
+
+    mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
+    mockCryptographyService.hashPassword.mockResolvedValue(hashedPassword);
+
+    const expectedUser = createUser({
+      email: registerDto.email,
+      name: registerDto.name,
+      hashedPassword,
+    });
+
+    mockUserRepository.save.mockResolvedValue(expectedUser);
+
+    // Act
+    const result = await useCase.execute(registerDto);
+
+    // Assert
+    expect(mockCryptographyService.hashPassword).toHaveBeenCalledWith(
+      registerDto.password
+    );
+    expect(mockUserRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ hashedPassword })
+    );
+    expect(result.email).toBe(registerDto.email);
+  });
+
+  it('should throw an error if hashPassword fails', async () => {
+    // Arrange
+    const registerDto = createRegisterUserDto();
+    mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
+    mockCryptographyService.hashPassword.mockRejectedValue(
+      new Error('Hashing failed')
+    );
+
+    // Act & Assert
+    await expect(useCase.execute(registerDto)).rejects.toThrow(
+      'Hashing failed'
+    );
+    expect(mockUserRepository.save).not.toHaveBeenCalled();
+  });
+
+  it('should throw an error for invalid DTO fields', async () => {
+    // Arrange
+    const invalidDto = {
+      email: 'invalid-email',
+      name: '',
+      password: '123',
+    };
+
+    // Act & Assert
+    await expect(useCase.execute(invalidDto as any)).rejects.toThrow(
+      'Invalid input data'
+    );
+    expect(mockUserRepository.save).not.toHaveBeenCalled();
+  });
+
+  it('should handle errors in findByEmail method', async () => {
+    // Arrange
+    const registerDto = createRegisterUserDto();
+    mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
+    mockUserRepository.findByEmail.mockRejectedValue(
+      new Error('Database error')
+    );
+
+    // Act & Assert
+    await expect(useCase.execute(registerDto)).rejects.toThrow(
+      'Database error'
+    );
+    expect(mockUserRepository.save).not.toHaveBeenCalled();
+  });
 });
 
 /**
@@ -144,6 +235,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
   let useCase: RegisterUserUseCase;
   let mockUserRepository: any;
   let mockUserDomainService: any;
+  let mockCryptographyService: any;
 
   beforeEach(() => {
     // Mocks más completos
@@ -165,7 +257,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
       publishAll: jest.fn(),
     };
 
-    const mockCryptographyService = {
+    mockCryptographyService = {
       hashPassword: jest.fn(),
       comparePassword: jest.fn(),
       validatePassword: jest.fn(),
@@ -341,5 +433,34 @@ describe('RegisterUserUseCase - Event Publication', () => {
     );
 
     expect(mockEventBus.publishAll).not.toHaveBeenCalled();
+  });
+
+  it('should publish events with correct data', async () => {
+    // Arrange
+    const registerDto = createRegisterUserDto();
+    const mockUser = {
+      id: 'test-id',
+      email: registerDto.email,
+      name: registerDto.name,
+      status: 'ACTIVE',
+      emailVerified: false,
+      lastLoginAt: undefined,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      getUncommittedEvents: jest.fn().mockReturnValue(['UserRegisteredEvent']),
+      clearEvents: jest.fn(),
+    };
+
+    mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
+    mockUserRepository.save.mockResolvedValue(mockUser);
+
+    // Act
+    await useCase.execute(registerDto);
+
+    // Assert
+    expect(mockEventBus.publishAll).toHaveBeenCalledWith([
+      'UserRegisteredEvent',
+    ]);
+    expect(mockUser.getUncommittedEvents).toHaveBeenCalled();
   });
 });
