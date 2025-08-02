@@ -51,7 +51,8 @@ check_app_security() {
     
     # Check Next.js version
     local next_version=$(grep '"next":' package.json | sed 's/.*"next": "\([^"]*\)".*/\1/')
-    if [[ "$next_version" == "$NEXTJS" ]]; then
+    local secure_nextjs_version="14.2.3"
+    if [[ "$next_version" == "$secure_nextjs_version" ]]; then
         echo -e "   ${GREEN}✅ Next.js: $next_version (Secure)${NC}"
     else
         echo -e "   ${YELLOW}⚠️  Next.js: $next_version (Check for updates)${NC}"
