@@ -1,7 +1,7 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 
 interface SalesOpportunity {
   id: string;
@@ -39,7 +39,15 @@ interface SalesOpportunitiesState {
 export function useSalesOpportunities(
   options: UseSalesOpportunitiesOptions = {}
 ) {
-  const { autoFetch = false, type, location, category } = options;
+  const { autoFetch = false } = options;
+
+  // Memoizar las opciones para evitar recreación en cada render
+  const memoizedOptions = useMemo(() => options, [
+    options.type,
+    options.location,
+    options.category,
+    options.autoFetch
+  ]);
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
@@ -56,7 +64,7 @@ export function useSalesOpportunities(
       try {
         const params = new URLSearchParams();
 
-        const finalFilters = { type, location, category, ...customFilters };
+        const finalFilters = { ...memoizedOptions, ...customFilters };
 
         if (finalFilters.type) params.append('type', finalFilters.type);
         if (finalFilters.location)
@@ -96,8 +104,12 @@ export function useSalesOpportunities(
         }));
       }
     },
-    [type, location, category]
+    [memoizedOptions]
   );
+
+  // Use ref to store the latest fetchOpportunities function
+  const fetchOpportunitiesRef = useRef(fetchOpportunities);
+  fetchOpportunitiesRef.current = fetchOpportunities;
 
   const createOpportunity = useCallback(
     async (opportunityData: Partial<SalesOpportunity>) => {
@@ -120,7 +132,7 @@ export function useSalesOpportunities(
 
         if (result.success) {
           // Refrescar la lista después de crear
-          await fetchOpportunities();
+          await fetchOpportunitiesRef.current();
           return result.data;
         } else {
           throw new Error(result.error || 'Error al crear oportunidad');
@@ -137,12 +149,12 @@ export function useSalesOpportunities(
         throw error;
       }
     },
-    [fetchOpportunities]
+    []
   );
 
   const refetch = useCallback(() => {
-    return fetchOpportunities();
-  }, [fetchOpportunities]);
+    return fetchOpportunitiesRef.current();
+  }, []);
 
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }));
@@ -151,9 +163,9 @@ export function useSalesOpportunities(
   // Auto-fetch en mount si está habilitado
   useEffect(() => {
     if (autoFetch) {
-      fetchOpportunities();
+      fetchOpportunitiesRef.current();
     }
-  }, [autoFetch, fetchOpportunities]);
+  }, [autoFetch]);
 
   return {
     ...state,
