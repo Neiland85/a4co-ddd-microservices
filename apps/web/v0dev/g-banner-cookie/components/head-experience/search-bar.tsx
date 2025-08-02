@@ -12,11 +12,11 @@ import { useSoundEffects } from "../../hooks/use-sound-effects"
 import type { SearchResult } from "../../types/head-experience-types"
 
 interface SearchBarProps {
-  onSearch: (query: string) => void
-  placeholder?: string
+  readonly onSearch: (query: string) => void
+  readonly placeholder?: string
 }
 
-export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: SearchBarProps) {
+export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Readonly<SearchBarProps>) {
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResult[]>([])
@@ -115,6 +115,132 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Sea
     setTimeout(() => inputRef.current?.focus(), 100)
   }
 
+  // Helper functions to render different content sections
+  const renderSearchResults = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-a4co-olive-600"></div>
+        </div>
+      )
+    }
+
+    if (results.length > 0) {
+      return (
+        <div className="space-y-1">
+          <h3 className="text-sm font-medium text-gray-600 mb-3">Resultados</h3>
+          {results.map((result, index) => (
+            <motion.button
+              key={result.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05 }}
+              onClick={() => handleSearch(result.title)}
+              onMouseEnter={() => playHover()}
+              className="w-full flex items-start gap-3 p-3 rounded-lg hover:bg-a4co-olive-50 transition-colors text-left"
+            >
+              <Search className="h-4 w-4 text-a4co-olive-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 truncate">{result.title}</div>
+                {result.description && (
+                  <div className="text-sm text-gray-600 truncate">{result.description}</div>
+                )}
+                <div className="text-xs text-a4co-olive-600 capitalize">{result.type}</div>
+              </div>
+            </motion.button>
+          ))}
+        </div>
+      )
+    }
+
+    return (
+      <div className="text-center py-8 text-gray-500">No se encontraron resultados para "{query}"</div>
+    )
+  }
+
+  const renderSuggestions = () => {
+    return (
+      <div className="space-y-4">
+        {/* Recent Searches */}
+        {recentSearches.length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium text-gray-600 mb-3 flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Búsquedas recientes
+            </h3>
+            <div className="space-y-1">
+              {recentSearches.map((search, index) => (
+                <motion.button
+                  key={search}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => handleSearch(search)}
+                  onMouseEnter={() => playHover()}
+                  className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-a4co-olive-50 transition-colors text-left"
+                >
+                  <Clock className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-700">{search}</span>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Trending Searches */}
+        <div>
+          <h3 className="text-sm font-medium text-gray-600 mb-3 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Búsquedas populares
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {trendingSearches.map((trend, index) => (
+              <motion.button
+                key={trend}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => handleSearch(trend)}
+                onMouseEnter={() => playHover()}
+                className="px-3 py-1.5 bg-a4co-olive-100 text-a4co-olive-700 rounded-full text-sm hover:bg-a4co-olive-200 transition-colors"
+              >
+                {trend}
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderMainContent = () => {
+    if (query.length > 2) {
+      return (
+        <motion.div
+          key="results"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="space-y-2"
+        >
+          {renderSearchResults()}
+        </motion.div>
+      )
+    }
+
+    return (
+      <motion.div
+        key="suggestions"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="space-y-4"
+      >
+        {renderSuggestions()}
+      </motion.div>
+    )
+  }
+
   return (
     <>
       <Button
@@ -122,7 +248,7 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Sea
         size="sm"
         onClick={openSearch}
         onMouseEnter={() => playHover()}
-        className="h-9 px-3 hover:bg-a4co-olive-50 transition-colors"
+        className="h-9 px-3 hover:bg-a4co-olive-50 transition-colors bg-transparent border-none"
         aria-label="Abrir búsqueda"
       >
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-2">
@@ -157,9 +283,9 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Sea
               {query && (
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={() => setQuery("")}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 bg-transparent border-none"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -168,104 +294,7 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Sea
 
             {/* Search Results */}
             <AnimatePresence mode="wait">
-              {query.length > 2 ? (
-                <motion.div
-                  key="results"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-2"
-                >
-                  {isLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-a4co-olive-600"></div>
-                    </div>
-                  ) : results.length > 0 ? (
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium text-gray-600 mb-3">Resultados</h3>
-                      {results.map((result, index) => (
-                        <motion.button
-                          key={result.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          onClick={() => handleSearch(result.title)}
-                          onMouseEnter={() => playHover()}
-                          className="w-full flex items-start gap-3 p-3 rounded-lg hover:bg-a4co-olive-50 transition-colors text-left"
-                        >
-                          <Search className="h-4 w-4 text-a4co-olive-600 mt-0.5 flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-gray-900 truncate">{result.title}</div>
-                            {result.description && (
-                              <div className="text-sm text-gray-600 truncate">{result.description}</div>
-                            )}
-                            <div className="text-xs text-a4co-olive-600 capitalize">{result.type}</div>
-                          </div>
-                        </motion.button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">No se encontraron resultados para "{query}"</div>
-                  )}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="suggestions"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-4"
-                >
-                  {/* Recent Searches */}
-                  {recentSearches.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-600 mb-3 flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Búsquedas recientes
-                      </h3>
-                      <div className="space-y-1">
-                        {recentSearches.map((search, index) => (
-                          <motion.button
-                            key={search}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            onClick={() => handleSearch(search)}
-                            onMouseEnter={() => playHover()}
-                            className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-a4co-olive-50 transition-colors text-left"
-                          >
-                            <Clock className="h-4 w-4 text-gray-400" />
-                            <span className="text-gray-700">{search}</span>
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Trending Searches */}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-600 mb-3 flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4" />
-                      Búsquedas populares
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {trendingSearches.map((trend, index) => (
-                        <motion.button
-                          key={trend}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.1 }}
-                          onClick={() => handleSearch(trend)}
-                          onMouseEnter={() => playHover()}
-                          className="px-3 py-1.5 bg-a4co-olive-100 text-a4co-olive-700 rounded-full text-sm hover:bg-a4co-olive-200 transition-colors"
-                        >
-                          {trend}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+              {renderMainContent()}
             </AnimatePresence>
           </motion.div>
         </DialogContent>
