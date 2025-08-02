@@ -58,14 +58,6 @@ export function useSalesOpportunities(
   const { autoFetch = false, type, location, category } = options;
         main
 
-  // Memoizar las opciones para evitar recreación en cada render
-  const memoizedOptions = useMemo(() => options, [
-    options.type,
-    options.location,
-    options.category,
-    options.autoFetch
-  ]);
-
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
     loading: false,
