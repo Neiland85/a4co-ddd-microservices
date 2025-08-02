@@ -9,9 +9,9 @@ import { useSoundEffects } from "../../hooks/use-sound-effects"
 import type { LanguageOption } from "../../types/head-experience-types"
 
 interface LanguageSelectorProps {
-  languages: LanguageOption[]
-  currentLanguage: string
-  onLanguageChange: (language: string) => void
+  readonly languages: LanguageOption[]
+  readonly currentLanguage: string
+  readonly onLanguageChange: (language: string) => void
 }
 
 export function LanguageSelector({ languages, currentLanguage, onLanguageChange }: LanguageSelectorProps) {

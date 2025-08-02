@@ -37,7 +37,7 @@ export default function HeadExperience({
   onSearch,
   soundSettings = defaultSoundSettings,
   onSoundSettingsChange,
-}: HeadExperienceProps) {
+}: Readonly<HeadExperienceProps>) {
   const [currentPath, setCurrentPath] = useState("/")
   const [localSoundSettings, setLocalSoundSettings] = useState(soundSettings)
   const { setGlobalVolume, setEnabled } = useSoundEffects()

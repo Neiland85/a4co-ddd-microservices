@@ -41,7 +41,7 @@ export default function IconGrid({
   showLabels = true,
   className = "",
   onIconClick,
-}: IconGridProps) {
+}: Readonly<IconGridProps>) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
 
@@ -129,7 +129,7 @@ export default function IconGrid({
               <SelectContent>
                 <SelectItem value="all">Todas las categorías</SelectItem>
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
+                  <SelectItem key={category} value={category || ""}>
                     {category}
                   </SelectItem>
                 ))}

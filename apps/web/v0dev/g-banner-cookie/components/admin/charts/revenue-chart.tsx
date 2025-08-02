@@ -11,8 +11,8 @@ import { useRealTimeData } from "../../../hooks/use-websocket"
 import type { RealTimeSalesUpdate } from "../../../types/websocket-types"
 
 interface RevenueChartProps {
-  data: SalesData[]
-  className?: string
+  readonly data: SalesData[]
+  readonly className?: string
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -176,7 +176,7 @@ export default function RevenueChart({ data, className }: RevenueChartProps) {
             {chartType === "area" ? (
               <AreaChart
                 data={realtimeData}
-                onMouseMove={(e) => setHoveredPoint(e?.activeTooltipIndex || null)}
+                onMouseMove={(e) => setHoveredPoint(typeof e?.activeTooltipIndex === 'number' ? e.activeTooltipIndex : null)}
                 onMouseLeave={() => setHoveredPoint(null)}
               >
                 <defs>
@@ -214,7 +214,7 @@ export default function RevenueChart({ data, className }: RevenueChartProps) {
             ) : (
               <LineChart
                 data={realtimeData}
-                onMouseMove={(e) => setHoveredPoint(e?.activeTooltipIndex || null)}
+                  onMouseMove={(e) => setHoveredPoint(typeof e?.activeTooltipIndex === 'number' ? e.activeTooltipIndex : null)}
                 onMouseLeave={() => setHoveredPoint(null)}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

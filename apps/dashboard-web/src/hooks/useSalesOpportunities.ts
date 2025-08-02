@@ -1,10 +1,8 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
-         develop
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useState, useCallback, useEffect, useMemo } from 'react';
-         main
+
 interface SalesOpportunity {
   id: string;
   title: string;
@@ -41,8 +39,7 @@ interface SalesOpportunitiesState {
 export function useSalesOpportunities(
   options: UseSalesOpportunitiesOptions = {}
 ) {
-        develop
-  const { autoFetch = true } = options;
+  const { autoFetch = false, type, location, category } = options;
 
   // Memoizar las opciones para evitar recreación en cada render
   const memoizedOptions = useMemo(() => options, [
@@ -51,8 +48,6 @@ export function useSalesOpportunities(
     options.category,
     options.autoFetch
   ]);
-  const { autoFetch = false, type, location, category } = options;
-        main
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
@@ -63,26 +58,16 @@ export function useSalesOpportunities(
   });
 
   const fetchOpportunities = useCallback(
-    async (customFilters?: Partial<UseSalesOpportunitiesOptions>) => {
+    async () => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
         const params = new URLSearchParams();
+        if (type) params.append('type', type);
+        if (location) params.append('location', location);
+        if (category) params.append('category', category);
 
-        develop
-        const finalFilters = { ...memoizedOptions, ...customFilters };
-        const finalFilters = { type, location, category, ...customFilters };
-         main
-
-        if (finalFilters.type) params.append('type', finalFilters.type);
-        if (finalFilters.location)
-          params.append('location', finalFilters.location);
-        if (finalFilters.category)
-          params.append('category', finalFilters.category);
-
-        const response = await fetch(
-          `/api/sales-opportunities?${params.toString()}`
-        );
+        const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
 
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -93,13 +78,13 @@ export function useSalesOpportunities(
         if (result.success) {
           setState((prev) => ({
             ...prev,
-            opportunities: result.data.opportunities,
-            total: result.data.total,
-            filters: result.data.filters,
+            opportunities: result.data.opportunities || [],
+            total: result.data.total || 0,
             loading: false,
+            error: null,
           }));
         } else {
-          throw new Error(result.error || 'Error desconocido');
+          throw new Error(result.error || 'Error al cargar oportunidades');
         }
       } catch (error) {
         setState((prev) => ({
@@ -112,11 +97,7 @@ export function useSalesOpportunities(
         }));
       }
     },
-      develop
-    [memoizedOptions]
-
     [type, location, category]
-       main
   );
 
   // Use ref to store the latest fetchOpportunities function
@@ -177,10 +158,7 @@ export function useSalesOpportunities(
     if (autoFetch) {
       fetchOpportunitiesRef.current();
     }
-       develop
-  }, [autoFetch]);
   }, [autoFetch, fetchOpportunities]);
-        main
 
   return {
     ...state,
