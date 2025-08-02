@@ -1,16 +1,13 @@
 // Archivo de configuración global para pruebas con Jest
 
-// Configuración de Jest para inicializar pruebas
-import '@testing-library/jest-dom';
-
-// Mock de funciones globales si es necesario
-jest.mock('axios', () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-}));
+// Import reflect-metadata for decorators
+require('reflect-metadata');
 
 // Configuración de entorno
 process.env.NODE_ENV = 'test';
+
+// Configuración de timeouts para tests
+jest.setTimeout(10000);
 
 // Limpieza después de cada prueba
 afterEach(() => {
