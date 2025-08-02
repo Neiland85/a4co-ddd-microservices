@@ -1,8 +1,18 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
+        feature/typescript-linting-improvements
 import { useState, useCallback, useEffect, useRef } from 'react';
 
+        develop
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+
+         develop
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+         main
+         main
+      develop
 interface SalesOpportunity {
   id: string;
   title: string;
@@ -61,7 +71,26 @@ export function useSalesOpportunities(
         if (location) params.append('location', location);
         if (category) params.append('category', category);
 
+       feature/typescript-linting-improvements
         const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
+        develop
+        const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
+        develop
+        const finalFilters = { ...memoizedOptions, ...customFilters };
+        const finalFilters = { type, location, category, ...customFilters };
+         main
+
+        if (finalFilters.type) params.append('type', finalFilters.type);
+        if (finalFilters.location)
+          params.append('location', finalFilters.location);
+        if (finalFilters.category)
+          params.append('category', finalFilters.category);
+
+        const response = await fetch(
+          `/api/sales-opportunities?${params.toString()}`
+        );
+        main
+       develop
 
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
