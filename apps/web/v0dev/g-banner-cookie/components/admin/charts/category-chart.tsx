@@ -26,7 +26,7 @@ const categoryLabels: Record<string, string> = {
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
+  if (active && payload?.length) {
     const data = payload[0].payload
     return (
       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-natural-lg">
@@ -167,7 +167,7 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
             {/* Legend */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {data.map((item, index) => (
-                <div
+                <button
                   key={item.category}
                   role="button"
                   tabIndex={0}
@@ -193,7 +193,7 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
                       €{item.value.toFixed(2)} ({item.percentage.toFixed(1)}%)
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>
