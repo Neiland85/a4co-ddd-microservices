@@ -1,0 +1,119 @@
+# GitGuardian Configuration
+# This file configures GitGuardian to reduce false positives
+
+# Ignore patterns for test files
+ignore:
+  # Test credentials that are clearly marked as test data
+  - name: "Test credentials in test files"
+    pattern: "test@example\.com"
+    paths:
+      - "**/*.spec.ts"
+      - "**/*.test.ts"
+      - "**/test/**"
+      - "**/tests/**"
+  
+  - name: "Test passwords in test files"
+    pattern: "TestPassword123|Password123|SecurePassword123"
+    paths:
+      - "**/*.spec.ts"
+      - "**/*.test.ts"
+      - "**/test/**"
+      - "**/tests/**"
+  
+  - name: "Demo credentials in demo files"
+    pattern: "admin@demo\.com|Admin123!"
+    paths:
+      - "**/demo/**"
+      - "**/examples/**"
+      - "**/f-modern-backoffice/**"
+  
+  - name: "Development credentials"
+    pattern: "password123|test@example\.com"
+    paths:
+      - "**/dev/**"
+      - "**/development/**"
+      - "**/a-head/**"
+  
+  # Ignore documentation files
+  - name: "Documentation examples"
+    pattern: ".*"
+    paths:
+      - "**/*.md"
+      - "**/*.txt"
+      - "**/docs/**"
+      - "**/documentation/**"
+  
+  # Ignore security guidelines documentation
+  - name: "Security guidelines examples"
+    pattern: "postgresql://.*@.*"
+    paths:
+      - "**/SECURITY_GUIDELINES.md"
+      - "**/*.md"
+  
+  # Ignore configuration examples
+  - name: "Configuration examples"
+    pattern: ".*"
+    paths:
+      - "**/.env.example"
+      - "**/config.example.*"
+      - "**/example.*"
+  
+  # Ignore test database URLs
+  - name: "Test database URLs"
+    pattern: "postgresql://test:test@localhost|postgresql://user:password@localhost"
+    paths:
+      - "**/*.spec.ts"
+      - "**/*.test.ts"
+      - "**/test/**"
+      - "**/tests/**"
+      - "**/*.md"
+      - "**/.env.example"
+
+# Custom rules for better detection
+custom_rules:
+  - name: "Real API keys"
+    pattern: "sk-[a-zA-Z0-9]{32,}"
+    severity: "critical"
+  
+  - name: "Real database URLs with strong passwords"
+    pattern: "postgresql://[^:]+:[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]{8,}@[^/]+/[^\\s]+"
+    severity: "high"
+  
+  - name: "Real JWT secrets"
+    pattern: "eyJ[A-Za-z0-9-_=]+\\.eyJ[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+"
+    severity: "high"
+
+# Scan settings
+scan:
+  # Enable scanning for these file types
+  file_extensions:
+    - ".ts"
+    - ".tsx"
+    - ".js"
+    - ".jsx"
+    - ".json"
+    - ".yaml"
+    - ".yml"
+    - ".env"
+    - ".env.local"
+    - ".env.production"
+  
+  # Exclude these directories
+  exclude_paths:
+    - "node_modules/"
+    - ".git/"
+    - "dist/"
+    - "build/"
+    - ".next/"
+    - "coverage/"
+    - ".nyc_output/"
+    - "*.log"
+    - "*.lock"
+
+# Notification settings
+notifications:
+  # Send notifications for critical and high severity findings
+  min_severity: "medium"
+  
+  # Include context in notifications
+  include_context: true

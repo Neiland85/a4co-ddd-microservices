@@ -8,8 +8,8 @@ describe('UserService', () => {
   });
 
   it('should create a user', () => {
-    const result = userService.createUser('testUser', 'test@example.com');
-    expect(result).toBe('Usuario testUser creado con email test@example.com.');
+    const result = userService.createUser('testUser', process.env.TEST_EMAIL || 'test@example.com');
+    expect(result).toBe(`Usuario testUser creado con email ${process.env.TEST_EMAIL || 'test@example.com'}.`);
   });
 
   it('should get user information', () => {

@@ -163,7 +163,7 @@ export default function ProductSalesChart({ data, className }: ProductSalesChart
               <Bar dataKey={sortBy} radius={[0, 4, 4, 0]}>
                 {topProducts.map((entry, index) => (
                   <Cell
-                    key={`cell-${index}`}
+                    key={`${entry.name}-${entry.category}`}
                     fill={categoryColors[entry.category] || "#8a9b73"}
                     style={{
                       filter: hoveredBar === index ? "brightness(1.1)" : "none",

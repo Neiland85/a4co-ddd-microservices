@@ -84,7 +84,7 @@ describe('RegisterUserUseCase', () => {
     const registerDto = new RegisterUserDto();
     registerDto.email = 'existing@example.com';
     registerDto.name = 'Test User';
-    registerDto.password = 'Password123';
+    registerDto.password = process.env.TEST_PASSWORD || 'Password123';
 
     userDomainService.validateUniqueEmail.mockRejectedValue(
       new Error('El email ya está registrado')

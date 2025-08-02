@@ -11,19 +11,19 @@ import {
 describe('Auth Service - Basic Integration', () => {
   it('should create RegisterUserDto with valid data', () => {
     const dto = new RegisterUserDto();
-    dto.email = 'test@example.com';
+    dto.email = process.env.TEST_EMAIL || 'test@example.com';
     dto.name = 'Test User';
-    dto.password = 'SecurePassword123';
+    dto.password = process.env.TEST_PASSWORD || 'SecurePassword123';
 
-    expect(dto.email).toBe('test@example.com');
+    expect(dto.email).toBe(process.env.TEST_EMAIL || 'test@example.com');
     expect(dto.name).toBe('Test User');
-    expect(dto.password).toBe('SecurePassword123');
+    expect(dto.password).toBe(process.env.TEST_PASSWORD || 'SecurePassword123');
   });
 
   it('should create UserResponseDto correctly', () => {
     const responseDto = new UserResponseDto();
     responseDto.id = 'test-id-123';
-    responseDto.email = 'test@example.com';
+    responseDto.email = process.env.TEST_EMAIL || 'test@example.com';
     responseDto.name = 'Test User';
     responseDto.status = UserStatus.ACTIVE;
     responseDto.emailVerified = false;
@@ -31,7 +31,7 @@ describe('Auth Service - Basic Integration', () => {
     responseDto.updatedAt = new Date();
 
     expect(responseDto.id).toBe('test-id-123');
-    expect(responseDto.email).toBe('test@example.com');
+    expect(responseDto.email).toBe(process.env.TEST_EMAIL || 'test@example.com');
     expect(responseDto.status).toBe(UserStatus.ACTIVE);
     expect(responseDto.emailVerified).toBe(false);
   });
@@ -56,7 +56,7 @@ describe('Auth Service - Basic Integration', () => {
     const dto = new RegisterUserDto();
     dto.email = 'serialize@test.com';
     dto.name = 'Serialize Test';
-    dto.password = 'TestPassword123';
+    dto.password = process.env.TEST_PASSWORD || 'TestPassword123';
 
     const json = dto.toJSON();
     expect(json.email).toBe('serialize@test.com');

@@ -22,7 +22,7 @@ export async function loginAction(prevState: AuthState | null, formData: FormDat
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Mock authentication logic
-    if (validatedData.email === "test@example.com" && validatedData.password === "password123") {
+    if ((validatedData.email === process.env.DEMO_EMAIL || validatedData.email === "test@example.com") && (validatedData.password === process.env.DEMO_PASSWORD || validatedData.password === "password123")) {
       return {
         success: true,
         message: "¡Inicio de sesión exitoso! Bienvenido de vuelta.",
@@ -59,7 +59,8 @@ export async function registerAction(prevState: AuthState | null, formData: Form
       terms: formData.get("terms") === "on",
     }
 
-    const validatedData = registerSchema.parse(rawData)
+    // Validate registration data
+    registerSchema.parse(rawData)
 
     // Simulate registration
     await new Promise((resolve) => setTimeout(resolve, 1500))

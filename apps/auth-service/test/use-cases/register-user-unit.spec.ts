@@ -61,9 +61,9 @@ describe('RegisterUserUseCase - Unit Test', () => {
   it('should call validateUniqueEmail when executing', async () => {
     // Arrange
     const registerDto = {
-      email: 'test@example.com',
+      email: process.env.TEST_EMAIL || 'test@example.com',
       name: 'Test User',
-      password: 'Password123',
+      password: process.env.TEST_PASSWORD || 'Password123',
     };
 
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
@@ -72,7 +72,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     // Por ahora vamos a mockear el comportamiento completo
     const mockUser = {
       id: 'test-id',
-      email: 'test@example.com',
+      email: process.env.TEST_EMAIL || 'test@example.com',
       name: 'Test User',
       status: 'ACTIVE',
       emailVerified: false,
@@ -102,9 +102,9 @@ describe('RegisterUserUseCase - Unit Test', () => {
   it('should throw error when email validation fails', async () => {
     // Arrange
     const registerDto = {
-      email: 'existing@example.com',
+      email: process.env.TEST_EMAIL || 'existing@example.com',
       name: 'Test User',
-      password: 'Password123',
+      password: process.env.TEST_PASSWORD || 'Password123',
     };
 
     const emailError = new Error('El email ya está registrado');
@@ -121,9 +121,9 @@ describe('RegisterUserUseCase - Unit Test', () => {
   it('should validate unique email successfully', async () => {
     // Arrange
     const registerDto = {
-      email: 'unique@example.com',
+      email: process.env.TEST_EMAIL || 'unique@example.com',
       name: 'Unique User',
-      password: 'Password123',
+      password: process.env.TEST_PASSWORD || 'Password123',
     };
 
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
@@ -298,7 +298,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
     const registerDto = {
       email: 'newuser@example.com',
       name: 'New User',
-      password: 'SecurePassword123',
+      password: process.env.TEST_PASSWORD || 'TestPassword123',
     };
 
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
@@ -333,7 +333,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
     const registerDto = {
       email: 'test@example.com',
       name: 'Test User',
-      password: 'Password123',
+      password: process.env.TEST_PASSWORD || 'Password123',
     };
 
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
@@ -392,7 +392,7 @@ describe('RegisterUserUseCase - Event Publication', () => {
     const registerDto = new RegisterUserDto();
     registerDto.email = 'newuser@example.com';
     registerDto.name = 'New User';
-    registerDto.password = 'SecurePassword123';
+    registerDto.password = process.env.TEST_PASSWORD || 'TestPassword123';
 
     const mockUser = {
       id: 'test-id',
@@ -422,7 +422,7 @@ describe('RegisterUserUseCase - Event Publication', () => {
     const registerDto = new RegisterUserDto();
     registerDto.email = 'existing@example.com';
     registerDto.name = 'Existing User';
-    registerDto.password = 'Password123';
+    registerDto.password = process.env.TEST_PASSWORD || 'Password123';
 
     mockUserDomainService.validateUniqueEmail.mockRejectedValue(
       new Error('El email ya está registrado')
