@@ -1,8 +1,14 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
+        develop
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 
+         develop
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+         main
+         main
 interface SalesOpportunity {
   id: string;
   title: string;
@@ -39,7 +45,18 @@ interface SalesOpportunitiesState {
 export function useSalesOpportunities(
   options: UseSalesOpportunitiesOptions = {}
 ) {
+        develop
+  const { autoFetch = true } = options;
+
+  // Memoizar las opciones para evitar recreación en cada render
+  const memoizedOptions = useMemo(() => options, [
+    options.type,
+    options.location,
+    options.category,
+    options.autoFetch
+  ]);
   const { autoFetch = false, type, location, category } = options;
+        main
 
   // Memoizar las opciones para evitar recreación en cada render
   const memoizedOptions = useMemo(() => options, [
@@ -67,7 +84,23 @@ export function useSalesOpportunities(
         if (location) params.append('location', location);
         if (category) params.append('category', category);
 
+        develop
         const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
+        develop
+        const finalFilters = { ...memoizedOptions, ...customFilters };
+        const finalFilters = { type, location, category, ...customFilters };
+         main
+
+        if (finalFilters.type) params.append('type', finalFilters.type);
+        if (finalFilters.location)
+          params.append('location', finalFilters.location);
+        if (finalFilters.category)
+          params.append('category', finalFilters.category);
+
+        const response = await fetch(
+          `/api/sales-opportunities?${params.toString()}`
+        );
+        main
 
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -97,7 +130,11 @@ export function useSalesOpportunities(
         }));
       }
     },
+      develop
+    [memoizedOptions]
+
     [type, location, category]
+       main
   );
 
   // Use ref to store the latest fetchOpportunities function
@@ -158,7 +195,10 @@ export function useSalesOpportunities(
     if (autoFetch) {
       fetchOpportunitiesRef.current();
     }
+       develop
+  }, [autoFetch]);
   }, [autoFetch, fetchOpportunities]);
+        main
 
   return {
     ...state,
