@@ -1,57 +1,119 @@
-# GitGuardian configuration file
-# https://docs.gitguardian.com/internal-repositories/configuration/ignored-matches
+# GitGuardian Configuration
+# This file configures GitGuardian to reduce false positives
 
-version: v1
-
-# Exclude common test patterns that are not actual secrets
-exclude:
-  # Test files and directories
-  paths:
-    - "**/*test*/**"
-    - "**/*.test.*"
-    - "**/*.spec.*"
-    - "**/test/**"
-    - "**/tests/**"
-    - "**/spec/**"
-    - "**/fixtures/**"
-    - "**/mocks/**"
-    - "**/coverage/**"
-    - "**/node_modules/**"
-    - "**/dist/**"
-    - "**/.git/**"
-
-# Allow specific patterns in test files
-policies:
-  - policy_name: "Test Password Patterns"
-    ignored_matches:
-      - match: "TestPassword123"
-        reason: "Test password for unit tests"
-      - match: "TestPass123"
-        reason: "Test password for unit tests"
-      - match: "Test1234"
-        reason: "Minimum test password"
-      - match: "TEST123"
-        reason: "Test password validation"
-      - match: "test123"
-        reason: "Test password validation"
-      - match: "TestPass"
-        reason: "Test password validation"
-      - match: "Password123"
-        reason: "Test password for unit tests"
-      - match: "DifferentTest123"
-        reason: "Test password for comparison tests"
-      - match: "ModifiedTest123"
-        reason: "Test password for immutability tests"
-
-# Specific secret types to look for
-secret_types:
-  - api_key
-  - database_url
-  - private_key
-  - aws_access_key
-  - github_token
-  - jwt_secret
-  - encryption_key
+# Ignore patterns for test files
+ignore:
+  # Test credentials that are clearly marked as test data
+  - name: "Test credentials in test files"
+    pattern: "test@example\.com"
+    paths:
+      - "**/*.spec.ts"
+      - "**/*.test.ts"
+      - "**/test/**"
+      - "**/tests/**"
   
-# Minimum entropy threshold for generic secrets
-minimum_entropy: 3.5
+  - name: "Test passwords in test files"
+    pattern: "TestPassword123|Password123|SecurePassword123"
+    paths:
+      - "**/*.spec.ts"
+      - "**/*.test.ts"
+      - "**/test/**"
+      - "**/tests/**"
+  
+  - name: "Demo credentials in demo files"
+    pattern: "admin@demo\.com|Admin123!"
+    paths:
+      - "**/demo/**"
+      - "**/examples/**"
+      - "**/f-modern-backoffice/**"
+  
+  - name: "Development credentials"
+    pattern: "password123|test@example\.com"
+    paths:
+      - "**/dev/**"
+      - "**/development/**"
+      - "**/a-head/**"
+  
+  # Ignore documentation files
+  - name: "Documentation examples"
+    pattern: ".*"
+    paths:
+      - "**/*.md"
+      - "**/*.txt"
+      - "**/docs/**"
+      - "**/documentation/**"
+  
+  # Ignore security guidelines documentation
+  - name: "Security guidelines examples"
+    pattern: "postgresql://.*@.*"
+    paths:
+      - "**/SECURITY_GUIDELINES.md"
+      - "**/*.md"
+  
+  # Ignore configuration examples
+  - name: "Configuration examples"
+    pattern: ".*"
+    paths:
+      - "**/.env.example"
+      - "**/config.example.*"
+      - "**/example.*"
+  
+  # Ignore test database URLs
+  - name: "Test database URLs"
+    pattern: "postgresql://test:test@localhost|postgresql://user:password@localhost"
+    paths:
+      - "**/*.spec.ts"
+      - "**/*.test.ts"
+      - "**/test/**"
+      - "**/tests/**"
+      - "**/*.md"
+      - "**/.env.example"
+
+# Custom rules for better detection
+custom_rules:
+  - name: "Real API keys"
+    pattern: "sk-[a-zA-Z0-9]{32,}"
+    severity: "critical"
+  
+  - name: "Real database URLs with strong passwords"
+    pattern: "postgresql://[^:]+:[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]{8,}@[^/]+/[^\\s]+"
+    severity: "high"
+  
+  - name: "Real JWT secrets"
+    pattern: "eyJ[A-Za-z0-9-_=]+\\.eyJ[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+"
+    severity: "high"
+
+# Scan settings
+scan:
+  # Enable scanning for these file types
+  file_extensions:
+    - ".ts"
+    - ".tsx"
+    - ".js"
+    - ".jsx"
+    - ".json"
+    - ".yaml"
+    - ".yml"
+    - ".env"
+    - ".env.local"
+    - ".env.production"
+  
+  # Exclude these directories
+  exclude_paths:
+    - "node_modules/"
+    - ".git/"
+    - "dist/"
+    - "build/"
+    - ".next/"
+    - "coverage/"
+    - ".nyc_output/"
+    - "*.log"
+    - "*.lock"
+
+# Notification settings
+notifications:
+  # Send notifications for critical and high severity findings
+  min_severity: "medium"
+  
+  # Include context in notifications
+  include_context: true

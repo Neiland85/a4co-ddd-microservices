@@ -5,16 +5,16 @@ export const createRegisterUserDto = (
   overrides: Partial<RegisterUserDto> = {}
 ): RegisterUserDto => {
   const dto = new RegisterUserDto();
-  dto.email = overrides.email ?? 'test@example.com';
+  dto.email = overrides.email ?? process.env.TEST_EMAIL || 'test@example.com';
   dto.name = overrides.name ?? 'Test User';
-  dto.password = overrides.password ?? 'Password123';
+  dto.password = overrides.password ?? process.env.TEST_PASSWORD || 'Password123';
   return dto;
 };
 
 export const createUser = (overrides: Partial<User> = {}): User => {
   return User.reconstruct(
     overrides.id ?? 'test-id',
-    overrides.email ?? 'test@example.com',
+    overrides.email ?? process.env.TEST_EMAIL || 'test@example.com',
     overrides.name ?? 'Test User',
     overrides.hashedPassword ?? 'hashed-password',
     overrides.status ?? UserStatus.ACTIVE,

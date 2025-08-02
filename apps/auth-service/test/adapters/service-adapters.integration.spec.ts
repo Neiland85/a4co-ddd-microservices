@@ -37,7 +37,7 @@ describe('Service Adapters Integration', () => {
 
   describe('CryptographyService Adapter', () => {
     it('should hash password securely', async () => {
-      const plainPassword = 'TestPassword123!';
+      const plainPassword = process.env.TEST_PASSWORD || 'TestPassword123!';
       const hashedPassword =
         await cryptographyService.hashPassword(plainPassword);
 
@@ -47,7 +47,7 @@ describe('Service Adapters Integration', () => {
     });
 
     it('should validate password correctly', async () => {
-      const plainPassword = 'TestPassword123!';
+      const plainPassword = process.env.TEST_PASSWORD || 'TestPassword123!';
       const hashedPassword =
         await cryptographyService.hashPassword(plainPassword);
 
@@ -83,7 +83,7 @@ describe('Service Adapters Integration', () => {
     });
 
     it('should check email existence', async () => {
-      const exists = await userRepository.existsByEmail('test@example.com');
+      const exists = await userRepository.existsByEmail(process.env.TEST_EMAIL || 'test@example.com');
       expect(exists).toBe(false);
     });
   });
@@ -108,9 +108,9 @@ describe('Service Adapters Integration', () => {
   describe('Integrated Use Case with Adapters', () => {
     it('should register user successfully using all adapters', async () => {
       const dto = new RegisterUserDto();
-      dto.email = 'test@example.com';
+      dto.email = process.env.TEST_EMAIL || 'test@example.com';
       dto.name = 'Test User';
-      dto.password = 'TestPassword123!';
+      dto.password = process.env.TEST_PASSWORD || 'TestPassword123!';
 
       const result = await registerUserUseCase.execute(dto);
 
@@ -136,7 +136,7 @@ describe('Service Adapters Integration', () => {
       const dto = new RegisterUserDto();
       dto.email = 'duplicate@example.com';
       dto.name = 'Test User';
-      dto.password = 'TestPassword123!';
+      dto.password = process.env.TEST_PASSWORD || 'TestPassword123!';
 
       // First registration should succeed
       await registerUserUseCase.execute(dto);

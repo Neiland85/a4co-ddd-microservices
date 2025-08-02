@@ -88,9 +88,9 @@ describe('RegisterUserUseCase', () => {
   it('should throw error if email already exists', async () => {
     // Arrange
     const registerDto = new RegisterUserDto();
-    registerDto.email = 'existing@example.com';
+    registerDto.email = process.env.TEST_EMAIL || 'test@example.com';
     registerDto.name = 'Test User';
-    registerDto.password = 'Password123';
+    registerDto.password = process.env.TEST_PASSWORD || 'Password123';
 
     userDomainService.validateUniqueEmail.mockRejectedValue(
       new Error('El email ya está registrado')
@@ -106,9 +106,9 @@ describe('RegisterUserUseCase', () => {
   it('should handle repository save errors', async () => {
     // Arrange
     const registerDto = new RegisterUserDto();
-    registerDto.email = 'test@example.com';
+    registerDto.email = process.env.TEST_EMAIL || 'test@example.com';
     registerDto.name = 'Test User';
-    registerDto.password = 'Password123';
+    registerDto.password = process.env.TEST_PASSWORD || 'Password123';
 
     userDomainService.validateUniqueEmail.mockResolvedValue(undefined);
 

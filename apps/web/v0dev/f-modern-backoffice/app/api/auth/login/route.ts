@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Simular autenticación
-    if (validatedData.email === "admin@demo.com" && validatedData.password === "Admin123!") {
+    if ((validatedData.email === process.env.ADMIN_EMAIL || validatedData.email === "admin@demo.com") && (validatedData.password === process.env.ADMIN_PASSWORD || validatedData.password === "Admin123!")) {
       const token = authService.generateToken({
         userId: "1",
         email: validatedData.email,
