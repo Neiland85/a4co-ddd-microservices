@@ -42,7 +42,7 @@ export function useSalesOpportunities(
   options: UseSalesOpportunitiesOptions = {}
 ) {
         develop
-  const { autoFetch = false } = options;
+  const { autoFetch = true } = options;
 
   // Memoizar las opciones para evitar recreación en cada render
   const memoizedOptions = useMemo(() => options, [
