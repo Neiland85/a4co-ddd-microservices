@@ -86,7 +86,12 @@ export default function Sidebar({ className }: SidebarProps) {
     <>
       {/* Mobile Overlay */}
       {isMobileOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsMobileOpen(false)} />
+        <button
+          type="button"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden border-none p-0 cursor-pointer"
+          onClick={() => setIsMobileOpen(false)}
+          aria-label="Cerrar menú móvil"
+        />
       )}
 
       {/* Mobile Toggle Button */}

@@ -111,7 +111,7 @@ const getStatusIcon = (status: string) => {
 }
 
 export default function Orders() {
-  const [orders, setOrders] = useState<Order[]>(mockOrders)
+  const orders = mockOrders
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [currentPage, setCurrentPage] = useState(1)
@@ -381,9 +381,9 @@ export default function Orders() {
                                 <div className="space-y-2">
                                   <span className="font-medium">Productos</span>
                                   <div className="space-y-2">
-                                    {selectedOrder.products.map((product, index) => (
+                                    {selectedOrder.products.map((product) => (
                                       <div
-                                        key={index}
+                                        key={product.productId}
                                         className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
                                       >
                                         <div>

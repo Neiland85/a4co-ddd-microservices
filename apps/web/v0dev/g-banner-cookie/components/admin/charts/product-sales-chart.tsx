@@ -27,7 +27,7 @@ const categoryColors: Record<string, string> = {
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
+  if (active && payload?.length) {
     const data = payload[0].payload
     return (
       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-natural-lg min-w-48">
