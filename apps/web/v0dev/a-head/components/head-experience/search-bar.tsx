@@ -244,8 +244,6 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Rea
   return (
     <>
       <Button
-        variant="ghost"
-        size="default"
         onClick={openSearch}
         onMouseEnter={() => playHover()}
         className="h-9 px-3 hover:bg-a4co-olive-50 transition-colors bg-transparent border-none"
@@ -282,8 +280,6 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Rea
               />
               {query && (
                 <Button
-                  variant="ghost"
-                  size="icon"
                   onClick={() => setQuery("")}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 bg-transparent border-none"
                 >
