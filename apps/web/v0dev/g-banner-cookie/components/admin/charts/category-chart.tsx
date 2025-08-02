@@ -26,7 +26,7 @@ const categoryLabels: Record<string, string> = {
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
+  if (active && payload?.length) {
     const data = payload[0].payload
     return (
       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-natural-lg">
@@ -167,10 +167,8 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
             {/* Legend */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {data.map((item, index) => (
-                <div
+                <button
                   key={item.category}
-                  role="button"
-                  tabIndex={0}
                   onMouseEnter={() => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(null)}
                   onKeyDown={(e) => {
@@ -180,7 +178,7 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
                     }
                   }}
                   className={cn(
-                    "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-natural-md focus:outline-none focus:ring-2 focus:ring-a4co-olive-500",
+                    "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-natural-md focus:outline-none focus:ring-2 focus:ring-a4co-olive-500 w-full text-left bg-transparent",
                     activeIndex === index ? "bg-gray-50 border-gray-300 scale-105" : "bg-white border-gray-200",
                   )}
                 >
@@ -193,7 +191,7 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
                       €{item.value.toFixed(2)} ({item.percentage.toFixed(1)}%)
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>

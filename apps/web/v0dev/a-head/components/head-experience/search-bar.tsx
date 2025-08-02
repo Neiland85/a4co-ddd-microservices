@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+// @ts-ignore Se ignora el error de importación de "lucide-react" temporalmente
 import { Search, X, Clock, TrendingUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSoundEffects } from "../../hooks/use-sound-effects"
@@ -244,8 +245,6 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Rea
   return (
     <>
       <Button
-        variant="ghost"
-        size="default"
         onClick={openSearch}
         onMouseEnter={() => playHover()}
         className="h-9 px-3 hover:bg-a4co-olive-50 transition-colors bg-transparent border-none"
@@ -282,8 +281,6 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Rea
               />
               {query && (
                 <Button
-                  variant="ghost"
-                  size="icon"
                   onClick={() => setQuery("")}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 bg-transparent border-none"
                 >

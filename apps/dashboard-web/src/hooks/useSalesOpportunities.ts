@@ -1,7 +1,7 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 interface SalesOpportunity {
   id: string;
@@ -42,12 +42,6 @@ export function useSalesOpportunities(
   const { autoFetch = false, type, location, category } = options;
 
   // Memoizar las opciones para evitar recreación en cada render
-  const memoizedOptions = useMemo(() => options, [
-    options.type,
-    options.location,
-    options.category,
-    options.autoFetch
-  ]);
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
