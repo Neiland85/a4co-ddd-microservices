@@ -55,9 +55,19 @@
     "next-auth": "4.24.11",
     "next-themes": "^0.4.4",
       cursor/address-dependabot-security-alerts-69af
+      cursor/address-dependabot-security-alerts-69af
 
       cursor/fix-dependabot-security-alerts-for-nextjs-and-nextauth-53c7
         main
+
+       cursor/fix-dependabot-security-alerts-for-nextjs-and-nextauth-53c7
+
+    cursor/address-dependabot-security-alerts-69af
+
+      cursor/fix-dependabot-security-alerts-for-nextjs-and-nextauth-53c7
+        main
+        develop
+       main
     "nodemailer": "7.0.5",
     "react": "^18",
 
