@@ -1,17 +1,17 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { authService, loginSchema } from "@/lib/security/auth"
-import { loginRateLimiter } from "@/lib/security/rate-limiter"
-import { intrusionDetection } from "@/lib/security/intrusion-detection"
-import { InputValidator } from "@/lib/security/validator"
+import { authService, loginSchema } from "@/lib/security/auth";
+import { loginRateLimiter } from "@/lib/security/rate-limiter";
+import { intrusionDetection } from "@/lib/security/intrusion-detection";
+import { InputValidator } from "@/lib/security/validator";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const clientIP = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1"
-
     const userAgent = request.headers.get("user-agent") || "Unknown"
 
-    // Verificar rate limiting
-    const rateLimitResult = loginRateLimiter.checkLimit(clientIP)
+    // Verificar limitación de tasa (rate limiting)
+    const rateLimitResult = loginRateLimiter.checkLimit(
+      Array.isArray(clientIP) ? clientIP[0] : clientIP
+    )
     if (!rateLimitResult.allowed) {
       // Registrar intento de fuerza bruta
       intrusionDetection.logSecurityEvent({
@@ -25,11 +25,11 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: "Demasiados intentos de login",
           resetTime: rateLimitResult.resetTime,
-        },
+        }),
         { status: 429 },
       )
     }
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Simular autenticación
-    if ((validatedData.email === process.env.ADMIN_EMAIL || validatedData.email === "admin@demo.com") && (validatedData.password === process.env.ADMIN_PASSWORD || validatedData.password === "Admin123!")) {
+    if (validatedData.email === process.env.ADMIN_EMAIL && validatedData.password === process.env.ADMIN_PASSWORD) {
       const token = authService.generateToken({
         userId: "1",
         email: validatedData.email,
@@ -77,16 +77,19 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      return NextResponse.json({
-        success: true,
-        token,
-        user: {
-          id: "1",
-          email: validatedData.email,
-          name: "Administrador Demo",
-          role: "admin",
-        },
-      })
+      return new Response(
+        JSON.stringify({
+          success: true,
+          token,
+          user: {
+            id: "1",
+            email: validatedData.email,
+            name: "Administrador Demo",
+            role: "admin",
+          },
+        }),
+        { status: 200 },
+      )
     } else {
       // Registrar intento fallido
       intrusionDetection.logSecurityEvent({
@@ -101,10 +104,16 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 })
+      return new Response(
+        JSON.stringify({ error: "Credenciales inválidas" }),
+        { status: 401 },
+      )
     }
   } catch (error) {
     console.error("Error en login:", error)
-    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 })
+    return new Response(
+      JSON.stringify({ error: "Error interno del servidor" }),
+      { status: 500 },
+    )
   }
 }
