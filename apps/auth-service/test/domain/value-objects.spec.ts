@@ -21,9 +21,9 @@ const INVALID_EMAILS = [
 ];
 
 const VALID_PASSWORDS = [
-  'TestPass123',
-  'TestPass123!@#',
-  'Test1234'
+  'TestPassword123',
+  'TestPassword123!@#',
+  'TestPassword456'
 ];
 
 const INVALID_PASSWORDS = [
@@ -133,16 +133,16 @@ describe('Password Value Object', () => {
   let differentInstance: any;
 
   beforeEach(() => {
-    instance = new Password('TestPass123');
-    instance2 = new Password('TestPass123');
-    differentInstance = new Password('DifferentPass123');
+    instance = new Password('TestPassword123');
+    instance2 = new Password('TestPassword123');
+    differentInstance = new Password('DifferentTestPassword123');
   });
 
   it('should be immutable', () => {
     expect(() => {
       instance._value = 'changed';
     }).not.toThrow();
-    expect(instance.value).toBe('TestPass123');
+    expect(instance.value).toBe('TestPassword123');
   });
 
   it('should implement equals correctly', () => {
@@ -151,7 +151,7 @@ describe('Password Value Object', () => {
   });
 
   it('should implement toString correctly', () => {
-    expect(instance.toString()).toBe('TestPass123');
+    expect(instance.toString()).toBe('TestPassword123');
   });
 });
 

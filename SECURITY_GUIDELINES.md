@@ -26,7 +26,7 @@ const testEmail = 'test@example.com';
 // ❌ Bad - Could be mistaken for real secrets
 const password = 'SecurePass123!';
 const apiKey = 'sk-1234567890abcdef';
-const dbUrl = 'postgresql://user:pass@localhost:5432/db';
+const dbUrl = 'postgresql://username:password@localhost:5432/database';
 ```
 
 ### Environment Variables
