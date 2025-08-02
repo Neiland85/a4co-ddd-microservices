@@ -1,5 +1,4 @@
    cursor/address-dependabot-security-alerts-69af
-    cursor/address-dependabot-security-alerts-69af
 # Security Vulnerabilities Fix Summary
 
 ## Overview
