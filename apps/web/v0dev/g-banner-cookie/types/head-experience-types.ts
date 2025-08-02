@@ -22,15 +22,15 @@ export interface SoundSettings {
 }
 
 export interface HeadExperienceProps {
-  logo?: string
-  companyName?: string
-  navigationItems?: NavigationItem[]
-  languages?: LanguageOption[]
-  currentLanguage?: string
-  onLanguageChange?: (language: string) => void
-  onSearch?: (query: string) => void
-  soundSettings?: SoundSettings
-  onSoundSettingsChange?: (settings: SoundSettings) => void
+  readonly logo?: string
+  readonly companyName?: string
+  readonly navigationItems?: NavigationItem[]
+  readonly languages?: LanguageOption[]
+  readonly currentLanguage?: string
+  readonly onLanguageChange?: (language: string) => void
+  readonly onSearch?: (query: string) => void
+  readonly soundSettings?: SoundSettings
+  readonly onSoundSettingsChange?: (settings: SoundSettings) => void
 }
 
 export interface SearchResult {

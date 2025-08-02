@@ -1,10 +1,18 @@
 "use client"
 
-import { BellIcon, MenuIcon, OutlinePersonIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/outline"
-import { signOut, useSession } from "next-auth/react"
-import Link from "next/link"
-import { useEffect } from "react"
-import { getWebSocketService } from "../../services/websocket-service"
+// Nota: Para evitar el error de tipo con @heroicons/react/outline, puedes crear un archivo de declaración de módulos
+// por ejemplo, en tu proyecto crea un archivo global.d.ts con:
+// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
+// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
+// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
+// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
+// declare module '@heroicons/react/outline';
+
+import { BellIcon, MenuIcon, OutlinePersonIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/outline";
+import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { useEffect } from "react";
+import { getWebSocketService } from "../../services/websocket-service";
 import RealTimeStatus from "./real-time-status"
 
 function classNames(...classes: any) {

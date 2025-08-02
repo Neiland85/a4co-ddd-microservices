@@ -11,8 +11,8 @@ import { useSoundEffects } from "../../hooks/use-sound-effects"
 import type { SoundSettings } from "../../types/head-experience-types"
 
 interface SoundControlsProps {
-  settings: SoundSettings
-  onSettingsChange: (settings: SoundSettings) => void
+  readonly settings: SoundSettings
+  readonly onSettingsChange: (settings: SoundSettings) => void
 }
 
 export function SoundControls({ settings, onSettingsChange }: SoundControlsProps) {
