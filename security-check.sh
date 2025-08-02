@@ -60,10 +60,10 @@ check_app_security() {
     # Check NextAuth version (if present)
     if grep -q '"next-auth":' package.json; then
         local nextauth_version=$(grep '"next-auth":' package.json | sed 's/.*"next-auth": "\([^"]*\)".*/\1/')
-        if [[ "$nextauth_version" == "4.24.11" ]]; then
+        if version_gte "$nextauth_version" "$MIN_NEXTAUTH_VERSION"; then
             echo -e "   ${GREEN}✅ NextAuth.js: $nextauth_version (Secure)${NC}"
         else
-            echo -e "   ${YELLOW}⚠️  NextAuth.js: $nextauth_version (Check for updates)${NC}"
+            echo -e "   ${YELLOW}⚠️  NextAuth.js: $nextauth_version (Update to >= $MIN_NEXTAUTH_VERSION)${NC}"
         fi
     fi
     
