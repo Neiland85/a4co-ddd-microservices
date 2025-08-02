@@ -70,7 +70,9 @@ check_app_security() {
     # Check Nodemailer version (if present)
     if grep -q '"nodemailer":' package.json; then
         local nodemailer_version=$(grep '"nodemailer":' package.json | sed 's/.*"nodemailer": "\([^"]*\)".*/\1/')
-        if [[ "$nodemailer_version" == "7.0.5" ]]; then
+        local min_secure_nodemailer_version="7.0.5"
+        # Compare versions using sort -V
+        if [[ "$(printf '%s\n' "$min_secure_nodemailer_version" "$nodemailer_version" | sort -V | head -n1)" == "$min_secure_nodemailer_version" ]]; then
             echo -e "   ${GREEN}✅ Nodemailer: $nodemailer_version (Secure)${NC}"
         else
             echo -e "   ${YELLOW}⚠️  Nodemailer: $nodemailer_version (Check for updates)${NC}"
