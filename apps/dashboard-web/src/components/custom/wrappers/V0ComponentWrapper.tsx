@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, ErrorBoundary } from 'react';
+import React, { Suspense } from 'react';
 import { cn } from '@/lib/utils';
 
 // Error Boundary personalizado para componentes v0
@@ -8,7 +8,7 @@ class V0ErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback: React.ReactNode; onError?: (error: Error) => void },
   { hasError: boolean; error?: Error }
 > {
-  constructor(props: any) {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode; onError?: (error: Error) => void }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -18,7 +18,9 @@ class V0ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('V0 Component Error:', error, errorInfo);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('V0 Component Error:', error, errorInfo);
+    }
     this.props.onError?.(error);
   }
 
@@ -33,40 +35,44 @@ class V0ErrorBoundary extends React.Component<
 
 // Interfaces
 interface V0WrapperCustomizations {
-  className?: string;
-  theme?: 'light' | 'dark' | 'auto' | 'minimal' | 'elevated' | 'glass';
-  animation?: 'none' | 'subtle' | 'bounce' | 'fade' | 'slide';
-  analytics?: boolean;
-  errorBoundary?: boolean;
-  loading?: boolean;
-  accessibility?: {
-    ariaLabel?: string;
-    role?: string;
-    tabIndex?: number;
+  readonly className?: string;
+  readonly theme?: 'light' | 'dark' | 'auto' | 'minimal' | 'elevated' | 'glass';
+  readonly animation?: 'none' | 'subtle' | 'bounce' | 'fade' | 'slide';
+  readonly analytics?: boolean;
+  readonly errorBoundary?: boolean;
+  readonly loading?: boolean;
+  readonly accessibility?: {
+    readonly ariaLabel?: string;
+    readonly role?: string;
+    readonly tabIndex?: number;
   };
 }
 
 interface V0DataSource {
-  hook?: () => any;
-  transformer?: (data: any) => any;
-  refreshInterval?: number;
+  readonly hook?: () => unknown;
+  readonly transformer?: (data: unknown) => unknown;
+  readonly refreshInterval?: number;
+}
+
+interface V0DataResult {
+  readonly loading?: boolean;
+  readonly error?: Error | null;
+  readonly refetch?: () => void;
 }
 
 interface V0WrapperProps {
-  v0Component: React.ComponentType<any>;
-  customizations?: V0WrapperCustomizations;
-  dataSource?: V0DataSource;
-  onError?: (error: Error) => void;
-  onEvent?: (event: string, data: any) => void;
-  children?: React.ReactNode;
-  fallback?: React.ReactNode;
-  [key: string]: any; // Props adicionales para el componente v0
+  readonly v0Component: React.ComponentType<Record<string, unknown>>;
+  readonly customizations?: V0WrapperCustomizations;
+  readonly dataSource?: V0DataSource;
+  readonly onError?: (error: Error) => void;
+  readonly onEvent?: (event: string, data: unknown) => void;
+  readonly children?: React.ReactNode;
+  readonly fallback?: React.ReactNode;
+  readonly [key: string]: unknown; // Props adicionales para el componente v0
 }
 
 // Hook para datos con refresh automático
 function useV0DataSource(dataSource?: V0DataSource) {
-  const [data, setData] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);
 
   // Hook de datos principal
@@ -84,16 +90,16 @@ function useV0DataSource(dataSource?: V0DataSource) {
       setError(err as Error);
       return null;
     }
-  }, [rawData, dataSource?.transformer]);
+  }, [rawData, dataSource]);
 
   // Auto-refresh
   React.useEffect(() => {
-    if (!dataSource?.refreshInterval) return;
+    if (!dataSource?.refreshInterval || !rawData) return;
 
     const interval = setInterval(() => {
       // Trigger re-fetch si el hook lo soporta
-      if (typeof rawData === 'object' && 'refetch' in rawData) {
-        (rawData as any).refetch?.();
+      if (typeof rawData === 'object' && rawData !== null && 'refetch' in rawData) {
+        (rawData as V0DataResult).refetch?.();
       }
     }, dataSource.refreshInterval);
 
@@ -102,8 +108,8 @@ function useV0DataSource(dataSource?: V0DataSource) {
 
   return {
     data: transformedData,
-    loading: loading || rawData?.loading || false,
-    error: error || rawData?.error || null,
+    loading: (rawData as V0DataResult)?.loading || false,
+    error: error || (rawData as V0DataResult)?.error || null,
   };
 }
 
@@ -117,28 +123,36 @@ export function V0ComponentWrapper({
   children,
   fallback = <div className="v0-loading">Cargando componente...</div>,
   ...props 
-}: V0WrapperProps) {
+}: Readonly<V0WrapperProps>) {
   
   // Datos del hook
   const { data, loading, error } = useV0DataSource(dataSource);
 
   // Analytics tracking
-  const trackEvent = React.useCallback((eventName: string, eventData: any) => {
+  const trackEvent = React.useCallback((eventName: string, eventData: unknown) => {
     if (customizations.analytics) {
       // Aquí podrías integrar con tu sistema de analytics
-      console.log(`📊 V0 Analytics: ${eventName}`, eventData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📊 V0 Analytics: ${eventName}`, eventData);
+      }
     }
     onEvent?.(eventName, eventData);
   }, [customizations.analytics, onEvent]);
 
   // Props finales para el componente v0
-  const v0Props = React.useMemo(() => ({
-    ...props,
-    ...data,
-    loading: loading || customizations.loading,
-    error,
-    onEvent: trackEvent,
-  }), [props, data, loading, customizations.loading, error, trackEvent]);
+  const v0Props = React.useMemo(() => {
+    const baseProps = {
+      loading: loading || customizations.loading,
+      error,
+      onEvent: trackEvent,
+    };
+
+    return {
+      ...props,
+      ...(data as Record<string, unknown>),
+      ...baseProps,
+    };
+  }, [props, data, loading, customizations.loading, error, trackEvent]);
 
   // Clases CSS dinámicas
   const wrapperClassName = cn(
@@ -208,10 +222,10 @@ export function V0ComponentWrapper({
 
 // HOC para crear wrappers predefinidos
 export function withV0Wrapper(
-  V0Component: React.ComponentType<any>,
+  V0Component: React.ComponentType<Record<string, unknown>>,
   defaultCustomizations: V0WrapperCustomizations = {}
 ) {
-  return function WrappedV0Component(props: any) {
+  return function WrappedV0Component(props: Readonly<Record<string, unknown>>) {
     return (
       <V0ComponentWrapper
         v0Component={V0Component}
@@ -268,7 +282,7 @@ export const v0WrapperPresets = {
 
 // Hook para usar el wrapper programáticamente
 export function useV0Wrapper(
-  Component: React.ComponentType<any>,
+  Component: React.ComponentType<Record<string, unknown>>,
   customizations?: V0WrapperCustomizations
 ) {
   return React.useMemo(

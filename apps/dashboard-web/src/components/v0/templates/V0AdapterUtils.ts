@@ -80,9 +80,9 @@ export function createV0Adapter<T extends Record<string, any>>(
         props.className,
         config.customProps?.className
       ].filter(Boolean).join(' ') || undefined
-    } as T;
+    } as unknown as React.ComponentProps<typeof OriginalComponent>;
 
-    return <OriginalComponent {...finalProps} />;
+    return React.createElement(OriginalComponent, finalProps);
   };
 }
 
