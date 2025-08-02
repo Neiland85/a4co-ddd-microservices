@@ -1,4 +1,3 @@
-     cursor/fix-dependabot-security-alerts-for-nextjs-and-nextauth-53c7
 # Security Vulnerabilities Fix Summary
 
 ## Overview
