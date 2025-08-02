@@ -1,8 +1,21 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import type { SalesOpportunity } from '../app/api/sales-opportunities/route';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+
+interface SalesOpportunity {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  location: string;
+  category: string;
+  priority: 'baja' | 'media' | 'alta';
+  value: number;
+  status: 'abierta' | 'en_proceso' | 'cerrada';
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface UseSalesOpportunitiesOptions {
   type?: string;
@@ -26,7 +39,7 @@ interface SalesOpportunitiesState {
 export function useSalesOpportunities(
   options: UseSalesOpportunitiesOptions = {}
 ) {
-  const { autoFetch = true } = options;
+  const { autoFetch = false, type, location, category } = options;
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
@@ -43,7 +56,7 @@ export function useSalesOpportunities(
       try {
         const params = new URLSearchParams();
 
-        const finalFilters = { ...options, ...customFilters };
+        const finalFilters = { type, location, category, ...customFilters };
 
         if (finalFilters.type) params.append('type', finalFilters.type);
         if (finalFilters.location)
@@ -83,7 +96,7 @@ export function useSalesOpportunities(
         }));
       }
     },
-    [options]
+    [type, location, category]
   );
 
   const createOpportunity = useCallback(
@@ -140,7 +153,7 @@ export function useSalesOpportunities(
     if (autoFetch) {
       fetchOpportunities();
     }
-  }, [fetchOpportunities, autoFetch]);
+  }, [autoFetch, fetchOpportunities]);
 
   return {
     ...state,
