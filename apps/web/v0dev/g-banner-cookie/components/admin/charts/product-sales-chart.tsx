@@ -10,11 +10,11 @@ import { cn } from "@/lib/utils"
 import type { ProductSalesData } from "../../../types/analytics-types"
 
 interface ProductSalesChartProps {
-  data: ProductSalesData[]
-  className?: string
+  readonly data: ProductSalesData[]
+  readonly className?: string
 }
 
-const categoryColors = {
+const categoryColors: Record<string, string> = {
   panaderia: "#b08968",
   queseria: "#f4d03f",
   aceite: "#8a9b73",
@@ -137,7 +137,7 @@ export default function ProductSalesChart({ data, className }: ProductSalesChart
             <BarChart
               data={topProducts}
               layout="horizontal"
-              onMouseMove={(e) => setHoveredBar(e?.activeTooltipIndex || null)}
+              onMouseMove={(e) => setHoveredBar(typeof e?.activeTooltipIndex === 'number' ? e.activeTooltipIndex : null)}
               onMouseLeave={() => setHoveredBar(null)}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

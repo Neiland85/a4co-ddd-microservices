@@ -10,28 +10,28 @@ export interface IconConfig {
 }
 
 export interface IconItemProps {
-  config: IconConfig
-  size?: number
-  color?: string
-  strokeWidth?: number
-  variant?: "default" | "outline" | "ghost" | "secondary"
-  className?: string
+  readonly config: IconConfig
+  readonly size?: number
+  readonly color?: string
+  readonly strokeWidth?: number
+  readonly variant?: "default" | "outline" | "ghost" | "secondary"
+  readonly className?: string
 }
 
 export interface IconGridProps {
-  icons: IconConfig[]
-  columns?: {
-    mobile?: number
-    tablet?: number
-    desktop?: number
+  readonly icons: IconConfig[]
+  readonly columns?: {
+    readonly mobile?: number
+    readonly tablet?: number
+    readonly desktop?: number
   }
-  size?: number
-  color?: string
-  strokeWidth?: number
-  variant?: "default" | "outline" | "ghost" | "secondary"
-  showLabels?: boolean
-  className?: string
-  onIconClick?: (config: IconConfig) => void
+  readonly size?: number
+  readonly color?: string
+  readonly strokeWidth?: number
+  readonly variant?: "default" | "outline" | "ghost" | "secondary"
+  readonly showLabels?: boolean
+  readonly className?: string
+  readonly onIconClick?: (config: IconConfig) => void
 }
 
 export type IconCategory = "navigation" | "commerce" | "social" | "ui" | "media" | "communication"
