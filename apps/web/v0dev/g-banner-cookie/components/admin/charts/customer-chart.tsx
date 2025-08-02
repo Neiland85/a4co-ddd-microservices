@@ -15,7 +15,7 @@ interface CustomerChartProps {
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
+  if (active && payload?.length) {
     return (
       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-natural-lg">
         <p className="font-medium text-gray-900 mb-2">{label}</p>
@@ -53,18 +53,24 @@ export default function CustomerChart({ data, className }: CustomerChartProps) {
           </div>
           <div className="flex items-center space-x-2">
             <Button
-              variant={chartType === "composed" ? "default" : "outline"}
-              size="sm"
               onClick={() => setChartType("composed")}
-              className="hover:scale-105 transition-all duration-300"
+              className={cn(
+                "hover:scale-105 transition-all duration-300",
+                chartType === "composed"
+                  ? "bg-a4co-olive-600 text-white"
+                  : "bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50"
+              )}
             >
               Combinado
             </Button>
             <Button
-              variant={chartType === "bar" ? "default" : "outline"}
-              size="sm"
               onClick={() => setChartType("bar")}
-              className="hover:scale-105 transition-all duration-300"
+              className={cn(
+                "hover:scale-105 transition-all duration-300",
+                chartType === "bar"
+                  ? "bg-a4co-olive-600 text-white"
+                  : "bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50"
+              )}
             >
               Barras
             </Button>
