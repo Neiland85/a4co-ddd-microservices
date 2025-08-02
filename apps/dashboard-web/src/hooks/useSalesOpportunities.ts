@@ -1,8 +1,10 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
+         develop
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-
+import { useState, useCallback, useEffect, useMemo } from 'react';
+         main
 interface SalesOpportunity {
   id: string;
   title: string;
@@ -39,6 +41,7 @@ interface SalesOpportunitiesState {
 export function useSalesOpportunities(
   options: UseSalesOpportunitiesOptions = {}
 ) {
+        develop
   const { autoFetch = false } = options;
 
   // Memoizar las opciones para evitar recreación en cada render
@@ -48,6 +51,8 @@ export function useSalesOpportunities(
     options.category,
     options.autoFetch
   ]);
+  const { autoFetch = false, type, location, category } = options;
+        main
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
@@ -64,7 +69,10 @@ export function useSalesOpportunities(
       try {
         const params = new URLSearchParams();
 
+        develop
         const finalFilters = { ...memoizedOptions, ...customFilters };
+        const finalFilters = { type, location, category, ...customFilters };
+         main
 
         if (finalFilters.type) params.append('type', finalFilters.type);
         if (finalFilters.location)
@@ -104,7 +112,11 @@ export function useSalesOpportunities(
         }));
       }
     },
+      develop
     [memoizedOptions]
+
+    [type, location, category]
+       main
   );
 
   // Use ref to store the latest fetchOpportunities function
@@ -165,7 +177,10 @@ export function useSalesOpportunities(
     if (autoFetch) {
       fetchOpportunitiesRef.current();
     }
+       develop
   }, [autoFetch]);
+  }, [autoFetch, fetchOpportunities]);
+        main
 
   return {
     ...state,
