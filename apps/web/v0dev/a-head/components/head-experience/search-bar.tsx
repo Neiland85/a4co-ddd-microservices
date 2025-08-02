@@ -6,7 +6,6 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-// @ts-ignore Se ignora el error de importación de "lucide-react" temporalmente
 import { Search, X, Clock, TrendingUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSoundEffects } from "../../hooks/use-sound-effects"
