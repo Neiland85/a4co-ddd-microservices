@@ -6,7 +6,7 @@ import { loginSchema, registerSchema } from "@/lib/validators/auth"
 export interface AuthState {
   success?: boolean
   message?: string
-  errors?: Record<string, string[]>
+  errors?: Record<string, string[] | undefined>
 }
 
 export async function loginAction(prevState: AuthState | null, formData: FormData): Promise<AuthState> {
@@ -22,7 +22,7 @@ export async function loginAction(prevState: AuthState | null, formData: FormDat
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Mock authentication logic
-    if ((validatedData.email === process.env.DEMO_EMAIL || validatedData.email === "test@example.com") && (validatedData.password === process.env.DEMO_PASSWORD || validatedData.password === "password123")) {
+    if (validatedData.email === process.env.DEMO_EMAIL && validatedData.password === process.env.DEMO_PASSWORD) {
       return {
         success: true,
         message: "¡Inicio de sesión exitoso! Bienvenido de vuelta.",
@@ -30,15 +30,25 @@ export async function loginAction(prevState: AuthState | null, formData: FormDat
     } else {
       return {
         success: false,
-        message: "Credenciales incorrectas. Intenta con test@example.com / password123",
+        message: "Credenciales incorrectas.",
       }
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
+      const fieldErrors = error.flatten().fieldErrors;
+      const filteredErrors: Record<string, string[]> = {};
+
+      // Filter out undefined values and ensure all values are string arrays
+      Object.entries(fieldErrors).forEach(([key, value]) => {
+        if (value && Array.isArray(value)) {
+          filteredErrors[key] = value;
+        }
+      });
+
       return {
         success: false,
         message: "Error de validación",
-        errors: error.flatten().fieldErrors,
+        errors: filteredErrors,
       }
     }
 
@@ -59,7 +69,7 @@ export async function registerAction(prevState: AuthState | null, formData: Form
       terms: formData.get("terms") === "on",
     }
 
-    const validatedData = registerSchema.parse(rawData)
+    registerSchema.parse(rawData)
 
     // Simulate registration
     await new Promise((resolve) => setTimeout(resolve, 1500))
@@ -71,10 +81,20 @@ export async function registerAction(prevState: AuthState | null, formData: Form
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
+      const fieldErrors = error.flatten().fieldErrors;
+      const filteredErrors: Record<string, string[]> = {};
+
+      // Filter out undefined values and ensure all values are string arrays
+      Object.entries(fieldErrors).forEach(([key, value]) => {
+        if (value && Array.isArray(value)) {
+          filteredErrors[key] = value;
+        }
+      });
+
       return {
         success: false,
         message: "Error de validación",
-        errors: error.flatten().fieldErrors,
+        errors: filteredErrors,
       }
     }
 

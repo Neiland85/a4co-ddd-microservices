@@ -1,251 +1,201 @@
 import { Email, Password, UserName } from '../../src/domain/value-objects/user-value-objects';
 
-describe('User Value Objects', () => {
-  describe('Email', () => {
-    describe('Valid emails', () => {
-      it('should create email with valid format', () => {
-        const email = new Email('user@example.com');
-        expect(email.value).toBe('user@example.com');
-      });
+// Test data constants
+const VALID_EMAILS = [
+  'user@example.com',
+  'user@mail.example.com',
+  'user+tag@example.com',
+  'user123@example123.com'
+];
 
-      it('should accept email with subdomain', () => {
-        const email = new Email('user@mail.example.com');
-        expect(email.value).toBe('user@mail.example.com');
-      });
+const INVALID_EMAILS = [
+  { value: '', error: 'Email es requerido' },
+  { value: null, error: 'Email es requerido' },
+  { value: undefined, error: 'Email es requerido' },
+  { value: 'userexample.com', error: 'Formato de email inválido' },
+  { value: 'user@', error: 'Formato de email inválido' },
+  { value: 'user@example', error: 'Formato de email inválido' },
+  { value: 'user @example.com', error: 'Formato de email inválido' },
+  { value: 'user@ example.com', error: 'Formato de email inválido' },
+  { value: 'a'.repeat(250) + '@example.com', error: 'Email demasiado largo' }
+];
 
-      it('should accept email with plus addressing', () => {
-        const email = new Email('user+tag@example.com');
-        expect(email.value).toBe('user+tag@example.com');
-      });
+const VALID_PASSWORDS = [
+  'TestPass123',
+  'TestPass123!@#',
+  'Test1234'
+];
 
-      it('should accept email with numbers', () => {
-        const email = new Email('user123@example123.com');
-        expect(email.value).toBe('user123@example123.com');
-      });
-    });
+const INVALID_PASSWORDS = [
+  { value: '', error: 'Password es requerido' },
+  { value: null, error: 'Password es requerido' },
+  { value: undefined, error: 'Password es requerido' },
+  { value: 'Sec1', error: 'Password debe tener al menos 8 caracteres' },
+  { value: 'A1' + 'a'.repeat(100), error: 'Password demasiado largo' },
+  { value: 'TEST123', error: 'Password debe contener al menos una minúscula, una mayúscula y un número' },
+  { value: 'test123', error: 'Password debe contener al menos una minúscula, una mayúscula y un número' },
+  { value: 'TestPass', error: 'Password debe contener al menos una minúscula, una mayúscula y un número' }
+];
 
-    describe('Invalid emails', () => {
-      it('should throw error for empty email', () => {
-        expect(() => new Email('')).toThrow('Email es requerido');
-      });
+const VALID_NAMES = [
+  'John Doe',
+  'José María',
+  "O'Connor",
+  'Ana-Lucía',
+  'Jo'
+];
 
-      it('should throw error for null/undefined email', () => {
-        expect(() => new Email(null as any)).toThrow('Email es requerido');
-        expect(() => new Email(undefined as any)).toThrow('Email es requerido');
-      });
+const INVALID_NAMES = [
+  { value: '', error: 'Nombre es requerido' },
+  { value: null, error: 'Nombre es requerido' },
+  { value: undefined, error: 'Nombre es requerido' },
+  { value: 'J', error: 'Nombre debe tener al menos 2 caracteres' },
+  { value: 'a'.repeat(51), error: 'Nombre demasiado largo' },
+  { value: 'John123', error: 'Nombre contiene caracteres inválidos' },
+  { value: 'John@Doe', error: 'Nombre contiene caracteres inválidos' },
+  { value: 'John#Doe', error: 'Nombre contiene caracteres inválidos' },
+  { value: 'John$Doe', error: 'Nombre contiene caracteres inválidos' }
+];
 
-      it('should throw error for email without @', () => {
-        expect(() => new Email('userexample.com')).toThrow('Formato de email inválido');
-      });
+// Helper function
+const getValueDescription = (value: any): string => {
+  if (value === '') return 'empty';
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+  return `"${value}"`;
+};
 
-      it('should throw error for email without domain', () => {
-        expect(() => new Email('user@')).toThrow('Formato de email inválido');
-      });
-
-      it('should throw error for email without TLD', () => {
-        expect(() => new Email('user@example')).toThrow('Formato de email inválido');
-      });
-
-      it('should throw error for email with spaces', () => {
-        expect(() => new Email('user @example.com')).toThrow('Formato de email inválido');
-        expect(() => new Email('user@ example.com')).toThrow('Formato de email inválido');
-      });
-
-      it('should throw error for too long email', () => {
-        const longEmail = 'a'.repeat(250) + '@example.com';
-        expect(() => new Email(longEmail)).toThrow('Email demasiado largo');
-      });
-    });
-
-    describe('Email behavior', () => {
-      it('should be immutable', () => {
-        const email = new Email('user@example.com');
-        expect(() => {
-          (email as any)._value = 'changed@example.com';
-        }).not.toThrow();
-        expect(email.value).toBe('user@example.com');
-      });
-
-      it('should implement equals correctly', () => {
-        const email1 = new Email('user@example.com');
-        const email2 = new Email('user@example.com');
-        const email3 = new Email('other@example.com');
-
-        expect(email1.equals(email2)).toBe(true);
-        expect(email1.equals(email3)).toBe(false);
-      });
-
-      it('should implement toString correctly', () => {
-        const email = new Email('user@example.com');
-        expect(email.toString()).toBe('user@example.com');
-      });
+describe('Email Value Object', () => {
+  // Valid email tests
+  VALID_EMAILS.forEach(value => {
+    it(`should create email with "${value}"`, () => {
+      const instance = new Email(value);
+      expect(instance.value).toBe(value);
     });
   });
 
-  describe('Password', () => {
-    describe('Valid passwords', () => {
-      it('should create password with valid format', () => {
-        const testPassword = 'TestPass123';
-        const password = new Password(testPassword);
-        expect(password.value).toBe(testPassword);
-      });
-
-      it('should accept password with special characters', () => {
-        const testPassword = 'TestPass123!@#';
-        const password = new Password(testPassword);
-        expect(password.value).toBe(testPassword);
-      });
-
-      it('should accept minimum length password', () => {
-        const testPassword = 'Test1234';
-        const password = new Password(testPassword);
-        expect(password.value).toBe(testPassword);
-      });
-    });
-
-    describe('Invalid passwords', () => {
-      it('should throw error for empty password', () => {
-        expect(() => new Password('')).toThrow('Password es requerido');
-      });
-
-      it('should throw error for null/undefined password', () => {
-        expect(() => new Password(null as any)).toThrow('Password es requerido');
-        expect(() => new Password(undefined as any)).toThrow('Password es requerido');
-      });
-
-      it('should throw error for too short password', () => {
-        expect(() => new Password('Sec1')).toThrow('Password debe tener al menos 8 caracteres');
-      });
-
-      it('should throw error for too long password', () => {
-        const longPassword = 'A1' + 'a'.repeat(100);
-        expect(() => new Password(longPassword)).toThrow('Password demasiado largo');
-      });
-
-      it('should throw error for password without lowercase', () => {
-        expect(() => new Password('TEST123')).toThrow(
-          'Password debe contener al menos una minúscula, una mayúscula y un número'
-        );
-      });
-
-      it('should throw error for password without uppercase', () => {
-        expect(() => new Password('test123')).toThrow(
-          'Password debe contener al menos una minúscula, una mayúscula y un número'
-        );
-      });
-
-      it('should throw error for password without numbers', () => {
-        expect(() => new Password('TestPass')).toThrow(
-          'Password debe contener al menos una minúscula, una mayúscula y un número'
-        );
-      });
-    });
-
-    describe('Password behavior', () => {
-      it('should be immutable', () => {
-        const testPassword = 'TestPass123';
-        const password = new Password(testPassword);
-        expect(() => {
-          (password as any)._value = 'ModifiedTest123';
-        }).not.toThrow();
-        expect(password.value).toBe(testPassword);
-      });
-
-      it('should implement equals correctly', () => {
-        const testPassword1 = 'TestPass123';
-        const testPassword2 = 'TestPass123';
-        const testPassword3 = 'DifferentTest123';
-        
-        const password1 = new Password(testPassword1);
-        const password2 = new Password(testPassword2);
-        const password3 = new Password(testPassword3);
-
-        expect(password1.equals(password2)).toBe(true);
-        expect(password1.equals(password3)).toBe(false);
-      });
+  // Invalid email tests
+  INVALID_EMAILS.forEach(({ value, error }) => {
+    it(`debería lanzar un error para ${getValueDescription(value)}`, () => {
+      // Forzamos el valor a string o null para evitar el error de tipo
+      expect(() => new Email(value as any)).toThrow(error);
     });
   });
 
-  describe('UserName', () => {
-    describe('Valid names', () => {
-      it('should create username with valid format', () => {
-        const userName = new UserName('John Doe');
-        expect(userName.value).toBe('John Doe');
-      });
+  // Behavior tests
+  let instance: any;
+  let instance2: any;
+  let differentInstance: any;
 
-      it('should accept name with accents', () => {
-        const userName = new UserName('José María');
-        expect(userName.value).toBe('José María');
-      });
+  beforeEach(() => {
+    instance = new Email('user@example.com');
+    instance2 = new Email('user@example.com');
+    differentInstance = new Email('different@example.com');
+  });
 
-      it('should accept name with apostrophe', () => {
-        const userName = new UserName("O'Connor");
-        expect(userName.value).toBe("O'Connor");
-      });
+  it('should be immutable', () => {
+    expect(() => {
+      instance._value = 'changed';
+    }).not.toThrow();
+    expect(instance.value).toBe('user@example.com');
+  });
 
-      it('should accept name with hyphen', () => {
-        const userName = new UserName('Ana-Lucía');
-        expect(userName.value).toBe('Ana-Lucía');
-      });
+  it('should implement equals correctly', () => {
+    expect(instance.equals(instance2)).toBe(true);
+    expect(instance.equals(differentInstance)).toBe(false);
+  });
 
-      it('should accept minimum length name', () => {
-        const userName = new UserName('Jo');
-        expect(userName.value).toBe('Jo');
-      });
+  it('should implement toString correctly', () => {
+    expect(instance.toString()).toBe('user@example.com');
+  });
+});
+
+describe('Password Value Object', () => {
+  // Valid password tests
+  VALID_PASSWORDS.forEach(value => {
+    it(`should create password with "${value}"`, () => {
+      const instance = new Password(value);
+      expect(instance.value).toBe(value);
     });
+  });
 
-    describe('Invalid names', () => {
-      it('should throw error for empty name', () => {
-        expect(() => new UserName('')).toThrow('Nombre es requerido');
-      });
-
-      it('should throw error for null/undefined name', () => {
-        expect(() => new UserName(null as any)).toThrow('Nombre es requerido');
-        expect(() => new UserName(undefined as any)).toThrow('Nombre es requerido');
-      });
-
-      it('should throw error for too short name', () => {
-        expect(() => new UserName('J')).toThrow('Nombre debe tener al menos 2 caracteres');
-      });
-
-      it('should throw error for too long name', () => {
-        const longName = 'a'.repeat(51);
-        expect(() => new UserName(longName)).toThrow('Nombre demasiado largo');
-      });
-
-      it('should throw error for name with numbers', () => {
-        expect(() => new UserName('John123')).toThrow('Nombre contiene caracteres inválidos');
-      });
-
-      it('should throw error for name with special characters', () => {
-        expect(() => new UserName('John@Doe')).toThrow('Nombre contiene caracteres inválidos');
-        expect(() => new UserName('John#Doe')).toThrow('Nombre contiene caracteres inválidos');
-        expect(() => new UserName('John$Doe')).toThrow('Nombre contiene caracteres inválidos');
-      });
+  // Invalid password tests
+  INVALID_PASSWORDS.forEach(({ value, error }) => {
+    it(`debería lanzar un error para ${getValueDescription(value)}`, () => {
+      // Forzamos el valor a string o null para evitar el error de tipo
+      expect(() => new Password(value as any)).toThrow(error);
     });
+  });
 
-    describe('UserName behavior', () => {
-      it('should be immutable', () => {
-        const userName = new UserName('John Doe');
-        expect(() => {
-          (userName as any)._value = 'Jane Doe';
-        }).not.toThrow();
-        expect(userName.value).toBe('John Doe');
-      });
+  // Behavior tests
+  let instance: any;
+  let instance2: any;
+  let differentInstance: any;
 
-      it('should implement equals correctly', () => {
-        const userName1 = new UserName('John Doe');
-        const userName2 = new UserName('John Doe');
-        const userName3 = new UserName('Jane Doe');
+  beforeEach(() => {
+    instance = new Password('TestPass123');
+    instance2 = new Password('TestPass123');
+    differentInstance = new Password('DifferentPass123');
+  });
 
-        expect(userName1.equals(userName2)).toBe(true);
-        expect(userName1.equals(userName3)).toBe(false);
-      });
+  it('should be immutable', () => {
+    expect(() => {
+      instance._value = 'changed';
+    }).not.toThrow();
+    expect(instance.value).toBe('TestPass123');
+  });
 
-      it('should implement toString correctly', () => {
-        const userName = new UserName('John Doe');
-        expect(userName.toString()).toBe('John Doe');
-      });
+  it('should implement equals correctly', () => {
+    expect(instance.equals(instance2)).toBe(true);
+    expect(instance.equals(differentInstance)).toBe(false);
+  });
+
+  it('should implement toString correctly', () => {
+    expect(instance.toString()).toBe('TestPass123');
+  });
+});
+
+describe('UserName Value Object', () => {
+  // Valid name tests
+  VALID_NAMES.forEach(value => {
+    it(`should create name with "${value}"`, () => {
+      const instance = new UserName(value);
+      expect(instance.value).toBe(value);
     });
+  });
+
+  // Invalid name tests
+  INVALID_NAMES.forEach(({ value, error }) => {
+    it(`debería lanzar un error para ${getValueDescription(value)}`, () => {
+      // Forzamos el valor a string o null para evitar el error de tipo
+      expect(() => new UserName(value as any)).toThrow(error);
+    });
+  });
+
+  // Behavior tests
+  let instance: any;
+  let instance2: any;
+  let differentInstance: any;
+
+  beforeEach(() => {
+    instance = new UserName('John Doe');
+    instance2 = new UserName('John Doe');
+    differentInstance = new UserName('Jane Doe');
+  });
+
+  it('should be immutable', () => {
+    expect(() => {
+      instance._value = 'changed';
+    }).not.toThrow();
+    expect(instance.value).toBe('John Doe');
+  });
+
+  it('should implement equals correctly', () => {
+    expect(instance.equals(instance2)).toBe(true);
+    expect(instance.equals(differentInstance)).toBe(false);
+  });
+
+  it('should implement toString correctly', () => {
+    expect(instance.toString()).toBe('John Doe');
   });
 });
