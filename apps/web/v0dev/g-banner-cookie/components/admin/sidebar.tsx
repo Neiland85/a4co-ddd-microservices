@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils"
 import type { NavItem } from "../../types/admin-types"
 
 interface SidebarProps {
-  className?: string
+  readonly className?: string
 }
 
 const navItems: NavItem[] = [

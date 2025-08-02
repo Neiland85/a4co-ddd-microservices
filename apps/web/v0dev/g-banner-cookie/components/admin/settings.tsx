@@ -85,13 +85,13 @@ const mockDataRequests = [
   },
 ]
 
-const requestTypeLabels = {
-  access: "Acceso a Datos",
-  deletion: "Eliminación de Datos",
-  export: "Exportación de Datos",
+const requestTypeLabels: Record<string, string> = {
+  access: "Acceso a datos",
+  deletion: "Eliminación de datos",
+  export: "Exportación de datos",
 }
 
-const requestStatusLabels = {
+const requestStatusLabels: Record<string, string> = {
   pending: "Pendiente",
   processing: "Procesando",
   completed: "Completado",
@@ -351,7 +351,7 @@ export default function AdminSettings() {
                     <div className="text-sm text-gray-600">{notification.description}</div>
                   </div>
                   <Switch
-                    checked={settingsData.notifications[notification.key]}
+                    checked={settingsData.notifications[notification.key as keyof typeof settingsData.notifications] || false}
                     onCheckedChange={(checked) => {
                       setSettingsData((prev) => ({
                         ...prev,
@@ -533,11 +533,11 @@ export default function AdminSettings() {
                           <div className="flex-1">
                             <div className="flex items-center space-x-3 mb-2">
                               <Badge variant="outline" className="bg-a4co-olive-50 text-a4co-olive-700">
-                                {requestTypeLabels[request.type]}
+                                {requestTypeLabels[request.type] || request.type}
                               </Badge>
                               <Badge className={cn("text-xs border", getRequestStatusColor(request.status))}>
                                 <StatusIcon className="h-3 w-3 mr-1" />
-                                {requestStatusLabels[request.status]}
+                                {requestStatusLabels[request.status] || request.status}
                               </Badge>
                             </div>
                             <div className="text-sm text-gray-900 font-medium">{request.customerEmail}</div>

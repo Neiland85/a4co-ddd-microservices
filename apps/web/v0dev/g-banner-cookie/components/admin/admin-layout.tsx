@@ -1,10 +1,10 @@
 "use client"
 
-import { BellIcon, MenuIcon, OutlinePersonIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/outline"
-import { signOut, useSession } from "next-auth/react"
-import Link from "next/link"
-import { useEffect } from "react"
-import { getWebSocketService } from "../../services/websocket-service"
+import { BellIcon, MenuIcon, OutlinePersonIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/outline";
+import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { useEffect } from "react";
+import { getWebSocketService } from "../../services/websocket-service";
 import RealTimeStatus from "./real-time-status"
 
 function classNames(...classes: any) {

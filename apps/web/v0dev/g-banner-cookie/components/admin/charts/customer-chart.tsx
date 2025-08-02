@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils"
 import type { CustomerData } from "../../../types/analytics-types"
 
 interface CustomerChartProps {
-  data: CustomerData[]
-  className?: string
+  readonly data: CustomerData[]
+  readonly className?: string
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -34,7 +34,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function CustomerChart({ data, className }: CustomerChartProps) {
   const [chartType, setChartType] = useState<"composed" | "bar">("composed")
-  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null)
 
   const totalNewCustomers = data.reduce((sum, item) => sum + item.newCustomers, 0)
   const totalReturningCustomers = data.reduce((sum, item) => sum + item.returningCustomers, 0)
@@ -123,8 +122,6 @@ export default function CustomerChart({ data, className }: CustomerChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={data}
-              onMouseMove={(e) => setHoveredPoint(e?.activeTooltipIndex || null)}
-              onMouseLeave={() => setHoveredPoint(null)}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="month" stroke="#666" fontSize={12} tickLine={false} axisLine={false} />

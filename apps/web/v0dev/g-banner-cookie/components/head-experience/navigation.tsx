@@ -10,8 +10,8 @@ import { useSoundEffects } from "../../hooks/use-sound-effects"
 import type { NavigationItem } from "../../types/head-experience-types"
 
 interface NavigationProps {
-  items: NavigationItem[]
-  currentPath?: string
+  readonly items?: NavigationItem[]
+  readonly currentPath?: string
 }
 
 const defaultItems: NavigationItem[] = [

@@ -1,9 +1,13 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
+        develop
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+
          develop
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useState, useCallback, useEffect, useMemo } from 'react';
+         main
          main
 interface SalesOpportunity {
   id: string;
@@ -63,12 +67,17 @@ export function useSalesOpportunities(
   });
 
   const fetchOpportunities = useCallback(
-    async (customFilters?: Partial<UseSalesOpportunitiesOptions>) => {
+    async () => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
         const params = new URLSearchParams();
+        if (type) params.append('type', type);
+        if (location) params.append('location', location);
+        if (category) params.append('category', category);
 
+        develop
+        const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
         develop
         const finalFilters = { ...memoizedOptions, ...customFilters };
         const finalFilters = { type, location, category, ...customFilters };
@@ -83,6 +92,7 @@ export function useSalesOpportunities(
         const response = await fetch(
           `/api/sales-opportunities?${params.toString()}`
         );
+        main
 
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -93,13 +103,13 @@ export function useSalesOpportunities(
         if (result.success) {
           setState((prev) => ({
             ...prev,
-            opportunities: result.data.opportunities,
-            total: result.data.total,
-            filters: result.data.filters,
+            opportunities: result.data.opportunities || [],
+            total: result.data.total || 0,
             loading: false,
+            error: null,
           }));
         } else {
-          throw new Error(result.error || 'Error desconocido');
+          throw new Error(result.error || 'Error al cargar oportunidades');
         }
       } catch (error) {
         setState((prev) => ({
