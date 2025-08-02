@@ -111,7 +111,7 @@ const getStatusIcon = (status: string) => {
 }
 
 export default function Orders() {
-  const orders = useMemo(() => mockOrders, [])
+  const orders = mockOrders
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [currentPage, setCurrentPage] = useState(1)
