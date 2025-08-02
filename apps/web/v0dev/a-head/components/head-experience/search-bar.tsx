@@ -244,6 +244,8 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos..." }: Rea
   return (
     <>
       <Button
+        variant="ghost"
+        size="default"
         onClick={openSearch}
         onMouseEnter={() => playHover()}
         className="h-9 px-3 hover:bg-a4co-olive-50 transition-colors bg-transparent border-none"
