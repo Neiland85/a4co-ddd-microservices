@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-08-02T14:03:22.633Z",
+  "summary": {
+    "totalPackages": 11,
+    "vulnerablePackages": 4,
+    "criticalVulnerabilities": 4,
+    "highVulnerabilities": 0,
+    "patchedFiles": 0
+  },
+  "vulnerabilities": [
+    {
+      "file": "/workspace/apps/web/v0dev/b-business-registration/package.json",
+      "package": "next",
+      "currentVersion": "15.2.4",
+      "secureVersion": "^15.4.0",
+      "cve": "CVE-2025-29927",
+      "severity": "CRITICAL",
+      "description": "Next.js Middleware Authorization Bypass"
+    },
+    {
+      "file": "/workspace/apps/web/v0dev/c-artisan-dashboard/package.json",
+      "package": "next",
+      "currentVersion": "15.2.4",
+      "secureVersion": "^15.4.0",
+      "cve": "CVE-2025-29927",
+      "severity": "CRITICAL",
+      "description": "Next.js Middleware Authorization Bypass"
+    },
+    {
+      "file": "/workspace/apps/web/v0dev/d-user-registration/package.json",
+      "package": "next",
+      "currentVersion": "15.2.4",
+      "secureVersion": "^15.4.0",
+      "cve": "CVE-2025-29927",
+      "severity": "CRITICAL",
+      "description": "Next.js Middleware Authorization Bypass"
+    },
+    {
+      "file": "/workspace/apps/web/v0dev/f-modern-backoffice/package.json",
+      "package": "next",
+      "currentVersion": "15.2.4",
+      "secureVersion": "^15.4.0",
+      "cve": "CVE-2025-29927",
+      "severity": "CRITICAL",
+      "description": "Next.js Middleware Authorization Bypass"
+    }
+  ],
+  "patchedFiles": []
+}
