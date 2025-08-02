@@ -1,5 +1,7 @@
 "use client"
 
+// If you encounter a type error with @heroicons/react/outline, add the following to a global.d.ts file:
+// declare module '@heroicons/react/outline';
 import { BellIcon, MenuIcon, OutlinePersonIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/outline";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
