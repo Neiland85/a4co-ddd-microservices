@@ -181,7 +181,7 @@ export function useSalesOpportunities(
     if (autoFetch) {
       fetchOpportunitiesRef.current();
     }
-  }, [autoFetch, fetchOpportunities]);
+  }, [autoFetch]);
 
   return {
     ...state,
