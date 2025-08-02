@@ -17,9 +17,9 @@ interface CookiePreferences {
 }
 
 interface CookieBannerProps {
-  companyName?: string
-  privacyPolicyUrl?: string
-  onPreferencesChange?: (preferences: CookiePreferences) => void
+  readonly companyName?: string
+  readonly privacyPolicyUrl?: string
+  readonly onPreferencesChange?: (preferences: CookiePreferences) => void
 }
 
 const COOKIE_CONSENT_KEY = "a4co-cookie-consent"

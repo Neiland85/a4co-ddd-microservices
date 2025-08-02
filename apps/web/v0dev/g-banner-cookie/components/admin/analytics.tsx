@@ -104,7 +104,7 @@ export default function Analytics() {
     const conversionRate = 3.2
     const growthRate = 15.8
     const topProduct = mockProductSalesData[0]?.name || "N/A"
-    const topCategory = mockCategoryData.sort((a, b) => b.value - a.value)[0]?.category || "N/A"
+    const topCategory = mockCategoryData.toSorted((a, b) => b.value - a.value)[0]?.category || "N/A"
 
     return {
       totalRevenue,
@@ -336,7 +336,7 @@ export default function Analytics() {
                     </thead>
                     <tbody>
                       {mockCategoryData
-                        .sort((a, b) => b.value - a.value)
+                        .toSorted((a, b) => b.value - a.value)
                         .map((category, index) => (
                           <tr
                             key={category.category}

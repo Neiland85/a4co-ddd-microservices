@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils"
 import type { CategoryData } from "../../../types/analytics-types"
 
 interface CategoryChartProps {
-  data: CategoryData[]
-  className?: string
+  readonly data: CategoryData[]
+  readonly className?: string
 }
 
-const categoryLabels = {
+const categoryLabels: Record<string, string> = {
   panaderia: "Panadería",
   queseria: "Quesería",
   aceite: "Aceite",
@@ -77,6 +77,7 @@ const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage }:
 export default function CategoryChart({ data, className }: CategoryChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [viewMode, setViewMode] = useState<"chart" | "list">("chart")
+  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null)
 
   const onPieEnter = (_: any, index: number) => {
     setActiveIndex(index)
@@ -140,10 +141,11 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
                     dataKey="value"
                     onMouseEnter={onPieEnter}
                     onMouseLeave={onPieLeave}
+                    onMouseMove={(e) => setHoveredPoint(typeof e?.activeTooltipIndex === 'number' ? e.activeTooltipIndex : null)}
                   >
                     {data.map((entry, index) => (
                       <Cell
-                        key={`cell-${index}`}
+                        key={`cell-${entry.category}`}
                         fill={entry.color}
                         stroke={activeIndex === index ? "#fff" : "none"}
                         strokeWidth={activeIndex === index ? 3 : 0}
@@ -167,10 +169,18 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
               {data.map((item, index) => (
                 <div
                   key={item.category}
+                  role="button"
+                  tabIndex={0}
                   onMouseEnter={() => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setActiveIndex(index)
+                    }
+                  }}
                   className={cn(
-                    "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-natural-md",
+                    "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-natural-md focus:outline-none focus:ring-2 focus:ring-a4co-olive-500",
                     activeIndex === index ? "bg-gray-50 border-gray-300 scale-105" : "bg-white border-gray-200",
                   )}
                 >
@@ -191,7 +201,7 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
           /* List View */
           <div className="space-y-3">
             {data
-              .sort((a, b) => b.value - a.value)
+                .toSorted((a, b) => b.value - a.value)
               .map((item, index) => (
                 <div
                   key={item.category}
