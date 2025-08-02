@@ -87,6 +87,7 @@ export default function Sidebar({ className }: SidebarProps) {
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <button
+          type="button"
           className="fixed inset-0 bg-black/50 z-40 lg:hidden border-none p-0 cursor-pointer"
           onClick={() => setIsMobileOpen(false)}
           aria-label="Cerrar menú móvil"
