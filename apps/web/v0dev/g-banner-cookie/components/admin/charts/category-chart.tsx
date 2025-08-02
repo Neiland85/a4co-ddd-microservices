@@ -180,10 +180,7 @@ export default function CategoryChart({ data, className }: CategoryChartProps) {
                     }
                   }}
                   className={cn(
-      feature/typescript-linting-improvements
-                    "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-natural-md focus:outline-none focus:ring-2 focus:ring-a4co-olive-500 w-full text-left bg-transparent",
                     "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-natural-md focus:outline-none focus:ring-2 focus:ring-a4co-olive-500",
-      develop
                     activeIndex === index ? "bg-gray-50 border-gray-300 scale-105" : "bg-white border-gray-200",
                   )}
                 >
