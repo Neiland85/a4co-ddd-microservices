@@ -13,11 +13,11 @@ describe('Auth Service - Basic Integration', () => {
     const dto = new RegisterUserDto();
     dto.email = 'test@example.com';
     dto.name = 'Test User';
-    dto.password = 'SecurePassword123';
+    dto.password = 'TestPassword123';
 
     expect(dto.email).toBe('test@example.com');
     expect(dto.name).toBe('Test User');
-    expect(dto.password).toBe('SecurePassword123');
+    expect(dto.password).toBe('TestPassword123');
   });
 
   it('should create UserResponseDto correctly', () => {

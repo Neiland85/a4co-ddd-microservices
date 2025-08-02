@@ -298,7 +298,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
     const registerDto = {
       email: 'newuser@example.com',
       name: 'New User',
-      password: 'SecurePassword123',
+      password: 'TestPassword123',
     };
 
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
@@ -392,7 +392,7 @@ describe('RegisterUserUseCase - Event Publication', () => {
     const registerDto = new RegisterUserDto();
     registerDto.email = 'newuser@example.com';
     registerDto.name = 'New User';
-    registerDto.password = 'SecurePassword123';
+    registerDto.password = 'TestPassword123';
 
     const mockUser = {
       id: 'test-id',

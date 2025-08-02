@@ -37,7 +37,7 @@ describe('Service Adapters Integration', () => {
 
   describe('CryptographyService Adapter', () => {
     it('should hash password securely', async () => {
-      const plainPassword = 'SecurePassword123!';
+      const plainPassword = 'TestPassword123!';
       const hashedPassword =
         await cryptographyService.hashPassword(plainPassword);
 
@@ -47,7 +47,7 @@ describe('Service Adapters Integration', () => {
     });
 
     it('should validate password correctly', async () => {
-      const plainPassword = 'SecurePassword123!';
+      const plainPassword = 'TestPassword123!';
       const hashedPassword =
         await cryptographyService.hashPassword(plainPassword);
 
@@ -110,7 +110,7 @@ describe('Service Adapters Integration', () => {
       const dto = new RegisterUserDto();
       dto.email = 'test@example.com';
       dto.name = 'Test User';
-      dto.password = 'SecurePassword123!';
+      dto.password = 'TestPassword123!';
 
       const result = await registerUserUseCase.execute(dto);
 
@@ -136,7 +136,7 @@ describe('Service Adapters Integration', () => {
       const dto = new RegisterUserDto();
       dto.email = 'duplicate@example.com';
       dto.name = 'Test User';
-      dto.password = 'SecurePassword123!';
+      dto.password = 'TestPassword123!';
 
       // First registration should succeed
       await registerUserUseCase.execute(dto);

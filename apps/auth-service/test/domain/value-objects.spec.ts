@@ -85,18 +85,21 @@ describe('User Value Objects', () => {
   describe('Password', () => {
     describe('Valid passwords', () => {
       it('should create password with valid format', () => {
-        const password = new Password('SecurePass123');
-        expect(password.value).toBe('SecurePass123');
+        const testPassword = 'TestPass123';
+        const password = new Password(testPassword);
+        expect(password.value).toBe(testPassword);
       });
 
       it('should accept password with special characters', () => {
-        const password = new Password('SecurePass123!@#');
-        expect(password.value).toBe('SecurePass123!@#');
+        const testPassword = 'TestPass123!@#';
+        const password = new Password(testPassword);
+        expect(password.value).toBe(testPassword);
       });
 
       it('should accept minimum length password', () => {
-        const password = new Password('Secure12');
-        expect(password.value).toBe('Secure12');
+        const testPassword = 'Test1234';
+        const password = new Password(testPassword);
+        expect(password.value).toBe(testPassword);
       });
     });
 
@@ -120,19 +123,19 @@ describe('User Value Objects', () => {
       });
 
       it('should throw error for password without lowercase', () => {
-        expect(() => new Password('SECURE123')).toThrow(
+        expect(() => new Password('TEST123')).toThrow(
           'Password debe contener al menos una minúscula, una mayúscula y un número'
         );
       });
 
       it('should throw error for password without uppercase', () => {
-        expect(() => new Password('secure123')).toThrow(
+        expect(() => new Password('test123')).toThrow(
           'Password debe contener al menos una minúscula, una mayúscula y un número'
         );
       });
 
       it('should throw error for password without numbers', () => {
-        expect(() => new Password('SecurePass')).toThrow(
+        expect(() => new Password('TestPass')).toThrow(
           'Password debe contener al menos una minúscula, una mayúscula y un número'
         );
       });
@@ -140,17 +143,22 @@ describe('User Value Objects', () => {
 
     describe('Password behavior', () => {
       it('should be immutable', () => {
-        const password = new Password('SecurePass123');
+        const testPassword = 'TestPass123';
+        const password = new Password(testPassword);
         expect(() => {
-          (password as any)._value = 'ChangedPass123';
+          (password as any)._value = 'ModifiedTest123';
         }).not.toThrow();
-        expect(password.value).toBe('SecurePass123');
+        expect(password.value).toBe(testPassword);
       });
 
       it('should implement equals correctly', () => {
-        const password1 = new Password('SecurePass123');
-        const password2 = new Password('SecurePass123');
-        const password3 = new Password('DifferentPass123');
+        const testPassword1 = 'TestPass123';
+        const testPassword2 = 'TestPass123';
+        const testPassword3 = 'DifferentTest123';
+        
+        const password1 = new Password(testPassword1);
+        const password2 = new Password(testPassword2);
+        const password3 = new Password(testPassword3);
 
         expect(password1.equals(password2)).toBe(true);
         expect(password1.equals(password3)).toBe(false);
