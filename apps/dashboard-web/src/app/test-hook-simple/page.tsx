@@ -3,6 +3,25 @@
 import { useProducts } from '../../hooks/useProducts';
 import { useEffect, useRef } from 'react';
 
+// Tipo para la ubicación del producto
+type ProductLocation = string | { municipality?: string } | null | undefined;
+
+// Función auxiliar para formatear la ubicación del producto
+function formatProductLocation(location: ProductLocation): string {
+  if (typeof location === 'string') {
+    return location;
+  }
+
+  if (location && typeof location === 'object') {
+    if (location.municipality) {
+      return `Municipio: ${location.municipality}`;
+    }
+    return JSON.stringify(location);
+  }
+
+  return '';
+}
+
 export default function TestHookSimple() {
   const renderCount = useRef(0);
   renderCount.current += 1;
@@ -56,7 +75,7 @@ export default function TestHookSimple() {
                 <strong>{product.name}</strong> - {product.category}
                 <br />
                 <span className="text-sm text-gray-600">
-                  {product.location}
+                  {formatProductLocation(product.location)}
                 </span>
               </li>
             ))}

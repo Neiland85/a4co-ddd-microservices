@@ -1,7 +1,7 @@
 // Hook para gestión de artesanos/productores
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Artisan } from '../app/api/artisans/route';
 
 interface UseArtisansOptions {
@@ -36,12 +36,21 @@ export function useArtisans(options: UseArtisansOptions = {}) {
     filters: {},
   });
 
+  // Memoizar las opciones para evitar recreaciones innecesarias
+  const memoizedOptions = useMemo(() => options, [
+    options.municipality,
+    options.specialty,
+    options.verified,
+    options.search,
+    options.autoFetch,
+  ]);
+
   const fetchArtisans = useCallback(
     async (customOptions?: UseArtisansOptions) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
-        const finalOptions = { ...options, ...customOptions };
+        const finalOptions = { ...memoizedOptions, ...customOptions };
         const params = new URLSearchParams();
 
         if (finalOptions.municipality)
@@ -82,7 +91,7 @@ export function useArtisans(options: UseArtisansOptions = {}) {
         }));
       }
     },
-    [options]
+    [memoizedOptions]
   );
 
   const searchArtisans = useCallback(
@@ -197,7 +206,7 @@ export function useArtisanSearch() {
     if (debouncedSearchTerm) {
       artisansResult.searchArtisans(debouncedSearchTerm);
     }
-  }, [debouncedSearchTerm, artisansResult]);
+  }, [debouncedSearchTerm, artisansResult.searchArtisans]);
 
   return {
     ...artisansResult,
