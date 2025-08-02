@@ -1,15 +1,7 @@
 "use client"
 
-       feature/typescript-linting-improvements
-// Nota: Para evitar el error de tipo con @heroicons/react/outline, puedes crear un archivo de declaración de módulos
-// por ejemplo, en tu proyecto crea un archivo global.d.ts con:
-// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
-// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
-// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
-// Para evitar el error de tipo con @heroicons/react/outline, crea un archivo global.d.ts con:
+// If you encounter a type error with @heroicons/react/outline, add the following to a global.d.ts file:
 // declare module '@heroicons/react/outline';
-
-         develop
 import { BellIcon, MenuIcon, OutlinePersonIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/outline";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
