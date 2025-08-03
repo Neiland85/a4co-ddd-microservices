@@ -93,9 +93,10 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   // Analizar auth-service específicamente
   try {
     console.log('  📦 Analizando auth-service...');
-    const authComplexity = execSync('cd apps/auth-service && npx eslint src --ext .ts,.tsx --format json 2>/dev/null || true', {
+    const authComplexity = execSync('npx eslint src --ext .ts,.tsx --format json 2>/dev/null || true', {
       encoding: 'utf8',
-      maxBuffer: 1024 * 1024 * 10
+      maxBuffer: 1024 * 1024 * 10,
+      cwd: path.join(process.cwd(), 'apps/auth-service')
     });
     
     if (authComplexity && authComplexity.trim() !== '') {
