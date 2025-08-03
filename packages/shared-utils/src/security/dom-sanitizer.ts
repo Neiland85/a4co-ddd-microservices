@@ -118,7 +118,12 @@ export class DOMSanitizer {
    */
   private isValidUrl(url: string): boolean {
     try {
-      const parsedUrl = new URL(url, window.location.href);
+      // Use window.location.href if available, otherwise fallback to a default base URL
+      const base =
+        typeof window !== 'undefined' && window.location && window.location.href
+          ? window.location.href
+          : 'http://localhost';
+      const parsedUrl = new URL(url, base);
       return this.options.allowedProtocols.includes(parsedUrl.protocol);
     } catch {
       return false;
