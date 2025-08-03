@@ -1,3 +1,4 @@
+     develop
 // Product Service - Schema de Base de Datos con Prisma ORM
 // Siguiendo principios DDD: Aggregates, Entities, Value Objects
 // Marketplace Local de Jaén - A4CO
@@ -5,6 +6,11 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/infrastructure/generated/prisma"
+     main
 }
 
 datasource db {
@@ -12,6 +18,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+    develop
 // ========================================
 // PRODUCT AGGREGATE ROOT
 // ========================================
@@ -453,4 +460,178 @@ view ProductWithDetails {
   createdAt        DateTime
   
   @@map("v_products_with_details")
+=======
+// AGREGADO PRINCIPAL - PRODUCTS
+model Product {
+  // Identificadores
+  id         String @id @default(uuid()) @db.Uuid
+  productId  String @unique @default(uuid()) @db.Uuid // Business ID
+  
+  // Información básica
+  name        String @db.VarChar(200)
+  description String @db.Text
+  
+  // Precio
+  price    Decimal @db.Decimal(10, 2)
+  currency String  @db.VarChar(3) @default("EUR")
+  
+  // Relaciones externas
+  categoryId String @db.Uuid
+  artisanId  String @db.Uuid
+  
+  // Estados
+  status       ProductStatus       @default(DRAFT)
+  availability ProductAvailability @default(IN_STOCK)
+  
+  // Información de artesanía
+  craftingTimeHours   Int     @default(0)
+  sustainabilityScore Int?    @db.SmallInt // 0-100
+  isCustomizable      Boolean @default(false)
+  
+  // Arrays JSON para simplicidad
+  materials String[] @default([])
+  
+  // Dimensiones (JSON para flexibilidad)
+  dimensions Json?
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  
+  // ENTIDADES DEL AGREGADO
+  variants ProductVariant[]
+  images   ProductImage[]
+  tags     ProductTag[]
+  
+  // Índices
+  @@index([categoryId])
+  @@index([artisanId])
+  @@index([status])
+  @@index([availability])
+  @@index([name])
+  @@index([createdAt])
+  @@map("products")
+}
+
+// ENTIDAD - PRODUCT VARIANTS
+model ProductVariant {
+  // Identificadores
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  
+  // Información básica
+  name        String  @db.VarChar(200)
+  description String? @db.Text
+  
+  // Precio específico de la variante
+  price    Decimal @db.Decimal(10, 2)
+  currency String  @db.VarChar(3) @default("EUR")
+  
+  // SKU único por variante
+  sku String? @unique @db.VarChar(100)
+  
+  // Atributos específicos (JSON para flexibilidad)
+  attributes Json @default("{}")
+  
+  // Estado
+  isActive Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  
+  // Relación con Product (parte del agregado)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Índices
+  @@index([productId])
+  @@index([isActive])
+  @@index([sku])
+  @@map("product_variants")
+}
+
+// ENTIDAD - PRODUCT IMAGES
+model ProductImage {
+  // Identificadores
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  
+  // Información de la imagen
+  url     String @db.VarChar(500)
+  altText String @db.VarChar(200)
+  
+  // Ordenamiento y características
+  isPrimary Boolean @default(false)
+  sortOrder Int     @default(0)
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  
+  // Relación con Product (parte del agregado)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Índices
+  @@index([productId])
+  @@index([isPrimary])
+  @@index([sortOrder])
+  @@map("product_images")
+}
+
+// ENTIDAD - PRODUCT TAGS
+model ProductTag {
+  // Identificadores
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  
+  // Información del tag
+  name String @db.VarChar(50)
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  
+  // Relación con Product (parte del agregado)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Índices
+  @@index([productId])
+  @@index([name])
+  @@unique([productId, name]) // Un producto no puede tener el mismo tag duplicado
+  @@map("product_tags")
+}
+
+// TABLA DE REFERENCIA - CATEGORIES (externa al agregado)
+model Category {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @db.VarChar(100)
+  description String? @db.Text
+  parentId    String? @db.Uuid
+  
+  // Jerarquía
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  
+  @@index([parentId])
+  @@map("categories")
+}
+
+// ENUMS
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+  DISCONTINUED
+}
+
+enum ProductAvailability {
+  IN_STOCK
+  OUT_OF_STOCK
+  MADE_TO_ORDER
+  SEASONAL
+     main
 }
