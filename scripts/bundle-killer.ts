@@ -48,14 +48,14 @@ export const analyzeBundle = async (): Promise<BundleAnalysis> => {
     const moduleOccurrences = new Map<string, string[]>();
     let totalSize = 0;
 
-    Object.entries(stats.chunks || {}).forEach(([name, chunk]: [string, any]) => {
+    Object.entries(stats.chunks || {}).forEach(([name, chunk]: [string, WebpackChunk]) => {
       const size = chunk.size || 0;
       totalSize += size;
       
       if (size > THRESHOLD_KB * 1024) {
         const largeModules = (chunk.modules || [])
-          .filter((m: any) => m.size > LARGE_MODULE_KB * 1024)
-          .map((m: any) => `${m.name} (${(m.size / 1024).toFixed(1)}KB)`)
+          .filter((m: WebpackModule) => m.size > LARGE_MODULE_KB * 1024)
+          .map((m: WebpackModule) => `${m.name} (${(m.size / 1024).toFixed(1)}KB)`)
           .slice(0, 5); // Top 5 módulos más grandes
 
         problematicChunks.push({
