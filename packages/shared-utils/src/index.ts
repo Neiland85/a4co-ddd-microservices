@@ -23,3 +23,7 @@ export * from './security';
 export * from './events/event-bus';
 export * from './events/subjects';
 export * from './events/domain-events';
+export * from './events/integration-events';
+
+// Exportar sistema de sagas
+export * from './saga/saga-orchestrator';
