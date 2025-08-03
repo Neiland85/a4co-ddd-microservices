@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* A4CO Brand Colors */
+    --a4co-olive-50: 247 248 243;
+    --a4co-olive-100: 238 240 230;
+    --a4co-olive-200: 221 226 205;
+    --a4co-olive-300: 198 207 168;
+    --a4co-olive-400: 173 185 133;
+    --a4co-olive-500: 148 163 102;
+    --a4co-olive-600: 122 138 79;
+    --a4co-olive-700: 96 107 64;
+    --a4co-olive-800: 79 87 54;
+    --a4co-olive-900: 67 74 48;
+    --a4co-olive-950: 42 47 29;
+
+    --a4co-clay-50: 250 248 245;
+    --a4co-clay-100: 244 240 232;
+    --a4co-clay-200: 232 221 208;
+    --a4co-clay-300: 217 197 176;
+    --a4co-clay-400: 200 168 141;
+    --a4co-clay-500: 184 144 111;
+    --a4co-clay-600: 166 124 94;
+    --a4co-clay-700: 138 102 80;
+    --a4co-clay-800: 112 84 70;
+    --a4co-clay-900: 92 70 58;
+    --a4co-clay-950: 59 45 37;
+
+    --a4co-cream-50: 254 252 248;
+    --a4co-cream-100: 253 248 240;
+    --a4co-cream-200: 250 240 222;
+    --a4co-cream-300: 246 228 196;
+    --a4co-cream-400: 240 212 159;
+    --a4co-cream-500: 233 193 120;
+    --a4co-cream-600: 223 169 77;
+    --a4co-cream-700: 200 144 58;
+    --a4co-cream-800: 163 115 50;
+    --a4co-cream-900: 133 94 45;
+    --a4co-cream-950: 86 59 26;
+
+    /* UI Variables */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    
+    --primary: 142 20% 40%;
+    --primary-foreground: 355.7 100% 97.3%;
+    
+    --secondary: 26 25% 47%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    
+    --accent: 40 85% 60%;
+    --accent-foreground: 0 0% 9%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 142 20% 40%;
+    
+    --radius: 0.5rem;
+  }
+  
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    
+    --card: 20 14.3% 8.1%;
+    --card-foreground: 0 0% 95%;
+    
+    --popover: 20 14.3% 8.1%;
+    --popover-foreground: 0 0% 95%;
+    
+    --primary: 142 20% 50%;
+    --primary-foreground: 144.9 80.4% 10%;
+    
+    --secondary: 26 25% 39%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    
+    --accent: 40 85% 50%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 142 20% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  ::selection {
+    @apply bg-a4co-olive-200 text-a4co-olive-900;
+  }
+  
+  ::-moz-selection {
+    @apply bg-a4co-olive-200 text-a4co-olive-900;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+}

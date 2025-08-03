@@ -1,0 +1,217 @@
+version: '3.8'
+
+services:
+  # Nginx Reverse Proxy
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: a4co-dev-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    networks:
+      - a4co-network
+    depends_on:
+      - web
+      - dashboard-web
+      - storybook
+      - auth-service
+      - product-service
+      - user-service
+    restart: unless-stopped
+
+  # Frontend Applications
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    container_name: a4co-web
+    volumes:
+      - ./apps/web:/app
+      - ./packages/design-system:/packages/design-system
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost/api
+      - WATCHPACK_POLLING=true
+    networks:
+      - a4co-network
+    command: pnpm dev
+
+  dashboard-web:
+    build:
+      context: ./apps/dashboard-web
+      dockerfile: Dockerfile.dev
+    container_name: a4co-dashboard
+    volumes:
+      - ./apps/dashboard-web:/app
+      - ./packages/design-system:/packages/design-system
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost/api
+      - WATCHPACK_POLLING=true
+    networks:
+      - a4co-network
+    command: pnpm dev
+
+  # Storybook for Design System
+  storybook:
+    build:
+      context: ./packages/design-system
+      dockerfile: Dockerfile.storybook
+    container_name: a4co-storybook
+    volumes:
+      - ./packages/design-system:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - STORYBOOK_DISABLE_TELEMETRY=1
+    networks:
+      - a4co-network
+    command: pnpm storybook:dev
+
+  # Microservices
+  auth-service:
+    build:
+      context: ./apps/auth-service
+      dockerfile: Dockerfile.dev
+    container_name: a4co-auth
+    volumes:
+      - ./apps/auth-service:/app
+      - ./packages/shared-utils:/packages/shared-utils
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/a4co_auth
+      - NATS_URL=nats://nats:4222
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - a4co-network
+    depends_on:
+      - postgres
+      - nats
+      - redis
+    command: pnpm start:dev
+
+  product-service:
+    build:
+      context: ./apps/product-service
+      dockerfile: Dockerfile.dev
+    container_name: a4co-product
+    volumes:
+      - ./apps/product-service:/app
+      - ./packages/shared-utils:/packages/shared-utils
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/a4co_product
+      - NATS_URL=nats://nats:4222
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - a4co-network
+    depends_on:
+      - postgres
+      - nats
+      - redis
+    command: pnpm start:dev
+
+  user-service:
+    build:
+      context: ./apps/user-service
+      dockerfile: Dockerfile.dev
+    container_name: a4co-user
+    volumes:
+      - ./apps/user-service:/app
+      - ./packages/shared-utils:/packages/shared-utils
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/a4co_user
+      - NATS_URL=nats://nats:4222
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - a4co-network
+    depends_on:
+      - postgres
+      - nats
+      - redis
+    command: pnpm start:dev
+
+  # Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: a4co-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=a4co_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-databases.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - a4co-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7.2-alpine
+    container_name: a4co-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - a4co-network
+    restart: unless-stopped
+
+  # NATS Messaging
+  nats:
+    image: nats:2.10-alpine
+    container_name: a4co-nats-dev
+    command: [
+      "--jetstream",
+      "--store_dir=/data",
+      "--http_port=8222"
+    ]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - nats_data:/data
+    networks:
+      - a4co-network
+    restart: unless-stopped
+
+  # Development Tools
+  mailhog:
+    image: mailhog/mailhog
+    container_name: a4co-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - a4co-network
+
+  adminer:
+    image: adminer
+    container_name: a4co-adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - a4co-network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  redis_data:
+  nats_data:
+
+networks:
+  a4co-network:
+    driver: bridge

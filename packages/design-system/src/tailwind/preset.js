@@ -1,0 +1,231 @@
+const colors = require('./tokens/colors');
+const typography = require('./tokens/typography');
+const spacing = require('./tokens/spacing');
+const animations = require('./tokens/animations');
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        // A4CO Brand Colors
+        a4co: {
+          olive: {
+            50: "#f7f8f3",
+            100: "#eef0e6",
+            200: "#dde2cd",
+            300: "#c6cfa8",
+            400: "#adb985",
+            500: "#94a366",
+            600: "#7a8a4f",
+            700: "#606b40",
+            800: "#4f5736",
+            900: "#434a30",
+            950: "#2a2f1d",
+          },
+          clay: {
+            50: "#faf8f5",
+            100: "#f4f0e8",
+            200: "#e8ddd0",
+            300: "#d9c5b0",
+            400: "#c8a88d",
+            500: "#b8906f",
+            600: "#a67c5e",
+            700: "#8a6650",
+            800: "#705446",
+            900: "#5c463a",
+            950: "#3b2d25",
+          },
+          cream: {
+            50: "#fefcf8",
+            100: "#fdf8f0",
+            200: "#faf0de",
+            300: "#f6e4c4",
+            400: "#f0d49f",
+            500: "#e9c178",
+            600: "#dfa94d",
+            700: "#c8903a",
+            800: "#a37332",
+            900: "#855e2d",
+            950: "#563b1a",
+          },
+          // Semantic colors
+          primary: {
+            DEFAULT: "var(--a4co-olive-600)",
+            hover: "var(--a4co-olive-700)",
+            active: "var(--a4co-olive-800)",
+            light: "var(--a4co-olive-100)",
+            dark: "var(--a4co-olive-900)",
+          },
+          secondary: {
+            DEFAULT: "var(--a4co-clay-600)",
+            hover: "var(--a4co-clay-700)",
+            active: "var(--a4co-clay-800)",
+            light: "var(--a4co-clay-100)",
+            dark: "var(--a4co-clay-900)",
+          },
+          accent: {
+            DEFAULT: "var(--a4co-cream-500)",
+            hover: "var(--a4co-cream-600)",
+            active: "var(--a4co-cream-700)",
+            light: "var(--a4co-cream-100)",
+            dark: "var(--a4co-cream-900)",
+          },
+        },
+        // UI Colors (compatible with shadcn/ui)
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        // Status colors
+        success: {
+          50: "#f0fdf4",
+          100: "#dcfce7",
+          200: "#bbf7d0",
+          300: "#86efac",
+          400: "#4ade80",
+          500: "#22c55e",
+          600: "#16a34a",
+          700: "#15803d",
+          800: "#166534",
+          900: "#14532d",
+        },
+        warning: {
+          50: "#fffbeb",
+          100: "#fef3c7",
+          200: "#fde68a",
+          300: "#fcd34d",
+          400: "#fbbf24",
+          500: "#f59e0b",
+          600: "#d97706",
+          700: "#b45309",
+          800: "#92400e",
+          900: "#78350f",
+        },
+        error: {
+          50: "#fef2f2",
+          100: "#fee2e2",
+          200: "#fecaca",
+          300: "#fca5a5",
+          400: "#f87171",
+          500: "#ef4444",
+          600: "#dc2626",
+          700: "#b91c1c",
+          800: "#991b1b",
+          900: "#7f1d1d",
+        },
+        info: {
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
+          800: "#1e40af",
+          900: "#1e3a8a",
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Monaco', 'Consolas', 'monospace'],
+      },
+      fontSize: {
+        '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['1rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['3rem', { lineHeight: '1' }],
+        '6xl': ['3.75rem', { lineHeight: '1' }],
+        '7xl': ['4.5rem', { lineHeight: '1' }],
+        '8xl': ['6rem', { lineHeight: '1' }],
+        '9xl': ['8rem', { lineHeight: '1' }],
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      screens: {
+        'xs': '475px',
+        '3xl': '1920px',
+      },
+      keyframes: {
+        ...animations.keyframes,
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        ...animations.animation,
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      boxShadow: {
+        'natural-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'natural': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        'natural-md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'natural-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'natural-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'natural-2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        'natural-inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+      },
+      transitionTimingFunction: {
+        'spring': 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        'bounce-in': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/container-queries'),
+  ],
+}
