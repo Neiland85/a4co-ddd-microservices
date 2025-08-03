@@ -1,6 +1,7 @@
 {
   "name": "@a4co/observability",
   "version": "1.0.0",
+   develop
      cursor/levantar-todos-los-servicios-de-desarrollo-local-39aa
 
     cursor/design-microservice-communication-strategy-a023
@@ -34,6 +35,8 @@
   "description": "Unified observability package for A4CO monorepo",
 
      develop
+  
+    main
   "description": "Unified observability package for A4CO platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -238,6 +241,7 @@
   },
     develop
 
+   develop
   "peerDependenciesMeta": {
     "express": {
       "optional": true
@@ -252,6 +256,8 @@
       "optional": true
     }
      develop
+
+     main
 
      main
   "peerDependenciesMeta": {
@@ -273,6 +279,7 @@
      develop
      develop
 
+     main
   "peerDependenciesMeta": {
     "express": {
       "optional": true
@@ -283,6 +290,26 @@
     "nats": {
       "optional": true
     },
+   develop
+
+    "react": {
+      "optional": true
+    }
+     cursor/verificar-arquitectura-y-levantar-servidores-0628
+
+     develop
+
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    },
+    "koa": {
+      "optional": true
+    },
+    "nats": {
+      "optional": true
+    },
+     main
     "react": {
       "optional": true
     }
@@ -292,10 +319,17 @@
   "publishConfig": {
     "access": "public"
 
+   develop
     cursor/levantar-todos-los-servicios-de-desarrollo-local-39aa
      main
      develop
 
+     main
+     develop
+
+     main
+   main
+     main
      main
    main
 
