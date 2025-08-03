@@ -99,6 +99,25 @@ export const EventSubjects = {
   CAMPAIGN_TRIGGERED: 'loyalty.campaign.triggered',
   
   // ========================================
+  // INTEGRATION EVENTS - Para comunicación entre bounded contexts
+  // ========================================
+  PRODUCT_INFORMATION_REQUESTED: 'integration.product.info.requested',
+  PRODUCT_INFORMATION_PROVIDED: 'integration.product.info.provided',
+  STOCK_VALIDATION_REQUESTED: 'integration.stock.validation.requested',
+  STOCK_VALIDATION_RESPONSE: 'integration.stock.validation.response',
+  USER_INFORMATION_REQUESTED: 'integration.user.info.requested',
+  USER_INFORMATION_PROVIDED: 'integration.user.info.provided',
+  
+  // ========================================
+  // SAGA EVENTS
+  // ========================================
+  SAGA_STARTED: 'saga.started',
+  SAGA_STEP_COMPLETED: 'saga.step.completed',
+  SAGA_COMPLETED: 'saga.completed',
+  SAGA_FAILED: 'saga.failed',
+  SAGA_COMPENSATION_TRIGGERED: 'saga.compensation.triggered',
+  
+  // ========================================
   // ANALYTICS DOMAIN EVENTS
   // ========================================
   PAGE_VIEW_TRACKED: 'analytics.pageview',
