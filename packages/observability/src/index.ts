@@ -1,120 +1,105 @@
-// Re-exportar todo desde los módulos
-export * from './logger';
-export * from './tracing';
-export * from './middleware';
+import { initializeLogger, createLogger, createHttpLogger, getGlobalLogger } from './logging';
+import { initializeTracing, initializeMetrics, getTracer, shutdown } from './tracing';
+import type { LoggerConfig } from './logging';
+import type { TracingConfig, MetricsConfig } from './tracing';
 
-// Importaciones para configuración rápida
-import { createLogger, createHttpLogger, StructuredLogger } from './logger';
-import { initializeTracing, TracingUtils, Trace } from './tracing';
-import { 
-  observabilityMiddleware, 
-  logCorrelationMiddleware, 
-  errorHandlingMiddleware,
-  TracedHttpClient 
-} from './middleware';
+// Re-exportar tipos
+export type { LoggerConfig, TracingConfig, MetricsConfig };
 
-// Configuración completa de observabilidad
+// Re-exportar funciones individuales
+export {
+  createLogger,
+  createHttpLogger,
+  getGlobalLogger,
+  initializeLogger,
+  initializeTracing,
+  initializeMetrics,
+  getTracer,
+  shutdown
+};
+
+// Interfaz para configuración completa
 export interface ObservabilityConfig {
   serviceName: string;
-  serviceVersion: string;
-  environment: string;
+  serviceVersion?: string;
+  environment?: string;
   logging?: {
     level?: string;
     prettyPrint?: boolean;
   };
   tracing?: {
     enabled?: boolean;
-    exporterType?: 'jaeger' | 'otlp' | 'console';
     jaegerEndpoint?: string;
-    otlpEndpoint?: string;
-    sampleRate?: number;
+    enableConsoleExporter?: boolean;
+    enableAutoInstrumentation?: boolean;
+  };
+  metrics?: {
+    enabled?: boolean;
+    port?: number;
+    endpoint?: string;
   };
 }
 
-// Clase principal para gestionar observabilidad
-export class Observability {
-  private logger: any;
-  private structuredLogger: StructuredLogger;
-  private tracingSDK: any;
-  private httpClient: TracedHttpClient;
-  
-  constructor(private config: ObservabilityConfig) {
-    // Inicializar logging
-    this.logger = createLogger({
+// Función principal para inicializar todo
+export function initializeObservability(config: ObservabilityConfig) {
+  // Inicializar logger
+  const logger = initializeLogger({
+    serviceName: config.serviceName,
+    serviceVersion: config.serviceVersion,
+    environment: config.environment,
+    level: config.logging?.level,
+    prettyPrint: config.logging?.prettyPrint,
+  });
+
+  // Inicializar tracing si está habilitado
+  let tracingSDK = null;
+  if (config.tracing?.enabled !== false) {
+    tracingSDK = initializeTracing({
       serviceName: config.serviceName,
+      serviceVersion: config.serviceVersion,
       environment: config.environment,
-      level: config.logging?.level,
-      prettyPrint: config.logging?.prettyPrint,
+      jaegerEndpoint: config.tracing?.jaegerEndpoint,
+      enableConsoleExporter: config.tracing?.enableConsoleExporter,
+      enableAutoInstrumentation: config.tracing?.enableAutoInstrumentation,
     });
-    
-    this.structuredLogger = new StructuredLogger(this.logger);
-    
-    // Inicializar tracing si está habilitado
-    if (config.tracing?.enabled !== false) {
-      this.tracingSDK = initializeTracing({
-        serviceName: config.serviceName,
-        serviceVersion: config.serviceVersion,
-        environment: config.environment,
-        exporterType: config.tracing?.exporterType,
-        jaegerEndpoint: config.tracing?.jaegerEndpoint,
-        otlpEndpoint: config.tracing?.otlpEndpoint,
-        sampleRate: config.tracing?.sampleRate,
+  }
+
+  // Inicializar métricas si está habilitado
+  let metricsExporter = null;
+  if (config.metrics?.enabled !== false) {
+    metricsExporter = initializeMetrics({
+      serviceName: config.serviceName,
+      port: config.metrics?.port,
+      endpoint: config.metrics?.endpoint,
+    });
+  }
+
+  return {
+    logger,
+    tracingSDK,
+    metricsExporter,
+    httpLogger: createHttpLogger(logger),
+    getTracer,
+    shutdown,
+  };
+}
+
+// Exportar el logger global por defecto si no se ha inicializado
+let defaultLogger: any = null;
+
+export const logger = new Proxy({}, {
+  get(target, prop) {
+    if (!defaultLogger) {
+      defaultLogger = createLogger({
+        serviceName: process.env.SERVICE_NAME || 'unknown-service',
+        environment: process.env.NODE_ENV || 'development',
       });
     }
-    
-    // Inicializar cliente HTTP con tracing
-    this.httpClient = new TracedHttpClient();
+    return defaultLogger[prop];
   }
-  
-  // Obtener logger
-  getLogger() {
-    return this.logger;
-  }
-  
-  // Obtener structured logger
-  getStructuredLogger() {
-    return this.structuredLogger;
-  }
-  
-  // Obtener cliente HTTP con tracing
-  getHttpClient() {
-    return this.httpClient;
-  }
-  
-  // Crear middleware para Express
-  getMiddleware() {
-    return {
-      // Middleware principal de observabilidad
-      observability: observabilityMiddleware(),
-      
-      // Middleware de logging HTTP
-      httpLogging: createHttpLogger(this.logger),
-      
-      // Middleware de correlación de logs
-      logCorrelation: logCorrelationMiddleware(this.logger),
-      
-      // Middleware de manejo de errores
-      errorHandling: errorHandlingMiddleware(this.logger),
-    };
-  }
-  
-  // Shutdown graceful
-  async shutdown() {
-    if (this.tracingSDK) {
-      await this.tracingSDK.shutdown();
-    }
-  }
+});
+
+// Función helper para obtener el tracer por defecto
+export function tracer(name?: string) {
+  return getTracer(name);
 }
-
-// Función helper para inicialización rápida
-export function setupObservability(config: ObservabilityConfig) {
-  return new Observability(config);
-}
-
-// Exportar utilidades
-export { TracingUtils, Trace };
-
-// Tipos útiles
-export type { LoggerConfig } from './logger';
-export type { TracingConfig } from './tracing';
-export type { TracedRequest } from './middleware';
