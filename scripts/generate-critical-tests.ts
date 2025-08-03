@@ -11,10 +11,16 @@ interface TestTemplate {
 // Generar tests para los servicios refactorizados con BaseService
 const generateServiceTests = (): TestTemplate[] => {
   const services = ['order', 'product', 'user', 'inventory'];
+  const serviceImportPaths: { [key: string]: string } = {
+    order: './service',
+    product: '../service',
+    user: '../service',
+    inventory: '../service'
+  };
   
   return services.map(service => {
     const serviceName = service.charAt(0).toUpperCase() + service.slice(1);
-    const content = `import { ${serviceName}Service } from './${service === 'order' ? 'service' : '../service'}';
+    const content = `import { ${serviceName}Service } from '${serviceImportPaths[service]}';
 
 describe('${serviceName}Service', () => {
   let service: ${serviceName}Service;
