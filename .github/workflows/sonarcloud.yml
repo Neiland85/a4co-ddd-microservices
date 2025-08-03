@@ -13,36 +13,79 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+      - name: Install required tools
+        shell: bash
+        run: |
+          # Update package list and install required tools
+          sudo apt-get update
+          sudo apt-get install -y git wget unzip
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Checkout code
+        shell: bash
+        run: |
+          # Clone the repository with full history
+          git clone --depth 0 https://github.com/${{ github.repository }}.git .
+          
+          # Checkout the appropriate ref
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git checkout ${{ github.event.pull_request.head.sha }}
+          else
+            git checkout ${{ github.sha }}
+          fi
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10.9.0
+      - name: Setup Node.js and pnpm
+        shell: bash
+        run: |
+          # Install Node.js 20 using NodeSource repository
+          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          
+          # Verify Node.js installation
+          node --version
+          npm --version
+          
+          # Install pnpm
+          npm install -g pnpm@10.9.0
+          pnpm --version
       
-      - name: Get pnpm store directory
+      - name: Cache pnpm store
         id: pnpm-cache
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-      
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          # Get pnpm store path
+          STORE_PATH=$(pnpm store path)
+          echo "STORE_PATH=$STORE_PATH" >> $GITHUB_OUTPUT
+          
+          # Create cache directory
+          CACHE_DIR="$HOME/.workflow-cache"
+          mkdir -p "$CACHE_DIR"
+          
+          # Generate cache key based on lock file
+          CACHE_KEY="${{ runner.os }}-pnpm-store-$(sha256sum pnpm-lock.yaml | cut -d' ' -f1)"
+          CACHE_FILE="$CACHE_DIR/${CACHE_KEY}.tar.gz"
+          
+          # Try to restore cache
+          if [ -f "$CACHE_FILE" ]; then
+            echo "Restoring pnpm cache from $CACHE_FILE"
+            tar -xzf "$CACHE_FILE" -C /
+          else
+            echo "No cache found"
+          fi
+          
+          # Save cache file path for later
+          echo "CACHE_FILE=$CACHE_FILE" >> $GITHUB_ENV
+          echo "CACHE_EXISTS=$([ -f "$CACHE_FILE" ] && echo "true" || echo "false")" >> $GITHUB_ENV
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      
+      - name: Save pnpm cache
+        if: env.CACHE_EXISTS != 'true'
+        shell: bash
+        run: |
+          # Save cache if it doesn't exist
+          echo "Saving pnpm cache to $CACHE_FILE"
+          tar -czf "$CACHE_FILE" "${{ steps.pnpm-cache.outputs.STORE_PATH }}"
       
       - name: Run tests with coverage
         run: |
@@ -77,15 +120,39 @@ jobs:
           fi
       
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=a4co-ddd-microservices
-            -Dsonar.organization=a4co
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts,**/*.test.tsx,**/*.spec.tsx,**/test/**,**/tests/**,**/__tests__/**,**/node_modules/**,**/dist/**,**/build/**,**/.next/**,**/coverage/**
-            -Dsonar.cpd.exclusions=**/*.test.ts,**/*.spec.ts,**/node_modules/**,**/dist/**
+        run: |
+          # Download SonarCloud Scanner
+          SCANNER_VERSION="5.0.1.3006"
+          wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SCANNER_VERSION}-linux.zip
+          unzip -q sonar-scanner-cli-${SCANNER_VERSION}-linux.zip
+          
+          # Set up scanner
+          export PATH="$PWD/sonar-scanner-${SCANNER_VERSION}-linux/bin:$PATH"
+          
+          # Configure scanner arguments
+          SONAR_ARGS="-Dsonar.host.url=https://sonarcloud.io"
+          SONAR_ARGS="$SONAR_ARGS -Dsonar.projectKey=a4co-ddd-microservices"
+          SONAR_ARGS="$SONAR_ARGS -Dsonar.organization=a4co"
+          SONAR_ARGS="$SONAR_ARGS -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info"
+          SONAR_ARGS="$SONAR_ARGS -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info"
+          SONAR_ARGS="$SONAR_ARGS -Dsonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts,**/*.test.tsx,**/*.spec.tsx,**/test/**,**/tests/**,**/__tests__/**,**/node_modules/**,**/dist/**,**/build/**,**/.next/**,**/coverage/**"
+          SONAR_ARGS="$SONAR_ARGS -Dsonar.cpd.exclusions=**/*.test.ts,**/*.spec.ts,**/node_modules/**,**/dist/**"
+          
+          # Add GitHub-specific properties
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            SONAR_ARGS="$SONAR_ARGS -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}"
+            SONAR_ARGS="$SONAR_ARGS -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}"
+            SONAR_ARGS="$SONAR_ARGS -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}"
+          else
+            SONAR_ARGS="$SONAR_ARGS -Dsonar.branch.name=${{ github.ref_name }}"
+          fi
+          
+          # Run scanner
+          sonar-scanner $SONAR_ARGS
+          
+          # Cleanup
+          rm -rf sonar-scanner-*
