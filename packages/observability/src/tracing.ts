@@ -6,15 +6,19 @@ import {
   BatchSpanProcessor, 
   ConsoleSpanExporter, 
   SpanExporter,
-  Tracer 
+  Tracer,
+  Span,
+  SpanStatusCode,
+  SpanKind
 } from '@opentelemetry/sdk-trace-base';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { trace, metrics } from '@opentelemetry/api';
+import { trace, metrics, context, SpanStatusCode as ApiSpanStatusCode } from '@opentelemetry/api';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import { B3Propagator, B3InjectEncoding } from '@opentelemetry/propagator-b3';
 import { CompositePropagator } from '@opentelemetry/core';
+import { Request, Response, NextFunction } from 'express';
 
 export interface TracingConfig {
   serviceName: string;
@@ -29,6 +33,28 @@ export interface TracingConfig {
 export interface MetricsConfig {
   port?: number;
   endpoint?: string;
+}
+
+// Interfaz para metadata DDD
+export interface DDDMetadata {
+  aggregate?: string;
+  command?: string;
+  event?: string;
+  domain?: string;
+  boundedContext?: string;
+}
+
+// Interfaz para decorador de controlador
+export interface ControllerSpanOptions {
+  operationName?: string;
+  aggregate?: string;
+  command?: string;
+  event?: string;
+  domain?: string;
+  boundedContext?: string;
+  captureRequestBody?: boolean;
+  captureResponseBody?: boolean;
+  captureHeaders?: boolean;
 }
 
 let sdk: NodeSDK | null = null;
@@ -154,6 +180,167 @@ export function initializeMetrics(config: MetricsConfig & { serviceName: string 
 // Obtener tracer para un componente
 export function getTracer(name?: string): Tracer {
   return trace.getTracer(name || 'default-tracer');
+}
+
+// Decorador para controladores Express con metadata DDD
+export function withTracing(options: ControllerSpanOptions = {}) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    
+    descriptor.value = async function (req: Request, res: Response, next: NextFunction) {
+      const tracer = getTracer('express-controller');
+      const operationName = options.operationName || `${target.constructor.name}.${propertyKey}`;
+      
+      const span = tracer.startSpan(operationName, {
+        kind: SpanKind.SERVER,
+        attributes: {
+          'http.method': req.method,
+          'http.url': req.url,
+          'http.route': req.route?.path || req.path,
+          'http.user_agent': req.get('User-Agent'),
+          'http.request_id': req.headers['x-request-id'] as string,
+          // Metadata DDD
+          'ddd.aggregate': options.aggregate,
+          'ddd.command': options.command,
+          'ddd.event': options.event,
+          'ddd.domain': options.domain,
+          'ddd.bounded_context': options.boundedContext,
+        },
+      });
+
+      // Capturar request body si está habilitado
+      if (options.captureRequestBody && req.body) {
+        span.setAttribute('http.request.body', JSON.stringify(req.body));
+      }
+
+      // Capturar headers si está habilitado
+      if (options.captureHeaders) {
+        span.setAttribute('http.request.headers', JSON.stringify(req.headers));
+      }
+
+      try {
+        // Ejecutar el método original
+        const result = await originalMethod.call(this, req, res, next);
+        
+        // Capturar response body si está habilitado
+        if (options.captureResponseBody && res.locals?.responseBody) {
+          span.setAttribute('http.response.body', JSON.stringify(res.locals.responseBody));
+        }
+        
+        span.setStatus({ code: ApiSpanStatusCode.OK });
+        span.setAttribute('http.status_code', res.statusCode);
+        
+        return result;
+      } catch (error) {
+        span.setStatus({ 
+          code: ApiSpanStatusCode.ERROR, 
+          message: error instanceof Error ? error.message : 'Unknown error' 
+        });
+        span.recordException(error as Error);
+        throw error;
+      } finally {
+        span.end();
+      }
+    };
+    
+    return descriptor;
+  };
+}
+
+// Middleware para propagación automática de Trace ID
+export function tracePropagationMiddleware() {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const tracer = getTracer('http-middleware');
+    const span = tracer.startSpan('http.request', {
+      kind: SpanKind.SERVER,
+      attributes: {
+        'http.method': req.method,
+        'http.url': req.url,
+        'http.route': req.route?.path || req.path,
+        'http.user_agent': req.get('User-Agent'),
+        'http.request_id': req.headers['x-request-id'] as string,
+      },
+    });
+
+    // Agregar trace ID a los headers de respuesta
+    const traceId = span.spanContext().traceId;
+    res.setHeader('X-Trace-ID', traceId);
+    res.setHeader('X-Span-ID', span.spanContext().spanId);
+
+    // Agregar span al request para uso posterior
+    (req as any).span = span;
+
+    // Interceptar el final de la respuesta
+    const originalEnd = res.end;
+    res.end = function(chunk?: any, encoding?: any) {
+      span.setAttribute('http.status_code', res.statusCode);
+      span.setAttribute('http.response_size', res.get('Content-Length') || 0);
+      
+      if (res.statusCode >= 400) {
+        span.setStatus({ 
+          code: ApiSpanStatusCode.ERROR,
+          message: `HTTP ${res.statusCode}`
+        });
+      } else {
+        span.setStatus({ code: ApiSpanStatusCode.OK });
+      }
+      
+      span.end();
+      return originalEnd.call(this, chunk, encoding);
+    };
+
+    next();
+  };
+}
+
+// Función helper para crear spans con metadata DDD
+export function createDDDSpan(
+  operationName: string, 
+  metadata: DDDMetadata, 
+  fn: (span: Span) => Promise<any>
+) {
+  const tracer = getTracer('ddd-operation');
+  const span = tracer.startSpan(operationName, {
+    attributes: {
+      'ddd.aggregate': metadata.aggregate,
+      'ddd.command': metadata.command,
+      'ddd.event': metadata.event,
+      'ddd.domain': metadata.domain,
+      'ddd.bounded_context': metadata.boundedContext,
+    },
+  });
+
+  return context.with(trace.setSpan(context.active(), span), async () => {
+    try {
+      const result = await fn(span);
+      span.setStatus({ code: ApiSpanStatusCode.OK });
+      return result;
+    } catch (error) {
+      span.setStatus({ 
+        code: ApiSpanStatusCode.ERROR, 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      });
+      span.recordException(error as Error);
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
+}
+
+// Función para propagar trace context en headers HTTP
+export function injectTraceContext(headers: Record<string, string> = {}): Record<string, string> {
+  const currentSpan = trace.getActiveSpan();
+  if (currentSpan) {
+    const spanContext = currentSpan.spanContext();
+    return {
+      ...headers,
+      'X-Trace-ID': spanContext.traceId,
+      'X-Span-ID': spanContext.spanId,
+      'traceparent': `00-${spanContext.traceId}-${spanContext.spanId}-${spanContext.traceFlags.toString(16).padStart(2, '0')}`,
+    };
+  }
+  return headers;
 }
 
 // Shutdown graceful

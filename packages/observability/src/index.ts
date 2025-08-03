@@ -1,10 +1,62 @@
 import { initializeLogger, createLogger, createHttpLogger, getGlobalLogger } from './logging';
-import { initializeTracing, initializeMetrics, getTracer, shutdown } from './tracing';
+import { 
+  initializeTracing, 
+  initializeMetrics, 
+  getTracer, 
+  shutdown,
+  withTracing,
+  tracePropagationMiddleware,
+  createDDDSpan,
+  injectTraceContext,
+  type DDDMetadata,
+  type ControllerSpanOptions
+} from './tracing';
+import {
+  initializeFrontendObservability,
+  getFrontendTracer,
+  useComponentTracking,
+  useNavigationTracking,
+  useAPITracking,
+  usePerformanceTracking,
+  withTracking,
+  sendLogToBackend,
+  ErrorBoundaryWithTracking,
+  type FrontendObservabilityConfig,
+  type UserEvent,
+  type PerformanceMetric
+} from './frontend';
+import {
+  DSComponentPlugin,
+  withDSPlugin,
+  useDSPlugin,
+  TrackedButton,
+  TrackedInput,
+  TrackedCard,
+  createDSSpan,
+  trackFormEvent,
+  trackUserNavigation,
+  trackUserInteraction,
+  type DSComponentProps,
+  type DSEvent,
+  type DSPluginConfig
+} from './design-system';
 import type { LoggerConfig } from './logging';
 import type { TracingConfig, MetricsConfig } from './tracing';
 
 // Re-exportar tipos
-export type { LoggerConfig, TracingConfig, MetricsConfig };
+export type { 
+  LoggerConfig, 
+  TracingConfig, 
+  MetricsConfig,
+  DDDMetadata,
+  ControllerSpanOptions,
+  FrontendObservabilityConfig,
+  UserEvent,
+  PerformanceMetric,
+  DSComponentProps,
+  DSEvent,
+  DSPluginConfig
+};
 
 // Re-exportar funciones individuales
 export {
@@ -15,7 +67,33 @@ export {
   initializeTracing,
   initializeMetrics,
   getTracer,
-  shutdown
+  shutdown,
+  // Nuevas funciones de tracing
+  withTracing,
+  tracePropagationMiddleware,
+  createDDDSpan,
+  injectTraceContext,
+  // Funciones de frontend
+  initializeFrontendObservability,
+  getFrontendTracer,
+  useComponentTracking,
+  useNavigationTracking,
+  useAPITracking,
+  usePerformanceTracking,
+  withTracking,
+  sendLogToBackend,
+  ErrorBoundaryWithTracking,
+  // Funciones de Design System
+  DSComponentPlugin,
+  withDSPlugin,
+  useDSPlugin,
+  TrackedButton,
+  TrackedInput,
+  TrackedCard,
+  createDSSpan,
+  trackFormEvent,
+  trackUserNavigation,
+  trackUserInteraction
 };
 
 // Interfaz para configuración completa

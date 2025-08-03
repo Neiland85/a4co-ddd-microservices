@@ -1,0 +1,176 @@
+groups:
+  - name: a4co-platform-alerts
+    rules:
+      # Alertas de disponibilidad de servicios
+      - alert: ServiceDown
+        expr: up{job="a4co-services"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "Service {{ $labels.service_name }} is down"
+          description: "Service {{ $labels.service_name }} has been down for more than 1 minute"
+
+      # Alertas de latencia alta
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 0.3
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "High latency detected for {{ $labels.service_name }}"
+          description: "P95 latency for {{ $labels.service_name }} is above 300ms for more than 2 minutes"
+
+      # Alertas de tasa de error alta
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "High error rate detected for {{ $labels.service_name }}"
+          description: "Error rate for {{ $labels.service_name }} is above 1% for more than 2 minutes"
+
+      # Alertas específicas para endpoints críticos
+      - alert: OrdersCreateHighErrorRate
+        expr: rate(http_requests_total{route="/api/orders", status=~"5.."}[5m]) / rate(http_requests_total{route="/api/orders"}[5m]) > 0.01
+        for: 1m
+        labels:
+          severity: critical
+          service: "order-service"
+          endpoint: "orders.create"
+        annotations:
+          summary: "High error rate in orders.create endpoint"
+          description: "Error rate in orders.create endpoint is above 1% for more than 1 minute"
+
+      - alert: OrdersCreateHighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{route="/api/orders"}[5m])) > 0.3
+        for: 2m
+        labels:
+          severity: warning
+          service: "order-service"
+          endpoint: "orders.create"
+        annotations:
+          summary: "High latency in orders.create endpoint"
+          description: "P95 latency in orders.create endpoint is above 300ms for more than 2 minutes"
+
+      # Alertas de frontend performance
+      - alert: FrontendSlowFCP
+        expr: frontend_fcp_seconds > 1.8
+        for: 5m
+        labels:
+          severity: warning
+          component: "frontend"
+        annotations:
+          summary: "Slow First Contentful Paint detected"
+          description: "FCP is above 1.8 seconds for more than 5 minutes"
+
+      - alert: FrontendSlowLCP
+        expr: frontend_lcp_seconds > 2.5
+        for: 5m
+        labels:
+          severity: warning
+          component: "frontend"
+        annotations:
+          summary: "Slow Largest Contentful Paint detected"
+          description: "LCP is above 2.5 seconds for more than 5 minutes"
+
+      - alert: FrontendHighFID
+        expr: frontend_fid_seconds > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: "frontend"
+        annotations:
+          summary: "High First Input Delay detected"
+          description: "FID is above 100ms for more than 5 minutes"
+
+      # Alertas de recursos del sistema
+      - alert: HighMemoryUsage
+        expr: (process_resident_memory_bytes / 1024 / 1024) > 1024
+        for: 5m
+        labels:
+          severity: warning
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "High memory usage for {{ $labels.service_name }}"
+          description: "Memory usage for {{ $labels.service_name }} is above 1GB for more than 5 minutes"
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "High CPU usage for {{ $labels.service_name }}"
+          description: "CPU usage for {{ $labels.service_name }} is above 80% for more than 5 minutes"
+
+      # Alertas de base de datos
+      - alert: DatabaseSlowQueries
+        expr: histogram_quantile(0.95, rate(database_query_duration_seconds_bucket[5m])) > 1
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "Slow database queries detected for {{ $labels.service_name }}"
+          description: "P95 database query duration for {{ $labels.service_name }} is above 1 second for more than 2 minutes"
+
+      # Alertas de eventos DDD
+      - alert: DDDEventProcessingDelay
+        expr: rate(ddd_events_processing_duration_seconds_sum[5m]) / rate(ddd_events_processing_duration_seconds_count[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "Slow DDD event processing for {{ $labels.service_name }}"
+          description: "Average DDD event processing time for {{ $labels.service_name }} is above 5 seconds for more than 2 minutes"
+
+      # Alertas de Design System
+      - alert: DSComponentHighErrorRate
+        expr: rate(ds_component_errors_total[5m]) / rate(ds_component_events_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: "design-system"
+        annotations:
+          summary: "High error rate in Design System components"
+          description: "Error rate in Design System components is above 5% for more than 5 minutes"
+
+      # Alertas de disponibilidad de endpoints de observabilidad
+      - alert: ObservabilityEndpointDown
+        expr: up{job="prometheus"} == 0 or up{job="jaeger"} == 0 or up{job="grafana"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: "observability"
+        annotations:
+          summary: "Observability endpoint is down"
+          description: "One or more observability endpoints (Prometheus, Jaeger, Grafana) are down"
+
+      # Alertas de métricas faltantes
+      - alert: MissingMetrics
+        expr: absent(up{job="a4co-services"})
+        for: 5m
+        labels:
+          severity: critical
+          component: "observability"
+        annotations:
+          summary: "No metrics received from services"
+          description: "No metrics have been received from any A4CO services for more than 5 minutes"
+
+      # Alertas de throughput bajo
+      - alert: LowThroughput
+        expr: rate(http_requests_total[5m]) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          service: "{{ $labels.service_name }}"
+        annotations:
+          summary: "Low throughput detected for {{ $labels.service_name }}"
+          description: "Request rate for {{ $labels.service_name }} is below 0.1 req/sec for more than 10 minutes"
