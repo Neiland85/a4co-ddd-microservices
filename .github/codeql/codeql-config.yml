@@ -1,0 +1,42 @@
+name: "CodeQL Configuration for A4CO DDD Microservices"
+
+# Disable default queries to use custom security-focused ones
+disable-default-queries: false
+
+# Additional query packs to include
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+# Paths to analyze
+paths:
+  - apps/
+  - packages/
+  - src/
+
+# Paths to ignore
+paths-ignore:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "**/node_modules/"
+  - "**/.next/"
+  - "**/dist/"
+  - "**/coverage/"
+  - "**/.turbo/"
+  - "**/test-results/"
+  - "**/playwright-report/"
+
+# Custom query filters
+query-filters:
+  - exclude:
+      id: js/unused-local-variable
+  - exclude:
+      id: js/useless-assignment-to-local
+  - include:
+      severity: error
+  - include:
+      security-severity: high
+  - include:
+      security-severity: critical

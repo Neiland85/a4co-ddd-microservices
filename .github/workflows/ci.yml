@@ -1,0 +1,412 @@
+name: 🚀 Continuous Integration
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Prevents multiple workflows from running simultaneously
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Node.js and package manager versions
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10.9.0'
+  
+  # Turbo configuration
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  
+  # Security and quality
+  CI: true
+  FORCE_COLOR: 1
+
+jobs:
+  # ===================================
+  # 🔍 CHANGED FILES DETECTION
+  # ===================================
+  changes:
+    name: 🔍 Detect Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      apps: ${{ steps.changes.outputs.apps }}
+      packages: ${{ steps.changes.outputs.packages }}
+      config: ${{ steps.changes.outputs.config }}
+      docs: ${{ steps.changes.outputs.docs }}
+      docker: ${{ steps.changes.outputs.docker }}
+      github: ${{ steps.changes.outputs.github }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Detect changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            apps:
+              - 'apps/**'
+            packages:
+              - 'packages/**'
+            config:
+              - 'package.json'
+              - 'pnpm-workspace.yaml'
+              - 'turbo.json'
+              - 'tsconfig.json'
+              - '.eslintrc.json'
+              - 'jest.config.js'
+            docs:
+              - '**/*.md'
+              - 'docs/**'
+            docker:
+              - '**/Dockerfile'
+              - 'docker-compose*.yml'
+            github:
+              - '.github/**'
+
+  # ===================================
+  # 🛡️ SECURITY SCANS
+  # ===================================
+  security:
+    name: 🛡️ Security Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: changes
+    if: needs.changes.outputs.apps == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.config == 'true'
+    
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔍 Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: typescript, javascript
+          queries: +security-and-quality
+
+      - name: 🏗️ Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: 🛡️ Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:typescript"
+
+  # ===================================
+  # ⚡ QUALITY & LINTING
+  # ===================================
+  lint:
+    name: ⚡ Lint & Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: changes
+    if: needs.changes.outputs.apps == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.config == 'true'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - name: ⚡ ESLint
+        run: pnpm lint
+
+      - name: 🎨 Prettier check
+        run: pnpm format --check
+
+      - name: 📊 Upload ESLint results
+        if: failure()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: eslint-results.sarif
+
+  # ===================================
+  # 🔧 TYPE CHECKING
+  # ===================================
+  typecheck:
+    name: 🔧 TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: changes
+    if: needs.changes.outputs.apps == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.config == 'true'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - name: 🔧 TypeScript check
+        run: pnpm exec turbo run type-check --concurrency=2
+
+  # ===================================
+  # 🧪 TESTS (Matrix Strategy)
+  # ===================================
+  test:
+    name: 🧪 Tests
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    needs: changes
+    if: needs.changes.outputs.apps == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.config == 'true'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        node-version: ['18', '20']
+        include:
+          # Test on Windows with latest Node.js for compatibility
+          - os: windows-latest
+            node-version: '20'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-node${{ matrix.node-version }}-
+
+      - name: 🧪 Unit tests
+        run: pnpm test
+
+      - name: 📊 Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # ===================================
+  # 🏗️ BUILD VERIFICATION
+  # ===================================
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [changes, lint, typecheck]
+    if: needs.changes.outputs.apps == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.config == 'true'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-build-
+
+      - name: 🏗️ Build applications
+        run: pnpm build
+
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ github.sha }}
+          path: |
+            apps/*/dist/
+            apps/*/.next/
+            !apps/*/.next/cache/
+          retention-days: 7
+
+  # ===================================
+  # 🔒 DEPENDENCY SCANNING
+  # ===================================
+  dependencies:
+    name: 🔒 Dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: changes
+    if: needs.changes.outputs.apps == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.config == 'true'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔒 Audit dependencies
+        run: pnpm audit --audit-level moderate
+
+      - name: 🛡️ Check for known vulnerabilities
+        run: |
+          npx better-npm-audit audit --level moderate --production
+        continue-on-error: true
+
+  # ===================================
+  # 🎯 E2E TESTS (Optional/Conditional)
+  # ===================================
+  e2e:
+    name: 🎯 E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-${{ github.sha }}
+
+      - name: 🎯 Run Playwright tests
+        run: pnpm e2e
+        continue-on-error: true
+
+      - name: 📊 Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: test-results/
+          retention-days: 7
+
+  # ===================================
+  # ✅ STATUS CHECK
+  # ===================================
+  ci-success:
+    name: ✅ CI Success
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [security, lint, typecheck, test, build, dependencies]
+    if: always()
+
+    steps:
+      - name: ✅ Check CI status
+        run: |
+          if [[ "${{ needs.security.result }}" == "failure" || \
+                "${{ needs.lint.result }}" == "failure" || \
+                "${{ needs.typecheck.result }}" == "failure" || \
+                "${{ needs.test.result }}" == "failure" || \
+                "${{ needs.build.result }}" == "failure" || \
+                "${{ needs.dependencies.result }}" == "failure" ]]; then
+            echo "❌ CI failed"
+            exit 1
+          else
+            echo "✅ CI passed"
+          fi

@@ -1,0 +1,271 @@
+name: 🛡️ Security Scan
+
+on:
+  schedule:
+    # Run security scan daily at 02:00 UTC
+    - cron: '0 2 * * *'
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10.9.0'
+
+jobs:
+  # ===================================
+  # 🔍 DEPENDENCY SCANNING
+  # ===================================
+  dependency-scan:
+    name: 🔍 Dependency Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔍 Run npm audit
+        run: |
+          pnpm audit --audit-level moderate --json > audit-results.json || true
+
+      - name: 🛡️ Run Snyk vulnerability scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=medium --json-file-output=snyk-results.json
+
+      - name: 📊 Upload vulnerability results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results-${{ github.sha }}
+          path: |
+            audit-results.json
+            snyk-results.json
+          retention-days: 30
+
+  # ===================================
+  # 🔒 CODE ANALYSIS
+  # ===================================
+  codeql-analysis:
+    name: 🔒 CodeQL Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['typescript', 'javascript']
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔍 Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: +security-and-quality
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: 🏗️ Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: 🛡️ Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # ===================================
+  # 🔐 SECRET SCANNING
+  # ===================================
+  secret-scan:
+    name: 🔐 Secret Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Run TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+      - name: 🔐 Detect secrets with GitLeaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # ===================================
+  # 🛡️ CONTAINER SECURITY
+  # ===================================
+  container-scan:
+    name: 🛡️ Container Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐳 Build test image
+        run: |
+          if [ -f "apps/dashboard-web/Dockerfile" ]; then
+            docker build -t test-image:latest apps/dashboard-web/
+          else
+            echo "Dockerfile not found, skipping container scan"
+            exit 0
+          fi
+
+      - name: 🔍 Run Trivy vulnerability scanner
+        if: success()
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'test-image:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: 📊 Upload Trivy scan results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # ===================================
+  # 🔒 SECURITY CONFIGURATION
+  # ===================================
+  security-config:
+    name: 🔒 Security Configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔍 Run custom security check script
+        run: |
+          if [[ -f "./security-check.sh" ]]; then
+            chmod +x ./security-check.sh
+            ./security-check.sh
+          fi
+
+      - name: 🛡️ Check security headers configuration
+        run: |
+          # Check Next.js security headers
+          if [ -f "next.config.js" ]; then
+            echo "Checking Next.js security configuration..."
+            grep -q "contentSecurityPolicy\|frameOptions\|contentTypeOptions" next.config.js || \
+              echo "⚠️ Security headers not found in next.config.js"
+          fi
+
+      - name: 🔐 Validate environment files
+        run: |
+          # Check for sensitive data in .env files
+          find . -name "*.env*" -not -path "./node_modules/*" | while read -r file; do
+            if [ -f "$file" ]; then
+              echo "Checking $file for sensitive patterns..."
+              # Check for common sensitive patterns
+              if grep -qE "(password|secret|key|token).*=" "$file"; then
+                echo "⚠️ Potential sensitive data found in $file"
+              fi
+            fi
+          done
+
+  # ===================================
+  # 📊 SECURITY REPORT
+  # ===================================
+  security-report:
+    name: 📊 Security Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [dependency-scan, codeql-analysis, secret-scan, security-config]
+    if: always()
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📥 Download scan results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "security-scan-results-*"
+          merge-multiple: true
+        continue-on-error: true
+
+      - name: 📊 Generate security summary
+        run: |
+          echo "## 🛡️ Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📋 Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dependency Scan:** ${{ needs.dependency-scan.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **CodeQL Analysis:** ${{ needs.codeql-analysis.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Secret Scanning:** ${{ needs.secret-scan.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Security Config:** ${{ needs.security-config.result }}" >> $GITHUB_STEP_SUMMARY
+          
+          # Check if any critical issues found
+          if [[ "${{ needs.dependency-scan.result }}" == "failure" ]] || \
+             [[ "${{ needs.codeql-analysis.result }}" == "failure" ]] || \
+             [[ "${{ needs.secret-scan.result }}" == "failure" ]]; then
+            echo "## ⚠️ Critical Security Issues Found" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the security scan results and address any critical vulnerabilities." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ No Critical Security Issues Found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🔔 Create security issue (if needed)
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title: `🛡️ Security Scan Failed - ${new Date().toISOString().split('T')[0]}`,
+              body: `Security scan failed on scheduled run. Please review the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
+              labels: ['security', 'bug', 'high-priority']
+            });

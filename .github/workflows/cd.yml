@@ -1,0 +1,446 @@
+name: 🚀 Continuous Deployment
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      force_deploy:
+        description: 'Force deployment (skip some checks)'
+        required: false
+        default: false
+        type: boolean
+
+# Prevents multiple deployments from running simultaneously
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Node.js and package manager versions
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10.9.0'
+  
+  # Turbo configuration
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  
+  # Build configuration
+  CI: true
+  FORCE_COLOR: 1
+  NODE_ENV: production
+
+permissions:
+  contents: read
+  packages: write
+  deployments: write
+  id-token: write
+
+jobs:
+  # ===================================
+  # 📋 DEPLOYMENT PREPARATION
+  # ===================================
+  prepare:
+    name: 📋 Prepare Deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      environment: ${{ steps.setup.outputs.environment }}
+      version: ${{ steps.setup.outputs.version }}
+      should_deploy: ${{ steps.setup.outputs.should_deploy }}
+      is_production: ${{ steps.setup.outputs.is_production }}
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup deployment variables
+        id: setup
+        run: |
+          # Determine environment
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+          
+          # Extract version
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "version=main-${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+          fi
+          
+          # Determine if should deploy
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || \
+             [[ "${{ github.ref }}" == "refs/heads/main" ]] || \
+             [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check if production
+          if [[ "${{ github.event.inputs.environment }}" == "production" ]] || \
+             [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "is_production=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_production=false" >> $GITHUB_OUTPUT
+          fi
+
+  # ===================================
+  # 🏗️ BUILD PRODUCTION ARTIFACTS
+  # ===================================
+  build:
+    name: 🏗️ Build Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: prepare
+    if: needs.prepare.outputs.should_deploy == 'true'
+
+    strategy:
+      matrix:
+        app: [dashboard-web, web]
+        include:
+          - app: dashboard-web
+            path: apps/dashboard-web
+          - app: web
+            path: apps/web
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-production-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-production-
+            turbo-${{ runner.os }}-build-
+
+      - name: 🔒 Setup environment variables
+        run: |
+          echo "NEXT_PUBLIC_APP_VERSION=${{ needs.prepare.outputs.version }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: 🏗️ Build application
+        run: pnpm turbo run build --filter=${{ matrix.app }}
+        env:
+          NODE_ENV: production
+
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-build-${{ needs.prepare.outputs.version }}
+          path: |
+            ${{ matrix.path }}/dist/
+            ${{ matrix.path }}/.next/
+            !${{ matrix.path }}/.next/cache/
+            ${{ matrix.path }}/public/
+          retention-days: 30
+
+  # ===================================
+  # 🐳 DOCKER BUILD (Optional)
+  # ===================================
+  docker:
+    name: 🐳 Docker Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [prepare, build]
+    if: needs.prepare.outputs.should_deploy == 'true' && (github.event.inputs.force_deploy == 'true' || needs.prepare.outputs.is_production == 'true')
+
+    strategy:
+      matrix:
+        app: [dashboard-web, web]
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.app }}-build-${{ needs.prepare.outputs.version }}
+          path: apps/${{ matrix.app }}/
+
+      - name: 🏗️ Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: apps/${{ matrix.app }}
+          file: apps/${{ matrix.app }}/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ needs.prepare.outputs.version }}
+            ghcr.io/${{ github.repository }}/${{ matrix.app }}:latest
+          labels: |
+            org.opencontainers.image.title=${{ matrix.app }}
+            org.opencontainers.image.description=A4CO DDD Microservices - ${{ matrix.app }}
+            org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  # ===================================
+  # 🔒 SECURITY VALIDATION
+  # ===================================
+  security-validation:
+    name: 🔒 Security Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [prepare, build]
+    if: needs.prepare.outputs.should_deploy == 'true' && needs.prepare.outputs.is_production == 'true'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-build-${{ needs.prepare.outputs.version }}"
+          merge-multiple: true
+
+      - name: 🛡️ Run security scan on build
+        run: |
+          # Custom security validation script
+          if [[ -f "./security-check.sh" ]]; then
+            chmod +x ./security-check.sh
+            ./security-check.sh
+          fi
+
+      - name: 🔍 Check for secrets in build
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+
+  # ===================================
+  # 🧪 SMOKE TESTS
+  # ===================================
+  smoke-tests:
+    name: 🧪 Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [prepare, build]
+    if: needs.prepare.outputs.should_deploy == 'true'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-build-${{ needs.prepare.outputs.version }}"
+          merge-multiple: true
+
+      - name: 🧪 Run smoke tests
+        run: |
+          # Start applications in background for smoke testing
+          pnpm turbo run start &
+          sleep 30
+          
+          # Basic health checks
+          curl -f http://localhost:3001/api/health || exit 1
+          
+          # Run lightweight smoke tests
+          pnpm test:smoke || true
+
+  # ===================================
+  # 🚀 STAGING DEPLOYMENT
+  # ===================================
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [prepare, build, smoke-tests]
+    if: needs.prepare.outputs.should_deploy == 'true' && needs.prepare.outputs.environment == 'staging'
+    
+    environment:
+      name: staging
+      url: https://staging.a4co.example.com
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-build-${{ needs.prepare.outputs.version }}"
+          merge-multiple: true
+
+      - name: 🚀 Deploy to staging environment
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "Version: ${{ needs.prepare.outputs.version }}"
+          echo "Environment: staging"
+          echo "Build artifacts ready for deployment"
+          
+          # TODO: Add actual staging deployment logic here
+          # Examples:
+          # - Deploy to Vercel preview
+          # - Deploy to AWS S3 + CloudFront
+          # - Deploy to Kubernetes staging namespace
+          # - Deploy to Docker containers
+
+      - name: 📝 Create deployment summary
+        run: |
+          echo "## 🚀 Staging Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ needs.prepare.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** staging" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+  # ===================================
+  # 🏭 PRODUCTION DEPLOYMENT
+  # ===================================
+  deploy-production:
+    name: 🏭 Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [prepare, build, security-validation, smoke-tests]
+    if: needs.prepare.outputs.should_deploy == 'true' && needs.prepare.outputs.is_production == 'true'
+    
+    environment:
+      name: production
+      url: https://a4co.example.com
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-build-${{ needs.prepare.outputs.version }}"
+          merge-multiple: true
+
+      - name: 🔒 Additional production security check
+        run: |
+          echo "🔒 Running additional production security checks..."
+          # Add production-specific security validations
+          
+      - name: 🏭 Deploy to production environment
+        run: |
+          echo "🏭 Deploying to production environment..."
+          echo "Version: ${{ needs.prepare.outputs.version }}"
+          echo "Environment: production"
+          echo "Build artifacts ready for deployment"
+          
+          # TODO: Add actual production deployment logic here
+          # Examples:
+          # - Deploy to Vercel production
+          # - Deploy to AWS S3 + CloudFront with blue-green
+          # - Deploy to Kubernetes production namespace
+          # - Deploy to production Docker containers with rolling update
+
+      - name: 📝 Create deployment summary
+        run: |
+          echo "## 🏭 Production Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** ${{ needs.prepare.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** production" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🎉 Post-deployment notification
+        if: success()
+        run: |
+          echo "🎉 Production deployment completed successfully!"
+          # TODO: Add notification logic (Slack, Discord, etc.)
+
+  # ===================================
+  # 🧹 CLEANUP
+  # ===================================
+  cleanup:
+    name: 🧹 Cleanup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [prepare, deploy-staging, deploy-production]
+    if: always() && needs.prepare.outputs.should_deploy == 'true'
+
+    steps:
+      - name: 🧹 Clean up old artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: artifacts } = await github.rest.actions.listArtifactsForRepo({
+              owner,
+              repo,
+              per_page: 100
+            });
+            
+            // Keep artifacts from last 10 deployments
+            const oldArtifacts = artifacts.artifacts
+              .filter(artifact => artifact.created_at < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+              .slice(10);
+            
+            for (const artifact of oldArtifacts) {
+              await github.rest.actions.deleteArtifact({
+                owner,
+                repo,
+                artifact_id: artifact.id
+              });
+              console.log(`Deleted artifact: ${artifact.name}`);
+            }

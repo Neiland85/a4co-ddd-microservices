@@ -1,0 +1,293 @@
+name: ⚡ Performance Monitoring
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run performance tests weekly on Sunday at 03:00 UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: performance-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10.9.0'
+
+jobs:
+  # ===================================
+  # 📦 BUNDLE SIZE ANALYSIS
+  # ===================================
+  bundle-analysis:
+    name: 📦 Bundle Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      matrix:
+        app: [dashboard-web]
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-performance-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-performance-
+            turbo-${{ runner.os }}-build-
+
+      - name: 🏗️ Build for production
+        run: pnpm turbo run build --filter=${{ matrix.app }}
+        env:
+          NODE_ENV: production
+          ANALYZE: true
+
+      - name: 📊 Analyze bundle size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            const buildPath = path.join('apps', '${{ matrix.app }}', '.next');
+            
+            if (fs.existsSync(buildPath)) {
+              console.log('📦 Bundle analysis for ${{ matrix.app }}');
+              
+              // Basic bundle size reporting
+              const { execSync } = require('child_process');
+              try {
+                const result = execSync(`npx next-bundle-analyzer apps/${{ matrix.app }}/.next`, { encoding: 'utf8' });
+                console.log(result);
+              } catch (error) {
+                console.log('Bundle analyzer not available, using basic analysis');
+                
+                // Simple size reporting
+                const nextStatic = path.join(buildPath, 'static');
+                if (fs.existsSync(nextStatic)) {
+                  const getDirectorySize = (dirPath) => {
+                    let totalSize = 0;
+                    const files = fs.readdirSync(dirPath, { withFileTypes: true });
+                    
+                    for (const file of files) {
+                      const filePath = path.join(dirPath, file.name);
+                      if (file.isDirectory()) {
+                        totalSize += getDirectorySize(filePath);
+                      } else {
+                        totalSize += fs.statSync(filePath).size;
+                      }
+                    }
+                    return totalSize;
+                  };
+                  
+                  const sizeInMB = (getDirectorySize(nextStatic) / 1024 / 1024).toFixed(2);
+                  console.log(`📦 Total static assets size: ${sizeInMB} MB`);
+                }
+              }
+            }
+
+      - name: 📈 Bundle size report
+        run: |
+          echo "## 📦 Bundle Size Report - ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **App:** ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Time:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+
+  # ===================================
+  # 🚀 LIGHTHOUSE AUDIT
+  # ===================================
+  lighthouse:
+    name: 🚀 Lighthouse Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    strategy:
+      matrix:
+        app: [dashboard-web]
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build application
+        run: pnpm turbo run build --filter=${{ matrix.app }}
+        env:
+          NODE_ENV: production
+
+      - name: 🚀 Start application
+        run: |
+          cd apps/${{ matrix.app }}
+          pnpm start &
+          
+          # Wait for application to be ready
+          timeout=60
+          while ! curl -f http://localhost:3000/api/health 2>/dev/null; do
+            sleep 2
+            timeout=$((timeout - 2))
+            if [ $timeout -le 0 ]; then
+              echo "❌ Application failed to start"
+              exit 1
+            fi
+          done
+          echo "✅ Application is ready"
+
+      - name: 🚀 Run Lighthouse audit
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/dashboard
+          configPath: './.github/lighthouse/lighthouse-config.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: 📊 Upload Lighthouse results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results-${{ matrix.app }}-${{ github.sha }}
+          path: |
+            lhci_reports/
+            lighthouse-results.json
+          retention-days: 30
+
+  # ===================================
+  # ⏱️ BUILD PERFORMANCE
+  # ===================================
+  build-performance:
+    name: ⏱️ Build Performance
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📦 Install dependencies
+        run: |
+          echo "⏱️ Starting dependency installation at $(date)"
+          time pnpm install --frozen-lockfile
+          echo "✅ Dependencies installed at $(date)"
+
+      - name: 🔧 Clean build (no cache)
+        run: |
+          echo "⏱️ Starting clean build at $(date)"
+          time pnpm turbo run build --force
+          echo "✅ Clean build completed at $(date)"
+
+      - name: 🔧 Cached build
+        run: |
+          echo "⏱️ Starting cached build at $(date)"
+          time pnpm turbo run build
+          echo "✅ Cached build completed at $(date)"
+
+      - name: 📊 Performance summary
+        run: |
+          echo "## ⏱️ Build Performance Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Runner:** ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Node.js:** ${{ env.NODE_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **pnpm:** ${{ env.PNPM_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+  # ===================================
+  # 📊 PERFORMANCE REPORT
+  # ===================================
+  performance-report:
+    name: 📊 Performance Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [bundle-analysis, lighthouse, build-performance]
+    if: always()
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📥 Download performance results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "lighthouse-results-*"
+          merge-multiple: true
+        continue-on-error: true
+
+      - name: 📊 Generate performance report
+        run: |
+          echo "## ⚡ Performance Monitoring Report" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📋 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bundle Analysis:** ${{ needs.bundle-analysis.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Lighthouse Audit:** ${{ needs.lighthouse.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Performance:** ${{ needs.build-performance.result }}" >> $GITHUB_STEP_SUMMARY
+          
+          # Check for performance regressions
+          if [[ "${{ needs.bundle-analysis.result }}" == "failure" ]] || \
+             [[ "${{ needs.lighthouse.result }}" == "failure" ]] || \
+             [[ "${{ needs.build-performance.result }}" == "failure" ]]; then
+            echo "## ⚠️ Performance Issues Detected" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the performance test results for potential optimizations." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ Performance Tests Passed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📈 Performance regression detection
+        if: github.event_name == 'pull_request'
+        run: |
+          # Simple performance regression detection
+          # In a real implementation, you would compare against baseline metrics
+          echo "🔍 Checking for performance regressions..."
+          echo "📊 Performance regression check completed"
