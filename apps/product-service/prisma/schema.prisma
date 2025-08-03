@@ -1,8 +1,11 @@
+      cursor/design-microservice-communication-strategy-a023
+
       develop
      develop
 
      cursor/design-microservice-communication-strategy-866b
      main
+     develop
 // Product Service - Schema de Base de Datos con Prisma ORM
 // Siguiendo principios DDD: Aggregates, Entities, Value Objects
 // Marketplace Local de Jaén - A4CO
@@ -10,11 +13,13 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+    cursor/design-microservice-communication-strategy-a023
 
 generator client {
   provider = "prisma-client-js"
   output   = "../src/infrastructure/generated/prisma"
      main
+     develop
 }
 
 datasource db {
@@ -22,11 +27,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+    cursor/design-microservice-communication-strategy-a023
+
      develop
     develop
 
     cursor/design-microservice-communication-strategy-866b
      main
+     develop
 // ========================================
 // PRODUCT AGGREGATE ROOT
 // ========================================
@@ -468,7 +476,7 @@ view ProductWithDetails {
   createdAt        DateTime
   
   @@map("v_products_with_details")
-=======
+    cursor/design-microservice-communication-strategy-a023
 // AGREGADO PRINCIPAL - PRODUCTS
 model Product {
   // Identificadores
@@ -646,4 +654,5 @@ enum ProductAvailability {
 
     main
      main
+     develop
 }

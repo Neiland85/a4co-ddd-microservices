@@ -25,12 +25,17 @@
     "db:push": "turbo run db:push",
     "db:migrate": "turbo run db:migrate",
     "start:dev": "concurrently \"pnpm run dev\"",
+     cursor/design-microservice-communication-strategy-a023
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+
     "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
     "docker:down": "docker-compose -f docker-compose.dev.yml down",
     "docker:logs": "docker-compose -f docker-compose.dev.yml logs -f",
     "storybook:dev": "pnpm --filter @a4co/design-system storybook",
     "design:sync": "node scripts/sync-design-tokens.js sync",
     "design:sync:watch": "node scripts/sync-design-tokens.js watch",
+     develop
     "test:coverage": "turbo run test:coverage",
     "test:coverage:report": "turbo run test:coverage && pnpm run coverage:merge",
     "coverage:merge": "lcov-result-merger 'apps/**/coverage/lcov.info' 'packages/**/coverage/lcov.info' > coverage/lcov.info",
