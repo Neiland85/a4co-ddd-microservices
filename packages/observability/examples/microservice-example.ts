@@ -1,9 +1,9 @@
     cursor/design-microservice-communication-strategy-a023
 import express, { Request, Response, NextFunction } from 'express';
-import { setupObservability, TracingUtils, Trace, TracedHttpClient } from '@a4co/observability';
+import { initializeObservability, TracingUtils, Trace, TracedHttpClient } from '@a4co/observability';
 
 // Configurar observabilidad
-const observability = setupObservability({
+const observability = initializeObservability({
   serviceName: 'user-service',
   serviceVersion: '1.0.0',
   environment: process.env.NODE_ENV || 'development',
