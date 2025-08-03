@@ -284,15 +284,7 @@ show_logs() {
 }
 
 # Abrir navegador si está disponible
-if command -v xdg-open &> /dev/null; then
-    sleep 3
-    xdg-open "http://localhost:3000" &
-    xdg-open "http://localhost:6006" &
-elif command -v open &> /dev/null; then
-    sleep 3
-    open "http://localhost:3000" &
-    open "http://localhost:6006" &
-fi
+open_browser_urls
 
 # Mantener el script corriendo
 echo -e "\n${GREEN}✅ Todos los servicios están iniciándose...${NC}"
