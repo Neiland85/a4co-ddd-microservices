@@ -91,7 +91,8 @@ jobs:
         run: |
           # Save cache if it doesn't exist
           echo "Saving pnpm cache to $CACHE_FILE"
-          tar -czf "$CACHE_FILE" "${{ steps.pnpm-cache.outputs.STORE_PATH }}"
+          STORE_PATH=$(pnpm store path)
+          tar -czf "$CACHE_FILE" "$STORE_PATH"
       
       - name: Run tests with coverage
         run: |
