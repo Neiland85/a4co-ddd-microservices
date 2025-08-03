@@ -2,6 +2,9 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+     cursor/verificar-arquitectura-y-levantar-servidores-0628
+
+     main
 interface SalesOpportunity {
   id: string;
   title: string;
@@ -41,6 +44,10 @@ export function useSalesOpportunities(
   const { autoFetch = false, type, location, category } = options;
 
   // Memoizar las opciones para evitar recreación en cada render
+  const memoizedOptions = useMemo(
+    () => ({ type, location, category }),
+    [type, location, category]
+  );
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
@@ -51,7 +58,7 @@ export function useSalesOpportunities(
   });
 
   const fetchOpportunities = useCallback(
-    async () => {
+    async (customFilters = {}) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -81,6 +88,7 @@ export function useSalesOpportunities(
             total: result.data.total || 0,
             loading: false,
             error: null,
+            filters: finalFilters,
           }));
         } else {
           throw new Error(result.error || 'Error al cargar oportunidades');
@@ -96,7 +104,7 @@ export function useSalesOpportunities(
         }));
       }
     },
-    [type, location, category]
+    [memoizedOptions]
   );
 
   // Use ref to store the latest fetchOpportunities function
