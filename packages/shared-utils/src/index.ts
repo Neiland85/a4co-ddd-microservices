@@ -23,3 +23,6 @@ export * from './security';
 export * from './events/event-bus';
 export * from './events/subjects';
 export * from './events/domain-events';
+
+// Exportar clientes API para comunicación entre servicios
+export * from './api-clients';
