@@ -1,0 +1,225 @@
+# Prometheus Helm Chart Values for A4CO Platform
+# https://github.com/prometheus-community/helm-charts
+
+# Prometheus Server Configuration
+prometheus:
+  prometheusSpec:
+    replicas: 2
+    retention: 30d
+    retentionSize: "50GB"
+    
+    # Resource limits
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 2000m
+        memory: 8Gi
+    
+    # Storage configuration
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 100Gi
+    
+    # Service monitors to discover
+    serviceMonitorSelector:
+      matchLabels:
+        app.kubernetes.io/part-of: a4co
+    
+    # Pod monitors to discover
+    podMonitorSelector:
+      matchLabels:
+        app.kubernetes.io/part-of: a4co
+    
+    # Rules to include
+    ruleSelector:
+      matchLabels:
+        app.kubernetes.io/part-of: a4co
+    
+    # Additional scrape configs
+    additionalScrapeConfigs:
+      - job_name: 'a4co-microservices'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - a4co-prod
+                - a4co-staging
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: kubernetes_pod_name
+
+# Alertmanager Configuration
+alertmanager:
+  alertmanagerSpec:
+    replicas: 3
+    retention: 120h
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+    
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+# Grafana Configuration
+grafana:
+  enabled: true
+  replicas: 2
+  
+  adminPassword: ${GRAFANA_ADMIN_PASSWORD}
+  
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    hosts:
+      - grafana.a4co.com
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.a4co.com
+  
+  persistence:
+    enabled: true
+    size: 10Gi
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  # Grafana datasources
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          url: http://prometheus-operated:9090
+          access: proxy
+          isDefault: true
+        - name: Jaeger
+          type: jaeger
+          url: http://jaeger-query:80
+          access: proxy
+        - name: Loki
+          type: loki
+          url: http://loki:3100
+          access: proxy
+  
+  # Pre-configured dashboards
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'a4co-dashboards'
+          orgId: 1
+          folder: 'A4CO'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/a4co
+
+# Node Exporter
+nodeExporter:
+  enabled: true
+
+# Kube State Metrics
+kubeStateMetrics:
+  enabled: true
+
+# Prometheus Operator
+prometheusOperator:
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# Default Prometheus Rules
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: false
+    general: true
+    k8s: true
+    kubeApiserver: true
+    kubeApiserverAvailability: true
+    kubeApiserverError: true
+    kubeApiserverSlos: true
+    kubelet: true
+    kubePrometheusGeneral: true
+    kubePrometheusNodeAlerting: true
+    kubePrometheusNodeRecording: true
+    kubernetesAbsent: true
+    kubernetesApps: true
+    kubernetesResources: true
+    kubernetesStorage: true
+    kubernetesSystem: true
+    kubeScheduler: true
+    kubeStateMetrics: true
+    network: true
+    node: true
+    prometheus: true
+    prometheusOperator: true
+
+# Additional ServiceMonitors
+additionalServiceMonitors:
+  - name: a4co-microservices
+    selector:
+      matchLabels:
+        app.kubernetes.io/part-of: a4co
+    endpoints:
+      - port: metrics
+        interval: 30s
+        path: /metrics
+    namespaceSelector:
+      matchNames:
+        - a4co-prod
+        - a4co-staging
+
+# Common labels
+commonLabels:
+  app.kubernetes.io/part-of: a4co-observability
+  app.kubernetes.io/component: monitoring
