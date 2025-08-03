@@ -22,7 +22,6 @@ export * from './security';
 // Exportar sistema de eventos
 export * from './events/event-bus';
 export * from './events/subjects';
-   cursor/design-microservice-communication-strategy-a023
 export * from './events/domain-events';
 
 
