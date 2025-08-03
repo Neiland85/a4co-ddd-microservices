@@ -2,7 +2,7 @@ import pino, { Logger, LoggerOptions } from 'pino';
 import { v4 as uuidv4 } from 'uuid';
 import { context, trace } from '@opentelemetry/api';
 import { LoggerConfig, LogContext, DDDMetadata } from '../types';
-import { ObservabilityLogger } from '../ObservabilityLogger';
+import type { ObservabilityLogger } from '../ObservabilityLogger';
 
 // Global logger instance
 let globalLogger: ObservabilityLogger | null = null;
