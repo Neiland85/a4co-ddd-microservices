@@ -63,3 +63,12 @@ echo -e "${YELLOW}💡 Presiona Ctrl+C para detener todos los servicios${NC}\n"
 
 # Ejecutar turbo dev (esto bloqueará hasta Ctrl+C)
 pnpm dev
+STATUS=$?
+if [ $STATUS -ne 0 ]; then
+    echo -e "${PURPLE}\n❌ Error: 'pnpm dev' falló al iniciar los servicios de desarrollo.${NC}" 1>&2
+    echo -e "${YELLOW}Sugerencias:${NC}" 1>&2
+    echo -e "${YELLOW}- Revisa el log de errores arriba para más detalles.${NC}" 1>&2
+    echo -e "${YELLOW}- Asegúrate de que todas las dependencias estén instaladas correctamente (prueba 'pnpm install').${NC}" 1>&2
+    echo -e "${YELLOW}- Verifica que no haya otro proceso usando los mismos puertos.${NC}" 1>&2
+    exit $STATUS
+fi
