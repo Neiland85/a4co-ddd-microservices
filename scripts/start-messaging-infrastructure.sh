@@ -35,7 +35,7 @@ cat << "EOF"
     _  _   ____  ____  ___  
    / )( \ / ___)/ ___)/ _ \ 
      cursor/design-microservice-communication-strategy-a023
-   ╲ (/ /╱     ) (__ ) __ (
+   \( / /     ) (__ ) __ (
 
    \ (/ /      ) (__ ) __ (
    develop
