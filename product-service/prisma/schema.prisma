@@ -1,0 +1,152 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== PRODUCT AGGREGATE ====================
+
+model Product {
+  id          String   @id @default(uuid())
+  sku         String   @unique
+  name        String
+  description String?
+  
+  // Value Objects
+  price       Decimal  @db.Decimal(10, 2)
+  currency    String   @default("USD")
+  
+  // Business Rules
+  isActive    Boolean  @default(true)
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  version     Int      @default(1) // Para optimistic locking
+  
+  // Relations
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  
+  variants    ProductVariant[]
+  images      ProductImage[]
+  attributes  ProductAttribute[]
+  
+  // Indexes for performance
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([createdAt])
+}
+
+model ProductVariant {
+  id          String   @id @default(uuid())
+  productId   String
+  sku         String   @unique
+  name        String
+  
+  // Variant specific pricing
+  price       Decimal? @db.Decimal(10, 2) // null means use product price
+  
+  // Stock keeping
+  stockQuantity Int    @default(0)
+  reservedQuantity Int @default(0)
+  
+  // Variant attributes (size, color, etc)
+  attributes  Json     // {"size": "L", "color": "Blue"}
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@index([productId])
+  @@index([stockQuantity])
+}
+
+// ==================== CATEGORY AGGREGATE ====================
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  
+  // Hierarchical structure
+  parentId    String?
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  
+  // Display order
+  sortOrder   Int      @default(0)
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  products    Product[]
+  
+  @@index([parentId])
+  @@index([slug])
+}
+
+// ==================== VALUE OBJECTS AS ENTITIES ====================
+
+model ProductImage {
+  id          String   @id @default(uuid())
+  productId   String
+  url         String
+  alt         String?
+  isPrimary   Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@index([productId])
+}
+
+model ProductAttribute {
+  id          String   @id @default(uuid())
+  productId   String
+  name        String
+  value       String
+  groupName   String?  // Para agrupar atributos relacionados
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@index([productId])
+  @@unique([productId, name])
+}
+
+// ==================== DOMAIN EVENTS OUTBOX ====================
+
+model DomainEvent {
+  id          String   @id @default(uuid())
+  aggregateId String
+  eventType   String
+  eventData   Json
+  occurredAt  DateTime @default(now())
+  
+  // Para garantizar entrega
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  
+  @@index([published])
+  @@index([occurredAt])
+  @@index([aggregateId])
+}
