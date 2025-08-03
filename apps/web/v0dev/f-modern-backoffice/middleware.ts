@@ -56,10 +56,10 @@ export function middleware(request: NextRequest) {
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 
   // CSP (Content Security Policy)
-  const isDev = process.env.NODE_ENV === 'development';
+  // Removed 'unsafe-eval' from script-src for improved security
   const cspHeader = [
     "default-src 'self'",
-    `script-src 'self'${isDev ? " 'unsafe-eval'" : ""}`,
+    "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
