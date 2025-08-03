@@ -26,7 +26,6 @@ export * from './events/subjects';
 export * from './events/domain-events';
 
 export * from './events/domain-events';
-     cursor/analizar-y-refactorizar-dependencias-del-monorepo-1ae9
 
 // Exportar clientes API para comunicación entre servicios
 export * from './api-clients';
@@ -35,5 +34,8 @@ export * from './events/integration-events';
 
 // Exportar sistema de sagas
 export * from './saga/saga-orchestrator';
+    cursor/levantar-todos-los-servicios-de-desarrollo-local-39aa
+
    main
      develop
+   develop
