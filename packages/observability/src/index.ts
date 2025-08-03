@@ -1,4 +1,7 @@
+    cursor/design-microservice-communication-strategy-a023
+
     develop
+     develop
 import { initializeLogger, createLogger, createHttpLogger, getGlobalLogger } from './logging';
 import { initializeTracing, initializeMetrics, getTracer, shutdown } from './tracing';
 import type { LoggerConfig } from './logging';
@@ -103,6 +106,9 @@ export const logger = new Proxy({}, {
 // Función helper para obtener el tracer por defecto
 export function tracer(name?: string) {
   return getTracer(name);
+   cursor/design-microservice-communication-strategy-a023
+}
+
 }
 
 // Exportar módulos de frontend
@@ -126,7 +132,7 @@ export * from './utils';
 export * from './instrumentation';
 export * from './config';
     develop
-=======
+
 /**
  * @a4co/observability - Unified observability package
  * 
@@ -161,3 +167,4 @@ export {
 // Version
 export const VERSION = '1.0.0';
      main
+     develop
