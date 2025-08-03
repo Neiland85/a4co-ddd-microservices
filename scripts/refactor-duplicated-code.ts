@@ -117,13 +117,9 @@ function generateService(service: ServiceConfig): string {
       if (method.name.includes('create') || method.name.includes('add')) {
         methodBody = `
     try {
-      ${method.params.map(p => {
-        if (p.type === 'string') {
-          return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`;
-        } else {
-          return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`;
-        }
-      }).join('\n      ')}
+      ${method.params.map(p =>
+        `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`
+      ).join('\n      ')}
       
       this.log('Creating ${entityName}', { ${method.params.map(p => p.name).join(', ')} });
       
