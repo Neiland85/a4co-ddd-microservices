@@ -2,7 +2,9 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+     cursor/verificar-arquitectura-y-levantar-servidores-0628
 
+     main
 interface SalesOpportunity {
   id: string;
   title: string;
