@@ -151,7 +151,7 @@ start_service() {
     cd - > /dev/null
     
     # Ejecutar comando y guardar logs
-    (cd "$dir" && $command) > "$LOGS_DIR/${name}.log" 2>&1 &
+    (cd "$dir" && "$command") > "$LOGS_DIR/${name}.log" 2>&1 &
     local pid=$!
     
     PIDS+=($pid)
