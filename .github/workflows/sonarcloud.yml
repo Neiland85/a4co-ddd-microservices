@@ -132,7 +132,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           # Download SonarCloud Scanner
-          SCANNER_VERSION="5.0.1.3006"
           wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SCANNER_VERSION}-linux.zip
           unzip -q sonar-scanner-cli-${SCANNER_VERSION}-linux.zip
           
