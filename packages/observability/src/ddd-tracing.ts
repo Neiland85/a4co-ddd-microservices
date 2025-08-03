@@ -1,5 +1,5 @@
 import { trace, context, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import { getTracer } from './tracing';
+import { getTracer } from './tracer';
 
 // Interfaces para DDD
 export interface AggregateMetadata {
