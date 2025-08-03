@@ -85,7 +85,7 @@
     "@opentelemetry/sdk-trace-node": "^1.19.0",
     "@opentelemetry/sdk-trace-web": "^1.19.0",
     "@opentelemetry/semantic-conventions": "^1.19.0",
-    "@opentelemetry/context-zone": "^1.18.1",
+    "@opentelemetry/context-zone": "^1.19.0",
     "axios": "^1.6.2",
     "pino": "^8.16.2",
     "pino-http": "^8.5.1",
