@@ -25,7 +25,6 @@ export * from './events/subjects';
    cursor/design-microservice-communication-strategy-a023
 export * from './events/domain-events';
 
-export * from './events/domain-events';
 
 // Exportar clientes API para comunicación entre servicios
 export * from './api-clients';
