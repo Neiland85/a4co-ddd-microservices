@@ -55,8 +55,8 @@ export const EventSubjects = {
   ARTISAN_VERIFIED: 'artisan.verified',
   ARTISAN_STATUS_CHANGED: 'artisan.status.changed',
   ARTISAN_PROFILE_UPDATED: 'artisan.profile.updated',
-  NEW_PRODUCT_LISTED: 'artisan.product.listed',
-  PRODUCT_UPDATED: 'artisan.product.updated',
+  PRODUCT_LISTED: 'artisan.product.listed',
+  ARTISAN_PRODUCT_UPDATED: 'artisan.product.updated',
   PRODUCT_DELISTED: 'artisan.product.delisted',
   
   // ========================================
