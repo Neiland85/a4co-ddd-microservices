@@ -1,5 +1,4 @@
     develop
-    cursor/implementar-observabilidad-unificada-en-monorepo-348b
 import { initializeLogger, createLogger, createHttpLogger, getGlobalLogger } from './logging';
 import { initializeTracing, initializeMetrics, getTracer, shutdown } from './tracing';
 import type { LoggerConfig } from './logging';
