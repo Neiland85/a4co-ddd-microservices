@@ -4,7 +4,10 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
      cursor/verificar-arquitectura-y-levantar-servidores-0628
 
+   cursor/levantar-todos-los-servicios-de-desarrollo-local-39aa
      main
+
+   develop
 interface SalesOpportunity {
   id: string;
   title: string;
