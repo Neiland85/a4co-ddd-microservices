@@ -70,11 +70,8 @@ export class OrderCreatedEvent extends DomainEvent {
     data: {
       customerId: string;
       customerEmail: string;
-     cursor/design-microservice-communication-strategy-a023
       items: OrderItem[];
-
       items: OrderItemReference[];  // Solo datos del contexto Order
-       develop
       totalAmount: number;
       currency: string;
       deliveryAddress: Address;
