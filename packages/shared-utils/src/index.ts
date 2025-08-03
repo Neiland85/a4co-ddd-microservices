@@ -18,3 +18,8 @@ export * from './utils';
 
 // Exportar utilidades de seguridad
 export * from './security';
+
+// Exportar sistema de eventos
+export * from './events/event-bus';
+export * from './events/subjects';
+export * from './events/domain-events';
