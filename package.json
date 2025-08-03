@@ -18,7 +18,12 @@
     "db:migrate": "turbo run db:migrate",
     "start:dev": "concurrently \"pnpm run dev\"",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "test:coverage": "turbo run test:coverage",
+    "test:coverage:report": "turbo run test:coverage && pnpm run coverage:merge",
+    "coverage:merge": "lcov-result-merger 'apps/**/coverage/lcov.info' 'packages/**/coverage/lcov.info' > coverage/lcov.info",
+    "sonar-scanner": "sonar-scanner",
+    "quality:check": "pnpm run test:coverage:report && pnpm run sonar-scanner"
   },
   "keywords": [
     "microservices",
