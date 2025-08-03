@@ -1,0 +1,217 @@
+version: '3.8'
+
+services:
+  # Message Broker - RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: a4co-rabbitmq
+    ports:
+      - "5672:5672"     # AMQP port
+      - "15672:15672"   # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-admin123}
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./config/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./config/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - a4co-network
+
+  # Alternative: NATS for lighter weight messaging
+  nats:
+    image: nats:2.10-alpine
+    container_name: a4co-nats
+    ports:
+      - "4222:4222"   # Client port
+      - "8222:8222"   # HTTP monitoring port
+    command: 
+      - "-js"         # Enable JetStream
+      - "-sd"
+      - "/data"
+      - "--http_port"
+      - "8222"
+    volumes:
+      - nats_data:/data
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8222/healthz || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - a4co-network
+    profiles:
+      - nats
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    container_name: a4co-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis123}
+    healthcheck:
+      test: redis-cli -a ${REDIS_PASSWORD:-redis123} ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - a4co-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: a4co-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      POSTGRES_DB: ${POSTGRES_DB:-a4co_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER:-postgres}
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - a4co-network
+
+  # Elasticsearch for search and analytics
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: a4co-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: curl -f http://localhost:9200/_cluster/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - a4co-network
+    profiles:
+      - search
+
+  # Kibana for visualization
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: a4co-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    depends_on:
+      - elasticsearch
+    networks:
+      - a4co-network
+    profiles:
+      - search
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:1.51
+    container_name: a4co-jaeger
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "6831:6831/udp" # Jaeger agent
+      - "14268:14268"   # Jaeger collector
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    networks:
+      - a4co-network
+    profiles:
+      - observability
+
+  # Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: a4co-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - a4co-network
+    profiles:
+      - observability
+
+  # Grafana for dashboards
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: a4co-grafana
+    ports:
+      - "3003:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin123}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    networks:
+      - a4co-network
+    profiles:
+      - observability
+
+  # MinIO for object storage (images, documents)
+  minio:
+    image: minio/minio:latest
+    container_name: a4co-minio
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - a4co-network
+    profiles:
+      - storage
+
+volumes:
+  rabbitmq_data:
+  nats_data:
+  redis_data:
+  postgres_data:
+  elasticsearch_data:
+  prometheus_data:
+  grafana_data:
+  minio_data:
+
+networks:
+  a4co-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
