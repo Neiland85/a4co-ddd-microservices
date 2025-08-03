@@ -1,0 +1,456 @@
+// Product Service - Schema de Base de Datos con Prisma ORM
+// Siguiendo principios DDD: Aggregates, Entities, Value Objects
+// Marketplace Local de Jaén - A4CO
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// PRODUCT AGGREGATE ROOT
+// ========================================
+
+model Product {
+  id                String   @id @default(cuid())
+  // Basic Information
+  name              String
+  description       String?
+  shortDescription  String?
+  sku               String   @unique
+  
+  // Pricing (Value Object embebido)
+  price             Decimal  @db.Decimal(10, 2)
+  originalPrice     Decimal? @db.Decimal(10, 2)
+  currency          String   @default("EUR")
+  
+  // Categories and Classification
+  categoryId        String
+  category          Category @relation(fields: [categoryId], references: [id])
+  tags              String[]
+  keywords          String[]
+  
+  // Artisan Relationship
+  artisanId         String
+  artisan           Artisan  @relation(fields: [artisanId], references: [id])
+  
+  // Product Status
+  status            ProductStatus @default(DRAFT)
+  availability      ProductAvailability @default(AVAILABLE)
+  
+  // Business Rules
+  isHandmade        Boolean  @default(true)
+  isCustomizable    Boolean  @default(false)
+  isDigital         Boolean  @default(false)
+  requiresShipping  Boolean  @default(true)
+  
+  // SEO and Marketing
+  slug              String   @unique
+  metaTitle         String?
+  metaDescription   String?
+  featured          Boolean  @default(false)
+  
+  // Timestamps (Audit)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  publishedAt       DateTime?
+  archivedAt        DateTime?
+  
+  // Relations to other entities in aggregate
+  variants          ProductVariant[]
+  images            ProductImage[]
+  specifications    ProductSpecification[]
+  inventory         ProductInventory[]
+  reviews           ProductReview[]
+  categories        ProductCategoryMapping[]
+  
+  // Computed fields for complex queries
+  averageRating     Float?   @default(0)
+  reviewCount       Int      @default(0)
+  totalSold         Int      @default(0)
+  
+  @@map("products")
+  @@index([artisanId])
+  @@index([categoryId])
+  @@index([status, availability])
+  @@index([slug])
+  @@index([featured])
+  @@index([createdAt])
+}
+
+// ========================================
+// PRODUCT VARIANT ENTITY
+// ========================================
+
+model ProductVariant {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Variant Information
+  name          String
+  sku           String   @unique
+  description   String?
+  
+  // Pricing (puede diferir del producto base)
+  price         Decimal  @db.Decimal(10, 2)
+  originalPrice Decimal? @db.Decimal(10, 2)
+  
+  // Variant Attributes (JSON para flexibilidad)
+  attributes    Json     // e.g., {"size": "L", "color": "blue", "material": "cotton"}
+  
+  // Stock and Availability
+  stockQuantity Int      @default(0)
+  
+  // Physical Characteristics
+  weight        Float?   // in grams
+  dimensions    Json?    // {"length": 10, "width": 5, "height": 2} in cm
+  
+  // Status
+  isActive      Boolean  @default(true)
+  isDefault     Boolean  @default(false)
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Images específicas del variant
+  images        ProductVariantImage[]
+  
+  @@map("product_variants")
+  @@index([productId])
+  @@index([sku])
+  @@index([isActive])
+}
+
+// ========================================
+// PRODUCT IMAGES (Value Object Collection)
+// ========================================
+
+model ProductImage {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Image Information
+  url         String
+  altText     String?
+  caption     String?
+  
+  // Image Properties
+  width       Int?
+  height      Int?
+  fileSize    Int?     // in bytes
+  mimeType    String?
+  
+  // Image Classification
+  type        ImageType @default(GALLERY)
+  isPrimary   Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@map("product_images")
+  @@index([productId, type])
+  @@index([isPrimary])
+}
+
+model ProductVariantImage {
+  id        String         @id @default(cuid())
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  
+  url       String
+  altText   String?
+  isPrimary Boolean        @default(false)
+  sortOrder Int            @default(0)
+  
+  createdAt DateTime       @default(now())
+  
+  @@map("product_variant_images")
+  @@index([variantId])
+}
+
+// ========================================
+// PRODUCT SPECIFICATIONS (Value Objects)
+// ========================================
+
+model ProductSpecification {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Specification Details
+  name        String   // e.g., "Material", "Origin", "Care Instructions"
+  value       String   // e.g., "100% Cotton", "Jaén, Spain", "Hand wash only"
+  type        SpecificationType @default(TEXT)
+  unit        String?  // e.g., "cm", "kg", "%" for numeric specifications
+  
+  // Organization
+  category    String?  // e.g., "Physical", "Care", "Origin"
+  sortOrder   Int      @default(0)
+  isRequired  Boolean  @default(false)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("product_specifications")
+  @@index([productId])
+  @@index([name])
+}
+
+// ========================================
+// CATEGORY AGGREGATE
+// ========================================
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  slug        String   @unique
+  
+  // Hierarchy Support
+  parentId    String?
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  
+  // SEO and Display
+  metaTitle   String?
+  metaDescription String?
+  icon        String?  // Font icon class or emoji
+  coverImage  String?  // URL to category image
+  
+  // Business Logic
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  products    Product[]
+  mappings    ProductCategoryMapping[]
+  
+  @@map("categories")
+  @@index([parentId])
+  @@index([slug])
+  @@index([isActive])
+}
+
+// ========================================
+// ARTISAN ENTITY (Reference from other bounded context)
+// ========================================
+
+model Artisan {
+  id              String   @id @default(cuid())
+  
+  // Basic Information
+  businessName    String
+  contactName     String
+  email           String   @unique
+  phone           String?
+  
+  // Location (Value Object)
+  address         Json     // Address value object
+  
+  // Business Information
+  description     String?
+  specialties     String[] // Array of specialties
+  
+  // Verification and Status
+  isVerified      Boolean  @default(false)
+  verificationDate DateTime?
+  status          ArtisanStatus @default(PENDING)
+  
+  // Business Metrics
+  rating          Float?   @default(0)
+  totalProducts   Int      @default(0)
+  totalSales      Int      @default(0)
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  products        Product[]
+  
+  @@map("artisans")
+  @@index([email])
+  @@index([isVerified])
+  @@index([status])
+}
+
+// ========================================
+// INVENTORY TRACKING (Separate bounded context integration)
+// ========================================
+
+model ProductInventory {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Stock Information
+  quantity      Int      @default(0)
+  reserved      Int      @default(0) // Stock reservado por órdenes pendientes
+  available     Int      @default(0) // quantity - reserved
+  
+  // Thresholds
+  lowStockThreshold Int @default(5)
+  
+  // Tracking
+  lastRestocked DateTime?
+  lastSold      DateTime?
+  
+  // Location (para múltiples almacenes en el futuro)
+  location      String   @default("main")
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("product_inventory")
+  @@unique([productId, location])
+  @@index([productId])
+  @@index([quantity])
+}
+
+// ========================================
+// PRODUCT REVIEWS (Read model for analytics)
+// ========================================
+
+model ProductReview {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Review Content
+  rating      Int      // 1-5 stars
+  title       String?
+  comment     String?
+  
+  // Reviewer Information (referencia a user service)
+  userId      String
+  userName    String   // Desnormalizado para performance
+  userEmail   String?  // Para notificaciones
+  
+  // Review Status
+  status      ReviewStatus @default(PENDING)
+  isVerified  Boolean  @default(false)
+  
+  // Moderation
+  moderatedBy String?
+  moderatedAt DateTime?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("product_reviews")
+  @@index([productId])
+  @@index([rating])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ========================================
+// MANY-TO-MANY RELATIONSHIPS
+// ========================================
+
+model ProductCategoryMapping {
+  id         String   @id @default(cuid())
+  productId  String
+  categoryId String
+  
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  @@unique([productId, categoryId])
+  @@map("product_category_mappings")
+}
+
+// ========================================
+// ENUMS
+// ========================================
+
+enum ProductStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  ARCHIVED
+  REJECTED
+}
+
+enum ProductAvailability {
+  AVAILABLE
+  OUT_OF_STOCK
+  DISCONTINUED
+  COMING_SOON
+  PRE_ORDER
+}
+
+enum ImageType {
+  GALLERY
+  THUMBNAIL
+  HERO
+  DETAIL
+  LIFESTYLE
+}
+
+enum SpecificationType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  DATE
+  URL
+  COLOR
+}
+
+enum ArtisanStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+  INACTIVE
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+}
+
+// ========================================
+// VIEWS FOR COMPLEX QUERIES
+// ========================================
+
+// Vista para productos con toda la información agregada
+view ProductWithDetails {
+  id               String
+  name             String
+  description      String?
+  price            Decimal
+  currency         String
+  categoryName     String
+  artisanName      String
+  averageRating    Float?
+  reviewCount      Int
+  stockQuantity    Int
+  primaryImageUrl  String?
+  status           ProductStatus
+  availability     ProductAvailability
+  createdAt        DateTime
+  
+  @@map("v_products_with_details")
+}
