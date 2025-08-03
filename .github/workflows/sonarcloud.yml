@@ -72,7 +72,7 @@ jobs:
           # Try to restore cache
           if [ -f "$CACHE_FILE" ]; then
             echo "Restoring pnpm cache from $CACHE_FILE"
-            tar -xzf "$CACHE_FILE" -C /
+            tar -xzf "$CACHE_FILE" -C "$STORE_PATH"
           else
             echo "No cache found"
           fi
