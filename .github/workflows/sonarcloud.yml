@@ -61,7 +61,13 @@ jobs:
           mkdir -p "$CACHE_DIR"
           
           # Generate cache key based on lock file
-          CACHE_KEY="${{ runner.os }}-pnpm-store-$(sha256sum pnpm-lock.yaml | cut -d' ' -f1)"
+          if [ -f pnpm-lock.yaml ]; then
+            LOCKFILE_HASH=$(sha256sum pnpm-lock.yaml | cut -d' ' -f1)
+          else
+            echo "Warning: pnpm-lock.yaml not found. Using 'no-lockfile' as cache key suffix."
+            LOCKFILE_HASH="no-lockfile"
+          fi
+          CACHE_KEY="${{ runner.os }}-pnpm-store-${LOCKFILE_HASH}"
           CACHE_FILE="$CACHE_DIR/${CACHE_KEY}.tar.gz"
           
           # Try to restore cache
