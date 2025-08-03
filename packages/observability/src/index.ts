@@ -103,3 +103,12 @@ export const logger = new Proxy({}, {
 export function tracer(name?: string) {
   return getTracer(name);
 }
+
+// Exportar módulos de frontend
+export * from './frontend';
+
+// Exportar módulos de DDD
+export * from './ddd-tracing';
+
+// Exportar módulos del Design System
+export * from './design-system';
