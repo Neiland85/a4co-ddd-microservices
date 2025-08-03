@@ -18,7 +18,12 @@
     "db:migrate": "turbo run db:migrate",
     "start:dev": "concurrently \"pnpm run dev\"",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "test:coverage": "turbo run test:coverage",
+    "test:coverage:report": "turbo run test:coverage && pnpm run coverage:merge",
+    "coverage:merge": "lcov-result-merger 'apps/**/coverage/lcov.info' 'packages/**/coverage/lcov.info' > coverage/lcov.info",
+    "sonar-scanner": "sonar-scanner",
+    "quality:check": "pnpm run test:coverage:report && pnpm run sonar-scanner"
   },
   "keywords": [
     "microservices",
@@ -48,7 +53,11 @@
     "esbuild": "^0.25.8",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-complexity": "^1.0.2",
+    "jscpd": "^4.0.5",
+    "madge": "^8.0.0",
     "prettier": "^3.6.2",
+    "ts-prune": "^0.10.3",
     "typescript": "^5.8.3"
   },
   "engines": {
