@@ -74,7 +74,7 @@ pnpm storybook:dev
 
 ### Opción 4: Docker Compose (requiere Docker)
 ```bash
-docker compose -f docker-compose.dev.yml up
+docker compose -f docker-compose.messaging.yml up
 ```
 
 ## 📍 Endpoints Principales
