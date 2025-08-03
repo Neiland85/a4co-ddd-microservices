@@ -49,7 +49,7 @@ fi
 
 # Buscar archivos de dominio y handlers
 if [ -d "apps" ]; then
-    find apps -path "*/src/domain/*.ts" -o -path "*/src/application/handlers/*.ts" | \
+    find apps \( -path "*/src/domain/*.ts" -o -path "*/src/application/handlers/*.ts" \) | \
     xargs npx eslint --rule 'complexity: ["error", 10]' --format json > reports/complexity.json 2>&1
     echo -e "${GREEN}✓ Análisis de complejidad completado${NC}"
 else
