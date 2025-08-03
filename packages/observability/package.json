@@ -1,28 +1,78 @@
 {
   "name": "@a4co/observability",
   "version": "1.0.0",
+     develop
+  "description": "Unified observability package for A4CO monorepo",
+
   "description": "Unified observability package for A4CO platform",
+     main
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
+     develop
     "test": "jest",
     "lint": "eslint src --ext ts,tsx",
     "clean": "rm -rf dist"
+
+    "dev": "tsc --watch",
+    "test": "jest",
+     cursor/analizar-construir-y-levantar-servidores-del-proyecto-836f
+    "lint": "eslint src --ext ts,tsx",
+    "clean": "rm -rf dist"
+
+    "lint": "eslint src --ext ts,tsx"
+   main
+     develop
   },
   "dependencies": {
     "@opentelemetry/api": "^1.7.0",
     "@opentelemetry/core": "^1.19.0",
     "@opentelemetry/sdk-node": "^0.46.0",
     "@opentelemetry/auto-instrumentations-node": "^0.40.1",
+       develop
+      cursor/implementar-observabilidad-unificada-en-monorepo-348b
+    "@opentelemetry/core": "^1.18.1",
+    "@opentelemetry/exporter-jaeger": "^1.18.1",
+
     "@opentelemetry/exporter-jaeger": "^1.19.0",
+     cursor/analizar-construir-y-levantar-servidores-del-proyecto-836f
     "@opentelemetry/exporter-prometheus": "^0.46.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.45.1",
     "@opentelemetry/instrumentation": "^0.46.0",
     "@opentelemetry/instrumentation-express": "^0.35.0",
     "@opentelemetry/instrumentation-http": "^0.46.0",
     "@opentelemetry/instrumentation-koa": "^0.36.0",
+
+       main
+    "@opentelemetry/exporter-prometheus": "^0.45.1",
+    "@opentelemetry/instrumentation-express": "^0.34.1",
+    "@opentelemetry/instrumentation-http": "^0.45.1",
+       develop
+    "@opentelemetry/propagator-b3": "^1.18.1",
+    "@opentelemetry/resources": "^1.18.1",
+    "@opentelemetry/sdk-metrics": "^1.18.1",
+    "@opentelemetry/sdk-node": "^0.45.1",
+    "@opentelemetry/sdk-trace-base": "^1.18.1",
+    "@opentelemetry/sdk-trace-node": "^1.18.1",
+    "@opentelemetry/sdk-trace-web": "^1.18.1",
+    "@opentelemetry/semantic-conventions": "^1.18.1",
+    "@opentelemetry/context-zone": "^1.18.1",
+    "@opentelemetry/instrumentation-document-load": "^0.34.1",
+    "@opentelemetry/instrumentation-user-interaction": "^0.34.1",
+    "@opentelemetry/instrumentation-xml-http-request": "^0.34.1",
+    "@opentelemetry/instrumentation-fetch": "^0.34.1",
+    "pino": "^8.16.2",
+    "pino-http": "^8.5.1",
+    "pino-pretty": "^10.2.3",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^19.0.0",
+    "@vitest/coverage-v8": "^1.1.0",
+
+       develop
     "@opentelemetry/instrumentation-grpc": "^0.45.1",
     "@opentelemetry/instrumentation-fetch": "^0.45.1",
     "@opentelemetry/instrumentation-xml-http-request": "^0.45.1",
@@ -46,11 +96,55 @@
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/uuid": "^9.0.7",
+     cursor/analizar-construir-y-levantar-servidores-del-proyecto-836f
+
+       main
+    "typescript": "^5.3.2",
+    "jest": "^29.7.0",
+     develop
     "@types/jest": "^29.5.10",
     "@vitest/coverage-v8": "^1.1.0",
     "typescript": "^5.3.3",
     "jest": "^29.7.0",
     "eslint": "^8.55.0"
+  },
+  "peerDependencies": {
+    "express": "*",
+    "koa": "*",
+    "nats": "*",
+    "react": ">=17.0.0"
+  },
+     develop
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+
+    "@opentelemetry/core": "^1.19.0",
+    "@opentelemetry/exporter-jaeger": "^1.19.0",
+    "@opentelemetry/exporter-prometheus": "^0.46.0",
+    "@opentelemetry/instrumentation": "^0.46.0",
+    "@opentelemetry/instrumentation-express": "^0.35.0",
+    "@opentelemetry/instrumentation-http": "^0.46.0",
+    "@opentelemetry/instrumentation-koa": "^0.36.0",
+    "@opentelemetry/resources": "^1.19.0",
+    "@opentelemetry/sdk-metrics": "^1.19.0",
+    "@opentelemetry/sdk-node": "^0.46.0",
+    "@opentelemetry/sdk-trace-base": "^1.19.0",
+    "@opentelemetry/sdk-trace-node": "^1.19.0",
+    "@opentelemetry/semantic-conventions": "^1.19.0",
+    "axios": "^1.6.2",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/uuid": "^9.0.7",
+    "jest": "^29.7.0",
+    "typescript": "^5.3.3"
   },
   "peerDependencies": {
     "express": "*",
@@ -71,8 +165,27 @@
     "react": {
       "optional": true
     }
+     develop
+
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    },
+    "koa": {
+      "optional": true
+    },
+    "nats": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+     cursor/analizar-construir-y-levantar-servidores-del-proyecto-836f
   },
   "publishConfig": {
     "access": "public"
+
+     main
+     develop
   }
 }
