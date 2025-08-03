@@ -346,14 +346,14 @@ export const useComponentTracking = (componentName: string, config?: ComponentTr
 
 // Hook for tracking user interactions
 export const useEventTracking = () => {
-  const { logEvent } = useObservability();
+  const { logEvent, sessionId } = useObservability();
 
   const trackClick = (componentName: string, metadata?: Record<string, any>) => {
     logEvent({
       eventType: 'click',
       componentName,
       timestamp: Date.now(),
-      sessionId: '',
+      sessionId,
       metadata,
     });
   };
