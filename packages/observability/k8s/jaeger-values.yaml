@@ -1,0 +1,123 @@
+# Jaeger Helm Chart Values for A4CO Platform
+# https://github.com/jaegertracing/helm-charts
+
+provisionDataStore:
+  cassandra: false
+  elasticsearch: true
+  kafka: false
+
+# Elasticsearch configuration
+elasticsearch:
+  replicas: 3
+  minimumMasterNodes: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  volumeClaimTemplate:
+    accessModes: ["ReadWriteOnce"]
+    resources:
+      requests:
+        storage: 10Gi
+  esJavaOpts: "-Xmx1g -Xms1g"
+
+# Jaeger components configuration
+agent:
+  enabled: false  # We'll use OpenTelemetry collector instead
+
+collector:
+  enabled: true
+  replicaCount: 2
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    type: ClusterIP
+    grpc:
+      port: 14250
+    http:
+      port: 14268
+  env:
+    - name: SPAN_STORAGE_TYPE
+      value: elasticsearch
+
+query:
+  enabled: true
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: jaeger-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+    hosts:
+      - host: jaeger.a4co.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: jaeger-tls
+        hosts:
+          - jaeger.a4co.com
+
+spark:
+  enabled: true
+  schedule: "0 1 * * *"  # Run daily at 1 AM
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+# Storage configuration
+storage:
+  type: elasticsearch
+  elasticsearch:
+    host: elasticsearch-master
+    port: 9200
+    index:
+      prefix: jaeger
+    # Retention configuration
+    maxSpanAge: 168h  # 7 days
+    numShards: 5
+    numReplicas: 1
+
+# Tags and labels
+commonLabels:
+  app.kubernetes.io/part-of: a4co-observability
+  app.kubernetes.io/component: tracing
+
+# Security Context
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+# Pod Security Policy
+podSecurityPolicy:
+  enabled: true
+
+# Network Policies
+networkPolicy:
+  enabled: true

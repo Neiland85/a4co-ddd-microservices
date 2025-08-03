@@ -1,3 +1,7 @@
+    cursor/design-microservice-communication-strategy-a023
+
+    develop
+     develop
 import { initializeLogger, createLogger, createHttpLogger, getGlobalLogger } from './logging';
 import { initializeTracing, initializeMetrics, getTracer, shutdown } from './tracing';
 import type { LoggerConfig } from './logging';
@@ -102,4 +106,65 @@ export const logger = new Proxy({}, {
 // Función helper para obtener el tracer por defecto
 export function tracer(name?: string) {
   return getTracer(name);
+   cursor/design-microservice-communication-strategy-a023
 }
+
+}
+
+// Exportar módulos de frontend
+export * from './frontend';
+
+// Exportar módulos de DDD
+export * from './ddd-tracing';
+
+// Exportar módulos del Design System
+export * from './design-system';
+
+// Main exports for @a4co/observability package
+export * from './logger';
+export * from './tracer';
+export * from './metrics';
+export * from './middleware';
+export * from './decorators';
+export * from './context';
+export * from './types';
+export * from './utils';
+export * from './instrumentation';
+export * from './config';
+    develop
+
+/**
+ * @a4co/observability - Unified observability package
+ * 
+ * This package provides structured logging, distributed tracing,
+ * and metrics collection for the A4CO platform.
+ */
+
+// Logging exports
+export * from './logging/types';
+export * from './logging/pino-logger';
+export * from './logging/frontend-logger';
+export * from './logging/react-hooks';
+export * from './logging/http-client-wrapper';
+
+// Tracing exports
+export * from './tracing/tracer';
+export * from './tracing/web-tracer';
+export * from './tracing/react-tracing';
+export * from './tracing/middleware';
+export * from './tracing/nats-tracing';
+
+// Re-export commonly used OpenTelemetry types
+export { 
+  SpanKind, 
+  SpanStatusCode,
+  Span,
+  SpanContext,
+  trace,
+  context,
+} from '@opentelemetry/api';
+
+// Version
+export const VERSION = '1.0.0';
+     main
+     develop

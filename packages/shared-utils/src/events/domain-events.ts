@@ -16,6 +16,7 @@ export interface Address {
   };
 }
 
+   cursor/design-microservice-communication-strategy-a023
 export interface OrderItem {
   productId: string;
   productName: string;
@@ -25,6 +26,7 @@ export interface OrderItem {
   artisanId: string;
 }
 
+     develop
 export interface ContactInfo {
   email: string;
   phone?: string;
@@ -32,6 +34,33 @@ export interface ContactInfo {
 }
 
 // ========================================
+     cursor/design-microservice-communication-strategy-a023
+
+// ORDER BOUNDED CONTEXT INTERFACES
+// ========================================
+
+export interface OrderItemReference {
+  productId: string;        // Solo referencia al ID
+  quantity: number;         // Cantidad solicitada
+  unitPrice: number;        // Precio al momento de la orden
+  totalPrice: number;       // Total calculado
+}
+
+// ========================================
+// PRODUCT BOUNDED CONTEXT INTERFACES  
+// ========================================
+
+export interface ProductSummary {
+  productId: string;
+  productName: string;
+  artisanId: string;
+  category: string;
+  price: number;
+  currency: string;
+}
+
+// ========================================
+     develop
 // ORDER DOMAIN EVENTS
 // ========================================
 
@@ -41,7 +70,11 @@ export class OrderCreatedEvent extends DomainEvent {
     data: {
       customerId: string;
       customerEmail: string;
+     cursor/design-microservice-communication-strategy-a023
       items: OrderItem[];
+
+      items: OrderItemReference[];  // Solo datos del contexto Order
+       develop
       totalAmount: number;
       currency: string;
       deliveryAddress: Address;

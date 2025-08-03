@@ -1,0 +1,106 @@
+# Prometheus configuration for A4CO Platform
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'a4co-production'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter for system metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Kubernetes service discovery for microservices
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      # Only scrape pods with prometheus annotations
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: kubernetes_pod_name
+
+  # A4CO Microservices (Static configuration for development)
+  - job_name: 'a4co-microservices'
+    static_configs:
+      - targets:
+          - 'product-service:9090'
+          - 'order-service:9090'
+          - 'user-service:9090'
+          - 'payment-service:9090'
+          - 'inventory-service:9090'
+          - 'notification-service:9090'
+          - 'event-service:9090'
+          - 'geo-service:9090'
+          - 'loyalty-service:9090'
+          - 'chat-service:9090'
+          - 'cms-service:9090'
+          - 'analytics-service:9090'
+          - 'artisan-service:9090'
+        labels:
+          group: 'microservices'
+
+  # Frontend applications
+  - job_name: 'a4co-frontend'
+    static_configs:
+      - targets:
+          - 'web:9090'
+          - 'dashboard-web:9090'
+        labels:
+          group: 'frontend'
+
+  # NATS monitoring
+  - job_name: 'nats'
+    static_configs:
+      - targets: ['nats-exporter:7777']
+        labels:
+          group: 'messaging'
+
+  # PostgreSQL monitoring
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          group: 'database'
+
+  # Redis monitoring
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          group: 'cache'

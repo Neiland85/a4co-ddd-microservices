@@ -34,7 +34,11 @@ echo -e "${BLUE}"
 cat << "EOF"
     _  _   ____  ____  ___  
    / )( \ / ___)/ ___)/ _ \ 
+     cursor/design-microservice-communication-strategy-a023
    ╲ (/ /╱     ) (__ ) __ (
+
+   \ (/ /      ) (__ ) __ (
+   develop
     \__/ \____)\___)\__)(__)
                             
    Marketplace Local de Jaén

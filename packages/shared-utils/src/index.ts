@@ -22,4 +22,18 @@ export * from './security';
 // Exportar sistema de eventos
 export * from './events/event-bus';
 export * from './events/subjects';
+   cursor/design-microservice-communication-strategy-a023
 export * from './events/domain-events';
+
+export * from './events/domain-events';
+     cursor/analizar-y-refactorizar-dependencias-del-monorepo-1ae9
+
+// Exportar clientes API para comunicación entre servicios
+export * from './api-clients';
+
+export * from './events/integration-events';
+
+// Exportar sistema de sagas
+export * from './saga/saga-orchestrator';
+   main
+     develop
