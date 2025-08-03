@@ -1,0 +1,116 @@
+{{- if and .Values.prometheus.enabled .Values.a4co.alerts.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alerts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: prometheus
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  alerts.yml: |
+{{ .Files.Get "alerts/alerts.yml" | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: prometheus
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  recording-rules.yml: |
+    groups:
+      - name: a4co_recording_rules
+        interval: 30s
+        rules:
+          # HTTP metrics aggregation
+          - record: service:http_requests:rate5m
+            expr: |
+              sum by (service, method, endpoint) (
+                rate(http_requests_total[5m])
+              )
+          
+          - record: service:http_errors:rate5m
+            expr: |
+              sum by (service, method, endpoint) (
+                rate(http_requests_total{status=~"5.."}[5m])
+              )
+          
+          - record: service:http_success_rate:ratio
+            expr: |
+              1 - (
+                service:http_errors:rate5m
+                /
+                service:http_requests:rate5m
+              )
+          
+          - record: service:http_latency:p50
+            expr: |
+              histogram_quantile(0.5,
+                sum by (service, le) (
+                  rate(http_request_duration_seconds_bucket[5m])
+                )
+              )
+          
+          - record: service:http_latency:p95
+            expr: |
+              histogram_quantile(0.95,
+                sum by (service, le) (
+                  rate(http_request_duration_seconds_bucket[5m])
+                )
+              )
+          
+          - record: service:http_latency:p99
+            expr: |
+              histogram_quantile(0.99,
+                sum by (service, le) (
+                  rate(http_request_duration_seconds_bucket[5m])
+                )
+              )
+          
+          # Business metrics aggregation
+          - record: business:orders:rate1h
+            expr: |
+              sum(rate(orders_create_total[1h])) * 3600
+          
+          - record: business:orders:success_rate
+            expr: |
+              1 - (
+                sum(rate(orders_create_failed_total[5m]))
+                /
+                sum(rate(orders_create_total[5m]))
+              )
+          
+          - record: business:revenue:rate1h
+            expr: |
+              sum(rate(payment_amount_total[1h])) * 3600
+          
+          # Frontend performance aggregation
+          - record: frontend:performance:fcp:p75
+            expr: |
+              histogram_quantile(0.75,
+                sum by (page, le) (
+                  rate(browser_performance_fcp_seconds_bucket[5m])
+                )
+              )
+          
+          - record: frontend:performance:lcp:p75
+            expr: |
+              histogram_quantile(0.75,
+                sum by (page, le) (
+                  rate(browser_performance_lcp_seconds_bucket[5m])
+                )
+              )
+          
+          - record: frontend:errors:rate5m
+            expr: |
+              sum by (page) (
+                rate(browser_js_errors_total[5m])
+              )
+{{- end }}
