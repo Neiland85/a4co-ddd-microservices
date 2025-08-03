@@ -16,19 +16,34 @@ export interface Address {
   };
 }
 
-export interface OrderItem {
-  productId: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  artisanId: string;
-}
-
 export interface ContactInfo {
   email: string;
   phone?: string;
   businessName?: string;
+}
+
+// ========================================
+// ORDER BOUNDED CONTEXT INTERFACES
+// ========================================
+
+export interface OrderItemReference {
+  productId: string;        // Solo referencia al ID
+  quantity: number;         // Cantidad solicitada
+  unitPrice: number;        // Precio al momento de la orden
+  totalPrice: number;       // Total calculado
+}
+
+// ========================================
+// PRODUCT BOUNDED CONTEXT INTERFACES  
+// ========================================
+
+export interface ProductSummary {
+  productId: string;
+  productName: string;
+  artisanId: string;
+  category: string;
+  price: number;
+  currency: string;
 }
 
 // ========================================
@@ -41,7 +56,7 @@ export class OrderCreatedEvent extends DomainEvent {
     data: {
       customerId: string;
       customerEmail: string;
-      items: OrderItem[];
+      items: OrderItemReference[];  // Solo datos del contexto Order
       totalAmount: number;
       currency: string;
       deliveryAddress: Address;
