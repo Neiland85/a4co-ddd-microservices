@@ -1,0 +1,22 @@
+FROM node:20-alpine
+
+# Instalar pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.1 --activate
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de configuración
+COPY package.json pnpm-lock.yaml ./
+
+# Instalar dependencias
+RUN pnpm install --frozen-lockfile
+
+# Copiar el resto del código
+COPY . .
+
+# Exponer puerto de Storybook
+EXPOSE 6006
+
+# Comando para desarrollo con hot reload
+CMD ["pnpm", "storybook"]
