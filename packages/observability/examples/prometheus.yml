@@ -1,0 +1,58 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'a4co-microservices'
+    environment: 'development'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # OpenTelemetry Collector metrics
+  - job_name: 'otel-collector'
+    static_configs:
+      - targets: ['otel-collector:8888', 'otel-collector:8889']
+
+  # Microservices metrics (usando service discovery o estático)
+  - job_name: 'microservices'
+    static_configs:
+      - targets:
+          - 'user-service:3001'
+          - 'order-service:3002'
+          - 'product-service:3003'
+          - 'payment-service:3004'
+          - 'notification-service:3005'
+          - 'inventory-service:3006'
+          - 'auth-service:3007'
+        labels:
+          group: 'backend'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: '([^:]+):.*'
+        target_label: service
+        replacement: '$1'
+
+  # Node.js specific metrics
+  - job_name: 'nodejs-metrics'
+    static_configs:
+      - targets: ['user-service:9464', 'order-service:9464']
+    metrics_path: '/metrics'
+
+  # Jaeger metrics
+  - job_name: 'jaeger'
+    static_configs:
+      - targets: ['jaeger:14269']
