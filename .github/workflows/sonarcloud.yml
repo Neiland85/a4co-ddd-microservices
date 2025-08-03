@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           # Clone the repository with full history
-          git clone --depth 0 https://github.com/${{ github.repository }}.git .
+          git clone https://github.com/${{ github.repository }}.git .
           
           # Checkout the appropriate ref
           if [ "${{ github.event_name }}" = "pull_request" ]; then
