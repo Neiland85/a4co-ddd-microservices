@@ -1,3 +1,4 @@
+    cursor/implementar-observabilidad-unificada-en-monorepo-348b
 import { initializeLogger, createLogger, createHttpLogger, getGlobalLogger } from './logging';
 import { initializeTracing, initializeMetrics, getTracer, shutdown } from './tracing';
 import type { LoggerConfig } from './logging';
@@ -112,3 +113,16 @@ export * from './ddd-tracing';
 
 // Exportar módulos del Design System
 export * from './design-system';
+
+// Main exports for @a4co/observability package
+export * from './logger';
+export * from './tracer';
+export * from './metrics';
+export * from './middleware';
+export * from './decorators';
+export * from './context';
+export * from './types';
+export * from './utils';
+export * from './instrumentation';
+export * from './config';
+    develop
