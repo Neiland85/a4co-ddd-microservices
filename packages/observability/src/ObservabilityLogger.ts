@@ -1,4 +1,4 @@
-// Se comentan las importaciones porque los módulos pueden no estar disponibles en todos los entornos.
+// Imports are commented out because the modules may not be available in all environments.
 // import { Logger } from 'pino';
 // import { Span, Tracer } from '@opentelemetry/api';
 import { Logger } from './logger';
