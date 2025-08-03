@@ -1,0 +1,246 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== PRODUCT AGGREGATE ====================
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  brand       String
+  categoryId  String
+  status      ProductStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  category    Category @relation(fields: [categoryId], references: [id])
+  variants    ProductVariant[]
+  images      ProductImage[]
+  attributes  ProductAttribute[]
+  
+  // Indexes
+  @@index([categoryId])
+  @@index([brand])
+  @@index([status])
+}
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  productId   String
+  sku         String   @unique
+  name        String
+  price       Decimal  @db.Decimal(10, 2)
+  compareAtPrice Decimal? @db.Decimal(10, 2)
+  cost        Decimal? @db.Decimal(10, 2)
+  barcode     String?
+  weight      Float?
+  weightUnit  String?
+  status      VariantStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  inventory   Inventory?
+  attributes  VariantAttribute[]
+  reservations StockReservation[]
+  
+  // Indexes
+  @@index([productId])
+  @@index([status])
+}
+
+model Inventory {
+  id              String   @id @default(cuid())
+  variantId       String   @unique
+  quantity        Int      @default(0)
+  reservedQuantity Int     @default(0)
+  location        String   @default("default")
+  reorderPoint    Int?
+  reorderQuantity Int?
+  lastRestockedAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relationships
+  variant         ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  movements       StockMovement[]
+  
+  // Computed field would be: availableQuantity = quantity - reservedQuantity
+  
+  // Indexes
+  @@index([location])
+}
+
+model StockReservation {
+  id          String   @id @default(cuid())
+  variantId   String
+  orderId     String
+  quantity    Int
+  expiresAt   DateTime
+  status      ReservationStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  variant     ProductVariant @relation(fields: [variantId], references: [id])
+  
+  // Indexes
+  @@index([variantId])
+  @@index([orderId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model StockMovement {
+  id          String   @id @default(cuid())
+  inventoryId String
+  type        MovementType
+  quantity    Int
+  reason      String
+  reference   String?  // Order ID, Adjustment ID, etc.
+  userId      String   // Who made the movement
+  createdAt   DateTime @default(now())
+  
+  // Relationships
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  
+  // Indexes
+  @@index([inventoryId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ==================== CATEGORY AGGREGATE ====================
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  parentId    String?
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+  attributes  CategoryAttribute[]
+  
+  // Indexes
+  @@index([parentId])
+  @@index([isActive])
+}
+
+// ==================== SUPPORTING ENTITIES ====================
+
+model ProductImage {
+  id          String   @id @default(cuid())
+  productId   String
+  url         String
+  alt         String?
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  
+  // Relationships
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Indexes
+  @@index([productId])
+}
+
+model ProductAttribute {
+  id          String   @id @default(cuid())
+  productId   String
+  name        String
+  value       String
+  
+  // Relationships
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Indexes
+  @@index([productId])
+  @@unique([productId, name])
+}
+
+model VariantAttribute {
+  id          String   @id @default(cuid())
+  variantId   String
+  name        String
+  value       String
+  
+  // Relationships
+  variant     ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  
+  // Indexes
+  @@index([variantId])
+  @@unique([variantId, name])
+}
+
+model CategoryAttribute {
+  id          String   @id @default(cuid())
+  categoryId  String
+  name        String
+  type        AttributeType
+  required    Boolean  @default(false)
+  options     Json?    // For SELECT type attributes
+  
+  // Relationships
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  // Indexes
+  @@index([categoryId])
+}
+
+// ==================== ENUMS ====================
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum VariantStatus {
+  ACTIVE
+  DISCONTINUED
+  OUT_OF_STOCK
+}
+
+enum ReservationStatus {
+  ACTIVE
+  EXPIRED
+  FULFILLED
+  CANCELLED
+}
+
+enum MovementType {
+  PURCHASE      // Stock added from supplier
+  SALE          // Stock removed for order
+  ADJUSTMENT    // Manual adjustment
+  RETURN        // Stock returned by customer
+  DAMAGE        // Stock damaged/lost
+  TRANSFER      // Transfer between locations
+}
+
+enum AttributeType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  SELECT
+  MULTISELECT
+  DATE
+}
