@@ -15,3 +15,6 @@ export * from './types';
 
 // Exportar utilidades
 export * from './utils';
+
+// Exportar utilidades de seguridad
+export * from './security';
