@@ -1,13 +1,39 @@
+import { BaseController } from '../../packages/shared-utils/src/base';
 import { InventoryService } from './service';
 
-export class InventoryController {
-  private inventoryService = new InventoryService();
+interface UpdateStockRequest {
+  productId: string;
+  quantity: number;
+}
 
-  updateStock(req: { productId: string; quantity: number }): string {
-    return this.inventoryService.updateStock(req.productId, req.quantity);
+interface GetStockRequest {
+  productId: string;
+}
+
+export class InventoryController extends BaseController<InventoryService> {
+  constructor() {
+    super(InventoryService);
   }
 
-  getStock(req: { productId: string }): string {
-    return this.inventoryService.getStock(req.productId);
+  updateStock(req: UpdateStockRequest): string {
+    try {
+      const validated = this.validateRequest<UpdateStockRequest>(req, ['productId', 'quantity']);
+      const result = this.service.updateStock(validated.productId, validated.quantity);
+      return this.formatResponse(result).data;
+    } catch (error) {
+      const errorResponse = this.handleError(error);
+      throw new Error(errorResponse.error);
+    }
+  }
+
+  getStock(req: GetStockRequest): string {
+    try {
+      const validated = this.validateRequest<GetStockRequest>(req, ['productId']);
+      const result = this.service.getStock(validated.productId);
+      return this.formatResponse(result).data;
+    } catch (error) {
+      const errorResponse = this.handleError(error);
+      throw new Error(errorResponse.error);
+    }
   }
 }

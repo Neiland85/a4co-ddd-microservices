@@ -1,13 +1,39 @@
+import { BaseController } from '../../packages/shared-utils/src/base';
 import { OrderService } from './service';
 
-export class OrderController {
-  private orderService = new OrderService();
+interface CreateOrderRequest {
+  orderId: string;
+  items: string[];
+}
 
-  createOrder(req: { orderId: string; items: string[] }): string {
-    return this.orderService.createOrder(req.orderId, req.items);
+interface GetOrderRequest {
+  orderId: string;
+}
+
+export class OrderController extends BaseController<OrderService> {
+  constructor() {
+    super(OrderService);
   }
 
-  getOrder(req: { orderId: string }): string {
-    return this.orderService.getOrder(req.orderId);
+  createOrder(req: CreateOrderRequest): string {
+    try {
+      const validated = this.validateRequest<CreateOrderRequest>(req, ['orderId', 'items']);
+      const result = this.service.createOrder(validated.orderId, validated.items);
+      return this.formatResponse(result).data;
+    } catch (error) {
+      const errorResponse = this.handleError(error);
+      throw new Error(errorResponse.error);
+    }
+  }
+
+  getOrder(req: GetOrderRequest): string {
+    try {
+      const validated = this.validateRequest<GetOrderRequest>(req, ['orderId']);
+      const result = this.service.getOrder(validated.orderId);
+      return this.formatResponse(result).data;
+    } catch (error) {
+      const errorResponse = this.handleError(error);
+      throw new Error(errorResponse.error);
+    }
   }
 }
