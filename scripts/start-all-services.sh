@@ -283,6 +283,33 @@ show_logs() {
     fi
 }
 
+# Función para abrir URLs de servicios en el navegador
+open_browser_urls() {
+    # Detectar comando para abrir navegador
+    if command -v xdg-open &> /dev/null; then
+        BROWSER_CMD="xdg-open"
+    elif command -v open &> /dev/null; then
+        BROWSER_CMD="open"
+    elif command -v start &> /dev/null; then
+        BROWSER_CMD="start"
+    else
+        echo -e "${YELLOW}⚠️  No se encontró un comando para abrir el navegador automáticamente.${NC}"
+        return
+    fi
+
+    # Abrir NATS Monitor
+    $BROWSER_CMD "http://localhost:8222" &> /dev/null &
+
+    # Si docker está disponible, abrir Jaeger y Prometheus si están corriendo
+    if command -v docker &> /dev/null; then
+        if docker ps | grep -q jaeger; then
+            $BROWSER_CMD "http://localhost:16686" &> /dev/null &
+        fi
+        if docker ps | grep -q prometheus; then
+            $BROWSER_CMD "http://localhost:9090" &> /dev/null &
+        fi
+    fi
+}
 # Abrir navegador si está disponible
 open_browser_urls
 
