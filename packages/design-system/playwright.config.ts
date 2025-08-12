@@ -1,4 +1,10 @@
-import { defineConfig, devices } from '@playwright/test'
+// Asegúrate de instalar @playwright/test en este microservicio:
+// Asegúrate de instalar @playwright/test en este microservicio:
+// Asegúrate de ejecutar en este microservicio:
+// Asegúrate de instalar @playwright/test en este microservicio:
+// npm install --save-dev @playwright/test
+
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/visual',

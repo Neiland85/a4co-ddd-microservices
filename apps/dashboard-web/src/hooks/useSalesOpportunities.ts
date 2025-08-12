@@ -2,16 +2,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-     cursor/verificar-arquitectura-y-levantar-servidores-0628
 
-   develop
-   cursor/levantar-todos-los-servicios-de-desarrollo-local-39aa
-     main
-
-   develop
-
-     main
-     main
 interface SalesOpportunity {
   id: string;
   title: string;
