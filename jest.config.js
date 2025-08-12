@@ -1,10 +1,10 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  roots: ['<rootDir>/src'],
-  moduleFileExtensions: ['ts', 'js'],
-  testMatch: ['**/*.test.ts'],
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
-  }
+  projects: [
+    '<rootDir>/apps/auth-service/jest.config.js',
+    '<rootDir>/packages/product-service/jest.config.js',
+    '<rootDir>/packages/shared-utils/jest.config.js',
+    // Add other packages here
+  ],
+  coverageDirectory: 'coverage',
+  collectCoverage: true,
 };
