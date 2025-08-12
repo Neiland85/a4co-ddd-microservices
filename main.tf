@@ -15,7 +15,7 @@ terraform {
     organization = "a4co-org"
 
     workspaces {
-      name = "a4co-ddd-microservices"
+      name = "a4co-ddd-microservices-workspace"
     }
   }
 }
