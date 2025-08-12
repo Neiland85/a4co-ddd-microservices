@@ -8,7 +8,7 @@ terraform {
   required_version = ">= 1.0.0"
 
   backend "remote" {
-    organization = "a4co-devops-org"
+    organization = "a4co-org"
 
     workspaces {
       name = "a4co-ddd-microservices"
@@ -18,4 +18,15 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-12345678"
+  instance_type = "t2.micro"
+
+  depends_on = [aws_vpc.example]
+
+  tags = {
+    Name = "ExampleInstance"
+  }
 }
