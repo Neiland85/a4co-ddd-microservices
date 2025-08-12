@@ -25,17 +25,12 @@
     "db:push": "turbo run db:push",
     "db:migrate": "turbo run db:migrate",
     "start:dev": "concurrently \"pnpm run dev\"",
-     cursor/design-microservice-communication-strategy-a023
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-
     "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
     "docker:down": "docker-compose -f docker-compose.dev.yml down",
     "docker:logs": "docker-compose -f docker-compose.dev.yml logs -f",
     "storybook:dev": "pnpm --filter @a4co/design-system storybook",
     "design:sync": "node scripts/sync-design-tokens.js sync",
     "design:sync:watch": "node scripts/sync-design-tokens.js watch",
-     develop
     "test:coverage": "turbo run test:coverage",
     "test:coverage:report": "turbo run test:coverage && pnpm run coverage:merge",
     "coverage:merge": "lcov-result-merger 'apps/**/coverage/lcov.info' 'packages/**/coverage/lcov.info' > coverage/lcov.info",
@@ -61,20 +56,7 @@
   ],
   "devDependencies": {
     "@playwright/test": "^1.54.2",
-    "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "lucide-react": "^0.525.0",
-    "turbo": "^2.5.5"
-  }
-}
-
-  ],
-  "dependencies": {
-    "concurrently": "^8.2.2",
-    "turbo": "^2.5.5"
-  },
-  "devDependencies": {
+    "typescript": "^5.9.2",
     "@types/node": "^20.19.9",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
@@ -85,8 +67,12 @@
     "jscpd": "^4.0.5",
     "madge": "^8.0.0",
     "prettier": "^3.6.2",
-    "ts-prune": "^0.10.3",
-    "typescript": "^5.8.3"
+    "ts-prune": "^0.10.3"
+  },
+  "dependencies": {
+    "lucide-react": "^0.525.0",
+    "turbo": "^2.5.5",
+    "concurrently": "^8.2.2"
   },
   "engines": {
     "node": ">=18.0.0",
