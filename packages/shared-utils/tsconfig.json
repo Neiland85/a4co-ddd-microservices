@@ -4,12 +4,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "lib": ["ES2022", "DOM"],
-    "jsx": "react-jsx",
-    "paths": {
-      "@shared/*": [
-        "../../packages/shared-utils/*"
-      ]
-    }
+    "jsx": "react-jsx"
   },
   "include": [
     "index.ts",
