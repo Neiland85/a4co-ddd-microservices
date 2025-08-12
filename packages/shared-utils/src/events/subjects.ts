@@ -99,8 +99,6 @@ export const EventSubjects = {
   CAMPAIGN_TRIGGERED: 'loyalty.campaign.triggered',
   
   // ========================================
-   cursor/design-microservice-communication-strategy-a023
-
   // INTEGRATION EVENTS - Para comunicación entre bounded contexts
   // ========================================
   PRODUCT_INFORMATION_REQUESTED: 'integration.product.info.requested',
@@ -120,7 +118,6 @@ export const EventSubjects = {
   SAGA_COMPENSATION_TRIGGERED: 'saga.compensation.triggered',
   
   // ========================================
-   develop
   // ANALYTICS DOMAIN EVENTS
   // ========================================
   PAGE_VIEW_TRACKED: 'analytics.pageview',
