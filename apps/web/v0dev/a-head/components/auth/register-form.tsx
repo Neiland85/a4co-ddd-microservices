@@ -136,7 +136,7 @@ export function RegisterForm() {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                bc vx <FormLabel>Acepto los términos y condiciones</FormLabel>
+                <FormLabel>Acepto los términos y condiciones</FormLabel>
                 <p className="text-sm text-muted-foreground">
                   Acepto los Términos de Servicio y la Política de Privacidad.
                 </p>
