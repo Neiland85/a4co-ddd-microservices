@@ -32,7 +32,10 @@ provider "aws" {
   }
 }
 
+    terraform-cloud-fix
 # S3 bucket resource for testing
+# Example resource - replace with your actual infrastructure
+    main
 resource "aws_s3_bucket" "example" {
   bucket = "a4co-ddd-microservices-${random_id.bucket_suffix.hex}"
   
@@ -43,6 +46,7 @@ resource "aws_s3_bucket" "example" {
 
 resource "random_id" "bucket_suffix" {
   byte_length = 4
+     terraform-cloud-fix
 }
 
 # Outputs
@@ -54,4 +58,6 @@ output "bucket_name" {
 output "bucket_arn" {
   description = "ARN of the S3 bucket"
   value       = aws_s3_bucket.example.arn
+
+     main
 }

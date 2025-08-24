@@ -10,13 +10,10 @@ module.exports = {
     '!src/**/*.interface.ts',
   ],
   moduleNameMapper: {
-    '^@a4co/shared-utils
     '^@a4co/shared-utils$': '<rootDir>/../../packages/shared-utils/index.ts',
-    '^@a4co/shared-utils/(.*)$'
-: '<rootDir>/../../packages/shared-utils/src/$1',
+    '^@a4co/shared-utils/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1',
   },
   transform: {
-    '^.+\.ts
     '^.+\\.ts$': [
       'ts-jest',
       {
