@@ -1,42 +1,20 @@
-// Exportar clases base
-export * from './base';
-
-// Exportar constantes
-export * from './constants';
-
-// Exportar elementos de dominio
+// Domain-Driven Design base classes and utilities
 export * from './domain';
-
-// Exportar DTOs
 export * from './dto';
-
-// Exportar tipos
-export * from './types';
-
-// Exportar utilidades
 export * from './utils';
-
-// Exportar utilidades de seguridad
-export * from './security';
-
-// Exportar sistema de eventos
-export * from './events/event-bus';
-export * from './events/subjects';
-export * from './events/domain-events';
-
-
-// Exportar clientes API para comunicación entre servicios
-export * from './api-clients';
-
-export * from './events/integration-events';
-
-// Exportar sistema de sagas
+export * from './events';
+export * from './constants';
+export * from './types';
 export * from './saga/saga-orchestrator';
-   develop
-    cursor/levantar-todos-los-servicios-de-desarrollo-local-39aa
 
-   main
-     develop
-   develop
+// Application layer patterns
+export interface UseCase<Input, Output> {
+  execute(input: Input): Promise<Output>;
+}
 
-   main
+// Repository pattern
+export interface Repository<T> {
+  findById(id: string): Promise<T | null>;
+  save(entity: T): Promise<void>;
+  delete(id: string): Promise<void>;
+}
