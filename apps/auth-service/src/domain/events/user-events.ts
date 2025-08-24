@@ -1,4 +1,4 @@
-import { DomainEvent } from '@a4co/shared-utils/src/domain/domain-event';
+import { DomainEvent } from '@a4co/shared-utils';
 
 export class UserRegisteredEvent extends DomainEvent {
   constructor(
