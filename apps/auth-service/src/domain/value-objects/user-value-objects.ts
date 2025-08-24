@@ -1,5 +1,5 @@
 // prompt: ✦ gen-service
-import { ValueObject } from '../../../../../packages/shared-utils';
+import { ValueObject } from '@a4co/shared-utils';
 
 export class Email extends ValueObject<string> {
   constructor(value: string) {

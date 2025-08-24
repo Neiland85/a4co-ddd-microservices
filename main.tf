@@ -12,10 +12,10 @@ terraform {
   required_version = ">= 1.5.0"
 
   cloud {
-    organization = "a4co-org"
+    organization = "NeilandAPiS"
 
     workspaces {
-      name = "a4co-ddd-microservices-workspace"
+      name = "a4co-ddd-microservices"
     }
   }
 }
