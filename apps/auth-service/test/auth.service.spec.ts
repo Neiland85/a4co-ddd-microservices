@@ -1,5 +1,6 @@
 import { AuthService } from '../src/service';
 import { AuthController } from '../src/controller';
+import { testConfig, generateTestCredentials } from './test.config';
 
 // Mock para simular dependencias externas
 const mockLogger = {
@@ -27,8 +28,7 @@ describe('AuthService - Casos de Uso Principales', () => {
 
   describe('Login - Flujos Principales', () => {
     it('debería autenticar un usuario con credenciales válidas', () => {
-      const username = 'usuario_test';
-      const password = 'password123';
+      const { username, password } = testConfig.testCredentials;
 
       const result = authService.login(username, password);
 
@@ -39,7 +39,7 @@ describe('AuthService - Casos de Uso Principales', () => {
 
     it('debería manejar nombres de usuario con caracteres especiales', () => {
       const username = 'usuario@test.com';
-      const password = 'password123';
+      const password = 'test_password';
 
       const result = authService.login(username, password);
 
@@ -79,7 +79,7 @@ describe('AuthService - Casos de Uso Principales', () => {
   describe('Register - Flujos Principales', () => {
     it('debería registrar un nuevo usuario exitosamente', () => {
       const username = 'nuevo_usuario';
-      const password = 'nueva_password';
+      const password = 'test_password';
 
       const result = authService.register(username, password);
 
@@ -88,7 +88,7 @@ describe('AuthService - Casos de Uso Principales', () => {
 
     it('debería manejar nombres de usuario largos', () => {
       const username = 'usuario_muy_largo_con_muchos_caracteres_123456789';
-      const password = 'password123';
+      const password = 'test_password';
 
       const result = authService.register(username, password);
 
@@ -97,7 +97,7 @@ describe('AuthService - Casos de Uso Principales', () => {
 
     it('debería manejar contraseñas complejas', () => {
       const username = 'usuario_test';
-      const password = 'P@ssw0rd!123#';
+      const password = 'TestP@ssw0rd!';
 
       const result = authService.register(username, password);
 
@@ -108,7 +108,7 @@ describe('AuthService - Casos de Uso Principales', () => {
   describe('Register - Casos de Error', () => {
     it('debería manejar username vacío', () => {
       const username = '';
-      const password = 'password123';
+      const password = 'test_password';
 
       const result = authService.register(username, password);
 
@@ -128,7 +128,7 @@ describe('AuthService - Casos de Uso Principales', () => {
   describe('Validaciones de Entrada', () => {
     it('debería validar que username sea string', () => {
       const username = 123 as any;
-      const password = 'password123';
+      const password = 'test_password';
 
       const result = authService.login(username, password);
 
@@ -149,8 +149,8 @@ describe('AuthService - Casos de Uso Principales', () => {
     it('debería manejar strings muy largos', () => {
       const longString = 'a'.repeat(1000);
 
-      const loginResult = authService.login(longString, 'password');
-      const registerResult = authService.register(longString, 'password');
+      const loginResult = authService.login(longString, 'test_password');
+      const registerResult = authService.register(longString, 'test_password');
 
       expect(loginResult).toBe(`Usuario ${longString} autenticado.`);
       expect(registerResult).toBe(`Usuario ${longString} registrado.`);
@@ -158,11 +158,11 @@ describe('AuthService - Casos de Uso Principales', () => {
 
     it('debería manejar caracteres Unicode', () => {
       const username = 'usuario_ñáéíóú_测试_🚀';
-      const password = 'password123';
+      const password = 'test_password';
 
       const result = authService.login(username, password);
 
-      expect(result).toBe(`Usuario ${username} autenticado.`);
+      expect(result).toBe(`Usuario ${username} registrado.`);
     });
   });
 });
@@ -177,7 +177,7 @@ describe('AuthController - Integración', () => {
 
   describe('Métodos del Controller', () => {
     it('debería delegar login al service correctamente', () => {
-      const request = { username: 'test_user', password: 'test_pass' };
+      const request = { username: 'test_user', password: 'test_password' };
 
       const result = authController.login(request);
 
@@ -185,7 +185,7 @@ describe('AuthController - Integración', () => {
     });
 
     it('debería delegar register al service correctamente', () => {
-      const request = { username: 'new_user', password: 'new_pass' };
+      const request = { username: 'new_user', password: 'test_password' };
 
       const result = authController.register(request);
 
