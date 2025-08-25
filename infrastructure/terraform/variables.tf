@@ -233,6 +233,30 @@ variable "rds_backup_retention_period" {
   default     = 7
 }
 
+variable "rds_backup_window" {
+  description = "Ventana de tiempo para backups (UTC)"
+  type        = string
+  default     = "03:00-04:00"
+}
+
+variable "rds_maintenance_window" {
+  description = "Ventana de tiempo para mantenimiento (UTC)"
+  type        = string
+  default     = "sun:04:00-sun:05:00"
+}
+
+variable "rds_kms_key_id" {
+  description = "ID de la clave KMS para encriptar RDS"
+  type        = string
+  default     = null
+}
+
+variable "rds_ecs_security_group_id" {
+  description = "ID del security group de ECS para RDS"
+  type        = string
+  default     = null
+}
+
 # Variables de Redis
 variable "redis_node_type" {
   description = "Tipo de nodo para Redis"
