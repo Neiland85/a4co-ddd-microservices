@@ -4,7 +4,11 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "lib": ["ES2022", "DOM"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "incremental": true,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true
   },
   "include": [
     "index.ts",

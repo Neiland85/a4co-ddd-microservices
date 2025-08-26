@@ -13,7 +13,7 @@ Se ha implementado una estrategia completa de observabilidad unificada para la p
 
 ## 🏗️ Arquitectura Implementada
 
-```
+```text
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   Frontend  │────▶│   Backend   │────▶│    NATS     │
 │   (React)   │     │  (Node.js)  │     │  (Message)  │
@@ -169,6 +169,7 @@ kubectl apply -f packages/observability/k8s/prometheus-alerts.yaml
 ## 🔧 Variables de Entorno
 
 ### Backend
+
 ```bash
 NODE_ENV=production
 SERVICE_NAME=order-service
@@ -179,6 +180,7 @@ LOG_LEVEL=info
 ```
 
 ### Frontend
+
 ```bash
 REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 ```
