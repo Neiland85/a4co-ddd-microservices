@@ -75,7 +75,11 @@ analyze_java() {
     if command -v checkstyle &> /dev/null; then
         echo ""
         echo "Ejecutando Checkstyle..."
-        checkstyle -c /google_checks.xml src/ > checkstyle-report.txt 2>&1 || true
+        if [ -f "./google_checks.xml" ]; then
+            checkstyle -c ./google_checks.xml src/ > checkstyle-report.txt 2>&1 || true
+        else
+            echo "Advertencia: No se encontró google_checks.xml en el directorio actual. Se omite Checkstyle."
+        fi
     fi
 }
 
