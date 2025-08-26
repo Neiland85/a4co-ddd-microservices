@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "4.67.0"  # Versión específica que sabemos que funciona
+      version = "~> 4.67.0"  # Permite actualizaciones de parches para mayor seguridad y estabilidad
     }
   }
   required_version = ">= 1.13.0"
@@ -21,11 +21,11 @@ terraform {
 provider "aws" {
   region = "us-east-1"
   
-  # Configuración para desarrollo local
+  # ⚠️ SOLO PARA DESARROLLO LOCAL - NO USAR EN PRODUCCIÓN
   # Comenta estas líneas cuando uses credenciales reales
-  skip_credentials_validation = true
-  skip_metadata_api_check     = true
-  skip_requesting_account_id  = true
+  # skip_credentials_validation = true
+  # skip_metadata_api_check     = true
+  # skip_requesting_account_id  = true
   
   default_tags {
     tags = {

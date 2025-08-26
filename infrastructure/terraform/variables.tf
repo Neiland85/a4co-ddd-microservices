@@ -252,10 +252,15 @@ variable "rds_kms_key_id" {
 }
 
 variable "rds_database_password" {
-  description = "Contraseña para la base de datos"
+  description = "Contraseña para la base de datos (REQUERIDA)"
   type        = string
   sensitive   = true
-  default     = null
+  # Removido default = null para forzar configuración explícita
+  
+  validation {
+    condition     = length(var.rds_database_password) >= 8
+    error_message = "La contraseña debe tener al menos 8 caracteres."
+  }
 }
 
 variable "rds_database_username" {
