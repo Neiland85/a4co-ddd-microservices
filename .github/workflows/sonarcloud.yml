@@ -1,61 +1,44 @@
+---
 name: SonarCloud Analysis
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [main, develop, master]
+  push:
+    branches: [main, develop, master]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '8'
 
 jobs:
   sonarcloud:
-    name: SonarCloud Scan
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 10.9.0
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Run tests with coverage
-        run: |
-          pnpm run test:coverage || true
-          if [ -d "coverage" ]; then
-            echo "Coverage directory found"
-            ls -la coverage/
-          fi
-        env:
-          CI: true
-
-      - name: Generate coverage report
-        run: |
-          mkdir -p coverage
-          find . -name "lcov.info" -not -path "./node_modules/*" -not -path "./.next/*" | while read lcov; do
-            echo "Found coverage file: $lcov"
-            cat "$lcov" >> coverage/lcov.info.tmp
-          done
-          if [ -f "coverage/lcov.info.tmp" ]; then
-            sort -u coverage/lcov.info.tmp > coverage/lcov.info
-            rm coverage/lcov.info.tmp
-            echo "Final coverage report size: $(wc -l < coverage/lcov.info) lines"
-          else
-            echo "No coverage files found, creating empty report"
-            touch coverage/lcov.info
-          fi
+        run: pnpm run test:coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
@@ -64,9 +47,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=a4co-ddd-microservices
-            -Dsonar.organization=a4co
+            -Dsonar.projectKey=Neiland85_a4co-ddd-microservices
+            -Dsonar.organization=neiland85
+            -Dsonar.sources=apps,packages
+            -Dsonar.tests=apps,packages
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts,**/*.test.tsx,**/*.spec.tsx,**/test/**,**/tests/**,**/__tests__/**,**/node_modules/**,**/dist/**,**/build/**,**/.next/**,**/coverage/**
-            -Dsonar.cpd.exclusions=**/*.test.ts,**/*.spec.ts,**/node_modules/**,**/dist/**
+            -Dsonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts,**/*.test.tsx,**/*.spec.tsx
