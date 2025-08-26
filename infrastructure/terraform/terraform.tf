@@ -16,7 +16,7 @@ terraform {
   cloud {
     organization = "NeilandAPiS"
     workspaces {
-      name = "a4co-ddd-microservices-workspace"
+      name = "stc-kz7eqQUy45iRYR9g"
     }
   }
 }
