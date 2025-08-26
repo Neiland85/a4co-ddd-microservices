@@ -20,17 +20,38 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: ./.github/actions/checkout
+        run: |
+          git clone --depth 1 --branch ${{ github.ref_name }} ${{ github.repository }} .
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
       - name: Setup Node.js
-        uses: ./.github/actions/setup-node
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+        run: |
+          # Download and install Node.js
+          NODE_VERSION="${{ env.NODE_VERSION }}"
+          NODE_DISTRO="linux-x64"
+          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz"
+          
+          echo "Installing Node.js ${NODE_VERSION}..."
+          curl -fsSL "$NODE_URL" -o node.tar.xz
+          tar -xJf node.tar.xz -C /usr/local --strip-components=1
+          rm node.tar.xz
+          
+          # Verify installation
+          node --version
+          npm --version
 
       - name: Setup pnpm
-        uses: ./.github/actions/setup-pnpm
-        with:
-          version: ${{ env.PNPM_VERSION }}
+        run: |
+          # Install pnpm
+          PNPM_VERSION="${{ env.PNPM_VERSION }}"
+          echo "Installing pnpm ${PNPM_VERSION}..."
+          
+          # Install pnpm using npm
+          npm install -g pnpm@${PNPM_VERSION}
+          
+          # Verify installation
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -52,17 +73,38 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: ./.github/actions/checkout
+        run: |
+          git clone --depth 1 --branch ${{ github.ref_name }} ${{ github.repository }} .
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
       - name: Setup Node.js
-        uses: ./.github/actions/setup-node
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+        run: |
+          # Download and install Node.js
+          NODE_VERSION="${{ env.NODE_VERSION }}"
+          NODE_DISTRO="linux-x64"
+          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz"
+          
+          echo "Installing Node.js ${NODE_VERSION}..."
+          curl -fsSL "$NODE_URL" -o node.tar.xz
+          tar -xJf node.tar.xz -C /usr/local --strip-components=1
+          rm node.tar.xz
+          
+          # Verify installation
+          node --version
+          npm --version
 
       - name: Setup pnpm
-        uses: ./.github/actions/setup-pnpm
-        with:
-          version: ${{ env.PNPM_VERSION }}
+        run: |
+          # Install pnpm
+          PNPM_VERSION="${{ env.PNPM_VERSION }}"
+          echo "Installing pnpm ${PNPM_VERSION}..."
+          
+          # Install pnpm using npm
+          npm install -g pnpm@${PNPM_VERSION}
+          
+          # Verify installation
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -85,17 +127,38 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: ./.github/actions/checkout
+        run: |
+          git clone --depth 1 --branch ${{ github.ref_name }} ${{ github.repository }} .
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
       - name: Setup Node.js
-        uses: ./.github/actions/setup-node
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+        run: |
+          # Download and install Node.js
+          NODE_VERSION="${{ env.NODE_VERSION }}"
+          NODE_DISTRO="linux-x64"
+          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz"
+          
+          echo "Installing Node.js ${NODE_VERSION}..."
+          curl -fsSL "$NODE_URL" -o node.tar.xz
+          tar -xJf node.tar.xz -C /usr/local --strip-components=1
+          rm node.tar.xz
+          
+          # Verify installation
+          node --version
+          npm --version
 
       - name: Setup pnpm
-        uses: ./.github/actions/setup-pnpm
-        with:
-          version: ${{ env.PNPM_VERSION }}
+        run: |
+          # Install pnpm
+          PNPM_VERSION="${{ env.PNPM_VERSION }}"
+          echo "Installing pnpm ${PNPM_VERSION}..."
+          
+          # Install pnpm using npm
+          npm install -g pnpm@${PNPM_VERSION}
+          
+          # Verify installation
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
