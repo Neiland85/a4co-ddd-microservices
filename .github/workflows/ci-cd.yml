@@ -27,17 +27,7 @@ jobs:
 
       - name: Setup Node.js
         run: |
-          # Download and install Node.js
-          NODE_VERSION="${{ env.NODE_VERSION }}"
-          NODE_DISTRO="linux-x64"
-          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz"
-          
-          echo "Installing Node.js ${NODE_VERSION}..."
-          curl -fsSL "$NODE_URL" -o node.tar.xz
-          tar -xJf node.tar.xz -C /usr/local --strip-components=1
-          rm node.tar.xz
-          
-          # Verify installation
+          # Use Node.js that's already available
           node --version
           npm --version
 
@@ -80,17 +70,7 @@ jobs:
 
       - name: Setup Node.js
         run: |
-          # Download and install Node.js
-          NODE_VERSION="${{ env.NODE_VERSION }}"
-          NODE_DISTRO="linux-x64"
-          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz"
-          
-          echo "Installing Node.js ${NODE_VERSION}..."
-          curl -fsSL "$NODE_URL" -o node.tar.xz
-          tar -xJf node.tar.xz -C /usr/local --strip-components=1
-          rm node.tar.xz
-          
-          # Verify installation
+          # Use Node.js that's already available
           node --version
           npm --version
 
@@ -134,17 +114,7 @@ jobs:
 
       - name: Setup Node.js
         run: |
-          # Download and install Node.js
-          NODE_VERSION="${{ env.NODE_VERSION }}"
-          NODE_DISTRO="linux-x64"
-          NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz"
-          
-          echo "Installing Node.js ${NODE_VERSION}..."
-          curl -fsSL "$NODE_URL" -o node.tar.xz
-          tar -xJf node.tar.xz -C /usr/local --strip-components=1
-          rm node.tar.xz
-          
-          # Verify installation
+          # Use Node.js that's already available
           node --version
           npm --version
 
