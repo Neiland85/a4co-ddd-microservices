@@ -104,7 +104,8 @@ export class SafeExec {
         timeout: options.timeout || 30000
       });
     } catch (error) {
-      throw new Error(`Command failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Command failed: ${errorMessage}`);
     }
   }
 
