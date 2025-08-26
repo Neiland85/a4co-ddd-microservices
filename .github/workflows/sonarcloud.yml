@@ -19,18 +19,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: ./.github/actions/checkout
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: ./.github/actions/setup-node
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: ./.github/actions/setup-pnpm
         with:
           version: ${{ env.PNPM_VERSION }}
 
@@ -41,15 +40,19 @@ jobs:
         run: pnpm run test:coverage
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=Neiland85_a4co-ddd-microservices
-            -Dsonar.organization=neiland85
-            -Dsonar.sources=apps,packages
-            -Dsonar.tests=apps,packages
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts,**/*.test.tsx,**/*.spec.tsx
+        run: |
+          # Instalar SonarCloud Scanner
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+          unzip sonar-scanner.zip
+          export PATH="$PWD/sonar-scanner-4.8.0.2856-linux/bin:$PATH"
+          
+          # Ejecutar análisis
+          sonar-scanner \
+            -Dsonar.projectKey=Neiland85_a4co-ddd-microservices \
+            -Dsonar.organization=neiland85 \
+            -Dsonar.sources=apps,packages \
+            -Dsonar.tests=apps,packages \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts,**/*.test.tsx,**/*.spec.tsx \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}

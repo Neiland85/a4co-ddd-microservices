@@ -1,0 +1,32 @@
+name: 'Setup Node.js'
+description: 'Setup a Node.js environment by adding necessary paths to PATH'
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: true
+  cache:
+    description: 'Package manager to cache dependencies from'
+    default: 'npm'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      shell: bash
+      run: |
+        # Download and install Node.js
+        NODE_VERSION="${{ inputs.node-version }}"
+        NODE_DISTRO="linux-x64"
+        NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz"
+        
+        echo "Installing Node.js ${NODE_VERSION}..."
+        curl -fsSL "$NODE_URL" -o node.tar.xz
+        tar -xJf node.tar.xz -C /usr/local --strip-components=1
+        rm node.tar.xz
+        
+        # Verify installation
+        node --version
+        npm --version
+        
+        # Add to PATH
+        echo "$GITHUB_ACTION_PATH/node" >> $GITHUB_PATH

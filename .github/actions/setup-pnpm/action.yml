@@ -1,0 +1,29 @@
+name: 'Setup pnpm'
+description: 'Setup pnpm package manager'
+inputs:
+  version:
+    description: 'pnpm version to use'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup pnpm
+      shell: bash
+      run: |
+        # Install pnpm
+        PNPM_VERSION="${{ inputs.version }}"
+        echo "Installing pnpm ${PNPM_VERSION}..."
+        
+        # Install pnpm using npm (if available) or curl
+        if command -v npm &> /dev/null; then
+          npm install -g pnpm@${PNPM_VERSION}
+        else
+          curl -fsSL https://get.pnpm.io/install.sh | sh -s -- --version ${PNPM_VERSION}
+        fi
+        
+        # Verify installation
+        pnpm --version
+        
+        # Add to PATH
+        echo "$HOME/.local/share/pnpm" >> $GITHUB_PATH
