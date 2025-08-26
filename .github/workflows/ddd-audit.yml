@@ -59,6 +59,7 @@ jobs:
         pip install lizard
         sudo apt-get update
         sudo apt-get install -y cloc
+        mkdir -p audit-reports
     
     - name: Análisis de complejidad
       run: |
@@ -88,6 +89,7 @@ jobs:
     - name: Detectar lenguaje principal
       id: detect-language
       run: |
+        mkdir -p audit-reports
         if [ $(find . -name "*.java" | wc -l) -gt 0 ]; then
           echo "language=java" >> $GITHUB_OUTPUT
         elif [ $(find . -name "*.cs" | wc -l) -gt 0 ]; then
@@ -97,7 +99,7 @@ jobs:
         elif [ $(find . -name "*.py" | wc -l) -gt 0 ]; then
           echo "language=python" >> $GITHUB_OUTPUT
         elif [ $(find . -name "*.go" | wc -l) -gt 0 ]; then
-          echo "language=go" >> $GITHUB_OUTPUT
+          echo "language=unknown" >> $GITHUB_OUTPUT
         else
           echo "language=unknown" >> $GITHUB_OUTPUT
         fi
