@@ -1,31 +1,3 @@
-terraform {
-  required_version = ">= 1.6.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-
-  # Configuración para Terraform Cloud
-  cloud {
-    organization = "NeilandAPiS"
-    workspaces {
-      name = "a4co-ddd-microservices-workspace"
-    }
-  }
-
-  # Backend S3 comentado para usar Terraform Cloud
-  # backend "s3" {
-  #   bucket         = "a4co-terraform-state"
-  #   key            = "infrastructure/terraform.tfstate"
-  #   region         = "us-east-1"
-  #   encrypt        = true
-  #   dynamodb_table = "a4co-terraform-locks"
-  # }
-}
-
 # Configuración del proveedor AWS
 # Nota: Para Terraform Cloud, usar terraform-cloud.tf
 provider "aws" {
