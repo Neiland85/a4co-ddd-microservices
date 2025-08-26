@@ -1,7 +1,6 @@
 // Hook para gestión de oportunidades de venta
 'use client';
-
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 
 interface SalesOpportunity {
   id: string;
