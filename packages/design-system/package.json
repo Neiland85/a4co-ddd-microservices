@@ -14,7 +14,8 @@
   },
   "scripts": {
     "dev": "tsup src/index.ts --watch --dts --format esm,cjs",
-    "build": "tsup src/index.ts --dts --format esm,cjs && postcss src/styles/main.css -o dist/styles.css",
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "build:css": "postcss src/styles/main.css -o dist/styles.css",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest",
