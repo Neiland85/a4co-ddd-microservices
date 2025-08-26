@@ -10,7 +10,7 @@ export interface EventMessage {
 }
 
 export interface EventHandler<T = any> {
-  (event: EventMessage<T>): Promise<void> | void;
+  (event: EventMessage): Promise<void> | void;
 }
 
 export interface NatsEventBusConfig {
@@ -88,25 +88,32 @@ export class NatsEventBus extends EventEmitter {
       console.log('🔌 Conexión NATS cerrada');
     });
 
-    this.connection.status().subscribe((status) => {
-      this.emit('status', status);
-      
-      switch (status.type) {
-        case 'disconnect':
-          this.isConnected = false;
-          this.emit('disconnected');
-          console.log('🔌 Desconectado de NATS');
-          break;
-        case 'reconnect':
-          this.isConnected = true;
-          this.emit('reconnected');
-          console.log('🔄 Reconectado a NATS');
-          break;
+    // NATS status es un AsyncIterable, no un Observable
+    (async () => {
+      try {
+        for await (const status of this.connection!.status()) {
+          this.emit('status', status);
+
+          switch (status.type) {
+            case 'disconnect':
+              this.isConnected = false;
+              this.emit('disconnected');
+              console.log('🔌 Desconectado de NATS');
+              break;
+            case 'reconnect':
+              this.isConnected = true;
+              this.emit('reconnected');
+              console.log('🔄 Reconectado a NATS');
+              break;
+          }
+        }
+      } catch (error) {
+        console.error('Error en status NATS:', error);
       }
-    });
+    })();
   }
 
-  async publish<T = any>(subject: string, event: EventMessage<T>): Promise<void> {
+  async publish<T = any>(subject: string, event: EventMessage): Promise<void> {
     if (!this.connection || !this.isConnected) {
       throw new Error('❌ No hay conexión activa con NATS');
     }
@@ -163,7 +170,9 @@ export class NatsEventBus extends EventEmitter {
 
           this.emit('message', { subject, message: eventMessage });
           await handler(eventMessage);
-          message.ack();
+          if ('ack' in message) {
+            (message as any).ack();
+          }
         } catch (error) {
           this.emit('error', error);
           console.error(`❌ Error procesando mensaje de ${subject}:`, error);
