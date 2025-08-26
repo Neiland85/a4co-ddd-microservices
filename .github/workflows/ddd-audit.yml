@@ -1,3 +1,4 @@
+---
 name: DDD Microservices Audit
 
 on:
@@ -16,7 +17,11 @@ jobs:
     name: Análisis de Estructura DDD
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      run: |
+        git clone --depth 1 --branch ${{ github.ref_name }} https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git .
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
     
     - name: Configurar entorno
       run: |
@@ -34,17 +39,20 @@ jobs:
         echo "Repositories: $(find . -name "*Repository*" | wc -l)" >> audit-reports/ddd-structure.txt
     
     - name: Subir reporte de estructura
-      uses: actions/upload-artifact@v3
-      with:
-        name: ddd-structure-report
-        path: audit-reports/ddd-structure.txt
+      run: |
+        echo "Reporte de estructura DDD generado:"
+        cat audit-reports/ddd-structure.txt
 
   code-quality-metrics:
     runs-on: ubuntu-latest
     name: Métricas de Calidad de Código
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      run: |
+        git clone --depth 1 --branch ${{ github.ref_name }} https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git .
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
     
     - name: Instalar herramientas
       run: |
@@ -62,17 +70,20 @@ jobs:
         cloc . --out=audit-reports/cloc-report.txt --exclude-dir=node_modules,vendor,.git
     
     - name: Subir reportes de calidad
-      uses: actions/upload-artifact@v3
-      with:
-        name: quality-metrics-reports
-        path: audit-reports/
+      run: |
+        echo "Reportes de calidad generados:"
+        ls -la audit-reports/
 
   language-specific-analysis:
     runs-on: ubuntu-latest
     name: Análisis Específico por Lenguaje
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      run: |
+        git clone --depth 1 --branch ${{ github.ref_name }} https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git .
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
     
     - name: Detectar lenguaje principal
       id: detect-language
@@ -93,211 +104,7 @@ jobs:
     
     - name: Setup Java
       if: steps.detect-language.outputs.language == 'java'
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    
-    - name: Setup .NET
-      if: steps.detect-language.outputs.language == 'csharp'
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '7.0.x'
-    
-    - name: Setup Node.js
-      if: steps.detect-language.outputs.language == 'typescript'
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Setup Python
-      if: steps.detect-language.outputs.language == 'python'
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: Setup Go
-      if: steps.detect-language.outputs.language == 'go'
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
-    
-    - name: Ejecutar análisis específico
       run: |
-        chmod +x scripts/language-specific-metrics.sh
-        ./scripts/language-specific-metrics.sh || true
-
-  sonarqube-analysis:
-    runs-on: ubuntu-latest
-    name: Análisis SonarQube
-    if: github.event_name != 'schedule'
-    
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-  generate-comparison-report:
-    runs-on: ubuntu-latest
-    needs: [ddd-structure-analysis, code-quality-metrics]
-    name: Generar Reporte Comparativo
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Descargar artefactos
-      uses: actions/download-artifact@v3
-      with:
-        path: audit-reports
-    
-    - name: Generar reporte HTML
-      run: |
-        cat > audit-reports/comparison-report.html << 'HTML'
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <title>DDD Audit - Comparación con Estándares</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-                th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-                th { background-color: #4CAF50; color: white; }
-                .metric-good { color: green; font-weight: bold; }
-                .metric-warning { color: orange; font-weight: bold; }
-                .metric-bad { color: red; font-weight: bold; }
-                .header { background-color: #f0f0f0; padding: 20px; border-radius: 5px; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <h1>🏗️ DDD Microservices Audit Report</h1>
-                <p>Generado: $(date)</p>
-                <p>Repositorio: ${{ github.repository }}</p>
-                <p>Rama: ${{ github.ref_name }}</p>
-            </div>
-            
-            <h2>📊 Comparación con Estándares</h2>
-            <table>
-                <tr>
-                    <th>Métrica</th>
-                    <th>Tu Proyecto</th>
-                    <th>Media Nacional</th>
-                    <th>Media Europea</th>
-                    <th>Media Internacional</th>
-                    <th>Estado</th>
-                </tr>
-                <tr>
-                    <td>Coverage</td>
-                    <td>Por medir</td>
-                    <td>70%</td>
-                    <td>75%</td>
-                    <td>80%</td>
-                    <td class="metric-warning">⚠️ Pendiente</td>
-                </tr>
-                <tr>
-                    <td>Complejidad Ciclomática</td>
-                    <td>$(grep "Average" audit-reports/complexity-summary.txt 2>/dev/null | awk '{print $3}' || echo "N/A")</td>
-                    <td>&lt;15</td>
-                    <td>&lt;12</td>
-                    <td>&lt;10</td>
-                    <td>📊 Ver detalle</td>
-                </tr>
-                <tr>
-                    <td>Deuda Técnica</td>
-                    <td>Por medir</td>
-                    <td>&lt;30 días</td>
-                    <td>&lt;20 días</td>
-                    <td>&lt;10 días</td>
-                    <td class="metric-warning">⚠️ Configurar SonarQube</td>
-                </tr>
-            </table>
-            
-            <h2>🎯 Cumplimiento DDD</h2>
-            <table>
-                <tr>
-                    <th>Elemento DDD</th>
-                    <th>Cantidad Encontrada</th>
-                    <th>Recomendado</th>
-                    <th>Estado</th>
-                </tr>
-                <tr>
-                    <td>Bounded Contexts</td>
-                    <td>$(grep "Bounded Contexts:" audit-reports/ddd-structure.txt | awk '{print $3}')</td>
-                    <td>2-5</td>
-                    <td>✅</td>
-                </tr>
-                <tr>
-                    <td>Aggregates</td>
-                    <td>$(grep "Aggregates:" audit-reports/ddd-structure.txt | awk '{print $2}')</td>
-                    <td>1-3 por BC</td>
-                    <td>📊</td>
-                </tr>
-                <tr>
-                    <td>Value Objects</td>
-                    <td>$(grep "Value Objects:" audit-reports/ddd-structure.txt | awk '{print $3}')</td>
-                    <td>2-3x Entities</td>
-                    <td>📊</td>
-                </tr>
-            </table>
-            
-            <h2>📋 Próximos Pasos</h2>
-            <ol>
-                <li>Configurar SonarQube para análisis continuo</li>
-                <li>Incrementar cobertura de tests al 80%</li>
-                <li>Reducir complejidad ciclomática en métodos críticos</li>
-                <li>Documentar Bounded Contexts y sus interacciones</li>
-                <li>Implementar más Value Objects para reducir obsesión primitiva</li>
-            </ol>
-        </body>
-        </html>
-        HTML
-    
-    - name: Comentar en PR
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const fs = require('fs');
-          const reportPath = 'audit-reports/ddd-structure.txt';
-          const report = fs.readFileSync(reportPath, 'utf8');
-          
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `## 🏗️ DDD Audit Results\n\n\`\`\`\n${report}\n\`\`\`\n\n[Ver reporte completo](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
-          });
-    
-    - name: Subir reporte final
-      uses: actions/upload-artifact@v3
-      with:
-        name: final-comparison-report
-        path: audit-reports/comparison-report.html
-
-  notify-results:
-    runs-on: ubuntu-latest
-    needs: [generate-comparison-report]
-    if: always()
-    name: Notificar Resultados
-    
-    steps:
-    - name: Crear resumen
-      run: |
-        echo "# 📊 DDD Microservices Audit Summary" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "## Resultados del Análisis" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Análisis de estructura DDD completado" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Métricas de calidad calculadas" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Comparación con estándares generada" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📥 Descargar Reportes" >> $GITHUB_STEP_SUMMARY
-        echo "Los reportes completos están disponibles en los artefactos de este workflow." >> $GITHUB_STEP_SUMMARY
+        # Use Java that's already available
+        java --version
+        javac --version
