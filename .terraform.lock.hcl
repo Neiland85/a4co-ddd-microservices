@@ -2,8 +2,12 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/hashicorp/aws" {
+fix/terraform-rds-variables-missing
+  version     = "4.67.0"
+  constraints = "4.67.0"
   version     = "5.100.0"
   constraints = "~> 5.0"
+  develop
   hashes = [
     "h1:hd45qFU5cFuJMpFGdUniU9mVIr5LYVWP1uMeunBpYYs=",
     "zh:054b8dd49f0549c9a7cc27d159e45327b7b65cf404da5e5a20da154b90b8a644",

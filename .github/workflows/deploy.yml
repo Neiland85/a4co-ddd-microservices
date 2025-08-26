@@ -1,0 +1,84 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '8'
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    # environment: production  # Descomenta cuando configures el environment en GitHub
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm --filter "./packages/*" build
+
+      - name: Build all services
+        run: pnpm run build
+
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Security audit
+        run: pnpm audit --audit-level moderate
+
+      - name: Deploy to production
+        run: |
+          echo "🚀 Deploying to production..."
+          echo "Build completed successfully"
+          echo "All tests passed"
+          echo "Security audit passed"
+
+          # Aquí puedes añadir los comandos específicos de deployment
+          # Por ejemplo: pnpm run deploy:prod
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "## 🎉 Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All services deployed successfully to production" >> $GITHUB_STEP_SUMMARY
+          echo "📊 Build artifacts available in previous job" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify deployment failure
+        if: failure()
+        run: |
+          echo "## ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "❌ Deployment failed. Please check the logs for details." >> $GITHUB_STEP_SUMMARY

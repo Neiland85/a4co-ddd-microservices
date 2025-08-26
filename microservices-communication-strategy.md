@@ -3,19 +3,23 @@
 ## 1. Arquitectura de Comunicación
 
 ### Principios de Diseño
+
 - **Acoplamiento débil**: Los servicios deben ser independientes
-- **Consistencia eventual**: Aceptar que los datos pueden no estar sincronizados inmediatamente
+- **Consistencia eventual**: Aceptar que los datos pueden no estar
+  sincronizados inmediatamente
 - **Resiliencia**: Los servicios deben manejar fallos de comunicación
 - **Idempotencia**: Las operaciones deben ser seguras para repetir
 
 ### Patrones de Comunicación
 
 #### Comunicación Síncrona (REST APIs)
+
 - Para operaciones que requieren respuesta inmediata
 - Consultas de datos en tiempo real
 - Validaciones críticas entre servicios
 
 #### Comunicación Asíncrona (Event-Driven)
+
 - Para notificar cambios de estado
 - Operaciones que no requieren respuesta inmediata
 - Procesos de larga duración
@@ -36,27 +40,31 @@
 ### Comunicaciones Síncronas (REST APIs)
 
 #### Product Service
-```
+
+```http
 GET /api/products/{id} - Obtener detalles del producto
 GET /api/products/search - Buscar productos
 GET /api/products/{id}/availability - Verificar disponibilidad
 ```
 
 #### Order Service
-```
+
+```http
 POST /api/orders - Crear nuevo pedido
 GET /api/orders/{id} - Obtener detalles del pedido
 GET /api/orders/customer/{customerId} - Pedidos por cliente
 ```
 
 #### Inventory Service
-```
+
+```http
 GET /api/inventory/{productId} - Consultar stock actual
 POST /api/inventory/check-availability - Verificar disponibilidad múltiple
 ```
 
 #### Customer Service
-```
+
+```http
 GET /api/customers/{id} - Obtener datos del cliente
 POST /api/customers/validate - Validar cliente para pedido
 ```
@@ -64,6 +72,7 @@ POST /api/customers/validate - Validar cliente para pedido
 ### Comunicaciones Asíncronas (Event-Driven)
 
 #### Message Broker: RabbitMQ
+
 - **Exchange Type**: Topic Exchange para routing flexible
 - **Message Format**: JSON con schema validation
 - **Dead Letter Queue**: Para manejo de errores
@@ -71,6 +80,7 @@ POST /api/customers/validate - Validar cliente para pedido
 ## 4. Eventos de Dominio
 
 ### Product Service Events
+
 ```typescript
 // Publicados
 interface ProductCreated {
@@ -101,6 +111,7 @@ interface ProductDeleted {
 ```
 
 ### Order Service Events
+
 ```typescript
 // Publicados
 interface OrderCreated {
@@ -143,6 +154,7 @@ interface OrderShipped {
 ```
 
 ### Inventory Service Events
+
 ```typescript
 // Publicados
 interface StockReserved {
@@ -193,6 +205,7 @@ interface StockUpdated {
 ```
 
 ### Payment Service Events
+
 ```typescript
 // Publicados
 interface PaymentInitiated {
@@ -234,6 +247,7 @@ interface PaymentRefunded {
 ```
 
 ### Customer Service Events
+
 ```typescript
 // Publicados
 interface CustomerRegistered {
@@ -265,6 +279,7 @@ interface CustomerAddressAdded {
 ```
 
 ### Notification Service Events
+
 ```typescript
 // Publicados
 interface NotificationSent {
@@ -286,6 +301,7 @@ interface NotificationSent {
 ```
 
 ### Shipping Service Events
+
 ```typescript
 // Publicados
 interface ShipmentCreated {
@@ -324,6 +340,7 @@ interface ShipmentDelivered {
 ### Saga Pattern para Transacciones Distribuidas
 
 #### Order Creation Saga
+
 1. **OrderCreated** → Inventory Service
 2. Inventory Service → **StockReserved/StockReservationFailed**
 3. Si StockReserved → Payment Service
@@ -332,11 +349,13 @@ interface ShipmentDelivered {
 6. Si falla en cualquier paso → Compensación
 
 ### API Gateway Pattern
+
 - Punto único de entrada para clientes
 - Agregación de respuestas de múltiples servicios
 - Rate limiting y autenticación centralizada
 
 ### Circuit Breaker Pattern
+
 - Protección contra cascada de fallos
 - Timeouts configurables por servicio
 - Fallback responses
@@ -344,12 +363,14 @@ interface ShipmentDelivered {
 ## 6. Decisiones de Diseño
 
 ### ¿Cuándo usar REST?
+
 - Consultas de catálogo de productos
 - Validación de disponibilidad inmediata
 - Consulta de estado de pedidos
 - Autenticación y autorización
 
 ### ¿Cuándo usar Eventos?
+
 - Actualización de inventario
 - Procesamiento de pagos
 - Envío de notificaciones
@@ -359,6 +380,7 @@ interface ShipmentDelivered {
 ## 7. Configuración de RabbitMQ
 
 ### Exchanges
+
 ```javascript
 // Topic exchanges para cada dominio
 const exchanges = {
@@ -373,7 +395,8 @@ const exchanges = {
 ```
 
 ### Routing Keys
-```
+
+```bash
 product.created
 product.updated
 product.deleted
@@ -397,11 +420,13 @@ payment.refunded
 ## 8. Manejo de Errores y Resiliencia
 
 ### Estrategias de Retry
+
 - Exponential backoff para llamadas REST
 - Dead letter queues para mensajes fallidos
 - Compensación automática en sagas
 
 ### Monitoreo
+
 - Distributed tracing con OpenTelemetry
 - Métricas de latencia y throughput
 - Alertas por acumulación en colas
@@ -409,11 +434,13 @@ payment.refunded
 ## 9. Seguridad
 
 ### Entre Servicios
+
 - mTLS para comunicación REST
 - JWT tokens para autenticación
 - API keys para servicios externos
 
 ### Message Bus
+
 - Autenticación con certificados
 - Encriptación de mensajes sensibles
 - Auditoría de todos los eventos

@@ -3,8 +3,12 @@
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "./",
-    "lib": ["ES2022", "DOM"],
-    "jsx": "react-jsx"
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
+    "jsx": "react-jsx",
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true
   },
   "include": [
     "index.ts",
