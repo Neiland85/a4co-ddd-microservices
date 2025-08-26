@@ -256,7 +256,7 @@ variable "rds_database_password" {
   type        = string
   sensitive   = true
   # Removido default = null para forzar configuración explícita
-
+  
   validation {
     condition     = length(var.rds_database_password) >= 8
     error_message = "La contraseña debe tener al menos 8 caracteres."
