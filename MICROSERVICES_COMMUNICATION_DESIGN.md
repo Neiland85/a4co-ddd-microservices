@@ -1,4 +1,5 @@
 # 🔄 DISEÑO DE COMUNICACIÓN ENTRE MICROSERVICIOS
+
 **Proyecto:** A4CO DDD Marketplace Local de Jaén  
 **Fecha:** Enero 2025  
 **Versión:** 2.0 Enhanced Strategy
@@ -8,6 +9,7 @@
 Esta estrategia define patrones de comunicación robustos entre microservicios del marketplace, estableciendo claramente cuándo usar comunicación **síncrona (REST APIs)** vs **asíncrona (eventos)**, con un enfoque en bajo acoplamiento y alta cohesión siguiendo principios DDD.
 
 ### Principios Fundamentales
+
 - **Asíncrono por defecto**: Los eventos de dominio son la forma principal de comunicación
 - **Síncrono solo cuando sea crítico**: REST APIs para validaciones inmediatas y consultas en tiempo real
 - **Consistencia eventual**: Aceptamos consistencia eventual entre bounded contexts
@@ -19,14 +21,18 @@ Esta estrategia define patrones de comunicación robustos entre microservicios d
 ## 🔀 MATRIZ DE DECISIÓN: SÍNCRONO vs ASÍNCRONO
 
 ### Criterios para Comunicación SÍNCRONA (REST API)
+
 ✅ **Usar cuando:**
+
 - Se necesita respuesta inmediata para continuar el flujo
 - Validaciones críticas de negocio en tiempo real
 - Consultas de datos requeridos para renderizar UI
 - Operaciones que fallan rápido y no requieren coordinación compleja
 
 ### Criterios para Comunicación ASÍNCRONA (Eventos)
+
 ✅ **Usar cuando:**
+
 - La operación puede ser procesada eventualmente
 - Se requiere desacoplar servicios
 - Operaciones que disparan múltiples acciones en otros servicios
@@ -109,6 +115,7 @@ export class ResilientHttpClient {
 ### Tecnología Recomendada: **NATS con JetStream**
 
 **Justificación técnica:**
+
 - 🚀 **Ultra-alta performance**: Millones de mensajes/segundo
 - 🔄 **Patrones flexibles**: Pub/Sub, Request/Reply, Queue Groups
 - 📡 **Durabilidad**: JetStream para persistencia y replay de eventos
@@ -230,6 +237,7 @@ export class OrderDeliveredEvent extends DomainEvent {
 ```
 
 **Suscriptores:**
+
 - `OrderCreatedEvent` → `inventory-service`, `payment-service`, `notification-service`, `analytics-service`, `artisan-service`
 - `OrderConfirmedEvent` → `notification-service`, `loyalty-service`, `artisan-service`, `delivery-service`
 - `OrderCancelledEvent` → `inventory-service`, `payment-service`, `notification-service`, `analytics-service`
@@ -311,6 +319,7 @@ export class InventoryAdjustedEvent extends DomainEvent {
 ```
 
 **Suscriptores:**
+
 - `StockReservedEvent` → `order-service`, `notification-service`, `analytics-service`
 - `StockReleasedEvent` → `order-service`, `product-service`, `analytics-service`
 - `LowStockWarningEvent` → `artisan-service`, `notification-service`, `procurement-service`
@@ -396,6 +405,7 @@ export class RefundProcessedEvent extends DomainEvent {
 ```
 
 **Suscriptores:**
+
 - `PaymentInitiatedEvent` → `order-service`, `analytics-service`, `fraud-service`
 - `PaymentSucceededEvent` → `order-service`, `loyalty-service`, `notification-service`, `accounting-service`
 - `PaymentFailedEvent` → `order-service`, `inventory-service`, `notification-service`, `analytics-service`
@@ -479,6 +489,7 @@ export class UserPreferencesChangedEvent extends DomainEvent {
 ```
 
 **Suscriptores:**
+
 - `UserRegisteredEvent` → `notification-service`, `loyalty-service`, `analytics-service`, `recommendation-service`
 - `UserProfileUpdatedEvent` → `notification-service`, `geo-service`, `recommendation-service`
 - `UserPreferencesChangedEvent` → `notification-service`, `product-service`, `recommendation-service`
@@ -563,6 +574,7 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
 ```
 
 **Suscriptores:**
+
 - `ArtisanVerifiedEvent` → `notification-service`, `product-service`, `geo-service`, `analytics-service`
 - `NewProductListedEvent` → `product-service`, `inventory-service`, `notification-service`, `recommendation-service`
 - `ArtisanStatusChangedEvent` → `product-service`, `inventory-service`, `notification-service`, `order-service`
@@ -1154,6 +1166,7 @@ export class ServiceAuthenticationManager {
 ## 🎯 PLAN DE IMPLEMENTACIÓN
 
 ### Fase 1: Infraestructura Base (Semana 1-2)
+
 - ✅ Configurar NATS con JetStream en entorno dev/staging
 - ✅ Implementar EventBus avanzado con métricas
 - ✅ Configurar streams para cada dominio  
@@ -1161,23 +1174,27 @@ export class ServiceAuthenticationManager {
 - ✅ Setup básico de observabilidad (Prometheus + Grafana)
 
 ### Fase 2: Eventos Críticos (Semana 3-4)
+
 - ✅ Implementar eventos de Order, Payment, Inventory
 - ✅ Configurar saga de Order Fulfillment
 - ✅ Implementar handlers en order-service, payment-service, inventory-service
 - ✅ Testing end-to-end del flujo crítico de pedidos
 
-### Fase 3: APIs Síncronas Críticas (Semana 4-5) 
+### Fase 3: APIs Síncronas Críticas (Semana 4-5)
+
 - ✅ Implementar cliente HTTP resiliente con circuit breakers
 - ✅ Configurar endpoints síncronos críticos (stock check, payment validation)
 - ✅ Implementar timeouts y retry policies
 - ✅ Testing de resilencia y failover
 
 ### Fase 4: Eventos Secundarios (Semana 5-6)
+
 - ✅ Eventos de User, Artisan, Notification
 - ✅ Handlers para analytics, recommendation, geo-services
 - ✅ Implementar eventos de auditoría y compliance
 
 ### Fase 5: Optimización y Producción (Semana 7-8)
+
 - ✅ Optimizar streams y retention policies
 - ✅ Implementar dead letter queues
 - ✅ Configurar alertas proactivas
@@ -1189,21 +1206,25 @@ export class ServiceAuthenticationManager {
 ## 📋 CONCLUSIONES
 
 ### ✅ **Estrategia Balanceada**
+
 - **8 interacciones síncronas** para validaciones críticas y consultas en tiempo real
 - **20+ eventos asíncronos** para coordinación entre dominios y desacoplamiento
 - **NATS + JetStream** como tecnología principal para messaging robusto
 
 ### ✅ **Patrones Robustos**
+
 - **Saga Pattern** para transacciones distribuidas complejas
 - **Circuit Breaker + Retry** para resilencia en comunicaciones síncronas
 - **Event Sourcing compatible** para auditoría y debugging
 
 ### ✅ **Observabilidad Completa**
+
 - Métricas detalladas de rendimiento y errores
 - Tracing distribuido para debugging
 - Dashboards proactivos para operaciones
 
 ### ✅ **Seguridad by Design**
+
 - Autenticación JWT para comunicaciones entre servicios
 - Autorización granular por permisos
 - Encryption en tránsito y at rest

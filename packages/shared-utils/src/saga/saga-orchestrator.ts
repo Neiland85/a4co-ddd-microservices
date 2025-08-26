@@ -1,5 +1,43 @@
 import { IEventBus } from '../events/event-bus';
 import { EventSubjects } from '../events/subjects';
+import { DomainEvent } from '../domain/domain-event';
+
+// Clases concretas para eventos de saga
+class SagaCompletedEvent extends DomainEvent {
+  constructor(sagaId: string, data: any) {
+    super(sagaId, data);
+  }
+}
+
+class SagaFailedEvent extends DomainEvent {
+  constructor(sagaId: string, data: any) {
+    super(sagaId, data);
+  }
+}
+
+class ProductInformationRequestedEvent extends DomainEvent {
+  constructor(sagaId: string, data: any) {
+    super(sagaId, data);
+  }
+}
+
+class StockValidationRequestedEvent extends DomainEvent {
+  constructor(sagaId: string, data: any) {
+    super(sagaId, data);
+  }
+}
+
+class UserInformationRequestedEvent extends DomainEvent {
+  constructor(sagaId: string, data: any) {
+    super(sagaId, data);
+  }
+}
+
+class PaymentInitiatedEvent extends DomainEvent {
+  constructor(sagaId: string, data: any) {
+    super(sagaId, data);
+  }
+}
 
 /**
  * Orquestador de Sagas - Elimina dependencias directas entre servicios
@@ -26,23 +64,27 @@ export abstract class SagaOrchestrator {
    * Completa la saga exitosamente
    */
   protected async completeSaga(sagaId: string, result: any): Promise<void> {
-    await this.eventBus.publish(EventSubjects.SAGA_COMPLETED, {
+    const event = new SagaCompletedEvent(sagaId, {
       sagaId,
       result,
       completedAt: new Date()
     });
+
+    await this.eventBus.publish(EventSubjects.SAGA_COMPLETED, event);
   }
 
   /**
    * Falla la saga y ejecuta compensaciones
    */
   protected async failSaga(sagaId: string, error: Error, compensations: string[]): Promise<void> {
-    await this.eventBus.publish(EventSubjects.SAGA_FAILED, {
+    const event = new SagaFailedEvent(sagaId, {
       sagaId,
       error: error.message,
       compensations,
       failedAt: new Date()
     });
+
+    await this.eventBus.publish(EventSubjects.SAGA_FAILED, event);
   }
 }
 
@@ -59,28 +101,34 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
   }): Promise<void> {
     
     // Paso 1: Solicitar información de productos
-    await this.eventBus.publish(EventSubjects.PRODUCT_INFORMATION_REQUESTED, {
+    const productInfoEvent = new ProductInformationRequestedEvent(sagaId, {
       sagaId,
       orderId: sagaId,
       productIds: initialData.items.map(item => item.productId),
       requestedAt: new Date()
     });
 
+    await this.eventBus.publish(EventSubjects.PRODUCT_INFORMATION_REQUESTED, productInfoEvent);
+
     // Paso 2: Solicitar validación de stock
-    await this.eventBus.publish(EventSubjects.STOCK_VALIDATION_REQUESTED, {
+    const stockValidationEvent = new StockValidationRequestedEvent(sagaId, {
       sagaId,
       orderId: sagaId,
       items: initialData.items,
       requestedAt: new Date()
     });
 
+    await this.eventBus.publish(EventSubjects.STOCK_VALIDATION_REQUESTED, stockValidationEvent);
+
     // Paso 3: Solicitar información del usuario
-    await this.eventBus.publish(EventSubjects.USER_INFORMATION_REQUESTED, {
+    const userInfoEvent = new UserInformationRequestedEvent(sagaId, {
       sagaId,
       userId: initialData.customerId,
       requestedFields: ['email', 'address', 'preferences'],
       requestedAt: new Date()
     });
+
+    await this.eventBus.publish(EventSubjects.USER_INFORMATION_REQUESTED, userInfoEvent);
   }
 
   async handleSagaStep(sagaId: string, step: string, data: any): Promise<void> {
@@ -110,13 +158,15 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
   private async handleStockValidated(sagaId: string, data: any): Promise<void> {
     if (data.allItemsAvailable) {
       // Continuar con el proceso de pago
-      await this.eventBus.publish(EventSubjects.PAYMENT_INITIATED, {
+      const paymentEvent = new PaymentInitiatedEvent(sagaId, {
         sagaId,
         orderId: sagaId,
         amount: data.totalAmount,
         currency: data.currency,
         initiatedAt: new Date()
       });
+
+      await this.eventBus.publish(EventSubjects.PAYMENT_INITIATED, paymentEvent);
     } else {
       // Fallar la saga
       await this.failSaga(sagaId, new Error('Stock not available'), ['release_stock']);

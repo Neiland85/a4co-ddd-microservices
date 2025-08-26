@@ -2,6 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
+        fix/terraform-rds-variables-missing
       version = "4.67.0"  # Versión específica que sabemos que funciona
     }
   }
@@ -16,11 +17,29 @@ terraform {
   #   encrypt        = true
   #   use_lockfile   = true
   # }
+      version = "~> 5.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
+  required_version = ">= 1.5.0"
+
+  cloud {
+    organization = "NeilandAPiS"
+
+    workspaces {
+      name = "a4co-ddd-microservices"
+    }
+  }
+  develop
 }
 
 provider "aws" {
   region = "us-east-1"
   
+  fix/terraform-rds-variables-missing
   # Configuración para desarrollo local
   # Comenta estas líneas cuando uses credenciales reales
   skip_credentials_validation = true
@@ -36,3 +55,27 @@ provider "aws" {
     }
   }
 }
+  default_tags {
+    tags = {
+      Environment = "development"
+      Project     = "a4co-ddd-microservices"
+      ManagedBy   = "terraform"
+    }
+  }
+}
+     develop
+
+# Example resource - replace with your actual infrastructure
+resource "aws_s3_bucket" "example" {
+  bucket = "a4co-ddd-microservices-${random_id.bucket_suffix.hex}"
+  
+  tags = {
+    Name = "A4CO DDD Microservices Bucket"
+  }
+}
+
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+     main
+     develop
