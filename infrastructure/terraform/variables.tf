@@ -48,6 +48,12 @@ variable "single_nat_gateway" {
   default     = true
 }
 
+variable "enable_vpn_gateway" {
+  description = "Habilitar VPN Gateway para la VPC"
+  type        = bool
+  default     = false
+}
+
 # Variables de ECS Cluster
 variable "cluster_name" {
   description = "Nombre del cluster ECS"
@@ -190,6 +196,18 @@ variable "product_service_enable_blue_green" {
   default     = true
 }
 
+variable "auth_service_blue_green_config" {
+  description = "Configuración de despliegue blue/green para Auth Service"
+  type        = map(any)
+  default     = {}
+}
+
+variable "product_service_blue_green_config" {
+  description = "Configuración de despliegue blue/green para Product Service"
+  type        = map(any)
+  default     = {}
+}
+
 # Variables de RDS
 variable "rds_instance_class" {
   description = "Clase de instancia RDS"
@@ -227,10 +245,35 @@ variable "rds_master_password" {
   sensitive   = true
 }
 
+variable "rds_kms_key_id" {
+  description = "ID de la clave KMS para encriptar la base de datos (opcional)"
+  type        = string
+  default     = null
+}
+
+variable "rds_database_password" {
+  description = "Contraseña para la base de datos"
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
+variable "rds_database_username" {
+  description = "Nombre de usuario para la base de datos"
+  type        = string
+  default     = "postgres"
+}
+
+variable "rds_engine_version" {
+  description = "Versión del motor PostgreSQL"
+  type        = string
+  default     = "15.4"
+}
+
 variable "rds_backup_retention_period" {
   description = "Período de retención de backups (días)"
   type        = number
-  default     = 7
+  default     = 30
 }
 
 # Variables de Redis
@@ -250,6 +293,12 @@ variable "redis_port" {
   description = "Puerto de Redis"
   type        = number
   default     = 6379
+}
+
+variable "redis_parameter_group_name" {
+  description = "Nombre del grupo de parámetros para Redis"
+  type        = string
+  default     = "default.redis7"
 }
 
 # Variables de CloudWatch

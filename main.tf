@@ -2,37 +2,37 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.0"
+      version = "4.67.0"  # Versión específica que sabemos que funciona
     }
   }
-  required_version = ">= 1.0.0"
-<<<<<<< HEAD
+  required_version = ">= 1.13.0"
 
-  backend "remote" {
-    organization = "a4co-org"
-
-    workspaces {
-      name = "a4co-ddd-microservices"
-    }
-  }
-=======
->>>>>>> b4c99a77661d4447a77fd27419f07bd269f8693d
+  # Backend local para desarrollo
+  # Descomenta el backend S3 cuando tengas credenciales configuradas
+  # backend "s3" {
+  #   bucket         = "a4co-terraform-state"
+  #   key            = "a4co-ddd-microservices/terraform.tfstate"
+  #   region         = "us-east-1"
+  #   encrypt        = true
+  #   use_lockfile   = true
+  # }
 }
 
 provider "aws" {
   region = "us-east-1"
-}
-<<<<<<< HEAD
-
-resource "aws_instance" "example" {
-  ami           = "ami-12345678"
-  instance_type = "t2.micro"
-
-  depends_on = [aws_vpc.example]
-
-  tags = {
-    Name = "ExampleInstance"
+  
+  # Configuración para desarrollo local
+  # Comenta estas líneas cuando uses credenciales reales
+  skip_credentials_validation = true
+  skip_metadata_api_check     = true
+  skip_requesting_account_id  = true
+  
+  default_tags {
+    tags = {
+      Project     = "a4co-ddd-microservices"
+      Environment = "development"
+      ManagedBy   = "terraform"
+      Owner       = "a4co-team"
+    }
   }
 }
-=======
->>>>>>> b4c99a77661d4447a77fd27419f07bd269f8693d
