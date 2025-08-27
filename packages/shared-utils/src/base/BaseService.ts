@@ -40,7 +40,7 @@ export abstract class BaseService {
    * Simula una operación asíncrona con retraso (para desarrollo)
    */
   protected async simulateDelay(ms = 100): Promise<void> {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env['NODE_ENV'] === 'development') {
       await new Promise(resolve => setTimeout(resolve, ms));
     }
   }

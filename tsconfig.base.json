@@ -36,7 +36,7 @@
     "allowJs": true,
     "checkJs": false,
     "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "tsBuildInfoFile": "./.tsbuildinfo"
   },
   "include": [
     "src/**/*",

@@ -110,10 +110,10 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
     <div
       className={`${
         collapsed ? "w-16" : "w-80"
-      } transition-all duration-300 bg-background border-r border-border flex flex-col h-screen sticky top-0`}
+      } transition-all duration-300 bg-background border-r border-gray-200 dark:border-gray-800 flex flex-col h-screen sticky top-0`}
     >
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between">
           {!collapsed && (
             <div className="flex items-center space-x-2">
@@ -182,7 +182,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
 
       {/* Footer */}
       {!collapsed && (
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
           <div className="flex items-center space-x-2 text-xs text-muted-foreground">
             <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
             <span>Sistema Online</span>

@@ -390,8 +390,8 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
       newStatus: 'pending' | 'verified' | 'suspended' | 'inactive';
       reason: string;
       changedBy: string;
-      changedAt: Date;
-      effectiveDate?: Date;
+      changedAt: globalThis.Date;
+      effectiveDate?: globalThis.Date;
       notificationSent: boolean;
     }
   ) {
@@ -584,6 +584,74 @@ export class ServiceErrorEvent extends DomainEvent {
     }
   ) {
     super(errorId, data);
+  }
+}
+
+// ========================================
+// SAGA DOMAIN EVENTS
+// ========================================
+
+export class SagaCompletedEvent extends DomainEvent {
+  constructor(
+    sagaId: string,
+    data: {
+      result: any;
+      completedAt: Date;
+    }
+  ) {
+    super(sagaId, data, 1, sagaId);
+  }
+}
+
+export class SagaFailedEvent extends DomainEvent {
+  constructor(
+    sagaId: string,
+    data: {
+      error: string;
+      compensations: string[];
+      failedAt: Date;
+    }
+  ) {
+    super(sagaId, data, 1, sagaId);
+  }
+}
+
+export class ProductInformationRequestedEvent extends DomainEvent {
+  constructor(
+    sagaId: string,
+    data: {
+      orderId: string;
+      productIds: string[];
+      requestedAt: Date;
+    }
+  ) {
+    super(sagaId, data, 1, sagaId);
+  }
+}
+
+export class StockValidationRequestedEvent extends DomainEvent {
+  constructor(
+    sagaId: string,
+    data: {
+      orderId: string;
+      items: Array<{ productId: string; quantity: number }>;
+      requestedAt: Date;
+    }
+  ) {
+    super(sagaId, data, 1, sagaId);
+  }
+}
+
+export class UserInformationRequestedEvent extends DomainEvent {
+  constructor(
+    sagaId: string,
+    data: {
+      userId: string;
+      requestedFields: string[];
+      requestedAt: Date;
+    }
+  ) {
+    super(sagaId, data, 1, sagaId);
   }
 }
 

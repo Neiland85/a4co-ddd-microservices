@@ -56,3 +56,8 @@ export const isUrl = (url: string): boolean => {
 export const removeAccents = (str: string): string => {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 };
+
+export function kebabToCamelCase(str: string): string {
+  if (!str) return str;
+  return str.replace(/-([a-z])/g, (g) => g[1]?.toUpperCase() || g[1]);
+}

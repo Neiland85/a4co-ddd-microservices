@@ -11,7 +11,7 @@ export interface EventMessage {
   sagaId?: string;
 }
 
-export interface EventHandler<T = any> {
+export interface IEventHandler<T = any> {
   handle(event: T): Promise<void> | void;
 }
 
@@ -20,8 +20,8 @@ export interface EventPublisher {
 }
 
 export interface EventSubscriber {
-  subscribe<T = any>(eventType: string, handler: EventHandler<T>): void;
-  unsubscribe(eventType: string, handler: EventHandler<any>): void;
+  subscribe<T = any>(eventType: string, handler: IEventHandler<T>): void;
+  unsubscribe(eventType: string, handler: IEventHandler<any>): void;
 }
 
 export interface EventBus extends EventPublisher, EventSubscriber {

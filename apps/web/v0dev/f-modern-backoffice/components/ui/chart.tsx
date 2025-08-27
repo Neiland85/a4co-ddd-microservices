@@ -77,9 +77,10 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   }
 
   return (
-    {/* @sonar-disable-next-line - CSS injection is safe here, only CSS variables are injected */}
+    <>
+      {/* @sonar-disable-next-line - CSS injection is safe here, only CSS variables are injected */}
 
-    <style dangerouslySetInnerHTML={{
+      <style dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(
             ([theme, prefix]) => `
@@ -98,6 +99,7 @@ ${colorConfig
           .join("\n"),
       }}
     />
+    </>
   )
 }
 
@@ -180,7 +182,7 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-gray-200 dark:border-gray-800 bg-background px-2.5 py-1.5 text-xs shadow-xl",
           className
         )}
       >

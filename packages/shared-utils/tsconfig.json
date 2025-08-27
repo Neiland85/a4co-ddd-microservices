@@ -1,10 +1,11 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
+    "rootDir": "./",
     "lib": [
       "ES2022",
       "DOM"
@@ -13,7 +14,19 @@
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
     "skipLibCheck": true,
-    "target": "ES2022"
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictNullChecks": false,
+    "exactOptionalPropertyTypes": false,
+    "types": ["jest", "node"]
   },
   "include": [
     "index.ts",
@@ -22,6 +35,8 @@
   ],
   "exclude": [
     "dist",
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }

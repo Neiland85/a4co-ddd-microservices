@@ -9,7 +9,7 @@ export interface EventMessage {
   metadata?: Record<string, any>;
 }
 
-export interface EventHandler<T = any> {
+export interface INatsEventHandler<T = any> {
   (event: EventMessage): Promise<void> | void;
 }
 
@@ -135,7 +135,7 @@ export class NatsEventBus extends EventEmitter {
     }
   }
 
-  async subscribe(subject: string, handler: EventHandler, queueGroup?: string): Promise<void> {
+  async subscribe(subject: string, handler: INatsEventHandler, queueGroup?: string): Promise<void> {
     if (!this.connection || !this.isConnected) {
       throw new Error('❌ No hay conexión activa con NATS');
     }
@@ -157,7 +157,7 @@ export class NatsEventBus extends EventEmitter {
     }
   }
 
-  private setupMessageHandler(subscription: Subscription, handler: EventHandler, subject: string): void {
+  private setupMessageHandler(subscription: Subscription, handler: INatsEventHandler, subject: string): void {
     (async () => {
       for await (const message of subscription) {
         try {
@@ -235,11 +235,11 @@ export class NatsEventBus extends EventEmitter {
     await this.publish('inventory.stock.reserved', event);
   }
 
-  async subscribeToOrderCreated(handler: EventHandler): Promise<void> {
+  async subscribeToOrderCreated(handler: INatsEventHandler): Promise<void> {
     await this.subscribe('order.created', handler, 'order-service');
   }
 
-  async subscribeToStockReserved(handler: EventHandler): Promise<void> {
+  async subscribeToStockReserved(handler: INatsEventHandler): Promise<void> {
     await this.subscribe('inventory.stock.reserved', handler, 'inventory-service');
   }
 }

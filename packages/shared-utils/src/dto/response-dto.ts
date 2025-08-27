@@ -36,7 +36,7 @@ export interface PaginatedResponse<T = any> extends BaseResponse {
 export type ApiResponse<T = any> = SuccessResponse<T> | ErrorResponse;
 
 // Factories para crear respuestas
-export const createSuccessResponse = <T>(data: T, message?: string): SuccessResponse<T> => ({
+export const createSuccessResponse = <T>(data: T, message: string = ''): SuccessResponse<T> => ({
   success: true,
   data,
   message,

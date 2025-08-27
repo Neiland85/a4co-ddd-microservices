@@ -6,10 +6,11 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Dashboard Gamificado - Navegador Épico",
-  description: "Dashboard altamente gamificado para usuarios navegadores con ofertas, mapas interactivos y actividades",
-    generator: 'v0.dev'
-}
+  title: 'Dashboard Gamificado - Navegador Épico',
+  description:
+    'Dashboard altamente gamificado para usuarios navegadores con ofertas, mapas interactivos y actividades',
+  generator: 'v0.app',
+};
 
 export default function RootLayout({
   children,
