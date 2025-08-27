@@ -21,8 +21,13 @@ export const safeExec = (command: string): Promise<string> => {
   });
 };
 
-export const safeExecAndParseJson = async <T>(command: string): Promise<T> => {
-  const stdout = await safeExec(command);
+/**
+ * Executes a whitelisted command with arguments and parses the output as JSON.
+ * @param command The command to execute (must be in whitelist)
+ * @param args Array of arguments to pass to the command
+ */
+export const safeExecAndParseJson = async <T>(command: string, args: string[] = []): Promise<T> => {
+  const stdout = await safeExec(command, args);
   try {
     return JSON.parse(stdout) as T;
   } catch (error) {
