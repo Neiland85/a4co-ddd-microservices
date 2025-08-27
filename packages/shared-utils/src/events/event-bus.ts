@@ -67,7 +67,7 @@ export class NatsEventBus implements IEventBus {
       this.subscriptions.clear();
 
       await this.nc.close();
-      this.nc = undefined;
+      this.nc = null;
       console.log(`🔌 ${this.serviceName} disconnected from NATS`);
     }
   }

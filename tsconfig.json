@@ -2,11 +2,11 @@
   "compilerOptions": {
     "strict": true,
     "target": "ES2022",
-    "module": "NodeNext",
+    "module": "CommonJS",
     "lib": [
       "ES2022"
     ],
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,8 +14,6 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "incremental": false,
-    "tsBuildInfoFile": "./.tsbuildinfo",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,

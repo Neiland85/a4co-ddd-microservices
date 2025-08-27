@@ -41,7 +41,7 @@ export class NotificationApiClient {
     headers?: Record<string, string>;
   }) {
     this.client = axios.create({
-      baseURL: config?.baseURL || process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:3000',
+      baseURL: config?.baseURL || process.env['NOTIFICATION_SERVICE_URL'] || 'http://notification-service:3000',
       timeout: config?.timeout || 5000,
       headers: {
         'Content-Type': 'application/json',
@@ -112,17 +112,19 @@ export class NotificationApiClient {
   async sendSecurityAlert(params: {
     title: string;
     message: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    priority: 'low' | 'medium' | 'high' | 'critical';
+    recipients: string[];
+    channels: string[];
     data?: Record<string, any>;
   }): Promise<NotificationResponse> {
     return this.sendNotification({
       type: 'security_alert',
-      priority: params.severity === 'critical' ? 'critical' : params.severity === 'high' ? 'high' : 'medium',
+      priority: params.priority,
       title: params.title,
       message: params.message,
-      recipients: ['admin@backoffice.com'], // TODO: Obtener de configuración
-      channels: ['email', 'slack'],
-      data: params.data,
+      recipients: params.recipients,
+      channels: params.channels,
+      data: params.data || {}
     });
   }
 

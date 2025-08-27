@@ -7,6 +7,7 @@ export interface IDomainEvent {
   eventVersion: number;
   occurredOn: Date;
   eventData: any;
+  sagaId?: string; // Añadir sagaId como opcional
 }
 
 export abstract class DomainEvent implements IDomainEvent {
@@ -16,13 +17,15 @@ export abstract class DomainEvent implements IDomainEvent {
   public readonly eventVersion: number;
   public readonly occurredOn: Date;
   public readonly eventData: any;
+  public readonly sagaId?: string; // Añadir sagaId como opcional
 
-  constructor(aggregateId: string, eventData: any, eventVersion: number = 1) {
+  constructor(aggregateId: string, eventData: any, eventVersion: number = 1, sagaId?: string) {
     this.eventId = uuidv4();
     this.eventType = this.constructor.name;
     this.aggregateId = aggregateId;
     this.eventVersion = eventVersion;
     this.occurredOn = new Date();
     this.eventData = eventData;
+    this.sagaId = sagaId; // Asignar sagaId
   }
 }
