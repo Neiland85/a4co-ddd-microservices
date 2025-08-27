@@ -31,6 +31,6 @@ export interface DomainService {
   readonly name: string;
 }
 
-export interface EventHandler<T> {
+export interface ICommonEventHandler<T> {
   handle(event: T): Promise<void>;
 }

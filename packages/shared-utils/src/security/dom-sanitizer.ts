@@ -1,155 +1,114 @@
-/**
- * DOM Sanitizer - Utilidad para sanitizar contenido HTML de forma segura
- * Mitiga vulnerabilidades XSS detectadas por SonarQube
- */
+/// <reference lib="dom" />
 
-interface SanitizeOptions {
-  allowedTags?: string[];
-  allowedAttributes?: Record<string, string[]>;
-  allowedProtocols?: string[];
+import type { JSDOM } from 'jsdom'; // Usar import type para evitar bundling en browser
+
+export interface SanitizeOptions {
+  allowedTags: string[];
+  allowedAttributes: Record<string, string[]>;
+  allowedClasses: Record<string, string[]>;
+  allowedSchemes: string[];
+  allowDataAttributes: boolean;
 }
 
-const DEFAULT_ALLOWED_TAGS = [
-  'p', 'div', 'span', 'a', 'b', 'i', 'em', 'strong', 
-  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'ul', 'ol', 'li', 'br', 'hr'
-];
+export class DomSanitizer {
+  private options: SanitizeOptions;
 
-const DEFAULT_ALLOWED_ATTRIBUTES = {
-  'a': ['href', 'title', 'target'],
-  '*': ['class', 'id']
-};
-
-const DEFAULT_ALLOWED_PROTOCOLS = ['http:', 'https:', 'mailto:'];
-
-export class DOMSanitizer {
-  private options: Required<SanitizeOptions>;
-
-  constructor(options: SanitizeOptions = {}) {
+  constructor(options?: Partial<SanitizeOptions>) {
     this.options = {
-      allowedTags: options.allowedTags || DEFAULT_ALLOWED_TAGS,
-      allowedAttributes: options.allowedAttributes || DEFAULT_ALLOWED_ATTRIBUTES,
-      allowedProtocols: options.allowedProtocols || DEFAULT_ALLOWED_PROTOCOLS
+      allowedTags: ['p', 'b', 'i', 'u', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'br', 'span', 'div'],
+      allowedAttributes: {
+        a: ['href', 'target', 'rel'],
+        img: ['src', 'alt', 'width', 'height'],
+        // Add other element-specific attributes here
+      },
+      allowedClasses: {},
+      allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+      allowDataAttributes: false,
+      ...options,
     };
   }
 
-  /**
-   * Sanitiza contenido HTML eliminando elementos y atributos peligrosos
-   */
-  sanitize(html: string): string {
-    if (!html) return '';
-
-    // Crear un elemento temporal para parsear el HTML
-    const template = document.createElement('template');
-    template.innerHTML = html;
-    
-    // Sanitizar recursivamente
-    this.sanitizeNode(template.content);
-    
-    return template.innerHTML;
+  public async sanitize(html: string): Promise<string> { // Hacer el método asíncrono
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      // Si no estamos en un entorno de navegador, usar JSDOM para la sanitización
+      // Importación dinámica para que no se bundle en el lado del cliente
+      const { JSDOM } = await import('jsdom'); 
+      const dom = new JSDOM(html);
+      const doc = dom.window.document;
+      this.sanitizeNode(doc.body);
+      return doc.body.innerHTML;
+    } else {
+      // En entorno de navegador, usar DOM Parser nativo
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      this.sanitizeNode(doc.body);
+      return doc.body.innerHTML;
+    }
   }
 
-  /**
-   * Sanitiza un nodo y sus hijos recursivamente
-   */
   private sanitizeNode(node: Node): void {
-    // Obtener todos los nodos hijos antes de modificar
-    const childNodes = Array.from(node.childNodes);
+    const children = Array.from(node.childNodes);
     
-    childNodes.forEach(child => {
+    for (const child of children) {
       if (child.nodeType === Node.ELEMENT_NODE) {
-        const element = child as Element;
+        const element = child as HTMLElement;
         
-        // Verificar si el tag está permitido
+        // Remover tags no permitidos
         if (!this.options.allowedTags.includes(element.tagName.toLowerCase())) {
-          // Reemplazar con su contenido de texto
           const textNode = document.createTextNode(element.textContent || '');
           node.replaceChild(textNode, element);
-          return;
+        } else {
+          // Remover atributos no permitidos
+          this.sanitizeAttributes(element);
+          // Recorrer hijos recursivamente
+          this.sanitizeNode(element);
         }
-        
-        // Sanitizar atributos
-        this.sanitizeAttributes(element);
-        
-        // Sanitizar hijos recursivamente
-        this.sanitizeNode(element);
       } else if (child.nodeType === Node.TEXT_NODE) {
-        // Los nodos de texto son seguros por defecto
+        // Dejar nodos de texto como están
+      } else if (child.nodeType === Node.COMMENT_NODE) {
+        // Remover comentarios
+        node.removeChild(child);
       } else {
-        // Eliminar otros tipos de nodos (comentarios, etc.)
+        // Remover otros tipos de nodos (doctype, etc.)
         node.removeChild(child);
       }
-    });
+    }
   }
 
-  /**
-   * Sanitiza los atributos de un elemento
-   */
-  private sanitizeAttributes(element: Element): void {
-    const attributes = Array.from(element.attributes);
-    
-    attributes.forEach(attr => {
+  private sanitizeAttributes(element: HTMLElement): void {
       const tagName = element.tagName.toLowerCase();
       const allowedForTag = this.options.allowedAttributes[tagName] || [];
-      const allowedGlobal = this.options.allowedAttributes['*'] || [];
+    const allowedGlobal = this.options.allowedAttributes['*'] || []; // Atributos permitidos globalmente
       
-      // Verificar si el atributo está permitido
+    const attributesToRemove: string[] = [];
+    for (const attr of Array.from(element.attributes)) {
+      // Remover atributos no permitidos para el tag o globalmente
       if (!allowedForTag.includes(attr.name) && !allowedGlobal.includes(attr.name)) {
-        element.removeAttribute(attr.name);
-        return;
+        attributesToRemove.push(attr.name);
       }
       
-      // Sanitizar valores de atributos especiales
+      // Sanitizar URLs en href/src
       if (attr.name === 'href' || attr.name === 'src') {
         if (!this.isValidUrl(attr.value)) {
-          element.removeAttribute(attr.name);
+          attributesToRemove.push(attr.name);
         }
       }
       
-      // Prevenir event handlers
+      // Remover event handlers (on* attributes)
       if (attr.name.startsWith('on')) {
-        element.removeAttribute(attr.name);
+        attributesToRemove.push(attr.name);
       }
-    });
+    }
+
+    attributesToRemove.forEach(attrName => element.removeAttribute(attrName));
   }
 
-  /**
-   * Valida si una URL es segura
-   */
   private isValidUrl(url: string): boolean {
     try {
-      // Use window.location.href if available, otherwise fallback to a default base URL
-      const base =
-        typeof window !== 'undefined' && window.location && window.location.href
-          ? window.location.href
-          : 'http://localhost';
-      const parsedUrl = new URL(url, base);
-      return this.options.allowedProtocols.includes(parsedUrl.protocol);
-    } catch {
+      const parsedUrl = new URL(url, typeof window !== 'undefined' ? window.location.href : 'http://localhost/');
+      return this.options.allowedSchemes.includes(parsedUrl.protocol.replace(':', ''));
+    } catch (e) {
       return false;
     }
   }
-}
-
-/**
- * Instancia singleton del sanitizador
- */
-export const domSanitizer = new DOMSanitizer();
-
-/**
- * Función helper para sanitizar HTML
- */
-export function sanitizeHTML(html: string, options?: SanitizeOptions): string {
-  if (options) {
-    const customSanitizer = new DOMSanitizer(options);
-    return customSanitizer.sanitize(html);
-  }
-  return domSanitizer.sanitize(html);
-}
-
-/**
- * Hook de React para contenido sanitizado
- */
-export function useSanitizedHTML(html: string, options?: SanitizeOptions): string {
-  return sanitizeHTML(html, options);
 }
