@@ -15,6 +15,7 @@
     "typescript.tsdk": "node_modules/typescript/lib",
     "i18n-ally.localesPaths": [],
     "python.languageServer": "None",
+    "editor.codeActions.triggerOnFocusChange": true,
   },
   "extensions": {
     "recommendations": [

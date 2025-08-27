@@ -263,7 +263,8 @@ export class SubjectUtils {
    * Extract domain from subject
    */
   static extractDomain(subject: string): string {
-    return subject.split('.')[0];
+    const parts = subject.split('.');
+    return parts[0] || 'unknown';
   }
 
   /**
@@ -271,7 +272,7 @@ export class SubjectUtils {
    */
   static extractEventType(subject: string): string {
     const parts = subject.split('.');
-    return parts[parts.length - 1];
+    return parts[parts.length - 1] || 'unknown';
   }
 
   /**

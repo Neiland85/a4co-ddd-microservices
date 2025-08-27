@@ -1,25 +1,11 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "target": "ES2022",
+    "incremental": true,
+    "composite": true,
     "module": "NodeNext",
-    "lib": [
-      "ES2022"
-    ],
     "moduleResolution": "nodenext",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "incremental": false,
-    "tsBuildInfoFile": "./.tsbuildinfo",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
+    "jsx": "react-jsx",
     "paths": {
       "@shared/*": [
         "packages/shared-utils/*"
@@ -27,8 +13,7 @@
       "@apps/*": [
         "apps/*"
       ]
-    },
-    "jsx": "react-jsx"
+    }
   },
   "include": [
     "apps/**/*",

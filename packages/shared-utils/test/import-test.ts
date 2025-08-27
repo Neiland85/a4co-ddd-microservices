@@ -1,4 +1,4 @@
-import { BaseEntity, ValueObject, UuidUtil, ErrorCodes } from '../index';
+import { BaseEntity, ValueObject, generateId } from '../index';
 
 // Test básico para verificar que las importaciones funcionan
 console.log('Testing shared-utils imports...');
@@ -26,11 +26,8 @@ class TestValue extends ValueObject<string> {
 const valueObj = new TestValue('test-value');
 console.log('✅ ValueObject works:', valueObj.value);
 
-// Test UuidUtil
-const uuid = UuidUtil.generate();
-console.log('✅ UuidUtil works:', uuid);
-
-// Test ErrorCodes
-console.log('✅ ErrorCodes works:', ErrorCodes.INVALID_CREDENTIALS);
+// Test generateId
+const uuid = generateId(16);
+console.log('✅ generateId works:', uuid);
 
 console.log('🎉 All imports are working correctly!');

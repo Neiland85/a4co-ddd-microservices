@@ -1,13 +1,34 @@
-import { formatDate, generateRandomId } from './index';
+import { BaseEntity, ValueObject, generateId } from './index';
 
-describe('Shared Utils', () => {
-  it('should format a date correctly', () => {
-    const date = new Date('2025-07-15');
-    expect(formatDate(date)).toBe('2025-07-15T00:00:00.000Z');
+// Test básico para verificar que las importaciones funcionan
+describe('Shared Utils Import Test', () => {
+  test('should import BaseEntity correctly', () => {
+    class TestEntity extends BaseEntity {
+      constructor(
+        public name: string,
+        id?: string
+      ) {
+        super(id);
+      }
+    }
+
+    const entity = new TestEntity('Test Entity');
+    expect(entity.id).toBeDefined();
   });
 
-  it('should generate a random ID', () => {
-    const id = generateRandomId();
-    expect(id).toMatch(/^[a-z0-9]{13}$/);
+  test('should import ValueObject correctly', () => {
+    class TestValue extends ValueObject<string> {
+      constructor(value: string) {
+        super(value);
+      }
+    }
+
+    const valueObj = new TestValue('test-value');
+    expect(valueObj.value).toBe('test-value');
+  });
+
+  test('should import generateId correctly', () => {
+    const id = generateId(16);
+    expect(id).toHaveLength(16);
   });
 });
