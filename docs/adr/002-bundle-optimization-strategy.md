@@ -28,7 +28,6 @@ Implementaremos una estrategia de optimización de bundle en 3 niveles:
 
 ### Nivel 1: Code Splitting Agresivo
 
-
 ```javascript
 // next.config.js
 splitChunks: {
@@ -66,9 +65,7 @@ splitChunks: {
 
 ```
 
-
 ### Nivel 2: Dynamic Imports y Lazy Loading
-
 
 ```typescript
 // Rutas pesadas
@@ -87,7 +84,6 @@ const Modal = dynamic(() => import('./Modal'));
 
 
 ```
-
 
 ### Nivel 3: Tree Shaking y Optimizaciones
 
@@ -141,7 +137,6 @@ const Modal = dynamic(() => import('./Modal'));
 
 ### Métricas de Monitoreo
 
-
 ```typescript
 // utils/bundle-metrics.ts
 export const BUNDLE_THRESHOLDS = {
@@ -163,9 +158,7 @@ export async function validateBundleSize() {
 
   return violations;
 }
-
 ```
-
 
 ## Plan de Implementación
 

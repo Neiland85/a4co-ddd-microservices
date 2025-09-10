@@ -8,7 +8,8 @@
 
 ## 🎯 RESUMEN EJECUTIVO
 
-Esta estrategia define la comunicación entre los 15+ microservicios del marketplace, estableciendo patrones claros para interacciones síncronas (REST) y asíncronas (eventos), garantizando bajo acoplamiento y alta cohesión.
+Esta estrategia define la comunicación entre los 15+ microservicios del marketplace, estableciendo patrones claros para
+interacciones síncronas (REST) y asíncronas (eventos), garantizando bajo acoplamiento y alta cohesión.
 
 ### Principios de Comunicación
 
@@ -33,31 +34,28 @@ Esta estrategia define la comunicación entre los 15+ microservicios del marketp
 
 ### Configuración NATS
 
-
 ```yaml
 # docker-compose.yml
 services:
   nats:
     image: nats:latest
     command: [
-        '-js', # JetStream enable
-        '-sd',
-        '/data', # Stream directory
-        '-m',
-        '8222', # Monitoring port
+        "-js", # JetStream enable
+        "-sd",
+        "/data", # Stream directory
+        "-m",
+        "8222", # Monitoring port
       ]
     ports:
-      - '4222:4222' # Client connections
-      - '8222:8222' # HTTP monitoring
+      - "4222:4222" # Client connections
+      - "8222:8222" # HTTP monitoring
     volumes:
       - nats_data:/data
 
   nats-box:
     image: natsio/nats-box:latest
     depends_on: [nats]
-
 ```
-
 
 ---
 
@@ -79,7 +77,6 @@ services:
 ### Comunicación ASÍNCRONA (Eventos de Dominio)
 
 #### 1. Order Domain Events
-
 
 ```typescript
 // Eventos publicados por order-service
@@ -136,9 +133,7 @@ export class OrderDeliveredEvent extends DomainEvent {
     super(orderId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -148,7 +143,6 @@ export class OrderDeliveredEvent extends DomainEvent {
 - `OrderDeliveredEvent` → `loyalty-service`, `analytics-service`, `notification-service`
 
 #### 2. Inventory Domain Events
-
 
 ```typescript
 // Eventos publicados por inventory-service
@@ -172,7 +166,7 @@ export class StockReleasedEvent extends DomainEvent {
     data: {
       orderId: string;
       quantityReleased: number;
-      reason: 'order-cancelled' | 'reservation-expired' | 'payment-failed';
+      reason: "order-cancelled" | "reservation-expired" | "payment-failed";
       newStock: number;
     }
   ) {
@@ -207,9 +201,7 @@ export class StockUpdatedEvent extends DomainEvent {
     super(productId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -219,7 +211,6 @@ export class StockUpdatedEvent extends DomainEvent {
 - `StockUpdatedEvent` → `product-service`, `analytics-service`
 
 #### 3. Payment Domain Events
-
 
 ```typescript
 // Eventos publicados por payment-service
@@ -282,9 +273,7 @@ export class RefundProcessedEvent extends DomainEvent {
     super(refundId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -294,7 +283,6 @@ export class RefundProcessedEvent extends DomainEvent {
 - `RefundProcessedEvent` → `order-service`, `notification-service`, `analytics-service`
 
 #### 4. User Domain Events
-
 
 ```typescript
 // Eventos publicados por user-service
@@ -344,9 +332,7 @@ export class UserPreferencesChangedEvent extends DomainEvent {
     super(userId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -355,7 +341,6 @@ export class UserPreferencesChangedEvent extends DomainEvent {
 - `UserPreferencesChangedEvent` → `notification-service`, `product-service`
 
 #### 5. Artisan Domain Events
-
 
 ```typescript
 // Eventos publicados por artisan-service
@@ -404,9 +389,7 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
     super(artisanId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -420,27 +403,22 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
 
 ### Estructura de Eventos en NATS
 
-
 ```typescript
 // packages/shared-utils/src/events/event-bus.ts
-import { connect, NatsConnection, Codec, StringCodec } from 'nats';
-import { DomainEvent } from '../domain/domain-event';
+import { connect, NatsConnection, Codec, StringCodec } from "nats";
+import { DomainEvent } from "../domain/domain-event";
 
 export interface IEventBus {
   publish(subject: string, event: DomainEvent): Promise<void>;
   subscribe(subject: string, handler: (event: DomainEvent) => Promise<void>): Promise<void>;
-  subscribeQueue(
-    subject: string,
-    queue: string,
-    handler: (event: DomainEvent) => Promise<void>
-  ): Promise<void>;
+  subscribeQueue(subject: string, queue: string, handler: (event: DomainEvent) => Promise<void>): Promise<void>;
 }
 
 export class NatsEventBus implements IEventBus {
   private nc!: NatsConnection;
   private codec: Codec<string> = StringCodec();
 
-  async connect(servers = ['nats://localhost:4222']): Promise<void> {
+  async connect(servers = ["nats://localhost:4222"]): Promise<void> {
     this.nc = await connect({ servers });
   }
 
@@ -449,7 +427,7 @@ export class NatsEventBus implements IEventBus {
       ...event,
       metadata: {
         publishedAt: new Date().toISOString(),
-        version: '1.0',
+        version: "1.0",
       },
     });
 
@@ -470,11 +448,7 @@ export class NatsEventBus implements IEventBus {
     }
   }
 
-  async subscribeQueue(
-    subject: string,
-    queue: string,
-    handler: (event: DomainEvent) => Promise<void>
-  ): Promise<void> {
+  async subscribeQueue(subject: string, queue: string, handler: (event: DomainEvent) => Promise<void>): Promise<void> {
     const sub = this.nc.subscribe(subject, { queue });
 
     for await (const msg of sub) {
@@ -487,52 +461,47 @@ export class NatsEventBus implements IEventBus {
     }
   }
 }
-
 ```
 
-
 ### Subjects/Topics para NATS
-
 
 ```typescript
 // packages/shared-utils/src/events/subjects.ts
 export const EventSubjects = {
   // Order Events
-  ORDER_CREATED: 'order.created',
-  ORDER_CONFIRMED: 'order.confirmed',
-  ORDER_CANCELLED: 'order.cancelled',
-  ORDER_DELIVERED: 'order.delivered',
+  ORDER_CREATED: "order.created",
+  ORDER_CONFIRMED: "order.confirmed",
+  ORDER_CANCELLED: "order.cancelled",
+  ORDER_DELIVERED: "order.delivered",
 
   // Inventory Events
-  STOCK_RESERVED: 'inventory.stock.reserved',
-  STOCK_RELEASED: 'inventory.stock.released',
-  LOW_STOCK_WARNING: 'inventory.stock.low',
-  STOCK_UPDATED: 'inventory.stock.updated',
+  STOCK_RESERVED: "inventory.stock.reserved",
+  STOCK_RELEASED: "inventory.stock.released",
+  LOW_STOCK_WARNING: "inventory.stock.low",
+  STOCK_UPDATED: "inventory.stock.updated",
 
   // Payment Events
-  PAYMENT_INITIATED: 'payment.initiated',
-  PAYMENT_SUCCEEDED: 'payment.succeeded',
-  PAYMENT_FAILED: 'payment.failed',
-  REFUND_PROCESSED: 'payment.refund.processed',
+  PAYMENT_INITIATED: "payment.initiated",
+  PAYMENT_SUCCEEDED: "payment.succeeded",
+  PAYMENT_FAILED: "payment.failed",
+  REFUND_PROCESSED: "payment.refund.processed",
 
   // User Events
-  USER_REGISTERED: 'user.registered',
-  USER_PROFILE_UPDATED: 'user.profile.updated',
-  USER_PREFERENCES_CHANGED: 'user.preferences.changed',
+  USER_REGISTERED: "user.registered",
+  USER_PROFILE_UPDATED: "user.profile.updated",
+  USER_PREFERENCES_CHANGED: "user.preferences.changed",
 
   // Artisan Events
-  ARTISAN_VERIFIED: 'artisan.verified',
-  NEW_PRODUCT_LISTED: 'artisan.product.listed',
-  ARTISAN_STATUS_CHANGED: 'artisan.status.changed',
+  ARTISAN_VERIFIED: "artisan.verified",
+  NEW_PRODUCT_LISTED: "artisan.product.listed",
+  ARTISAN_STATUS_CHANGED: "artisan.status.changed",
 
   // Notification Events
-  NOTIFICATION_SENT: 'notification.sent',
-  EMAIL_DELIVERED: 'notification.email.delivered',
-  SMS_DELIVERED: 'notification.sms.delivered',
+  NOTIFICATION_SENT: "notification.sent",
+  EMAIL_DELIVERED: "notification.email.delivered",
+  SMS_DELIVERED: "notification.sms.delivered",
 } as const;
-
 ```
-
 
 ---
 
@@ -541,7 +510,6 @@ export const EventSubjects = {
 ### 1. Saga Pattern para Transacciones Distribuidas
 
 **Ejemplo: Proceso de Creación de Pedido**
-
 
 ```typescript
 // order-service/src/sagas/order-creation-saga.ts
@@ -563,7 +531,7 @@ export class OrderCreationSaga {
       await this.eventBus.publish(
         EventSubjects.ORDER_CANCELLED,
         new OrderCancelledEvent(event.aggregateId, {
-          reason: 'saga-failure',
+          reason: "saga-failure",
           cancelledAt: new Date(),
           refundRequired: false,
         })
@@ -573,10 +541,7 @@ export class OrderCreationSaga {
 
   async handleStockReserved(event: StockReservedEvent): Promise<void> {
     // Continuar con el proceso de pago
-    await this.eventBus.publish(
-      EventSubjects.PAYMENT_INITIATED,
-      new InitiatePaymentCommand(event.eventData.orderId)
-    );
+    await this.eventBus.publish(EventSubjects.PAYMENT_INITIATED, new InitiatePaymentCommand(event.eventData.orderId));
   }
 
   async handlePaymentSucceeded(event: PaymentSucceededEvent): Promise<void> {
@@ -591,12 +556,9 @@ export class OrderCreationSaga {
     );
   }
 }
-
 ```
 
-
 ### 2. Event Sourcing Pattern (Opcional)
-
 
 ```typescript
 // packages/shared-utils/src/event-store/event-store.ts
@@ -610,16 +572,13 @@ export class NatsEventStore implements IEventStore {
   // Implementation using NATS JetStream for persistence
   // Permite replay de eventos y reconstrucción de estado
 }
-
 ```
-
 
 ---
 
 ## 🚦 CONFIGURACIÓN POR MICROSERVICIO
 
 ### Order Service
-
 
 ```typescript
 // apps/order-service/src/events/handlers.ts
@@ -642,12 +601,9 @@ export class OrderEventHandlers {
     // Liberar stock reservado
   }
 }
-
 ```
 
-
 ### Inventory Service
-
 
 ```typescript
 // apps/inventory-service/src/events/handlers.ts
@@ -664,12 +620,9 @@ export class InventoryEventHandlers {
     // Publicar StockReleasedEvent
   }
 }
-
 ```
 
-
 ### Notification Service
-
 
 ```typescript
 // apps/notification-service/src/events/handlers.ts
@@ -692,16 +645,13 @@ export class NotificationEventHandlers {
     // Configurar preferencias por defecto
   }
 }
-
 ```
-
 
 ---
 
 ## 📊 MÉTRICAS Y MONITOREO
 
 ### Observabilidad de Eventos
-
 
 ```typescript
 // packages/observability/src/event-metrics.ts
@@ -723,9 +673,7 @@ export class EventMetrics {
     // Track failures for alerting
   }
 }
-
 ```
-
 
 ### Dashboard de Monitoreo
 
@@ -740,7 +688,6 @@ export class EventMetrics {
 
 ### Autenticación de Servicios
 
-
 ```typescript
 // packages/shared-utils/src/auth/service-auth.ts
 export class ServiceAuth {
@@ -748,12 +695,9 @@ export class ServiceAuth {
   // Certificates para comunicación segura
   // Rate limiting por servicio
 }
-
 ```
 
-
 ### Retry Policies
-
 
 ```typescript
 // packages/shared-utils/src/resilience/retry-policy.ts
@@ -762,12 +706,9 @@ export class RetryPolicy {
   // Circuit breaker pattern
   // Dead letter queue para mensajes fallidos
 }
-
 ```
 
-
 ### Idempotencia
-
 
 ```typescript
 // Cada evento debe incluir:
@@ -777,9 +718,7 @@ interface EventMetadata {
   causationId?: string; // Evento que causó este evento
   retryCount?: number; // Número de reintentos
 }
-
 ```
-
 
 ---
 
@@ -842,4 +781,5 @@ Esta estrategia establece:
 - Queue groups para distribución de carga
 - Eventual consistency para mejor rendimiento
 
-**El proyecto está preparado para manejar el crecimiento del marketplace local de Jaén con una arquitectura robusta y escalable.**
+**El proyecto está preparado para manejar el crecimiento del marketplace local de Jaén con una arquitectura robusta y
+escalable.**

@@ -23,7 +23,6 @@ Implementaremos un sistema de monitoreo continuo en 4 capas:
 
 ### 1. Performance Gates en CI/CD
 
-
 ```yaml
 # .github/workflows/performance-gates.yml
 name: Performance Gates
@@ -78,54 +77,49 @@ jobs:
             http://localhost:3000/dashboard
           budgetPath: ./lighthouse-budget.json
           uploadArtifacts: true
-
 ```
 
-
 ### 2. Real-time Performance Dashboard
-
 
 ```typescript
 // monitoring/dashboard-config.ts
 export const DASHBOARD_CONFIG = {
   metrics: [
     {
-      id: 'bundle-size',
-      name: 'Bundle Size Trend',
-      query:
-        'SELECT date, first_load_js, total_size FROM bundle_metrics ORDER BY date DESC LIMIT 30',
-      visualization: 'line-chart',
+      id: "bundle-size",
+      name: "Bundle Size Trend",
+      query: "SELECT date, first_load_js, total_size FROM bundle_metrics ORDER BY date DESC LIMIT 30",
+      visualization: "line-chart",
       thresholds: {
         warning: 100_000, // 100KB
         critical: 150_000, // 150KB
       },
     },
     {
-      id: 'complexity',
-      name: 'Code Complexity Heatmap',
-      query: 'SELECT file, function, complexity FROM complexity_metrics WHERE complexity > 5',
-      visualization: 'heatmap',
+      id: "complexity",
+      name: "Code Complexity Heatmap",
+      query: "SELECT file, function, complexity FROM complexity_metrics WHERE complexity > 5",
+      visualization: "heatmap",
       thresholds: {
         warning: 10,
         critical: 15,
       },
     },
     {
-      id: 'react-performance',
-      name: 'React Render Metrics',
-      query: 'SELECT component, render_count, render_time FROM react_metrics',
-      visualization: 'scatter-plot',
+      id: "react-performance",
+      name: "React Render Metrics",
+      query: "SELECT component, render_count, render_time FROM react_metrics",
+      visualization: "scatter-plot",
       thresholds: {
         renderTime: 16, // 60fps
         renderCount: 10,
       },
     },
     {
-      id: 'web-vitals',
-      name: 'Core Web Vitals',
-      query:
-        'SELECT lcp, fid, cls, inp FROM web_vitals WHERE timestamp > NOW() - INTERVAL 24 HOURS',
-      visualization: 'gauge',
+      id: "web-vitals",
+      name: "Core Web Vitals",
+      query: "SELECT lcp, fid, cls, inp FROM web_vitals WHERE timestamp > NOW() - INTERVAL 24 HOURS",
+      visualization: "gauge",
       thresholds: {
         lcp: 2500,
         fid: 100,
@@ -137,40 +131,37 @@ export const DASHBOARD_CONFIG = {
 
   alerts: [
     {
-      name: 'Bundle Size Regression',
-      condition: 'bundle_size > previous_bundle_size * 1.1',
-      severity: 'high',
-      channels: ['slack', 'email'],
+      name: "Bundle Size Regression",
+      condition: "bundle_size > previous_bundle_size * 1.1",
+      severity: "high",
+      channels: ["slack", "email"],
     },
     {
-      name: 'Complexity Spike',
-      condition: 'max_complexity > 20',
-      severity: 'critical',
-      channels: ['slack', 'pagerduty'],
+      name: "Complexity Spike",
+      condition: "max_complexity > 20",
+      severity: "critical",
+      channels: ["slack", "pagerduty"],
     },
   ],
 };
-
 ```
-
 
 ### 3. Automated Performance Testing
 
-
 ```typescript
 // tests/performance/benchmarks.ts
-import { test, expect } from '@playwright/test';
-import lighthouse from 'lighthouse';
+import { test, expect } from "@playwright/test";
+import lighthouse from "lighthouse";
 
-test.describe('Performance Benchmarks', () => {
-  test('Dashboard should load within performance budget', async ({ page }) => {
-    await page.goto('/dashboard');
+test.describe("Performance Benchmarks", () => {
+  test("Dashboard should load within performance budget", async ({ page }) => {
+    await page.goto("/dashboard");
 
     const metrics = await page.evaluate(() => {
       return {
-        fcp: performance.getEntriesByName('first-contentful-paint')[0]?.startTime,
-        lcp: performance.getEntriesByName('largest-contentful-paint')[0]?.startTime,
-        tbt: performance.measure('tbt').duration,
+        fcp: performance.getEntriesByName("first-contentful-paint")[0]?.startTime,
+        lcp: performance.getEntriesByName("largest-contentful-paint")[0]?.startTime,
+        tbt: performance.measure("tbt").duration,
       };
     });
 
@@ -179,8 +170,8 @@ test.describe('Performance Benchmarks', () => {
     expect(metrics.tbt).toBeLessThan(300);
   });
 
-  test('Heavy operations should not block main thread', async ({ page }) => {
-    await page.goto('/dashboard');
+  test("Heavy operations should not block main thread", async ({ page }) => {
+    await page.goto("/dashboard");
 
     const startTime = Date.now();
     await page.click('[data-testid="heavy-operation"]');
@@ -188,7 +179,7 @@ test.describe('Performance Benchmarks', () => {
     // Check if UI remains responsive
     const inputDelay = await page.evaluate(() => {
       return new Promise(resolve => {
-        const input = document.createElement('input');
+        const input = document.createElement("input");
         document.body.appendChild(input);
 
         const start = performance.now();
@@ -205,20 +196,17 @@ test.describe('Performance Benchmarks', () => {
 });
 
 // Lighthouse automated tests
-test('Lighthouse Performance Score', async ({ page }) => {
+test("Lighthouse Performance Score", async ({ page }) => {
   const result = await lighthouse(page.url(), {
     port: 9222,
-    onlyCategories: ['performance'],
+    onlyCategories: ["performance"],
   });
 
   expect(result.lhr.categories.performance.score).toBeGreaterThan(0.9);
 });
-
 ```
 
-
 ### 4. Performance Budget Configuration
-
 
 ```json
 // performance-budget.json
@@ -247,9 +235,7 @@ test('Lighthouse Performance Score', async ({ page }) => {
     "filesOverLimit": 10
   }
 }
-
 ```
-
 
 ## Drivers de la Decisión
 
@@ -296,38 +282,35 @@ test('Lighthouse Performance Score', async ({ page }) => {
 
 ### Stack Tecnológico
 
-
 ```typescript
 // monitoring/stack.ts
 export const MONITORING_STACK = {
   collection: {
-    metrics: 'Prometheus',
-    logs: 'Loki',
-    traces: 'Tempo',
-    realUser: 'Google Analytics 4',
+    metrics: "Prometheus",
+    logs: "Loki",
+    traces: "Tempo",
+    realUser: "Google Analytics 4",
   },
 
   storage: {
-    timeSeries: 'InfluxDB',
-    events: 'PostgreSQL',
-    artifacts: 'S3',
+    timeSeries: "InfluxDB",
+    events: "PostgreSQL",
+    artifacts: "S3",
   },
 
   visualization: {
-    dashboards: 'Grafana',
-    alerts: 'AlertManager',
-    reports: 'Custom React Dashboard',
+    dashboards: "Grafana",
+    alerts: "AlertManager",
+    reports: "Custom React Dashboard",
   },
 
   integration: {
-    ci: 'GitHub Actions',
-    cd: 'ArgoCD',
-    communication: 'Slack',
+    ci: "GitHub Actions",
+    cd: "ArgoCD",
+    communication: "Slack",
   },
 };
-
 ```
-
 
 ## Plan de Implementación
 

@@ -1,6 +1,7 @@
 # 🏗️ DDD Microservices Audit Tools
 
-Conjunto completo de herramientas y comandos para auditar código de microservicios con Domain-Driven Design (DDD) y comparar métricas con estándares internacionales, europeos y nacionales.
+Conjunto completo de herramientas y comandos para auditar código de microservicios con Domain-Driven Design (DDD) y
+comparar métricas con estándares internacionales, europeos y nacionales.
 
 ## 📋 Contenido
 
@@ -14,7 +15,6 @@ Conjunto completo de herramientas y comandos para auditar código de microservic
 
 ### 1. Ejecutar Auditoría Completa
 
-
 ```bash
 # Dar permisos de ejecución
 chmod +x scripts/*.sh
@@ -25,9 +25,7 @@ chmod +x scripts/*.sh
 
 ```
 
-
 ### 2. Análisis por Lenguaje
-
 
 ```bash
 # Detecta automáticamente el lenguaje y ejecuta análisis específico
@@ -35,7 +33,6 @@ chmod +x scripts/*.sh
 
 
 ```
-
 
 ## 📊 Métricas Evaluadas
 
@@ -147,19 +144,15 @@ El workflow incluido (`./github/workflows/ddd-audit.yml`) ejecuta automáticamen
 
 ### Configuración
 
-
 ```yaml
 # Ejecutar en
 - Push a main/develop
 - Pull requests
 - Programado (lunes 9 AM)
 - Manual (workflow_dispatch)
-
 ```
 
-
 ### Secrets Necesarios
-
 
 ```bash
 SONAR_TOKEN      # Token de SonarQube
@@ -168,11 +161,9 @@ SONAR_HOST_URL   # URL del servidor SonarQube
 
 ```
 
-
 ## 📈 Reportes Generados
 
 ### 1. Reporte de Estructura (`ddd-structure-analysis.txt`)
-
 
 ```
 
@@ -186,7 +177,6 @@ Domain Events: 18
 
 
 ```
-
 
 ### 2. Reporte HTML Interactivo
 
@@ -224,7 +214,6 @@ Domain Events: 18
 
 Edita los scripts para cambiar umbrales según tu contexto:
 
-
 ```bash
 # En scripts/ddd-audit-runner.sh
 INTL_COVERAGE=80    # Cambiar a tu estándar
@@ -233,7 +222,6 @@ NATIONAL_COVERAGE=70 # Basado en tu país/industria
 
 
 ```
-
 
 ### Agregar Herramientas
 
@@ -262,7 +250,6 @@ Para agregar nuevas herramientas de análisis:
 
 ### Error: Herramienta no encontrada
 
-
 ```bash
 # Instalar herramientas básicas
 pip install lizard
@@ -272,16 +259,13 @@ npm install -g madge
 
 ```
 
-
 ### Error: Permisos denegados
-
 
 ```bash
 chmod +x scripts/*.sh
 
 
 ```
-
 
 ### Error: No se encuentran archivos DDD
 

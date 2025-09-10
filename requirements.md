@@ -1,6 +1,7 @@
 # 📦 Requisitos técnicos y dependencias clave — `a4co-ddd-microservices`
 
-Este documento define las herramientas mínimas necesarias para trabajar con este monorepo y las versiones recomendadas para evitar conflictos.
+Este documento define las herramientas mínimas necesarias para trabajar con este monorepo y las versiones recomendadas
+para evitar conflictos.
 
 ---
 

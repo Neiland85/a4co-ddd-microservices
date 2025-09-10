@@ -55,7 +55,6 @@
 
 ### Para levantar todos los servicios
 
-
 ```bash
 # Opción 1: Usando Turbo (recomendado)
 pnpm dev
@@ -71,7 +70,6 @@ pnpm dev:backend
 
 
 ```
-
 
 ## 🌐 URLs y Endpoints Disponibles
 
@@ -91,11 +89,14 @@ pnpm dev:backend
 
 ## ⚠️ Limitaciones Encontradas
 
-1. **Docker no disponible**: En el entorno actual no está instalado Docker, por lo que la infraestructura (PostgreSQL, Redis, NATS) debe ser provista externamente o mediante otros medios.
+1. **Docker no disponible**: En el entorno actual no está instalado Docker, por lo que la infraestructura (PostgreSQL,
+   Redis, NATS) debe ser provista externamente o mediante otros medios.
 
-2. **Servicios Backend**: Los microservicios backend no tienen `package.json` individual, parecen estar manejados centralmente por Turbo.
+2. **Servicios Backend**: Los microservicios backend no tienen `package.json` individual, parecen estar manejados
+   centralmente por Turbo.
 
-3. **Proceso de inicio**: El comando `pnpm dev` debería iniciar todos los servicios, pero requiere que las dependencias estén instaladas y la infraestructura esté disponible.
+3. **Proceso de inicio**: El comando `pnpm dev` debería iniciar todos los servicios, pero requiere que las dependencias
+   estén instaladas y la infraestructura esté disponible.
 
 ## 📝 Recomendaciones
 

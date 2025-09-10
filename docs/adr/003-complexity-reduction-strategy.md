@@ -29,45 +29,41 @@ Implementaremos un programa de reducción de complejidad basado en:
 
 ### 1. Establecimiento de Límites por Capa
 
-
 ```typescript
 // .eslintrc.js
 module.exports = {
   rules: {
     complexity: [
-      'error',
+      "error",
       {
         max: 5, // Default
       },
     ],
     overrides: [
       {
-        files: ['**/domain/entities/**/*.ts'],
-        rules: { complexity: ['error', 5] },
+        files: ["**/domain/entities/**/*.ts"],
+        rules: { complexity: ["error", 5] },
       },
       {
-        files: ['**/domain/value-objects/**/*.ts'],
-        rules: { complexity: ['error', 3] },
+        files: ["**/domain/value-objects/**/*.ts"],
+        rules: { complexity: ["error", 3] },
       },
       {
-        files: ['**/application/use-cases/**/*.ts'],
-        rules: { complexity: ['error', 8] },
+        files: ["**/application/use-cases/**/*.ts"],
+        rules: { complexity: ["error", 8] },
       },
       {
-        files: ['**/application/handlers/**/*.ts'],
-        rules: { complexity: ['error', 5] },
+        files: ["**/application/handlers/**/*.ts"],
+        rules: { complexity: ["error", 5] },
       },
     ],
   },
 };
-
 ```
-
 
 ### 2. Patrones de Refactoring por Tipo
 
 #### Para Domain Entities (Target: 5)
-
 
 ```typescript
 // ANTES: Complejidad 12
@@ -76,8 +72,8 @@ class Order {
     if (!this.id) return false;
     if (!this.customerId) return false;
     if (!this.items || this.items.length === 0) return false;
-    if (this.status === 'draft' && this.paymentMethod) return false;
-    if (this.status === 'paid' && !this.paymentMethod) return false;
+    if (this.status === "draft" && this.paymentMethod) return false;
+    if (this.status === "paid" && !this.paymentMethod) return false;
     // ... más validaciones
   }
 }
@@ -101,12 +97,9 @@ class Order {
     return rules[this.status]?.(this) ?? true;
   }
 }
-
 ```
 
-
 #### Para Use Cases (Target: 8)
-
 
 ```typescript
 // ANTES: Complejidad 15
@@ -133,25 +126,20 @@ class CreateOrderUseCase {
     return savedOrder;
   }
 }
-
 ```
 
-
 #### Para Handlers (Target: 5)
-
 
 ```typescript
 // DESPUÉS: Handler simple que delega
 class OrderHandler {
-  @Post('/orders')
+  @Post("/orders")
   async createOrder(@Body() dto: CreateOrderDto) {
     const result = await this.createOrderUseCase.execute(dto);
     return this.presenter.toResponse(result);
   }
 }
-
 ```
-
 
 ### 3. Técnicas de Reducción
 
@@ -207,32 +195,29 @@ class OrderHandler {
 
 ### Plan de Ataque por Prioridad
 
-
 ```typescript
 // scripts/complexity-priorities.ts
 export const REFACTOR_PRIORITIES = [
   {
     priority: 1,
-    criteria: 'complexity > 20',
-    action: 'Refactor inmediato',
-    technique: 'Extract Use Cases',
+    criteria: "complexity > 20",
+    action: "Refactor inmediato",
+    technique: "Extract Use Cases",
   },
   {
     priority: 2,
-    criteria: 'complexity > 15 && changes > 10',
-    action: 'Refactor en próximo sprint',
-    technique: 'Strategy Pattern',
+    criteria: "complexity > 15 && changes > 10",
+    action: "Refactor en próximo sprint",
+    technique: "Strategy Pattern",
   },
   {
     priority: 3,
-    criteria: 'complexity > 10',
-    action: 'Refactor oportunista',
-    technique: 'Extract Methods',
+    criteria: "complexity > 10",
+    action: "Refactor oportunista",
+    technique: "Extract Methods",
   },
 ];
-
 ```
-
 
 ## Métricas de Éxito
 
@@ -242,7 +227,6 @@ export const REFACTOR_PRIORITIES = [
 - **Bugs post-refactor**: -30%
 
 ## Recursos y Herramientas
-
 
 ```bash
 # Herramientas de análisis
@@ -261,7 +245,6 @@ npm install -D \
 
 
 ```
-
 
 ## Timeline
 

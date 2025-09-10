@@ -13,7 +13,6 @@
 
 #### Herramientas a implementar
 
-
 ```bash
 # Instalar analizadores
 pnpm add -D @next/bundle-analyzer webpack-bundle-analyzer source-map-explorer
@@ -26,13 +25,11 @@ pnpm add -D @next/bundle-analyzer webpack-bundle-analyzer source-map-explorer
 
 ```
 
-
 #### Configuración next.config.js
 
-
 ```javascript
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
 });
 
 module.exports = withBundleAnalyzer({
@@ -40,22 +37,22 @@ module.exports = withBundleAnalyzer({
     // Webpack optimizations
     config.optimization = {
       ...config.optimization,
-      moduleIds: 'deterministic',
+      moduleIds: "deterministic",
       splitChunks: {
-        chunks: 'all',
+        chunks: "all",
         cacheGroups: {
           default: false,
           vendors: false,
           vendor: {
-            name: 'vendor',
-            chunks: 'all',
+            name: "vendor",
+            chunks: "all",
             test: /node_modules/,
             priority: 20,
           },
           common: {
-            name: 'common',
+            name: "common",
             minChunks: 2,
-            chunks: 'all',
+            chunks: "all",
             priority: 10,
             reuseExistingChunk: true,
             enforce: true,
@@ -66,9 +63,7 @@ module.exports = withBundleAnalyzer({
     return config;
   },
 });
-
 ```
-
 
 #### Métricas clave a monitorizar
 
@@ -80,7 +75,6 @@ module.exports = withBundleAnalyzer({
 ### 1.2 Análisis de Renderizado (React 19)
 
 #### Implementar React DevTools Profiler
-
 
 ```typescript
 // utils/performance/ProfilerWrapper.tsx
@@ -112,11 +106,9 @@ export const ProfilerWrapper = ({ id, children }) => (
 
 ```
 
-
 ### 1.3 Análisis de Lógica de Negocio
 
 #### Script de análisis de complejidad
-
 
 ```bash
 # Instalar herramientas
@@ -137,17 +129,15 @@ pnpm add -D complexity-report code-complexity eslint-plugin-complexity
 
 ```
 
-
 ## 🔬 2. Auditoría de Complejidad Ciclomática
 
 ### 2.1 Script de Análisis Automatizado
 
-
 ```typescript
 // scripts/complexity-audit.ts
-import * as ts from 'typescript';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as ts from "typescript";
+import * as fs from "fs";
+import * as path from "path";
 
 interface ComplexityReport {
   file: string;
@@ -187,13 +177,11 @@ function calculateCyclomaticComplexity(node: ts.Node): number {
 
 // Ejecutar análisis en módulos críticos
 const criticalPaths = [
-  'apps/*/src/domain/**/*.ts',
-  'apps/*/src/application/handlers/**/*.ts',
-  'apps/*/src/infrastructure/repositories/**/*.ts',
+  "apps/*/src/domain/**/*.ts",
+  "apps/*/src/application/handlers/**/*.ts",
+  "apps/*/src/infrastructure/repositories/**/*.ts",
 ];
-
 ```
-
 
 ### 2.2 Métricas Objetivo por Capa (DDD)
 
@@ -209,7 +197,6 @@ const criticalPaths = [
 ## 🚨 3. Identificación de Refactoring Urgente
 
 ### 3.1 Herramientas de Análisis
-
 
 ```bash
 # Instalar suite de análisis
@@ -230,9 +217,7 @@ pnpm add -D \
 
 ```
 
-
 ### 3.2 Configuración de Detección de Duplicados
-
 
 ```json
 // .jscpd.json
@@ -243,16 +228,13 @@ pnpm add -D \
   "format": ["typescript", "tsx"],
   "output": "./reports/duplication/"
 }
-
 ```
-
 
 ### 3.3 Script de Hot Path Analysis
 
-
 ```typescript
 // scripts/hot-path-analysis.ts
-import { execSync } from 'child_process';
+import { execSync } from "child_process";
 
 // Analizar archivos más modificados (hot paths)
 const getHotPaths = () => {
@@ -261,7 +243,7 @@ const getHotPaths = () => {
   ).toString();
 
   return gitLog
-    .split('\n')
+    .split("\n")
     .map(line => {
       const match = line.match(/\s*(\d+)\s+(.+)/);
       return match ? { count: parseInt(match[1]), file: match[2] } : null;
@@ -285,14 +267,11 @@ const analyzeCandidates = async () => {
 
   return candidates;
 };
-
 ```
-
 
 ## 🚀 4. Técnicas de Optimización
 
 ### 4.1 Lazy Loading y Code Splitting
-
 
 ```typescript
 // Implementación con React 19 y Next.js 15
@@ -328,15 +307,13 @@ export const LazyBoundary = ({ children, fallback }) => (
 
 ```
 
-
 ### 4.2 Tree Shaking Avanzado
-
 
 ```javascript
 // next.config.js optimizations
 module.exports = {
   experimental: {
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-*', 'date-fns', 'lodash'],
+    optimizePackageImports: ["lucide-react", "@radix-ui/react-*", "date-fns", "lodash"],
   },
   webpack: config => {
     config.optimization.usedExports = true;
@@ -351,12 +328,9 @@ module.exports = {
     return config;
   },
 };
-
 ```
 
-
 ### 4.3 Modularización Progresiva
-
 
 ```typescript
 // Estrategia de migración a módulos
@@ -371,7 +345,7 @@ interface BoundedContext {
 // 2. Script de análisis de acoplamiento
 const analyzeModuleCoupling = () => {
   // Usar madge para detectar dependencias
-  const dependencies = execSync('madge --json apps/').toString();
+  const dependencies = execSync("madge --json apps/").toString();
   const graph = JSON.parse(dependencies);
 
   // Calcular fan-in/fan-out
@@ -387,16 +361,13 @@ const analyzeModuleCoupling = () => {
 
 // 3. Estrategia de extracción
 const extractionStrategy = {
-  phase1: ['user-service', 'auth-service'], // Menos acoplados
-  phase2: ['product-service', 'inventory-service'], // Acoplamiento medio
-  phase3: ['order-service', 'payment-service'], // Más acoplados
+  phase1: ["user-service", "auth-service"], // Menos acoplados
+  phase2: ["product-service", "inventory-service"], // Acoplamiento medio
+  phase3: ["order-service", "payment-service"], // Más acoplados
 };
-
 ```
 
-
 ### 4.4 Optimización de Renderizado (React 19)
-
 
 ```typescript
 // hooks/useOptimizedRender.ts
@@ -440,9 +411,7 @@ export const OptimizedList = memo(({ items, filter }) => {
 
 ```
 
-
 ### 4.5 Separación UI/Infra/Dominio Estricta
-
 
 ```typescript
 // Estructura recomendada por módulo
@@ -469,23 +438,20 @@ apps/[service]/
 */
 
 // Regla de dependencia: Domain <- Application <- Infrastructure <- Presentation
-
 ```
-
 
 ## 📊 5. Herramientas Recomendadas - Configuración
 
 ### 5.1 SonarQube Local
 
-
 ```yaml
 # docker-compose.sonar.yml
-version: '3.8'
+version: "3.8"
 services:
   sonarqube:
     image: sonarqube:lts
     ports:
-      - '9000:9000'
+      - "9000:9000"
     environment:
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
     volumes:
@@ -497,35 +463,30 @@ services:
       - sonarqube
     volumes:
       - .:/usr/src
-
 ```
-
 
 ```javascript
 // sonar-project.js
 module.exports = {
-  'sonar.projectKey': 'a4co-ddd-microservices',
-  'sonar.sources': 'apps,packages',
-  'sonar.exclusions': '**/*.test.ts,**/*.spec.ts,**/node_modules/**',
-  'sonar.typescript.lcov.reportPaths': 'coverage/lcov.info',
-  'sonar.javascript.lcov.reportPaths': 'coverage/lcov.info',
-  'sonar.testExecutionReportPaths': 'test-report.xml',
+  "sonar.projectKey": "a4co-ddd-microservices",
+  "sonar.sources": "apps,packages",
+  "sonar.exclusions": "**/*.test.ts,**/*.spec.ts,**/node_modules/**",
+  "sonar.typescript.lcov.reportPaths": "coverage/lcov.info",
+  "sonar.javascript.lcov.reportPaths": "coverage/lcov.info",
+  "sonar.testExecutionReportPaths": "test-report.xml",
 };
-
 ```
-
 
 ### 5.2 Webpack Bundle Analyzer Integration
 
-
 ```typescript
 // scripts/bundle-analysis.ts
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
 export const analyzeBundles = async () => {
   const results = await Promise.all([
-    analyzeApp('dashboard-web'),
-    analyzeApp('user-service'),
+    analyzeApp("dashboard-web"),
+    analyzeApp("user-service"),
     // ... otros servicios
   ]);
 
@@ -544,11 +505,11 @@ const generateRecommendations = results => {
 
   results.forEach(({ app, size, chunks }) => {
     // Detectar vendor chunks grandes
-    const largeVendor = chunks.find(c => c.name === 'vendor' && c.size > 500000);
+    const largeVendor = chunks.find(c => c.name === "vendor" && c.size > 500000);
     if (largeVendor) {
       recommendations.push({
         app,
-        type: 'vendor-split',
+        type: "vendor-split",
         message: `Vendor bundle es ${(largeVendor.size / 1024 / 1024).toFixed(2)}MB. Considerar split adicional.`,
       });
     }
@@ -558,7 +519,7 @@ const generateRecommendations = results => {
     if (duplicates.length > 0) {
       recommendations.push({
         app,
-        type: 'duplicates',
+        type: "duplicates",
         message: `${duplicates.length} módulos duplicados encontrados`,
         modules: duplicates,
       });
@@ -567,14 +528,11 @@ const generateRecommendations = results => {
 
   return recommendations;
 };
-
 ```
-
 
 ## 📈 6. Métricas Clave y KPIs
 
 ### 6.1 Dashboard de Métricas
-
 
 ```typescript
 // monitoring/metrics-dashboard.ts
@@ -619,12 +577,9 @@ interface MetricsDashboard {
     sharedCodeRatio: number; // Target: > 20%
   };
 }
-
 ```
 
-
 ### 6.2 Script de Monitoreo Continuo
-
 
 ```bash
 #!/bin/bash
@@ -666,11 +621,9 @@ node scripts/check-metrics-threshold.js
 
 ```
 
-
 ## 🏗️ 7. Mejores Prácticas para +100K LOC
 
 ### 7.1 Organización de Código
-
 
 ```typescript
 // Estructura modular escalable
@@ -681,13 +634,13 @@ interface ModuleStructure {
   maxExportsPerFile: 5;
 
   // Convenciones de naming
-  fileNaming: 'kebab-case';
-  componentNaming: 'PascalCase';
-  functionNaming: 'camelCase';
+  fileNaming: "kebab-case";
+  componentNaming: "PascalCase";
+  functionNaming: "camelCase";
 
   // Índices y barriles
-  indexStrategy: 'explicit'; // No re-exportar todo
-  barrelFiles: 'avoided'; // Evitar para tree-shaking
+  indexStrategy: "explicit"; // No re-exportar todo
+  barrelFiles: "avoided"; // Evitar para tree-shaking
 }
 
 // Ejemplo de módulo bien estructurado
@@ -707,34 +660,31 @@ modules/order/
 │   └── order.controller.ts         (< 150 LOC)
 └── index.ts                        (explicit exports)
 */
-
 ```
 
-
 ### 7.2 Estrategia de Testing Escalable
-
 
 ```typescript
 // testing/scalable-testing-strategy.ts
 interface TestingStrategy {
   unit: {
     coverage: 80; // Mínimo para lógica de dominio
-    location: 'colocated'; // Junto al código
-    naming: '*.spec.ts';
-    framework: 'vitest'; // Más rápido que Jest
+    location: "colocated"; // Junto al código
+    naming: "*.spec.ts";
+    framework: "vitest"; // Más rápido que Jest
   };
 
   integration: {
     coverage: 60; // Para flujos críticos
-    location: '__tests__';
-    naming: '*.integration.ts';
+    location: "__tests__";
+    naming: "*.integration.ts";
     parallel: true;
   };
 
   e2e: {
     coverage: 40; // Flujos principales
-    location: 'e2e/';
-    framework: 'playwright';
+    location: "e2e/";
+    framework: "playwright";
     parallelization: 4; // Workers paralelos
   };
 }
@@ -745,20 +695,17 @@ export const testOptimizations = {
   sharedDatabaseContext: true,
 
   // Mocking inteligente
-  autoMockModules: ['@prisma/client', 'axios'],
+  autoMockModules: ["@prisma/client", "axios"],
 
   // Test sharding para CI
   shardStrategy: {
     total: 4,
-    pattern: 'round-robin',
+    pattern: "round-robin",
   },
 };
-
 ```
 
-
 ### 7.3 CI/CD Optimizado
-
 
 ```yaml
 # .github/workflows/optimized-ci.yml
@@ -812,19 +759,16 @@ jobs:
 
       - name: Build Changed
         run: pnpm turbo build --filter=[HEAD^1]
-
 ```
 
-
 ### 7.4 Monitoreo de Deuda Técnica
-
 
 ```typescript
 // scripts/tech-debt-tracker.ts
 interface TechDebtItem {
   id: string;
-  type: 'complexity' | 'duplication' | 'coupling' | 'performance';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "complexity" | "duplication" | "coupling" | "performance";
+  severity: "low" | "medium" | "high" | "critical";
   estimatedHours: number;
   location: string;
   description: string;
@@ -861,14 +805,10 @@ class TechDebtTracker {
   }
 
   prioritize(): TechDebtItem[] {
-    return this.debts
-      .map(debt => ({ ...debt, roi: this.calculateROI(debt) }))
-      .sort((a, b) => b.roi - a.roi);
+    return this.debts.map(debt => ({ ...debt, roi: this.calculateROI(debt) })).sort((a, b) => b.roi - a.roi);
   }
 }
-
 ```
-
 
 ## 🎯 8. Plan de Acción Inmediata (Quick Wins)
 

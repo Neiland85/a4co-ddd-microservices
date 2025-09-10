@@ -2,7 +2,9 @@
 
 ## 🎯 Resumen Ejecutivo
 
-Esta documentación describe todos los endpoints REST implementados para la comunicación crítica entre microservicios en el proyecto A4CO DDD Marketplace. Los endpoints están diseñados siguiendo principios de REST, con validación de entrada, manejo de errores consistente y respuestas estandarizadas.
+Esta documentación describe todos los endpoints REST implementados para la comunicación crítica entre microservicios en
+el proyecto A4CO DDD Marketplace. Los endpoints están diseñados siguiendo principios de REST, con validación de entrada,
+manejo de errores consistente y respuestas estandarizadas.
 
 ## 🏗️ Arquitectura de Endpoints
 
@@ -31,16 +33,13 @@ Esta documentación describe todos los endpoints REST implementados para la comu
 
 **Ejemplo de Request**:
 
-
 ```bash
 GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
 
 
 ```
 
-
 **Ejemplo de Response**:
-
 
 ```json
 {
@@ -50,16 +49,13 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   "availableStock": 80,
   "message": "Stock disponible"
 }
-
 ```
-
 
 ##### `POST /inventory/check/bulk`
 
 **Descripción**: Verificar disponibilidad de stock para múltiples productos
 
 **Body**:
-
 
 ```json
 {
@@ -74,12 +70,9 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
     }
   ]
 }
-
 ```
 
-
 **Response**:
-
 
 ```json
 {
@@ -94,16 +87,13 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   ],
   "summary": "Todos los productos están disponibles"
 }
-
 ```
-
 
 ##### `POST /inventory/reserve`
 
 **Descripción**: Reservar stock para una orden
 
 **Body**:
-
 
 ```json
 {
@@ -112,12 +102,9 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   "quantity": 5,
   "customerId": "customer-456"
 }
-
 ```
 
-
 **Response**:
-
 
 ```json
 {
@@ -128,9 +115,7 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   "reservedQuantity": 5,
   "message": "Stock reservado exitosamente"
 }
-
 ```
-
 
 ##### `POST /inventory/release`
 
@@ -138,16 +123,13 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
 
 **Body**:
 
-
 ```json
 {
   "orderId": "order-123",
   "productId": "123e4567-e89b-12d3-a456-426614174000",
   "quantity": 5
 }
-
 ```
-
 
 #### 🔧 Endpoints Internos del Servicio
 
@@ -187,7 +169,6 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
 
 **Body**:
 
-
 ```json
 {
   "paymentMethodType": "credit_card",
@@ -197,12 +178,9 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   "currency": "EUR",
   "orderId": "order-123"
 }
-
 ```
 
-
 **Response**:
-
 
 ```json
 {
@@ -215,16 +193,13 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   "monthlyLimit": 50000.0,
   "message": "Método de pago válido"
 }
-
 ```
-
 
 ##### `POST /payments/process`
 
 **Descripción**: Procesar el pago de una orden
 
 **Body**:
-
 
 ```json
 {
@@ -237,12 +212,9 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   "description": "Compra de productos",
   "customerEmail": "cliente@example.com"
 }
-
 ```
 
-
 **Response**:
-
 
 ```json
 {
@@ -255,9 +227,7 @@ GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
   "transactionId": "txn_abc123",
   "message": "Pago procesado exitosamente"
 }
-
 ```
-
 
 ##### `GET /payments/methods/:customerId`
 
@@ -459,15 +429,12 @@ Todos los endpoints implementan validación usando `class-validator`:
 
 **Estructura de Error Estándar**:
 
-
 ```json
 {
   "error": "Error code",
   "message": "Descripción del error en español"
 }
-
 ```
-
 
 **Códigos HTTP**:
 
@@ -488,7 +455,6 @@ Todos los endpoints implementan validación usando `class-validator`:
 
 ### Variables de Entorno
 
-
 ```bash
 # Configuración del servicio
 SERVICE_NAME=inventory-service
@@ -508,11 +474,9 @@ LOG_FORMAT=json
 
 ```
 
-
 ### Health Checks
 
 Cada servicio expone endpoints de salud:
-
 
 ```bash
 # Verificar salud del servicio
@@ -523,7 +487,6 @@ GET /{service}/metrics
 
 
 ```
-
 
 ### Rate Limiting
 
@@ -546,7 +509,6 @@ Los endpoints críticos implementan rate limiting:
 
 ### Logs Estructurados
 
-
 ```json
 {
   "timestamp": "2025-01-15T10:30:00Z",
@@ -559,16 +521,13 @@ Los endpoints críticos implementan rate limiting:
   "responseTime": 45,
   "statusCode": 200
 }
-
 ```
-
 
 ---
 
 ## 🧪 Testing
 
 ### Endpoints de Testing
-
 
 ```bash
 # Verificar que el servicio esté funcionando
@@ -583,25 +542,21 @@ POST /{service}/test/reset
 
 ```
 
-
 ### Ejemplos de Tests
-
 
 ```typescript
 // Test de validación de inventario
-describe('Inventory Check Endpoint', () => {
-  it('should validate stock availability', async () => {
+describe("Inventory Check Endpoint", () => {
+  it("should validate stock availability", async () => {
     const response = await request(app)
-      .get('/inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5')
+      .get("/inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5")
       .expect(200);
 
     expect(response.body.available).toBe(true);
     expect(response.body.availableStock).toBeGreaterThanOrEqual(5);
   });
 });
-
 ```
-
 
 ---
 

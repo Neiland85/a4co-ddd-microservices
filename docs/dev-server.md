@@ -2,10 +2,10 @@
 
 ## Visión General
 
-El servidor de desarrollo unificado de A4CO proporciona un entorno completo donde el diseño fluye instantáneamente a través de todo el stack tecnológico. Este documento guía a desarrolladores y diseñadores en el uso del sistema.
+El servidor de desarrollo unificado de A4CO proporciona un entorno completo donde el diseño fluye instantáneamente a
+través de todo el stack tecnológico. Este documento guía a desarrolladores y diseñadores en el uso del sistema.
 
 ## 🏗️ Arquitectura
-
 
 ```mermaid
 graph TB
@@ -46,7 +46,6 @@ graph TB
 
 ```
 
-
 ## 🚦 Inicio Rápido
 
 ### Prerrequisitos
@@ -57,7 +56,6 @@ graph TB
 - Git
 
 ### Instalación
-
 
 ```bash
 # Clonar el repositorio
@@ -73,9 +71,7 @@ cp .env.example .env.local
 
 ```
 
-
 ### Comandos Principales
-
 
 ```bash
 # 🚀 Iniciar todo el entorno de desarrollo
@@ -96,11 +92,9 @@ pnpm build:all
 
 ```
 
-
 ## 🎨 Design System
 
 ### Estructura
-
 
 ```
 
@@ -119,25 +113,21 @@ packages/design-system/
 
 ```
 
-
 ### Uso en Aplicaciones
-
 
 ```typescript
 // En tu aplicación Next.js
-import { Button, Card } from '@a4co/design-system';
-import { colors, spacing } from '@a4co/design-system/tokens';
+import { Button, Card } from "@a4co/design-system";
+import { colors, spacing } from "@a4co/design-system/tokens";
 
 // tailwind.config.ts
-import a4coPreset from '@a4co/design-system/tailwind';
+import a4coPreset from "@a4co/design-system/tailwind";
 
 export default {
   presets: [a4coPreset],
   // ... configuración adicional
 };
-
 ```
-
 
 ### Hot Reload
 
@@ -164,7 +154,6 @@ Los cambios en el Design System se reflejan automáticamente en todas las aplica
 
 ### Comandos Docker
 
-
 ```bash
 # Iniciar servicios
 docker-compose -f docker-compose.dev.yml up -d
@@ -184,7 +173,6 @@ docker-compose -f docker-compose.dev.yml down -v
 
 ```
 
-
 ## 🔄 CI/CD
 
 ### GitHub Actions
@@ -197,21 +185,17 @@ Los workflows automatizados incluyen:
 
 ### Secretos Requeridos
 
-
 ```yaml
 VERCEL_TOKEN: Token de Vercel
 VERCEL_ORG_ID: ID de la organización
 VERCEL_PROJECT_ID: ID del proyecto
 CHROMATIC_PROJECT_TOKEN: Token de Chromatic
 TURBO_TOKEN: Token de Turborepo
-
 ```
-
 
 ## 🧪 Testing
 
 ### Tests Visuales con Playwright
-
 
 ```bash
 # Ejecutar todos los tests visuales
@@ -226,9 +210,7 @@ pnpm test:visual:report
 
 ```
 
-
 ### Tests de Componentes
-
 
 ```bash
 # Tests unitarios con Vitest
@@ -243,11 +225,9 @@ pnpm test:coverage
 
 ```
 
-
 ## 📚 Recursos Adicionales
 
 ### Scripts Útiles
-
 
 ```json
 {
@@ -261,12 +241,9 @@ pnpm test:coverage
     "reinstall": "pnpm clean:all && pnpm install"
   }
 }
-
 ```
 
-
 ### Alias de TypeScript
-
 
 ```json
 // tsconfig.json
@@ -278,12 +255,9 @@ pnpm test:coverage
     }
   }
 }
-
 ```
 
-
 ### Configuración VSCode
-
 
 ```json
 // .vscode/settings.json
@@ -296,9 +270,7 @@ pnpm test:coverage
     "typescriptreact": "javascript"
   }
 }
-
 ```
-
 
 ## 🐛 Troubleshooting
 

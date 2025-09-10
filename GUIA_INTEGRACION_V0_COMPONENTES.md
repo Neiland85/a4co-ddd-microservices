@@ -23,7 +23,6 @@
 
 ### Arquitectura de 3 Capas
 
-
 ```
 
 
@@ -41,9 +40,7 @@
 
 ```
 
-
 ## 📁 Estructura Recomendada
-
 
 ```bash
 apps/dashboard-web/src/components/
@@ -73,11 +70,9 @@ apps/dashboard-web/src/components/
 
 ```
 
-
 ## 🔄 Flujo de Trabajo
 
 ### 1. Generación en V0.dev
-
 
 ```bash
 # Paso 1: Crear componente en v0.dev con tu prompt
@@ -88,9 +83,7 @@ apps/dashboard-web/src/components/
 
 ```
 
-
 ### 2. Integración Automatizada
-
 
 ```bash
 # Script helper para nueva integración
@@ -99,9 +92,7 @@ pnpm run integrate:v0 --component=ProductDashboard --url=https://v0.dev/your-com
 
 ```
 
-
 ### 3. Adaptación Manual
-
 
 ```typescript
 // Ejemplo de adaptación
@@ -119,11 +110,9 @@ export default function ProductDashboardV0(props: AdaptedProps) {
 
 ```
 
-
 ## 🔧 Patrones de Integración
 
 ### Patrón 1: Adapter Pattern (Recomendado)
-
 
 ```typescript
 // apps/dashboard-web/src/components/v0/templates/V0AdapterUtils.ts
@@ -177,9 +166,7 @@ export function createV0Adapter<T extends Record<string, any>>(
 
 ```
 
-
 ### Patrón 2: Wrapper Component
-
 
 ```typescript
 // apps/dashboard-web/src/components/custom/wrappers/V0ComponentWrapper.tsx
@@ -241,9 +228,7 @@ export function V0ComponentWrapper({
 
 ```
 
-
 ### Patrón 3: Enhanced Components
-
 
 ```typescript
 // apps/dashboard-web/src/components/custom/enhanced/ProductCatalogEnhanced.tsx
@@ -295,11 +280,9 @@ export function ProductCatalogEnhanced({
 
 ```
 
-
 ## 🎨 Personalización Avanzada
 
 ### 1. Sistema de Temas Dinámicos
-
 
 ```typescript
 // apps/dashboard-web/src/lib/theme-system.ts
@@ -332,9 +315,7 @@ export function applyV0Theme(component: React.ReactElement, theme: Partial<V0The
 
 ```
 
-
 ### 2. Plugin System para Extensiones
-
 
 ```typescript
 // apps/dashboard-web/src/lib/v0-plugin-system.ts
@@ -391,69 +372,64 @@ v0PluginManager.register({
 
 ```
 
-
 ### 3. CSS-in-JS Personalización
-
 
 ```typescript
 // apps/dashboard-web/src/styles/v0-customizations.ts
-import { styled } from '@stitches/react';
+import { styled } from "@stitches/react";
 
-export const V0CustomWrapper = styled('div', {
+export const V0CustomWrapper = styled("div", {
   // Base styles
-  '.v0-component': {
-    transition: 'all 0.2s ease',
-    borderRadius: '$radius',
+  ".v0-component": {
+    transition: "all 0.2s ease",
+    borderRadius: "$radius",
   },
 
   // Variants
   variants: {
     theme: {
       minimal: {
-        '.v0-component': {
-          boxShadow: 'none',
-          border: '1px solid $gray300',
+        ".v0-component": {
+          boxShadow: "none",
+          border: "1px solid $gray300",
         },
       },
       elevated: {
-        '.v0-component': {
-          boxShadow: '$lg',
-          border: 'none',
+        ".v0-component": {
+          boxShadow: "$lg",
+          border: "none",
         },
       },
       glass: {
-        '.v0-component': {
-          backdropFilter: 'blur(10px)',
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+        ".v0-component": {
+          backdropFilter: "blur(10px)",
+          background: "rgba(255, 255, 255, 0.1)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
         },
       },
     },
 
     animation: {
       subtle: {
-        '.v0-component': {
-          '&:hover': {
-            transform: 'translateY(-2px)',
+        ".v0-component": {
+          "&:hover": {
+            transform: "translateY(-2px)",
           },
         },
       },
       bounce: {
-        '.v0-component': {
-          '&:hover': {
-            animation: 'bounce 0.5s ease',
+        ".v0-component": {
+          "&:hover": {
+            animation: "bounce 0.5s ease",
           },
         },
       },
     },
   },
 });
-
 ```
 
-
 ## 🚀 Scripts de Automatización
-
 
 ```bash
 # apps/dashboard-web/scripts/integrate-v0.sh
@@ -586,7 +562,6 @@ echo "   4. Importar y usar en tu página"
 
 ```
 
-
 ```json
 // package.json - Scripts adicionales
 {
@@ -596,14 +571,11 @@ echo "   4. Importar y usar en tu página"
     "update:v0": "bash scripts/update-v0-components.sh"
   }
 }
-
 ```
-
 
 ## 🛠️ Mejores Prácticas
 
 ### 1. Versionado de Componentes V0
-
 
 ```typescript
 // apps/dashboard-web/src/components/v0/version-control.ts
@@ -618,24 +590,17 @@ interface V0ComponentVersion {
 
 export const v0Registry: V0ComponentVersion[] = [
   {
-    componentName: 'ProductCatalog',
-    version: '1.2.0',
-    v0Url: 'https://v0.dev/component/abc123',
-    lastUpdated: new Date('2024-01-15'),
-    changelog: [
-      'Added filter functionality',
-      'Improved responsive design',
-      'Fixed accessibility issues',
-    ],
+    componentName: "ProductCatalog",
+    version: "1.2.0",
+    v0Url: "https://v0.dev/component/abc123",
+    lastUpdated: new Date("2024-01-15"),
+    changelog: ["Added filter functionality", "Improved responsive design", "Fixed accessibility issues"],
     breaking: false,
   },
 ];
-
 ```
 
-
 ### 2. Testing de Componentes V0
-
 
 ```typescript
 // apps/dashboard-web/src/components/v0/__tests__/integration.test.tsx
@@ -667,9 +632,7 @@ describe('V0 Component Integration', () => {
 
 ```
 
-
 ### 3. Documentación Automática
-
 
 ```typescript
 // apps/dashboard-web/src/lib/v0-docs-generator.ts
@@ -678,9 +641,7 @@ export function generateV0Documentation(componentPath: string) {
   // Generación de documentación Storybook
   // Creación de ejemplos de uso
 }
-
 ```
-
 
 ## ⚠️ Troubleshooting
 
@@ -688,33 +649,26 @@ export function generateV0Documentation(componentPath: string) {
 
 1. **Imports incorrectos desde v0**
 
-
 ```typescript
 // ❌ Código v0 original
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 // ✅ Solución: Adaptar paths
-import { Button } from '../../../ui/button';
+import { Button } from "../../../ui/button";
 // o usar alias configurado en tsconfig.json
-import { Button } from '@/components/ui/button';
-
+import { Button } from "@/components/ui/button";
 ```
-
 
 2. **Conflictos de tipos TypeScript**
 
-
 ```typescript
 // ✅ Solución: Crear interfaces de adaptación
-interface AdaptedProps extends Omit<OriginalV0Props, 'conflictingProp'> {
+interface AdaptedProps extends Omit<OriginalV0Props, "conflictingProp"> {
   conflictingProp: YourCustomType;
 }
-
 ```
 
-
 3. **Estilos no aplicados correctamente**
-
 
 ```typescript
 // ✅ Solución: Wrapper con CSS Module
@@ -727,20 +681,15 @@ import styles from './V0StyleFix.module.css';
 
 ```
 
-
 4. **Rendimiento lento con múltiples componentes v0**
-
 
 ```typescript
 // ✅ Solución: Lazy loading y memoización
-const LazyV0Component = React.lazy(() => import('./V0Component'));
+const LazyV0Component = React.lazy(() => import("./V0Component"));
 const MemoizedV0 = React.memo(V0Component);
-
 ```
 
-
 ## 📊 Monitoreo y Analytics
-
 
 ```typescript
 // apps/dashboard-web/src/lib/v0-analytics.ts
@@ -757,9 +706,7 @@ export function trackV0Performance(componentName: string) {
   // Tracking de errores
   // Análisis de uso
 }
-
 ```
-
 
 ---
 

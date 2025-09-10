@@ -8,7 +8,8 @@
 
 ## 🎯 RESUMEN EJECUTIVO
 
-Esta documentación presenta una implementación completa de **Persistencia DDD** usando **Prisma ORM** para el `product-service`, integrando:
+Esta documentación presenta una implementación completa de **Persistencia DDD** usando **Prisma ORM** para el
+`product-service`, integrando:
 
 1. **Esquema de Base de Datos** optimizado para patrones DDD
 2. **Entidades de Dominio** con agregados, value objects y eventos
@@ -21,7 +22,6 @@ Esta documentación presenta una implementación completa de **Persistencia DDD*
 ## 📊 ARQUITECTURA DE PERSISTENCIA
 
 ### Capas de la Aplicación
-
 
 ```
 
@@ -43,9 +43,7 @@ Esta documentación presenta una implementación completa de **Persistencia DDD*
 
 ```
 
-
 ### Patrón Repository con Prisma
-
 
 ```typescript
 // Separación clara entre dominio e infraestructura
@@ -53,7 +51,6 @@ Domain Entity ←→ Repository Interface ←→ Prisma Repository ←→ Databa
 
 
 ```
-
 
 ---
 
@@ -69,7 +66,6 @@ Domain Entity ←→ Repository Interface ←→ Prisma Repository ←→ Databa
 6. **Campos de auditoría** (createdAt, updatedAt)
 
 ### Ejemplo de Agregado Product
-
 
 ```prisma
 model Product {
@@ -107,7 +103,6 @@ model Product {
 
 ```
 
-
 ### Ventajas de este Diseño
 
 ✅ **Consistencia del Agregado**: Todas las entidades relacionadas se persisten juntas  
@@ -121,7 +116,6 @@ model Product {
 ## 🏛️ ENTIDADES DE DOMINIO CON DDD
 
 ### Agregado Root: Product
-
 
 ```typescript
 export class Product extends AggregateRoot {
@@ -139,7 +133,7 @@ export class Product extends AggregateRoot {
 
     // Validaciones de dominio
     if (!name.trim()) {
-      throw new Error('Product name cannot be empty');
+      throw new Error("Product name cannot be empty");
     }
 
     // Evento de dominio
@@ -157,28 +151,25 @@ export class Product extends AggregateRoot {
   // Métodos de negocio
   publish(): void {
     if (this._images.length === 0) {
-      throw new Error('Product must have at least one image');
+      throw new Error("Product must have at least one image");
     }
 
     this._status = ProductStatus.PUBLISHED;
     this.addDomainEvent(new ProductPublishedEvent(/*...*/));
   }
 }
-
 ```
 
-
 ### Value Objects Inmutables
-
 
 ```typescript
 export class Money {
   constructor(
     public readonly amount: number,
-    public readonly currency: string = 'EUR'
+    public readonly currency: string = "EUR"
   ) {
     if (amount < 0) {
-      throw new Error('Money amount cannot be negative');
+      throw new Error("Money amount cannot be negative");
     }
   }
 
@@ -188,17 +179,14 @@ export class Money {
 
   add(other: Money): Money {
     if (this.currency !== other.currency) {
-      throw new Error('Cannot add different currencies');
+      throw new Error("Cannot add different currencies");
     }
     return new Money(this.amount + other.amount, this.currency);
   }
 }
-
 ```
 
-
 ### Eventos de Dominio
-
 
 ```typescript
 export class ProductCreatedEvent extends DomainEvent {
@@ -215,16 +203,13 @@ export class ProductCreatedEvent extends DomainEvent {
     super(productId, data);
   }
 }
-
 ```
-
 
 ---
 
 ## 🔄 REPOSITORIO CON MAPEO PRISMA ↔ DOMINIO
 
 ### Interfaz del Repositorio (Domain Layer)
-
 
 ```typescript
 export interface IProductRepository {
@@ -236,12 +221,9 @@ export interface IProductRepository {
   update(product: Product): Promise<void>;
   delete(id: string): Promise<void>;
 }
-
 ```
 
-
 ### Implementación con Prisma (Infrastructure Layer)
-
 
 ```typescript
 export class PrismaProductRepository implements IProductRepository {
@@ -297,9 +279,7 @@ export class PrismaProductRepository implements IProductRepository {
     return product;
   }
 }
-
 ```
-
 
 ### Ventajas del Mapeo
 
@@ -313,7 +293,6 @@ export class PrismaProductRepository implements IProductRepository {
 ## 🚀 SERVICIO DE APLICACIÓN (USE CASES)
 
 ### Coordinación de Casos de Uso
-
 
 ```typescript
 export class ProductService {
@@ -335,7 +314,7 @@ export class ProductService {
       dto.name,
       dto.description,
       dto.sku,
-      new Money(dto.price, dto.currency || 'EUR'),
+      new Money(dto.price, dto.currency || "EUR"),
       dto.artisanId,
       dto.categoryId,
       dto.slug
@@ -364,16 +343,13 @@ export class ProductService {
     product.clearDomainEvents();
   }
 }
-
 ```
-
 
 ---
 
 ## 📡 EVENTOS DE DOMINIO Y COMUNICACIÓN
 
 ### Eventos Publicados por Product Service
-
 
 ```typescript
 // Cuando se crea un producto
@@ -397,14 +373,12 @@ ProductPriceChangedEvent →
 
 ```
 
-
 ### Integración con NATS Event Bus
-
 
 ```typescript
 // En el startup del servicio
-const eventBus = new NatsEventBus('product-service');
-await eventBus.connect(['nats://localhost:4222']);
+const eventBus = new NatsEventBus("product-service");
+await eventBus.connect(["nats://localhost:4222"]);
 
 // Configurar suscriptores
 await eventBus.subscribe(EventSubjects.ORDER_CONFIRMED, async event => {
@@ -414,15 +388,9 @@ await eventBus.subscribe(EventSubjects.ORDER_CONFIRMED, async event => {
 
 await eventBus.subscribe(EventSubjects.REVIEW_APPROVED, async event => {
   // Actualizar rating del producto
-  await productService.updateProductRating(
-    event.productId,
-    event.newAverageRating,
-    event.newReviewCount
-  );
+  await productService.updateProductRating(event.productId, event.newAverageRating, event.newReviewCount);
 });
-
 ```
-
 
 ---
 
@@ -430,40 +398,39 @@ await eventBus.subscribe(EventSubjects.REVIEW_APPROVED, async event => {
 
 ### 1. Crear Producto Completo
 
-
 ```typescript
 // Configuración de dependencias
 const prisma = new PrismaClient();
-const eventBus = new NatsEventBus('product-service');
+const eventBus = new NatsEventBus("product-service");
 const productRepository = new PrismaProductRepository(prisma);
 const productService = new ProductService(productRepository, eventBus);
 
 // Crear producto
 const product = await productService.createProduct({
-  name: 'Cerámica Artesanal de Úbeda',
-  description: 'Hermosa vasija de cerámica tradicional de Úbeda',
-  sku: 'CER-UBE-001',
+  name: "Cerámica Artesanal de Úbeda",
+  description: "Hermosa vasija de cerámica tradicional de Úbeda",
+  sku: "CER-UBE-001",
   price: 89.99,
   originalPrice: 120.0,
-  artisanId: 'artisan_maria_gonzalez',
-  categoryId: 'ceramica_tradicional',
-  slug: 'ceramica-artesanal-ubeda-001',
-  tags: ['cerámica', 'úbeda', 'artesanal', 'tradicional'],
-  keywords: ['vasija', 'decoración', 'hogar', 'jaén'],
+  artisanId: "artisan_maria_gonzalez",
+  categoryId: "ceramica_tradicional",
+  slug: "ceramica-artesanal-ubeda-001",
+  tags: ["cerámica", "úbeda", "artesanal", "tradicional"],
+  keywords: ["vasija", "decoración", "hogar", "jaén"],
   featured: true,
 });
 
 // Agregar variantes
 await productService.addVariant({
   productId: product.id,
-  name: 'Tamaño Mediano',
-  sku: 'CER-UBE-001-M',
+  name: "Tamaño Mediano",
+  sku: "CER-UBE-001-M",
   price: 89.99,
   attributes: {
-    size: 'Medium',
-    height: '25cm',
-    diameter: '18cm',
-    color: 'Azul Cobalto',
+    size: "Medium",
+    height: "25cm",
+    diameter: "18cm",
+    color: "Azul Cobalto",
   },
   stockQuantity: 12,
   weight: 850, // gramos
@@ -472,14 +439,14 @@ await productService.addVariant({
 
 await productService.addVariant({
   productId: product.id,
-  name: 'Tamaño Grande',
-  sku: 'CER-UBE-001-L',
+  name: "Tamaño Grande",
+  sku: "CER-UBE-001-L",
   price: 129.99,
   attributes: {
-    size: 'Large',
-    height: '35cm',
-    diameter: '25cm',
-    color: 'Azul Cobalto',
+    size: "Large",
+    height: "35cm",
+    diameter: "25cm",
+    color: "Azul Cobalto",
   },
   stockQuantity: 8,
   weight: 1200, // gramos
@@ -488,44 +455,44 @@ await productService.addVariant({
 // Agregar imágenes
 await productService.addImage({
   productId: product.id,
-  url: 'https://storage.a4co.com/products/cer-ube-001-main.jpg',
-  altText: 'Cerámica artesanal de Úbeda - vista principal',
-  type: 'HERO',
+  url: "https://storage.a4co.com/products/cer-ube-001-main.jpg",
+  altText: "Cerámica artesanal de Úbeda - vista principal",
+  type: "HERO",
   isPrimary: true,
   sortOrder: 0,
 });
 
 await productService.addImage({
   productId: product.id,
-  url: 'https://storage.a4co.com/products/cer-ube-001-detail.jpg',
-  altText: 'Detalle del acabado de la cerámica',
-  type: 'DETAIL',
+  url: "https://storage.a4co.com/products/cer-ube-001-detail.jpg",
+  altText: "Detalle del acabado de la cerámica",
+  type: "DETAIL",
   sortOrder: 1,
 });
 
 // Agregar especificaciones
 await productService.addSpecification({
   productId: product.id,
-  name: 'Material',
-  value: 'Arcilla roja de Úbeda',
-  type: 'TEXT',
-  category: 'Composición',
+  name: "Material",
+  value: "Arcilla roja de Úbeda",
+  type: "TEXT",
+  category: "Composición",
 });
 
 await productService.addSpecification({
   productId: product.id,
-  name: 'Técnica',
-  value: 'Torno alfarero tradicional',
-  type: 'TEXT',
-  category: 'Proceso',
+  name: "Técnica",
+  value: "Torno alfarero tradicional",
+  type: "TEXT",
+  category: "Proceso",
 });
 
 await productService.addSpecification({
   productId: product.id,
-  name: 'Origen',
-  value: 'Úbeda, Jaén, España',
-  type: 'TEXT',
-  category: 'Procedencia',
+  name: "Origen",
+  value: "Úbeda, Jaén, España",
+  type: "TEXT",
+  category: "Procedencia",
 });
 
 // Publicar producto
@@ -537,18 +504,15 @@ console.log(`🏷️ SKU: ${product.sku}`);
 console.log(`💰 Precio: ${product.price.amount} ${product.price.currency}`);
 console.log(`🎨 Variantes: ${product.variants.length}`);
 console.log(`📸 Imágenes: ${product.images.length}`);
-
 ```
 
-
 ### 2. Buscar y Filtrar Productos
-
 
 ```typescript
 // Búsqueda por texto
 const searchResults = await productService.searchProducts({
-  query: 'cerámica úbeda',
-  categoryId: 'ceramica_tradicional',
+  query: "cerámica úbeda",
+  categoryId: "ceramica_tradicional",
   priceMin: 50,
   priceMax: 150,
   featured: true,
@@ -567,19 +531,16 @@ searchResults.products.forEach(product => {
 
 // Productos por artesano
 const artisanProducts = await productService.getProductsByArtisan(
-  'artisan_maria_gonzalez',
+  "artisan_maria_gonzalez",
   1, // página
   10 // límite
 );
 
 // Productos destacados
 const featuredProducts = await productService.getFeaturedProducts(8);
-
 ```
 
-
 ### 3. Gestión de Eventos en Tiempo Real
-
 
 ```typescript
 // Event handlers para otros servicios
@@ -604,16 +565,10 @@ class ProductEventHandlers {
   async onReviewApproved(event: ReviewApprovedEvent): Promise<void> {
     // Recalcular rating promedio
     const newRating = await this.calculateAverageRating(event.productId);
-    await this.productService.updateProductRating(
-      event.productId,
-      newRating.average,
-      newRating.count
-    );
+    await this.productService.updateProductRating(event.productId, newRating.average, newRating.count);
   }
 }
-
 ```
-
 
 ---
 
@@ -668,4 +623,5 @@ Esta implementación establece una **base sólida** para el product-service del 
 4. **Testing completo** con Jest para todas las capas
 5. **CI/CD pipeline** para despliegue automatizado
 
-**Esta arquitectura posiciona al marketplace local de Jaén para escalar desde cientos a millones de productos manteniendo la calidad y performance.**
+**Esta arquitectura posiciona al marketplace local de Jaén para escalar desde cientos a millones de productos
+manteniendo la calidad y performance.**

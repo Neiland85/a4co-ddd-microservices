@@ -6,7 +6,9 @@
 
 ## 🎯 RESUMEN EJECUTIVO
 
-Esta estrategia define patrones de comunicación robustos entre microservicios del marketplace, estableciendo claramente cuándo usar comunicación **síncrona (REST APIs)** vs **asíncrona (eventos)**, con un enfoque en bajo acoplamiento y alta cohesión siguiendo principios DDD.
+Esta estrategia define patrones de comunicación robustos entre microservicios del marketplace, estableciendo claramente
+cuándo usar comunicación **síncrona (REST APIs)** vs **asíncrona (eventos)**, con un enfoque en bajo acoplamiento y alta
+cohesión siguiendo principios DDD.
 
 ### Principios Fundamentales
 
@@ -58,7 +60,6 @@ Esta estrategia define patrones de comunicación robustos entre microservicios d
 
 ### Patrones de Resilencia para APIs REST
 
-
 ```typescript
 // packages/shared-utils/src/http/resilient-http-client.ts
 export class ResilientHttpClient {
@@ -80,7 +81,7 @@ export class ResilientHttpClient {
 
     this.retryPolicy = new RetryPolicy({
       maxRetries: config.retries,
-      backoffStrategy: 'exponential',
+      backoffStrategy: "exponential",
       baseDelay: 1000,
     });
   }
@@ -107,9 +108,7 @@ export class ResilientHttpClient {
     return this.circuitBreaker.execute(() => this.retryPolicy.execute(operation));
   }
 }
-
 ```
-
 
 ---
 
@@ -127,7 +126,6 @@ export class ResilientHttpClient {
 
 ### Configuración NATS Productiva
 
-
 ```yaml
 # docker-compose.messaging.yml (enhanced)
 services:
@@ -135,34 +133,31 @@ services:
     image: nats:2.10-alpine
     command:
       [
-        '--jetstream',
-        '--store_dir=/data',
-        '--max_file_store=10GB',
-        '--max_memory_store=1GB',
-        '--max_msgs=10000000',
-        '--max_bytes=1GB',
-        '--max_age=7d',
-        '--replicas=1',
-        '--http_port=8222',
-        '--cluster_name=a4co-marketplace',
-        '--auth_token=${NATS_AUTH_TOKEN}',
+        "--jetstream",
+        "--store_dir=/data",
+        "--max_file_store=10GB",
+        "--max_memory_store=1GB",
+        "--max_msgs=10000000",
+        "--max_bytes=1GB",
+        "--max_age=7d",
+        "--replicas=1",
+        "--http_port=8222",
+        "--cluster_name=a4co-marketplace",
+        "--auth_token=${NATS_AUTH_TOKEN}",
       ]
     volumes:
       - nats_data:/data
       - ./config/nats/server.conf:/etc/nats/server.conf
     healthcheck:
-      test: ['CMD', 'nats', 'server', 'check', '--server=nats://localhost:4222']
+      test: ["CMD", "nats", "server", "check", "--server=nats://localhost:4222"]
       interval: 10s
       timeout: 5s
       retries: 3
-
 ```
-
 
 ### Eventos de Dominio Críticos
 
 #### 1. 🛒 Order Domain Events
-
 
 ```typescript
 // packages/shared-utils/src/events/order-events.ts
@@ -186,7 +181,7 @@ export class OrderCreatedEvent extends DomainEvent {
         postalCode: string;
         coordinates?: { lat: number; lng: number };
       };
-      orderType: 'delivery' | 'pickup';
+      orderType: "delivery" | "pickup";
       requestedDeliveryDate?: Date;
       createdAt: Date;
     }
@@ -214,11 +209,7 @@ export class OrderCancelledEvent extends DomainEvent {
   constructor(
     orderId: string,
     data: {
-      reason:
-        | 'customer-request'
-        | 'payment-failed'
-        | 'inventory-unavailable'
-        | 'artisan-unavailable';
+      reason: "customer-request" | "payment-failed" | "inventory-unavailable" | "artisan-unavailable";
       cancelledAt: Date;
       refundRequired: boolean;
       refundAmount?: number;
@@ -235,7 +226,7 @@ export class OrderDeliveredEvent extends DomainEvent {
     orderId: string,
     data: {
       deliveredAt: Date;
-      deliveryMethod: 'courier' | 'pickup' | 'direct';
+      deliveryMethod: "courier" | "pickup" | "direct";
       recipientName: string;
       recipientSignature?: string;
       deliveryPhotos?: string[];
@@ -246,19 +237,17 @@ export class OrderDeliveredEvent extends DomainEvent {
     super(orderId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
-- `OrderCreatedEvent` → `inventory-service`, `payment-service`, `notification-service`, `analytics-service`, `artisan-service`
+- `OrderCreatedEvent` → `inventory-service`, `payment-service`, `notification-service`, `analytics-service`,
+  `artisan-service`
 - `OrderConfirmedEvent` → `notification-service`, `loyalty-service`, `artisan-service`, `delivery-service`
 - `OrderCancelledEvent` → `inventory-service`, `payment-service`, `notification-service`, `analytics-service`
 - `OrderDeliveredEvent` → `loyalty-service`, `analytics-service`, `notification-service`, `review-service`
 
 #### 2. 📦 Inventory Domain Events
-
 
 ```typescript
 // packages/shared-utils/src/events/inventory-events.ts
@@ -286,7 +275,7 @@ export class StockReleasedEvent extends DomainEvent {
       orderId: string;
       reservationId: string;
       quantityReleased: number;
-      reason: 'order-cancelled' | 'reservation-expired' | 'payment-failed' | 'manual-release';
+      reason: "order-cancelled" | "reservation-expired" | "payment-failed" | "manual-release";
       newAvailableStock: number;
       releasedAt: Date;
     }
@@ -321,7 +310,7 @@ export class InventoryAdjustedEvent extends DomainEvent {
       previousStock: number;
       newStock: number;
       adjustmentQuantity: number;
-      adjustmentReason: 'restock' | 'damage' | 'loss' | 'correction' | 'return';
+      adjustmentReason: "restock" | "damage" | "loss" | "correction" | "return";
       adjustedBy: string;
       adjustedAt: Date;
       notes?: string;
@@ -331,9 +320,7 @@ export class InventoryAdjustedEvent extends DomainEvent {
     super(productId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -343,7 +330,6 @@ export class InventoryAdjustedEvent extends DomainEvent {
 - `InventoryAdjustedEvent` → `product-service`, `analytics-service`, `audit-service`
 
 #### 3. 💳 Payment Domain Events
-
 
 ```typescript
 // packages/shared-utils/src/events/payment-events.ts
@@ -355,7 +341,7 @@ export class PaymentInitiatedEvent extends DomainEvent {
       customerId: string;
       amount: number;
       currency: string;
-      paymentMethod: 'card' | 'transfer' | 'paypal' | 'bizum' | 'cash';
+      paymentMethod: "card" | "transfer" | "paypal" | "bizum" | "cash";
       paymentGateway: string;
       merchantReference: string;
       initiatedAt: Date;
@@ -413,16 +399,14 @@ export class RefundProcessedEvent extends DomainEvent {
       refundReason: string;
       processedAt: Date;
       gatewayRefundId: string;
-      refundMethod: 'original' | 'store-credit' | 'manual';
+      refundMethod: "original" | "store-credit" | "manual";
       processingTime: number; // in business days
     }
   ) {
     super(refundId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -432,7 +416,6 @@ export class RefundProcessedEvent extends DomainEvent {
 - `RefundProcessedEvent` → `order-service`, `notification-service`, `analytics-service`, `accounting-service`
 
 #### 4. 👤 User Domain Events
-
 
 ```typescript
 // packages/shared-utils/src/events/user-events.ts
@@ -444,7 +427,7 @@ export class UserRegisteredEvent extends DomainEvent {
       firstName: string;
       lastName: string;
       registrationDate: Date;
-      registrationSource: 'web' | 'mobile' | 'social' | 'referral';
+      registrationSource: "web" | "mobile" | "social" | "referral";
       preferredLanguage: string;
       location?: {
         city: string;
@@ -507,9 +490,7 @@ export class UserPreferencesChangedEvent extends DomainEvent {
     super(userId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -518,7 +499,6 @@ export class UserPreferencesChangedEvent extends DomainEvent {
 - `UserPreferencesChangedEvent` → `notification-service`, `product-service`, `recommendation-service`
 
 #### 5. 🎨 Artisan Domain Events
-
 
 ```typescript
 // packages/shared-utils/src/events/artisan-events.ts
@@ -539,7 +519,7 @@ export class ArtisanVerifiedEvent extends DomainEvent {
       specialties: string[];
       craftingTechniques: string[];
       certifications: string[];
-      verificationLevel: 'basic' | 'premium' | 'master';
+      verificationLevel: "basic" | "premium" | "master";
       verifiedAt: Date;
       verifiedBy: string;
       backgroundCheckPassed: boolean;
@@ -583,8 +563,8 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
   constructor(
     artisanId: string,
     data: {
-      previousStatus: 'pending' | 'active' | 'inactive' | 'suspended' | 'banned';
-      newStatus: 'pending' | 'active' | 'inactive' | 'suspended' | 'banned';
+      previousStatus: "pending" | "active" | "inactive" | "suspended" | "banned";
+      newStatus: "pending" | "active" | "inactive" | "suspended" | "banned";
       reason: string;
       changedAt: Date;
       changedBy: string;
@@ -595,9 +575,7 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
     super(artisanId, data);
   }
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -611,20 +589,12 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
 
 ### Event Bus Avanzado con NATS
 
-
 ```typescript
 // packages/shared-utils/src/events/enhanced-event-bus.ts
-import {
-  connect,
-  NatsConnection,
-  Codec,
-  StringCodec,
-  JetStreamManager,
-  JetStreamClient,
-} from 'nats';
-import { DomainEvent } from '../domain/domain-event';
-import { Logger } from '../utils/logger';
-import { MetricsCollector } from '../observability/metrics-collector';
+import { connect, NatsConnection, Codec, StringCodec, JetStreamManager, JetStreamClient } from "nats";
+import { DomainEvent } from "../domain/domain-event";
+import { Logger } from "../utils/logger";
+import { MetricsCollector } from "../observability/metrics-collector";
 
 export interface EventBusConfig {
   servers: string[];
@@ -638,10 +608,10 @@ export interface EventBusConfig {
 export interface StreamConfig {
   name: string;
   subjects: string[];
-  retention: 'limits' | 'interest' | 'workqueue';
+  retention: "limits" | "interest" | "workqueue";
   maxAge: number; // nanoseconds
   maxMsgs: number;
-  storage: 'file' | 'memory';
+  storage: "file" | "memory";
 }
 
 export class EnhancedEventBus {
@@ -649,7 +619,7 @@ export class EnhancedEventBus {
   private js!: JetStreamClient;
   private jsm!: JetStreamManager;
   private codec: Codec<string> = StringCodec();
-  private logger = new Logger('EventBus');
+  private logger = new Logger("EventBus");
   private metrics = new MetricsCollector();
 
   constructor(private config: EventBusConfig) {}
@@ -669,9 +639,9 @@ export class EnhancedEventBus {
         await this.setupStreams();
       }
 
-      this.logger.info('EventBus connected successfully');
+      this.logger.info("EventBus connected successfully");
     } catch (error) {
-      this.logger.error('Failed to connect to NATS', error);
+      this.logger.error("Failed to connect to NATS", error);
       throw error;
     }
   }
@@ -684,7 +654,7 @@ export class EnhancedEventBus {
         ...event,
         metadata: {
           publishedAt: new Date().toISOString(),
-          version: '1.0',
+          version: "1.0",
           correlationId: event.eventId,
           causationId: event.aggregateId,
         },
@@ -696,9 +666,9 @@ export class EnhancedEventBus {
         await this.js.publish(subject, message, {
           msgID: event.eventId,
           headers: {
-            'Event-Type': event.eventType,
-            'Aggregate-Id': event.aggregateId,
-            'Event-Version': event.eventVersion.toString(),
+            "Event-Type": event.eventType,
+            "Aggregate-Id": event.aggregateId,
+            "Event-Version": event.eventVersion.toString(),
           },
         });
       } else {
@@ -720,8 +690,8 @@ export class EnhancedEventBus {
     options: {
       durableName?: string;
       queue?: string;
-      deliverPolicy?: 'all' | 'last' | 'new' | 'by_start_sequence' | 'by_start_time';
-      ackPolicy?: 'none' | 'all' | 'explicit';
+      deliverPolicy?: "all" | "last" | "new" | "by_start_sequence" | "by_start_time";
+      ackPolicy?: "none" | "all" | "explicit";
       maxDeliver?: number;
       ackWait?: number;
     } = {}
@@ -731,8 +701,8 @@ export class EnhancedEventBus {
         // Durable subscription for guaranteed delivery
         const subscription = await this.js.subscribe(subject, {
           durable: options.durableName,
-          deliver_policy: options.deliverPolicy || 'new',
-          ack_policy: options.ackPolicy || 'explicit',
+          deliver_policy: options.deliverPolicy || "new",
+          ack_policy: options.ackPolicy || "explicit",
           max_deliver: options.maxDeliver || 3,
           ack_wait: options.ackWait || 30000, // 30 seconds
         });
@@ -746,7 +716,7 @@ export class EnhancedEventBus {
 
             this.metrics.recordEventProcessed(subject, eventData.eventType, Date.now() - startTime);
           } catch (error) {
-            this.metrics.recordEventProcessingFailed(subject, 'unknown', error as Error);
+            this.metrics.recordEventProcessingFailed(subject, "unknown", error as Error);
             this.logger.error(`Error processing event on ${subject}`, error);
             msg.nak();
           }
@@ -763,7 +733,7 @@ export class EnhancedEventBus {
 
             this.metrics.recordEventProcessed(subject, eventData.eventType, Date.now() - startTime);
           } catch (error) {
-            this.metrics.recordEventProcessingFailed(subject, 'unknown', error as Error);
+            this.metrics.recordEventProcessingFailed(subject, "unknown", error as Error);
             this.logger.error(`Error processing event on ${subject}`, error);
           }
         }
@@ -795,70 +765,64 @@ export class EnhancedEventBus {
 
   async disconnect(): Promise<void> {
     await this.nc.close();
-    this.logger.info('EventBus disconnected');
+    this.logger.info("EventBus disconnected");
   }
 }
-
 ```
 
-
 ### Configuración de Streams para Dominios
-
 
 ```typescript
 // config/nats-streams.ts
 export const marketplaceStreams: StreamConfig[] = [
   {
-    name: 'ORDERS',
-    subjects: ['order.*'],
-    retention: 'limits',
+    name: "ORDERS",
+    subjects: ["order.*"],
+    retention: "limits",
     maxAge: 7 * 24 * 60 * 60 * 1000000000, // 7 days in nanoseconds
     maxMsgs: 1000000,
-    storage: 'file',
+    storage: "file",
   },
   {
-    name: 'INVENTORY',
-    subjects: ['inventory.*'],
-    retention: 'limits',
+    name: "INVENTORY",
+    subjects: ["inventory.*"],
+    retention: "limits",
     maxAge: 30 * 24 * 60 * 60 * 1000000000, // 30 days
     maxMsgs: 5000000,
-    storage: 'file',
+    storage: "file",
   },
   {
-    name: 'PAYMENTS',
-    subjects: ['payment.*'],
-    retention: 'limits',
+    name: "PAYMENTS",
+    subjects: ["payment.*"],
+    retention: "limits",
     maxAge: 365 * 24 * 60 * 60 * 1000000000, // 1 year for compliance
     maxMsgs: 10000000,
-    storage: 'file',
+    storage: "file",
   },
   {
-    name: 'USERS',
-    subjects: ['user.*'],
-    retention: 'limits',
+    name: "USERS",
+    subjects: ["user.*"],
+    retention: "limits",
     maxAge: 90 * 24 * 60 * 60 * 1000000000, // 90 days
     maxMsgs: 1000000,
-    storage: 'file',
+    storage: "file",
   },
   {
-    name: 'ARTISANS',
-    subjects: ['artisan.*'],
-    retention: 'limits',
+    name: "ARTISANS",
+    subjects: ["artisan.*"],
+    retention: "limits",
     maxAge: 180 * 24 * 60 * 60 * 1000000000, // 6 months
     maxMsgs: 500000,
-    storage: 'file',
+    storage: "file",
   },
 ];
-
 ```
-
 
 ---
 
 ## 🔄 PATRONES DE ORQUESTACIÓN
 
 ### Saga Pattern para Procesos Complejos
-
 
 ```typescript
 // packages/shared-utils/src/sagas/order-fulfillment-saga.ts
@@ -877,8 +841,8 @@ export class OrderFulfillmentSaga {
       // 1. Inicializar estado de la saga
       await this.sagaStore.initializeSaga(sagaId, {
         orderId: event.aggregateId,
-        status: 'stock-check-pending',
-        steps: ['stock-check', 'payment-processing', 'order-confirmation'],
+        status: "stock-check-pending",
+        steps: ["stock-check", "payment-processing", "order-confirmation"],
         currentStep: 0,
         startedAt: new Date(),
         eventHistory: [event],
@@ -887,7 +851,7 @@ export class OrderFulfillmentSaga {
       // 2. Verificar stock para todos los productos
       for (const item of event.eventData.items) {
         await this.eventBus.publishDomainEvent(
-          'inventory.stock.check',
+          "inventory.stock.check",
           new StockCheckRequestedEvent(item.productId, {
             orderId: event.aggregateId,
             quantityRequested: item.quantity,
@@ -898,7 +862,7 @@ export class OrderFulfillmentSaga {
 
       this.logger.info(`Order fulfillment saga started for order ${event.aggregateId}`);
     } catch (error) {
-      await this.handleSagaFailure(sagaId, 'stock-check-failed', error);
+      await this.handleSagaFailure(sagaId, "stock-check-failed", error);
     }
   }
 
@@ -906,7 +870,7 @@ export class OrderFulfillmentSaga {
     const sagaId = `order-fulfillment-${event.eventData.orderId}`;
     const sagaState = await this.sagaStore.getSagaState(sagaId);
 
-    if (!sagaState || sagaState.status !== 'stock-check-pending') {
+    if (!sagaState || sagaState.status !== "stock-check-pending") {
       this.logger.warn(`Unexpected stock reserved event for saga ${sagaId}`);
       return;
     }
@@ -930,12 +894,12 @@ export class OrderFulfillmentSaga {
 
       if (allItemsReserved) {
         // Proceder al pago
-        sagaState.status = 'payment-processing';
+        sagaState.status = "payment-processing";
         sagaState.currentStep = 1;
         await this.sagaStore.updateSagaState(sagaId, sagaState);
 
         await this.eventBus.publishDomainEvent(
-          'payment.process',
+          "payment.process",
           new PaymentProcessRequestedEvent(uuidv4(), {
             orderId: event.eventData.orderId,
             amount: order.totalAmount,
@@ -948,7 +912,7 @@ export class OrderFulfillmentSaga {
         await this.sagaStore.updateSagaState(sagaId, sagaState);
       }
     } catch (error) {
-      await this.handleSagaFailure(sagaId, 'stock-reservation-processing-failed', error);
+      await this.handleSagaFailure(sagaId, "stock-reservation-processing-failed", error);
     }
   }
 
@@ -956,20 +920,20 @@ export class OrderFulfillmentSaga {
     const sagaId = `order-fulfillment-${event.eventData.orderId}`;
     const sagaState = await this.sagaStore.getSagaState(sagaId);
 
-    if (!sagaState || sagaState.status !== 'payment-processing') {
+    if (!sagaState || sagaState.status !== "payment-processing") {
       this.logger.warn(`Unexpected payment succeeded event for saga ${sagaId}`);
       return;
     }
 
     try {
       // Confirmar pedido
-      sagaState.status = 'order-confirmation';
+      sagaState.status = "order-confirmation";
       sagaState.currentStep = 2;
       sagaState.paymentReference = event.eventData.transactionId;
       await this.sagaStore.updateSagaState(sagaId, sagaState);
 
       await this.eventBus.publishDomainEvent(
-        'order.confirm',
+        "order.confirm",
         new OrderConfirmRequestedEvent(event.eventData.orderId, {
           paymentReference: event.eventData.transactionId,
           confirmedAt: new Date(),
@@ -977,7 +941,7 @@ export class OrderFulfillmentSaga {
         })
       );
     } catch (error) {
-      await this.handleSagaFailure(sagaId, 'order-confirmation-failed', error);
+      await this.handleSagaFailure(sagaId, "order-confirmation-failed", error);
     }
   }
 
@@ -989,15 +953,15 @@ export class OrderFulfillmentSaga {
 
     // Cancelar pedido
     await this.eventBus.publishDomainEvent(
-      'order.cancel',
+      "order.cancel",
       new OrderCancelRequestedEvent(event.eventData.orderId, {
-        reason: 'payment-failed',
+        reason: "payment-failed",
         cancelledAt: new Date(),
         sagaId,
       })
     );
 
-    await this.sagaStore.completeSaga(sagaId, 'failed', 'payment-failed');
+    await this.sagaStore.completeSaga(sagaId, "failed", "payment-failed");
   }
 
   private async compensateStockReservations(sagaId: string, orderId: string): Promise<void> {
@@ -1006,11 +970,11 @@ export class OrderFulfillmentSaga {
     if (sagaState?.reservedItems) {
       for (const reserved of sagaState.reservedItems) {
         await this.eventBus.publishDomainEvent(
-          'inventory.stock.release',
+          "inventory.stock.release",
           new StockReleaseRequestedEvent(reserved.productId, {
             orderId,
             reservationId: reserved.reservationId,
-            reason: 'payment-failed',
+            reason: "payment-failed",
             sagaId,
           })
         );
@@ -1020,15 +984,13 @@ export class OrderFulfillmentSaga {
 
   private async handleSagaFailure(sagaId: string, reason: string, error: any): Promise<void> {
     this.logger.error(`Saga ${sagaId} failed: ${reason}`, error);
-    await this.sagaStore.completeSaga(sagaId, 'failed', reason);
+    await this.sagaStore.completeSaga(sagaId, "failed", reason);
 
     // Implement compensation logic based on failure point
     // ...
   }
 }
-
 ```
-
 
 ---
 
@@ -1036,41 +998,40 @@ export class OrderFulfillmentSaga {
 
 ### Métricas de Comunicación
 
-
 ```typescript
 // packages/observability/src/communication-metrics.ts
 export class CommunicationMetrics {
   private prometheusRegistry: Registry;
 
   private syncRequestsTotal = new Counter({
-    name: 'microservices_sync_requests_total',
-    help: 'Total number of synchronous requests between microservices',
-    labelNames: ['source_service', 'target_service', 'endpoint', 'status'],
+    name: "microservices_sync_requests_total",
+    help: "Total number of synchronous requests between microservices",
+    labelNames: ["source_service", "target_service", "endpoint", "status"],
   });
 
   private syncRequestDuration = new Histogram({
-    name: 'microservices_sync_request_duration_seconds',
-    help: 'Duration of synchronous requests between microservices',
-    labelNames: ['source_service', 'target_service', 'endpoint'],
+    name: "microservices_sync_request_duration_seconds",
+    help: "Duration of synchronous requests between microservices",
+    labelNames: ["source_service", "target_service", "endpoint"],
     buckets: [0.1, 0.5, 1, 2, 5, 10],
   });
 
   private asyncEventsPublished = new Counter({
-    name: 'microservices_events_published_total',
-    help: 'Total number of domain events published',
-    labelNames: ['service', 'event_type', 'subject'],
+    name: "microservices_events_published_total",
+    help: "Total number of domain events published",
+    labelNames: ["service", "event_type", "subject"],
   });
 
   private asyncEventsProcessed = new Counter({
-    name: 'microservices_events_processed_total',
-    help: 'Total number of domain events processed',
-    labelNames: ['service', 'event_type', 'subject', 'status'],
+    name: "microservices_events_processed_total",
+    help: "Total number of domain events processed",
+    labelNames: ["service", "event_type", "subject", "status"],
   });
 
   private eventProcessingDuration = new Histogram({
-    name: 'microservices_event_processing_duration_seconds',
-    help: 'Duration of event processing',
-    labelNames: ['service', 'event_type', 'subject'],
+    name: "microservices_event_processing_duration_seconds",
+    help: "Duration of event processing",
+    labelNames: ["service", "event_type", "subject"],
     buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
   });
 
@@ -1089,23 +1050,14 @@ export class CommunicationMetrics {
     this.asyncEventsPublished.labels(service, eventType, subject).inc();
   }
 
-  recordEventProcessed(
-    service: string,
-    eventType: string,
-    subject: string,
-    duration: number,
-    status: string
-  ): void {
+  recordEventProcessed(service: string, eventType: string, subject: string, duration: number, status: string): void {
     this.asyncEventsProcessed.labels(service, eventType, subject, status).inc();
     this.eventProcessingDuration.labels(service, eventType, subject).observe(duration);
   }
 }
-
 ```
 
-
 ### Dashboard de Monitoreo (Grafana)
-
 
 ```json
 {
@@ -1159,16 +1111,13 @@ export class CommunicationMetrics {
     ]
   }
 }
-
 ```
-
 
 ---
 
 ## 🔒 SEGURIDAD EN COMUNICACIONES
 
 ### Autenticación entre Servicios
-
 
 ```typescript
 // packages/shared-utils/src/security/service-auth.ts
@@ -1177,14 +1126,14 @@ export class ServiceAuthenticationManager {
   private tokenExpiration: number = 3600; // 1 hour
 
   constructor() {
-    this.jwtSecret = process.env.SERVICE_JWT_SECRET || 'fallback-secret';
+    this.jwtSecret = process.env.SERVICE_JWT_SECRET || "fallback-secret";
   }
 
   generateServiceToken(serviceId: string, permissions: string[]): string {
     const payload = {
       serviceId,
       permissions,
-      type: 'service-to-service',
+      type: "service-to-service",
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + this.tokenExpiration,
     };
@@ -1196,8 +1145,8 @@ export class ServiceAuthenticationManager {
     try {
       const decoded = jwt.verify(token, this.jwtSecret) as any;
 
-      if (decoded.type !== 'service-to-service') {
-        throw new Error('Invalid token type');
+      if (decoded.type !== "service-to-service") {
+        throw new Error("Invalid token type");
       }
 
       return {
@@ -1205,7 +1154,7 @@ export class ServiceAuthenticationManager {
         permissions: decoded.permissions,
       };
     } catch (error) {
-      throw new Error('Invalid service token');
+      throw new Error("Invalid service token");
     }
   }
 
@@ -1215,14 +1164,12 @@ export class ServiceAuthenticationManager {
     return new ResilientHttpClient({
       defaultHeaders: {
         Authorization: `Bearer ${token}`,
-        'X-Service-ID': serviceId,
+        "X-Service-ID": serviceId,
       },
     });
   }
 }
-
 ```
-
 
 ---
 
@@ -1292,4 +1239,5 @@ export class ServiceAuthenticationManager {
 - Autorización granular por permisos
 - Encryption en tránsito y at rest
 
-**Esta estrategia posiciona el marketplace para escalar efectivamente manteniendo bajo acoplamiento, alta cohesión y excelente observabilidad operacional.**
+**Esta estrategia posiciona el marketplace para escalar efectivamente manteniendo bajo acoplamiento, alta cohesión y
+excelente observabilidad operacional.**

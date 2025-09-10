@@ -2,8 +2,8 @@
 
 ## Justificación de Seguridad
 
-Los componentes chart.tsx usan inyección de estilos CSS para variables de color dinámicas.
-Esta implementación es segura porque:
+Los componentes chart.tsx usan inyección de estilos CSS para variables de color dinámicas. Esta implementación es segura
+porque:
 
 1. **Solo se inyectan variables CSS**: No se permite HTML arbitrario
 2. **Valores sanitizados**: Los valores de color son validados
@@ -18,5 +18,5 @@ Esta implementación es segura porque:
 
 ## Para Marcar en SonarCloud
 
-Todos estos hotspots deben marcarse como "Safe" con la justificación:
-"CSS-only injection with validated color values from static configuration. No user input or HTML injection possible."
+Todos estos hotspots deben marcarse como "Safe" con la justificación: "CSS-only injection with validated color values
+from static configuration. No user input or HTML injection possible."

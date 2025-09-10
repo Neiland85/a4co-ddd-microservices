@@ -2,7 +2,6 @@
 
 ## 📋 **PROMPT 1: ProductCatalog Premium**
 
-
 ````
 Crear un catálogo de productos premium para mercado local de aceite de oliva de Jaén, España.
 
@@ -43,7 +42,6 @@ const sampleProducts = [
 
 PROPS INTERFACE:
 
-
 ```typescript
 interface ProductCatalogProps {
   products: LocalProduct[];
@@ -52,9 +50,7 @@ interface ProductCatalogProps {
   maxItems?: number;
   loading?: boolean;
 }
-
 ```
-
 
 DISEÑO VISUAL:
 
@@ -64,7 +60,6 @@ DISEÑO VISUAL:
 - Indicadores de stock y certificaciones
 - Botones CTA: "👁️ Ver Detalles" con gradiente amber
 - Responsive design mobile-first
-
 
 ```
 
@@ -78,7 +73,6 @@ DISEÑO VISUAL:
 
 ```
 
-
 Crear buscador avanzado con autocompletado para productos locales de Jaén.
 
 ESPECIFICACIONES:
@@ -90,7 +84,6 @@ ESPECIFICACIONES:
 - Keyboard navigation completa
 
 PROPS INTERFACE:
-
 
 ```typescript
 interface ProductSearchProps {
@@ -106,9 +99,7 @@ interface SearchFilters {
   seasonal?: boolean;
   certified?: boolean;
 }
-
 ```
-
 
 CARACTERÍSTICAS VISUALES:
 
@@ -121,18 +112,14 @@ CARACTERÍSTICAS VISUALES:
 
 DATOS DE EJEMPLO:
 
-
 ```typescript
 const suggestions = [
-  'Aceite de oliva virgen extra',
-  'Queso de cabra artesano',
-  'Miel de azahar',
-  'Jamón ibérico de bellota',
+  "Aceite de oliva virgen extra",
+  "Queso de cabra artesano",
+  "Miel de azahar",
+  "Jamón ibérico de bellota",
 ];
-
 ```
-
-
 
 ```
 
@@ -146,7 +133,6 @@ const suggestions = [
 
 ```
 
-
 Diseñar directorio elegante de artesanos/productores locales de Jaén con mapas.
 
 ESPECIFICACIONES:
@@ -159,14 +145,13 @@ ESPECIFICACIONES:
 
 PROPS INTERFACE:
 
-
 ```typescript
 interface ArtisanDirectoryProps {
   artisans: LocalArtisan[];
   onArtisanSelect: (artisan: LocalArtisan) => void;
   showMap?: boolean;
-  viewMode?: 'grid' | 'list';
-  sortBy?: 'name' | 'rating' | 'distance';
+  viewMode?: "grid" | "list";
+  sortBy?: "name" | "rating" | "distance";
 }
 
 interface LocalArtisan {
@@ -180,9 +165,7 @@ interface LocalArtisan {
   verified: boolean;
   contact: { phone: string; email: string };
 }
-
 ```
-
 
 DISEÑO VISUAL:
 
@@ -195,24 +178,20 @@ DISEÑO VISUAL:
 
 DATOS DE EJEMPLO:
 
-
 ```typescript
 const sampleArtisans = [
   {
-    id: '1',
-    name: 'María José Ruiz',
-    business: 'Olivares del Guadalquivir',
-    speciality: 'aceites',
-    location: 'Úbeda, Jaén',
+    id: "1",
+    name: "María José Ruiz",
+    business: "Olivares del Guadalquivir",
+    speciality: "aceites",
+    location: "Úbeda, Jaén",
     rating: 4.8,
     verified: true,
-    contact: { phone: '+34 953 123 456', email: 'maria@olivares.com' },
+    contact: { phone: "+34 953 123 456", email: "maria@olivares.com" },
   },
 ];
-
 ```
-
-
 
 ```
 
@@ -226,7 +205,6 @@ const sampleArtisans = [
 
 ```
 
-
 Crear tablero Kanban para oportunidades de venta de productos locales.
 
 ESPECIFICACIONES:
@@ -238,7 +216,6 @@ ESPECIFICACIONES:
 - FAB button para crear nueva oportunidad
 
 PROPS INTERFACE:
-
 
 ```typescript
 interface SalesOpportunityBoardProps {
@@ -254,14 +231,12 @@ interface SalesOpportunity {
   category: string;
   priceRange: { min: number; max: number };
   quantity: string;
-  status: 'active' | 'pending' | 'closed';
+  status: "active" | "pending" | "closed";
   harvestDate: string;
   location: string;
   producer: string;
 }
-
 ```
-
 
 DISEÑO VISUAL:
 
@@ -274,24 +249,20 @@ DISEÑO VISUAL:
 
 DATOS DE EJEMPLO:
 
-
 ```typescript
 const sampleOpportunities = [
   {
-    id: '1',
-    title: 'Aceite Nuevo - Cosecha 2024',
-    category: 'aceites',
+    id: "1",
+    title: "Aceite Nuevo - Cosecha 2024",
+    category: "aceites",
     priceRange: { min: 10, max: 15 },
-    quantity: '500 litros',
-    status: 'active',
-    harvestDate: '2024-11-15',
-    producer: 'Olivares del Guadalquivir',
+    quantity: "500 litros",
+    status: "active",
+    harvestDate: "2024-11-15",
+    producer: "Olivares del Guadalquivir",
   },
 ];
-
 ```
-
-
 
 ```
 
@@ -305,7 +276,6 @@ const sampleOpportunities = [
 
 ```
 
-
 Diseñar dashboard ejecutivo para mercado local de Jaén con métricas y mapas.
 
 ESPECIFICACIONES:
@@ -317,7 +287,6 @@ ESPECIFICACIONES:
 - Panel de notificaciones y actividad reciente
 
 PROPS INTERFACE:
-
 
 ```typescript
 interface MarketplaceDashboardProps {
@@ -334,9 +303,7 @@ interface DashboardStats {
   salesVolume: number;
   averageRating: number;
 }
-
 ```
-
 
 DISEÑO VISUAL:
 
@@ -349,7 +316,6 @@ DISEÑO VISUAL:
 
 DATOS DE EJEMPLO:
 
-
 ```typescript
 const sampleStats = {
   totalProducts: 156,
@@ -357,10 +323,7 @@ const sampleStats = {
   salesVolume: 25680,
   averageRating: 4.6,
 };
-
 ```
-
-
 
 ```
 
@@ -395,4 +358,3 @@ const sampleStats = {
 
 
 ```
-

@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document summarizes the security vulnerabilities that were detected by Dependabot and the fixes applied to resolve them.
+This document summarizes the security vulnerabilities that were detected by Dependabot and the fixes applied to resolve
+them.
 
 ## Affected Projects
 
@@ -117,7 +118,6 @@ This document summarizes the security vulnerabilities that were detected by Depe
 
 To fully mitigate NextAuth.js vulnerabilities, ensure proper configuration:
 
-
 ```javascript
 // Example secure NextAuth.js configuration
 export const authOptions = {
@@ -128,25 +128,22 @@ export const authOptions = {
     redirect: ({ url, baseUrl }) => {
       // Validate redirect URLs to prevent open redirects
       if (url.startsWith(baseUrl)) return url;
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
       return baseUrl;
     },
   },
   // Enable PKCE for OAuth providers
-  useSecureCookies: process.env.NODE_ENV === 'production',
+  useSecureCookies: process.env.NODE_ENV === "production",
 };
-
 ```
-
 
 ### 2. Nodemailer Security
 
 To fully mitigate Nodemailer vulnerabilities:
 
-
 ```javascript
 // Example secure Nodemailer configuration
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 // Validate email addresses before sending
 function validateEmail(email) {
@@ -157,7 +154,7 @@ function validateEmail(email) {
 // Sanitize email content
 function sanitizeEmailContent(content) {
   // Remove potentially dangerous characters and patterns
-  return content.replace(/[<>]/g, '');
+  return content.replace(/[<>]/g, "");
 }
 
 // Use secure transport configuration
@@ -166,14 +163,11 @@ const transporter = nodemailer.createTransporter({
   secure: true,
   // Validate all inputs before sending
 });
-
 ```
-
 
 ### 3. Next.js Security Headers
 
 Add security headers to your Next.js configuration:
-
 
 ```javascript
 // next.config.js
@@ -181,28 +175,26 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
           },
         ],
       },
     ];
   },
 };
-
 ```
-
 
 ## Monitoring
 
@@ -213,7 +205,5 @@ const nextConfig = {
 
 ## Status
 
-✅ All critical and high severity vulnerabilities have been resolved
-✅ All moderate and low severity vulnerabilities have been addressed
-✅ Package-lock.json files have been updated
-✅ Security audits pass with 0 vulnerabilities found
+✅ All critical and high severity vulnerabilities have been resolved ✅ All moderate and low severity vulnerabilities
+have been addressed ✅ Package-lock.json files have been updated ✅ Security audits pass with 0 vulnerabilities found

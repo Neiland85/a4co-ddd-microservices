@@ -2,7 +2,8 @@
 
 ## 📋 Resumen Ejecutivo
 
-Se ha implementado una **integración completa de APIs, hooks y componentes UI** para el Mercado Local de Jaén, creando una plataforma funcional que conecta productores locales con consumidores a través de una experiencia digital moderna.
+Se ha implementado una **integración completa de APIs, hooks y componentes UI** para el Mercado Local de Jaén, creando
+una plataforma funcional que conecta productores locales con consumidores a través de una experiencia digital moderna.
 
 ### 🎯 **Estado del Proyecto: ✅ COMPLETAMENTE FUNCIONAL**
 
@@ -18,7 +19,6 @@ Se ha implementado una **integración completa de APIs, hooks y componentes UI**
 
 ### **Stack Tecnológico**
 
-
 ```
 
 
@@ -31,9 +31,7 @@ Development: Turbopack + pnpm workspaces
 
 ```
 
-
 ### **Estructura del Proyecto**
-
 
 ```
 
@@ -61,13 +59,11 @@ apps/dashboard-web/
 
 ```
 
-
 ---
 
 ## 🔌 **APIs Implementadas**
 
 ### **1. Products API** - `/api/products`
-
 
 ```typescript
 // GET /api/products?category=aceites&search=oliva&limit=10
@@ -94,7 +90,6 @@ apps/dashboard-web/
 
 ```
 
-
 **Características:**
 
 - ✅ Filtros por categoría (aceites, quesos, mieles, embutidos, conservas)
@@ -103,7 +98,6 @@ apps/dashboard-web/
 - ✅ Respuesta estructurada con metadatos
 
 ### **2. Artisans API** - `/api/artisans`
-
 
 ```typescript
 // GET /api/artisans?speciality=aceites&location=Jaén
@@ -133,7 +127,6 @@ apps/dashboard-web/
 
 ```
 
-
 **Características:**
 
 - ✅ Filtros por especialidad y ubicación
@@ -142,7 +135,6 @@ apps/dashboard-web/
 - ✅ Sistema de valoraciones
 
 ### **3. Sales Opportunities API** - `/api/sales-opportunities`
-
 
 ```typescript
 // GET /api/sales-opportunities?status=active&category=aceites
@@ -170,7 +162,6 @@ apps/dashboard-web/
 
 ```
 
-
 **Características:**
 
 - ✅ Estados de oportunidad (active, pending, closed)
@@ -184,12 +175,9 @@ apps/dashboard-web/
 
 ### **1. useProducts** - Gestión de Catálogo
 
-
 ```typescript
 const { products, loading, error, searchProducts, filterByCategory, loadMore } = useProducts();
-
 ```
-
 
 **Funcionalidades:**
 
@@ -201,12 +189,9 @@ const { products, loading, error, searchProducts, filterByCategory, loadMore } =
 
 ### **2. useArtisans** - Directorio de Productores
 
-
 ```typescript
 const { artisans, loading, searchArtisans, filterBySpeciality, filterByLocation } = useArtisans();
-
 ```
-
 
 **Funcionalidades:**
 
@@ -217,13 +202,9 @@ const { artisans, loading, searchArtisans, filterBySpeciality, filterByLocation 
 
 ### **3. useSalesOpportunities** - Oportunidades de Negocio
 
-
 ```typescript
-const { opportunities, loading, createOpportunity, updateStatus, filterByStatus } =
-  useSalesOpportunities();
-
+const { opportunities, loading, createOpportunity, updateStatus, filterByStatus } = useSalesOpportunities();
 ```
-
 
 **Funcionalidades:**
 
@@ -234,12 +215,9 @@ const { opportunities, loading, createOpportunity, updateStatus, filterByStatus 
 
 ### **4. useGeolocation** - Servicios de Ubicación
 
-
 ```typescript
 const { position, loading, error, getNearbyArtisans, calculateDistance } = useGeolocation();
-
 ```
-
 
 **Funcionalidades:**
 
@@ -254,17 +232,9 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } = useGe
 
 ### **1. ProductCatalog** - Catálogo Principal
 
-
 ```tsx
-<ProductCatalog
-  categories={categories}
-  onCategoryChange={handleCategoryChange}
-  showFilters={true}
-  layout="grid"
-/>
-
+<ProductCatalog categories={categories} onCategoryChange={handleCategoryChange} showFilters={true} layout="grid" />
 ```
-
 
 **Características:**
 
@@ -275,16 +245,9 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } = useGe
 
 ### **2. ProductSearch** - Búsqueda en Tiempo Real
 
-
 ```tsx
-<ProductSearch
-  onSearch={handleSearch}
-  placeholder="Buscar productos de Jaén..."
-  showSuggestions={true}
-/>
-
+<ProductSearch onSearch={handleSearch} placeholder="Buscar productos de Jaén..." showSuggestions={true} />
 ```
-
 
 **Características:**
 
@@ -295,12 +258,9 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } = useGe
 
 ### **3. MarketplaceDashboard** - Dashboard Integrado
 
-
 ```tsx
 <MarketplaceDashboard showStats={true} showMap={true} theme="jaen" />
-
 ```
-
 
 **Características:**
 
@@ -311,12 +271,9 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } = useGe
 
 ### **4. ArtisanDirectory** - Directorio de Productores
 
-
 ```tsx
 <ArtisanDirectory showMap={true} sortBy="rating" filterByDistance={true} />
-
 ```
-
 
 **Características:**
 
@@ -327,12 +284,9 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } = useGe
 
 ### **5. SalesOpportunityBoard** - Tablero de Oportunidades
 
-
 ```tsx
 <SalesOpportunityBoard status="active" showCreateForm={true} autoRefresh={true} />
-
 ```
-
 
 **Características:**
 
@@ -346,7 +300,6 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } = useGe
 ## 🎨 **Sistema de Diseño Jaén**
 
 ### **Paleta de Colores**
-
 
 ```css
 :root {
@@ -362,28 +315,23 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } = useGe
   --error: #ef4444; /* Rojo error */
   --info: #3b82f6; /* Azul información */
 }
-
 ```
-
 
 ### **Tipografía**
 
-
 ```css
 .jaen-heading {
-  font-family: 'Geist', system-ui, sans-serif;
+  font-family: "Geist", system-ui, sans-serif;
   font-weight: 600;
   color: var(--jaen-earth);
 }
 
 .jaen-body {
-  font-family: 'Geist', system-ui, sans-serif;
+  font-family: "Geist", system-ui, sans-serif;
   font-weight: 400;
   color: #374151;
 }
-
 ```
-
 
 ### **Componentes de UI**
 
@@ -422,7 +370,6 @@ Esta página incluye:
 
 ### **Métricas de Rendimiento**
 
-
 ```
 
 
@@ -435,13 +382,11 @@ Esta página incluye:
 
 ```
 
-
 ---
 
 ## 🚀 **Instrucciones de Ejecución**
 
 ### **Inicio Rápido**
-
 
 ```bash
 # Desde la raíz del proyecto
@@ -454,7 +399,6 @@ pnpm dev --port 3001
 
 ```
 
-
 ### **URLs Disponibles**
 
 - 🏠 **Dashboard**: http://localhost:3001
@@ -465,7 +409,6 @@ pnpm dev --port 3001
 
 ### **Scripts Disponibles**
 
-
 ```json
 {
   "dev": "next dev --turbopack --port 3001",
@@ -474,9 +417,7 @@ pnpm dev --port 3001
   "test": "jest",
   "lint": "next lint"
 }
-
 ```
-
 
 ---
 
@@ -512,7 +453,6 @@ pnpm dev --port 3001
 
 #### ❌ Error: "Invalid package.json"
 
-
 ```bash
 # Solución: El package.json estaba corrupto, ya fue reparado
 # Archivo limpio en: /package.json
@@ -520,9 +460,7 @@ pnpm dev --port 3001
 
 ```
 
-
 #### ⚠️ Warning: "border-border utility class"
-
 
 ```bash
 # Solución: Actualizar clases de Tailwind CSS v4
@@ -531,9 +469,7 @@ pnpm dev --port 3001
 
 ```
 
-
 #### 🔤 Warning: Google Fonts 404
-
 
 ```bash
 # Solución: Las fuentes Geist no están disponibles
@@ -542,9 +478,7 @@ pnpm dev --port 3001
 
 ```
 
-
 #### 🐌 Warning: "Slow filesystem detected"
-
 
 ```bash
 # Información: El sistema detectó un filesystem lento
@@ -552,7 +486,6 @@ pnpm dev --port 3001
 
 
 ```
-
 
 ### **Estados del Sistema**
 
@@ -615,7 +548,6 @@ pnpm dev --port 3001
 
 ### **Repositorio**
 
-
 ```
 
 
@@ -626,12 +558,12 @@ Workspace: apps/dashboard-web
 
 ```
 
-
 ---
 
 ## 🎉 **Conclusión**
 
-El **Mercado Local de Jaén** representa una integración completa y funcional que conecta la tradición artesanal de Jaén con la innovación tecnológica moderna.
+El **Mercado Local de Jaén** representa una integración completa y funcional que conecta la tradición artesanal de Jaén
+con la innovación tecnológica moderna.
 
 ### **Logros Alcanzados** ✅
 
@@ -647,7 +579,8 @@ El **Mercado Local de Jaén** representa una integración completa y funcional q
 - **Preservación de tradiciones** a través de tecnología moderna
 - **Impulso económico** para el sector artesanal local
 
-¡El Mercado Local de Jaén está listo para conectar la riqueza gastronómica y artesanal de esta tierra andaluza con el mundo digital! 🌍✨
+¡El Mercado Local de Jaén está listo para conectar la riqueza gastronómica y artesanal de esta tierra andaluza con el
+mundo digital! 🌍✨
 
 ---
 

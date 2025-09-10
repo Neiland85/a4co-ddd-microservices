@@ -1,18 +1,15 @@
 # 🧱 a4co-ddd-microservices
 
-Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para una plataforma colaborativa de venta y logística del pequeño comercio andaluz. Soporte completo para CI/CD, infraestructura como código, trazabilidad técnica y GitHub Copilot Pro+.
+Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para una plataforma colaborativa de venta y
+logística del pequeño comercio andaluz. Soporte completo para CI/CD, infraestructura como código, trazabilidad técnica y
+GitHub Copilot Pro+.
 
 ## 🗂️ Estructura del repositorio
 
-a4co-ddd-microservices/
-├── apps/ # Microservicios y frontends (ej: auth, web)
-├── packages/ # Librerías compartidas (DTOs, config, schemas)
-├── infra/ # Terraform, Docker, scripts de infraestructura
-├── docs/ # Documentación viva, ADRs, onboarding
-├── .vscode/ # Configuración de entorno y Copilot
-├── .gitignore # Ignora outputs, secrets, cache, etc.
-├── pnpm-workspace.yaml
-└── README.md
+a4co-ddd-microservices/ ├── apps/ # Microservicios y frontends (ej: auth, web) ├── packages/ # Librerías compartidas
+(DTOs, config, schemas) ├── infra/ # Terraform, Docker, scripts de infraestructura ├── docs/ # Documentación viva, ADRs,
+onboarding ├── .vscode/ # Configuración de entorno y Copilot ├── .gitignore # Ignora outputs, secrets, cache, etc. ├──
+pnpm-workspace.yaml └── README.md
 
 ### ✨ Características técnicas
 
@@ -27,22 +24,16 @@ a4co-ddd-microservices/
 
 #### 🚀 Requisitos
 
-Node.js v18+
-pnpm v8+
-Docker + Docker Compose
-Terraform v1.6+
-GitHub Copilot Pro+ (opcional pero recomendado)
-VS Code (con extensiones de linter + formateo + pruebas unitarias en .vscode/extensions.json)
+Node.js v18+ pnpm v8+ Docker + Docker Compose Terraform v1.6+ GitHub Copilot Pro+ (opcional pero recomendado) VS Code
+(con extensiones de linter + formateo + pruebas unitarias en .vscode/extensions.json)
 
 🤖 Copilot Pro+ Config
 
-Este repositorio está optimizado para Copilot Pro+ con:
-.vscode/copilot-chat.json: reglas de estilo y contexto técnico
-copilot-prompts.json: comandos por rol (frontend, backend, devops, QA, revisión)
-Dashboard visual (Copilot Prompts) accesible desde VS Code
+Este repositorio está optimizado para Copilot Pro+ con: .vscode/copilot-chat.json: reglas de estilo y contexto técnico
+copilot-prompts.json: comandos por rol (frontend, backend, devops, QA, revisión) Dashboard visual (Copilot Prompts)
+accesible desde VS Code
 
-Prompts incluyen:
-✦ prisma-schema, ✦ test-e2e, ✦ generate-adr, ✦ revisar-ui, ✦ deploy-pipeline, etc.
+Prompts incluyen: ✦ prisma-schema, ✦ test-e2e, ✦ generate-adr, ✦ revisar-ui, ✦ deploy-pipeline, etc.
 
 ## Prompts recomendados para Copilot
 
@@ -73,12 +64,9 @@ Prompts incluyen:
 
 ##### 📚 Documentación técnica
 
-📌 ADRs: docs/adr/
-📘 Onboarding Copilot: docs/copilot-onboarding.md
-🔧 Infraestructura: infra/terraform/
-🧪 Testing: integrado con Jest + Supertest + Playwright
+📌 ADRs: docs/adr/ 📘 Onboarding Copilot: docs/copilot-onboarding.md 🔧 Infraestructura: infra/terraform/ 🧪 Testing:
+integrado con Jest + Supertest + Playwright
 
 ####### 📜 Licencia
 
-Apache License 2.0
-(c) 2025 - Jesús Sánchez Campos (cliente titular) & Neil Muñoz Lago (autor técnico titular)
+Apache License 2.0 (c) 2025 - Jesús Sánchez Campos (cliente titular) & Neil Muñoz Lago (autor técnico titular)

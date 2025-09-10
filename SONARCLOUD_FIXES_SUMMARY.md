@@ -15,7 +15,6 @@
 
 **Solución aplicada**:
 
-
 ```tsx
 // Antes (Security Hotspot):
 <style
@@ -34,7 +33,6 @@
 
 
 ```
-
 
 **Archivos actualizados**:
 
@@ -91,7 +89,6 @@ Agregar en Settings > Secrets:
 
 ## 🔄 Comandos para Verificar Localmente
 
-
 ```bash
 # 1. Ejecutar tests con coverage
 pnpm test:coverage
@@ -108,7 +105,6 @@ sonar-scanner \
 
 
 ```
-
 
 ## 📊 Métricas Esperadas Post-Fix
 

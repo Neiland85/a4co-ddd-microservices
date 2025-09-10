@@ -21,7 +21,6 @@
 
 ### 1. Refactorización de Código Duplicado
 
-
 ```bash
 # Clases base creadas
 - packages/shared-utils/src/base/BaseController.ts
@@ -36,9 +35,7 @@
 
 ```
 
-
 ### 2. Mitigación de Security Hotspots
-
 
 ```bash
 # Utilidades de seguridad creadas
@@ -51,9 +48,7 @@
 
 ```
 
-
 ### 3. Tests Generados
-
 
 ```bash
 # Tests de cobertura crítica
@@ -63,11 +58,9 @@
 
 ```
 
-
 ## 📋 Comandos para Ejecutar
 
 ### Paso 1: Análisis de Complejidad
-
 
 ```bash
 # Ejecutar análisis completo de deuda técnica
@@ -86,9 +79,7 @@ npx ts-prune --error
 
 ```
 
-
 ### Paso 2: Ejecutar Tests y Cobertura
-
 
 ```bash
 # Configurar jest para cobertura lcov
@@ -106,9 +97,7 @@ open coverage/lcov-report/index.html
 
 ```
 
-
 ### Paso 3: Análisis con SonarQube
-
 
 ```bash
 # Instalar scanner si no está instalado
@@ -127,11 +116,9 @@ pnpm run quality:check
 
 ```
 
-
 ## 🔄 Plan de Commits
 
 ### Commit 1: Refactorización Base
-
 
 ```bash
 git add packages/shared-utils/src/base/
@@ -146,9 +133,7 @@ git commit -m "refactor: add BaseController and BaseService to reduce duplicatio
 
 ```
 
-
 ### Commit 2: Aplicar Refactorización
-
 
 ```bash
 git add apps/order-service/
@@ -165,9 +150,7 @@ git commit -m "refactor: migrate services to use base classes
 
 ```
 
-
 ### Commit 3: Mitigación de Seguridad
-
 
 ```bash
 git add packages/shared-utils/src/security/
@@ -182,9 +165,7 @@ git commit -m "security: add DOM sanitizer and safe exec utilities
 
 ```
 
-
 ### Commit 4: Tests de Cobertura
-
 
 ```bash
 git add apps/*/service.test.ts
@@ -200,9 +181,7 @@ git commit -m "test: add unit tests for critical domain services
 
 ```
 
-
 ### Commit 5: Configuración de Calidad
-
 
 ```bash
 git add sonar-project.properties
@@ -220,9 +199,7 @@ git commit -m "chore: add quality tools and SonarQube configuration
 
 ```
 
-
 ### Commit 6: Documentación
-
 
 ```bash
 git add docs/SECURITY_HOTSPOTS_REVIEW.md
@@ -237,7 +214,6 @@ git commit -m "docs: document security hotspots and debt reduction plan
 
 ```
 
-
 ## ✅ Verificación Post-Implementación
 
 ### 1. Métricas Esperadas
@@ -248,7 +224,6 @@ git commit -m "docs: document security hotspots and debt reduction plan
 - **Complejidad**: Sin cambios significativos (ya era aceptable)
 
 ### 2. Comandos de Verificación
-
 
 ```bash
 # Verificar que no hay errores de TypeScript
@@ -265,7 +240,6 @@ npx tsx scripts/analyze-technical-debt.ts
 
 
 ```
-
 
 ### 3. Checklist para SonarQube
 

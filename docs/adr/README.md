@@ -2,7 +2,8 @@
 
 ## Resumen
 
-Este directorio contiene los Architecture Decision Records (ADRs) para el proyecto a4co-ddd-microservices, específicamente enfocados en la iniciativa de optimización de rendimiento para un proyecto de +87K líneas de código.
+Este directorio contiene los Architecture Decision Records (ADRs) para el proyecto a4co-ddd-microservices,
+específicamente enfocados en la iniciativa de optimización de rendimiento para un proyecto de +87K líneas de código.
 
 ## 🎯 Objetivo
 
@@ -24,7 +25,6 @@ Documentar decisiones arquitecturales clave para:
 | [005](./005-continuous-monitoring-strategy.md)    | Monitoreo Continuo de Rendimiento         | 🟡 Propuesto | MTTD < 5 minutos                          |
 
 ## 🚀 Plan de Implementación Global
-
 
 ```mermaid
 graph LR
@@ -50,7 +50,6 @@ graph LR
 
 ```
 
-
 ## 📊 Métricas de Éxito Consolidadas
 
 | Métrica                | Actual  | Target  | ADR Relacionado |
@@ -72,7 +71,6 @@ graph LR
 
 ### Ejecución Rápida
 
-
 ```bash
 # Análisis completo
 ./scripts/impact-analysis.sh
@@ -84,7 +82,6 @@ npx madge --circular apps/
 
 
 ```
-
 
 ## 📈 ROI Esperado
 
@@ -103,7 +100,6 @@ npx madge --circular apps/
 5. **Implementación**: Según plan definido
 
 ## 📝 Template ADR
-
 
 ```markdown
 # ADR-XXX: [Título]
@@ -136,9 +132,7 @@ npx madge --circular apps/
 ## Referencias
 
 [Links y recursos]
-
 ```
-
 
 ## 🔗 Referencias
 

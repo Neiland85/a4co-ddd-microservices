@@ -2,7 +2,8 @@
 
 ## 📋 Resumen Ejecutivo
 
-Este documento detalla la revisión de los 10 Security Hotspots detectados por SonarQube en el PR #71 del proyecto a4co-ddd-microservices.
+Este documento detalla la revisión de los 10 Security Hotspots detectados por SonarQube en el PR #71 del proyecto
+a4co-ddd-microservices.
 
 ### Estado Actual
 
@@ -25,7 +26,6 @@ Este documento detalla la revisión de los 10 Security Hotspots detectados por S
 
 **Recomendación**:
 
-
 ```typescript
 // En lugar de:
 dangerouslySetInnerHTML={{ __html: content }}
@@ -37,7 +37,6 @@ dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
 
 ```
 
-
 ### 2. Uso de `child_process.execSync`
 
 **Archivo afectado**: `/scripts/bundle-killer.ts`
@@ -48,14 +47,11 @@ dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
 
 **Contexto**:
 
-
 ```typescript
-execSync('cd apps/dashboard-web && ANALYZE=true next build', {
-  stdio: 'inherit',
+execSync("cd apps/dashboard-web && ANALYZE=true next build", {
+  stdio: "inherit",
 });
-
 ```
-
 
 **Evaluación**: ✅ SEGURO - Comando hardcodeado sin entrada del usuario.
 
@@ -73,18 +69,15 @@ execSync('cd apps/dashboard-web && ANALYZE=true next build', {
 
 **Recomendación**:
 
-
 ```typescript
-import path from 'path';
+import path from "path";
 
 // Validar que la ruta esté dentro del workspace
 const safePath = path.resolve(workspacePath, file);
 if (!safePath.startsWith(workspacePath)) {
-  throw new Error('Invalid file path');
+  throw new Error("Invalid file path");
 }
-
 ```
-
 
 ### 4. Uso de `fs.writeFileSync`
 
@@ -96,12 +89,9 @@ if (!safePath.startsWith(workspacePath)) {
 
 **Contexto**:
 
-
 ```typescript
 fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-
 ```
-
 
 **Evaluación**: ✅ SEGURO - Escribe en ruta predefinida de reportes.
 
@@ -115,13 +105,11 @@ fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
 **Contexto**:
 
-
 ```typescript
 { name: "SQL Injection", regex: /(union|select|insert|update|delete|drop|create|alter|exec|execute)/i }
 
 
 ```
-
 
 **Evaluación**: ✅ SEGURO - Es un validador de seguridad, no ejecuta SQL.
 
@@ -135,14 +123,11 @@ fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
 **Recomendación**:
 
-
 ```typescript
 // Eliminar 'unsafe-inline' y 'unsafe-eval'
 // Usar nonces o hashes específicos
 "script-src 'self' 'nonce-{RANDOM_NONCE}';";
-
 ```
-
 
 ### 7. Métodos `execute` genéricos
 
@@ -201,22 +186,19 @@ fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
 ### 1. Actualizar CSP Headers (CRÍTICO)
 
-
 ```typescript
 // En /apps/web/v0dev/f-modern-backoffice/middleware.ts
 // Reemplazar la política CSP actual con:
 const cspHeader = `
   default-src 'self';
-  script-src 'self' ${isDev ? "'unsafe-eval'" : ''};
+  script-src 'self' ${isDev ? "'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: https:;
   font-src 'self' data:;
   connect-src 'self' https:;
   frame-ancestors 'none';
 `;
-
 ```
-
 
 ### 2. Marcar Hotspots en SonarQube
 
@@ -227,7 +209,6 @@ Todos los hotspots deben ser marcados como "Reviewed" en la interfaz de SonarQub
 
 ### 3. Implementar validación adicional (Opcional pero recomendado)
 
-
 ```typescript
 // Crear utilidad de validación de rutas
 export function validateFilePath(filePath: string, allowedBase: string): string {
@@ -235,14 +216,12 @@ export function validateFilePath(filePath: string, allowedBase: string): string 
   const base = path.resolve(allowedBase);
 
   if (!resolved.startsWith(base)) {
-    throw new Error('Path traversal attempt detected');
+    throw new Error("Path traversal attempt detected");
   }
 
   return resolved;
 }
-
 ```
-
 
 ## 🔄 Proceso de Revisión en SonarQube
 
@@ -258,7 +237,6 @@ export function validateFilePath(filePath: string, allowedBase: string): string 
 
 Después de aplicar los cambios:
 
-
 ```bash
 # Ejecutar análisis de SonarQube localmente
 npm run sonar-scanner
@@ -269,7 +247,6 @@ npm run sonar-scanner
 
 ```
 
-
 ## 📝 Notas Finales
 
 - La mayoría de los hotspots son falsos positivos debido al contexto del código
@@ -279,5 +256,4 @@ npm run sonar-scanner
 
 ---
 
-**Última actualización**: ${new Date().toISOString()}
-**Revisado por**: Sistema automatizado de análisis de seguridad
+**Última actualización**: ${new Date().toISOString()} **Revisado por**: Sistema automatizado de análisis de seguridad

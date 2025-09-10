@@ -15,33 +15,30 @@ Este paquete proporciona una configuración unificada para:
 
 ## Instalación
 
-
 ```bash
 pnpm add @a4co/observability
 
 
 ```
 
-
 ## Uso Rápido
 
 ### Inicialización completa
 
-
 ```typescript
-import { initializeObservability } from '@a4co/observability';
+import { initializeObservability } from "@a4co/observability";
 
 const observability = initializeObservability({
-  serviceName: 'user-service',
-  serviceVersion: '1.0.0',
-  environment: 'production',
+  serviceName: "user-service",
+  serviceVersion: "1.0.0",
+  environment: "production",
   logging: {
-    level: 'info',
+    level: "info",
     prettyPrint: false,
   },
   tracing: {
     enabled: true,
-    jaegerEndpoint: 'http://localhost:14268/api/traces',
+    jaegerEndpoint: "http://localhost:14268/api/traces",
   },
   metrics: {
     enabled: true,
@@ -50,20 +47,17 @@ const observability = initializeObservability({
 });
 
 const { logger, httpLogger } = observability;
-
 ```
-
 
 ### Uso con Express
 
-
 ```typescript
-import express from 'express';
-import { initializeObservability } from '@a4co/observability';
+import express from "express";
+import { initializeObservability } from "@a4co/observability";
 
 const app = express();
 const { logger, httpLogger, getTracer } = initializeObservability({
-  serviceName: 'api-gateway',
+  serviceName: "api-gateway",
   environment: process.env.NODE_ENV,
 });
 
@@ -71,12 +65,12 @@ const { logger, httpLogger, getTracer } = initializeObservability({
 app.use(httpLogger);
 
 // Ruta de ejemplo
-app.get('/users/:id', async (req, res) => {
-  const tracer = getTracer('user-controller');
-  const span = tracer.startSpan('getUser');
+app.get("/users/:id", async (req, res) => {
+  const tracer = getTracer("user-controller");
+  const span = tracer.startSpan("getUser");
 
   try {
-    logger.info('Fetching user', { userId: req.params.id });
+    logger.info("Fetching user", { userId: req.params.id });
 
     // Tu lógica aquí
     const user = await fetchUser(req.params.id);
@@ -84,79 +78,70 @@ app.get('/users/:id', async (req, res) => {
     span.setStatus({ code: 0 });
     res.json(user);
   } catch (error) {
-    logger.error('Error fetching user', error);
+    logger.error("Error fetching user", error);
     span.recordException(error);
     span.setStatus({ code: 2 });
-    res.status(500).json({ error: 'Internal error' });
+    res.status(500).json({ error: "Internal error" });
   } finally {
     span.end();
   }
 });
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 // Metrics endpoint
-app.get('/metrics', (req, res) => {
-  res.set('Content-Type', 'text/plain');
-  res.send('# Metrics endpoint');
+app.get("/metrics", (req, res) => {
+  res.set("Content-Type", "text/plain");
+  res.send("# Metrics endpoint");
 });
 
 app.listen(3000);
-
 ```
-
 
 ### Uso con Next.js
 
-
 ```typescript
 // pages/api/hello.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { logger, getTracer } from '@a4co/observability';
+import type { NextApiRequest, NextApiResponse } from "next";
+import { logger, getTracer } from "@a4co/observability";
 
 // Inicializar una vez en otro archivo o al inicio
 // initializeObservability({ serviceName: 'nextjs-app' });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const tracer = getTracer('api-handler');
-  const span = tracer.startSpan('hello-endpoint');
+  const tracer = getTracer("api-handler");
+  const span = tracer.startSpan("hello-endpoint");
 
   try {
-    logger.info('Hello endpoint called', {
+    logger.info("Hello endpoint called", {
       method: req.method,
       query: req.query,
     });
 
-    res.status(200).json({ message: 'Hello World' });
+    res.status(200).json({ message: "Hello World" });
   } finally {
     span.end();
   }
 }
-
 ```
-
 
 ### Uso del logger standalone
 
-
 ```typescript
-import { logger } from '@a4co/observability';
+import { logger } from "@a4co/observability";
 
 // El logger se auto-configura con valores por defecto
-logger.info('Application started');
-logger.error('Something went wrong', { error: new Error('Oops') });
-logger.debug('Debug information', { data: { foo: 'bar' } });
-
+logger.info("Application started");
+logger.error("Something went wrong", { error: new Error("Oops") });
+logger.debug("Debug information", { data: { foo: "bar" } });
 ```
-
 
 ## Desarrollo
 
 ### Compilar
-
 
 ```bash
 pnpm build
@@ -164,9 +149,7 @@ pnpm build
 
 ```
 
-
 ### Modo desarrollo (watch)
-
 
 ```bash
 pnpm dev
@@ -174,9 +157,7 @@ pnpm dev
 
 ```
 
-
 ### Ejecutar tests
-
 
 ```bash
 pnpm test
@@ -184,11 +165,9 @@ pnpm test
 
 ```
 
-
 ## Configuración
 
 ### Variables de entorno
-
 
 ```bash
 # Servicio
@@ -207,9 +186,7 @@ METRICS_PORT=9464
 
 ```
 
-
 ### Opciones de configuración
-
 
 ```typescript
 interface ObservabilityConfig {
@@ -235,14 +212,11 @@ interface ObservabilityConfig {
     endpoint?: string; // Ruta del endpoint
   };
 }
-
 ```
-
 
 ## Ejemplos de logs
 
 ### Formato desarrollo (pretty)
-
 
 ```
 
@@ -255,9 +229,7 @@ interface ObservabilityConfig {
 
 ```
 
-
 ### Formato producción (JSON)
-
 
 ```json
 {
@@ -273,14 +245,11 @@ interface ObservabilityConfig {
   "msg": "User created successfully",
   "userId": "usr_123"
 }
-
 ```
-
 
 ## Integración con infraestructura
 
 ### Docker Compose
-
 
 ```yaml
 services:
@@ -291,17 +260,15 @@ services:
       - NODE_ENV=production
       - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
     ports:
-      - '3000:3000'
-      - '9464:9464' # Metrics
+      - "3000:3000"
+      - "9464:9464" # Metrics
 
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
-      - '16686:16686' # UI
-      - '14268:14268' # Collector
-
+      - "16686:16686" # UI
+      - "14268:14268" # Collector
 ```
-
 
 ### Ver trazas en Jaeger
 
@@ -322,7 +289,8 @@ Ver [CONTRIBUTING.md](../../CONTRIBUTING.md) en el repositorio principal.
       develop
      cursor/implementar-observabilidad-unificada-en-monorepo-348b
 
-Estrategia unificada de observabilidad para la plataforma A4CO con microservicios Node.js/TypeScript (DDD) y frontend Next.js/React 19.
+Estrategia unificada de observabilidad para la plataforma A4CO con microservicios Node.js/TypeScript (DDD) y frontend
+Next.js/React 19.
 
 ## 🎯 Características
 
@@ -335,7 +303,8 @@ Estrategia unificada de observabilidad para la plataforma A4CO con microservicio
 - **Dashboards** predefinidos en Grafana
 - **Alertas** configurables
 
-Sistema unificado de observabilidad para la plataforma A4CO que proporciona logging estructurado, tracing distribuido y métricas integradas para aplicaciones Node.js/TypeScript y React.
+Sistema unificado de observabilidad para la plataforma A4CO que proporciona logging estructurado, tracing distribuido y
+métricas integradas para aplicaciones Node.js/TypeScript y React.
 
 ## 🎯 Características
 
@@ -346,10 +315,10 @@ Sistema unificado de observabilidad para la plataforma A4CO que proporciona logg
 - **Componentes React instrumentados** con tracking de eventos UI
 - **Integración con DDD** para tracking de comandos y eventos
 - **Dashboards preconfigurados** en Grafana
-- **Alertas automatizadas** basadas en SLOs
-  develop
+- **Alertas automatizadas** basadas en SLOs develop
 
-Estrategia unificada de observabilidad para la plataforma A4CO, proporcionando logging estructurado, tracing distribuido y métricas para microservicios Node.js/TypeScript y aplicaciones frontend React.
+Estrategia unificada de observabilidad para la plataforma A4CO, proporcionando logging estructurado, tracing distribuido
+y métricas para microservicios Node.js/TypeScript y aplicaciones frontend React.
 
 ## 📋 Tabla de Contenidos
 
@@ -373,11 +342,9 @@ Estrategia unificada de observabilidad para la plataforma A4CO, proporcionando l
 - **Frontend**: Instrumentación React con hooks y HOCs
 - **Design System**: Componentes observables con tracking integrado
 - **Dashboards**: Grafana preconfigurado con paneles para microservicios y frontend
-- **Alertas**: Reglas predefinidas para latencia, errores y métricas de negocio
-  main
+- **Alertas**: Reglas predefinidas para latencia, errores y métricas de negocio main
 
 ## 📦 Instalación
-
 
 ```bash
     develop
@@ -400,7 +367,6 @@ yarn add @a4co/observability
 
 ```
 
-
     cursor/implementar-observabilidad-unificada-en-monorepo-348b
 
 ## 🚀 Configuración Rápida
@@ -412,7 +378,6 @@ yarn add @a4co/observability
 ### Backend (Node.js/TypeScript)
 
      develop
-
 
 ```typescript
 import { quickStart } from '@a4co/observability';
@@ -447,12 +412,10 @@ logger.info({ userId: '123' }, 'User logged in');
 
 ```
 
-
 ### Frontend (React)
 
-
 ```tsx
-import { ObservabilityProvider } from '@a4co/observability/react';
+import { ObservabilityProvider } from "@a4co/observability/react";
 
 function App() {
   return (
@@ -461,16 +424,13 @@ function App() {
     </ObservabilityProvider>
   );
 }
-
 ```
-
 
 ## 📖 Guía Detallada
 
 ### 1. Configuración del Backend
 
 #### Inicialización Completa
-
 
 ```typescript
 import { initializeObservability } from '@a4co/observability';
@@ -518,125 +478,105 @@ pnpm add react@^18.0.0 || pnpm add react@^19.0.0
 
 ```
 
-
 ## ⚙️ Configuración
 
 ### Backend (Node.js/TypeScript)
 
-
 ```typescript
 // src/infrastructure/observability.ts
-import { createLogger, initializeTracer, expressTracingMiddleware } from '@a4co/observability';
+import { createLogger, initializeTracer, expressTracingMiddleware } from "@a4co/observability";
 
 // Configurar logger
 const logger = createLogger({
-  service: 'order-service',
-  environment: process.env.NODE_ENV || 'development',
-  version: process.env.SERVICE_VERSION || '1.0.0',
-  level: 'info',
-  pretty: process.env.NODE_ENV === 'development',
-  redact: ['password', 'token', 'creditCard'],
+  service: "order-service",
+  environment: process.env.NODE_ENV || "development",
+  version: process.env.SERVICE_VERSION || "1.0.0",
+  level: "info",
+  pretty: process.env.NODE_ENV === "development",
+  redact: ["password", "token", "creditCard"],
   main,
 });
-
 ```
-
 
     cursor/implementar-observabilidad-unificada-en-monorepo-348b
 
 ### Frontend (React)
 
-
 ```typescript
-import { initializeFrontendObservability } from '@a4co/observability';
+import { initializeFrontendObservability } from "@a4co/observability";
 
 initializeFrontendObservability(
   {
-    serviceName: 'dashboard-web',
-    serviceVersion: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
-    endpoint: process.env.REACT_APP_LOG_ENDPOINT || 'http://localhost:3000/api/logs',
-    level: 'info',
+    serviceName: "dashboard-web",
+    serviceVersion: "1.0.0",
+    environment: process.env.NODE_ENV || "development",
+    endpoint: process.env.REACT_APP_LOG_ENDPOINT || "http://localhost:3000/api/logs",
+    level: "info",
   },
   {
-    serviceName: 'dashboard-web',
-    serviceVersion: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
-    endpoint: process.env.REACT_APP_TRACE_ENDPOINT || 'http://localhost:4318/v1/traces',
-    enableConsoleExporter: process.env.NODE_ENV === 'development',
+    serviceName: "dashboard-web",
+    serviceVersion: "1.0.0",
+    environment: process.env.NODE_ENV || "development",
+    endpoint: process.env.REACT_APP_TRACE_ENDPOINT || "http://localhost:4318/v1/traces",
+    enableConsoleExporter: process.env.NODE_ENV === "development",
   }
 );
-
 ```
-
 
 ## 🏗️ Arquitectura DDD
 
 ### Decoradores para Agregados
 
-
 ```typescript
-import { TraceAggregateMethod } from '@a4co/observability';
+import { TraceAggregateMethod } from "@a4co/observability";
 
 class Product {
-  @TraceAggregateMethod('Product')
+  @TraceAggregateMethod("Product")
   async updateStock(quantity: number): Promise<void> {
     // Lógica del dominio
   }
 }
-
 ```
-
 
 ### Decoradores para Comandos
 
-
 ```typescript
-import { TraceCommand } from '@a4co/observability';
+import { TraceCommand } from "@a4co/observability";
 
 class ProductCommandHandler {
-  @TraceCommand('CreateProduct')
+  @TraceCommand("CreateProduct")
   async handleCreateProduct(command: CreateProductCommand): Promise<ProductCreatedEvent> {
     // Lógica del comando
   }
 }
-
 ```
-
 
 ### Decoradores para Eventos
 
-
 ```typescript
-import { TraceEventHandler } from '@a4co/observability';
+import { TraceEventHandler } from "@a4co/observability";
 
 class ProductEventHandler {
-  @TraceEventHandler('ProductCreated')
+  @TraceEventHandler("ProductCreated")
   async handleProductCreated(event: ProductCreatedEvent): Promise<void> {
     // Lógica del evento
   }
 }
-
 ```
-
 
 ### Middleware para Contexto DDD
 
-
 ```typescript
-import { dddContextMiddleware } from '@a4co/observability';
+import { dddContextMiddleware } from "@a4co/observability";
 
 app.use(dddContextMiddleware());
-
 ```
-
 
 ## 🎨 Design System Integration
 
 develop
 
 ### Componentes Observables
-
 
 ```typescript
 import { ObservableButton, ObservableInput, ObservableCard } from '@a4co/observability';
@@ -653,9 +593,7 @@ import { ObservableButton, ObservableInput, ObservableCard } from '@a4co/observa
 
 ```
 
-
 ### Hooks para Observabilidad
-
 
 ```typescript
 import { useDSObservability, useDSPerformanceTracking } from '@a4co/observability';
@@ -674,22 +612,17 @@ const MyComponent = () => {
 
 ```
 
-
 ### HOC para Instrumentación
 
-
 ```typescript
-import { withDSObservability } from '@a4co/observability';
+import { withDSObservability } from "@a4co/observability";
 
-const ObservableMyComponent = withDSObservability(MyComponent, 'MyComponent', 'default', 'md');
-
+const ObservableMyComponent = withDSObservability(MyComponent, "MyComponent", "default", "md");
 ```
-
 
 ## 🔧 Configuración Avanzada
 
 ### Variables de Entorno
-
 
 ```bash
 # Backend
@@ -707,35 +640,21 @@ REACT_APP_API_BASE_URL=http://api:3000
 
 ```
 
-
 ### Configuración de Express
 
-// Inicializar tracer
-const tracer = initializeTracer({
-serviceName: 'order-service',
-serviceVersion: process.env.SERVICE_VERSION || '1.0.0',
-environment: process.env.NODE_ENV || 'development',
-jaegerEndpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces',
-prometheusPort: 9090,
-logger,
-});
-main
+// Inicializar tracer const tracer = initializeTracer({ serviceName: 'order-service', serviceVersion:
+process.env.SERVICE_VERSION || '1.0.0', environment: process.env.NODE_ENV || 'development', jaegerEndpoint:
+process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces', prometheusPort: 9090, logger, }); main
 
-// En tu aplicación Express
-import express from 'express';
-develop
-import { initializeObservability, dddContextMiddleware } from '@a4co/observability';
+// En tu aplicación Express import express from 'express'; develop import { initializeObservability,
+dddContextMiddleware } from '@a4co/observability';
 
 const app = express();
 
-// Inicializar observabilidad
-const observability = initializeObservability(config);
+// Inicializar observabilidad const observability = initializeObservability(config);
 
-// Middleware (orden importante)
-app.use(dddContextMiddleware()); // 1. Contexto DDD
-app.use(observability.httpLogger); // 2. Logging HTTP
-app.use(express.json()); // 3. Body parser
-
+// Middleware (orden importante) app.use(dddContextMiddleware()); // 1. Contexto DDD app.use(observability.httpLogger);
+// 2. Logging HTTP app.use(express.json()); // 3. Body parser
 
 ````
 
@@ -778,7 +697,6 @@ extractNATSTraceContext(headers);
 
 ### Kubernetes
 
-
 ```bash
 # Crear namespace
 kubectl create namespace observability
@@ -794,38 +712,34 @@ kubectl get pods -n observability
 
 ```
 
-
 ### Docker Compose (Desarrollo)
 
-
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   jaeger:
     image: jaegertracing/all-in-one:1.50
     ports:
-      - '16686:16686'
-      - '14268:14268'
-      - '4318:4318'
+      - "16686:16686"
+      - "14268:14268"
+      - "4318:4318"
     environment:
       - COLLECTOR_OTLP_ENABLED=true
 
   prometheus:
     image: prom/prometheus:v2.45.0
     ports:
-      - '9090:9090'
+      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
     image: grafana/grafana:10.0.0
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin123
-
 ```
-
 
 ## 🔍 Monitoreo
 
@@ -844,7 +758,6 @@ services:
 ## 📝 Logging
 
 ### Estructura de Logs
-
 
 ```json
 {
@@ -870,9 +783,7 @@ services:
     "price": 99.99
   }
 }
-
 ```
-
 
 ### Niveles de Log
 
@@ -882,7 +793,6 @@ services:
 - `error`: Errores que requieren atención
 
 ## 🧪 Testing
-
 
 ```bash
 # Ejecutar tests
@@ -896,7 +806,6 @@ pnpm test:coverage
 
 
 ```
-
 
 ## 📚 Ejemplos
 
@@ -927,20 +836,19 @@ Para soporte y preguntas:
 
 #### Middleware para Express
 
-
 ```typescript
-import express from 'express';
-import { expressObservabilityMiddleware, expressErrorHandler } from '@a4co/observability';
+import express from "express";
+import { expressObservabilityMiddleware, expressErrorHandler } from "@a4co/observability";
 
 const app = express();
 
 // Agregar middleware de observabilidad
 app.use(
   expressObservabilityMiddleware({
-    ignorePaths: ['/health', '/metrics'],
+    ignorePaths: ["/health", "/metrics"],
     includeRequestBody: true,
     customAttributes: req => ({
-      tenantId: req.headers['x-tenant-id'],
+      tenantId: req.headers["x-tenant-id"],
     }),
   })
 );
@@ -949,16 +857,13 @@ app.use(
 
 // Error handler al final
 app.use(expressErrorHandler());
-
 ```
-
 
 #### Middleware para Koa
 
-
 ```typescript
-import Koa from 'koa';
-import { koaObservabilityMiddleware, koaErrorHandler } from '@a4co/observability';
+import Koa from "koa";
+import { koaObservabilityMiddleware, koaErrorHandler } from "@a4co/observability";
 
 const app = new Koa();
 
@@ -968,65 +873,56 @@ app.use(koaErrorHandler());
 // Middleware de observabilidad
 app.use(
   koaObservabilityMiddleware({
-    ignorePaths: ['/health', '/metrics'],
+    ignorePaths: ["/health", "/metrics"],
   })
 );
-
 ```
-
 
 ### 2. Logging Estructurado
 
 #### Logger con Contexto
 
-
 ```typescript
-import { getLogger } from '@a4co/observability';
+import { getLogger } from "@a4co/observability";
 
 const logger = getLogger();
 
 // Logger con contexto
 const userLogger = logger.withContext({
-  userId: '123',
-  tenantId: 'abc',
-  correlationId: 'xyz-456',
+  userId: "123",
+  tenantId: "abc",
+  correlationId: "xyz-456",
 });
 
-userLogger.info({ action: 'checkout' }, 'User initiated checkout');
-
+userLogger.info({ action: "checkout" }, "User initiated checkout");
 ```
-
 
 #### Logger DDD
 
-
 ```typescript
 const dddLogger = logger.withDDD({
-  aggregateName: 'Order',
-  aggregateId: 'order-123',
-  commandName: 'CreateOrder',
+  aggregateName: "Order",
+  aggregateId: "order-123",
+  commandName: "CreateOrder",
 });
 
-dddLogger.info('Processing CreateOrder command');
-
+dddLogger.info("Processing CreateOrder command");
 ```
-
 
 ### 3. Tracing Distribuido
 
 #### Crear Spans Manuales
 
-
 ```typescript
-import { getTracer, SpanStatusCode } from '@a4co/observability';
+import { getTracer, SpanStatusCode } from "@a4co/observability";
 
-const tracer = getTracer('order-service');
+const tracer = getTracer("order-service");
 
 async function processOrder(orderId: string) {
-  const span = tracer.startSpan('processOrder', {
+  const span = tracer.startSpan("processOrder", {
     attributes: {
-      'order.id': orderId,
-      'order.status': 'pending',
+      "order.id": orderId,
+      "order.status": "pending",
     },
   });
 
@@ -1047,17 +943,14 @@ async function processOrder(orderId: string) {
     span.end();
   }
 }
-
 ```
-
 
 #### Usar Decoradores
 
-
 ```typescript
-import { Trace, CommandHandler, Repository } from '@a4co/observability';
+import { Trace, CommandHandler, Repository } from "@a4co/observability";
 
-@Repository('Order')
+@Repository("Order")
 class OrderRepository {
   @Trace({ recordResult: true })
   async findById(id: string): Promise<Order> {
@@ -1067,117 +960,94 @@ class OrderRepository {
 }
 
 class OrderCommandHandler {
-  @CommandHandler('CreateOrder', 'Order')
+  @CommandHandler("CreateOrder", "Order")
   async handle(command: CreateOrderCommand): Promise<void> {
     // Automáticamente trackea comando, crea spans y métricas
     await this.orderRepo.save(order);
   }
 }
-
 ```
-
 
 ### 4. Métricas
 
 #### Usar Métricas Predefinidas
 
-
 ```typescript
-import { recordHttpRequest, recordCommandExecution } from '@a4co/observability';
+import { recordHttpRequest, recordCommandExecution } from "@a4co/observability";
 
 // Registrar petición HTTP
-recordHttpRequest('POST', '/api/orders', 201, 145); // método, ruta, status, duración
+recordHttpRequest("POST", "/api/orders", 201, 145); // método, ruta, status, duración
 
 // Registrar ejecución de comando
-recordCommandExecution('CreateOrder', 'Order', true, 230); // comando, agregado, éxito, duración
-
+recordCommandExecution("CreateOrder", "Order", true, 230); // comando, agregado, éxito, duración
 ```
-
 
 #### Crear Métricas Personalizadas
 
-
 ```typescript
-import { createCustomCounter, createCustomHistogram } from '@a4co/observability';
+import { createCustomCounter, createCustomHistogram } from "@a4co/observability";
 
 // Contador personalizado
-const orderCounter = createCustomCounter('orders_created_total', 'Total orders created');
-orderCounter.add(1, { region: 'us-east', paymentMethod: 'credit_card' });
+const orderCounter = createCustomCounter("orders_created_total", "Total orders created");
+orderCounter.add(1, { region: "us-east", paymentMethod: "credit_card" });
 
 // Histograma personalizado
-const paymentDuration = createCustomHistogram(
-  'payment_processing_duration_ms',
-  'Payment processing duration',
-  'ms'
-);
-paymentDuration.record(1250, { provider: 'stripe' });
-
+const paymentDuration = createCustomHistogram("payment_processing_duration_ms", "Payment processing duration", "ms");
+paymentDuration.record(1250, { provider: "stripe" });
 ```
-
 
 ### 5. Instrumentación de Servicios
 
 #### NATS
 
-
 ```typescript
-import { connect } from 'nats';
-import { instrumentNatsClient } from '@a4co/observability';
+import { connect } from "nats";
+import { instrumentNatsClient } from "@a4co/observability";
 
-const nc = await connect({ servers: 'nats://localhost:4222' });
+const nc = await connect({ servers: "nats://localhost:4222" });
 const instrumentedNc = instrumentNatsClient(nc);
 
 // Publicar con tracing automático
-instrumentedNc.publish('orders.created', orderData);
+instrumentedNc.publish("orders.created", orderData);
 
 // Suscribir con tracing automático
-instrumentedNc.subscribe('orders.*', msg => {
+instrumentedNc.subscribe("orders.*", msg => {
   // El span se propaga automáticamente
-  console.log('Received:', msg);
+  console.log("Received:", msg);
 });
-
 ```
-
 
 #### Redis
 
-
 ```typescript
-import Redis from 'ioredis';
-import { instrumentRedisClient } from '@a4co/observability';
+import Redis from "ioredis";
+import { instrumentRedisClient } from "@a4co/observability";
 
 const redis = new Redis();
 const instrumentedRedis = instrumentRedisClient(redis);
 
 // Todas las operaciones son instrumentadas
-await instrumentedRedis.set('key', 'value');
-const value = await instrumentedRedis.get('key');
-
+await instrumentedRedis.set("key", "value");
+const value = await instrumentedRedis.get("key");
 ```
-
 
 ### 6. Frontend (React)
 
 #### Hooks de Observabilidad
 
-
 ```tsx
-import {
-  useObservability,
-  useEventTracking,
-  useComponentTracking,
-} from '@a4co/observability/react';
+import { useObservability, useEventTracking, useComponentTracking } from "@a4co/observability/react";
 
 function CheckoutButton() {
   const { trackClick } = useEventTracking();
 
   // Track automático del ciclo de vida del componente
-  useComponentTracking('CheckoutButton', {
-    trackProps: ['variant', 'disabled'],
+  useComponentTracking("CheckoutButton", {
+    trackProps: ["variant", "disabled"],
   });
 
   const handleClick = () => {
-    trackClick('CheckoutButton', {
+    trackClick("CheckoutButton", {
       cartValue: cart.total,
       itemCount: cart.items.length,
     });
@@ -1187,51 +1057,36 @@ function CheckoutButton() {
 
   return <button onClick={handleClick}>Checkout</button>;
 }
-
 ```
-
 
 #### Componentes del Design System
 
-
 ```tsx
-import { TrackedButton, TrackedInput, TrackedModal } from '@a4co/observability/react';
+import { TrackedButton, TrackedInput, TrackedModal } from "@a4co/observability/react";
 
 function MyForm() {
   return (
     <form>
-      <TrackedInput
-        label="Email"
-        type="email"
-        trackingName="email-input"
-        onChange={e => setEmail(e.target.value)}
-      />
+      <TrackedInput label="Email" type="email" trackingName="email-input" onChange={e => setEmail(e.target.value)} />
 
-      <TrackedButton
-        variant="primary"
-        trackingName="submit-button"
-        trackingMetadata={{ formType: 'registration' }}
-      >
+      <TrackedButton variant="primary" trackingName="submit-button" trackingMetadata={{ formType: "registration" }}>
         Submit
       </TrackedButton>
     </form>
   );
 }
-
 ```
-
 
 #### Performance Tracking
 
-
 ```tsx
-import { PerformanceTracker, measurePerformance } from '@a4co/observability/react';
+import { PerformanceTracker, measurePerformance } from "@a4co/observability/react";
 
 function ExpensiveComponent() {
   const { measurePerformance } = useObservability();
 
   useEffect(() => {
-    measurePerformance('ExpensiveComponent.render', async () => {
+    measurePerformance("ExpensiveComponent.render", async () => {
       await loadData();
       await processData();
     });
@@ -1243,49 +1098,43 @@ function ExpensiveComponent() {
     </PerformanceTracker>
   );
 }
-
 ```
-
 
 ### 7. Contexto y Propagación
 
 #### Propagación Manual de Contexto
 
-
 ```typescript
-import { injectContextToHeaders, extractContextFromHeaders } from '@a4co/observability';
+import { injectContextToHeaders, extractContextFromHeaders } from "@a4co/observability";
 
 // Cliente HTTP
 const headers = injectContextToHeaders({
   traceId: span.spanContext().traceId,
-  correlationId: 'abc-123',
-  userId: 'user-456',
+  correlationId: "abc-123",
+  userId: "user-456",
 });
 
-await axios.post('/api/orders', data, { headers });
+await axios.post("/api/orders", data, { headers });
 
 // Servidor
-app.post('/api/orders', (req, res) => {
+app.post("/api/orders", (req, res) => {
   const context = extractContextFromHeaders(req.headers);
   // context contiene traceId, correlationId, userId
 });
-
 ```
-
 
 ### 8. Utilidades
 
 #### Circuit Breaker
 
-
 ```typescript
-import { CircuitBreaker } from '@a4co/observability';
+import { CircuitBreaker } from "@a4co/observability";
 
 const paymentBreaker = new CircuitBreaker(async () => await paymentProvider.charge(amount), {
   failureThreshold: 5,
   resetTimeout: 60000,
   onStateChange: state => {
-    logger.warn({ state }, 'Circuit breaker state changed');
+    logger.warn({ state }, "Circuit breaker state changed");
   },
 });
 
@@ -1294,32 +1143,26 @@ try {
 } catch (error) {
   // Manejar falla o circuito abierto
 }
-
 ```
-
 
 #### Retry con Backoff
 
-
 ```typescript
-import { retryWithBackoff } from '@a4co/observability';
+import { retryWithBackoff } from "@a4co/observability";
 
 const result = await retryWithBackoff(async () => await unstableService.call(), {
   maxRetries: 3,
   initialDelay: 1000,
   factor: 2,
   onRetry: (error, attempt) => {
-    logger.warn({ error, attempt }, 'Retrying operation');
+    logger.warn({ error, attempt }, "Retrying operation");
   },
 });
-
 ```
-
 
 ## 🐳 Despliegue con Kubernetes
 
 ### Instalar Jaeger
-
 
 ```bash
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
@@ -1330,9 +1173,7 @@ helm install jaeger jaegertracing/jaeger \
 
 ```
 
-
 ### Instalar Prometheus + Grafana
-
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -1343,16 +1184,13 @@ helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
 
 ```
 
-
 ### Aplicar Reglas de Alertas
-
 
 ```bash
 kubectl apply -f packages/observability/k8s/prometheus-alerts.yaml
 
 
 ```
-
 
 ## 📊 Dashboards
 
@@ -1363,7 +1201,6 @@ Los dashboards preconfigurados están en `k8s/grafana-dashboards/`:
 - **ddd-metrics.json**: Métricas específicas de DDD (comandos, eventos)
 
 ## 🔧 Variables de Entorno
-
 
 ```bash
 # Backend
@@ -1379,9 +1216,7 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 
 ```
 
-
 ## 🏗️ Arquitectura
-
 
 ```
 
@@ -1413,7 +1248,6 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 
 ```
 
-
 ## 🤝 Contribuir
 
 1. Fork el repositorio
@@ -1424,21 +1258,14 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 
 ## 📄 Licencia
 
-Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](../../LICENSE) para más detalles.
-develop
+Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](../../LICENSE) para más detalles. develop
 
 const app = express();
 
-// Agregar middleware de tracing
-app.use(expressTracingMiddleware({
-serviceName: 'order-service',
-logger,
-captureRequestBody: true,
-captureResponseBody: false,
-}));
+// Agregar middleware de tracing app.use(expressTracingMiddleware({ serviceName: 'order-service', logger,
+captureRequestBody: true, captureResponseBody: false, }));
 
 export { logger, tracer };
-
 
 ````
 
@@ -1500,21 +1327,20 @@ function App() {
 
 #### Backend - Logging con metadata DDD
 
-
 ```typescript
-import { Trace, withSpan } from '@a4co/observability';
+import { Trace, withSpan } from "@a4co/observability";
 
 class OrderService {
   constructor(private logger: Logger) {}
 
-  @Trace({ name: 'OrderService.createOrder' })
+  @Trace({ name: "OrderService.createOrder" })
   async createOrder(command: CreateOrderCommand): Promise<Order> {
     // Log con metadata DDD
-    this.logger.info('Processing order creation', {
+    this.logger.info("Processing order creation", {
       ddd: {
         aggregateId: command.orderId,
-        aggregateType: 'Order',
-        commandName: 'CreateOrderCommand',
+        aggregateType: "Order",
+        commandName: "CreateOrderCommand",
         userId: command.userId,
         correlationId: command.correlationId,
       },
@@ -1523,61 +1349,58 @@ class OrderService {
     try {
       const order = await this.orderRepository.save(order);
 
-      this.logger.info('Order created successfully', {
+      this.logger.info("Order created successfully", {
         ddd: {
           aggregateId: order.id,
-          eventName: 'OrderCreatedEvent',
+          eventName: "OrderCreatedEvent",
           eventVersion: 1,
         },
       });
 
       return order;
     } catch (error) {
-      this.logger.error('Order creation failed', error, {
+      this.logger.error("Order creation failed", error, {
         ddd: {
           aggregateId: command.orderId,
-          commandName: 'CreateOrderCommand',
+          commandName: "CreateOrderCommand",
         },
       });
       throw error;
     }
   }
 }
-
 ```
-
 
 #### Frontend - Logging con React Hooks
 
-
 ```tsx
-import { useLogger, useComponentLogger, useApiLogger } from '@a4co/observability';
+import { useLogger, useComponentLogger, useApiLogger } from "@a4co/observability";
 
 function ProductList() {
   const logger = useLogger();
-  const componentLogger = useComponentLogger('ProductList');
+  const componentLogger = useComponentLogger("ProductList");
   const { logRequest, logResponse, logError } = useApiLogger();
 
   const fetchProducts = async () => {
     const startTime = logRequest({
-      method: 'GET',
-      url: '/api/products',
+      method: "GET",
+      url: "/api/products",
     });
 
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch("/api/products");
       const data = await response.json();
 
       logResponse(
         startTime,
         {
-          method: 'GET',
-          url: '/api/products',
+          method: "GET",
+          url: "/api/products",
         },
         response
       );
 
-      componentLogger.info('Products loaded', {
+      componentLogger.info("Products loaded", {
         custom: {
           productCount: data.length,
         },
@@ -1588,8 +1411,8 @@ function ProductList() {
       logError(
         startTime,
         {
-          method: 'GET',
-          url: '/api/products',
+          method: "GET",
+          url: "/api/products",
         },
         error
       );
@@ -1599,75 +1422,66 @@ function ProductList() {
 
   // ...
 }
-
 ```
-
 
 ### Tracing Distribuido
 
 #### Propagación de Trace ID entre servicios
 
-
 ```typescript
 // order-service
-import { TracedNatsClient } from '@a4co/observability';
+import { TracedNatsClient } from "@a4co/observability";
 
 const natsClient = new TracedNatsClient({
-  serviceName: 'order-service',
+  serviceName: "order-service",
   logger,
 });
 
 // Publicar evento con trace propagation
-await natsClient.publishEvent('orders.created', {
-  type: 'OrderCreated',
+await natsClient.publishEvent("orders.created", {
+  type: "OrderCreated",
   aggregateId: order.id,
   data: order,
 });
 
 // payment-service
-natsClient.subscribeToEvents('orders.created', async (event, span) => {
+natsClient.subscribeToEvents("orders.created", async (event, span) => {
   // El span ya incluye el trace context del servicio origen
-  span.setAttribute('payment.orderId', event.aggregateId);
+  span.setAttribute("payment.orderId", event.aggregateId);
 
   // Procesar pago...
 });
-
 ```
-
 
 #### HTTP Client con tracing automático
 
-
 ```typescript
-import { createFetchWrapper } from '@a4co/observability';
+import { createFetchWrapper } from "@a4co/observability";
 
 const httpClient = createFetchWrapper({
-  baseURL: 'https://api.a4co.com',
+  baseURL: "https://api.a4co.com",
   logger,
   propagateTrace: true,
 });
 
 // Las llamadas HTTP incluirán automáticamente headers de tracing
-const response = await httpClient.get('/products');
-
+const response = await httpClient.get("/products");
 ```
-
 
 ### Integración Frontend
 
 #### Hooks para tracking de interacciones
 
-
 ```tsx
-import { useInteractionLogger, useInteractionTracing, useRouteTracing } from '@a4co/observability';
+import { useInteractionLogger, useInteractionTracing, useRouteTracing } from "@a4co/observability";
 
 function CheckoutForm() {
-  const logInteraction = useInteractionLogger('checkout.form');
-  const traceInteraction = useInteractionTracing('checkout', 'form');
+  const logInteraction = useInteractionLogger("checkout.form");
+  const traceInteraction = useInteractionTracing("checkout", "form");
 
   const handleSubmit = data => {
     logInteraction({
-      action: 'submit',
+      action: "submit",
       items: data.items.length,
       total: data.total,
     });
@@ -1689,17 +1503,14 @@ function App() {
 
   return <Routes>{/* ... */}</Routes>;
 }
-
 ```
-
 
 ### Design System
 
 #### Componentes observables
 
-
 ```tsx
-import { ObservableButton, ObservableForm } from '@a4co/observability';
+import { ObservableButton, ObservableForm } from "@a4co/observability";
 
 function ProductActions({ product }) {
   return (
@@ -1720,7 +1531,7 @@ function ProductActions({ product }) {
       <ObservableForm
         formId="product-review"
         onSubmitSuccess={data => {
-          console.log('Review submitted:', data);
+          console.log("Review submitted:", data);
         }}
       >
         <input name="rating" type="number" min="1" max="5" />
@@ -1730,49 +1541,39 @@ function ProductActions({ product }) {
     </>
   );
 }
-
 ```
-
 
 #### Plugin para componentes existentes
 
-
 ```typescript
-import {
-  createComponentPlugin,
-  DesignTokenTracker,
-  ComponentPerformanceTracker,
-} from '@a4co/observability';
+import { createComponentPlugin, DesignTokenTracker, ComponentPerformanceTracker } from "@a4co/observability";
 
 // Crear plugin de observabilidad
 const buttonPlugin = createComponentPlugin({
-  componentName: 'Button',
-  trackProps: ['variant', 'size', 'disabled'],
-  trackEvents: ['click', 'hover'],
-  logLevel: 'debug',
+  componentName: "Button",
+  trackProps: ["variant", "size", "disabled"],
+  trackEvents: ["click", "hover"],
+  logLevel: "debug",
 });
 
 // Tracking de design tokens
 const tokenTracker = new DesignTokenTracker(logger);
 tokenTracker.trackTokenUsage({
-  token: 'color.primary.500',
-  value: '#3B82F6',
-  component: 'Button',
-  variant: 'primary',
+  token: "color.primary.500",
+  value: "#3B82F6",
+  component: "Button",
+  variant: "primary",
   timestamp: new Date().toISOString(),
 });
 
 // Performance tracking
 const perfTracker = new ComponentPerformanceTracker(logger);
-perfTracker.recordRenderTime('ProductList', 125); // 125ms
-
+perfTracker.recordRenderTime("ProductList", 125); // 125ms
 ```
-
 
 ## 🚢 Despliegue
 
 ### Kubernetes con Helm
-
 
 ```bash
 # Agregar repositorios necesarios
@@ -1795,30 +1596,28 @@ kubectl get all -n observability
 
 ```
 
-
 ### Docker Compose (Desarrollo)
-
 
 ```yaml
 # docker-compose.observability.yml
-version: '3.8'
+version: "3.8"
 
 services:
   prometheus:
     image: prom/prometheus:v2.48.0
     ports:
-      - '9090:9090'
+      - "9090:9090"
     volumes:
       - ./packages/observability/config/prometheus:/etc/prometheus
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
 
   grafana:
     image: grafana/grafana:10.2.2
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
@@ -1828,28 +1627,26 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:1.51
     ports:
-      - '16686:16686' # UI
-      - '14268:14268' # HTTP collector
-      - '14250:14250' # gRPC collector
+      - "16686:16686" # UI
+      - "14268:14268" # HTTP collector
+      - "14250:14250" # gRPC collector
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.91.0
-    command: ['--config=/etc/otel/config.yaml']
+    command: ["--config=/etc/otel/config.yaml"]
     volumes:
       - ./packages/observability/config/otel:/etc/otel
     ports:
-      - '4317:4317' # OTLP gRPC
-      - '4318:4318' # OTLP HTTP
-      - '8889:8889' # Prometheus metrics
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+      - "8889:8889" # Prometheus metrics
 
 volumes:
   prometheus_data:
   grafana_data:
-
 ```
-
 
 ## 📊 Dashboards y Alertas
 
@@ -1882,23 +1679,20 @@ volumes:
 
 ### Nomenclatura de Spans y Logs
 
-
 ```typescript
 // Spans
-'ds.button.primary.click';
-'api.orders.create';
-'db.users.findById';
+"ds.button.primary.click";
+"api.orders.create";
+"db.users.findById";
 
 // Logs
-'[OrderService] Order created successfully';
-'[PaymentGateway] Payment processing failed';
+"[OrderService] Order created successfully";
+"[PaymentGateway] Payment processing failed";
 
 // Métricas
 'http_requests_total{service="order-service",method="POST",endpoint="/orders"}';
 'ds_button_click_total{variant="primary",size="medium"}';
-
 ```
-
 
 ### Niveles de Log Recomendados
 
@@ -1925,6 +1719,4 @@ volumes:
 
 ## 📄 Licencia
 
-Apache 2.0 © A4CO
-main
-develop
+Apache 2.0 © A4CO main develop

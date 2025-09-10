@@ -4,7 +4,6 @@
 
 ### Verificación de Estructura de Capas
 
-
 ```bash
 # Verificar estructura de capas DDD
 find . -type d -name "domain" | head -20
@@ -18,9 +17,7 @@ cloc --by-dir domain/ application/ infrastructure/ presentation/
 
 ```
 
-
 ### Detección de Bounded Contexts
-
 
 ```bash
 # Buscar contextos delimitados
@@ -32,9 +29,7 @@ grep -r "Aggregate\|AggregateRoot" --include="*.java" --include="*.cs" --include
 
 ```
 
-
 ### Análisis de Entidades y Value Objects
-
 
 ```bash
 # Contar entidades
@@ -49,11 +44,9 @@ echo "scale=2; $(find . -name "*ValueObject*" | wc -l) / $(find . -name "*Entity
 
 ```
 
-
 ## 2. Métricas de Calidad de Código
 
 ### SonarQube (Estándares Internacionales)
-
 
 ```bash
 # Ejecutar análisis SonarQube
@@ -69,9 +62,7 @@ curl -u $SONAR_TOKEN: "http://localhost:9000/api/measures/component?component=dd
 
 ```
 
-
 ### PMD (Pattern Matching Detection)
-
 
 ```bash
 # Análisis con PMD para Java
@@ -84,9 +75,7 @@ dotnet pmd analyze -d ./src -R rulesets/net/quickstart.xml
 
 ```
 
-
 ### Complejidad Ciclomática
-
 
 ```bash
 # Para Java
@@ -101,11 +90,9 @@ lizard -C 10 -L 100 -a 5 . | grep -E "NLOC|CCN|token|PARAM"
 
 ```
 
-
 ## 3. Análisis de Microservicios
 
 ### Detección de Anti-patrones
-
 
 ```bash
 # Chatty APIs (demasiadas llamadas entre servicios)
@@ -120,9 +107,7 @@ grep -r "import.*\.domain\." --include="*.java" | grep -v "same.package" | wc -l
 
 ```
 
-
 ### Análisis de APIs REST
-
 
 ```bash
 # Contar endpoints
@@ -138,9 +123,7 @@ spectral lint api-docs/*.yaml
 
 ```
 
-
 ### Métricas de Independencia
-
 
 ```bash
 # Análisis de dependencias con jdeps (Java)
@@ -155,11 +138,9 @@ madge --circular --extensions js,ts src/
 
 ```
 
-
 ## 4. Herramientas de Análisis Avanzado
 
 ### ArchUnit (Java)
-
 
 ```java
 // Archivo: ArchitectureTest.java
@@ -175,9 +156,7 @@ public void domainShouldNotDependOnInfrastructure() {
 
 ```
 
-
 ### Ejecutar tests de arquitectura
-
 
 ```bash
 mvn test -Dtest=ArchitectureTest
@@ -186,9 +165,7 @@ gradle test --tests ArchitectureTest
 
 ```
 
-
 ### Structure101 (Análisis de Estructura)
-
 
 ```bash
 # Generar reporte de estructura
@@ -200,11 +177,9 @@ s101 -project myproject.s101prj -report-tangles -report-fat -report-xl
 
 ```
 
-
 ## 5. Benchmarking contra Estándares
 
 ### Métricas Internacionales (ISO/IEC 25010)
-
 
 ```bash
 # Script para calcular métricas ISO
@@ -224,9 +199,7 @@ chmod +x iso-metrics.sh
 
 ```
 
-
 ### Estándares Europeos (ECSS)
-
 
 ```bash
 # Verificar cumplimiento ECSS-Q-ST-80C
@@ -238,9 +211,7 @@ echo "Cyclomatic Complexity Average: $(lizard . | tail -1 | awk '{print $3}')"
 
 ```
 
-
 ### Comparación con Medias Nacionales
-
 
 ```bash
 # Script de comparación
@@ -277,11 +248,9 @@ chmod +x benchmark-comparison.sh
 
 ```
 
-
 ## 6. Automatización con CI/CD
 
 ### GitLab CI Pipeline
-
 
 ```yaml
 # .gitlab-ci.yml
@@ -306,12 +275,9 @@ benchmark:
   artifacts:
     paths:
       - benchmark-report.txt
-
 ```
 
-
 ### GitHub Actions
-
 
 ```yaml
 # .github/workflows/ddd-audit.yml
@@ -335,14 +301,11 @@ jobs:
       - name: Compare with Standards
         run: |
           ./benchmark-comparison.sh
-
 ```
-
 
 ## 7. Dashboard de Métricas
 
 ### Script para Generar Reporte HTML
-
 
 ```bash
 cat > generate-report.sh << 'EOF'
@@ -386,9 +349,7 @@ chmod +x generate-report.sh
 
 ```
 
-
 ## 8. Checklist de Auditoría DDD
-
 
 ```bash
 # Script de validación DDD
@@ -407,7 +368,6 @@ chmod +x ddd-checklist.sh
 
 
 ```
-
 
 ## Recursos Adicionales
 

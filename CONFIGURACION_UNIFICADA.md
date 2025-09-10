@@ -2,7 +2,8 @@
 
 ## 📋 Resumen de Cambios
 
-Se ha implementado una configuración unificada que elimina duplicaciones y optimiza el uso de **pnpm** y **Turbo** en todo el monorepo.
+Se ha implementado una configuración unificada que elimina duplicaciones y optimiza el uso de **pnpm** y **Turbo** en
+todo el monorepo.
 
 ## 🎯 Objetivos Alcanzados
 
@@ -28,7 +29,6 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 
 ### 📁 Configuraciones Base
 
-
 ```bash
 ├── jest.config.base.js          # Configuración Jest compartida
 ├── tsconfig.base.json           # Configuración TypeScript base
@@ -39,9 +39,7 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 
 ```
 
-
 ### 📦 Scripts Unificados
-
 
 ```json
 {
@@ -52,9 +50,7 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
   "type-check": "turbo run type-check",
   "validate": "pnpm run lint && pnpm run format:check && pnpm run type-check"
 }
-
 ```
-
 
 ### 🔧 Nuevas Funcionalidades
 
@@ -67,7 +63,6 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 
 ### 1. Configuración Automática
 
-
 ```bash
 # Ejecutar el script de configuración unificada
 ./scripts/setup-unified.sh
@@ -75,9 +70,7 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 
 ```
 
-
 ### 2. Configuración Manual
-
 
 ```bash
 # Generar package.json faltantes
@@ -95,11 +88,9 @@ pnpm run validate
 
 ```
 
-
 ## 📱 Comandos Disponibles
 
 ### 🎯 Comandos del Monorepo
-
 
 ```bash
 # Desarrollo
@@ -130,9 +121,7 @@ pnpm db:migrate            # Migraciones
 
 ```
 
-
 ### 🎯 Comandos por Servicio
-
 
 ```bash
 # Comandos específicos por servicio
@@ -143,11 +132,9 @@ pnpm --filter @a4co/web build
 
 ```
 
-
 ## 🔄 Flujo de Trabajo Recomendado
 
 ### 1. Desarrollo Diario
-
 
 ```bash
 # Iniciar desarrollo
@@ -162,9 +149,7 @@ pnpm validate
 
 ```
 
-
 ### 2. Antes de Commit
-
 
 ```bash
 # El pre-commit hook ejecuta automáticamente
@@ -175,9 +160,7 @@ pnpm validate
 
 ```
 
-
 ### 3. Antes de Deploy
-
 
 ```bash
 # Validación completa
@@ -191,7 +174,6 @@ pnpm run build
 
 
 ```
-
 
 ## 📊 Beneficios de la Configuración Unificada
 
@@ -232,7 +214,6 @@ pnpm run build
 
 ### Error: "Command not found: pnpm"
 
-
 ```bash
 # Instalar pnpm globalmente
 npm install -g pnpm
@@ -243,9 +224,7 @@ npx pnpm install
 
 ```
 
-
 ### Error: "Turbo not found"
-
 
 ```bash
 # Instalar Turbo
@@ -257,9 +236,7 @@ npx turbo run build
 
 ```
 
-
 ### Error: "Package not found"
-
 
 ```bash
 # Regenerar package.json
@@ -270,7 +247,6 @@ pnpm install
 
 
 ```
-
 
 ## 📚 Recursos Adicionales
 

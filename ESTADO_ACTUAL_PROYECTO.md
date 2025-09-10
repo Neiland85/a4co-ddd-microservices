@@ -1,7 +1,6 @@
 # 📊 ESTADO ACTUAL DEL PROYECTO A4CO
 
-**Fecha de análisis:** 16 de enero de 2025
-**Estado:** Proyecto en desarrollo activo
+**Fecha de análisis:** 16 de enero de 2025 **Estado:** Proyecto en desarrollo activo
 
 ---
 
@@ -110,7 +109,6 @@
 
 ### Comandos Globales (desde la raíz)
 
-
 ```bash
 # Desarrollo
 pnpm run dev                  # Levantar todo en modo desarrollo
@@ -137,9 +135,7 @@ pnpm run reinstall          # Reinstalar todo desde cero
 
 ```
 
-
 ### Comandos Específicos
-
 
 ```bash
 # Dashboard
@@ -156,7 +152,6 @@ pnpm run docker:logs        # Ver logs
 
 
 ```
-
 
 ---
 
