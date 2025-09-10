@@ -47,16 +47,13 @@ El monorepo A4CO contiene los siguientes servicios y aplicaciones:
 
 ### Opción 1: Iniciar todos los servicios con Turbo
 
-
 ```bash
 pnpm dev
 
 
 ```
 
-
 ### Opción 2: Usar el script personalizado
-
 
 ```bash
 ./scripts/start-dev-services.sh
@@ -64,11 +61,9 @@ pnpm dev
 
 ```
 
-
 ### Opción 3: Iniciar servicios específicos
 
 #### Solo Frontend
-
 
 ```bash
 pnpm dev:frontend
@@ -76,9 +71,7 @@ pnpm dev:frontend
 
 ```
 
-
 #### Solo Backend
-
 
 ```bash
 pnpm dev:backend
@@ -86,9 +79,7 @@ pnpm dev:backend
 
 ```
 
-
 #### Solo Storybook
-
 
 ```bash
 pnpm storybook:dev
@@ -96,16 +87,13 @@ pnpm storybook:dev
 
 ```
 
-
 ### Opción 4: Docker Compose (requiere Docker)
-
 
 ```bash
 docker compose -f docker-compose.messaging.yml up
 
 
 ```
-
 
 ## 📍 Endpoints Principales
 
@@ -143,7 +131,6 @@ docker compose -f docker-compose.messaging.yml up
 
 ### Verificar servicios activos
 
-
 ```bash
 # Ver todos los procesos Node.js
 ps aux | grep node
@@ -156,9 +143,7 @@ lsof -i -P -n | grep LISTEN
 
 ```
 
-
 ### Ver logs en tiempo real
-
 
 ```bash
 # Si usaste el script start-all-services.sh
@@ -170,11 +155,9 @@ tail -f logs/*/[servicio].log
 
 ```
 
-
 ## 🛠️ Solución de Problemas
 
 ### Puerto ya en uso
-
 
 ```bash
 # Encontrar proceso usando el puerto
@@ -185,9 +168,7 @@ kill -9 [PID]
 
 ```
 
-
 ### Limpiar y reinstalar
-
 
 ```bash
 pnpm clean:all
@@ -197,9 +178,7 @@ pnpm build
 
 ```
 
-
 ### Reiniciar todo
-
 
 ```bash
 # Detener todos los servicios (Ctrl+C)
@@ -210,7 +189,6 @@ pnpm dev
 
 
 ```
-
 
 ## 📝 Notas Importantes
 
@@ -225,4 +203,5 @@ pnpm dev
 
 4. **Logs**: Revisa los logs si algún servicio no se inicia correctamente.
 
-5. **Recursos**: El monorepo completo consume bastantes recursos. Si tienes problemas de rendimiento, considera levantar solo los servicios que necesites.
+5. **Recursos**: El monorepo completo consume bastantes recursos. Si tienes problemas de rendimiento, considera levantar
+   solo los servicios que necesites.

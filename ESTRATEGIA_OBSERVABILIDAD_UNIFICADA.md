@@ -13,7 +13,6 @@ Se ha implementado una estrategia completa de observabilidad unificada para la p
 
 ## 🏗️ Arquitectura Implementada
 
-
 ```text
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   Frontend  │────▶│   Backend   │────▶│    NATS     │
@@ -34,7 +33,6 @@ Se ha implementado una estrategia completa de observabilidad unificada para la p
 
 
 ```
-
 
 ## 🚀 Componentes Implementados
 
@@ -95,33 +93,27 @@ Se ha implementado una estrategia completa de observabilidad unificada para la p
 
 ### Instalación
 
-
 ```bash
 pnpm add @a4co/observability
 
 
 ```
 
-
 ### Backend Setup
 
-
 ```typescript
-import { quickStart } from '@a4co/observability';
+import { quickStart } from "@a4co/observability";
 
-await quickStart('my-service', {
-  serviceVersion: '1.0.0',
-  environment: 'production',
+await quickStart("my-service", {
+  serviceVersion: "1.0.0",
+  environment: "production",
 });
-
 ```
-
 
 ### Frontend Setup
 
-
 ```tsx
-import { ObservabilityProvider } from '@a4co/observability/react';
+import { ObservabilityProvider } from "@a4co/observability/react";
 
 function App() {
   return (
@@ -130,9 +122,7 @@ function App() {
     </ObservabilityProvider>
   );
 }
-
 ```
-
 
 ## 🐳 Despliegue en Kubernetes
 
@@ -144,7 +134,6 @@ function App() {
 4. **Dashboards**: `packages/observability/k8s/grafana-dashboards/`
 
 ### Comandos de Despliegue
-
 
 ```bash
 # Namespace
@@ -165,7 +154,6 @@ kubectl apply -f packages/observability/k8s/prometheus-alerts.yaml
 
 
 ```
-
 
 ## 📊 Dashboards y Alertas
 
@@ -188,7 +176,6 @@ kubectl apply -f packages/observability/k8s/prometheus-alerts.yaml
 
 ### Backend
 
-
 ```bash
 NODE_ENV=production
 SERVICE_NAME=order-service
@@ -200,16 +187,13 @@ LOG_LEVEL=info
 
 ```
 
-
 ### Frontend
-
 
 ```bash
 REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 
 
 ```
-
 
 ## 📈 Beneficios Logrados
 
@@ -233,7 +217,6 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 
 ### Debugging con Logs Correlacionados
 
-
 ```json
 {
   "level": "info",
@@ -248,9 +231,7 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
   },
   "msg": "Processing CreateOrder command"
 }
-
 ```
-
 
 ## 📚 Documentación Adicional
 
@@ -283,4 +264,5 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 5. **Añadir distributed tracing** para GraphQL
 6. **Implementar custom dashboards** por equipo
 
-La estrategia de observabilidad está completamente implementada y lista para usar en todos los microservicios y aplicaciones frontend de la plataforma A4CO.
+La estrategia de observabilidad está completamente implementada y lista para usar en todos los microservicios y
+aplicaciones frontend de la plataforma A4CO.

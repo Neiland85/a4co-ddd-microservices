@@ -25,22 +25,19 @@
 
 #### `jest.config.js` (NUEVO)
 
-
 ```javascript
 module.exports = {
-  displayName: 'auth-service',
-  preset: 'ts-jest',
-  testEnvironment: 'node',
+  displayName: "auth-service",
+  preset: "ts-jest",
+  testEnvironment: "node",
   moduleNameMapping: {
-    '^@shared/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1',
-    '^@shared$': '<rootDir>/../../packages/shared-utils/index.ts',
+    "^@shared/(.*)$": "<rootDir>/../../packages/shared-utils/src/$1",
+    "^@shared$": "<rootDir>/../../packages/shared-utils/index.ts",
   },
-  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
+  setupFilesAfterEnv: ["<rootDir>/test/setup.ts"],
   // ... más configuración
 };
-
 ```
-
 
 #### `test/setup.ts` (NUEVO)
 
@@ -105,7 +102,6 @@ module.exports = {
 
 ## 🚀 Cómo Ejecutar los Tests
 
-
 ```bash
 # Instalar dependencias (desde la raíz del monorepo)
 pnpm install
@@ -122,7 +118,6 @@ npm run test:cov
 
 
 ```
-
 
 ## 📋 Tests Disponibles
 
@@ -154,7 +149,6 @@ npm run test:cov
 
 ## 🛠️ Comandos de Desarrollo
 
-
 ```bash
 # Limpiar y reinstalar dependencias
 rm -rf node_modules && pnpm install
@@ -171,7 +165,6 @@ npm run test:debug -- --testNamePattern="should register"
 
 
 ```
-
 
 ## 🔧 Troubleshooting
 

@@ -1,6 +1,7 @@
 # V0 Component Template
 
-Template base robusto para componentes generados con [v0.dev](https://v0.dev) integrado con el sistema de hooks y estilos del proyecto.
+Template base robusto para componentes generados con [v0.dev](https://v0.dev) integrado con el sistema de hooks y
+estilos del proyecto.
 
 ## 🎯 Características
 
@@ -33,9 +34,8 @@ Template base robusto para componentes generados con [v0.dev](https://v0.dev) in
 
 ## 🚀 Uso Básico
 
-
 ```tsx
-import V0ComponentTemplate from './V0ComponentTemplate';
+import V0ComponentTemplate from "./V0ComponentTemplate";
 
 function MiComponente() {
   return (
@@ -44,19 +44,16 @@ function MiComponente() {
       description="Descripción del componente"
       variant="primary"
       size="md"
-      onAction={() => console.log('Acción ejecutada')}
+      onAction={() => console.log("Acción ejecutada")}
     >
       {/* Tu contenido V0 aquí */}
       <div>Contenido generado en V0</div>
     </V0ComponentTemplate>
   );
 }
-
 ```
 
-
 ## 🎨 Variantes Disponibles
-
 
 ```tsx
 // Variantes de estilo
@@ -72,7 +69,6 @@ function MiComponente() {
 
 
 ```
-
 
 ## 📋 Props del Componente Principal
 
@@ -93,9 +89,8 @@ function MiComponente() {
 
 ### Con Hooks del Proyecto
 
-
 ```tsx
-import { useProducts } from '../../hooks/useProducts';
+import { useProducts } from "../../hooks/useProducts";
 
 function ProductosList() {
   const { products, loading, error } = useProducts();
@@ -109,34 +104,23 @@ function ProductosList() {
     </V0ComponentTemplate>
   );
 }
-
 ```
 
-
 ### Modal con Template
-
 
 ```tsx
 function ProductModal() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <V0ModalTemplate
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-      title="Detalles del Producto"
-      size="lg"
-    >
+    <V0ModalTemplate isOpen={isOpen} onClose={() => setIsOpen(false)} title="Detalles del Producto" size="lg">
       <V0ComponentTemplate variant="default">{/* Contenido del modal */}</V0ComponentTemplate>
     </V0ModalTemplate>
   );
 }
-
 ```
 
-
 ### Estado Avanzado con Hook
-
 
 ```tsx
 function FormularioContacto() {
@@ -145,8 +129,8 @@ function FormularioContacto() {
     updateValue: setForm,
     isLoading,
   } = useV0State({
-    name: '',
-    email: '',
+    name: "",
+    email: "",
   });
 
   return (
@@ -161,9 +145,7 @@ function FormularioContacto() {
     </V0ComponentTemplate>
   );
 }
-
 ```
-
 
 ## 🎯 Flujo de Trabajo con V0
 
@@ -185,12 +167,11 @@ function FormularioContacto() {
 
 ### Manejo de Errores
 
-
 ```tsx
 const [state, { setError, reset }] = useLoadingState();
 
 // En caso de error
-setError('Mensaje de error específico');
+setError("Mensaje de error específico");
 
 // Para reintentar
 <ErrorMessage
@@ -200,26 +181,21 @@ setError('Mensaje de error específico');
     ejecutarOperacion();
   }}
 />;
-
 ```
-
 
 ## 🎨 Personalización de Estilos
 
 El template usa Tailwind CSS y puede ser personalizado:
-
 
 ```tsx
 // Clases adicionales
 <V0ComponentTemplate className="border-2 border-blue-500 shadow-lg" variant="primary" />;
 
 // Función cn() para combinar clases
-import { cn } from '../lib/utils';
+import { cn } from "../lib/utils";
 
-const customClass = cn('base-class', condition && 'conditional-class', 'additional-class');
-
+const customClass = cn("base-class", condition && "conditional-class", "additional-class");
 ```
-
 
 ## 📚 Recursos Adicionales
 

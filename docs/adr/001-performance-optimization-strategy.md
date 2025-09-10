@@ -7,7 +7,8 @@
 
 ## Contexto y Problema
 
-Nuestro proyecto a4co-ddd-microservices ha alcanzado ~87,529 líneas de código distribuidas en 856 archivos, con 18 microservicios en un monorepo. El análisis inicial muestra:
+Nuestro proyecto a4co-ddd-microservices ha alcanzado ~87,529 líneas de código distribuidas en 856 archivos, con 18
+microservicios en un monorepo. El análisis inicial muestra:
 
 - Bundle size sin optimizar en Next.js (dashboard-web)
 - Complejidad ciclomática elevada en capas de dominio
@@ -106,7 +107,6 @@ Implementaremos una estrategia de optimización en 4 fases, priorizando por ROI 
 
 ## Plan de Implementación
 
-
 ```mermaid
 gantt
     title Plan de Optimización de Rendimiento
@@ -126,7 +126,6 @@ gantt
 
 
 ```
-
 
 ## Referencias
 

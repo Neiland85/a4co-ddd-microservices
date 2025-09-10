@@ -1,8 +1,7 @@
 # 🚀 GUÍA COMPLETA DE LEVANTAMIENTO DEL PROYECTO A4CO
 
-**Proyecto:** A4CO DDD Microservices - Mercado Local de Jaén
-**Fecha:** 16 de enero de 2025
-**Stack:** NestJS + Next.js + PostgreSQL + Redis + NATS
+**Proyecto:** A4CO DDD Microservices - Mercado Local de Jaén **Fecha:** 16 de enero de 2025 **Stack:** NestJS +
+Next.js + PostgreSQL + Redis + NATS
 
 ---
 
@@ -17,20 +16,17 @@
 
 ### Instalación de pnpm (si no está instalado)
 
-
 ```bash
 npm install -g pnpm
 
 
 ```
 
-
 ---
 
 ## 🛠️ INSTALACIÓN INICIAL
 
 ### 1. Clonar el repositorio (si es necesario)
-
 
 ```bash
 git clone https://github.com/Neiland85/a4co-ddd-microservices.git
@@ -39,16 +35,13 @@ cd a4co-ddd-microservices
 
 ```
 
-
 ### 2. Instalar todas las dependencias
-
 
 ```bash
 pnpm install
 
 
 ```
-
 
 Este comando instalará todas las dependencias del monorepo, incluyendo:
 
@@ -62,7 +55,6 @@ Este comando instalará todas las dependencias del monorepo, incluyendo:
 
 ### Opción 1: Levantar todo el ecosistema completo
 
-
 ```bash
 # Levantar todos los servicios con Docker Compose
 pnpm run docker:up
@@ -72,7 +64,6 @@ docker-compose -f docker-compose.dev.yml up -d
 
 
 ```
-
 
 Este comando levantará:
 
@@ -89,7 +80,6 @@ Este comando levantará:
 
 ### Ver logs de los servicios
 
-
 ```bash
 pnpm run docker:logs
 
@@ -99,9 +89,7 @@ docker-compose -f docker-compose.dev.yml logs -f [nombre-servicio]
 
 ```
 
-
 ### Detener todos los servicios
-
 
 ```bash
 pnpm run docker:down
@@ -109,13 +97,11 @@ pnpm run docker:down
 
 ```
 
-
 ---
 
 ## 💻 LEVANTAMIENTO LOCAL (SIN DOCKER)
 
 ### 1. Levantar servicios de infraestructura con Docker
-
 
 ```bash
 # Crear red Docker si no existe
@@ -149,9 +135,7 @@ docker run -d \
 
 ```
 
-
 ### 2. Configurar bases de datos (si es la primera vez)
-
 
 ```bash
 # Generar Prisma Clients
@@ -163,11 +147,9 @@ pnpm run db:migrate
 
 ```
 
-
 ### 3. Levantar aplicaciones específicas
 
 #### Dashboard del Mercado de Jaén
-
 
 ```bash
 # Usando el script específico
@@ -180,11 +162,9 @@ pnpm dev --port 3001
 
 ```
 
-
 Accesible en: http://localhost:3001
 
 #### Frontend principal (a-head)
-
 
 ```bash
 cd apps/web/v0dev/a-head
@@ -193,11 +173,9 @@ pnpm dev
 
 ```
 
-
 Accesible en: http://localhost:3000
 
 #### Design System (Storybook)
-
 
 ```bash
 pnpm run storybook:dev
@@ -205,11 +183,9 @@ pnpm run storybook:dev
 
 ```
 
-
 Accesible en: http://localhost:6006
 
 #### Todos los servicios backend
-
 
 ```bash
 pnpm run dev:backend
@@ -217,9 +193,7 @@ pnpm run dev:backend
 
 ```
 
-
 #### Todas las aplicaciones frontend
-
 
 ```bash
 pnpm run dev:frontend
@@ -227,9 +201,7 @@ pnpm run dev:frontend
 
 ```
 
-
 #### Todo el proyecto (frontend + backend)
-
 
 ```bash
 pnpm run dev
@@ -237,13 +209,11 @@ pnpm run dev
 
 ```
 
-
 ---
 
 ## 🔧 COMANDOS ÚTILES
 
 ### Gestión del proyecto
-
 
 ```bash
 # Limpiar cache y node_modules
@@ -267,9 +237,7 @@ pnpm run test:coverage
 
 ```
 
-
 ### Comandos de base de datos
-
 
 ```bash
 # Generar cliente Prisma
@@ -283,7 +251,6 @@ pnpm run db:migrate
 
 
 ```
-
 
 ---
 
@@ -322,7 +289,6 @@ pnpm run db:migrate
 
 ### Error: Puerto ya en uso
 
-
 ```bash
 # Verificar qué está usando el puerto
 lsof -i :PUERTO
@@ -335,9 +301,7 @@ kill -9 PID
 
 ```
 
-
 ### Error: No se puede conectar a PostgreSQL
-
 
 ```bash
 # Verificar que PostgreSQL esté corriendo
@@ -352,9 +316,7 @@ docker restart a4co-postgres
 
 ```
 
-
 ### Error: Dependencias no se instalan correctamente
-
 
 ```bash
 # Limpiar cache de pnpm
@@ -366,9 +328,7 @@ pnpm run reinstall
 
 ```
 
-
 ### Error: Cambios no se reflejan (Hot Reload)
-
 
 ```bash
 # Verificar que el sync-service esté corriendo (solo con Docker)
@@ -379,13 +339,11 @@ docker ps | grep sync
 
 ```
 
-
 ---
 
 ## 📊 MONITOREO Y LOGS
 
 ### Ver logs en tiempo real
-
 
 ```bash
 # Con Docker Compose
@@ -398,9 +356,7 @@ pnpm dev
 
 ```
 
-
 ### Verificar estado de los servicios
-
 
 ```bash
 # Ver contenedores Docker
@@ -417,7 +373,6 @@ curl http://localhost:8222/varz
 
 
 ```
-
 
 ---
 

@@ -4,7 +4,6 @@
 
 ### 1. **Arrancar el Servidor**
 
-
 ```bash
 # Opción A: Script automatizado
 ./start-dashboard.sh
@@ -16,9 +15,7 @@ pnpm dev --port 3001
 
 ```
 
-
 ### 2. **URLs Principales**
-
 
 ```
 
@@ -29,9 +26,7 @@ pnpm dev --port 3001
 
 ```
 
-
 ### 3. **APIs Directas para Probar**
-
 
 ```
 
@@ -47,7 +42,6 @@ pnpm dev --port 3001
 
 
 ```
-
 
 ---
 
@@ -196,7 +190,6 @@ pnpm dev --port 3001
 
 ### **Si no arranca:**
 
-
 ```bash
 # Verificar que estás en el directorio correcto
 pwd
@@ -211,7 +204,6 @@ pnpm dev --port 3001
 
 
 ```
-
 
 ### **Si las APIs no responden:**
 

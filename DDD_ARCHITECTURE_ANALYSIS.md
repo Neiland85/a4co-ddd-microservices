@@ -13,7 +13,8 @@
    - Línea 2: `import { notificationService } from "@/lib/notifications/notification-service"`
 
 2. **⚠️ ADVERTENCIA: Duplicación de lógica de dominio**
-   - Existe un `NotificationService` en la aplicación web que duplica funcionalidad del microservicio `notification-service`
+   - Existe un `NotificationService` en la aplicación web que duplica funcionalidad del microservicio
+     `notification-service`
    - Esto viola el principio de Single Source of Truth
 
 3. **⚠️ ADVERTENCIA: Acoplamiento a través de bases compartidas**
@@ -23,7 +24,6 @@
 ## 🏗️ ARQUITECTURA ACTUAL
 
 ### Estructura del Monorepo
-
 
 ```
 
@@ -44,7 +44,6 @@
 
 ```
 
-
 ### Bounded Contexts Identificados
 
 1. **Authentication Context** (`auth-service`)
@@ -60,17 +59,15 @@
 
 **Problema:**
 
-
 ```typescript
 // apps/web/v0dev/f-modern-backoffice/app/api/security/scan/route.ts
-import { notificationService } from '@/lib/notifications/notification-service';
-
+import { notificationService } from "@/lib/notifications/notification-service";
 ```
-
 
 **Por qué es una violación:**
 
-- La aplicación web está accediendo directamente a lógica de dominio que debería estar encapsulada en el `notification-service`
+- La aplicación web está accediendo directamente a lógica de dominio que debería estar encapsulada en el
+  `notification-service`
 - Rompe el aislamiento entre bounded contexts
 - Crea acoplamiento directo entre la capa de presentación y la lógica de dominio
 
@@ -100,20 +97,17 @@ import { notificationService } from '@/lib/notifications/notification-service';
 
 **Acción inmediata:**
 
-
 ```typescript
 // ANTES (INCORRECTO)
-import { notificationService } from '@/lib/notifications/notification-service';
+import { notificationService } from "@/lib/notifications/notification-service";
 
 // DESPUÉS (CORRECTO)
-import { NotificationApiClient } from '@a4co/shared-utils/api-clients';
+import { NotificationApiClient } from "@a4co/shared-utils/api-clients";
 
 const notificationClient = new NotificationApiClient({
   baseURL: process.env.NOTIFICATION_SERVICE_URL,
 });
-
 ```
-
 
 **Pasos de refactoring:**
 
@@ -124,7 +118,6 @@ const notificationClient = new NotificationApiClient({
 ### 2. Implementar Anti-Corruption Layer (ACL)
 
 **Crear adaptadores para la comunicación entre bounded contexts:**
-
 
 ```typescript
 // packages/shared-utils/src/adapters/notification.adapter.ts
@@ -137,23 +130,20 @@ export class NotificationHttpAdapter implements NotificationPort {
   constructor(private httpClient: HttpClient) {}
 
   async sendNotification(params: NotificationDTO): Promise<void> {
-    await this.httpClient.post('/api/v1/notifications', params);
+    await this.httpClient.post("/api/v1/notifications", params);
   }
 }
-
 ```
-
 
 ### 3. Establecer Contratos Explícitos
 
 **Crear un paquete de contratos compartidos:**
 
-
 ```typescript
 // packages/contracts/src/notification/index.ts
 export interface NotificationContract {
-  type: 'email' | 'sms' | 'push' | 'slack';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  type: "email" | "sms" | "push" | "slack";
+  priority: "low" | "medium" | "high" | "critical";
   recipient: string;
   subject: string;
   body: string;
@@ -162,12 +152,10 @@ export interface NotificationContract {
 
 export interface NotificationResponse {
   id: string;
-  status: 'queued' | 'sent' | 'failed';
+  status: "queued" | "sent" | "failed";
   timestamp: string;
 }
-
 ```
-
 
 ### 4. Refactorizar la Aplicación Web
 
@@ -176,35 +164,31 @@ export interface NotificationResponse {
 1. Remover `/apps/web/v0dev/f-modern-backoffice/lib/notifications/notification-service.ts`
 2. Reemplazar con llamadas al API del microservicio
 
-
 ```typescript
 // apps/web/v0dev/f-modern-backoffice/app/api/security/scan/route.ts
-import { NotificationApiClient } from '@a4co/shared-utils/api-clients';
+import { NotificationApiClient } from "@a4co/shared-utils/api-clients";
 
 export async function POST(request: NextRequest) {
   const notificationClient = new NotificationApiClient();
 
   // En lugar de usar el servicio directamente
   await notificationClient.send({
-    type: 'security_alert',
-    priority: 'critical',
+    type: "security_alert",
+    priority: "critical",
     // ... resto de parámetros
   });
 }
-
 ```
-
 
 ### 5. Implementar Event-Driven Communication
 
 **Para reducir acoplamiento, usar eventos de dominio:**
 
-
 ```typescript
 // packages/shared-utils/src/events/security.events.ts
 export class SecurityThreatDetectedEvent {
   constructor(
-    public readonly threatLevel: 'low' | 'medium' | 'high' | 'critical',
+    public readonly threatLevel: "low" | "medium" | "high" | "critical",
     public readonly source: string,
     public readonly timestamp: Date,
     public readonly details: any
@@ -213,14 +197,11 @@ export class SecurityThreatDetectedEvent {
 
 // El notification-service se suscribe a estos eventos
 // En lugar de ser llamado directamente
-
 ```
-
 
 ### 6. Mejorar la Separación de Concerns
 
 **Estructura recomendada por servicio:**
-
 
 ```
 
@@ -243,7 +224,6 @@ apps/[service-name]/
 
 
 ```
-
 
 ## 📋 PLAN DE ACCIÓN
 
@@ -275,7 +255,6 @@ apps/[service-name]/
 
 ### 1. Regla de Dependencias
 
-
 ```
 
 
@@ -285,7 +264,6 @@ Aplicaciones Web → API Clients → Microservicios → Domain Logic
 
 
 ```
-
 
 ### 2. Prohibiciones Estrictas
 
@@ -305,32 +283,28 @@ Aplicaciones Web → API Clients → Microservicios → Domain Logic
 
 ### ESLint Rules Recomendadas
 
-
 ```javascript
 // .eslintrc.js
 module.exports = {
   rules: {
-    'no-restricted-imports': [
-      'error',
+    "no-restricted-imports": [
+      "error",
       {
         patterns: [
           // Prohibir importaciones directas entre servicios
-          'apps/*/src/**',
-          '../../../apps/*',
+          "apps/*/src/**",
+          "../../../apps/*",
           // Permitir solo shared-utils y contracts
-          '!@a4co/shared-utils/*',
-          '!@a4co/contracts/*',
+          "!@a4co/shared-utils/*",
+          "!@a4co/contracts/*",
         ],
       },
     ],
   },
 };
-
 ```
 
-
 ### Script de Validación
-
 
 ```bash
 #!/bin/bash
@@ -348,7 +322,6 @@ echo "✅ No DDD violations found"
 
 
 ```
-
 
 ## 📚 RECURSOS Y REFERENCIAS
 

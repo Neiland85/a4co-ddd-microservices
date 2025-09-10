@@ -2,7 +2,8 @@
 
 ## 📋 Introducción
 
-Este proyecto incluye una colección de shortcuts personalizados para GitHub Copilot, organizados por roles técnicos. Además, se ha implementado un dashboard interactivo para visualizar y copiar estos comandos desde una interfaz web.
+Este proyecto incluye una colección de shortcuts personalizados para GitHub Copilot, organizados por roles técnicos.
+Además, se ha implementado un dashboard interactivo para visualizar y copiar estos comandos desde una interfaz web.
 
 ---
 

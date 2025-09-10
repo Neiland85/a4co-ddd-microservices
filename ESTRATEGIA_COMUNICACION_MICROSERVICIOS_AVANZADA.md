@@ -45,7 +45,6 @@
 
 ### 🛒 **Order Service - Eventos Publicados**
 
-
 ```typescript
 // Evento: Orden creada (inicia saga de procesamiento)
 export interface OrderCreatedEvent {
@@ -69,12 +68,10 @@ export interface OrderConfirmedEvent {
 export interface OrderCancelledEvent {
   orderId: string;
   reason: string;
-  cancelledBy: 'customer' | 'system' | 'payment-failure';
+  cancelledBy: "customer" | "system" | "payment-failure";
   refundRequired: boolean;
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -83,7 +80,6 @@ export interface OrderCancelledEvent {
 - `OrderCancelledEvent` → `inventory-service`, `payment-service`, `notification-service`
 
 ### 📦 **Inventory Service - Eventos Publicados**
-
 
 ```typescript
 // Evento: Stock reservado exitosamente
@@ -100,7 +96,7 @@ export interface StockReleasedEvent {
   productId: string;
   orderId: string;
   quantityReleased: number;
-  reason: 'order-cancelled' | 'reservation-expired';
+  reason: "order-cancelled" | "reservation-expired";
   newStock: number;
 }
 
@@ -120,9 +116,7 @@ export interface StockDepletedEvent {
   lastOrderId: string;
   artisanId: string;
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -132,7 +126,6 @@ export interface StockDepletedEvent {
 - `StockDepletedEvent` → `artisan-service`, `notification-service`, `product-service`
 
 ### 💳 **Payment Service - Eventos Publicados**
-
 
 ```typescript
 // Evento: Pago iniciado
@@ -173,9 +166,7 @@ export interface RefundProcessedEvent {
   reason: string;
   processedAt: Date;
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -185,7 +176,6 @@ export interface RefundProcessedEvent {
 - `RefundProcessedEvent` → `order-service`, `notification-service`, `analytics-service`
 
 ### 👤 **User Service - Eventos Publicados**
-
 
 ```typescript
 // Evento: Usuario registrado
@@ -219,9 +209,7 @@ export interface UserPreferencesChangedEvent {
   };
   updatedAt: Date;
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -230,7 +218,6 @@ export interface UserPreferencesChangedEvent {
 - `UserPreferencesChangedEvent` → `notification-service`, `product-service`
 
 ### 🎨 **Artisan Service - Eventos Publicados**
-
 
 ```typescript
 // Evento: Artesano verificado
@@ -263,9 +250,7 @@ export interface ArtisanStatusChangedEvent {
   reason: string;
   changedAt: Date;
 }
-
 ```
-
 
 **Suscriptores:**
 
@@ -278,7 +263,6 @@ export interface ArtisanStatusChangedEvent {
 ## 🔄 PATRONES DE COMUNICACIÓN IMPLEMENTADOS
 
 ### 1. **Saga Pattern - Proceso de Orden Completa**
-
 
 ```typescript
 // Secuencia de eventos para crear una orden
@@ -300,9 +284,7 @@ PaymentFailedEvent → OrderCancelledEvent → StockReleasedEvent
 
 ```
 
-
 ### 2. **Event Sourcing para Auditoría**
-
 
 ```typescript
 // Ejemplo: Tracking completo de una orden
@@ -315,12 +297,9 @@ export interface EventStore {
 // Reconstruir estado de orden desde eventos
 const orderEvents = await eventStore.getEvents(orderId);
 const order = Order.fromEvents(orderEvents);
-
 ```
 
-
 ### 3. **CQRS (Command Query Responsibility Segregation)**
-
 
 ```typescript
 // Commands (modifican estado)
@@ -338,16 +317,13 @@ export interface GetOrderQuery {
 }
 
 // Separación clara entre escritura y lectura
-
 ```
-
 
 ---
 
 ## 🔧 IMPLEMENTACIÓN DEL MESSAGE BUS CON NATS
 
 ### Configuración Avanzada de NATS
-
 
 ```typescript
 // packages/shared-utils/src/events/enhanced-event-bus.ts
@@ -359,8 +335,8 @@ export class EnhancedNatsEventBus implements IEventBus {
   async setupStreams(): Promise<void> {
     // Stream para eventos de orden
     await this.js?.addStream({
-      name: 'ORDERS',
-      subjects: ['order.*'],
+      name: "ORDERS",
+      subjects: ["order.*"],
       storage: StorageType.File,
       retention: RetentionPolicy.Workqueue,
       max_age: 7 * 24 * 60 * 60 * 1000, // 7 días
@@ -368,16 +344,16 @@ export class EnhancedNatsEventBus implements IEventBus {
 
     // Stream para eventos de inventario
     await this.js?.addStream({
-      name: 'INVENTORY',
-      subjects: ['inventory.*'],
+      name: "INVENTORY",
+      subjects: ["inventory.*"],
       storage: StorageType.File,
       retention: RetentionPolicy.Interest,
     });
 
     // Stream para eventos de pago
     await this.js?.addStream({
-      name: 'PAYMENTS',
-      subjects: ['payment.*'],
+      name: "PAYMENTS",
+      subjects: ["payment.*"],
       storage: StorageType.File,
       retention: RetentionPolicy.Limits,
     });
@@ -395,18 +371,15 @@ export class EnhancedNatsEventBus implements IEventBus {
         eventId: crypto.randomUUID(),
         correlationId: event.correlationId || crypto.randomUUID(),
         publishedAt: new Date().toISOString(),
-        version: '1.0',
+        version: "1.0",
         source: this.serviceName,
       },
     };
   }
 }
-
 ```
 
-
 ### Dead Letter Queue Pattern
-
 
 ```typescript
 // Manejo de eventos fallidos
@@ -421,7 +394,7 @@ export class DeadLetterHandler {
   }
 
   private async sendToDeadLetter(event: DomainEvent, error: Error): Promise<void> {
-    await this.eventBus.publish('dead-letter.events', {
+    await this.eventBus.publish("dead-letter.events", {
       originalEvent: event,
       error: error.message,
       failedAt: new Date(),
@@ -429,16 +402,13 @@ export class DeadLetterHandler {
     });
   }
 }
-
 ```
-
 
 ---
 
 ## 📊 MONITOREO Y OBSERVABILIDAD
 
 ### Métricas Clave
-
 
 ```typescript
 // Métricas de eventos por servicio
@@ -453,15 +423,13 @@ export interface EventMetrics {
 
 // Dashboard de salud del sistema
 export interface SystemHealth {
-  natsConnectionStatus: 'connected' | 'disconnected' | 'reconnecting';
+  natsConnectionStatus: "connected" | "disconnected" | "reconnecting";
   activeSubscriptions: number;
   messageBacklog: number;
   serviceLatency: Record<string, number>;
   errorRate: number;
 }
-
 ```
-
 
 ### Alertas Críticas
 
@@ -476,7 +444,6 @@ export interface SystemHealth {
 ## 🔒 SEGURIDAD Y CONFIABILIDAD
 
 ### Autenticación Inter-Servicios
-
 
 ```typescript
 // JWT para comunicación entre servicios
@@ -493,12 +460,9 @@ export class ServiceAuthMiddleware {
     // Verificar que el servicio puede publicar/suscribirse a topics específicos
   }
 }
-
 ```
 
-
 ### Idempotencia y Deduplicación
-
 
 ```typescript
 // Garantizar que eventos duplicados no causen problemas
@@ -514,9 +478,7 @@ export class EventDeduplicator {
     // Persistir en Redis con TTL
   }
 }
-
 ```
-
 
 ---
 
@@ -550,4 +512,5 @@ export class EventDeduplicator {
 4. **Mantenibilidad**: Contratos claros de eventos
 5. **Performance**: Comunicación asíncrona por defecto
 
-**Esta estrategia posiciona al marketplace para manejar crecimiento exponencial mientras mantiene la calidad del servicio.**
+**Esta estrategia posiciona al marketplace para manejar crecimiento exponencial mientras mantiene la calidad del
+servicio.**

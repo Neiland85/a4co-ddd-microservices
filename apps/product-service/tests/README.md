@@ -48,7 +48,6 @@ Este directorio contiene las pruebas unitarias completas para el `ProductService
 
 ### Comando Básico
 
-
 ```bash
 # Desde el directorio raíz del proyecto
 pnpm test --filter=product-service
@@ -60,9 +59,7 @@ pnpm test
 
 ```
 
-
 ### Comando con Coverage
-
 
 ```bash
 pnpm test:coverage --filter=product-service
@@ -70,9 +67,7 @@ pnpm test:coverage --filter=product-service
 
 ```
 
-
 ### Comando con Watch Mode
-
 
 ```bash
 pnpm test:watch --filter=product-service
@@ -80,9 +75,7 @@ pnpm test:watch --filter=product-service
 
 ```
 
-
 ### Ejecutar Tests Específicos
-
 
 ```bash
 # Solo tests del service
@@ -96,7 +89,6 @@ pnpm test --testNamePattern="Casos de Error"
 
 
 ```
-
 
 ## Configuración de Jest
 
@@ -118,60 +110,45 @@ pnpm test --testNamePattern="Casos de Error"
 
 ### BaseService Mock
 
-
 ```typescript
 validateRequired: (value, field) => {
-  if (value === undefined || value === null || value === '') {
+  if (value === undefined || value === null || value === "") {
     throw new Error(`${field} is required`);
   }
   return value;
 };
-
 ```
 
-
 ### BaseController Mock
-
 
 ```typescript
 validateRequest: (req, fields) => {
   // Validación de campos requeridos
 };
-
 ```
-
 
 ## Assertions y Validaciones
 
 ### Assertions Básicos
 
-
 ```typescript
-expect(result).toContain('Product');
-expect(result).toContain('created');
-expect(typeof result).toBe('string');
-
+expect(result).toContain("Product");
+expect(result).toContain("created");
+expect(typeof result).toBe("string");
 ```
-
 
 ### Validaciones de Error
 
-
 ```typescript
-expect(result).toContain('Error in addProduct');
-expect(result).toContain('name is required');
-
+expect(result).toContain("Error in addProduct");
+expect(result).toContain("name is required");
 ```
-
 
 ### Validaciones de Excepción
 
-
 ```typescript
 expect(() => controller.addProduct(invalidRequest)).toThrow();
-
 ```
-
 
 ## Cobertura de Código
 
@@ -194,7 +171,6 @@ expect(() => controller.addProduct(invalidRequest)).toThrow();
 
 #### Mock no encontrado
 
-
 ```bash
 # Verificar que setup.ts esté configurado correctamente
 jest.setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
@@ -202,9 +178,7 @@ jest.setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 
 ```
 
-
 #### TypeScript errors
-
 
 ```bash
 # Verificar tsconfig.spec.json
@@ -213,9 +187,7 @@ jest.setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 
 ```
 
-
 #### Coverage bajo
-
 
 ```bash
 # Verificar collectCoverageFrom en jest.config.js
@@ -224,9 +196,7 @@ jest.setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 
 ```
 
-
 ### Debug Tests
-
 
 ```bash
 # Ejecutar con verbose
@@ -237,7 +207,6 @@ pnpm test --testNamePattern="should create a product" --verbose
 
 
 ```
-
 
 ## Próximos Pasos
 

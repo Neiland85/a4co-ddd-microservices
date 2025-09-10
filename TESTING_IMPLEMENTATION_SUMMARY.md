@@ -28,7 +28,6 @@ Se han implementado pruebas unitarias completas para dos microservicios principa
 
 ### Auth Service (`apps/auth-service/`)
 
-
 ```bash
 test/
 ├── auth.service.spec.ts    # Tests principales del servicio
@@ -41,9 +40,7 @@ test/
 
 ```
 
-
 ### Product Service (`apps/product-service/`)
-
 
 ```bash
 tests/
@@ -54,7 +51,6 @@ tests/
 
 
 ```
-
 
 ## 🧪 Casos de Test Implementados
 
@@ -112,19 +108,15 @@ tests/
 
 ### Jest Configuration
 
-
 ```javascript
 // Configuración base extendida
-displayName: 'service-name';
-testMatch: ['tests/**/*.spec.ts'];
-collectCoverageFrom: ['src/**/*.ts'];
-setupFilesAfterEnv: ['tests/setup.ts'];
-
+displayName: "service-name";
+testMatch: ["tests/**/*.spec.ts"];
+collectCoverageFrom: ["src/**/*.ts"];
+setupFilesAfterEnv: ["tests/setup.ts"];
 ```
 
-
 ### TypeScript Configuration
-
 
 ```json
 {
@@ -135,9 +127,7 @@ setupFilesAfterEnv: ['tests/setup.ts'];
     "noImplicitAny": false
   }
 }
-
 ```
-
 
 ### Mocks Implementados
 
@@ -150,7 +140,6 @@ setupFilesAfterEnv: ['tests/setup.ts'];
 ## 🚀 Scripts de Ejecución
 
 ### Comandos Básicos
-
 
 ```bash
 # Ejecutar todos los tests
@@ -166,9 +155,7 @@ pnpm test:watch --filter=product-service
 
 ```
 
-
 ### Scripts Personalizados
-
 
 ```bash
 # Auth Service
@@ -181,7 +168,6 @@ cd apps/product-service/tests
 
 
 ```
-
 
 ### Opciones de Scripts
 
@@ -210,7 +196,6 @@ cd apps/product-service/tests
 
 ### Tipos de Assertions
 
-
 ```typescript
 // Validaciones básicas
 expect(result).toBe(expectedValue);
@@ -226,7 +211,6 @@ expect(typeof service.method).toBe('function');
 
 
 ```
-
 
 ### Patrón AAA (Arrange-Act-Assert)
 
@@ -327,4 +311,5 @@ La implementación de testing para los microservicios A4CO proporciona:
 4. **Documentación detallada** de cada test
 5. **Base sólida** para futuras expansiones
 
-Esta implementación establece un estándar de calidad que puede ser replicado en otros microservicios del proyecto, asegurando la robustez y mantenibilidad del código a largo plazo.
+Esta implementación establece un estándar de calidad que puede ser replicado en otros microservicios del proyecto,
+asegurando la robustez y mantenibilidad del código a largo plazo.

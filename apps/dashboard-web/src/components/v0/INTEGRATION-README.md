@@ -2,7 +2,6 @@
 
 ## 📁 Estructura de Archivos V0
 
-
 ```bash
 apps/dashboard-web/src/components/v0/
 ├── ProductCatalogV0.tsx     # Componente de V0 → ProductCatalog
@@ -14,7 +13,6 @@ apps/dashboard-web/src/components/v0/
 
 ```
 
-
 ## 🔗 Pasos de Integración Rápida
 
 ### 1. Generar en V0.dev
@@ -23,7 +21,6 @@ apps/dashboard-web/src/components/v0/
 - Copiar código generado
 
 ### 2. Integración Manual
-
 
 ```bash
 # Crear archivo del componente
@@ -36,26 +33,21 @@ touch src/components/v0/ProductCatalogV0.tsx
 
 ```
 
-
 ### 3. Ajustes Necesarios
 
 #### Imports típicos a cambiar
 
-
 ```typescript
 // V0 genera esto:
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 // Cambiar por:
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 ```
 
-
 #### Conectar con nuestros hooks
-
 
 ```typescript
 // Agregar al inicio del componente V0:
@@ -64,9 +56,7 @@ export default function ProductCatalogV0() {
 
   // Resto del código de V0...
 }
-
 ```
-
 
 ## 🎯 URLs de Prueba
 

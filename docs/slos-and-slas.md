@@ -2,7 +2,8 @@
 
 ## 📊 Resumen Ejecutivo
 
-Este documento define los Objetivos de Nivel de Servicio (SLOs) y Acuerdos de Nivel de Servicio (SLAs) para los microservicios de A4CO.
+Este documento define los Objetivos de Nivel de Servicio (SLOs) y Acuerdos de Nivel de Servicio (SLAs) para los
+microservicios de A4CO.
 
 ## 🎯 SLOs por Servicio
 

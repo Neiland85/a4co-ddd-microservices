@@ -4,19 +4,15 @@
 
 ### **Stack Tecnológico**
 
-
 ```typescript
 // Framework: Next.js 15.4.1 + React 19
 // Styling: Tailwind CSS 4
 // UI Library: Radix UI components
 // TypeScript: Strict mode habilitado
 // Hooks: Custom hooks integrados
-
 ```
 
-
 ### **🎨 Paleta de Colores Oficial de Jaén**
-
 
 ```css
 :root {
@@ -32,12 +28,9 @@
   --gradient-secondary: from-green-500 to-emerald-600;
   --gradient-background: from-amber-50 via-white to-amber-50;
 }
-
 ```
 
-
 ### **📦 Tipos TypeScript Existentes**
-
 
 ```typescript
 // Producto Local
@@ -92,16 +85,13 @@ interface SalesOpportunity {
   quantity: string;
   harvestDate: string;
   location: string;
-  status: 'active' | 'pending' | 'closed';
+  status: "active" | "pending" | "closed";
   tags: string[];
   contact: string;
 }
-
 ```
 
-
 ### **🪝 Hooks Disponibles**
-
 
 ```typescript
 // Hook de productos
@@ -115,12 +105,9 @@ const { opportunities, loading, createOpportunity, updateStatus } = useSalesOppo
 
 // Hook de geolocalización
 const { position, loading, getNearbyArtisans, calculateDistance } = useGeolocation();
-
 ```
 
-
 ### **🎯 APIs Disponibles**
-
 
 ```typescript
 // Endpoints funcionales
@@ -131,13 +118,11 @@ GET /api/sales-opportunities?status=active&category=aceites
 
 ```
 
-
 ---
 
 ## 🎨 **PROMPTS PARA V0.DEV**
 
 ### **1. 🏠 ProductCatalog Mejorado**
-
 
 ````prompt
 Crear un catálogo de productos premium para un mercado local de aceite de oliva de Jaén, España.
@@ -186,7 +171,6 @@ CARACTERÍSTICAS ESPECIALES:
 - Loading skeleton con aceitunas animadas
 - Responsive design con breakpoints de Tailwind
 
-
 ````
 
 ### **2. 🔍 ProductSearch Avanzado**
@@ -233,7 +217,6 @@ CARACTERÍSTICAS:
 - Animaciones smooth para dropdown y resultados
 - Keyboard navigation (arrow keys, enter, escape)
 - Mobile-first design con gestos touch
-
 
 ````
 
@@ -287,7 +270,6 @@ CARACTERÍSTICAS:
 - Skeleton loading para cada card
 - Responsive con masonry layout en desktop
 
-
 ````
 
 ### **4. 💼 SalesOpportunityBoard**
@@ -339,7 +321,6 @@ CARACTERÍSTICAS:
 - Drag & drop con feedback visual
 - Stats header con métricas clave
 
-
 ````
 
 ### **5. 🗺️ MarketplaceDashboard Principal**
@@ -387,7 +368,6 @@ CARACTERÍSTICAS:
 - Interactive tooltips y modals
 - Export/share functionality
 
-
 ```
 
 
@@ -417,23 +397,10 @@ CARACTERÍSTICAS:
 
 ```
 
-
-src/components/
-├── market/ # Componentes actuales
-│ ├── ProductCatalog.tsx
-│ ├── ProductSearch.tsx
-│ └── MarketplaceDashboard.tsx
-├── v0/ # Componentes de V0
-│ ├── ProductCatalogV0.tsx
-│ ├── ProductSearchV0.tsx
-│ ├── ArtisanDirectoryV0.tsx
-│ ├── SalesOpportunityBoardV0.tsx
-│ └── MarketplaceDashboardV0.tsx
-└── ui/ # Componentes base Radix UI
-├── button.tsx
-├── card.tsx
-└── input.tsx
-
+src/components/ ├── market/ # Componentes actuales │ ├── ProductCatalog.tsx │ ├── ProductSearch.tsx │ └──
+MarketplaceDashboard.tsx ├── v0/ # Componentes de V0 │ ├── ProductCatalogV0.tsx │ ├── ProductSearchV0.tsx │ ├──
+ArtisanDirectoryV0.tsx │ ├── SalesOpportunityBoardV0.tsx │ └── MarketplaceDashboardV0.tsx └── ui/ # Componentes base
+Radix UI ├── button.tsx ├── card.tsx └── input.tsx
 
 ```
 
@@ -445,4 +412,3 @@ Voy a crear scripts para facilitar la integración:
 
 
 ```
-

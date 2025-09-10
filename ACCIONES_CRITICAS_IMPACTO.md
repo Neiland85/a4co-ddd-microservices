@@ -4,7 +4,6 @@
 
 ### Comando inmediato
 
-
 ```bash
 # Instalar y ejecutar AHORA
 pnpm add -D @next/bundle-analyzer
@@ -13,39 +12,35 @@ ANALYZE=true pnpm --filter dashboard-web build
 
 ```
 
-
 ### Script automatizado para detectar chunks problemáticos
-
 
 ```typescript
 // scripts/bundle-killer.ts
-import { execSync } from 'child_process';
-import { readFileSync } from 'fs';
+import { execSync } from "child_process";
+import { readFileSync } from "fs";
 
 const THRESHOLD_KB = 50; // Alerta si un chunk > 50KB
 
 const analyzeBundle = () => {
-  const buildOutput = execSync('cd apps/dashboard-web && ANALYZE=true next build', {
-    encoding: 'utf8',
+  const buildOutput = execSync("cd apps/dashboard-web && ANALYZE=true next build", {
+    encoding: "utf8",
   });
-  const statsFile = JSON.parse(readFileSync('.next/analyze/client.json', 'utf8'));
+  const statsFile = JSON.parse(readFileSync(".next/analyze/client.json", "utf8"));
 
   const problematicChunks = Object.entries(statsFile.chunks)
     .filter(([_, chunk]) => chunk.size > THRESHOLD_KB * 1024)
     .map(([name, chunk]) => ({
       name,
-      size: (chunk.size / 1024).toFixed(2) + 'KB',
+      size: (chunk.size / 1024).toFixed(2) + "KB",
       modules: chunk.modules.filter(m => m.size > 10000).map(m => m.name),
     }));
 
-  console.log('🚨 CHUNKS CRÍTICOS:', problematicChunks);
+  console.log("🚨 CHUNKS CRÍTICOS:", problematicChunks);
   return problematicChunks;
 };
 
 // Ejecutar: npx tsx scripts/bundle-killer.ts
-
 ```
-
 
 ### Métricas clave a extraer
 
@@ -55,22 +50,21 @@ const analyzeBundle = () => {
 
 ### Refactor inmediato basado en datos
 
-
 ```javascript
 // next.config.js - Optimización agresiva
 module.exports = {
   webpack: config => {
     config.optimization.splitChunks = {
-      chunks: 'all',
+      chunks: "all",
       cacheGroups: {
         react: {
           test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
-          name: 'react-vendor',
+          name: "react-vendor",
           priority: 10,
         },
         commons: {
           test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
+          name: "vendor",
           priority: 9,
         },
       },
@@ -78,14 +72,11 @@ module.exports = {
     return config;
   },
 };
-
 ```
-
 
 ## 2. 💀 Dead Code Detection (Impacto: -20% bundle, -15% complejidad)
 
 ### Comando inmediato
-
 
 ```bash
 # Instalar y ejecutar
@@ -95,38 +86,34 @@ npx ts-prune --project tsconfig.json --ignore "*.test.ts|*.spec.ts" > dead-code-
 
 ```
 
-
 ### Script para análisis profundo
-
 
 ```typescript
 // scripts/dead-code-hunter.ts
-import { execSync } from 'child_process';
-import * as fs from 'fs';
+import { execSync } from "child_process";
+import * as fs from "fs";
 
 const huntDeadCode = () => {
   // 1. ts-prune para exports no usados
-  const tsPruneOutput = execSync('npx ts-prune', { encoding: 'utf8' });
+  const tsPruneOutput = execSync("npx ts-prune", { encoding: "utf8" });
 
   // 2. Análisis de imports no usados con regex
   const findUnusedImports = () => {
-    const files = execSync('find apps -name "*.ts" -o -name "*.tsx"', { encoding: 'utf8' }).split(
-      '\n'
-    );
+    const files = execSync('find apps -name "*.ts" -o -name "*.tsx"', { encoding: "utf8" }).split("\n");
     const unusedImports = [];
 
     files.forEach(file => {
       if (!file) return;
-      const content = fs.readFileSync(file, 'utf8');
+      const content = fs.readFileSync(file, "utf8");
       const imports = content.match(/import\s+{([^}]+)}\s+from/g) || [];
 
       imports.forEach(imp => {
         const symbols = imp
           .match(/{([^}]+)}/)[1]
-          .split(',')
+          .split(",")
           .map(s => s.trim());
         symbols.forEach(symbol => {
-          const regex = new RegExp(`\\b${symbol}\\b`, 'g');
+          const regex = new RegExp(`\\b${symbol}\\b`, "g");
           const uses = (content.match(regex) || []).length;
           if (uses === 1) {
             // Solo en el import
@@ -142,19 +129,17 @@ const huntDeadCode = () => {
   // 3. Archivos nunca importados
   const orphanFiles = execSync(
     `comm -23 <(find apps -name "*.ts" -o -name "*.tsx" | sort) <(grep -r "from" apps --include="*.ts" --include="*.tsx" | grep -oE "'[^']+'" | sed "s/'//g" | sort -u)`,
-    { shell: '/bin/bash', encoding: 'utf8' }
+    { shell: "/bin/bash", encoding: "utf8" }
   );
 
   return {
-    tsProblems: tsPruneOutput.split('\n').length,
+    tsProblems: tsPruneOutput.split("\n").length,
     unusedImports: findUnusedImports(),
-    orphanFiles: orphanFiles.split('\n').filter(Boolean),
-    estimatedSizeReduction: `${tsPruneOutput.split('\n').length * 0.5}KB`, // Estimación conservadora
+    orphanFiles: orphanFiles.split("\n").filter(Boolean),
+    estimatedSizeReduction: `${tsPruneOutput.split("\n").length * 0.5}KB`, // Estimación conservadora
   };
 };
-
 ```
-
 
 ### Métricas clave
 
@@ -165,7 +150,6 @@ const huntDeadCode = () => {
 ## 3. 🔄 Complejidad Ciclomática en Domain/Handlers (Impacto: -30% bugs, +50% mantenibilidad)
 
 ### Comando inmediato
-
 
 ```bash
 # Análisis de complejidad con ESLint
@@ -179,15 +163,13 @@ npx eslint "apps/*/src/domain/**/*.ts" "apps/*/src/application/handlers/**/*.ts"
 
 ```
 
-
 ### Script para hot spots de complejidad
-
 
 ```typescript
 // scripts/complexity-hotspots.ts
-import * as ts from 'typescript';
-import * as fs from 'fs';
-import { glob } from 'glob';
+import * as ts from "typescript";
+import * as fs from "fs";
+import { glob } from "glob";
 
 interface ComplexityHotspot {
   file: string;
@@ -198,11 +180,11 @@ interface ComplexityHotspot {
 }
 
 const analyzeComplexity = async (): Promise<ComplexityHotspot[]> => {
-  const files = await glob('apps/*/src/{domain,application}/**/*.ts');
+  const files = await glob("apps/*/src/{domain,application}/**/*.ts");
   const hotspots: ComplexityHotspot[] = [];
 
   files.forEach(file => {
-    const content = fs.readFileSync(file, 'utf8');
+    const content = fs.readFileSync(file, "utf8");
     const sourceFile = ts.createSourceFile(file, content, ts.ScriptTarget.Latest);
 
     const visit = (node: ts.Node) => {
@@ -211,7 +193,7 @@ const analyzeComplexity = async (): Promise<ComplexityHotspot[]> => {
         const loc = node.getEnd() - node.getStart();
 
         if (complexity > 10) {
-          const name = node.name?.getText() || 'anonymous';
+          const name = node.name?.getText() || "anonymous";
           hotspots.push({
             file,
             function: name,
@@ -231,18 +213,16 @@ const analyzeComplexity = async (): Promise<ComplexityHotspot[]> => {
 };
 
 const getRefactorRecommendation = (complexity: number, node: ts.Node): string => {
-  if (complexity > 20) return 'CRÍTICO: Extraer a múltiples use cases';
-  if (complexity > 15) return 'ALTO: Aplicar patrón Strategy o Chain of Responsibility';
-  if (complexity > 10) return 'MEDIO: Extraer validaciones a Value Objects';
-  return 'BAJO: Considerar early returns';
+  if (complexity > 20) return "CRÍTICO: Extraer a múltiples use cases";
+  if (complexity > 15) return "ALTO: Aplicar patrón Strategy o Chain of Responsibility";
+  if (complexity > 10) return "MEDIO: Extraer validaciones a Value Objects";
+  return "BAJO: Considerar early returns";
 };
 
 // Top 10 funciones más complejas
 const top10 = await analyzeComplexity();
 console.table(top10.slice(0, 10));
-
 ```
-
 
 ### Métricas clave por capa DDD
 
@@ -257,7 +237,6 @@ console.table(top10.slice(0, 10));
 
 ### Comando inmediato
 
-
 ```bash
 # Profiler en desarrollo
 NEXT_PUBLIC_PROFILE=true pnpm --filter dashboard-web dev
@@ -265,9 +244,7 @@ NEXT_PUBLIC_PROFILE=true pnpm --filter dashboard-web dev
 
 ```
 
-
 ### Component render tracker
-
 
 ```typescript
 // hooks/useRenderTracker.ts
@@ -322,9 +299,7 @@ export const withRenderTracking = <P extends object>(
 
 ```
 
-
 ### Script para detectar componentes problemáticos
-
 
 ```typescript
 // scripts/render-analysis.ts
@@ -341,17 +316,14 @@ const analyzeRenders = async () => {
       component: commit.fiberName,
       duration: commit.duration,
       renderCount: commit.renderCount,
-      problem: commit.duration > 50 ? 'CRÍTICO' : 'ALTO',
+      problem: commit.duration > 50 ? "CRÍTICO" : "ALTO",
     }));
 
   return problematicComponents;
 };
-
 ```
 
-
 ### Refactors inmediatos React 19
-
 
 ```typescript
 // 1. Usar nuevas APIs de React 19
@@ -400,11 +372,9 @@ export const OptimizedDataTable = memo(({
 
 ```
 
-
 ## 5. 🔗 Dependencias Circulares y Acoplamiento (Impacto: -25% tiempo build, +40% modularidad)
 
 ### Comando inmediato
-
 
 ```bash
 # Detectar dependencias circulares
@@ -417,14 +387,12 @@ npx madge --image graph.svg apps/dashboard-web/src
 
 ```
 
-
 ### Script para análisis de acoplamiento
-
 
 ```typescript
 // scripts/coupling-analyzer.ts
-import { execSync } from 'child_process';
-import * as fs from 'fs';
+import { execSync } from "child_process";
+import * as fs from "fs";
 
 interface CouplingMetrics {
   module: string;
@@ -437,7 +405,7 @@ interface CouplingMetrics {
 
 const analyzeCoupling = async () => {
   // 1. Generar dependencias con madge
-  const dependencies = JSON.parse(execSync('npx madge --json apps/', { encoding: 'utf8' }));
+  const dependencies = JSON.parse(execSync("npx madge --json apps/", { encoding: "utf8" }));
 
   // 2. Calcular métricas
   const metrics: CouplingMetrics[] = Object.entries(dependencies).map(([module, deps]) => {
@@ -447,7 +415,7 @@ const analyzeCoupling = async () => {
     const instability = fanOut / (fanIn + fanOut || 1);
 
     // Detectar si es interfaz o implementación
-    const content = fs.readFileSync(module, 'utf8');
+    const content = fs.readFileSync(module, "utf8");
     const interfaces = (content.match(/interface\s+\w+/g) || []).length;
     const classes = (content.match(/class\s+\w+/g) || []).length;
     const abstractness = interfaces / (interfaces + classes || 1);
@@ -474,7 +442,7 @@ const analyzeCoupling = async () => {
 
   return {
     worstOffenders: problems.sort((a, b) => b.distance - a.distance).slice(0, 10),
-    circularDeps: execSync('npx madge --circular apps/', { encoding: 'utf8' }),
+    circularDeps: execSync("npx madge --circular apps/", { encoding: "utf8" }),
     recommendation: generateRefactorPlan(problems),
   };
 };
@@ -484,19 +452,16 @@ const generateRefactorPlan = (problems: CouplingMetrics[]) => {
     module: p.module,
     action:
       p.instability > 0.8
-        ? 'Extraer a paquete compartido'
+        ? "Extraer a paquete compartido"
         : p.fanOut > 10
-          ? 'Aplicar Dependency Inversion'
-          : 'Aumentar abstracciones',
-    priority: p.distance > 0.5 ? 'ALTA' : 'MEDIA',
+          ? "Aplicar Dependency Inversion"
+          : "Aumentar abstracciones",
+    priority: p.distance > 0.5 ? "ALTA" : "MEDIA",
   }));
 };
-
 ```
 
-
 ### Refactor pattern para romper ciclos
-
 
 ```typescript
 // ANTES: Dependencia circular
@@ -531,14 +496,11 @@ export class PaymentHandler {
     await this.processPayment(event.orderId, event.total);
   }
 }
-
 ```
-
 
 ---
 
 ## 🚀 COMANDO MAESTRO - Ejecutar TODO de una vez
-
 
 ```bash
 #!/bin/bash
@@ -573,6 +535,5 @@ echo "\n✅ Análisis completo en: ./reports/impact-summary.html"
 
 
 ```
-
 
 **Ejecuta esto AHORA y tendrás datos reales en < 5 minutos.**

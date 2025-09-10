@@ -6,7 +6,9 @@
 
 ## 🎯 RESUMEN EJECUTIVO
 
-Este documento detalla la implementación de persistencia DDD para el **product-service**, diseñando un esquema de base de datos que refleje fielmente el modelo de dominio, respetando aggregates, entidades y value objects, con implementación de repositorios usando Prisma ORM.
+Este documento detalla la implementación de persistencia DDD para el **product-service**, diseñando un esquema de base
+de datos que refleje fielmente el modelo de dominio, respetando aggregates, entidades y value objects, con
+implementación de repositorios usando Prisma ORM.
 
 ### Principios DDD en Persistencia
 
@@ -21,39 +23,32 @@ Este documento detalla la implementación de persistencia DDD para el **product-
 
 ### Product Aggregate Root
 
-
 ```typescript
 // apps/product-service/src/domain/aggregates/product.aggregate.ts
-import { AggregateRoot } from '@a4co/shared-utils';
-import {
-  ProductId,
-  ProductName,
-  ProductDescription,
-  Price,
-  CategoryId,
-} from '../value-objects/product-value-objects';
-import { ProductVariant } from '../entities/product-variant.entity';
-import { ProductImage } from '../entities/product-image.entity';
-import { ProductTag } from '../entities/product-tag.entity';
+import { AggregateRoot } from "@a4co/shared-utils";
+import { ProductId, ProductName, ProductDescription, Price, CategoryId } from "../value-objects/product-value-objects";
+import { ProductVariant } from "../entities/product-variant.entity";
+import { ProductImage } from "../entities/product-image.entity";
+import { ProductTag } from "../entities/product-tag.entity";
 import {
   ProductCreatedEvent,
   ProductUpdatedEvent,
   ProductVariantAddedEvent,
   ProductDeactivatedEvent,
-} from '../events/product-events';
+} from "../events/product-events";
 
 export enum ProductStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DISCONTINUED = 'discontinued',
+  DRAFT = "draft",
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  DISCONTINUED = "discontinued",
 }
 
 export enum ProductAvailability {
-  IN_STOCK = 'in_stock',
-  OUT_OF_STOCK = 'out_of_stock',
-  MADE_TO_ORDER = 'made_to_order',
-  SEASONAL = 'seasonal',
+  IN_STOCK = "in_stock",
+  OUT_OF_STOCK = "out_of_stock",
+  MADE_TO_ORDER = "made_to_order",
+  SEASONAL = "seasonal",
 }
 
 export class Product extends AggregateRoot {
@@ -273,12 +268,7 @@ export class Product extends AggregateRoot {
   }
 
   // Métodos de negocio
-  public updateBasicInfo(data: {
-    name?: string;
-    description?: string;
-    price?: number;
-    currency?: string;
-  }): void {
+  public updateBasicInfo(data: { name?: string; description?: string; price?: number; currency?: string }): void {
     const oldData = {
       name: this._name.value,
       description: this._description.value,
@@ -347,12 +337,7 @@ export class Product extends AggregateRoot {
     );
   }
 
-  public addImage(imageData: {
-    url: string;
-    altText?: string;
-    isPrimary?: boolean;
-    sortOrder?: number;
-  }): void {
+  public addImage(imageData: { url: string; altText?: string; isPrimary?: boolean; sortOrder?: number }): void {
     // Si es imagen primaria, quitar primary de las demás
     if (imageData.isPrimary) {
       this._images.forEach(img => img.setPrimary(false));
@@ -386,7 +371,7 @@ export class Product extends AggregateRoot {
 
   public activate(): void {
     if (this._status === ProductStatus.ACTIVE) {
-      throw new Error('Product is already active');
+      throw new Error("Product is already active");
     }
 
     this._status = ProductStatus.ACTIVE;
@@ -395,7 +380,7 @@ export class Product extends AggregateRoot {
 
   public deactivate(reason?: string): void {
     if (this._status === ProductStatus.INACTIVE) {
-      throw new Error('Product is already inactive');
+      throw new Error("Product is already inactive");
     }
 
     this._status = ProductStatus.INACTIVE;
@@ -404,7 +389,7 @@ export class Product extends AggregateRoot {
     this.addDomainEvent(
       new ProductDeactivatedEvent(this.id, {
         productId: this._productId.value,
-        reason: reason || 'Manual deactivation',
+        reason: reason || "Manual deactivation",
         deactivatedAt: new Date(),
       })
     );
@@ -483,17 +468,14 @@ export class Product extends AggregateRoot {
     };
   }
 }
-
 ```
-
 
 ### Value Objects
 
-
 ```typescript
 // apps/product-service/src/domain/value-objects/product-value-objects.ts
-import { ValueObject } from '@a4co/shared-utils';
-import { v4 as uuidv4 } from 'uuid';
+import { ValueObject } from "@a4co/shared-utils";
+import { v4 as uuidv4 } from "uuid";
 
 export class ProductId extends ValueObject<string> {
   constructor(value?: string) {
@@ -502,7 +484,7 @@ export class ProductId extends ValueObject<string> {
 
   public static fromString(value: string): ProductId {
     if (!value || value.trim().length === 0) {
-      throw new Error('ProductId cannot be empty');
+      throw new Error("ProductId cannot be empty");
     }
     return new ProductId(value);
   }
@@ -511,10 +493,10 @@ export class ProductId extends ValueObject<string> {
 export class ProductName extends ValueObject<string> {
   constructor(value: string) {
     if (!value || value.trim().length === 0) {
-      throw new Error('Product name cannot be empty');
+      throw new Error("Product name cannot be empty");
     }
     if (value.length > 200) {
-      throw new Error('Product name cannot exceed 200 characters');
+      throw new Error("Product name cannot exceed 200 characters");
     }
     super(value.trim());
   }
@@ -523,10 +505,10 @@ export class ProductName extends ValueObject<string> {
 export class ProductDescription extends ValueObject<string> {
   constructor(value: string) {
     if (!value || value.trim().length === 0) {
-      throw new Error('Product description cannot be empty');
+      throw new Error("Product description cannot be empty");
     }
     if (value.length > 2000) {
-      throw new Error('Product description cannot exceed 2000 characters');
+      throw new Error("Product description cannot exceed 2000 characters");
     }
     super(value.trim());
   }
@@ -535,10 +517,10 @@ export class ProductDescription extends ValueObject<string> {
 export class Price extends ValueObject<{ amount: number; currency: string }> {
   constructor(amount: number, currency: string) {
     if (amount < 0) {
-      throw new Error('Price amount cannot be negative');
+      throw new Error("Price amount cannot be negative");
     }
     if (!currency || currency.length !== 3) {
-      throw new Error('Currency must be a valid 3-letter code');
+      throw new Error("Currency must be a valid 3-letter code");
     }
     super({ amount, currency: currency.toUpperCase() });
   }
@@ -553,7 +535,7 @@ export class Price extends ValueObject<{ amount: number; currency: string }> {
 
   public add(other: Price): Price {
     if (this.currency !== other.currency) {
-      throw new Error('Cannot add prices with different currencies');
+      throw new Error("Cannot add prices with different currencies");
     }
     return new Price(this.amount + other.amount, this.currency);
   }
@@ -566,7 +548,7 @@ export class Price extends ValueObject<{ amount: number; currency: string }> {
 export class CategoryId extends ValueObject<string> {
   constructor(value: string) {
     if (!value || value.trim().length === 0) {
-      throw new Error('CategoryId cannot be empty');
+      throw new Error("CategoryId cannot be empty");
     }
     super(value);
   }
@@ -575,25 +557,22 @@ export class CategoryId extends ValueObject<string> {
 export class SKU extends ValueObject<string> {
   constructor(value: string) {
     if (!value || value.trim().length === 0) {
-      throw new Error('SKU cannot be empty');
+      throw new Error("SKU cannot be empty");
     }
     if (!/^[A-Z0-9-_]+$/i.test(value)) {
-      throw new Error('SKU can only contain alphanumeric characters, hyphens, and underscores');
+      throw new Error("SKU can only contain alphanumeric characters, hyphens, and underscores");
     }
     super(value.toUpperCase());
   }
 }
-
 ```
-
 
 ### Entidades
 
-
 ```typescript
 // apps/product-service/src/domain/entities/product-variant.entity.ts
-import { BaseEntity } from '@a4co/shared-utils';
-import { Price, SKU } from '../value-objects/product-value-objects';
+import { BaseEntity } from "@a4co/shared-utils";
+import { Price, SKU } from "../value-objects/product-value-objects";
 
 export class ProductVariant extends BaseEntity {
   private constructor(
@@ -749,7 +728,7 @@ export class ProductVariant extends BaseEntity {
 }
 
 // apps/product-service/src/domain/entities/product-image.entity.ts
-import { BaseEntity } from '@a4co/shared-utils';
+import { BaseEntity } from "@a4co/shared-utils";
 
 export class ProductImage extends BaseEntity {
   private constructor(
@@ -862,7 +841,7 @@ export class ProductImage extends BaseEntity {
 }
 
 // apps/product-service/src/domain/entities/product-tag.entity.ts
-import { BaseEntity } from '@a4co/shared-utils';
+import { BaseEntity } from "@a4co/shared-utils";
 
 export class ProductTag extends BaseEntity {
   private constructor(
@@ -916,16 +895,13 @@ export class ProductTag extends BaseEntity {
     };
   }
 }
-
 ```
-
 
 ---
 
 ## 🗄️ ESQUEMA DE BASE DE DATOS CON PRISMA
 
 ### Prisma Schema Completo
-
 
 ```prisma
 // apps/product-service/prisma/schema.prisma
@@ -1116,9 +1092,7 @@ enum ProductAvailability {
 
 ```
 
-
 ### Migraciones de Base de Datos
-
 
 ```sql
 -- Migration: 001_create_products_schema.sql
@@ -1248,18 +1222,16 @@ COMMENT ON TABLE "categories" IS 'Product categories with hierarchical structure
 
 ```
 
-
 ---
 
 ## 🔄 IMPLEMENTACIÓN DEL REPOSITORIO
 
 ### Repository Interface
 
-
 ```typescript
 // apps/product-service/src/domain/repositories/product.repository.ts
-import { Product } from '../aggregates/product.aggregate';
-import { ProductId } from '../value-objects/product-value-objects';
+import { Product } from "../aggregates/product.aggregate";
+import { ProductId } from "../value-objects/product-value-objects";
 
 export interface ProductRepository {
   // Métodos básicos de agregado
@@ -1289,7 +1261,7 @@ export interface PaginationOptions {
   page: number;
   limit: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface ProductSearchCriteria {
@@ -1316,30 +1288,23 @@ export interface ProductSearchResult {
   page: number;
   totalPages: number;
 }
-
 ```
-
 
 ### Prisma Repository Implementation
 
-
 ```typescript
 // apps/product-service/src/infrastructure/repositories/prisma-product.repository.ts
-import { Injectable } from '@nestjs/common';
-import { PrismaClient, Prisma } from '../generated/prisma';
+import { Injectable } from "@nestjs/common";
+import { PrismaClient, Prisma } from "../generated/prisma";
 import {
   ProductRepository,
   ProductSearchCriteria,
   ProductSearchResult,
   PaginationOptions,
-} from '../../domain/repositories/product.repository';
-import {
-  Product,
-  ProductStatus,
-  ProductAvailability,
-} from '../../domain/aggregates/product.aggregate';
-import { ProductId } from '../../domain/value-objects/product-value-objects';
-import { Logger } from '@a4co/shared-utils';
+} from "../../domain/repositories/product.repository";
+import { Product, ProductStatus, ProductAvailability } from "../../domain/aggregates/product.aggregate";
+import { ProductId } from "../../domain/value-objects/product-value-objects";
+import { Logger } from "@a4co/shared-utils";
 
 @Injectable()
 export class PrismaProductRepository implements ProductRepository {
@@ -1441,7 +1406,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1465,7 +1430,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1495,7 +1460,7 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async findByArtisanId(artisanId: string, options?: PaginationOptions): Promise<Product[]> {
-    const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = options || {};
+    const { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" } = options || {};
 
     try {
       const productsData = await this.prisma.product.findMany({
@@ -1503,7 +1468,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1520,7 +1485,7 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async findByCategoryId(categoryId: string, options?: PaginationOptions): Promise<Product[]> {
-    const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = options || {};
+    const { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" } = options || {};
 
     try {
       const productsData = await this.prisma.product.findMany({
@@ -1531,7 +1496,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1548,7 +1513,7 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async findActiveProducts(options?: PaginationOptions): Promise<Product[]> {
-    const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = options || {};
+    const { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" } = options || {};
 
     try {
       const productsData = await this.prisma.product.findMany({
@@ -1561,7 +1526,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1572,14 +1537,14 @@ export class PrismaProductRepository implements ProductRepository {
 
       return productsData.map(p => this.mapToDomainProduct(p));
     } catch (error) {
-      this.logger.error('Failed to find active products', error);
+      this.logger.error("Failed to find active products", error);
       throw new Error(`Failed to find products: ${error.message}`);
     }
   }
 
   async searchProducts(criteria: ProductSearchCriteria): Promise<ProductSearchResult> {
     const { pagination = { page: 1, limit: 20 } } = criteria;
-    const { page, limit, sortBy = 'createdAt', sortOrder = 'desc' } = pagination;
+    const { page, limit, sortBy = "createdAt", sortOrder = "desc" } = pagination;
 
     try {
       // Construir filtros dinámicamente
@@ -1587,8 +1552,8 @@ export class PrismaProductRepository implements ProductRepository {
 
       if (criteria.query) {
         where.OR = [
-          { name: { contains: criteria.query, mode: 'insensitive' } },
-          { description: { contains: criteria.query, mode: 'insensitive' } },
+          { name: { contains: criteria.query, mode: "insensitive" } },
+          { description: { contains: criteria.query, mode: "insensitive" } },
           { materials: { has: criteria.query } },
         ];
       }
@@ -1652,7 +1617,7 @@ export class PrismaProductRepository implements ProductRepository {
           include: {
             variants: true,
             images: {
-              orderBy: { sortOrder: 'asc' },
+              orderBy: { sortOrder: "asc" },
             },
             tags: true,
           },
@@ -1672,7 +1637,7 @@ export class PrismaProductRepository implements ProductRepository {
         totalPages: Math.ceil(total / limit),
       };
     } catch (error) {
-      this.logger.error('Failed to search products', error);
+      this.logger.error("Failed to search products", error);
       throw new Error(`Failed to search products: ${error.message}`);
     }
   }
@@ -1691,19 +1656,16 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
-        orderBy: { price: 'asc' },
+        orderBy: { price: "asc" },
       });
 
       return productsData.map(p => this.mapToDomainProduct(p));
     } catch (error) {
-      this.logger.error(
-        `Failed to find products by price range ${minPrice}-${maxPrice} ${currency}`,
-        error
-      );
+      this.logger.error(`Failed to find products by price range ${minPrice}-${maxPrice} ${currency}`, error);
       throw new Error(`Failed to find products: ${error.message}`);
     }
   }
@@ -1720,7 +1682,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1728,7 +1690,7 @@ export class PrismaProductRepository implements ProductRepository {
 
       return productsData.map(p => this.mapToDomainProduct(p));
     } catch (error) {
-      this.logger.error(`Failed to find products by materials ${materials.join(', ')}`, error);
+      this.logger.error(`Failed to find products by materials ${materials.join(", ")}`, error);
       throw new Error(`Failed to find products: ${error.message}`);
     }
   }
@@ -1743,7 +1705,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1751,7 +1713,7 @@ export class PrismaProductRepository implements ProductRepository {
 
       return productsData.map(p => this.mapToDomainProduct(p));
     } catch (error) {
-      this.logger.error('Failed to find customizable products', error);
+      this.logger.error("Failed to find customizable products", error);
       throw new Error(`Failed to find products: ${error.message}`);
     }
   }
@@ -1772,7 +1734,7 @@ export class PrismaProductRepository implements ProductRepository {
       const where: Prisma.ProductWhereInput = {
         name: {
           equals: name,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       };
 
@@ -1796,7 +1758,7 @@ export class PrismaProductRepository implements ProductRepository {
             some: {
               sku: {
                 equals: sku,
-                mode: 'insensitive',
+                mode: "insensitive",
               },
             },
           },
@@ -1804,7 +1766,7 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           tags: true,
         },
@@ -1842,9 +1804,7 @@ export class PrismaProductRepository implements ProductRepository {
     });
   }
 }
-
 ```
-
 
 ---
 
@@ -1852,15 +1812,14 @@ export class PrismaProductRepository implements ProductRepository {
 
 ### Application Service
 
-
 ```typescript
 // apps/product-service/src/application/services/product-application.service.ts
-import { Injectable } from '@nestjs/common';
-import { ProductRepository } from '../../domain/repositories/product.repository';
-import { Product } from '../../domain/aggregates/product.aggregate';
-import { ProductId } from '../../domain/value-objects/product-value-objects';
-import { Logger } from '@a4co/shared-utils';
-import { EnhancedEventBus } from '@a4co/shared-utils';
+import { Injectable } from "@nestjs/common";
+import { ProductRepository } from "../../domain/repositories/product.repository";
+import { Product } from "../../domain/aggregates/product.aggregate";
+import { ProductId } from "../../domain/value-objects/product-value-objects";
+import { Logger } from "@a4co/shared-utils";
+import { EnhancedEventBus } from "@a4co/shared-utils";
 
 @Injectable()
 export class ProductApplicationService {
@@ -1872,17 +1831,15 @@ export class ProductApplicationService {
   ) {}
 
   async createProduct(command: CreateProductCommand): Promise<{ productId: string }> {
-    this.logger.debug('Creating new product', { artisanId: command.artisanId, name: command.name });
+    this.logger.debug("Creating new product", { artisanId: command.artisanId, name: command.name });
 
     try {
       // Validar que no exista un producto con el mismo nombre para el artesano
       const existingProducts = await this.productRepository.findByArtisanId(command.artisanId);
-      const duplicateName = existingProducts.some(
-        p => p.name.toLowerCase() === command.name.toLowerCase()
-      );
+      const duplicateName = existingProducts.some(p => p.name.toLowerCase() === command.name.toLowerCase());
 
       if (duplicateName) {
-        throw new Error('Product with this name already exists for this artisan');
+        throw new Error("Product with this name already exists for this artisan");
       }
 
       // Crear el agregado Product
@@ -1931,34 +1888,32 @@ export class ProductApplicationService {
       }
       product.clearEvents();
 
-      this.logger.info('Product created successfully', {
+      this.logger.info("Product created successfully", {
         productId: product.id,
         businessId: product.productId,
       });
 
       return { productId: product.productId };
     } catch (error) {
-      this.logger.error('Failed to create product', error);
+      this.logger.error("Failed to create product", error);
       throw error;
     }
   }
 
   async updateProduct(command: UpdateProductCommand): Promise<void> {
-    this.logger.debug('Updating product', { productId: command.productId });
+    this.logger.debug("Updating product", { productId: command.productId });
 
     try {
       // Buscar el producto
-      const product = await this.productRepository.findByProductId(
-        new ProductId(command.productId)
-      );
+      const product = await this.productRepository.findByProductId(new ProductId(command.productId));
 
       if (!product) {
-        throw new Error('Product not found');
+        throw new Error("Product not found");
       }
 
       // Verificar que el artesano sea el propietario
       if (product.artisanId !== command.artisanId) {
-        throw new Error('Unauthorized: You can only update your own products');
+        throw new Error("Unauthorized: You can only update your own products");
       }
 
       // Actualizar información básica
@@ -1996,15 +1951,15 @@ export class ProductApplicationService {
       }
       product.clearEvents();
 
-      this.logger.info('Product updated successfully', { productId: command.productId });
+      this.logger.info("Product updated successfully", { productId: command.productId });
     } catch (error) {
-      this.logger.error('Failed to update product', error);
+      this.logger.error("Failed to update product", error);
       throw error;
     }
   }
 
   async searchProducts(query: ProductSearchQuery): Promise<ProductSearchResult> {
-    this.logger.debug('Searching products', { query: query.query, filters: query.filters });
+    this.logger.debug("Searching products", { query: query.query, filters: query.filters });
 
     try {
       const searchCriteria = {
@@ -2022,14 +1977,14 @@ export class ProductApplicationService {
         pagination: {
           page: query.page || 1,
           limit: query.limit || 20,
-          sortBy: query.sortBy || 'createdAt',
-          sortOrder: query.sortOrder || 'desc',
+          sortBy: query.sortBy || "createdAt",
+          sortOrder: query.sortOrder || "desc",
         },
       };
 
       const result = await this.productRepository.searchProducts(searchCriteria);
 
-      this.logger.debug('Products search completed', {
+      this.logger.debug("Products search completed", {
         total: result.total,
         page: result.page,
         resultsCount: result.products.length,
@@ -2057,7 +2012,7 @@ export class ProductApplicationService {
         totalPages: result.totalPages,
       };
     } catch (error) {
-      this.logger.error('Failed to search products', error);
+      this.logger.error("Failed to search products", error);
       throw error;
     }
   }
@@ -2131,11 +2086,9 @@ export interface ProductSearchQuery {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
-
 ```
-
 
 ---
 
@@ -2143,11 +2096,10 @@ export interface ProductSearchQuery {
 
 ### Environment Configuration
 
-
 ```typescript
 // apps/product-service/src/config/database.config.ts
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class DatabaseConfig {
@@ -2155,44 +2107,41 @@ export class DatabaseConfig {
 
   get databaseUrl(): string {
     return (
-      this.configService.get<string>('DATABASE_URL') ||
-      'postgresql://postgres:password@localhost:5432/a4co_products?schema=public'
+      this.configService.get<string>("DATABASE_URL") ||
+      "postgresql://postgres:password@localhost:5432/a4co_products?schema=public"
     );
   }
 
   get maxConnections(): number {
-    return this.configService.get<number>('DB_MAX_CONNECTIONS') || 10;
+    return this.configService.get<number>("DB_MAX_CONNECTIONS") || 10;
   }
 
   get connectionTimeout(): number {
-    return this.configService.get<number>('DB_CONNECTION_TIMEOUT') || 5000;
+    return this.configService.get<number>("DB_CONNECTION_TIMEOUT") || 5000;
   }
 
   get queryTimeout(): number {
-    return this.configService.get<number>('DB_QUERY_TIMEOUT') || 10000;
+    return this.configService.get<number>("DB_QUERY_TIMEOUT") || 10000;
   }
 
   get logLevel(): string {
-    return this.configService.get<string>('DB_LOG_LEVEL') || 'warn';
+    return this.configService.get<string>("DB_LOG_LEVEL") || "warn";
   }
 }
-
 ```
-
 
 ### Module Configuration
 
-
 ```typescript
 // apps/product-service/src/product.module.ts
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { PrismaClient } from './infrastructure/generated/prisma';
-import { PrismaProductRepository } from './infrastructure/repositories/prisma-product.repository';
-import { ProductApplicationService } from './application/services/product-application.service';
-import { ProductController } from './presentation/controllers/product.controller';
-import { DatabaseConfig } from './config/database.config';
-import { EnhancedEventBus } from '@a4co/shared-utils';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { PrismaClient } from "./infrastructure/generated/prisma";
+import { PrismaProductRepository } from "./infrastructure/repositories/prisma-product.repository";
+import { ProductApplicationService } from "./application/services/product-application.service";
+import { ProductController } from "./presentation/controllers/product.controller";
+import { DatabaseConfig } from "./config/database.config";
+import { EnhancedEventBus } from "@a4co/shared-utils";
 
 @Module({
   imports: [
@@ -2217,7 +2166,7 @@ import { EnhancedEventBus } from '@a4co/shared-utils';
       inject: [DatabaseConfig],
     },
     {
-      provide: 'ProductRepository',
+      provide: "ProductRepository",
       useClass: PrismaProductRepository,
     },
     ProductApplicationService,
@@ -2227,12 +2176,9 @@ import { EnhancedEventBus } from '@a4co/shared-utils';
   exports: [ProductApplicationService],
 })
 export class ProductModule {}
-
 ```
 
-
 ### Docker Configuration
-
 
 ```dockerfile
 # apps/product-service/Dockerfile
@@ -2282,39 +2228,37 @@ CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
 
 ```
 
-
 ---
 
 ## 📊 MÉTRICAS Y PERFORMANCE
 
 ### Database Performance Monitoring
 
-
 ```typescript
 // apps/product-service/src/infrastructure/monitoring/database-metrics.ts
-import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '../generated/prisma';
-import { Counter, Histogram, register } from 'prom-client';
+import { Injectable } from "@nestjs/common";
+import { PrismaClient } from "../generated/prisma";
+import { Counter, Histogram, register } from "prom-client";
 
 @Injectable()
 export class DatabaseMetrics {
   private queryDuration = new Histogram({
-    name: 'product_service_db_query_duration_seconds',
-    help: 'Duration of database queries in seconds',
-    labelNames: ['operation', 'table', 'status'],
+    name: "product_service_db_query_duration_seconds",
+    help: "Duration of database queries in seconds",
+    labelNames: ["operation", "table", "status"],
     buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2, 5],
   });
 
   private queryCount = new Counter({
-    name: 'product_service_db_query_total',
-    help: 'Total number of database queries',
-    labelNames: ['operation', 'table', 'status'],
+    name: "product_service_db_query_total",
+    help: "Total number of database queries",
+    labelNames: ["operation", "table", "status"],
   });
 
   private connectionPool = new Histogram({
-    name: 'product_service_db_connection_pool_size',
-    help: 'Database connection pool size',
-    labelNames: ['status'],
+    name: "product_service_db_connection_pool_size",
+    help: "Database connection pool size",
+    labelNames: ["status"],
   });
 
   constructor() {
@@ -2323,24 +2267,17 @@ export class DatabaseMetrics {
     register.registerMetric(this.connectionPool);
   }
 
-  recordQuery(
-    operation: string,
-    table: string,
-    duration: number,
-    status: 'success' | 'error'
-  ): void {
+  recordQuery(operation: string, table: string, duration: number, status: "success" | "error"): void {
     this.queryDuration.labels(operation, table, status).observe(duration);
     this.queryCount.labels(operation, table, status).inc();
   }
 
   recordConnectionPoolSize(activeConnections: number, idleConnections: number): void {
-    this.connectionPool.labels('active').observe(activeConnections);
-    this.connectionPool.labels('idle').observe(idleConnections);
+    this.connectionPool.labels("active").observe(activeConnections);
+    this.connectionPool.labels("idle").observe(idleConnections);
   }
 }
-
 ```
-
 
 ---
 
@@ -2370,4 +2307,5 @@ export class DatabaseMetrics {
 - **Paginación eficiente** para grandes volúmenes de datos
 - **Métricas de monitoreo** para observabilidad de la base de datos
 
-**Esta implementación establece una base sólida para el product-service que puede manejar el crecimiento del marketplace manteniendo la integridad del modelo de dominio y excelente performance.**
+**Esta implementación establece una base sólida para el product-service que puede manejar el crecimiento del marketplace
+manteniendo la integridad del modelo de dominio y excelente performance.**

@@ -2,7 +2,8 @@
 
 **A4CO DDD Microservices - Marketplace Local de Jaén**
 
-Este documento proporciona una implementación completa de comunicación asíncrona y síncrona entre microservicios usando NATS como message bus principal.
+Este documento proporciona una implementación completa de comunicación asíncrona y síncrona entre microservicios usando
+NATS como message bus principal.
 
 ---
 
@@ -23,7 +24,6 @@ Este documento proporciona una implementación completa de comunicación asíncr
 
 ### 1. Instalar Dependencias
 
-
 ```bash
 # En el directorio raíz del proyecto
 pnpm install
@@ -35,9 +35,7 @@ pnpm add -D @types/node
 
 ```
 
-
 ### 2. Iniciar Infraestructura
-
 
 ```bash
 # Ejecutar script de inicio (crear primero si no existe)
@@ -46,7 +44,6 @@ chmod +x scripts/start-messaging-infrastructure.sh
 
 
 ```
-
 
 ### 3. Verificar Servicios
 
@@ -59,7 +56,6 @@ Una vez iniciado, verifica que los servicios estén corriendo:
 
 ### 4. Ejecutar Ejemplo
 
-
 ```bash
 # Compilar y ejecutar ejemplo
 npx tsx examples/order-creation-saga-example.ts
@@ -67,13 +63,11 @@ npx tsx examples/order-creation-saga-example.ts
 
 ```
 
-
 ---
 
 ## 🏗️ Arquitectura
 
 ### Componentes Principales
-
 
 ```
 
@@ -102,9 +96,7 @@ npx tsx examples/order-creation-saga-example.ts
 
 ```
 
-
 ### Flujo de Eventos (Saga Pattern)
-
 
 ```
 
@@ -121,7 +113,6 @@ npx tsx examples/order-creation-saga-example.ts
 
 ```
 
-
 ---
 
 ## 📡 Comunicación Síncrona vs Asíncrona
@@ -134,18 +125,15 @@ npx tsx examples/order-creation-saga-example.ts
 - Validación en tiempo real
 - Datos críticos para continuar procesamiento
 
-
 ```typescript
 // Ejemplo: Verificar stock antes de crear orden
-const stockResponse = await fetch('/api/inventory/check/product_123');
+const stockResponse = await fetch("/api/inventory/check/product_123");
 const { available } = await stockResponse.json();
 
 if (available < requestedQuantity) {
-  throw new Error('Stock insuficiente');
+  throw new Error("Stock insuficiente");
 }
-
 ```
-
 
 **Casos de uso:**
 
@@ -164,7 +152,6 @@ if (available < requestedQuantity) {
 - Actualizaciones de estado
 - Coordinación entre servicios
 
-
 ```typescript
 // Ejemplo: Publicar evento de orden creada
 const orderCreatedEvent = new OrderCreatedEvent(orderId, {
@@ -177,7 +164,6 @@ await eventBus.publish(EventSubjects.ORDER_CREATED, orderCreatedEvent);
 
 
 ```
-
 
 **Casos de uso:**
 
@@ -195,64 +181,48 @@ await eventBus.publish(EventSubjects.ORDER_CREATED, orderCreatedEvent);
 
 #### 📦 Order Events
 
-
 ```typescript
 ORDER_CREATED; // Nueva orden creada
 ORDER_CONFIRMED; // Orden confirmada tras pago exitoso
 ORDER_CANCELLED; // Orden cancelada
 ORDER_DELIVERED; // Orden entregada
-
 ```
 
-
 #### 🏪 Inventory Events
-
 
 ```typescript
 STOCK_RESERVED; // Stock reservado para orden
 STOCK_RELEASED; // Stock liberado (cancelación)
 LOW_STOCK_WARNING; // Aviso de stock bajo
 STOCK_UPDATED; // Actualización de inventario
-
 ```
 
-
 #### 💳 Payment Events
-
 
 ```typescript
 PAYMENT_INITIATED; // Pago iniciado
 PAYMENT_SUCCEEDED; // Pago exitoso
 PAYMENT_FAILED; // Pago fallido
 REFUND_PROCESSED; // Reembolso procesado
-
 ```
 
-
 #### 👥 User Events
-
 
 ```typescript
 USER_REGISTERED; // Usuario registrado
 USER_VERIFIED; // Usuario verificado
 USER_PROFILE_UPDATED; // Perfil actualizado
-
 ```
 
-
 #### 🔔 Notification Events
-
 
 ```typescript
 EMAIL_SENT; // Email enviado
 SMS_SENT; // SMS enviado
 PUSH_NOTIFICATION_SENT; // Notificación push enviada
-
 ```
 
-
 ### Estructura de Eventos
-
 
 ```typescript
 interface DomainEvent {
@@ -264,9 +234,7 @@ interface DomainEvent {
   eventData: any; // Datos específicos del evento
   metadata: EventMetadata; // Metadatos adicionales
 }
-
 ```
-
 
 ---
 
@@ -274,14 +242,13 @@ interface DomainEvent {
 
 ### 1. Configurar Event Bus en un Servicio
 
-
 ```typescript
-import { EventDrivenService, EventHandler } from '@shared/events/event-bus';
-import { EventSubjects } from '@shared/events/subjects';
+import { EventDrivenService, EventHandler } from "@shared/events/event-bus";
+import { EventSubjects } from "@shared/events/subjects";
 
 export class OrderService extends EventDrivenService {
   constructor() {
-    super('order-service'); // Nombre del servicio
+    super("order-service"); // Nombre del servicio
   }
 
   // Publicar evento
@@ -297,12 +264,9 @@ export class OrderService extends EventDrivenService {
     // Lógica para confirmar orden
   }
 }
-
 ```
 
-
 ### 2. Inicializar Servicio
-
 
 ```typescript
 const orderService = new OrderService();
@@ -312,12 +276,9 @@ await orderService.startEventHandling();
 
 // ... al finalizar
 await orderService.stopEventHandling();
-
 ```
 
-
 ### 3. Variables de Entorno
-
 
 ```bash
 # .env
@@ -329,31 +290,26 @@ LOG_LEVEL=info
 
 ```
 
-
 ---
 
 ## 📖 Ejemplos de Uso
 
 ### Ejemplo 1: Crear una Orden (Saga Pattern)
 
-
 ```typescript
 // 1. Crear orden
 const orderId = await orderService.createOrder({
-  customerId: 'customer_123',
-  items: [{ productId: 'product_aceite', quantity: 2 }],
+  customerId: "customer_123",
+  items: [{ productId: "product_aceite", quantity: 2 }],
 });
 
 // 2. El flujo continúa automáticamente:
 // - InventoryService reserva stock
 // - PaymentService procesa pago
 // - NotificationService envía confirmación
-
 ```
 
-
 ### Ejemplo 2: Manejar Stock Bajo
-
 
 ```typescript
 export class InventoryService extends EventDrivenService {
@@ -366,19 +322,16 @@ export class InventoryService extends EventDrivenService {
       const warningEvent = new LowStockWarningEvent(productId, {
         currentStock: newStock,
         threshold: this.getThreshold(productId),
-        urgencyLevel: newStock === 0 ? 'critical' : 'medium',
+        urgencyLevel: newStock === 0 ? "critical" : "medium",
       });
 
       await this.publishEvent(EventSubjects.LOW_STOCK_WARNING, warningEvent);
     }
   }
 }
-
 ```
 
-
 ### Ejemplo 3: Implementar Retry Logic
-
 
 ```typescript
 export class PaymentService extends EventDrivenService {
@@ -398,9 +351,7 @@ export class PaymentService extends EventDrivenService {
     }
   }
 }
-
 ```
-
 
 ---
 
@@ -428,23 +379,20 @@ http://localhost:3000 (admin/admin123)
 
 ### Métricas Clave
 
-
 ```typescript
 // Métricas personalizadas
-eventBus.on('event-published', (subject, eventType) => {
-  metrics.increment('events.published', { subject, eventType });
+eventBus.on("event-published", (subject, eventType) => {
+  metrics.increment("events.published", { subject, eventType });
 });
 
-eventBus.on('event-processed', (subject, eventType, duration) => {
-  metrics.histogram('events.processing_time', duration, { subject, eventType });
+eventBus.on("event-processed", (subject, eventType, duration) => {
+  metrics.histogram("events.processing_time", duration, { subject, eventType });
 });
 
-eventBus.on('event-failed', (subject, eventType, error) => {
-  metrics.increment('events.failed', { subject, eventType, error: error.type });
+eventBus.on("event-failed", (subject, eventType, error) => {
+  metrics.increment("events.failed", { subject, eventType, error: error.type });
 });
-
 ```
-
 
 ---
 
@@ -453,7 +401,6 @@ eventBus.on('event-failed', (subject, eventType, error) => {
 ### Problemas Comunes
 
 #### 1. **Servicio no se conecta a NATS**
-
 
 ```bash
 # Verificar que NATS esté corriendo
@@ -468,40 +415,32 @@ telnet localhost 4222
 
 ```
 
-
 #### 2. **Eventos no se procesan**
-
 
 ```typescript
 // Verificar suscripciones
-console.log('Handlers registrados:', service._eventHandlers);
+console.log("Handlers registrados:", service._eventHandlers);
 
 // Verificar que el servicio esté conectado
-console.log('Conectado:', eventBus.isConnected());
+console.log("Conectado:", eventBus.isConnected());
 
 // Ver logs detallados
-process.env.DEBUG = 'nats:*';
-
+process.env.DEBUG = "nats:*";
 ```
 
-
 #### 3. **Pérdida de mensajes**
-
 
 ```typescript
 // Usar JetStream para persistencia
 const jsm = await nc.jetstreamManager();
 await jsm.streams.add({
-  name: 'ORDERS',
-  subjects: ['order.*'],
+  name: "ORDERS",
+  subjects: ["order.*"],
   retention: RetentionPolicy.WorkQueue,
 });
-
 ```
 
-
 #### 4. **Alto uso de memoria**
-
 
 ```bash
 # Monitorear uso de memoria
@@ -513,9 +452,7 @@ mem_limit: 512m
 
 ```
 
-
 ### Debug Mode
-
 
 ```bash
 # Activar debug completo
@@ -528,16 +465,14 @@ npm start
 
 ```
 
-
 ### Health Checks
-
 
 ```typescript
 // Endpoint de health check
-app.get('/health', async (req, res) => {
+app.get("/health", async (req, res) => {
   const health = {
-    service: 'order-service',
-    status: 'ok',
+    service: "order-service",
+    status: "ok",
     timestamp: new Date().toISOString(),
     checks: {
       nats: eventBus.isConnected(),
@@ -548,9 +483,7 @@ app.get('/health', async (req, res) => {
 
   res.json(health);
 });
-
 ```
-
 
 ---
 

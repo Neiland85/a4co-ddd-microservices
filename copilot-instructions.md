@@ -1,6 +1,7 @@
 # 🤖 Instrucciones para GitHub Copilot Review – Proyecto `a4co-ddd-microservices`
 
-Estas instrucciones definen el estilo, las convenciones y los criterios técnicos que Copilot debe aplicar al revisar automáticamente un Pull Request.
+Estas instrucciones definen el estilo, las convenciones y los criterios técnicos que Copilot debe aplicar al revisar
+automáticamente un Pull Request.
 
 ---
 
