@@ -20,10 +20,7 @@ import { useActionState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 export function RegisterForm() {
-  const [state, formAction, isPending] = useActionState<AuthState, FormData>(
-    registerAction,
-    null
-  );
+  const [state, formAction, isPending] = useActionState<AuthState, FormData>(registerAction, null);
   const { toast } = useToast();
   const { playSuccess, playError } = useSoundEffects();
 
@@ -97,11 +94,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Contraseña</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Mínimo 6 caracteres"
-                  {...field}
-                />
+                <Input type="password" placeholder="Mínimo 6 caracteres" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -114,11 +107,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Confirmar contraseña</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Repite tu contraseña"
-                  {...field}
-                />
+                <Input type="password" placeholder="Repite tu contraseña" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -130,14 +119,11 @@ export function RegisterForm() {
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>Acepto los términos y condiciones</FormLabel>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Acepto los Términos de Servicio y la Política de Privacidad.
                 </p>
                 <FormMessage />

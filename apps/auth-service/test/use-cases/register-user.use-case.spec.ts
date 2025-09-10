@@ -68,9 +68,7 @@ describe('RegisterUserUseCase', () => {
     const result = await useCase.execute(registerDto);
 
     // Assert
-    expect(userDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    expect(userDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
     expect(userRepository.save).toHaveBeenCalledWith(expect.any(Object));
     expect(result.email).toBe(registerDto.email);
     expect(result.name).toBe(registerDto.name);
@@ -91,9 +89,7 @@ describe('RegisterUserUseCase', () => {
     );
 
     // Act & Assert
-    await expect(useCase.execute(registerDto)).rejects.toThrow(
-      'El email ya está registrado'
-    );
+    await expect(useCase.execute(registerDto)).rejects.toThrow('El email ya está registrado');
     expect(userRepository.save).not.toHaveBeenCalled();
   });
 });

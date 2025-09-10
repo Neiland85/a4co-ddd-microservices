@@ -1,14 +1,10 @@
 export default function Dashboard() {
   return (
     <div className="dashboard-working-container">
-      <h1 className="dashboard-working-title">
-        🎉 A4CO DASHBOARD FUNCIONA! 🎉
-      </h1>
+      <h1 className="dashboard-working-title">🎉 A4CO DASHBOARD FUNCIONA! 🎉</h1>
 
       <div className="dashboard-working-card">
-        <h2 className="dashboard-working-subtitle">
-          ✅ Sistema Completamente Operativo
-        </h2>
+        <h2 className="dashboard-working-subtitle">✅ Sistema Completamente Operativo</h2>
 
         <p className="dashboard-working-description">
           El servidor Next.js está corriendo correctamente en puerto 3000.

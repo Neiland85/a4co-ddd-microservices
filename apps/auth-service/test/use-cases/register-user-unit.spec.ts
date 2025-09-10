@@ -94,9 +94,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     // Act - intentar ejecutar y capturar cualquier error
     await useCase.execute(registerDto as any);
     // Assert - verificar que se llamó la validación
-    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
   });
 
   it('should throw error when email validation fails', async () => {
@@ -132,9 +130,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     await useCase.execute(registerDto as any);
 
     // Assert
-    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
   });
 
   it('should create a user successfully', async () => {
@@ -146,9 +142,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
 
     const result = await useCase.execute(registerDto);
 
-    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
     expect(mockUserRepository.save).toHaveBeenCalledWith(user);
     expect(result.email).toBe(registerDto.email);
   });
@@ -173,9 +167,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     const result = await useCase.execute(registerDto);
 
     // Assert
-    expect(mockCryptographyService.hashPassword).toHaveBeenCalledWith(
-      registerDto.password
-    );
+    expect(mockCryptographyService.hashPassword).toHaveBeenCalledWith(registerDto.password);
     expect(mockUserRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({ hashedPassword })
     );
@@ -186,14 +178,10 @@ describe('RegisterUserUseCase - Unit Test', () => {
     // Arrange
     const registerDto = createRegisterUserDto();
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
-    mockCryptographyService.hashPassword.mockRejectedValue(
-      new Error('Hashing failed')
-    );
+    mockCryptographyService.hashPassword.mockRejectedValue(new Error('Hashing failed'));
 
     // Act & Assert
-    await expect(useCase.execute(registerDto)).rejects.toThrow(
-      'Hashing failed'
-    );
+    await expect(useCase.execute(registerDto)).rejects.toThrow('Hashing failed');
     expect(mockUserRepository.save).not.toHaveBeenCalled();
   });
 
@@ -206,9 +194,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     };
 
     // Act & Assert
-    await expect(useCase.execute(invalidDto as any)).rejects.toThrow(
-      'Invalid input data'
-    );
+    await expect(useCase.execute(invalidDto as any)).rejects.toThrow('Invalid input data');
     expect(mockUserRepository.save).not.toHaveBeenCalled();
   });
 
@@ -216,14 +202,10 @@ describe('RegisterUserUseCase - Unit Test', () => {
     // Arrange
     const registerDto = createRegisterUserDto();
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
-    mockUserRepository.findByEmail.mockRejectedValue(
-      new Error('Database error')
-    );
+    mockUserRepository.findByEmail.mockRejectedValue(new Error('Database error'));
 
     // Act & Assert
-    await expect(useCase.execute(registerDto)).rejects.toThrow(
-      'Database error'
-    );
+    await expect(useCase.execute(registerDto)).rejects.toThrow('Database error');
     expect(mockUserRepository.save).not.toHaveBeenCalled();
   });
 });
@@ -276,9 +258,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
           lastLoginAt: undefined,
           createdAt: new Date(),
           updatedAt: new Date(),
-          getUncommittedEvents: jest
-            .fn()
-            .mockReturnValue(['UserRegisteredEvent']),
+          getUncommittedEvents: jest.fn().mockReturnValue(['UserRegisteredEvent']),
           clearEvents: jest.fn(),
         }),
       },
@@ -320,9 +300,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
     const result = await useCase.execute(registerDto as any);
 
     // Assert
-    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
     expect(mockUserRepository.save).toHaveBeenCalled();
     expect(result.email).toBe(registerDto.email);
     expect(result.name).toBe(registerDto.name);
@@ -337,19 +315,13 @@ describe('RegisterUserUseCase - Integration Test', () => {
     };
 
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
-    mockUserRepository.save.mockRejectedValue(
-      new Error('Database connection failed')
-    );
+    mockUserRepository.save.mockRejectedValue(new Error('Database connection failed'));
 
     // Act & Assert
-    await expect(useCase.execute(registerDto as any)).rejects.toThrow(
-      'Database connection failed'
-    );
+    await expect(useCase.execute(registerDto as any)).rejects.toThrow('Database connection failed');
 
     // Verificar que se intentó la validación antes del error de BD
-    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
   });
 });
 
@@ -412,9 +384,7 @@ describe('RegisterUserUseCase - Event Publication', () => {
 
     await useCase.execute(registerDto);
 
-    expect(mockEventBus.publishAll).toHaveBeenCalledWith([
-      'UserRegisteredEvent',
-    ]);
+    expect(mockEventBus.publishAll).toHaveBeenCalledWith(['UserRegisteredEvent']);
     expect(mockUser.clearEvents).toHaveBeenCalled();
   });
 
@@ -428,9 +398,7 @@ describe('RegisterUserUseCase - Event Publication', () => {
       new Error('El email ya está registrado')
     );
 
-    await expect(useCase.execute(registerDto)).rejects.toThrow(
-      'El email ya está registrado'
-    );
+    await expect(useCase.execute(registerDto)).rejects.toThrow('El email ya está registrado');
 
     expect(mockEventBus.publishAll).not.toHaveBeenCalled();
   });
@@ -458,9 +426,7 @@ describe('RegisterUserUseCase - Event Publication', () => {
     await useCase.execute(registerDto);
 
     // Assert
-    expect(mockEventBus.publishAll).toHaveBeenCalledWith([
-      'UserRegisteredEvent',
-    ]);
+    expect(mockEventBus.publishAll).toHaveBeenCalledWith(['UserRegisteredEvent']);
     expect(mockUser.getUncommittedEvents).toHaveBeenCalled();
   });
 });

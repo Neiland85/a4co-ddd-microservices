@@ -15,9 +15,9 @@ const generateServiceTests = (): TestTemplate[] => {
     order: './service',
     product: '../service',
     user: '../service',
-    inventory: '../service'
+    inventory: '../service',
   };
-  
+
   return services.map(service => {
     const serviceName = service.charAt(0).toUpperCase() + service.slice(1);
     const content = `import { ${serviceName}Service } from '${serviceImportPaths[service]}';
@@ -66,7 +66,7 @@ describe('${serviceName}Service', () => {
     return {
       service: `${service}-service`,
       testFile: `apps/${service}-service/${service === 'order' ? 'service' : 'tests/service'}.test.ts`,
-      content
+      content,
     };
   });
 };
@@ -100,7 +100,7 @@ const generateServiceSpecificTests = (service: string, serviceName: string): str
       expect(() => service.getOrder('')).toThrow('Invalid order ID');
     });
   })`,
-    
+
     product: `describe('addProduct', () => {
     it('should add a product successfully', () => {
       const result = service.addProduct('Product A', 29.99);
@@ -129,7 +129,7 @@ const generateServiceSpecificTests = (service: string, serviceName: string): str
       expect(() => service.getProduct('')).toThrow('Invalid name');
     });
   })`,
-    
+
     user: `describe('createUser', () => {
     it('should create a user successfully', () => {
       const result = service.createUser('john_doe', 'john@example.com');
@@ -158,7 +158,7 @@ const generateServiceSpecificTests = (service: string, serviceName: string): str
       expect(() => service.getUser('')).toThrow('Invalid username');
     });
   })`,
-    
+
     inventory: `describe('updateStock', () => {
     it('should update stock successfully', () => {
       const result = service.updateStock('PROD-001', 100);
@@ -186,7 +186,7 @@ const generateServiceSpecificTests = (service: string, serviceName: string): str
     it('should validate product ID', () => {
       expect(() => service.getStock('')).toThrow('Invalid productId');
     });
-  })`
+  })`,
   };
 
   return testCases[service] || '';
@@ -197,9 +197,9 @@ const generateErrorTestCase = (service: string): string => {
     order: `service.createOrder(invalidData, invalidData)`,
     product: `service.addProduct(invalidData, invalidData)`,
     user: `service.createUser(invalidData, invalidData)`,
-    inventory: `service.updateStock(invalidData, invalidData)`
+    inventory: `service.updateStock(invalidData, invalidData)`,
   };
-  
+
   return cases[service] || '';
 };
 
@@ -208,9 +208,9 @@ const generateLoggingTestCase = (service: string, serviceName: string): string =
     order: `service.createOrder('ORD-001', ['item1']);`,
     product: `service.addProduct('Product A', 29.99);`,
     user: `service.createUser('john_doe', 'john@example.com');`,
-    inventory: `service.updateStock('PROD-001', 100);`
+    inventory: `service.updateStock('PROD-001', 100);`,
   };
-  
+
   return cases[service] || '';
 };
 
@@ -298,7 +298,7 @@ describe('BaseController', () => {
       expect(response.status).toBe('error');
     });
   });
-});`
+});`,
     },
     {
       service: 'shared-utils',
@@ -416,8 +416,8 @@ describe('BaseService', () => {
       expect(duration).toBeLessThan(10);
     });
   });
-});`
-    }
+});`,
+    },
   ];
 };
 
@@ -425,10 +425,7 @@ describe('BaseService', () => {
 const generateTests = async () => {
   console.log('🧪 Generando tests para áreas críticas del dominio...\n');
 
-  const allTests = [
-    ...generateServiceTests(),
-    ...generateBaseClassTests()
-  ];
+  const allTests = [...generateServiceTests(), ...generateBaseClassTests()];
 
   let generatedCount = 0;
 

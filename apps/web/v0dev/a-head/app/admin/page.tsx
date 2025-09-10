@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { AdminDashboard } from "@/components/admin/dashboard"
-import type { DashboardStats } from "@/types/admin-types"
+import { AdminDashboard } from '@/components/admin/dashboard';
+import type { DashboardStats } from '@/types/admin-types';
 
 // Mock data
 const mockStats: DashboardStats = {
@@ -15,14 +15,14 @@ const mockStats: DashboardStats = {
     orders: 15.7,
     revenue: 23.1,
   },
-}
+};
 
 export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <AdminDashboard stats={mockStats} />
       </div>
     </div>
-  )
+  );
 }

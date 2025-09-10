@@ -78,9 +78,7 @@ describe('RegisterUserUseCase', () => {
 
     const result = await useCase.execute(registerDto);
 
-    expect(userDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    expect(userDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
     expect(userRepository.save).toHaveBeenCalledWith(expect.any(Object));
     expect(result.email).toBe(registerDto.email);
   });
@@ -97,9 +95,7 @@ describe('RegisterUserUseCase', () => {
     );
 
     // Act & Assert
-    await expect(useCase.execute(registerDto)).rejects.toThrow(
-      'El email ya está registrado'
-    );
+    await expect(useCase.execute(registerDto)).rejects.toThrow('El email ya está registrado');
     expect(userRepository.save).not.toHaveBeenCalled();
   });
 
@@ -116,11 +112,7 @@ describe('RegisterUserUseCase', () => {
     userRepository.save.mockRejectedValue(new Error('Database error'));
 
     // Act & Assert
-    await expect(useCase.execute(registerDto)).rejects.toThrow(
-      'Database error'
-    );
-    expect(userDomainService.validateUniqueEmail).toHaveBeenCalledWith(
-      registerDto.email
-    );
+    await expect(useCase.execute(registerDto)).rejects.toThrow('Database error');
+    expect(userDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
   });
 });

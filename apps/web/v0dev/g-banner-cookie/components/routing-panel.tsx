@@ -1,34 +1,51 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Navigation, Car, Bike, MapPin, Clock, RouteIcon, X, AlertCircle, Loader2, Settings } from "lucide-react"
-import type { Route, TransportMode, RoutingOptions } from "../types/routing-types"
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Navigation,
+  Car,
+  Bike,
+  MapPin,
+  Clock,
+  RouteIcon,
+  X,
+  AlertCircle,
+  Loader2,
+  Settings,
+} from 'lucide-react';
+import type { Route, TransportMode, RoutingOptions } from '../types/routing-types';
 
 interface RoutingPanelProps {
-  route: Route | null
-  isCalculating: boolean
-  error: string | null
-  onCalculateRoute: (options: RoutingOptions) => void
-  onClearRoute: () => void
-  startAddress?: string
-  endAddress?: string
-  className?: string
+  route: Route | null;
+  isCalculating: boolean;
+  error: string | null;
+  onCalculateRoute: (options: RoutingOptions) => void;
+  onClearRoute: () => void;
+  startAddress?: string;
+  endAddress?: string;
+  className?: string;
 }
 
 const transportModes: { value: TransportMode; label: string; icon: React.ReactNode }[] = [
-  { value: "driving-car", label: "Coche", icon: <Car className="h-4 w-4" /> },
-  { value: "cycling-regular", label: "Bicicleta", icon: <Bike className="h-4 w-4" /> },
-  { value: "foot-walking", label: "A pie", icon: <MapPin className="h-4 w-4" /> },
-]
+  { value: 'driving-car', label: 'Coche', icon: <Car className="h-4 w-4" /> },
+  { value: 'cycling-regular', label: 'Bicicleta', icon: <Bike className="h-4 w-4" /> },
+  { value: 'foot-walking', label: 'A pie', icon: <MapPin className="h-4 w-4" /> },
+];
 
 export default function RoutingPanel({
   route,
@@ -36,33 +53,33 @@ export default function RoutingPanel({
   error,
   onCalculateRoute,
   onClearRoute,
-  startAddress = "Tu ubicación",
-  endAddress = "Destino seleccionado",
-  className = "",
+  startAddress = 'Tu ubicación',
+  endAddress = 'Destino seleccionado',
+  className = '',
 }: RoutingPanelProps) {
-  const [selectedMode, setSelectedMode] = useState<TransportMode>("driving-car")
-  const [avoidTolls, setAvoidTolls] = useState(false)
-  const [avoidHighways, setAvoidHighways] = useState(false)
-  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [selectedMode, setSelectedMode] = useState<TransportMode>('driving-car');
+  const [avoidTolls, setAvoidTolls] = useState(false);
+  const [avoidHighways, setAvoidHighways] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleCalculateRoute = () => {
     onCalculateRoute({
       mode: selectedMode,
       avoidTolls,
       avoidHighways,
-    })
-  }
+    });
+  };
 
   const getModeIcon = (mode: TransportMode) => {
-    return transportModes.find((m) => m.value === mode)?.icon || <Car className="h-4 w-4" />
-  }
+    return transportModes.find(m => m.value === mode)?.icon || <Car className="h-4 w-4" />;
+  };
 
   return (
     <Card className={`shadow-natural-lg border-a4co-olive-200 ${className}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-            <Navigation className="h-5 w-5 mr-2 text-a4co-olive-600" />
+          <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
+            <Navigation className="text-a4co-olive-600 mr-2 h-5 w-5" />
             Cómo Llegar
           </CardTitle>
           {route && (
@@ -82,30 +99,30 @@ export default function RoutingPanel({
       <CardContent className="space-y-4">
         {/* Route Summary */}
         {route && (
-          <div className="bg-a4co-olive-50 rounded-lg p-4 border border-a4co-olive-200">
-            <div className="flex items-center justify-between mb-2">
+          <div className="bg-a4co-olive-50 border-a4co-olive-200 rounded-lg border p-4">
+            <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 {getModeIcon(selectedMode)}
-                <span className="font-medium text-a4co-olive-700">
-                  {transportModes.find((m) => m.value === selectedMode)?.label}
+                <span className="text-a4co-olive-700 font-medium">
+                  {transportModes.find(m => m.value === selectedMode)?.label}
                 </span>
               </div>
               <Badge variant="secondary" className="bg-a4co-olive-100 text-a4co-olive-700">
-                <RouteIcon className="h-3 w-3 mr-1" />
+                <RouteIcon className="mr-1 h-3 w-3" />
                 Ruta calculada
               </Badge>
             </div>
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-a4co-olive-600" />
+                <MapPin className="text-a4co-olive-600 h-4 w-4" />
                 <div>
                   <div className="font-medium text-gray-900">{route.summary.distance}</div>
                   <div className="text-gray-600">Distancia</div>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-a4co-olive-600" />
+                <Clock className="text-a4co-olive-600 h-4 w-4" />
                 <div>
                   <div className="font-medium text-gray-900">{route.summary.duration}</div>
                   <div className="text-gray-600">Tiempo estimado</div>
@@ -126,18 +143,18 @@ export default function RoutingPanel({
         {/* Route Points */}
         <div className="space-y-3">
           <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-green-500 rounded-full flex-shrink-0"></div>
-            <div className="flex-1 min-w-0">
+            <div className="h-3 w-3 flex-shrink-0 rounded-full bg-green-500"></div>
+            <div className="min-w-0 flex-1">
               <div className="text-sm font-medium text-gray-900">Origen</div>
-              <div className="text-xs text-gray-600 truncate">{startAddress}</div>
+              <div className="truncate text-xs text-gray-600">{startAddress}</div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-red-500 rounded-full flex-shrink-0"></div>
-            <div className="flex-1 min-w-0">
+            <div className="h-3 w-3 flex-shrink-0 rounded-full bg-red-500"></div>
+            <div className="min-w-0 flex-1">
               <div className="text-sm font-medium text-gray-900">Destino</div>
-              <div className="text-xs text-gray-600 truncate">{endAddress}</div>
+              <div className="truncate text-xs text-gray-600">{endAddress}</div>
             </div>
           </div>
         </div>
@@ -145,12 +162,15 @@ export default function RoutingPanel({
         {/* Transport Mode Selection */}
         <div className="space-y-2">
           <Label className="text-sm font-medium text-gray-700">Medio de transporte</Label>
-          <Select value={selectedMode} onValueChange={(value: TransportMode) => setSelectedMode(value)}>
-            <SelectTrigger className="border-gray-300 focus:border-a4co-olive-500 focus:ring-a4co-olive-500">
+          <Select
+            value={selectedMode}
+            onValueChange={(value: TransportMode) => setSelectedMode(value)}
+          >
+            <SelectTrigger className="focus:border-a4co-olive-500 focus:ring-a4co-olive-500 border-gray-300">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {transportModes.map((mode) => (
+              {transportModes.map(mode => (
                 <SelectItem key={mode.value} value={mode.value}>
                   <div className="flex items-center space-x-2">
                     {mode.icon}
@@ -163,20 +183,20 @@ export default function RoutingPanel({
         </div>
 
         {/* Advanced Options */}
-        {selectedMode === "driving-car" && (
+        {selectedMode === 'driving-car' && (
           <div className="space-y-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="text-a4co-olive-600 hover:text-a4co-olive-700 hover:bg-a4co-olive-50 p-0 h-auto font-normal"
+              className="text-a4co-olive-600 hover:text-a4co-olive-700 hover:bg-a4co-olive-50 h-auto p-0 font-normal"
             >
-              <Settings className="h-4 w-4 mr-1" />
+              <Settings className="mr-1 h-4 w-4" />
               Opciones avanzadas
             </Button>
 
             {showAdvanced && (
-              <div className="space-y-3 pl-4 border-l-2 border-a4co-olive-200">
+              <div className="border-a4co-olive-200 space-y-3 border-l-2 pl-4">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="avoid-tolls" className="text-sm text-gray-700">
                     Evitar peajes
@@ -209,17 +229,17 @@ export default function RoutingPanel({
         <Button
           onClick={handleCalculateRoute}
           disabled={isCalculating}
-          className="w-full bg-gradient-to-r from-a4co-olive-500 to-a4co-clay-500 hover:from-a4co-olive-600 hover:to-a4co-clay-600 text-white shadow-mixed hover:shadow-mixed-lg transition-all duration-300"
+          className="from-a4co-olive-500 to-a4co-clay-500 hover:from-a4co-olive-600 hover:to-a4co-clay-600 shadow-mixed hover:shadow-mixed-lg w-full bg-gradient-to-r text-white transition-all duration-300"
         >
           {isCalculating ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Calculando ruta...
             </>
           ) : (
             <>
-              <Navigation className="h-4 w-4 mr-2" />
-              {route ? "Recalcular Ruta" : "Calcular Ruta"}
+              <Navigation className="mr-2 h-4 w-4" />
+              {route ? 'Recalcular Ruta' : 'Calcular Ruta'}
             </>
           )}
         </Button>
@@ -228,19 +248,20 @@ export default function RoutingPanel({
         {route && route.segments.length > 0 && (
           <div className="space-y-2">
             <Label className="text-sm font-medium text-gray-700">Instrucciones</Label>
-            <div className="max-h-32 overflow-y-auto space-y-1">
+            <div className="max-h-32 space-y-1 overflow-y-auto">
               {route.segments.slice(0, 5).map((segment, index) => (
-                <div key={index} className="text-xs text-gray-600 p-2 bg-gray-50 rounded">
+                <div key={index} className="rounded bg-gray-50 p-2 text-xs text-gray-600">
                   <div className="font-medium">
                     {index + 1}. {segment.instruction}
                   </div>
-                  <div className="text-gray-500 mt-1">
-                    {(segment.distance / 1000).toFixed(1)} km • {Math.round(segment.duration / 60)} min
+                  <div className="mt-1 text-gray-500">
+                    {(segment.distance / 1000).toFixed(1)} km • {Math.round(segment.duration / 60)}{' '}
+                    min
                   </div>
                 </div>
               ))}
               {route.segments.length > 5 && (
-                <div className="text-xs text-gray-500 text-center py-1">
+                <div className="py-1 text-center text-xs text-gray-500">
                   +{route.segments.length - 5} instrucciones más
                 </div>
               )}
@@ -249,5 +270,5 @@ export default function RoutingPanel({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

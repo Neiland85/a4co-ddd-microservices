@@ -76,10 +76,7 @@ import { UserRepository } from './domain/repositories/user.repository';
     // Use Cases
     {
       provide: RegisterUserUseCase,
-      useFactory: (
-        userRepository: UserRepository,
-        userDomainService: UserDomainService
-      ) => {
+      useFactory: (userRepository: UserRepository, userDomainService: UserDomainService) => {
         return new RegisterUserUseCase(userRepository, userDomainService);
       },
       inject: ['UserRepository', UserDomainService],

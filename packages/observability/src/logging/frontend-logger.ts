@@ -177,17 +177,18 @@ export class FrontendLogger implements Logger {
   }
 
   error(message: string, error?: Error | unknown, context?: Partial<LogContext>): void {
-    const errorContext = error instanceof Error
-      ? {
-          error: {
-            message: error.message,
-            stackTrace: error.stack,
-            name: error.name,
-          },
-        }
-      : error
-      ? { error: String(error) }
-      : {};
+    const errorContext =
+      error instanceof Error
+        ? {
+            error: {
+              message: error.message,
+              stackTrace: error.stack,
+              name: error.name,
+            },
+          }
+        : error
+          ? { error: String(error) }
+          : {};
 
     this.log('error', message, {
       ...context,
@@ -196,17 +197,18 @@ export class FrontendLogger implements Logger {
   }
 
   fatal(message: string, error?: Error | unknown, context?: Partial<LogContext>): void {
-    const errorContext = error instanceof Error
-      ? {
-          error: {
-            message: error.message,
-            stackTrace: error.stack,
-            name: error.name,
-          },
-        }
-      : error
-      ? { error: String(error) }
-      : {};
+    const errorContext =
+      error instanceof Error
+        ? {
+            error: {
+              message: error.message,
+              stackTrace: error.stack,
+              name: error.name,
+            },
+          }
+        : error
+          ? { error: String(error) }
+          : {};
 
     this.log('fatal', message, {
       ...context,

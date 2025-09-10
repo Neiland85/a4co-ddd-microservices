@@ -18,17 +18,8 @@ export class ProductController {
    */
   async createProduct(req: Request, res: Response): Promise<void> {
     try {
-      const {
-        sku,
-        name,
-        description,
-        price,
-        currency,
-        categoryId,
-        variants,
-        images,
-        attributes
-      } = req.body;
+      const { sku, name, description, price, currency, categoryId, variants, images, attributes } =
+        req.body;
 
       const result = await this.createProductUseCase.execute({
         sku,
@@ -39,13 +30,13 @@ export class ProductController {
         categoryId,
         variants: variants || [],
         images: images || [],
-        attributes: attributes || []
+        attributes: attributes || [],
       });
 
       if (result.isFailure) {
         res.status(400).json({
           success: false,
-          error: result.error
+          error: result.error,
         });
         return;
       }
@@ -55,14 +46,14 @@ export class ProductController {
         data: {
           productId: result.getValue().productId,
           sku: result.getValue().sku,
-          name: result.getValue().name
-        }
+          name: result.getValue().name,
+        },
       });
     } catch (error) {
       console.error('Error creating product:', error);
       res.status(500).json({
         success: false,
-        error: 'Internal server error'
+        error: 'Internal server error',
       });
     }
   }
@@ -80,13 +71,13 @@ export class ProductController {
       if (result.isFailure) {
         res.status(404).json({
           success: false,
-          error: result.error
+          error: result.error,
         });
         return;
       }
 
       const product = result.getValue();
-      
+
       res.json({
         success: true,
         data: {
@@ -96,7 +87,7 @@ export class ProductController {
           description: product.description,
           price: {
             amount: product.price.amount,
-            currency: product.price.currency
+            currency: product.price.currency,
           },
           categoryId: product.categoryId,
           isActive: product.isActive,
@@ -107,28 +98,28 @@ export class ProductController {
             price: v.price,
             stockQuantity: v.stockQuantity,
             availableQuantity: v.availableQuantity,
-            attributes: v.attributes
+            attributes: v.attributes,
           })),
           images: product.images.map(img => ({
             id: img.id,
             url: img.url,
             alt: img.alt,
-            isPrimary: img.isPrimary
+            isPrimary: img.isPrimary,
           })),
           attributes: product.attributes.map(attr => ({
             name: attr.name,
             value: attr.value,
-            groupName: attr.groupName
+            groupName: attr.groupName,
           })),
           totalStock: product.getTotalStock(),
-          isInStock: product.isInStock()
-        }
+          isInStock: product.isInStock(),
+        },
       });
     } catch (error) {
       console.error('Error getting product:', error);
       res.status(500).json({
         success: false,
-        error: 'Internal server error'
+        error: 'Internal server error',
       });
     }
   }
@@ -145,7 +136,7 @@ export class ProductController {
       if (!price || !currency) {
         res.status(400).json({
           success: false,
-          error: 'Price and currency are required'
+          error: 'Price and currency are required',
         });
         return;
       }
@@ -153,26 +144,26 @@ export class ProductController {
       const result = await this.updateProductPriceUseCase.execute({
         productId: id,
         newPrice: price,
-        currency
+        currency,
       });
 
       if (result.isFailure) {
         res.status(400).json({
           success: false,
-          error: result.error
+          error: result.error,
         });
         return;
       }
 
       res.json({
         success: true,
-        message: 'Product price updated successfully'
+        message: 'Product price updated successfully',
       });
     } catch (error) {
       console.error('Error updating product price:', error);
       res.status(500).json({
         success: false,
-        error: 'Internal server error'
+        error: 'Internal server error',
       });
     }
   }
@@ -183,15 +174,7 @@ export class ProductController {
    */
   async searchProducts(req: Request, res: Response): Promise<void> {
     try {
-      const {
-        q,
-        categoryIds,
-        minPrice,
-        maxPrice,
-        isActive,
-        page = 1,
-        limit = 20
-      } = req.query;
+      const { q, categoryIds, minPrice, maxPrice, isActive, page = 1, limit = 20 } = req.query;
 
       const skip = (Number(page) - 1) * Number(limit);
 
@@ -202,13 +185,13 @@ export class ProductController {
         maxPrice: maxPrice ? Number(maxPrice) : undefined,
         isActive: isActive === 'true',
         skip,
-        take: Number(limit)
+        take: Number(limit),
       });
 
       if (result.isFailure) {
         res.status(400).json({
           success: false,
-          error: result.error
+          error: result.error,
         });
         return;
       }
@@ -225,27 +208,27 @@ export class ProductController {
             description: product.description,
             price: {
               amount: product.price.amount,
-              currency: product.price.currency
+              currency: product.price.currency,
             },
             categoryId: product.categoryId,
             isActive: product.isActive,
             primaryImage: product.images.find(img => img.isPrimary)?.url,
             totalStock: product.getTotalStock(),
-            isInStock: product.isInStock()
+            isInStock: product.isInStock(),
           })),
           pagination: {
             total,
             page: Number(page),
             limit: Number(limit),
-            totalPages: Math.ceil(total / Number(limit))
-          }
-        }
+            totalPages: Math.ceil(total / Number(limit)),
+          },
+        },
       });
     } catch (error) {
       console.error('Error searching products:', error);
       res.status(500).json({
         success: false,
-        error: 'Internal server error'
+        error: 'Internal server error',
       });
     }
   }
@@ -264,19 +247,19 @@ export class ProductController {
       if (result.isFailure) {
         res.status(404).json({
           success: false,
-          error: 'Product not found'
+          error: 'Product not found',
         });
         return;
       }
 
       const product = result.getValue();
-      
+
       if (variantId) {
         const variant = product.variants.find(v => v.id === variantId);
         if (!variant) {
           res.status(404).json({
             success: false,
-            error: 'Variant not found'
+            error: 'Variant not found',
           });
           return;
         }
@@ -287,8 +270,8 @@ export class ProductController {
             productId: product.productId,
             variantId: variant.id,
             available: variant.availableQuantity > 0,
-            quantity: variant.availableQuantity
-          }
+            quantity: variant.availableQuantity,
+          },
         });
       } else {
         res.json({
@@ -296,15 +279,15 @@ export class ProductController {
           data: {
             productId: product.productId,
             available: product.isInStock(),
-            quantity: product.getTotalStock()
-          }
+            quantity: product.getTotalStock(),
+          },
         });
       }
     } catch (error) {
       console.error('Error checking availability:', error);
       res.status(500).json({
         success: false,
-        error: 'Internal server error'
+        error: 'Internal server error',
       });
     }
   }

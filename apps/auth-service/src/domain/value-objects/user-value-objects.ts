@@ -49,9 +49,7 @@ export class Password extends ValueObject<string> {
     const hasNumbers = /\d/.test(password);
 
     if (!hasLowerCase || !hasUpperCase || !hasNumbers) {
-      throw new Error(
-        'Password debe contener al menos una minúscula, una mayúscula y un número'
-      );
+      throw new Error('Password debe contener al menos una minúscula, una mayúscula y un número');
     }
   }
 }

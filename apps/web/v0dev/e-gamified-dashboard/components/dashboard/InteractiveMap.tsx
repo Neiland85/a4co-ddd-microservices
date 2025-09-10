@@ -1,100 +1,124 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
-import { Navigation, Zap } from "lucide-react"
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Navigation, Zap } from 'lucide-react';
 
 interface Location {
-  id: number
-  name: string
-  type: string
-  lat: number
-  lng: number
-  offers: number
-  rating: number
+  id: number;
+  name: string;
+  type: string;
+  lat: number;
+  lng: number;
+  offers: number;
+  rating: number;
 }
 
 const locations: Location[] = [
-  { id: 1, name: "Pizza Palace", type: "restaurant", lat: 40.7128, lng: -74.006, offers: 3, rating: 4.8 },
-  { id: 2, name: "Spa Zen", type: "wellness", lat: 40.7589, lng: -73.9851, offers: 2, rating: 4.9 },
-  { id: 3, name: "Adventure Park", type: "entertainment", lat: 40.7505, lng: -73.9934, offers: 5, rating: 4.7 },
-  { id: 4, name: "Tech Store", type: "shopping", lat: 40.7282, lng: -73.9942, offers: 4, rating: 4.6 },
-]
+  {
+    id: 1,
+    name: 'Pizza Palace',
+    type: 'restaurant',
+    lat: 40.7128,
+    lng: -74.006,
+    offers: 3,
+    rating: 4.8,
+  },
+  { id: 2, name: 'Spa Zen', type: 'wellness', lat: 40.7589, lng: -73.9851, offers: 2, rating: 4.9 },
+  {
+    id: 3,
+    name: 'Adventure Park',
+    type: 'entertainment',
+    lat: 40.7505,
+    lng: -73.9934,
+    offers: 5,
+    rating: 4.7,
+  },
+  {
+    id: 4,
+    name: 'Tech Store',
+    type: 'shopping',
+    lat: 40.7282,
+    lng: -73.9942,
+    offers: 4,
+    rating: 4.6,
+  },
+];
 
 export default function InteractiveMap() {
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const [pulsingLocations, setPulsingLocations] = useState<{ [key: number]: boolean }>({})
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [pulsingLocations, setPulsingLocations] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const randomId = locations[Math.floor(Math.random() * locations.length)].id
-      setPulsingLocations((prev) => ({
+      const randomId = locations[Math.floor(Math.random() * locations.length)].id;
+      setPulsingLocations(prev => ({
         ...prev,
         [randomId]: !prev[randomId],
-      }))
-    }, 2000)
+      }));
+    }, 2000);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   const getLocationIcon = (type: string) => {
     switch (type) {
-      case "restaurant":
-        return "🍕"
-      case "wellness":
-        return "🧘"
-      case "entertainment":
-        return "🎢"
-      case "shopping":
-        return "🛍️"
+      case 'restaurant':
+        return '🍕';
+      case 'wellness':
+        return '🧘';
+      case 'entertainment':
+        return '🎢';
+      case 'shopping':
+        return '🛍️';
       default:
-        return "📍"
+        return '📍';
     }
-  }
+  };
 
   const getLocationColor = (type: string) => {
     switch (type) {
-      case "restaurant":
-        return "from-orange-400 to-red-500"
-      case "wellness":
-        return "from-green-400 to-teal-500"
-      case "entertainment":
-        return "from-purple-400 to-pink-500"
-      case "shopping":
-        return "from-blue-400 to-indigo-500"
+      case 'restaurant':
+        return 'from-orange-400 to-red-500';
+      case 'wellness':
+        return 'from-green-400 to-teal-500';
+      case 'entertainment':
+        return 'from-purple-400 to-pink-500';
+      case 'shopping':
+        return 'from-blue-400 to-indigo-500';
       default:
-        return "from-gray-400 to-gray-500"
+        return 'from-gray-400 to-gray-500';
     }
-  }
+  };
 
   return (
-    <div className="bg-gradient-to-br from-teal-600 via-blue-600 to-purple-600 rounded-3xl p-6 shadow-2xl border-4 border-cyan-400">
+    <div className="rounded-3xl border-4 border-cyan-400 bg-gradient-to-br from-teal-600 via-blue-600 to-purple-600 p-6 shadow-2xl">
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex items-center justify-between mb-6"
+        className="mb-6 flex items-center justify-between"
       >
-        <h2 className="text-3xl font-bold text-white flex items-center">
-          <Navigation className="w-8 h-8 text-cyan-400 mr-3" />
+        <h2 className="flex items-center text-3xl font-bold text-white">
+          <Navigation className="mr-3 h-8 w-8 text-cyan-400" />
           Mapa de Aventuras
-          <Zap className="w-6 h-6 text-yellow-400 ml-2" />
+          <Zap className="ml-2 h-6 w-6 text-yellow-400" />
         </h2>
 
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-          className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center"
+          transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: 'linear' }}
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-400"
         >
-          <Navigation className="w-4 h-4 text-blue-900" />
+          <Navigation className="h-4 w-4 text-blue-900" />
         </motion.div>
       </motion.div>
 
       <div className="relative">
         {/* Simulated Map Background */}
-        <div className="bg-gradient-to-br from-green-200 via-blue-200 to-purple-200 rounded-2xl h-96 relative overflow-hidden">
+        <div className="relative h-96 overflow-hidden rounded-2xl bg-gradient-to-br from-green-200 via-blue-200 to-purple-200">
           {/* Grid Pattern */}
           <div className="absolute inset-0 opacity-20">
-            <div className="grid grid-cols-8 grid-rows-6 h-full">
+            <div className="grid h-full grid-cols-8 grid-rows-6">
               {[...Array(48)].map((_, i) => (
                 <div key={i} className="border border-gray-400" />
               ))}
@@ -105,12 +129,12 @@ export default function InteractiveMap() {
           <motion.div
             animate={{ pathLength: [0, 1, 0] }}
             transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
-            className="absolute top-1/2 left-0 w-full h-1 bg-yellow-400 opacity-60"
+            className="absolute left-0 top-1/2 h-1 w-full bg-yellow-400 opacity-60"
           />
           <motion.div
             animate={{ pathLength: [0, 1, 0] }}
             transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, delay: 1.5 }}
-            className="absolute top-0 left-1/2 w-1 h-full bg-yellow-400 opacity-60"
+            className="absolute left-1/2 top-0 h-full w-1 bg-yellow-400 opacity-60"
           />
 
           {/* Location Markers */}
@@ -130,9 +154,9 @@ export default function InteractiveMap() {
                   ? {
                       scale: [1, 1.3, 1],
                       boxShadow: [
-                        "0 0 0 0 rgba(59, 130, 246, 0.7)",
-                        "0 0 0 20px rgba(59, 130, 246, 0)",
-                        "0 0 0 0 rgba(59, 130, 246, 0)",
+                        '0 0 0 0 rgba(59, 130, 246, 0.7)',
+                        '0 0 0 20px rgba(59, 130, 246, 0)',
+                        '0 0 0 0 rgba(59, 130, 246, 0)',
                       ],
                     }
                   : {}
@@ -140,7 +164,7 @@ export default function InteractiveMap() {
               transition={{ duration: 1.5 }}
             >
               <div
-                className={`w-12 h-12 bg-gradient-to-r ${getLocationColor(location.type)} rounded-full flex items-center justify-center shadow-lg border-2 border-white`}
+                className={`h-12 w-12 bg-gradient-to-r ${getLocationColor(location.type)} flex items-center justify-center rounded-full border-2 border-white shadow-lg`}
               >
                 <span className="text-xl">{getLocationIcon(location.type)}</span>
               </div>
@@ -149,7 +173,7 @@ export default function InteractiveMap() {
               <motion.div
                 animate={{ y: [-2, 2, -2] }}
                 transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
+                className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"
               >
                 {location.offers}
               </motion.div>
@@ -158,19 +182,19 @@ export default function InteractiveMap() {
 
           {/* User Location */}
           <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
             animate={{
               scale: [1, 1.2, 1],
               boxShadow: [
-                "0 0 0 0 rgba(34, 197, 94, 0.7)",
-                "0 0 0 15px rgba(34, 197, 94, 0)",
-                "0 0 0 0 rgba(34, 197, 94, 0)",
+                '0 0 0 0 rgba(34, 197, 94, 0.7)',
+                '0 0 0 15px rgba(34, 197, 94, 0)',
+                '0 0 0 0 rgba(34, 197, 94, 0)',
               ],
             }}
             transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
           >
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-2 border-white shadow-lg">
-              <div className="w-3 h-3 bg-white rounded-full" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-green-500 shadow-lg">
+              <div className="h-3 w-3 rounded-full bg-white" />
             </div>
           </motion.div>
         </div>
@@ -181,21 +205,21 @@ export default function InteractiveMap() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-4 left-4 right-4 bg-white rounded-2xl p-4 shadow-xl border-2 border-cyan-400"
+            className="absolute bottom-4 left-4 right-4 rounded-2xl border-2 border-cyan-400 bg-white p-4 shadow-xl"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-lg text-gray-800 flex items-center">
+                <h3 className="flex items-center text-lg font-bold text-gray-800">
                   <span className="mr-2">{getLocationIcon(selectedLocation.type)}</span>
                   {selectedLocation.name}
                 </h3>
-                <p className="text-gray-600 capitalize">{selectedLocation.type}</p>
-                <div className="flex items-center mt-2">
+                <p className="capitalize text-gray-600">{selectedLocation.type}</p>
+                <div className="mt-2 flex items-center">
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => (
                       <span
                         key={i}
-                        className={`text-sm ${i < Math.floor(selectedLocation.rating) ? "text-yellow-400" : "text-gray-300"}`}
+                        className={`text-sm ${i < Math.floor(selectedLocation.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
                       >
                         ⭐
                       </span>
@@ -206,13 +230,13 @@ export default function InteractiveMap() {
               </div>
 
               <div className="text-right">
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                <div className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 text-sm font-semibold text-white">
                   {selectedLocation.offers} ofertas
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="mt-2 bg-cyan-500 text-white px-4 py-2 rounded-full text-sm font-semibold"
+                  className="mt-2 rounded-full bg-cyan-500 px-4 py-2 text-sm font-semibold text-white"
                   onClick={() => setSelectedLocation(null)}
                 >
                   Cerrar
@@ -223,5 +247,5 @@ export default function InteractiveMap() {
         )}
       </div>
     </div>
-  )
+  );
 }

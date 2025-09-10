@@ -61,7 +61,7 @@ export class CheckInventoryUseCase {
       needsRestock: product.needsRestock,
       unitPrice: product.unitPrice,
       currency: product.currency,
-      isActive: product.isActive
+      isActive: product.isActive,
     };
   }
 
@@ -76,8 +76,8 @@ export class CheckInventoryUseCase {
           inStock: 0,
           lowStock: 0,
           outOfStock: 0,
-          discontinued: 0
-        }
+          discontinued: 0,
+        },
       };
     }
 
@@ -96,7 +96,7 @@ export class CheckInventoryUseCase {
       needsRestock: product.needsRestock,
       unitPrice: product.unitPrice,
       currency: product.currency,
-      isActive: product.isActive
+      isActive: product.isActive,
     }));
 
     // Calculate summary
@@ -105,12 +105,12 @@ export class CheckInventoryUseCase {
       inStock: productResponses.filter(p => p.stockStatus === 'in_stock').length,
       lowStock: productResponses.filter(p => p.stockStatus === 'low_stock').length,
       outOfStock: productResponses.filter(p => p.stockStatus === 'out_of_stock').length,
-      discontinued: productResponses.filter(p => p.stockStatus === 'discontinued').length
+      discontinued: productResponses.filter(p => p.stockStatus === 'discontinued').length,
     };
 
     return {
       products: productResponses,
-      summary
+      summary,
     };
   }
 }

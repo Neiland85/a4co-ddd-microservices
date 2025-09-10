@@ -1,33 +1,37 @@
 "use strict";
-/**
- * React hooks and HOCs for distributed tracing
- */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
     };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
     };
 })();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TracingErrorBoundary = void 0;
 exports.useComponentTracing = useComponentTracing;
@@ -36,20 +40,24 @@ exports.useInteractionTracing = useInteractionTracing;
 exports.useApiTracing = useApiTracing;
 exports.withTracing = withTracing;
 exports.TracingProvider = TracingProvider;
-var react_1 = require("react");
-var web_tracer_1 = require("./web-tracer");
+const jsx_runtime_1 = require("react/jsx-runtime");
+/**
+ * React hooks and HOCs for distributed tracing
+ */
+const react_1 = __importStar(require("react"));
+const web_tracer_1 = require("./web-tracer");
 /**
  * Hook to trace component lifecycle
  */
 function useComponentTracing(componentName, props) {
-    var spanRef = (0, react_1.useRef)(null);
-    var renderCountRef = (0, react_1.useRef)(0);
-    (0, react_1.useEffect)(function () {
+    const spanRef = (0, react_1.useRef)(null);
+    const renderCountRef = (0, react_1.useRef)(0);
+    (0, react_1.useEffect)(() => {
         // Start span on mount
         spanRef.current = (0, web_tracer_1.traceComponentRender)(componentName, props);
         spanRef.current.setAttribute('component.mounted', true);
         spanRef.current.setAttribute('component.renderCount', 1);
-        return function () {
+        return () => {
             // End span on unmount
             if (spanRef.current) {
                 spanRef.current.setAttribute('component.unmounted', true);
@@ -58,7 +66,7 @@ function useComponentTracing(componentName, props) {
             }
         };
     }, [componentName]);
-    (0, react_1.useEffect)(function () {
+    (0, react_1.useEffect)(() => {
         // Track renders
         renderCountRef.current++;
         if (spanRef.current && renderCountRef.current > 1) {
@@ -74,9 +82,9 @@ function useComponentTracing(componentName, props) {
  * Hook to trace route changes
  */
 function useRouteTracing(currentRoute) {
-    var previousRouteRef = (0, react_1.useRef)(currentRoute);
-    var spanRef = (0, react_1.useRef)(null);
-    (0, react_1.useEffect)(function () {
+    const previousRouteRef = (0, react_1.useRef)(currentRoute);
+    const spanRef = (0, react_1.useRef)(null);
+    (0, react_1.useEffect)(() => {
         if (previousRouteRef.current !== currentRoute) {
             // End previous navigation span
             if (spanRef.current) {
@@ -85,7 +93,7 @@ function useRouteTracing(currentRoute) {
             // Start new navigation span
             spanRef.current = (0, web_tracer_1.traceRouteNavigation)(previousRouteRef.current, currentRoute);
             // Add performance metrics after navigation
-            setTimeout(function () {
+            setTimeout(() => {
                 if (spanRef.current) {
                     (0, web_tracer_1.addPerformanceMetricsToSpan)();
                 }
@@ -96,13 +104,16 @@ function useRouteTracing(currentRoute) {
     return spanRef.current;
 }
 function useInteractionTracing(interactionType, target, options) {
-    var lastInteractionTime = (0, react_1.useRef)(0);
-    var traceInteraction = (0, react_1.useCallback)(function (metadata) {
-        var now = Date.now();
-        if ((options === null || options === void 0 ? void 0 : options.throttle) && now - lastInteractionTime.current < options.throttle) {
+    const lastInteractionTime = (0, react_1.useRef)(0);
+    const traceInteraction = (0, react_1.useCallback)((metadata) => {
+        const now = Date.now();
+        if (options?.throttle && now - lastInteractionTime.current < options.throttle) {
             return;
         }
-        var span = (0, web_tracer_1.traceUserInteraction)(interactionType, target, __assign(__assign({}, options === null || options === void 0 ? void 0 : options.attributes), metadata));
+        const span = (0, web_tracer_1.traceUserInteraction)(interactionType, target, {
+            ...options?.attributes,
+            ...metadata,
+        });
         span.end();
         lastInteractionTime.current = now;
     }, [interactionType, target, options]);
@@ -112,79 +123,74 @@ function useInteractionTracing(interactionType, target, options) {
  * Hook to trace API calls with spans
  */
 function useApiTracing() {
-    var activeSpans = (0, react_1.useRef)(new Map());
-    var startApiTrace = (0, react_1.useCallback)(function (operationName, metadata) {
-        var span = (0, web_tracer_1.traceUserInteraction)('api-call', operationName, metadata);
-        var traceId = span.spanContext().traceId;
+    const activeSpans = (0, react_1.useRef)(new Map());
+    const startApiTrace = (0, react_1.useCallback)((operationName, metadata) => {
+        const span = (0, web_tracer_1.traceUserInteraction)('api-call', operationName, metadata);
+        const traceId = span.spanContext().traceId;
         activeSpans.current.set(traceId, span);
         return traceId;
     }, []);
-    var endApiTrace = (0, react_1.useCallback)(function (traceId, success, metadata) {
-        var span = activeSpans.current.get(traceId);
+    const endApiTrace = (0, react_1.useCallback)((traceId, success, metadata) => {
+        const span = activeSpans.current.get(traceId);
         if (span) {
             span.setAttribute('api.success', success);
             if (metadata) {
-                Object.entries(metadata).forEach(function (_a) {
-                    var key = _a[0], value = _a[1];
-                    span.setAttribute("api.".concat(key), value);
+                Object.entries(metadata).forEach(([key, value]) => {
+                    span.setAttribute(`api.${key}`, value);
                 });
             }
             span.end();
             activeSpans.current.delete(traceId);
         }
     }, []);
-    return { startApiTrace: startApiTrace, endApiTrace: endApiTrace };
+    return { startApiTrace, endApiTrace };
 }
 function withTracing(Component, options) {
-    var displayName = (options === null || options === void 0 ? void 0 : options.componentName) || Component.displayName || Component.name || 'Component';
-    return react_1.default.forwardRef(function (props, ref) {
-        var _a;
-        var span = useComponentTracing(displayName, props);
+    const displayName = options?.componentName || Component.displayName || Component.name || 'Component';
+    return react_1.default.forwardRef((props, ref) => {
+        const span = useComponentTracing(displayName, props);
         // Track specific prop changes
-        (0, react_1.useEffect)(function () {
-            if (span && (options === null || options === void 0 ? void 0 : options.trackProps)) {
-                var trackedProps_1 = {};
-                options.trackProps.forEach(function (propName) {
+        (0, react_1.useEffect)(() => {
+            if (span && options?.trackProps) {
+                const trackedProps = {};
+                options.trackProps.forEach(propName => {
                     if (propName in props) {
-                        trackedProps_1[propName] = props[propName];
+                        trackedProps[propName] = props[propName];
                     }
                 });
                 span.addEvent('props.updated', {
-                    props: trackedProps_1,
+                    props: trackedProps,
                     timestamp: new Date().toISOString(),
                 });
             }
-        }, ((_a = options === null || options === void 0 ? void 0 : options.trackProps) === null || _a === void 0 ? void 0 : _a.map(function (prop) { return props[prop]; })) || []);
-        return <Component {...props} ref={ref}/>;
+        }, options?.trackProps?.map(prop => props[prop]) || []);
+        return (0, jsx_runtime_1.jsx)(Component, { ...props, ref: ref });
     });
 }
-function TracingProvider(_a) {
-    var children = _a.children, serviceName = _a.serviceName, serviceVersion = _a.serviceVersion, environment = _a.environment;
-    (0, react_1.useEffect)(function () {
+function TracingProvider({ children, serviceName, serviceVersion, environment, }) {
+    (0, react_1.useEffect)(() => {
         // Initialize web tracer on mount
-        Promise.resolve().then(function () { return require('./web-tracer'); }).then(function (_a) {
-            var initializeWebTracer = _a.initializeWebTracer;
+        import('./web-tracer').then(({ initializeWebTracer }) => {
             initializeWebTracer({
-                serviceName: serviceName,
-                serviceVersion: serviceVersion,
-                environment: environment,
+                serviceName,
+                serviceVersion,
+                environment,
             });
         });
     }, [serviceName, serviceVersion, environment]);
-    return <>{children}</>;
+    return (0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: children });
 }
-var TracingErrorBoundary = /** @class */ (function (_super) {
-    __extends(TracingErrorBoundary, _super);
-    function TracingErrorBoundary(props) {
-        var _this = _super.call(this, props) || this;
-        _this.state = { hasError: false };
-        return _this;
+class TracingErrorBoundary extends react_1.default.Component {
+    span;
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
     }
-    TracingErrorBoundary.getDerivedStateFromError = function (error) {
-        return { hasError: true, error: error };
-    };
-    TracingErrorBoundary.prototype.componentDidCatch = function (error, errorInfo) {
-        var componentName = this.props.componentName || 'ErrorBoundary';
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error, errorInfo) {
+        const componentName = this.props.componentName || 'ErrorBoundary';
         this.span = (0, web_tracer_1.traceComponentRender)(componentName, {
             error: true,
             errorMessage: error.message,
@@ -193,23 +199,17 @@ var TracingErrorBoundary = /** @class */ (function (_super) {
         });
         this.span.recordException(error);
         this.span.end();
-    };
-    TracingErrorBoundary.prototype.render = function () {
-        var _a;
+    }
+    render() {
         if (this.state.hasError) {
-            var Fallback = this.props.fallback;
+            const Fallback = this.props.fallback;
             if (Fallback) {
-                return <Fallback error={this.state.error}/>;
+                return (0, jsx_runtime_1.jsx)(Fallback, { error: this.state.error });
             }
-            return (<div style={{ padding: '20px', textAlign: 'center' }}>
-          <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {(_a = this.state.error) === null || _a === void 0 ? void 0 : _a.toString()}
-          </details>
-        </div>);
+            return ((0, jsx_runtime_1.jsxs)("div", { style: { padding: '20px', textAlign: 'center' }, children: [(0, jsx_runtime_1.jsx)("h2", { children: "Something went wrong." }), (0, jsx_runtime_1.jsx)("details", { style: { whiteSpace: 'pre-wrap' }, children: this.state.error?.toString() })] }));
         }
         return this.props.children;
-    };
-    return TracingErrorBoundary;
-}(react_1.default.Component));
+    }
+}
 exports.TracingErrorBoundary = TracingErrorBoundary;
+//# sourceMappingURL=react-tracing.js.map

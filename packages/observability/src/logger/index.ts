@@ -28,15 +28,19 @@ const defaultSerializers = {
   err: pino.stdSerializers.err,
   error: pino.stdSerializers.err,
   ddd: (metadata: DDDMetadata) => ({
-    aggregate: metadata.aggregateName ? {
-      id: metadata.aggregateId,
-      name: metadata.aggregateName,
-    } : undefined,
+    aggregate: metadata.aggregateName
+      ? {
+          id: metadata.aggregateId,
+          name: metadata.aggregateName,
+        }
+      : undefined,
     command: metadata.commandName,
-    event: metadata.eventName ? {
-      name: metadata.eventName,
-      version: metadata.eventVersion,
-    } : undefined,
+    event: metadata.eventName
+      ? {
+          name: metadata.eventName,
+          version: metadata.eventVersion,
+        }
+      : undefined,
     correlationId: metadata.correlationId,
     causationId: metadata.causationId,
   }),
@@ -71,7 +75,9 @@ function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
 }
 
 // Create logger with configuration
-export function createLogger(config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }): ObservabilityLogger {
+export function createLogger(
+  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+): ObservabilityLogger {
   const options: LoggerOptions = {
     name: config.serviceName,
     level: config.level || 'info',
@@ -88,8 +94,8 @@ export function createLogger(config: LoggerConfig & { serviceName: string; servi
     },
     timestamp: pino.stdTimeFunctions.isoTime,
     formatters: {
-      level: (label) => ({ level: label }),
-      log: (object) => {
+      level: label => ({ level: label }),
+      log: object => {
         // Add OpenTelemetry context if available
         const span = trace.getActiveSpan();
         if (span) {
@@ -121,7 +127,9 @@ export function createLogger(config: LoggerConfig & { serviceName: string; servi
 }
 
 // Initialize global logger
-export function initializeLogger(config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }): ObservabilityLogger {
+export function initializeLogger(
+  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+): ObservabilityLogger {
   globalLogger = createLogger(config);
   return globalLogger;
 }
@@ -171,11 +179,14 @@ export function createHttpLogger(logger?: ObservabilityLogger) {
       const duration = Date.now() - startTime;
       const level = res.statusCode >= 400 ? 'error' : 'info';
 
-      req.log[level]({
-        res,
-        duration,
-        responseSize: res.get?.('content-length'),
-      }, 'Request completed');
+      req.log[level](
+        {
+          res,
+          duration,
+          responseSize: res.get?.('content-length'),
+        },
+        'Request completed'
+      );
     });
 
     next();

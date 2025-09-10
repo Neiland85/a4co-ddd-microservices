@@ -48,12 +48,7 @@ export class User extends AggregateRoot {
 
     const hashedPassword = await bcrypt.hash(passwordVO.value, 12);
 
-    const user = new User(
-      id || require('uuid').v4(),
-      emailVO,
-      nameVO,
-      hashedPassword
-    );
+    const user = new User(id || require('uuid').v4(), emailVO, nameVO, hashedPassword);
 
     // Emitir evento de dominio
     user.addDomainEvent(
@@ -77,12 +72,7 @@ export class User extends AggregateRoot {
     const emailVO = new Email(email);
     const nameVO = new UserName(name);
 
-    const user = new User(
-      id || require('uuid').v4(),
-      emailVO,
-      nameVO,
-      hashedPassword
-    );
+    const user = new User(id || require('uuid').v4(), emailVO, nameVO, hashedPassword);
 
     // Emitir evento de dominio
     user.addDomainEvent(
@@ -180,8 +170,7 @@ export class User extends AggregateRoot {
     changedBy: string
   ): Promise<void> {
     try {
-      const isCurrentPasswordValid =
-        await this.validatePassword(currentPassword);
+      const isCurrentPasswordValid = await this.validatePassword(currentPassword);
       if (!isCurrentPasswordValid) {
         throw new Error('Password actual incorrecto');
       }

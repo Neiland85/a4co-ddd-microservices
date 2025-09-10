@@ -8,10 +8,7 @@ type ClassValue =
   | { [key: string]: any }
   | ClassValue[];
 
-function handleObjectInput(
-  input: Record<string, any>,
-  classes: string[]
-): void {
+function handleObjectInput(input: Record<string, any>, classes: string[]): void {
   for (const [key, value] of Object.entries(input)) {
     if (value) classes.push(key);
   }
@@ -64,8 +61,5 @@ export const truncateText = (text: string, maxLength: number): string => {
 };
 
 export const generateId = (): string => {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };

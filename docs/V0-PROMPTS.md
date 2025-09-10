@@ -2,6 +2,7 @@
 
 ## 📋 **PROMPT 1: ProductCatalog Premium**
 
+
 ````
 Crear un catálogo de productos premium para mercado local de aceite de oliva de Jaén, España.
 
@@ -18,6 +19,7 @@ CARACTERÍSTICAS DEL COMPONENTE:
 - Tema dorado/ámbar inspirado en aceite de oliva
 
 DATOS DE EJEMPLO:
+
 ```typescript
 const sampleProducts = [
   {
@@ -34,9 +36,11 @@ const sampleProducts = [
     certifications: ["Ecológico", "DO Jaén", "Primera Cosecha"]
   }
 ];
+
 ````
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface ProductCatalogProps {
@@ -46,7 +50,9 @@ interface ProductCatalogProps {
   maxItems?: number;
   loading?: boolean;
 }
+
 ```
+
 
 DISEÑO VISUAL:
 
@@ -57,13 +63,17 @@ DISEÑO VISUAL:
 - Botones CTA: "👁️ Ver Detalles" con gradiente amber
 - Responsive design mobile-first
 
+
 ```
+
 
 ---
 
 ## 📋 **PROMPT 2: ProductSearch Avanzado**
 
+
 ```
+
 
 Crear buscador avanzado con autocompletado para productos locales de Jaén.
 
@@ -76,6 +86,7 @@ ESPECIFICACIONES:
 - Keyboard navigation completa
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface ProductSearchProps {
@@ -91,7 +102,9 @@ interface SearchFilters {
   seasonal?: boolean;
   certified?: boolean;
 }
+
 ```
+
 
 CARACTERÍSTICAS VISUALES:
 
@@ -104,6 +117,7 @@ CARACTERÍSTICAS VISUALES:
 
 DATOS DE EJEMPLO:
 
+
 ```typescript
 const suggestions = [
   'Aceite de oliva virgen extra',
@@ -111,15 +125,21 @@ const suggestions = [
   'Miel de azahar',
   'Jamón ibérico de bellota',
 ];
-```
 
 ```
+
+
+
+```
+
 
 ---
 
 ## 📋 **PROMPT 3: ArtisanDirectory Premium**
 
+
 ```
+
 
 Diseñar directorio elegante de artesanos/productores locales de Jaén con mapas.
 
@@ -132,6 +152,7 @@ ESPECIFICACIONES:
 - Integración con mapas (placeholder)
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface ArtisanDirectoryProps {
@@ -153,7 +174,9 @@ interface LocalArtisan {
   verified: boolean;
   contact: { phone: string; email: string };
 }
+
 ```
+
 
 DISEÑO VISUAL:
 
@@ -165,6 +188,7 @@ DISEÑO VISUAL:
 - Skeleton loading para cada card
 
 DATOS DE EJEMPLO:
+
 
 ```typescript
 const sampleArtisans = [
@@ -179,15 +203,21 @@ const sampleArtisans = [
     contact: { phone: '+34 953 123 456', email: 'maria@olivares.com' },
   },
 ];
-```
 
 ```
+
+
+
+```
+
 
 ---
 
 ## 📋 **PROMPT 4: SalesOpportunityBoard**
 
+
 ```
+
 
 Crear tablero Kanban para oportunidades de venta de productos locales.
 
@@ -200,6 +230,7 @@ ESPECIFICACIONES:
 - FAB button para crear nueva oportunidad
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface SalesOpportunityBoardProps {
@@ -220,7 +251,9 @@ interface SalesOpportunity {
   location: string;
   producer: string;
 }
+
 ```
+
 
 DISEÑO VISUAL:
 
@@ -232,6 +265,7 @@ DISEÑO VISUAL:
 - FAB button con icono ➕
 
 DATOS DE EJEMPLO:
+
 
 ```typescript
 const sampleOpportunities = [
@@ -246,15 +280,21 @@ const sampleOpportunities = [
     producer: 'Olivares del Guadalquivir',
   },
 ];
-```
 
 ```
+
+
+
+```
+
 
 ---
 
 ## 📋 **PROMPT 5: MarketplaceDashboard Ejecutivo**
 
+
 ```
+
 
 Diseñar dashboard ejecutivo para mercado local de Jaén con métricas y mapas.
 
@@ -267,6 +307,7 @@ ESPECIFICACIONES:
 - Panel de notificaciones y actividad reciente
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface MarketplaceDashboardProps {
@@ -283,7 +324,9 @@ interface DashboardStats {
   salesVolume: number;
   averageRating: number;
 }
+
 ```
+
 
 DISEÑO VISUAL:
 
@@ -296,6 +339,7 @@ DISEÑO VISUAL:
 
 DATOS DE EJEMPLO:
 
+
 ```typescript
 const sampleStats = {
   totalProducts: 156,
@@ -303,9 +347,13 @@ const sampleStats = {
   salesVolume: 25680,
   averageRating: 4.6,
 };
-```
 
 ```
+
+
+
+```
+
 
 ---
 
@@ -333,4 +381,6 @@ const sampleStats = {
 - 📋 **Template de adaptación**: `src/components/v0/V0ComponentTemplate.tsx`
 
 ¡Listo para crear componentes increíbles en V0 y traerlos a nuestro proyecto! 🚀✨
+
 ```
+

@@ -21,11 +21,7 @@ export abstract class SagaOrchestrator {
   /**
    * Maneja el siguiente paso de la saga
    */
-  abstract handleSagaStep(
-    sagaId: string,
-    step: string,
-    data: any
-  ): Promise<void>;
+  abstract handleSagaStep(sagaId: string, step: string, data: any): Promise<void>;
 
   /**
    * Completa la saga exitosamente
@@ -33,7 +29,7 @@ export abstract class SagaOrchestrator {
   protected async completeSaga(sagaId: string, result: any): Promise<void> {
     const event = new SagaCompletedEvent(sagaId, {
       result,
-      completedAt: new Date()
+      completedAt: new Date(),
     });
     await this.eventBus.publish(EventSubjects.SAGA_COMPLETED, event);
   }
@@ -45,7 +41,7 @@ export abstract class SagaOrchestrator {
     const event = new SagaFailedEvent(sagaId, {
       error: error.message || error.toString(),
       compensations: [],
-      failedAt: new Date()
+      failedAt: new Date(),
     });
     await this.eventBus.publish(EventSubjects.SAGA_FAILED, event);
   }
@@ -55,8 +51,7 @@ export abstract class SagaOrchestrator {
  * Orquestador específico para la saga de creación de órdenes
  */
 export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
-  private sagaStates: Map<string, { customerId: string; initialData: any }> =
-    new Map(); // Almacenar estado por sagaId
+  private sagaStates: Map<string, { customerId: string; initialData: any }> = new Map(); // Almacenar estado por sagaId
 
   async startSaga(
     sagaId: string,
@@ -65,7 +60,7 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
     // Almacenar estado inicial
     this.sagaStates.set(sagaId, {
       customerId: initialData.customerId,
-      initialData
+      initialData,
     });
 
     // Publicar evento de inicio de saga usando SAGA_STARTED
@@ -78,17 +73,13 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       eventData: {
         sagaId,
         customerId: initialData.customerId,
-        items: initialData.items
+        items: initialData.items,
       },
-      sagaId
+      sagaId,
     });
   }
 
-  async handleSagaStep(
-    sagaId: string,
-    step: string,
-    data: any
-  ): Promise<void> {
+  async handleSagaStep(sagaId: string, step: string, data: any): Promise<void> {
     const sagaState = this.sagaStates.get(sagaId);
     if (!sagaState) {
       throw new Error(`Saga ${sagaId} no encontrada`);
@@ -122,9 +113,9 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       occurredOn: new Date(),
       eventData: {
         sagaId,
-        items: data.items
+        items: data.items,
       },
-      sagaId
+      sagaId,
     });
   }
 
@@ -139,9 +130,9 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       eventData: {
         sagaId,
         customerId: data.customerId,
-        items: data.items
+        items: data.items,
       },
-      sagaId
+      sagaId,
     });
   }
 
@@ -156,9 +147,9 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       eventData: {
         sagaId,
         orderId: data.orderId,
-        amount: data.amount
+        amount: data.amount,
       },
-      sagaId
+      sagaId,
     });
   }
 
@@ -172,9 +163,9 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       occurredOn: new Date(),
       eventData: {
         sagaId,
-        orderId: data.orderId
+        orderId: data.orderId,
       },
-      sagaId
+      sagaId,
     });
   }
 }

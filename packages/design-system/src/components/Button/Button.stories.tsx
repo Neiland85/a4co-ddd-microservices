@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from './Button'
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './Button';
 
 const meta = {
   title: 'Components/Button',
@@ -27,17 +27,17 @@ const meta = {
       control: 'boolean',
     },
   },
-} satisfies Meta<typeof Button>
+} satisfies Meta<typeof Button>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 // Historia por defecto
 export const Default: Story = {
   args: {
     children: 'Button',
   },
-}
+};
 
 // Variantes
 export const Primary: Story = {
@@ -45,42 +45,42 @@ export const Primary: Story = {
     variant: 'primary',
     children: 'Primary Button',
   },
-}
+};
 
 export const Secondary: Story = {
   args: {
     variant: 'secondary',
     children: 'Secondary Button',
   },
-}
+};
 
 export const Danger: Story = {
   args: {
     variant: 'danger',
     children: 'Danger Button',
   },
-}
+};
 
 export const Success: Story = {
   args: {
     variant: 'success',
     children: 'Success Button',
   },
-}
+};
 
 export const Ghost: Story = {
   args: {
     variant: 'ghost',
     children: 'Ghost Button',
   },
-}
+};
 
 export const Outline: Story = {
   args: {
     variant: 'outline',
     children: 'Outline Button',
   },
-}
+};
 
 // Tamaños
 export const Small: Story = {
@@ -88,21 +88,21 @@ export const Small: Story = {
     size: 'small',
     children: 'Small Button',
   },
-}
+};
 
 export const Medium: Story = {
   args: {
     size: 'medium',
     children: 'Medium Button',
   },
-}
+};
 
 export const Large: Story = {
   args: {
     size: 'large',
     children: 'Large Button',
   },
-}
+};
 
 // Estados
 export const Loading: Story = {
@@ -110,37 +110,42 @@ export const Loading: Story = {
     isLoading: true,
     children: 'Loading...',
   },
-}
+};
 
 export const Disabled: Story = {
   args: {
     disabled: true,
     children: 'Disabled Button',
   },
-}
+};
 
 // Con iconos
 export const WithIcon: Story = {
   args: {
     children: 'Download',
     leftIcon: (
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+        />
       </svg>
     ),
   },
-}
+};
 
 export const WithRightIcon: Story = {
   args: {
     children: 'Next',
     rightIcon: (
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     ),
   },
-}
+};
 
 // Full width
 export const FullWidth: Story = {
@@ -149,13 +154,13 @@ export const FullWidth: Story = {
     children: 'Full Width Button',
   },
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{ width: '400px' }}>
         <Story />
       </div>
     ),
   ],
-}
+};
 
 // Grupo de botones
 export const ButtonGroup: Story = {
@@ -165,4 +170,4 @@ export const ButtonGroup: Story = {
       <Button variant="outline">Cancel</Button>
     </div>
   ),
-}
+};

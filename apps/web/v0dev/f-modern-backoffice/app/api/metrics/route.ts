@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from 'next/server';
 
 // Simulación de datos de métricas en tiempo real
 export async function GET() {
@@ -22,12 +22,12 @@ export async function GET() {
       moderators: Math.floor(Math.random() * 5 + 10),
     },
     system: {
-      uptime: "99.8%",
-      version: "2.1.3",
+      uptime: '99.8%',
+      version: '2.1.3',
       lastUpdate: new Date(Date.now() - 86400000).toISOString(),
-      status: "operational",
+      status: 'operational',
     },
-  }
+  };
 
-  return NextResponse.json(metrics)
+  return NextResponse.json(metrics);
 }

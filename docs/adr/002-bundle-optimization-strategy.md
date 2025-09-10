@@ -8,6 +8,7 @@
 ## Contexto y Problema
 
 El análisis inicial del bundle de `dashboard-web` revela:
+
 - Sin configuración de code splitting optimizada
 - Dependencias de vendor en un único chunk
 - Posibles módulos duplicados entre chunks
@@ -15,6 +16,7 @@ El análisis inicial del bundle de `dashboard-web` revela:
 - Bundle total potencialmente > 1MB
 
 Esto impacta directamente en:
+
 - **Time to Interactive (TTI)**: Usuario espera más para interactuar
 - **First Contentful Paint (FCP)**: Contenido tarda en aparecer
 - **Costos de bandwidth**: Especialmente en móviles
@@ -25,6 +27,8 @@ Esto impacta directamente en:
 Implementaremos una estrategia de optimización de bundle en 3 niveles:
 
 ### Nivel 1: Code Splitting Agresivo
+
+
 ```javascript
 // next.config.js
 splitChunks: {
@@ -58,9 +62,13 @@ splitChunks: {
     }
   }
 }
+
 ```
 
+
 ### Nivel 2: Dynamic Imports y Lazy Loading
+
+
 ```typescript
 // Rutas pesadas
 const HeavyDashboard = dynamic(() => import('./HeavyDashboard'), {
@@ -75,9 +83,12 @@ const Analytics = dynamic(() => import('./Analytics'), {
 
 // Modales y overlays
 const Modal = dynamic(() => import('./Modal'));
+
 ```
 
+
 ### Nivel 3: Tree Shaking y Optimizaciones
+
 - Imports específicos: `import { debounce } from 'lodash-es'`
 - Eliminar polyfills innecesarios
 - Configurar `sideEffects: false` en package.json
@@ -93,16 +104,19 @@ const Modal = dynamic(() => import('./Modal'));
 ## Opciones Consideradas
 
 ### Opción 1: Micro-frontends
+
 - ✅ Máxima separación
 - ❌ Complejidad arquitectural alta
 - ❌ Overhead de coordinación
 
 ### Opción 2: Module Federation
+
 - ✅ Compartir dependencias entre apps
 - ❌ Requiere Webpack 5+ específico
 - ❌ Debugging complejo
 
 ### Opción 3: Code Splitting + Lazy Loading (SELECCIONADA)
+
 - ✅ Balance complejidad/beneficio
 - ✅ Soportado nativamente en Next.js
 - ✅ Progresivo y reversible
@@ -111,54 +125,62 @@ const Modal = dynamic(() => import('./Modal'));
 ## Consecuencias
 
 ### Positivas
+
 - Reducción 40-60% en First Load JS
 - Mejor TTI y FCP
 - Caché más eficiente
 - Actualizaciones más granulares
 
 ### Negativas
+
 - Más archivos HTTP (mitigado con HTTP/2)
 - Complejidad inicial de configuración
 - Posible FOUC si no se maneja bien
 
 ### Métricas de Monitoreo
 
+
 ```typescript
 // utils/bundle-metrics.ts
 export const BUNDLE_THRESHOLDS = {
-  firstLoadJS: 100_000,        // 100KB
-  totalBundleSize: 1_000_000,  // 1MB
-  largestChunk: 200_000,       // 200KB
-  vendorChunk: 300_000,        // 300KB
-  cssSize: 50_000              // 50KB
+  firstLoadJS: 100_000, // 100KB
+  totalBundleSize: 1_000_000, // 1MB
+  largestChunk: 200_000, // 200KB
+  vendorChunk: 300_000, // 300KB
+  cssSize: 50_000, // 50KB
 };
 
 // Script de validación
 export async function validateBundleSize() {
   const stats = await analyzeBuild();
   const violations = [];
-  
+
   if (stats.firstLoadJS > BUNDLE_THRESHOLDS.firstLoadJS) {
     violations.push(`First Load JS: ${stats.firstLoadJS} > ${BUNDLE_THRESHOLDS.firstLoadJS}`);
   }
-  
+
   return violations;
 }
+
 ```
+
 
 ## Plan de Implementación
 
 ### Semana 1: Análisis y Configuración
+
 - [ ] Ejecutar bundle analyzer baseline
 - [ ] Identificar chunks problemáticos
 - [ ] Configurar splitChunks inicial
 
 ### Semana 2: Lazy Loading
+
 - [ ] Identificar componentes no críticos
 - [ ] Implementar dynamic imports
 - [ ] Validar métricas post-cambio
 
 ### Semana 3: Optimizaciones Finas
+
 - [ ] Tree shaking audit
 - [ ] Eliminar duplicados
 - [ ] Optimizar imágenes y assets
@@ -172,6 +194,7 @@ export async function validateBundleSize() {
 ## Criterios de Reversión
 
 Si post-implementación observamos:
+
 - Incremento en errores de carga > 5%
 - Degradación de UX reportada
 - Complejidad de mantenimiento insostenible

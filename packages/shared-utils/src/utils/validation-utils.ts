@@ -29,7 +29,7 @@ export class Validator<T = any> {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }
@@ -37,40 +37,43 @@ export class Validator<T = any> {
 // Reglas de validación comunes
 export const required = (message: string = 'Este campo es requerido'): ValidationRule<any> => ({
   validate: (value: any) => value !== null && value !== undefined && value !== '',
-  message
+  message,
 });
 
 export const minLength = (min: number, message?: string): ValidationRule<string> => ({
   validate: (value: string) => value.length >= min,
-  message: message || `Debe tener al menos ${min} caracteres`
+  message: message || `Debe tener al menos ${min} caracteres`,
 });
 
 export const maxLength = (max: number, message?: string): ValidationRule<string> => ({
   validate: (value: string) => value.length <= max,
-  message: message || `Debe tener máximo ${max} caracteres`
+  message: message || `Debe tener máximo ${max} caracteres`,
 });
 
 export const email = (message: string = 'Formato de email inválido'): ValidationRule<string> => ({
   validate: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-  message
+  message,
 });
 
 export const min = (min: number, message?: string): ValidationRule<number> => ({
   validate: (value: number) => value >= min,
-  message: message || `Debe ser mayor o igual a ${min}`
+  message: message || `Debe ser mayor o igual a ${min}`,
 });
 
 export const max = (max: number, message?: string): ValidationRule<number> => ({
   validate: (value: number) => value <= max,
-  message: message || `Debe ser menor o igual a ${max}`
+  message: message || `Debe ser menor o igual a ${max}`,
 });
 
 export const pattern = (regex: RegExp, message: string): ValidationRule<string> => ({
   validate: (value: string) => regex.test(value),
-  message
+  message,
 });
 
-export const custom = <T>(validator: (value: T) => boolean, message: string): ValidationRule<T> => ({
+export const custom = <T>(
+  validator: (value: T) => boolean,
+  message: string
+): ValidationRule<T> => ({
   validate: validator,
-  message
+  message,
 });

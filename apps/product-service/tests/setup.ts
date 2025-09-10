@@ -36,12 +36,10 @@ jest.mock('../../packages/shared-utils/src/base', () => ({
       return value;
     }),
     log: jest.fn(),
-    createSuccessMessage: jest.fn((entity, action, details) => 
-      `${entity} ${action} successfully ${details}`
+    createSuccessMessage: jest.fn(
+      (entity, action, details) => `${entity} ${action} successfully ${details}`
     ),
-    handleServiceError: jest.fn((error, method) => 
-      `Error in ${method}: ${error.message}`
-    ),
+    handleServiceError: jest.fn((error, method) => `Error in ${method}: ${error.message}`),
   })),
   BaseController: jest.fn().mockImplementation(() => ({
     validateRequest: jest.fn((req, fields) => {
@@ -54,8 +52,8 @@ jest.mock('../../packages/shared-utils/src/base', () => ({
       });
       return validated;
     }),
-    formatResponse: jest.fn((data) => ({ data })),
-    handleError: jest.fn((error) => ({ error: error.message })),
+    formatResponse: jest.fn(data => ({ data })),
+    handleError: jest.fn(error => ({ error: error.message })),
     service: null,
   })),
 }));

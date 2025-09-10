@@ -47,11 +47,7 @@ const mockArtisans: Artisan[] = [
     description:
       'Cooperativa fundada en 1952 que agrupa a más de 300 olivicultores de la región. Especializada en aceite de oliva virgen extra de variedad Picual.',
     experience: 72,
-    certifications: [
-      'Denominación de Origen',
-      'Certificación Ecológica',
-      'ISO 9001',
-    ],
+    certifications: ['Denominación de Origen', 'Certificación Ecológica', 'ISO 9001'],
     products: ['prod-001'],
     images: ['/images/cooperativa-san-jose.jpg', '/images/olivos-ubeda.jpg'],
     schedules: {
@@ -62,12 +58,7 @@ const mockArtisans: Artisan[] = [
       viernes: '8:00-14:00',
       sábado: '9:00-13:00',
     },
-    services: [
-      'Visitas guiadas',
-      'Catas de aceite',
-      'Venta directa',
-      'Tours del olivar',
-    ],
+    services: ['Visitas guiadas', 'Catas de aceite', 'Venta directa', 'Tours del olivar'],
     rating: 4.8,
     reviewsCount: 156,
     verified: true,
@@ -126,11 +117,7 @@ const mockArtisans: Artisan[] = [
     description:
       'Taller familiar fundado en 1928, especializado en cerámica vidriada tradicional de Úbeda con técnicas transmitidas de generación en generación.',
     experience: 96,
-    certifications: [
-      'Artesanía Tradicional',
-      'Denominación Específica',
-      'Patrimonio Cultural',
-    ],
+    certifications: ['Artesanía Tradicional', 'Denominación Específica', 'Patrimonio Cultural'],
     products: ['prod-006'],
     images: ['/images/taller-paco-tito.jpg', '/images/ceramica-proceso.jpg'],
     schedules: {
@@ -161,32 +148,30 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search');
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await new Promise(resolve => setTimeout(resolve, 700));
 
     let filteredArtisans = [...mockArtisans];
 
     if (municipality) {
-      filteredArtisans = filteredArtisans.filter((artisan) =>
-        artisan.location.municipality
-          .toLowerCase()
-          .includes(municipality.toLowerCase())
+      filteredArtisans = filteredArtisans.filter(artisan =>
+        artisan.location.municipality.toLowerCase().includes(municipality.toLowerCase())
       );
     }
 
     if (specialty) {
-      filteredArtisans = filteredArtisans.filter((artisan) =>
+      filteredArtisans = filteredArtisans.filter(artisan =>
         artisan.specialty.toLowerCase().includes(specialty.toLowerCase())
       );
     }
 
     if (verified === 'true') {
-      filteredArtisans = filteredArtisans.filter((artisan) => artisan.verified);
+      filteredArtisans = filteredArtisans.filter(artisan => artisan.verified);
     }
 
     if (search) {
       const searchLower = search.toLowerCase();
       filteredArtisans = filteredArtisans.filter(
-        (artisan) =>
+        artisan =>
           artisan.name.toLowerCase().includes(searchLower) ||
           artisan.specialty.toLowerCase().includes(searchLower) ||
           artisan.description.toLowerCase().includes(searchLower)

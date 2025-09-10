@@ -91,9 +91,9 @@ export const usePWA = () => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((registration) => {
+        .then(registration => {
           console.log('Service Worker registrado:', registration);
-          
+
           // Verificar actualizaciones
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
@@ -107,37 +107,40 @@ export const usePWA = () => {
             }
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.error('Error registrando Service Worker:', error);
         });
     }
   }, []);
 
   // Función para instalar la PWA
-  const installPWA = useCallback(async (options?: PWAInstallOptions) => {
-    if (!deferredPrompt) {
-      throw new Error('No hay prompt de instalación disponible');
-    }
-
-    try {
-      // Mostrar el prompt de instalación
-      deferredPrompt.prompt();
-      
-      // Esperar la respuesta del usuario
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      if (outcome === 'accepted') {
-        console.log('Usuario aceptó instalar la PWA');
-        setState(prev => ({ ...prev, isInstalled: true, isInstallable: false }));
-        setDeferredPrompt(null);
-      } else {
-        console.log('Usuario rechazó instalar la PWA');
+  const installPWA = useCallback(
+    async (options?: PWAInstallOptions) => {
+      if (!deferredPrompt) {
+        throw new Error('No hay prompt de instalación disponible');
       }
-    } catch (error) {
-      console.error('Error durante la instalación:', error);
-      throw error;
-    }
-  }, [deferredPrompt]);
+
+      try {
+        // Mostrar el prompt de instalación
+        deferredPrompt.prompt();
+
+        // Esperar la respuesta del usuario
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === 'accepted') {
+          console.log('Usuario aceptó instalar la PWA');
+          setState(prev => ({ ...prev, isInstalled: true, isInstallable: false }));
+          setDeferredPrompt(null);
+        } else {
+          console.log('Usuario rechazó instalar la PWA');
+        }
+      } catch (error) {
+        console.error('Error durante la instalación:', error);
+        throw error;
+      }
+    },
+    [deferredPrompt]
+  );
 
   // Función para solicitar permisos de notificación push
   const requestNotificationPermission = useCallback(async () => {
@@ -177,33 +180,41 @@ export const usePWA = () => {
   }, []);
 
   // Función para obtener ubicación del usuario
-  const getCurrentLocation = useCallback(async (options?: PositionOptions): Promise<GeolocationPosition> => {
-    if (!('geolocation' in navigator)) {
-      throw new Error('Este navegador no soporta geolocalización');
-    }
+  const getCurrentLocation = useCallback(
+    async (options?: PositionOptions): Promise<GeolocationPosition> => {
+      if (!('geolocation' in navigator)) {
+        throw new Error('Este navegador no soporta geolocalización');
+      }
 
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000,
-        ...options,
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000,
+          ...options,
+        });
       });
-    });
-  }, []);
+    },
+    []
+  );
 
   // Función para calcular distancia entre dos puntos
-  const calculateDistance = useCallback((lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 6371; // Radio de la Tierra en km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-  }, []);
+  const calculateDistance = useCallback(
+    (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const R = 6371; // Radio de la Tierra en km
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+          Math.cos((lat2 * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    },
+    []
+  );
 
   // Función para sincronizar en background
   const syncInBackground = useCallback(async (tag: string) => {
@@ -214,7 +225,7 @@ export const usePWA = () => {
     try {
       await navigator.serviceWorker.ready;
       const registration = await navigator.serviceWorker.getRegistration();
-      
+
       if (registration && 'sync' in registration) {
         await (registration as any).sync.register(tag);
         console.log('Sincronización en background registrada:', tag);
@@ -252,9 +263,7 @@ export const usePWA = () => {
 
     try {
       const cacheNames = await caches.keys();
-      await Promise.all(
-        cacheNames.map(name => caches.delete(name))
-      );
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
       console.log('Caches limpiados exitosamente');
       return true;
     } catch (error) {

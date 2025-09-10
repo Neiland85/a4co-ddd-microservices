@@ -54,12 +54,16 @@ export class NatsEventBus extends EventEmitter {
       this.connection = await connect(connectionOptions);
       this.isConnected = true;
       this.setupConnectionListeners();
-      
+
       this.emit('connected');
-      console.log(`✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`);
+      console.log(
+        `✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`
+      );
     } catch (error) {
       this.emit('error', error);
-      throw new Error(`❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -131,7 +135,9 @@ export class NatsEventBus extends EventEmitter {
       console.log(`📤 Evento publicado en ${subject}:`, event.eventType);
     } catch (error) {
       this.emit('error', error);
-      throw new Error(`❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -141,29 +147,35 @@ export class NatsEventBus extends EventEmitter {
     }
 
     try {
-      const subscription = queueGroup 
+      const subscription = queueGroup
         ? this.connection.subscribe(subject, { queue: queueGroup })
         : this.connection.subscribe(subject);
 
       const subscriptionKey = `${subject}-${queueGroup || 'default'}`;
       this.setupMessageHandler(subscription, handler, subject);
       this.subscriptions.set(subscriptionKey, subscription);
-      
+
       this.emit('subscribed', { subject, queueGroup });
       console.log(`📥 Suscrito a ${subject}${queueGroup ? ` (queue: ${queueGroup})` : ''}`);
     } catch (error) {
       this.emit('error', error);
-      throw new Error(`❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
-  private setupMessageHandler(subscription: Subscription, handler: INatsEventHandler, subject: string): void {
+  private setupMessageHandler(
+    subscription: Subscription,
+    handler: INatsEventHandler,
+    subject: string
+  ): void {
     (async () => {
       for await (const message of subscription) {
         try {
           const decodedMessage = this.codec.decode(message.data);
           const eventMessage: EventMessage = JSON.parse(decodedMessage);
-          
+
           if (typeof eventMessage.timestamp === 'string') {
             eventMessage.timestamp = new Date(eventMessage.timestamp);
           }
@@ -184,7 +196,7 @@ export class NatsEventBus extends EventEmitter {
   async unsubscribe(subject: string, queueGroup?: string): Promise<void> {
     const subscriptionKey = `${subject}-${queueGroup || 'default'}`;
     const subscription = this.subscriptions.get(subscriptionKey);
-    
+
     if (subscription) {
       subscription.unsubscribe();
       this.subscriptions.delete(subscriptionKey);

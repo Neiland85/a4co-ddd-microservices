@@ -1,20 +1,20 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { Gamepad2, Rocket, Star, Zap } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import FlamencoPlayer from "@/components/FlamencoPlayer"
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { Gamepad2, Rocket, Star, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import FlamencoPlayer from '@/components/FlamencoPlayer';
 
 export default function HomePage() {
-  const router = useRouter()
+  const router = useRouter();
 
   const handleRegisterClick = () => {
-    router.push("/dashboard")
-  }
+    router.push('/dashboard');
+  };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden">
       {/* Hypnotic Black and White Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
         {/* Main Hypnotic Circle */}
@@ -25,7 +25,7 @@ export default function HomePage() {
             transition={{
               duration: 8,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "linear",
+              ease: 'linear',
             }}
           >
             {/* Concentric Hypnotic Rings */}
@@ -38,8 +38,8 @@ export default function HomePage() {
                   height: `${(i + 1) * 60}px`,
                   left: `${-(i + 1) * 30}px`,
                   top: `${-(i + 1) * 30}px`,
-                  borderColor: i % 2 === 0 ? "white" : "black",
-                  backgroundColor: i % 2 === 0 ? "transparent" : "white",
+                  borderColor: i % 2 === 0 ? 'white' : 'black',
+                  backgroundColor: i % 2 === 0 ? 'transparent' : 'white',
                 }}
                 animate={{
                   opacity: [0.1, 0.8, 0.1],
@@ -48,7 +48,7 @@ export default function HomePage() {
                 transition={{
                   duration: 3 + i * 0.2,
                   repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                   delay: i * 0.1,
                 }}
               />
@@ -56,7 +56,7 @@ export default function HomePage() {
 
             {/* Central Hypnotic Spiral */}
             <motion.div
-              className="absolute w-8 h-8 -left-4 -top-4 rounded-full bg-white"
+              className="absolute -left-4 -top-4 h-8 w-8 rounded-full bg-white"
               animate={{
                 scale: [1, 2, 1],
                 opacity: [1, 0.3, 1],
@@ -64,7 +64,7 @@ export default function HomePage() {
               transition={{
                 duration: 2,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
+                ease: 'easeInOut',
               }}
             />
           </motion.div>
@@ -72,10 +72,10 @@ export default function HomePage() {
 
         {/* Secondary Hypnotic Circles */}
         {[
-          { x: "20%", y: "30%", size: 300 },
-          { x: "80%", y: "70%", size: 400 },
-          { x: "10%", y: "80%", size: 250 },
-          { x: "90%", y: "20%", size: 350 },
+          { x: '20%', y: '30%', size: 300 },
+          { x: '80%', y: '70%', size: 400 },
+          { x: '10%', y: '80%', size: 250 },
+          { x: '90%', y: '20%', size: 350 },
         ].map((circle, index) => (
           <motion.div
             key={index}
@@ -85,7 +85,7 @@ export default function HomePage() {
             transition={{
               duration: 12 + index * 2,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "linear",
+              ease: 'linear',
             }}
           >
             {[...Array(8)].map((_, i) => (
@@ -97,8 +97,8 @@ export default function HomePage() {
                   height: `${(i + 1) * (circle.size / 8)}px`,
                   left: `${-(i + 1) * (circle.size / 16)}px`,
                   top: `${-(i + 1) * (circle.size / 16)}px`,
-                  borderColor: i % 2 === 0 ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.5)",
-                  borderWidth: "1px",
+                  borderColor: i % 2 === 0 ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.5)',
+                  borderWidth: '1px',
                 }}
                 animate={{
                   opacity: [0.1, 0.6, 0.1],
@@ -107,7 +107,7 @@ export default function HomePage() {
                 transition={{
                   duration: 4 + i * 0.3,
                   repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                   delay: index * 0.5 + i * 0.1,
                 }}
               />
@@ -130,23 +130,23 @@ export default function HomePage() {
               scale: [0.5, 2, 0.5],
               opacity: [0.05, 0.4, 0.05],
               rotate: [0, 360],
-              borderRadius: ["0%", "50%", "0%"],
+              borderRadius: ['0%', '50%', '0%'],
             }}
             transition={{
               duration: 15 + Math.random() * 10,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: Math.random() * 5,
             }}
           >
             {i % 4 === 0 ? (
-              <div className="w-20 h-20 bg-white/10" />
+              <div className="h-20 w-20 bg-white/10" />
             ) : i % 4 === 1 ? (
-              <div className="w-16 h-16 bg-black/20 rounded-full" />
+              <div className="h-16 w-16 rounded-full bg-black/20" />
             ) : i % 4 === 2 ? (
-              <div className="w-12 h-24 bg-white/15 transform rotate-45" />
+              <div className="h-24 w-12 rotate-45 transform bg-white/15" />
             ) : (
-              <div className="w-24 h-12 bg-black/10 rounded-full" />
+              <div className="h-12 w-24 rounded-full bg-black/10" />
             )}
           </motion.div>
         ))}
@@ -156,16 +156,16 @@ export default function HomePage() {
           className="absolute inset-0"
           animate={{
             background: [
-              "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 50%, rgba(255,255,255,0.05) 100%)",
-              "radial-gradient(circle at 30% 70%, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.4) 100%)",
-              "radial-gradient(circle at 70% 30%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.2) 50%, rgba(255,255,255,0.08) 100%)",
-              "radial-gradient(circle at 50% 50%, rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.2) 100%)",
+              'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 50%, rgba(255,255,255,0.05) 100%)',
+              'radial-gradient(circle at 30% 70%, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.4) 100%)',
+              'radial-gradient(circle at 70% 30%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.2) 50%, rgba(255,255,255,0.08) 100%)',
+              'radial-gradient(circle at 50% 50%, rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.2) 100%)',
             ],
           }}
           transition={{
             duration: 12,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
 
@@ -179,7 +179,7 @@ export default function HomePage() {
               top: `${Math.random() * 100}%`,
               width: `${Math.random() * 8 + 2}px`,
               height: `${Math.random() * 8 + 2}px`,
-              backgroundColor: i % 2 === 0 ? "white" : "black",
+              backgroundColor: i % 2 === 0 ? 'white' : 'black',
             }}
             animate={{
               x: [0, Math.random() * 200 - 100, 0],
@@ -190,7 +190,7 @@ export default function HomePage() {
             transition={{
               duration: 8 + Math.random() * 6,
               repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: Math.random() * 3,
             }}
           />
@@ -198,44 +198,44 @@ export default function HomePage() {
       </div>
 
       {/* Content with Enhanced Backdrop */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-6">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="text-center max-w-2xl"
+          className="max-w-2xl text-center"
         >
           {/* Enhanced Content Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-white/10 to-black/40 backdrop-blur-md rounded-3xl border border-white/20 shadow-2xl" />
+          <div className="absolute inset-0 rounded-3xl border border-white/20 bg-gradient-to-br from-black/40 via-white/10 to-black/40 shadow-2xl backdrop-blur-md" />
 
           <div className="relative z-10 p-8">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-              className="w-24 h-24 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl border-4 border-white/30"
+              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: 'linear' }}
+              className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/30 bg-gradient-to-r from-yellow-400 to-orange-500 shadow-2xl"
             >
-              <Gamepad2 className="w-12 h-12 text-white" />
+              <Gamepad2 className="h-12 w-12 text-white" />
             </motion.div>
 
-            <h1 className="text-6xl font-bold text-white mb-6 drop-shadow-2xl">
+            <h1 className="mb-6 text-6xl font-bold text-white drop-shadow-2xl">
               ¡Andalucía Es
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">
-                {" "}
+              <span className="bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent">
+                {' '}
                 Cultura!
               </span>
             </h1>
 
-            <p className="text-xl text-white/95 mb-8 drop-shadow-lg leading-relaxed font-medium">
-              Descubre a tus artesanos, apoya tus tiendas locales favoritas, asiste a los mejores festivales, puntúa tus
-              experiencias y gana entradas a eventos culturales, participa y sé parte de la cultura más auténtica y rica
-              en artesanía del país.
+            <p className="mb-8 text-xl font-medium leading-relaxed text-white/95 drop-shadow-lg">
+              Descubre a tus artesanos, apoya tus tiendas locales favoritas, asiste a los mejores
+              festivales, puntúa tus experiencias y gana entradas a eventos culturales, participa y
+              sé parte de la cultura más auténtica y rica en artesanía del país.
             </p>
 
-            <div className="flex justify-center space-x-8 mb-12">
+            <div className="mb-12 flex justify-center space-x-8">
               {[
-                { icon: <Star className="w-8 h-8" />, text: "Ofertas Explosivas" },
-                { icon: <Rocket className="w-8 h-8" />, text: "Mapas Interactivos" },
-                { icon: <Zap className="w-8 h-8" />, text: "Actividades Gamificadas" },
+                { icon: <Star className="h-8 w-8" />, text: 'Ofertas Explosivas' },
+                { icon: <Rocket className="h-8 w-8" />, text: 'Mapas Interactivos' },
+                { icon: <Zap className="h-8 w-8" />, text: 'Actividades Gamificadas' },
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -245,13 +245,13 @@ export default function HomePage() {
                   className="text-center"
                 >
                   <motion.div
-                    className="text-yellow-300 mb-2"
+                    className="mb-2 text-yellow-300"
                     whileHover={{ scale: 1.2, rotate: 10 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
                   >
                     {feature.icon}
                   </motion.div>
-                  <p className="text-white/90 text-sm font-medium drop-shadow">{feature.text}</p>
+                  <p className="text-sm font-medium text-white/90 drop-shadow">{feature.text}</p>
                 </motion.div>
               ))}
             </div>
@@ -260,10 +260,10 @@ export default function HomePage() {
               <Button
                 onClick={handleRegisterClick}
                 size="lg"
-                className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-full text-xl shadow-2xl border-4 border-white/30 backdrop-blur-sm"
+                className="rounded-full border-4 border-white/30 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 px-8 py-4 text-xl font-bold text-white shadow-2xl backdrop-blur-sm hover:from-yellow-600 hover:via-orange-600 hover:to-red-600"
               >
                 ¡Comenzar Aventura!
-                <Rocket className="w-6 h-6 ml-2" />
+                <Rocket className="ml-2 h-6 w-6" />
               </Button>
             </motion.div>
           </div>
@@ -275,9 +275,10 @@ export default function HomePage() {
             transition={{ delay: 1.5, duration: 1 }}
             className="fixed bottom-4 right-4 max-w-xs text-right"
           >
-            <div className="bg-black/30 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-xl">
-              <p className="text-white/80 text-xs italic leading-relaxed">
-                "Yo no soy un guitarrista flamenco, soy un guitarrista que ama el flamenco." – Paco de Lucía
+            <div className="rounded-2xl border border-white/20 bg-black/30 p-4 shadow-xl backdrop-blur-md">
+              <p className="text-xs italic leading-relaxed text-white/80">
+                "Yo no soy un guitarrista flamenco, soy un guitarrista que ama el flamenco." – Paco
+                de Lucía
               </p>
             </div>
           </motion.div>
@@ -287,5 +288,5 @@ export default function HomePage() {
       {/* Reproductor de Música Flamenca */}
       <FlamencoPlayer />
     </div>
-  )
+  );
 }

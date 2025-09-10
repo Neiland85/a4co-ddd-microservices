@@ -13,7 +13,7 @@ export const EventSubjects = {
   ORDER_DELIVERED: 'order.delivered',
   ORDER_UPDATED: 'order.updated',
   ORDER_PAYMENT_REQUESTED: 'order.payment.requested',
-  
+
   // ========================================
   // INVENTORY DOMAIN EVENTS
   // ========================================
@@ -23,7 +23,7 @@ export const EventSubjects = {
   LOW_STOCK_WARNING: 'inventory.stock.warning',
   STOCK_DEPLETED: 'inventory.stock.depleted',
   STOCK_REPLENISHED: 'inventory.stock.replenished',
-  
+
   // ========================================
   // PAYMENT DOMAIN EVENTS
   // ========================================
@@ -34,7 +34,7 @@ export const EventSubjects = {
   REFUND_INITIATED: 'payment.refund.initiated',
   REFUND_PROCESSED: 'payment.refund.processed',
   REFUND_FAILED: 'payment.refund.failed',
-  
+
   // ========================================
   // USER DOMAIN EVENTS
   // ========================================
@@ -47,7 +47,7 @@ export const EventSubjects = {
   USER_LOGIN_ATTEMPTED: 'user.login.attempted',
   USER_LOGIN_SUCCEEDED: 'user.login.succeeded',
   USER_LOGIN_FAILED: 'user.login.failed',
-  
+
   // ========================================
   // ARTISAN DOMAIN EVENTS
   // ========================================
@@ -58,7 +58,7 @@ export const EventSubjects = {
   PRODUCT_LISTED: 'artisan.product.listed',
   ARTISAN_PRODUCT_UPDATED: 'artisan.product.updated',
   PRODUCT_DELISTED: 'artisan.product.delisted',
-  
+
   // ========================================
   // PRODUCT DOMAIN EVENTS
   // ========================================
@@ -68,7 +68,7 @@ export const EventSubjects = {
   PRODUCT_PRICE_CHANGED: 'product.price.changed',
   PRODUCT_AVAILABILITY_CHANGED: 'product.availability.changed',
   PRODUCT_CATEGORY_CHANGED: 'product.category.changed',
-  
+
   // ========================================
   // NOTIFICATION DOMAIN EVENTS
   // ========================================
@@ -80,7 +80,7 @@ export const EventSubjects = {
   SMS_DELIVERED: 'notification.sms.delivered',
   SMS_FAILED: 'notification.sms.failed',
   PUSH_NOTIFICATION_SENT: 'notification.push.sent',
-  
+
   // ========================================
   // GEO/LOCATION DOMAIN EVENTS
   // ========================================
@@ -88,7 +88,7 @@ export const EventSubjects = {
   DELIVERY_ZONE_CHANGED: 'geo.delivery_zone.changed',
   ARTISAN_LOCATION_VERIFIED: 'geo.artisan.verified',
   NEARBY_SEARCH_PERFORMED: 'geo.search.nearby',
-  
+
   // ========================================
   // LOYALTY DOMAIN EVENTS
   // ========================================
@@ -97,7 +97,7 @@ export const EventSubjects = {
   TIER_UPGRADED: 'loyalty.tier.upgraded',
   REWARD_UNLOCKED: 'loyalty.reward.unlocked',
   CAMPAIGN_TRIGGERED: 'loyalty.campaign.triggered',
-  
+
   // ========================================
   // INTEGRATION EVENTS - Para comunicación entre bounded contexts
   // ========================================
@@ -107,7 +107,7 @@ export const EventSubjects = {
   STOCK_VALIDATION_RESPONSE: 'integration.stock.validation.response',
   USER_INFORMATION_REQUESTED: 'integration.user.info.requested',
   USER_INFORMATION_PROVIDED: 'integration.user.info.provided',
-  
+
   // ========================================
   // SAGA EVENTS
   // ========================================
@@ -116,7 +116,7 @@ export const EventSubjects = {
   SAGA_COMPLETED: 'saga.completed',
   SAGA_FAILED: 'saga.failed',
   SAGA_COMPENSATION_TRIGGERED: 'saga.compensation.triggered',
-  
+
   // ========================================
   // ANALYTICS DOMAIN EVENTS
   // ========================================
@@ -125,7 +125,7 @@ export const EventSubjects = {
   CONVERSION_TRACKED: 'analytics.conversion',
   SALES_RECORDED: 'analytics.sales',
   PERFORMANCE_METRIC_RECORDED: 'analytics.performance',
-  
+
   // ========================================
   // CHAT DOMAIN EVENTS
   // ========================================
@@ -134,7 +134,7 @@ export const EventSubjects = {
   CHAT_MESSAGE_READ: 'chat.message.read',
   CHAT_CONVERSATION_STARTED: 'chat.conversation.started',
   CHAT_CONVERSATION_ENDED: 'chat.conversation.ended',
-  
+
   // ========================================
   // CMS DOMAIN EVENTS
   // ========================================
@@ -143,7 +143,7 @@ export const EventSubjects = {
   CONTENT_DELETED: 'cms.content.deleted',
   CONTENT_APPROVED: 'cms.content.approved',
   CONTENT_REJECTED: 'cms.content.rejected',
-  
+
   // ========================================
   // ADMIN DOMAIN EVENTS
   // ========================================
@@ -151,7 +151,7 @@ export const EventSubjects = {
   SYSTEM_MAINTENANCE_SCHEDULED: 'admin.maintenance.scheduled',
   SYSTEM_BACKUP_COMPLETED: 'admin.backup.completed',
   SECURITY_ALERT_TRIGGERED: 'admin.security.alert',
-  
+
   // ========================================
   // EVENT SERVICE DOMAIN EVENTS
   // ========================================
@@ -159,7 +159,7 @@ export const EventSubjects = {
   MARKETPLACE_EVENT_UPDATED: 'event.marketplace.updated',
   MARKETPLACE_EVENT_CANCELLED: 'event.marketplace.cancelled',
   EVENT_ATTENDANCE_REGISTERED: 'event.attendance.registered',
-  
+
   // ========================================
   // SYSTEM EVENTS
   // ========================================
@@ -168,17 +168,17 @@ export const EventSubjects = {
   SERVICE_STOPPED: 'system.service.stopped',
   SERVICE_ERROR: 'system.service.error',
   INTEGRATION_ERROR: 'system.integration.error',
-  
+
   // ========================================
   // DEAD LETTER QUEUE PATTERNS
   // ========================================
   DLQ_SUFFIX: '.dlq',
-  RETRY_SUFFIX: '.retry'
+  RETRY_SUFFIX: '.retry',
 } as const;
 
 // Type-safe subject keys
 export type EventSubjectKeys = keyof typeof EventSubjects;
-export type EventSubjectValues = typeof EventSubjects[EventSubjectKeys];
+export type EventSubjectValues = (typeof EventSubjects)[EventSubjectKeys];
 
 /**
  * Subject patterns for subscription wildcards
@@ -186,34 +186,34 @@ export type EventSubjectValues = typeof EventSubjects[EventSubjectKeys];
 export const SubjectPatterns = {
   // All order events
   ALL_ORDER_EVENTS: 'order.*',
-  
+
   // All payment events
   ALL_PAYMENT_EVENTS: 'payment.*',
-  
+
   // All inventory events
   ALL_INVENTORY_EVENTS: 'inventory.*',
-  
+
   // All user events
   ALL_USER_EVENTS: 'user.*',
-  
+
   // All notification events
   ALL_NOTIFICATION_EVENTS: 'notification.*',
-  
+
   // All system events
   ALL_SYSTEM_EVENTS: 'system.*',
-  
+
   // All events (use with caution)
   ALL_EVENTS: '*',
-  
+
   // Domain-specific patterns
   ALL_STOCK_EVENTS: 'inventory.stock.*',
   ALL_PAYMENT_REFUND_EVENTS: 'payment.refund.*',
   ALL_EMAIL_EVENTS: 'notification.email.*',
   ALL_SMS_EVENTS: 'notification.sms.*',
-  
+
   // Dead letter queues
   ALL_DLQ_EVENTS: '*.dlq',
-  ALL_RETRY_EVENTS: '*.retry'
+  ALL_RETRY_EVENTS: '*.retry',
 } as const;
 
 /**
@@ -227,18 +227,18 @@ export const QueueNames = {
   NOTIFICATION_DELIVERY: 'notification-delivery-queue',
   EMAIL_SENDING: 'email-sending-queue',
   SMS_SENDING: 'sms-sending-queue',
-  
+
   // Analytics queues
   ANALYTICS_EVENTS: 'analytics-events-queue',
   METRICS_COLLECTION: 'metrics-collection-queue',
-  
+
   // Background processing
   BACKGROUND_TASKS: 'background-tasks-queue',
   CLEANUP_TASKS: 'cleanup-tasks-queue',
-  
+
   // Priority queues
   HIGH_PRIORITY: 'high-priority-queue',
-  LOW_PRIORITY: 'low-priority-queue'
+  LOW_PRIORITY: 'low-priority-queue',
 } as const;
 
 /**
@@ -306,16 +306,16 @@ export enum EventPriority {
   LOW = 'low',
   NORMAL = 'normal',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
  * Event categories for filtering and routing
  */
 export enum EventCategory {
-  BUSINESS = 'business',      // Core business events
-  SYSTEM = 'system',          // System/infrastructure events
+  BUSINESS = 'business', // Core business events
+  SYSTEM = 'system', // System/infrastructure events
   INTEGRATION = 'integration', // External system integration events
-  ANALYTICS = 'analytics',    // Analytics and tracking events
-  SECURITY = 'security'       // Security-related events
+  ANALYTICS = 'analytics', // Analytics and tracking events
+  SECURITY = 'security', // Security-related events
 }

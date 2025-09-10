@@ -28,15 +28,19 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 
 ### 📁 Configuraciones Base
 
+
 ```bash
 ├── jest.config.base.js          # Configuración Jest compartida
 ├── tsconfig.base.json           # Configuración TypeScript base
 ├── .eslintrc.json               # ESLint unificado
 ├── .prettierrc                  # Prettier unificado
 └── turbo.json                   # Turbo optimizado
+
 ```
 
+
 ### 📦 Scripts Unificados
+
 
 ```json
 {
@@ -47,7 +51,9 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
   "type-check": "turbo run type-check",
   "validate": "pnpm run lint && pnpm run format:check && pnpm run type-check"
 }
+
 ```
+
 
 ### 🔧 Nuevas Funcionalidades
 
@@ -60,12 +66,16 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 
 ### 1. Configuración Automática
 
+
 ```bash
 # Ejecutar el script de configuración unificada
 ./scripts/setup-unified.sh
+
 ```
 
+
 ### 2. Configuración Manual
+
 
 ```bash
 # Generar package.json faltantes
@@ -79,11 +89,14 @@ pnpm --filter "./packages/*" build
 
 # Validar configuración
 pnpm run validate
+
 ```
+
 
 ## 📱 Comandos Disponibles
 
 ### 🎯 Comandos del Monorepo
+
 
 ```bash
 # Desarrollo
@@ -110,20 +123,26 @@ pnpm validate              # Validación completa
 pnpm db:generate           # Generar cliente Prisma
 pnpm db:push               # Push de esquema
 pnpm db:migrate            # Migraciones
+
 ```
 
+
 ### 🎯 Comandos por Servicio
+
 
 ```bash
 # Comandos específicos por servicio
 pnpm --filter @a4co/auth-service dev
 pnpm --filter @a4co/product-service test
 pnpm --filter @a4co/web build
+
 ```
+
 
 ## 🔄 Flujo de Trabajo Recomendado
 
 ### 1. Desarrollo Diario
+
 
 ```bash
 # Iniciar desarrollo
@@ -134,18 +153,24 @@ pnpm test:watch
 
 # Verificar calidad
 pnpm validate
+
 ```
+
 
 ### 2. Antes de Commit
 
+
 ```bash
-# El pre-commit hook ejecuta automáticamente:
+# El pre-commit hook ejecuta automáticamente
 # - ESLint con --fix
 # - Prettier
 # - TypeScript type-check
+
 ```
 
+
 ### 3. Antes de Deploy
+
 
 ```bash
 # Validación completa
@@ -156,7 +181,9 @@ pnpm run test:coverage:report
 
 # Construcción
 pnpm run build
+
 ```
+
 
 ## 📊 Beneficios de la Configuración Unificada
 
@@ -197,15 +224,19 @@ pnpm run build
 
 ### Error: "Command not found: pnpm"
 
+
 ```bash
 # Instalar pnpm globalmente
 npm install -g pnpm
 
 # O usar npx
 npx pnpm install
+
 ```
 
+
 ### Error: "Turbo not found"
+
 
 ```bash
 # Instalar Turbo
@@ -213,9 +244,12 @@ pnpm add -D turbo
 
 # O usar npx
 npx turbo run build
+
 ```
 
+
 ### Error: "Package not found"
+
 
 ```bash
 # Regenerar package.json
@@ -223,7 +257,9 @@ node scripts/generate-microservice-packages.js
 
 # Reinstalar dependencias
 pnpm install
+
 ```
+
 
 ## 📚 Recursos Adicionales
 

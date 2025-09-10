@@ -41,33 +41,45 @@
 
 #### Product Service
 
+
 ```http
 GET /api/products/{id} - Obtener detalles del producto
 GET /api/products/search - Buscar productos
 GET /api/products/{id}/availability - Verificar disponibilidad
+
 ```
 
+
 #### Order Service
+
 
 ```http
 POST /api/orders - Crear nuevo pedido
 GET /api/orders/{id} - Obtener detalles del pedido
 GET /api/orders/customer/{customerId} - Pedidos por cliente
+
 ```
 
+
 #### Inventory Service
+
 
 ```http
 GET /api/inventory/{productId} - Consultar stock actual
 POST /api/inventory/check-availability - Verificar disponibilidad múltiple
+
 ```
 
+
 #### Customer Service
+
 
 ```http
 GET /api/customers/{id} - Obtener datos del cliente
 POST /api/customers/validate - Validar cliente para pedido
+
 ```
+
 
 ### Comunicaciones Asíncronas (Event-Driven)
 
@@ -80,6 +92,7 @@ POST /api/customers/validate - Validar cliente para pedido
 ## 4. Eventos de Dominio
 
 ### Product Service Events
+
 
 ```typescript
 // Publicados
@@ -108,9 +121,12 @@ interface ProductDeleted {
 
 // Suscribe a:
 // - StockUpdated (para actualizar disponibilidad)
+
 ```
 
+
 ### Order Service Events
+
 
 ```typescript
 // Publicados
@@ -151,9 +167,12 @@ interface OrderShipped {
 // - StockReserved
 // - StockReservationFailed
 // - ShipmentCreated
+
 ```
 
+
 ### Inventory Service Events
+
 
 ```typescript
 // Publicados
@@ -202,9 +221,12 @@ interface StockUpdated {
 // - OrderCreated
 // - OrderCancelled
 // - OrderShipped
+
 ```
 
+
 ### Payment Service Events
+
 
 ```typescript
 // Publicados
@@ -244,9 +266,12 @@ interface PaymentRefunded {
 // Suscribe a:
 // - OrderCreated
 // - OrderCancelled
+
 ```
 
+
 ### Customer Service Events
+
 
 ```typescript
 // Publicados
@@ -276,9 +301,12 @@ interface CustomerAddressAdded {
 // Suscribe a:
 // - OrderCreated (para actualizar estadísticas)
 // - OrderCompleted
+
 ```
 
+
 ### Notification Service Events
+
 
 ```typescript
 // Publicados
@@ -298,9 +326,12 @@ interface NotificationSent {
 // - PaymentCompleted
 // - PaymentFailed
 // - CustomerRegistered
+
 ```
 
+
 ### Shipping Service Events
+
 
 ```typescript
 // Publicados
@@ -333,7 +364,9 @@ interface ShipmentDelivered {
 // Suscribe a:
 // - OrderConfirmed
 // - OrderCancelled
+
 ```
+
 
 ## 5. Patrones de Integración
 
@@ -362,14 +395,14 @@ interface ShipmentDelivered {
 
 ## 6. Decisiones de Diseño
 
-### ¿Cuándo usar REST?
+### ¿Cuándo usar REST
 
 - Consultas de catálogo de productos
 - Validación de disponibilidad inmediata
 - Consulta de estado de pedidos
 - Autenticación y autorización
 
-### ¿Cuándo usar Eventos?
+### ¿Cuándo usar Eventos
 
 - Actualización de inventario
 - Procesamiento de pagos
@@ -381,6 +414,7 @@ interface ShipmentDelivered {
 
 ### Exchanges
 
+
 ```javascript
 // Topic exchanges para cada dominio
 const exchanges = {
@@ -390,11 +424,14 @@ const exchanges = {
   'payment.events': { type: 'topic', durable: true },
   'customer.events': { type: 'topic', durable: true },
   'notification.events': { type: 'topic', durable: true },
-  'shipping.events': { type: 'topic', durable: true }
+  'shipping.events': { type: 'topic', durable: true },
 };
+
 ```
 
+
 ### Routing Keys
+
 
 ```bash
 product.created
@@ -415,7 +452,9 @@ payment.initiated
 payment.completed
 payment.failed
 payment.refunded
+
 ```
+
 
 ## 8. Manejo de Errores y Resiliencia
 

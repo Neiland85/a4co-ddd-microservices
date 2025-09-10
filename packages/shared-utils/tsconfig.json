@@ -6,10 +6,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
     "rootDir": "./",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
+    "lib": ["ES2022", "DOM"],
     "jsx": "react-jsx",
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
@@ -28,15 +25,6 @@
     "exactOptionalPropertyTypes": false,
     "types": ["jest", "node"]
   },
-  "include": [
-    "index.ts",
-    "src/**/*",
-    "test/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["index.ts", "src/**/*", "test/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
 }

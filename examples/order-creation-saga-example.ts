@@ -1,17 +1,17 @@
 /**
  * Ejemplo Práctico: Order Creation Saga
- * 
+ *
  * Este ejemplo muestra cómo implementar el patrón Saga para
  * el proceso completo de creación de pedidos usando eventos.
  */
 
-import { 
-  EventDrivenService, 
-  EventHandler, 
-  IEventBus 
+import {
+  EventDrivenService,
+  EventHandler,
+  IEventBus,
 } from '../packages/shared-utils/src/events/event-bus';
 import { EventSubjects } from '../packages/shared-utils/src/events/subjects';
-import { 
+import {
   OrderCreatedEvent,
   OrderConfirmedEvent,
   OrderCancelledEvent,
@@ -19,7 +19,7 @@ import {
   StockReleasedEvent,
   PaymentSucceededEvent,
   PaymentFailedEvent,
-  EmailSentEvent
+  EmailSentEvent,
 } from '../packages/shared-utils/src/events/domain-events';
 
 // ========================================
@@ -48,10 +48,11 @@ export class OrderService extends EventDrivenService {
     deliveryAddress: any;
   }): Promise<string> {
     const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Calcular totales
-    const totalAmount = orderData.items.reduce((sum, item) => 
-      sum + (item.quantity * item.unitPrice), 0
+    const totalAmount = orderData.items.reduce(
+      (sum, item) => sum + item.quantity * item.unitPrice,
+      0
     );
 
     // Crear evento de orden creada
@@ -60,18 +61,18 @@ export class OrderService extends EventDrivenService {
       customerEmail: orderData.customerEmail,
       items: orderData.items.map(item => ({
         ...item,
-        totalPrice: item.quantity * item.unitPrice
+        totalPrice: item.quantity * item.unitPrice,
       })),
       totalAmount,
       currency: 'EUR',
       deliveryAddress: orderData.deliveryAddress,
       estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 días
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     // Publicar evento para iniciar el saga
     await this.publishEvent(EventSubjects.ORDER_CREATED, orderCreatedEvent);
-    
+
     console.log(`✅ Orden ${orderId} creada, iniciando proceso de validación...`);
     return orderId;
   }
@@ -82,10 +83,10 @@ export class OrderService extends EventDrivenService {
   @EventHandler(EventSubjects.STOCK_RESERVED)
   async onStockReserved(event: StockReservedEvent): Promise<void> {
     console.log(`📦 Stock reservado para producto ${event.aggregateId}, continuando con pago...`);
-    
+
     // Aquí normalmente buscaríamos la orden en la base de datos
     // Por simplicidad, asumimos que tenemos los datos
-    
+
     // El saga continúa automáticamente - el payment service
     // está subscrito a ORDER_CREATED y procesará el pago
   }
@@ -96,16 +97,16 @@ export class OrderService extends EventDrivenService {
   @EventHandler(EventSubjects.PAYMENT_SUCCEEDED)
   async onPaymentSucceeded(event: PaymentSucceededEvent): Promise<void> {
     const orderId = event.eventData.orderId;
-    
+
     console.log(`💳 Pago exitoso para orden ${orderId}, confirmando orden...`);
-    
+
     // Confirmar la orden
     const orderConfirmedEvent = new OrderConfirmedEvent(orderId, {
       confirmedAt: new Date(),
       estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       paymentReference: event.eventData.transactionId,
       artisanNotified: true,
-      trackingNumber: `TRK${Date.now()}`
+      trackingNumber: `TRK${Date.now()}`,
     });
 
     await this.publishEvent(EventSubjects.ORDER_CONFIRMED, orderConfirmedEvent);
@@ -117,16 +118,16 @@ export class OrderService extends EventDrivenService {
   @EventHandler(EventSubjects.PAYMENT_FAILED)
   async onPaymentFailed(event: PaymentFailedEvent): Promise<void> {
     const orderId = event.eventData.orderId;
-    
+
     console.log(`❌ Pago fallido para orden ${orderId}, cancelando orden...`);
-    
+
     // Cancelar la orden
     const orderCancelledEvent = new OrderCancelledEvent(orderId, {
       reason: `Pago fallido: ${event.eventData.errorMessage}`,
       cancelledAt: new Date(),
       cancelledBy: 'system',
       refundRequired: false,
-      notificationSent: false
+      notificationSent: false,
     });
 
     await this.publishEvent(EventSubjects.ORDER_CANCELLED, orderCancelledEvent);
@@ -143,7 +144,7 @@ export class InventoryService extends EventDrivenService {
     ['product_aceite_picual', 50],
     ['product_queso_cabra', 25],
     ['product_miel_azahar', 100],
-    ['product_jamon_iberico', 15]
+    ['product_jamon_iberico', 15],
   ]);
 
   constructor() {
@@ -157,30 +158,28 @@ export class InventoryService extends EventDrivenService {
   async onOrderCreated(event: OrderCreatedEvent): Promise<void> {
     const orderId = event.aggregateId;
     const items = event.eventData.items;
-    
+
     console.log(`📦 Verificando stock para orden ${orderId}...`);
-    
+
     // Verificar si hay stock suficiente para todos los items
     const stockChecks = items.map(item => ({
       productId: item.productId,
       requested: item.quantity,
-      available: this.inventory.get(item.productId) || 0
+      available: this.inventory.get(item.productId) || 0,
     }));
 
-    const insufficientStock = stockChecks.find(check => 
-      check.available < check.requested
-    );
+    const insufficientStock = stockChecks.find(check => check.available < check.requested);
 
     if (insufficientStock) {
       console.log(`❌ Stock insuficiente para ${insufficientStock.productId}`);
-      
+
       // Cancelar orden por falta de stock
       const orderCancelledEvent = new OrderCancelledEvent(orderId, {
         reason: `Stock insuficiente para producto ${insufficientStock.productId}`,
         cancelledAt: new Date(),
         cancelledBy: 'system',
         refundRequired: false,
-        notificationSent: true
+        notificationSent: true,
       });
 
       await this.publishEvent(EventSubjects.ORDER_CANCELLED, orderCancelledEvent);
@@ -191,7 +190,7 @@ export class InventoryService extends EventDrivenService {
     for (const item of items) {
       const currentStock = this.inventory.get(item.productId) || 0;
       this.inventory.set(item.productId, currentStock - item.quantity);
-      
+
       // Publicar evento de stock reservado
       const stockReservedEvent = new StockReservedEvent(item.productId, {
         orderId,
@@ -199,7 +198,7 @@ export class InventoryService extends EventDrivenService {
         remainingStock: currentStock - item.quantity,
         reservationExpiry: new Date(Date.now() + 30 * 60 * 1000), // 30 minutos
         reservedAt: new Date(),
-        artisanId: item.artisanId
+        artisanId: item.artisanId,
       });
 
       await this.publishEvent(EventSubjects.STOCK_RESERVED, stockReservedEvent);
@@ -214,12 +213,12 @@ export class InventoryService extends EventDrivenService {
   @EventHandler(EventSubjects.ORDER_CANCELLED)
   async onOrderCancelled(event: OrderCancelledEvent): Promise<void> {
     const orderId = event.aggregateId;
-    
+
     console.log(`🔄 Liberando stock para orden cancelada ${orderId}...`);
-    
+
     // En un caso real, buscaríamos las reservas en la base de datos
     // Por simplicidad, asumimos que liberamos el stock
-    
+
     console.log(`✅ Stock liberado para orden ${orderId}`);
   }
 }
@@ -239,45 +238,39 @@ export class PaymentService extends EventDrivenService {
   @EventHandler(EventSubjects.STOCK_RESERVED)
   async onStockReserved(event: StockReservedEvent): Promise<void> {
     const orderId = event.eventData.orderId;
-    
+
     console.log(`💳 Iniciando procesamiento de pago para orden ${orderId}...`);
-    
+
     // Simular procesamiento de pago
     const paymentSuccess = Math.random() > 0.2; // 80% de éxito
-    
+
     setTimeout(async () => {
       if (paymentSuccess) {
-        const paymentSucceededEvent = new PaymentSucceededEvent(
-          `payment_${Date.now()}`, 
-          {
-            orderId,
-            transactionId: `txn_${Date.now()}`,
-            amount: 25.50, // Simulado
-            currency: 'EUR',
-            fees: 0.75,
-            netAmount: 24.75,
-            processedAt: new Date(),
-            paymentGateway: 'stripe',
-            authorizationCode: `auth_${Math.random().toString(36).substr(2, 9)}`
-          }
-        );
+        const paymentSucceededEvent = new PaymentSucceededEvent(`payment_${Date.now()}`, {
+          orderId,
+          transactionId: `txn_${Date.now()}`,
+          amount: 25.5, // Simulado
+          currency: 'EUR',
+          fees: 0.75,
+          netAmount: 24.75,
+          processedAt: new Date(),
+          paymentGateway: 'stripe',
+          authorizationCode: `auth_${Math.random().toString(36).substr(2, 9)}`,
+        });
 
         await this.publishEvent(EventSubjects.PAYMENT_SUCCEEDED, paymentSucceededEvent);
         console.log(`✅ Pago exitoso para orden ${orderId}`);
       } else {
-        const paymentFailedEvent = new PaymentFailedEvent(
-          `payment_${Date.now()}`, 
-          {
-            orderId,
-            errorCode: 'CARD_DECLINED',
-            errorMessage: 'Tarjeta rechazada por el banco',
-            retryable: true,
-            failedAt: new Date(),
-            paymentGateway: 'stripe',
-            failureReason: 'Insufficient funds',
-            customerNotified: false
-          }
-        );
+        const paymentFailedEvent = new PaymentFailedEvent(`payment_${Date.now()}`, {
+          orderId,
+          errorCode: 'CARD_DECLINED',
+          errorMessage: 'Tarjeta rechazada por el banco',
+          retryable: true,
+          failedAt: new Date(),
+          paymentGateway: 'stripe',
+          failureReason: 'Insufficient funds',
+          customerNotified: false,
+        });
 
         await this.publishEvent(EventSubjects.PAYMENT_FAILED, paymentFailedEvent);
         console.log(`❌ Pago fallido para orden ${orderId}`);
@@ -301,9 +294,9 @@ export class NotificationService extends EventDrivenService {
   @EventHandler(EventSubjects.ORDER_CONFIRMED)
   async onOrderConfirmed(event: OrderConfirmedEvent): Promise<void> {
     const orderId = event.aggregateId;
-    
+
     console.log(`📧 Enviando confirmación por email para orden ${orderId}...`);
-    
+
     // Simular envío de email
     const emailSentEvent = new EmailSentEvent(`email_${Date.now()}`, {
       recipientEmail: 'customer@example.com', // En un caso real, buscaríamos el email
@@ -313,11 +306,11 @@ export class NotificationService extends EventDrivenService {
       variables: {
         orderId,
         trackingNumber: event.eventData.trackingNumber,
-        estimatedDelivery: event.eventData.estimatedDelivery
+        estimatedDelivery: event.eventData.estimatedDelivery,
       },
       sentAt: new Date(),
       provider: 'sendgrid',
-      messageId: `msg_${Date.now()}`
+      messageId: `msg_${Date.now()}`,
     });
 
     await this.publishEvent(EventSubjects.EMAIL_SENT, emailSentEvent);
@@ -330,13 +323,13 @@ export class NotificationService extends EventDrivenService {
   @EventHandler(EventSubjects.ORDER_CANCELLED)
   async onOrderCancelled(event: OrderCancelledEvent): Promise<void> {
     const orderId = event.aggregateId;
-    
+
     if (event.eventData.notificationSent) {
       return; // Ya se envió notificación
     }
-    
+
     console.log(`📧 Enviando notificación de cancelación para orden ${orderId}...`);
-    
+
     const emailSentEvent = new EmailSentEvent(`email_${Date.now()}`, {
       recipientEmail: 'customer@example.com',
       recipientName: 'Cliente',
@@ -345,11 +338,11 @@ export class NotificationService extends EventDrivenService {
       variables: {
         orderId,
         reason: event.eventData.reason,
-        refundRequired: event.eventData.refundRequired
+        refundRequired: event.eventData.refundRequired,
       },
       sentAt: new Date(),
       provider: 'sendgrid',
-      messageId: `msg_${Date.now()}`
+      messageId: `msg_${Date.now()}`,
     });
 
     await this.publishEvent(EventSubjects.EMAIL_SENT, emailSentEvent);
@@ -376,13 +369,13 @@ export class MarketplaceDemo {
 
   async start(): Promise<void> {
     console.log('🚀 Iniciando demo del marketplace...');
-    
+
     // Conectar todos los servicios al event bus
     await Promise.all([
       this.orderService.startEventHandling(),
       this.inventoryService.startEventHandling(),
       this.paymentService.startEventHandling(),
-      this.notificationService.startEventHandling()
+      this.notificationService.startEventHandling(),
     ]);
 
     console.log('✅ Todos los servicios conectados y listos');
@@ -390,12 +383,12 @@ export class MarketplaceDemo {
 
   async stop(): Promise<void> {
     console.log('⏹️ Deteniendo servicios...');
-    
+
     await Promise.all([
       this.orderService.stopEventHandling(),
       this.inventoryService.stopEventHandling(),
       this.paymentService.stopEventHandling(),
-      this.notificationService.stopEventHandling()
+      this.notificationService.stopEventHandling(),
     ]);
 
     console.log('✅ Todos los servicios detenidos');
@@ -403,7 +396,7 @@ export class MarketplaceDemo {
 
   async simulateOrder(): Promise<void> {
     console.log('\n🛒 Simulando creación de pedido...');
-    
+
     const orderId = await this.orderService.createOrder({
       customerId: 'customer_123',
       customerEmail: 'cliente@jaen.com',
@@ -412,17 +405,17 @@ export class MarketplaceDemo {
           productId: 'product_aceite_picual',
           productName: 'Aceite Picual de Úbeda',
           quantity: 2,
-          unitPrice: 12.50,
-          artisanId: 'artisan_olivares_ubeda'
-        }
+          unitPrice: 12.5,
+          artisanId: 'artisan_olivares_ubeda',
+        },
       ],
       deliveryAddress: {
         street: 'Calle Real 123',
         city: 'Jaén',
         state: 'Andalucía',
         postalCode: '23001',
-        country: 'España'
-      }
+        country: 'España',
+      },
     });
 
     console.log(`📋 Orden ${orderId} en proceso...`);
@@ -435,20 +428,19 @@ export class MarketplaceDemo {
 
 async function runDemo(): Promise<void> {
   const demo = new MarketplaceDemo();
-  
+
   try {
     await demo.start();
-    
+
     // Simular varias órdenes
     for (let i = 0; i < 3; i++) {
       await demo.simulateOrder();
       await new Promise(resolve => setTimeout(resolve, 5000)); // Esperar 5 segundos entre órdenes
     }
-    
+
     // Esperar a que se procesen todos los eventos
     console.log('\n⏳ Esperando a que se procesen todos los eventos...');
     await new Promise(resolve => setTimeout(resolve, 10000));
-    
   } finally {
     await demo.stop();
   }

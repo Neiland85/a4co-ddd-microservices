@@ -1,14 +1,6 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pino = void 0;
@@ -17,55 +9,53 @@ exports.initializeLogger = initializeLogger;
 exports.getLogger = getLogger;
 exports.createChildLogger = createChildLogger;
 exports.createHttpLogger = createHttpLogger;
-var pino_1 = require("pino");
+const pino_1 = __importDefault(require("pino"));
 exports.pino = pino_1.default;
-var uuid_1 = require("uuid");
-var api_1 = require("@opentelemetry/api");
+const uuid_1 = require("uuid");
+const api_1 = require("@opentelemetry/api");
 // Global logger instance
-var globalLogger = null;
+let globalLogger = null;
 // Custom serializers for common objects
-var defaultSerializers = {
-    req: function (req) {
-        var _a, _b, _c;
-        return ({
-            id: req.id,
-            method: req.method,
-            url: req.url,
-            query: req.query,
-            params: req.params,
-            headers: {
-                'user-agent': (_a = req.headers) === null || _a === void 0 ? void 0 : _a['user-agent'],
-                'x-trace-id': (_b = req.headers) === null || _b === void 0 ? void 0 : _b['x-trace-id'],
-                'x-correlation-id': (_c = req.headers) === null || _c === void 0 ? void 0 : _c['x-correlation-id'],
-            },
-        });
-    },
-    res: function (res) {
-        var _a;
-        return ({
-            statusCode: res.statusCode,
-            headers: (_a = res.getHeaders) === null || _a === void 0 ? void 0 : _a.call(res),
-        });
-    },
+const defaultSerializers = {
+    req: (req) => ({
+        id: req.id,
+        method: req.method,
+        url: req.url,
+        query: req.query,
+        params: req.params,
+        headers: {
+            'user-agent': req.headers?.['user-agent'],
+            'x-trace-id': req.headers?.['x-trace-id'],
+            'x-correlation-id': req.headers?.['x-correlation-id'],
+        },
+    }),
+    res: (res) => ({
+        statusCode: res.statusCode,
+        headers: res.getHeaders?.(),
+    }),
     err: pino_1.default.stdSerializers.err,
     error: pino_1.default.stdSerializers.err,
-    ddd: function (metadata) { return ({
-        aggregate: metadata.aggregateName ? {
-            id: metadata.aggregateId,
-            name: metadata.aggregateName,
-        } : undefined,
+    ddd: (metadata) => ({
+        aggregate: metadata.aggregateName
+            ? {
+                id: metadata.aggregateId,
+                name: metadata.aggregateName,
+            }
+            : undefined,
         command: metadata.commandName,
-        event: metadata.eventName ? {
-            name: metadata.eventName,
-            version: metadata.eventVersion,
-        } : undefined,
+        event: metadata.eventName
+            ? {
+                name: metadata.eventName,
+                version: metadata.eventVersion,
+            }
+            : undefined,
         correlationId: metadata.correlationId,
         causationId: metadata.causationId,
-    }); },
+    }),
 };
 // Create enhanced logger with context support
 function createEnhancedLogger(baseLogger) {
-    var enhancedLogger = Object.create(baseLogger);
+    const enhancedLogger = Object.create(baseLogger);
     enhancedLogger.withContext = function (ctx) {
         return createEnhancedLogger(baseLogger.child(ctx));
     };
@@ -73,8 +63,8 @@ function createEnhancedLogger(baseLogger) {
         return createEnhancedLogger(baseLogger.child({ ddd: metadata }));
     };
     enhancedLogger.startSpan = function (name, attributes) {
-        var tracer = api_1.trace.getTracer('@a4co/observability');
-        var span = tracer.startSpan(name, { attributes: attributes });
+        const tracer = api_1.trace.getTracer('@a4co/observability');
+        const span = tracer.startSpan(name, { attributes });
         // Log span start
         this.debug({ spanId: span.spanContext().spanId, spanName: name }, 'Span started');
         return span;
@@ -85,10 +75,13 @@ function createEnhancedLogger(baseLogger) {
 }
 // Create logger with configuration
 function createLogger(config) {
-    var options = {
+    const options = {
         name: config.serviceName,
         level: config.level || 'info',
-        serializers: __assign(__assign({}, defaultSerializers), config.serializers),
+        serializers: {
+            ...defaultSerializers,
+            ...config.serializers,
+        },
         base: {
             service: config.serviceName,
             version: config.serviceVersion,
@@ -98,12 +91,12 @@ function createLogger(config) {
         },
         timestamp: pino_1.default.stdTimeFunctions.isoTime,
         formatters: {
-            level: function (label) { return ({ level: label }); },
-            log: function (object) {
+            level: label => ({ level: label }),
+            log: object => {
                 // Add OpenTelemetry context if available
-                var span = api_1.trace.getActiveSpan();
+                const span = api_1.trace.getActiveSpan();
                 if (span) {
-                    var spanContext = span.spanContext();
+                    const spanContext = span.spanContext();
                     object.traceId = spanContext.traceId;
                     object.spanId = spanContext.spanId;
                 }
@@ -124,7 +117,7 @@ function createLogger(config) {
             },
         };
     }
-    var baseLogger = (0, pino_1.default)(options);
+    const baseLogger = (0, pino_1.default)(options);
     return createEnhancedLogger(baseLogger);
 }
 // Initialize global logger
@@ -145,37 +138,37 @@ function createChildLogger(context) {
 }
 // Create HTTP logger middleware
 function createHttpLogger(logger) {
-    var log = logger || getLogger();
-    return function (req, res, next) {
-        var requestId = req.headers['x-request-id'] || (0, uuid_1.v4)();
-        var traceId = req.headers['x-trace-id'] || (0, uuid_1.v4)();
-        var correlationId = req.headers['x-correlation-id'] || requestId;
+    const log = logger || getLogger();
+    return (req, res, next) => {
+        const requestId = req.headers['x-request-id'] || (0, uuid_1.v4)();
+        const traceId = req.headers['x-trace-id'] || (0, uuid_1.v4)();
+        const correlationId = req.headers['x-correlation-id'] || requestId;
         // Add to request object
         req.id = requestId;
         req.traceId = traceId;
         req.correlationId = correlationId;
         // Create child logger with request context
         req.log = log.withContext({
-            requestId: requestId,
-            traceId: traceId,
-            correlationId: correlationId,
+            requestId,
+            traceId,
+            correlationId,
             method: req.method,
             url: req.url,
         });
         // Log request
-        req.log.info({ req: req }, 'Request received');
+        req.log.info({ req }, 'Request received');
         // Log response
-        var startTime = Date.now();
-        res.on('finish', function () {
-            var _a;
-            var duration = Date.now() - startTime;
-            var level = res.statusCode >= 400 ? 'error' : 'info';
+        const startTime = Date.now();
+        res.on('finish', () => {
+            const duration = Date.now() - startTime;
+            const level = res.statusCode >= 400 ? 'error' : 'info';
             req.log[level]({
-                res: res,
-                duration: duration,
-                responseSize: (_a = res.get) === null || _a === void 0 ? void 0 : _a.call(res, 'content-length'),
+                res,
+                duration,
+                responseSize: res.get?.('content-length'),
             }, 'Request completed');
         });
         next();
     };
 }
+//# sourceMappingURL=index.js.map

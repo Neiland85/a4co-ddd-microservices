@@ -47,14 +47,14 @@ describe('UserService', () => {
     it('should validate username', () => {
       expect(() => service.getUser('')).toThrow('Invalid username');
     });
-  })
+  });
 
   describe('error handling', () => {
     it('should handle errors gracefully', () => {
       const invalidData = null as any;
-      
+
       expect(() => {
-        service.createUser(invalidData, invalidData)
+        service.createUser(invalidData, invalidData);
       }).toThrow();
     });
   });
@@ -62,7 +62,7 @@ describe('UserService', () => {
   describe('logging', () => {
     it('should log operations', () => {
       service.createUser('john_doe', 'john@example.com');
-      
+
       expect(console.log).toHaveBeenCalled();
     });
   });

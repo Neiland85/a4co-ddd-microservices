@@ -6,15 +6,15 @@ Este documento define las herramientas mínimas necesarias para trabajar con est
 
 ## 🧱 Requisitos globales
 
-| Herramienta       | Versión recomendada | Motivo                                |
-|-------------------|---------------------|----------------------------------------|
-| Node.js           | >= 18.x             | Compatibilidad con Next.js + Prisma   |
-| pnpm              | >= 8.x              | Monorepo eficiente y reproducible      |
-| Docker            | >= 24.x             | Infraestructura local + despliegue CI  |
-| Docker Compose    | >= 2.x              | Orquestación local de servicios        |
-| Terraform         | >= 1.6.x            | Infraestructura como código (IaC)      |
-| GitHub CLI        | opcional            | Autenticación + CI/CD + scripts        |
-| VS Code           | >= 1.85              | IDE principal + integración Copilot    |
+| Herramienta    | Versión recomendada | Motivo                                |
+| -------------- | ------------------- | ------------------------------------- |
+| Node.js        | >= 18.x             | Compatibilidad con Next.js + Prisma   |
+| pnpm           | >= 8.x              | Monorepo eficiente y reproducible     |
+| Docker         | >= 24.x             | Infraestructura local + despliegue CI |
+| Docker Compose | >= 2.x              | Orquestación local de servicios       |
+| Terraform      | >= 1.6.x            | Infraestructura como código (IaC)     |
+| GitHub CLI     | opcional            | Autenticación + CI/CD + scripts       |
+| VS Code        | >= 1.85             | IDE principal + integración Copilot   |
 
 ---
 
@@ -85,4 +85,3 @@ Estas se encuentran también en `.vscode/extensions.json`:
 - No se permite el uso de `npm` o `yarn` en este repositorio.
 - Todas las instalaciones deben hacerse con `pnpm install`.
 - Si usas GitHub Codespaces, activa el `devcontainer.json` (por configurar).
-

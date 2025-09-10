@@ -11,7 +11,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
       if (!productId) {
         return res.status(400).json({
           error: 'Bad Request',
-          message: 'productId is required'
+          message: 'productId is required',
         });
       }
       const result = await inventoryService.checkInventory({ productId });
@@ -19,7 +19,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(400).json({
         error: 'Bad Request',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });
@@ -31,7 +31,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
       if (!Array.isArray(productIds)) {
         return res.status(400).json({
           error: 'Bad Request',
-          message: 'productIds must be an array'
+          message: 'productIds must be an array',
         });
       }
       const result = await inventoryService.bulkCheckInventory({ productIds });
@@ -39,7 +39,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(400).json({
         error: 'Bad Request',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });
@@ -52,7 +52,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
       if (!productId || !quantity || !orderId || !customerId || !expiresAt) {
         return res.status(400).json({
           error: 'Bad Request',
-          message: 'Missing required fields: productId, quantity, orderId, customerId, expiresAt'
+          message: 'Missing required fields: productId, quantity, orderId, customerId, expiresAt',
         });
       }
 
@@ -61,7 +61,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
         quantity: Number(quantity),
         orderId,
         customerId,
-        expiresAt: new Date(expiresAt)
+        expiresAt: new Date(expiresAt),
       });
 
       if (result.success) {
@@ -72,7 +72,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(400).json({
         error: 'Bad Request',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });
@@ -85,14 +85,14 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
       if (!productId || !quantity || !reason) {
         return res.status(400).json({
           error: 'Bad Request',
-          message: 'Missing required fields: productId, quantity, reason'
+          message: 'Missing required fields: productId, quantity, reason',
         });
       }
 
       const result = await inventoryService.releaseStock({
         productId,
         quantity: Number(quantity),
-        reason
+        reason,
       });
 
       if (result.success) {
@@ -103,7 +103,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(400).json({
         error: 'Bad Request',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });
@@ -116,7 +116,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(500).json({
         error: 'Internal Server Error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });
@@ -129,7 +129,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(500).json({
         error: 'Internal Server Error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });
@@ -142,7 +142,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(500).json({
         error: 'Internal Server Error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });
@@ -154,7 +154,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
       if (!id) {
         return res.status(400).json({
           error: 'Bad Request',
-          message: 'id is required'
+          message: 'id is required',
         });
       }
       const product = await inventoryService.getProductById(id);
@@ -162,7 +162,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
       if (!product) {
         return res.status(404).json({
           error: 'Not Found',
-          message: `Product with id ${id} not found`
+          message: `Product with id ${id} not found`,
         });
       }
 
@@ -170,7 +170,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort) {
     } catch (error) {
       res.status(500).json({
         error: 'Internal Server Error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   });

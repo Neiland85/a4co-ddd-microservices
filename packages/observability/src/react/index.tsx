@@ -1,12 +1,12 @@
-import React, { 
-  createContext, 
-  useContext, 
-  useEffect, 
-  useRef, 
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
   useState,
   ComponentType,
   PropsWithChildren,
-  ErrorInfo
+  ErrorInfo,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { UIEvent, ComponentTrackingConfig } from '../types';
@@ -153,13 +153,13 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   // Measure performance
   const measurePerformance = async (name: string, fn: () => void | Promise<void>) => {
     const startTime = performance.now();
-    
+
     try {
       await fn();
       const duration = performance.now() - startTime;
-      
+
       logger.current.info(`Performance: ${name}`, { duration });
-      
+
       logEvent({
         eventType: 'custom',
         componentName: 'performance',
@@ -195,7 +195,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
 
     trackPageView();
     window.addEventListener('popstate', trackPageView);
-    
+
     return () => {
       window.removeEventListener('popstate', trackPageView);
       // Flush remaining events
@@ -210,14 +210,18 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
     // Wait for page load
     const trackPerformance = () => {
       if ('performance' in window) {
-        const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        
+        const perfData = performance.getEntriesByType(
+          'navigation'
+        )[0] as PerformanceNavigationTiming;
+
         if (perfData) {
           logger.current.info('Page performance metrics', {
-            domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+            domContentLoaded:
+              perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
             loadComplete: perfData.loadEventEnd - perfData.loadEventStart,
             firstPaint: performance.getEntriesByName('first-paint')[0]?.startTime,
-            firstContentfulPaint: performance.getEntriesByName('first-contentful-paint')[0]?.startTime,
+            firstContentfulPaint:
+              performance.getEntriesByName('first-contentful-paint')[0]?.startTime,
           });
         }
       }
@@ -250,11 +254,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
     );
   }
 
-  return (
-    <ObservabilityContext.Provider value={value}>
-      {children}
-    </ObservabilityContext.Provider>
-  );
+  return <ObservabilityContext.Provider value={value}>{children}</ObservabilityContext.Provider>;
 };
 
 // Error Boundary Component
@@ -365,7 +365,8 @@ export const useEventTracking = () => {
       timestamp: Date.now(),
       sessionId: '',
       metadata: {
-        value: typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value,
+        value:
+          typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value,
         ...metadata,
       },
     });
@@ -439,13 +440,18 @@ export const createTracedFetch = (apiEndpoint: string, sessionId: string) => {
 
       // Log to console in development
       if (process.env.NODE_ENV === 'development') {
-        console.debug(`[Trace ${traceId}] ${options?.method || 'GET'} ${url} - ${response.status} (${duration.toFixed(2)}ms)`);
+        console.debug(
+          `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - ${response.status} (${duration.toFixed(2)}ms)`
+        );
       }
 
       return response;
     } catch (error) {
       const duration = performance.now() - startTime;
-      console.error(`[Trace ${traceId}] ${options?.method || 'GET'} ${url} - Failed (${duration.toFixed(2)}ms)`, error);
+      console.error(
+        `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - Failed (${duration.toFixed(2)}ms)`,
+        error
+      );
       throw error;
     }
   };

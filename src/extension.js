@@ -43,7 +43,7 @@ function activate(context) {
     const disposable = vscode.commands.registerCommand(commandId, () => {
         const panel = vscode.window.createWebviewPanel('copilotDashboardView', 'Copilot Pro+ Dashboard', vscode.ViewColumn.One, {
             enableScripts: true,
-            localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))]
+            localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))],
         });
         const mediaPath = path.join(context.extensionPath, 'media', 'webview.html');
         const html = fs.readFileSync(mediaPath, 'utf8');

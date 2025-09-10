@@ -47,14 +47,14 @@ describe('InventoryService', () => {
     it('should validate product ID', () => {
       expect(() => service.getStock('')).toThrow('Invalid productId');
     });
-  })
+  });
 
   describe('error handling', () => {
     it('should handle errors gracefully', () => {
       const invalidData = null as any;
-      
+
       expect(() => {
-        service.updateStock(invalidData, invalidData)
+        service.updateStock(invalidData, invalidData);
       }).toThrow();
     });
   });
@@ -62,7 +62,7 @@ describe('InventoryService', () => {
   describe('logging', () => {
     it('should log operations', () => {
       service.updateStock('PROD-001', 100);
-      
+
       expect(console.log).toHaveBeenCalled();
     });
   });

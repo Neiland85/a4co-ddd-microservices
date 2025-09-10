@@ -1,125 +1,154 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, Menu, X, LogOut, Bell } from "lucide-react"
+import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  BarChart3,
+  Settings,
+  Menu,
+  X,
+  LogOut,
+  Bell,
+} from 'lucide-react';
 
 const navigationItems = [
   {
-    name: "Dashboard",
-    href: "/admin",
+    name: 'Dashboard',
+    href: '/admin',
     icon: LayoutDashboard,
     badge: null,
   },
   {
-    name: "Productos",
-    href: "/admin/products",
+    name: 'Productos',
+    href: '/admin/products',
     icon: Package,
-    badge: "89",
+    badge: '89',
   },
   {
-    name: "Pedidos",
-    href: "/admin/orders",
+    name: 'Pedidos',
+    href: '/admin/orders',
     icon: ShoppingCart,
-    badge: "12",
+    badge: '12',
   },
   {
-    name: "Usuarios",
-    href: "/admin/users",
+    name: 'Usuarios',
+    href: '/admin/users',
     icon: Users,
     badge: null,
   },
   {
-    name: "Análisis",
-    href: "/admin/analytics",
+    name: 'Análisis',
+    href: '/admin/analytics',
     icon: BarChart3,
     badge: null,
   },
   {
-    name: "Configuración",
-    href: "/admin/settings",
+    name: 'Configuración',
+    href: '/admin/settings',
     icon: Settings,
     badge: null,
   },
-]
+];
 
 export function AdminSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const pathname = usePathname()
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
       {/* Mobile Overlay */}
       {!isCollapsed && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setIsCollapsed(true)} />
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          onClick={() => setIsCollapsed(true)}
+        />
       )}
 
       {/* Sidebar */}
       <div
         className={`
-        fixed top-0 left-0 z-50 h-full bg-white border-r border-gray-200 transition-all duration-300
-        ${isCollapsed ? "-translate-x-full lg:translate-x-0 lg:w-16" : "w-64"}
+        fixed left-0 top-0 z-50 h-full border-r border-gray-200 bg-white transition-all duration-300
+        ${isCollapsed ? '-translate-x-full lg:w-16 lg:translate-x-0' : 'w-64'}
       `}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between border-b p-4">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-600 to-amber-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">J</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-600 to-amber-500">
+                  <span className="text-sm font-bold text-white">J</span>
                 </div>
                 <span className="font-bold text-gray-900">Admin Panel</span>
               </div>
             )}
-            <Button variant="ghost" size="sm" onClick={() => setIsCollapsed(!isCollapsed)} className="lg:hidden">
-              {isCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="lg:hidden"
+            >
+              {isCollapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
             </Button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {navigationItems.map((item) => {
-              const IconComponent = item.icon
-              const isActive = pathname === item.href
+          <nav className="flex-1 space-y-2 p-4">
+            {navigationItems.map(item => {
+              const IconComponent = item.icon;
+              const isActive = pathname === item.href;
 
               return (
                 <Link key={item.name} href={item.href}>
                   <div
                     className={`
-                    flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
+                    flex items-center gap-3 rounded-lg px-3 py-2 transition-colors
                     ${
                       isActive
-                        ? "bg-green-100 text-green-700 border border-green-200"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        ? 'border border-green-200 bg-green-100 text-green-700'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                     }
                   `}
                   >
-                    <IconComponent className="w-5 h-5 flex-shrink-0" />
+                    <IconComponent className="h-5 w-5 flex-shrink-0" />
                     {!isCollapsed && (
                       <>
                         <span className="font-medium">{item.name}</span>
-                        {item.badge && <Badge className="ml-auto bg-red-100 text-red-800 text-xs">{item.badge}</Badge>}
+                        {item.badge && (
+                          <Badge className="ml-auto bg-red-100 text-xs text-red-800">
+                            {item.badge}
+                          </Badge>
+                        )}
                       </>
                     )}
                   </div>
                 </Link>
-              )
+              );
             })}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t space-y-2">
-            <Button variant="ghost" className="w-full justify-start text-gray-600 hover:text-gray-900">
-              <Bell className="w-4 h-4 mr-3" />
-              {!isCollapsed && "Notificaciones"}
+          <div className="space-y-2 border-t p-4">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-gray-600 hover:text-gray-900"
+            >
+              <Bell className="mr-3 h-4 w-4" />
+              {!isCollapsed && 'Notificaciones'}
             </Button>
-            <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
-              <LogOut className="w-4 h-4 mr-3" />
-              {!isCollapsed && "Cerrar Sesión"}
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              <LogOut className="mr-3 h-4 w-4" />
+              {!isCollapsed && 'Cerrar Sesión'}
             </Button>
           </div>
         </div>
@@ -130,10 +159,10 @@ export function AdminSidebar() {
         variant="ghost"
         size="sm"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="hidden lg:flex fixed top-4 left-4 z-40"
+        className="fixed left-4 top-4 z-40 hidden lg:flex"
       >
-        <Menu className="w-4 h-4" />
+        <Menu className="h-4 w-4" />
       </Button>
     </>
-  )
+  );
 }

@@ -1,12 +1,14 @@
 "use strict";
+// Utilidades para manejo de strings
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeAccents = exports.isUrl = exports.isEmail = exports.generateId = exports.slugify = exports.truncate = exports.snakeCase = exports.kebabCase = exports.camelCase = exports.capitalize = void 0;
+exports.kebabToCamelCase = kebabToCamelCase;
 const capitalize = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 exports.capitalize = capitalize;
 const camelCase = (str) => {
-    return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+    return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
 };
 exports.camelCase = camelCase;
 const kebabCase = (str) => {
@@ -60,4 +62,9 @@ const removeAccents = (str) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 };
 exports.removeAccents = removeAccents;
+function kebabToCamelCase(str) {
+    if (!str)
+        return str;
+    return str.replace(/-([a-z])/g, g => g[1]?.toUpperCase() || g[1]);
+}
 //# sourceMappingURL=string-utils.js.map

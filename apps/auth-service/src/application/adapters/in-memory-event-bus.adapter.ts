@@ -7,8 +7,7 @@ import { EventBusPort } from '../ports/event-bus.port';
  */
 @Injectable()
 export class InMemoryEventBusAdapter implements EventBusPort {
-  private readonly handlers: Map<string, Array<(event: any) => void>> =
-    new Map();
+  private readonly handlers: Map<string, Array<(event: any) => void>> = new Map();
   private readonly publishedEvents: any[] = [];
 
   async publish(event: any): Promise<void> {

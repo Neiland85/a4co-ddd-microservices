@@ -1,6 +1,7 @@
 # 🎨 Guía Completa: Integración de Componentes V0.dev
 
 ## 📋 Índice
+
 1. [Estrategia de Integración](#estrategia-de-integración)
 2. [Estructura Recomendada](#estructura-recomendada)
 3. [Flujo de Trabajo](#flujo-de-trabajo)
@@ -14,6 +15,7 @@
 ### Principios Fundamentales
 
 **Filosofía Híbrida Low-Code + Custom Code:**
+
 - ✅ Mantener componentes v0 como base funcional
 - ✅ Crear capas de personalización sin modificar el core v0
 - ✅ Facilitar actualizaciones futuras desde v0.dev
@@ -21,7 +23,9 @@
 
 ### Arquitectura de 3 Capas
 
+
 ```
+
 ┌─────────────────────────────────────┐
 │         CAPA DE PRESENTACIÓN        │ ← Tu personalización
 │     (Wrappers + Custom Styles)      │
@@ -32,9 +36,12 @@
 │         CAPA V0 ORIGINAL            │ ← Componentes v0 puros
 │      (Código generado v0.dev)       │
 └─────────────────────────────────────┘
+
 ```
 
+
 ## 📁 Estructura Recomendada
+
 
 ```bash
 apps/dashboard-web/src/components/
@@ -60,25 +67,37 @@ apps/dashboard-web/src/components/
 └── ui/                         # Componentes base (shadcn/ui)
     ├── button.tsx
     └── card.tsx
+
 ```
+
 
 ## 🔄 Flujo de Trabajo
 
 ### 1. Generación en V0.dev
+
+
 ```bash
 # Paso 1: Crear componente en v0.dev con tu prompt
 # Ejemplo: "Crea un dashboard de ventas para artesanos con métricas, gráficos y lista de productos"
 
 # Paso 2: Copiar código generado → archivo raw
+
 ```
 
+
 ### 2. Integración Automatizada
+
+
 ```bash
 # Script helper para nueva integración
 pnpm run integrate:v0 --component=ProductDashboard --url=https://v0.dev/your-component-url
+
 ```
 
+
 ### 3. Adaptación Manual
+
+
 ```typescript
 // Ejemplo de adaptación
 import ProductDashboardV0Raw from '../raw/ProductDashboardV0Raw';
@@ -88,14 +107,17 @@ import { adaptV0Props } from '../templates/V0AdapterUtils';
 export default function ProductDashboardV0(props: AdaptedProps) {
   const { products, loading } = useProducts();
   const adaptedProps = adaptV0Props(props, { products, loading });
-  
+
   return <ProductDashboardV0Raw {...adaptedProps} />;
 }
+
 ```
+
 
 ## 🔧 Patrones de Integración
 
 ### Patrón 1: Adapter Pattern (Recomendado)
+
 
 ```typescript
 // apps/dashboard-web/src/components/v0/templates/V0AdapterUtils.ts
@@ -110,12 +132,12 @@ export function createV0Adapter<T extends Record<string, any>>(
   OriginalComponent: React.ComponentType<T>,
   config: V0AdapterConfig = {}
 ) {
-  return function AdaptedComponent(props: Partial<T> & { 
-    customData?: any; 
+  return function AdaptedComponent(props: Partial<T> & {
+    customData?: any;
     onCustomEvent?: (event: string, data: any) => void;
   }) {
     // Mapeo de datos
-    const mappedData = config.dataMapping 
+    const mappedData = config.dataMapping
       ? Object.entries(config.dataMapping).reduce((acc, [v0Key, localKey]) => {
           acc[v0Key] = props.customData?.[localKey];
           return acc;
@@ -145,9 +167,12 @@ export function createV0Adapter<T extends Record<string, any>>(
     return <OriginalComponent {...finalProps} />;
   };
 }
+
 ```
 
+
 ### Patrón 2: Wrapper Component
+
 
 ```typescript
 // apps/dashboard-web/src/components/custom/wrappers/V0ComponentWrapper.tsx
@@ -166,17 +191,17 @@ interface V0WrapperProps {
   children?: React.ReactNode;
 }
 
-export function V0ComponentWrapper({ 
-  v0Component: V0Component, 
+export function V0ComponentWrapper({
+  v0Component: V0Component,
   customizations = {},
   dataSource,
   children,
-  ...props 
+  ...props
 }: V0WrapperProps) {
   // Hook de datos si se proporciona
   const rawData = dataSource?.hook?.();
-  const transformedData = dataSource?.transformer 
-    ? dataSource.transformer(rawData) 
+  const transformedData = dataSource?.transformer
+    ? dataSource.transformer(rawData)
     : rawData;
 
   // Clases CSS personalizadas
@@ -205,9 +230,12 @@ export function V0ComponentWrapper({
     </div>
   );
 }
+
 ```
 
+
 ### Patrón 3: Enhanced Components
+
 
 ```typescript
 // apps/dashboard-web/src/components/custom/enhanced/ProductCatalogEnhanced.tsx
@@ -222,17 +250,17 @@ interface EnhancedFeatures {
   internationalization?: boolean;
 }
 
-export function ProductCatalogEnhanced({ 
+export function ProductCatalogEnhanced({
   enhanced = {},
-  ...v0Props 
+  ...v0Props
 }: { enhanced?: EnhancedFeatures } & React.ComponentProps<typeof ProductCatalogV0>) {
-  
+
   // Analytics tracking
   const { trackEvent } = useAnalytics(enhanced.analytics);
-  
+
   // Performance monitoring
   const { measureRender } = usePerformance(enhanced.performance);
-  
+
   // Enhanced event handlers
   const enhancedHandlers = {
     onProductView: (product: any) => {
@@ -248,18 +276,21 @@ export function ProductCatalogEnhanced({
   return measureRender(
     'ProductCatalogEnhanced',
     <div className="enhanced-wrapper">
-      <ProductCatalogV0 
-        {...v0Props} 
+      <ProductCatalogV0
+        {...v0Props}
         {...enhancedHandlers}
       />
     </div>
   );
 }
+
 ```
+
 
 ## 🎨 Personalización Avanzada
 
 ### 1. Sistema de Temas Dinámicos
+
 
 ```typescript
 // apps/dashboard-web/src/lib/theme-system.ts
@@ -288,9 +319,12 @@ export function applyV0Theme(component: React.ReactElement, theme: Partial<V0The
     </div>
   );
 }
+
 ```
 
+
 ### 2. Plugin System para Extensiones
+
 
 ```typescript
 // apps/dashboard-web/src/lib/v0-plugin-system.ts
@@ -309,14 +343,14 @@ class V0PluginManager {
 
   apply(componentName: string, component: React.ReactElement, pluginConfigs: Record<string, any> = {}) {
     let result = component;
-    
+
     for (const [pluginName, config] of Object.entries(pluginConfigs)) {
       const plugin = this.plugins.get(pluginName);
       if (plugin) {
         result = plugin.apply(result, config);
       }
     }
-    
+
     return result;
   }
 }
@@ -343,9 +377,12 @@ v0PluginManager.register({
     </Suspense>
   )
 });
+
 ```
 
+
 ### 3. CSS-in-JS Personalización
+
 
 ```typescript
 // apps/dashboard-web/src/styles/v0-customizations.ts
@@ -357,7 +394,7 @@ export const V0CustomWrapper = styled('div', {
     transition: 'all 0.2s ease',
     borderRadius: '$radius',
   },
-  
+
   // Variants
   variants: {
     theme: {
@@ -365,44 +402,47 @@ export const V0CustomWrapper = styled('div', {
         '.v0-component': {
           boxShadow: 'none',
           border: '1px solid $gray300',
-        }
+        },
       },
       elevated: {
         '.v0-component': {
           boxShadow: '$lg',
           border: 'none',
-        }
+        },
       },
       glass: {
         '.v0-component': {
           backdropFilter: 'blur(10px)',
           background: 'rgba(255, 255, 255, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-        }
-      }
+        },
+      },
     },
-    
+
     animation: {
       subtle: {
         '.v0-component': {
           '&:hover': {
             transform: 'translateY(-2px)',
-          }
-        }
+          },
+        },
       },
       bounce: {
         '.v0-component': {
           '&:hover': {
             animation: 'bounce 0.5s ease',
-          }
-        }
-      }
-    }
-  }
+          },
+        },
+      },
+    },
+  },
 });
+
 ```
 
+
 ## 🚀 Scripts de Automatización
+
 
 ```bash
 # apps/dashboard-web/scripts/integrate-v0.sh
@@ -487,12 +527,12 @@ import { V0ComponentWrapper } from '../wrappers/V0ComponentWrapper';
 interface ${COMPONENT_NAME}EnhancedProps {
   // Props del componente v0 original
   v0Props?: React.ComponentProps<typeof ${COMPONENT_NAME}V0>;
-  
+
   // Funcionalidades adicionales
   analytics?: boolean;
   theme?: 'minimal' | 'elevated' | 'glass';
   animation?: 'subtle' | 'bounce';
-  
+
   // Callbacks personalizados
   onCustomEvent?: (event: string, data: any) => void;
 }
@@ -523,7 +563,7 @@ EOF
 
 echo "✅ Archivos creados:"
 echo "   📁 Raw: $RAW_FILE"
-echo "   📁 Adapted: $ADAPTED_FILE" 
+echo "   📁 Adapted: $ADAPTED_FILE"
 echo "   📁 Enhanced: $ENHANCED_FILE"
 echo ""
 echo "📋 Próximos pasos:"
@@ -531,7 +571,9 @@ echo "   1. Copiar código de v0.dev → $RAW_FILE"
 echo "   2. Configurar adaptación → $ADAPTED_FILE"
 echo "   3. Personalizar enhanced → $ENHANCED_FILE"
 echo "   4. Importar y usar en tu página"
+
 ```
+
 
 ```json
 // package.json - Scripts adicionales
@@ -542,11 +584,15 @@ echo "   4. Importar y usar en tu página"
     "update:v0": "bash scripts/update-v0-components.sh"
   }
 }
+
 ```
+
 
 ## 🛠️ Mejores Prácticas
 
 ### 1. Versionado de Componentes V0
+
+
 ```typescript
 // apps/dashboard-web/src/components/v0/version-control.ts
 interface V0ComponentVersion {
@@ -567,14 +613,18 @@ export const v0Registry: V0ComponentVersion[] = [
     changelog: [
       'Added filter functionality',
       'Improved responsive design',
-      'Fixed accessibility issues'
+      'Fixed accessibility issues',
     ],
-    breaking: false
-  }
+    breaking: false,
+  },
 ];
+
 ```
 
+
 ### 2. Testing de Componentes V0
+
+
 ```typescript
 // apps/dashboard-web/src/components/v0/__tests__/integration.test.tsx
 import { render, screen } from '@testing-library/react';
@@ -594,16 +644,20 @@ describe('V0 Component Integration', () => {
 
   it('should apply custom styling', () => {
     render(
-      <ProductCatalogV0 
-        customizations={{ theme: 'minimal' }} 
+      <ProductCatalogV0
+        customizations={{ theme: 'minimal' }}
       />
     );
     expect(screen.getByTestId('v0-component')).toHaveClass('theme-minimal');
   });
 });
+
 ```
 
+
 ### 3. Documentación Automática
+
+
 ```typescript
 // apps/dashboard-web/src/lib/v0-docs-generator.ts
 export function generateV0Documentation(componentPath: string) {
@@ -611,13 +665,17 @@ export function generateV0Documentation(componentPath: string) {
   // Generación de documentación Storybook
   // Creación de ejemplos de uso
 }
+
 ```
+
 
 ## ⚠️ Troubleshooting
 
 ### Problemas Comunes y Soluciones
 
 1. **Imports incorrectos desde v0**
+
+
 ```typescript
 // ❌ Código v0 original
 import { Button } from '@/components/ui/button';
@@ -626,17 +684,25 @@ import { Button } from '@/components/ui/button';
 import { Button } from '../../../ui/button';
 // o usar alias configurado en tsconfig.json
 import { Button } from '@/components/ui/button';
+
 ```
 
+
 2. **Conflictos de tipos TypeScript**
+
+
 ```typescript
 // ✅ Solución: Crear interfaces de adaptación
 interface AdaptedProps extends Omit<OriginalV0Props, 'conflictingProp'> {
   conflictingProp: YourCustomType;
 }
+
 ```
 
+
 3. **Estilos no aplicados correctamente**
+
+
 ```typescript
 // ✅ Solución: Wrapper con CSS Module
 import styles from './V0StyleFix.module.css';
@@ -644,16 +710,23 @@ import styles from './V0StyleFix.module.css';
 <div className={styles.v0FixWrapper}>
   <V0Component />
 </div>
+
 ```
 
+
 4. **Rendimiento lento con múltiples componentes v0**
+
+
 ```typescript
 // ✅ Solución: Lazy loading y memoización
 const LazyV0Component = React.lazy(() => import('./V0Component'));
 const MemoizedV0 = React.memo(V0Component);
+
 ```
 
+
 ## 📊 Monitoreo y Analytics
+
 
 ```typescript
 // apps/dashboard-web/src/lib/v0-analytics.ts
@@ -670,7 +743,9 @@ export function trackV0Performance(componentName: string) {
   // Tracking de errores
   // Análisis de uso
 }
+
 ```
+
 
 ---
 

@@ -65,7 +65,7 @@ export function createTracedPublisher(config: NatsTracingConfig) {
     try {
       // Here you would call the actual NATS publish method
       // For example: await nc.publish(subject, JSON.stringify(tracedMessage))
-      
+
       logger?.info('NATS message published', {
         traceId: spanContext.traceId,
         spanId: spanContext.spanId,
@@ -112,12 +112,10 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
   ) {
     return async (msg: any) => {
       let tracedMessage: TracedMessage;
-      
+
       try {
         // Parse the message if it's a string
-        tracedMessage = typeof msg.data === 'string' 
-          ? JSON.parse(msg.data) 
-          : msg.data;
+        tracedMessage = typeof msg.data === 'string' ? JSON.parse(msg.data) : msg.data;
       } catch (e) {
         // If parsing fails, treat as plain message
         tracedMessage = {
@@ -240,7 +238,7 @@ export function createTracedRequest(config: NatsTracingConfig) {
     try {
       // Here you would call the actual NATS request method
       // For example: const response = await nc.request(subject, JSON.stringify(tracedMessage), options)
-      
+
       const duration = Date.now() - startTime;
       span.setAttribute('messaging.duration_ms', duration);
 
@@ -317,18 +315,17 @@ export class TracedNatsClient {
         'event.type': event.type,
         'event.aggregate_id': event.aggregateId,
         'event.timestamp': new Date().toISOString(),
-        ...(parentContext ? {
-          'trace.parent_trace_id': parentContext.traceId,
-          'trace.parent_span_id': parentContext.spanId,
-        } : {}),
+        ...(parentContext
+          ? {
+              'trace.parent_trace_id': parentContext.traceId,
+              'trace.parent_span_id': parentContext.spanId,
+            }
+          : {}),
       },
     });
   }
 
-  subscribeToEvents(
-    subject: string,
-    handler: (event: any, span: Span) => Promise<void>
-  ): void {
+  subscribeToEvents(subject: string, handler: (event: any, span: Span) => Promise<void>): void {
     this.subscribe(subject, async (event: any, span: Span) => {
       // Add event-specific attributes to span
       if (event.type) {
@@ -361,10 +358,12 @@ export class TracedNatsClient {
         'command.type': command.type,
         'command.aggregate_id': command.aggregateId,
         'command.timestamp': new Date().toISOString(),
-        ...(parentContext ? {
-          'trace.parent_trace_id': parentContext.traceId,
-          'trace.parent_span_id': parentContext.spanId,
-        } : {}),
+        ...(parentContext
+          ? {
+              'trace.parent_trace_id': parentContext.traceId,
+              'trace.parent_span_id': parentContext.spanId,
+            }
+          : {}),
       },
     });
   }

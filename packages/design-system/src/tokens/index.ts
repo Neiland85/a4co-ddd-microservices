@@ -1,43 +1,43 @@
 export const colors = {
   a4co: {
     olive: {
-      50: "#f7f8f3",
-      100: "#eef0e6",
-      200: "#dde2cd",
-      300: "#c6cfa8",
-      400: "#adb985",
-      500: "#94a366",
-      600: "#7a8a4f",
-      700: "#606b40",
-      800: "#4f5736",
-      900: "#434a30",
-      950: "#2a2f1c",
+      50: '#f7f8f3',
+      100: '#eef0e6',
+      200: '#dde2cd',
+      300: '#c6cfa8',
+      400: '#adb985',
+      500: '#94a366',
+      600: '#7a8a4f',
+      700: '#606b40',
+      800: '#4f5736',
+      900: '#434a30',
+      950: '#2a2f1c',
     },
     clay: {
-      50: "#faf8f5",
-      100: "#f4f0e8",
-      200: "#e8ddd0",
-      300: "#d9c5b0",
-      400: "#c8a88d",
-      500: "#b8906f",
-      600: "#a67c5e",
-      700: "#8a6650",
-      800: "#705446",
-      900: "#5c463a",
-      950: "#3a2b24",
+      50: '#faf8f5',
+      100: '#f4f0e8',
+      200: '#e8ddd0',
+      300: '#d9c5b0',
+      400: '#c8a88d',
+      500: '#b8906f',
+      600: '#a67c5e',
+      700: '#8a6650',
+      800: '#705446',
+      900: '#5c463a',
+      950: '#3a2b24',
     },
     cream: {
-      50: "#fefcf8",
-      100: "#fdf8f0",
-      200: "#faf0de",
-      300: "#f6e4c4",
-      400: "#f0d49f",
-      500: "#e9c178",
-      600: "#dfa94d",
-      700: "#c8903a",
-      800: "#a37332",
-      900: "#855e2d",
-      950: "#543a1a",
+      50: '#fefcf8',
+      100: '#fdf8f0',
+      200: '#faf0de',
+      300: '#f6e4c4',
+      400: '#f0d49f',
+      500: '#e9c178',
+      600: '#dfa94d',
+      700: '#c8903a',
+      800: '#a37332',
+      900: '#855e2d',
+      950: '#543a1a',
     },
   },
   semantic: {
@@ -48,8 +48,8 @@ export const colors = {
     warning: '#f59e0b',
     danger: '#ef4444',
     info: '#3b82f6',
-  }
-}
+  },
+};
 
 export const typography = {
   fonts: {
@@ -77,8 +77,8 @@ export const typography = {
     bold: 700,
     extrabold: 800,
     black: 900,
-  }
-}
+  },
+};
 
 export const spacing = {
   0: '0px',
@@ -118,7 +118,7 @@ export const spacing = {
   88: '22rem',
   96: '24rem',
   128: '32rem',
-}
+};
 
 export const breakpoints = {
   xs: '475px',
@@ -128,7 +128,7 @@ export const breakpoints = {
   xl: '1280px',
   '2xl': '1536px',
   '3xl': '1920px',
-}
+};
 
 export const shadows = {
   none: 'none',
@@ -138,7 +138,7 @@ export const shadows = {
   lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
   xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
   inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-}
+};
 
 export const radii = {
   none: '0px',
@@ -150,7 +150,7 @@ export const radii = {
   '2xl': '1rem',
   '3xl': '1.5rem',
   full: '9999px',
-}
+};
 
 export const transitions = {
   durations: {
@@ -164,5 +164,5 @@ export const transitions = {
     in: 'cubic-bezier(0.4, 0, 1, 1)',
     out: 'cubic-bezier(0, 0, 0.2, 1)',
     inOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  }
-}
+  },
+};

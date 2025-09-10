@@ -4,6 +4,7 @@
 
 ### 1. **Arrancar el Servidor**
 
+
 ```bash
 # Opción A: Script automatizado
 ./start-dashboard.sh
@@ -11,18 +12,26 @@
 # Opción B: Manual
 cd apps/dashboard-web
 pnpm dev --port 3001
+
 ```
+
 
 ### 2. **URLs Principales**
 
+
 ```
+
 🏠 Dashboard Principal:    http://localhost:3001/
 🧪 Página de Testing:     http://localhost:3001/test-integrations
+
 ```
+
 
 ### 3. **APIs Directas para Probar**
 
+
 ```
+
 📊 Oportunidades de Venta:  http://localhost:3001/api/sales-opportunities
 🛒 Productos Locales:      http://localhost:3001/api/products
 👨‍🌾 Artesanos:             http://localhost:3001/api/artisans
@@ -31,7 +40,9 @@ pnpm dev --port 3001
      /api/products?category=aceite
      /api/products?search=queso&location=Cazorla
      /api/artisans?verified=true
+
 ```
+
 
 ---
 
@@ -180,6 +191,7 @@ pnpm dev --port 3001
 
 ### **Si no arranca:**
 
+
 ```bash
 # Verificar que estás en el directorio correcto
 pwd
@@ -191,7 +203,9 @@ pnpm install
 
 # Arrancar manualmente
 pnpm dev --port 3001
+
 ```
+
 
 ### **Si las APIs no responden:**
 
