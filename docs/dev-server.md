@@ -43,6 +43,7 @@ graph TB
     MS3 --> NATS
     GW --> REDIS
 
+
 ```
 
 
@@ -69,6 +70,7 @@ pnpm install
 # Configurar variables de entorno
 cp .env.example .env.local
 
+
 ```
 
 
@@ -91,6 +93,7 @@ pnpm test:visual
 # 📦 Build de producción
 pnpm build:all
 
+
 ```
 
 
@@ -100,6 +103,7 @@ pnpm build:all
 
 
 ```
+
 
 packages/design-system/
 ├── src/
@@ -111,6 +115,7 @@ packages/design-system/
 ├── .storybook/          # Configuración de Storybook
 ├── tests/               # Tests visuales
 └── tailwind.preset.js   # Preset de Tailwind
+
 
 ```
 
@@ -176,6 +181,7 @@ docker-compose -f docker-compose.dev.yml down
 # Limpiar volúmenes
 docker-compose -f docker-compose.dev.yml down -v
 
+
 ```
 
 
@@ -217,6 +223,7 @@ pnpm test:visual:update
 # Ver reporte HTML
 pnpm test:visual:report
 
+
 ```
 
 
@@ -232,6 +239,7 @@ pnpm test:watch
 
 # Coverage
 pnpm test:coverage
+
 
 ```
 

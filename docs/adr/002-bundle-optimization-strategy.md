@@ -63,6 +63,7 @@ splitChunks: {
   }
 }
 
+
 ```
 
 
@@ -83,6 +84,7 @@ const Analytics = dynamic(() => import('./Analytics'), {
 
 // Modales y overlays
 const Modal = dynamic(() => import('./Modal'));
+
 
 ```
 

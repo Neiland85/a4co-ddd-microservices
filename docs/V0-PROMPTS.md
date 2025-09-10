@@ -20,6 +20,7 @@ CARACTERÍSTICAS DEL COMPONENTE:
 
 DATOS DE EJEMPLO:
 
+
 ```typescript
 const sampleProducts = [
   {
@@ -36,6 +37,7 @@ const sampleProducts = [
     certifications: ["Ecológico", "DO Jaén", "Primera Cosecha"]
   }
 ];
+
 
 ````
 
@@ -67,9 +69,11 @@ DISEÑO VISUAL:
 ```
 
 
+
 ---
 
 ## 📋 **PROMPT 2: ProductSearch Avanzado**
+
 
 
 ```
@@ -133,9 +137,11 @@ const suggestions = [
 ```
 
 
+
 ---
 
 ## 📋 **PROMPT 3: ArtisanDirectory Premium**
+
 
 
 ```
@@ -211,9 +217,11 @@ const sampleArtisans = [
 ```
 
 
+
 ---
 
 ## 📋 **PROMPT 4: SalesOpportunityBoard**
+
 
 
 ```
@@ -288,9 +296,11 @@ const sampleOpportunities = [
 ```
 
 
+
 ---
 
 ## 📋 **PROMPT 5: MarketplaceDashboard Ejecutivo**
+
 
 
 ```
@@ -355,6 +365,7 @@ const sampleStats = {
 ```
 
 
+
 ---
 
 ## 🛠️ **INSTRUCCIONES DE INTEGRACIÓN**
@@ -381,6 +392,7 @@ const sampleStats = {
 - 📋 **Template de adaptación**: `src/components/v0/V0ComponentTemplate.tsx`
 
 ¡Listo para crear componentes increíbles en V0 y traerlos a nuestro proyecto! 🚀✨
+
 
 ```
 

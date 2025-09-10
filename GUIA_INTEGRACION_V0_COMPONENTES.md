@@ -26,6 +26,7 @@
 
 ```
 
+
 ┌─────────────────────────────────────┐
 │         CAPA DE PRESENTACIÓN        │ ← Tu personalización
 │     (Wrappers + Custom Styles)      │
@@ -36,6 +37,7 @@
 │         CAPA V0 ORIGINAL            │ ← Componentes v0 puros
 │      (Código generado v0.dev)       │
 └─────────────────────────────────────┘
+
 
 ```
 
@@ -68,6 +70,7 @@ apps/dashboard-web/src/components/
     ├── button.tsx
     └── card.tsx
 
+
 ```
 
 
@@ -82,6 +85,7 @@ apps/dashboard-web/src/components/
 
 # Paso 2: Copiar código generado → archivo raw
 
+
 ```
 
 
@@ -91,6 +95,7 @@ apps/dashboard-web/src/components/
 ```bash
 # Script helper para nueva integración
 pnpm run integrate:v0 --component=ProductDashboard --url=https://v0.dev/your-component-url
+
 
 ```
 
@@ -110,6 +115,7 @@ export default function ProductDashboardV0(props: AdaptedProps) {
 
   return <ProductDashboardV0Raw {...adaptedProps} />;
 }
+
 
 ```
 
@@ -167,6 +173,7 @@ export function createV0Adapter<T extends Record<string, any>>(
     return <OriginalComponent {...finalProps} />;
   };
 }
+
 
 ```
 
@@ -231,6 +238,7 @@ export function V0ComponentWrapper({
   );
 }
 
+
 ```
 
 
@@ -284,6 +292,7 @@ export function ProductCatalogEnhanced({
   );
 }
 
+
 ```
 
 
@@ -319,6 +328,7 @@ export function applyV0Theme(component: React.ReactElement, theme: Partial<V0The
     </div>
   );
 }
+
 
 ```
 
@@ -377,6 +387,7 @@ v0PluginManager.register({
     </Suspense>
   )
 });
+
 
 ```
 
@@ -572,6 +583,7 @@ echo "   2. Configurar adaptación → $ADAPTED_FILE"
 echo "   3. Personalizar enhanced → $ENHANCED_FILE"
 echo "   4. Importar y usar en tu página"
 
+
 ```
 
 
@@ -652,6 +664,7 @@ describe('V0 Component Integration', () => {
   });
 });
 
+
 ```
 
 
@@ -710,6 +723,7 @@ import styles from './V0StyleFix.module.css';
 <div className={styles.v0FixWrapper}>
   <V0Component />
 </div>
+
 
 ```
 

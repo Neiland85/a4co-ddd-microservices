@@ -36,6 +36,7 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 ├── .prettierrc                  # Prettier unificado
 └── turbo.json                   # Turbo optimizado
 
+
 ```
 
 
@@ -71,6 +72,7 @@ Se ha implementado una configuración unificada que elimina duplicaciones y opti
 # Ejecutar el script de configuración unificada
 ./scripts/setup-unified.sh
 
+
 ```
 
 
@@ -89,6 +91,7 @@ pnpm --filter "./packages/*" build
 
 # Validar configuración
 pnpm run validate
+
 
 ```
 
@@ -124,6 +127,7 @@ pnpm db:generate           # Generar cliente Prisma
 pnpm db:push               # Push de esquema
 pnpm db:migrate            # Migraciones
 
+
 ```
 
 
@@ -135,6 +139,7 @@ pnpm db:migrate            # Migraciones
 pnpm --filter @a4co/auth-service dev
 pnpm --filter @a4co/product-service test
 pnpm --filter @a4co/web build
+
 
 ```
 
@@ -154,6 +159,7 @@ pnpm test:watch
 # Verificar calidad
 pnpm validate
 
+
 ```
 
 
@@ -165,6 +171,7 @@ pnpm validate
 # - ESLint con --fix
 # - Prettier
 # - TypeScript type-check
+
 
 ```
 
@@ -181,6 +188,7 @@ pnpm run test:coverage:report
 
 # Construcción
 pnpm run build
+
 
 ```
 
@@ -232,6 +240,7 @@ npm install -g pnpm
 # O usar npx
 npx pnpm install
 
+
 ```
 
 
@@ -245,6 +254,7 @@ pnpm add -D turbo
 # O usar npx
 npx turbo run build
 
+
 ```
 
 
@@ -257,6 +267,7 @@ node scripts/generate-microservice-packages.js
 
 # Reinstalar dependencias
 pnpm install
+
 
 ```
 

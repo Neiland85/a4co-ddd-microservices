@@ -120,6 +120,7 @@ npm test -- --testPathPattern=register-user-unit
 # Ejecutar con coverage
 npm run test:cov
 
+
 ```
 
 
@@ -167,6 +168,7 @@ open coverage/lcov-report/index.html
 
 # Debug de tests específicos
 npm run test:debug -- --testNamePattern="should register"
+
 
 ```
 

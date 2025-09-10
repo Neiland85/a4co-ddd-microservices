@@ -134,6 +134,7 @@ pnpm run clean              # Limpiar builds
 pnpm run clean:all          # Limpiar todo incluido node_modules
 pnpm run reinstall          # Reinstalar todo desde cero
 
+
 ```
 
 
@@ -152,6 +153,7 @@ pnpm run storybook:dev      # Levantar Storybook
 pnpm run docker:up          # Levantar infraestructura
 pnpm run docker:down        # Detener infraestructura
 pnpm run docker:logs        # Ver logs
+
 
 ```
 

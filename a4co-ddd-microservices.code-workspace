@@ -28,7 +28,6 @@
       "ms-playwright.playwright",
       "ms-azuretools.vscode-docker",
       "redhat.vscode-yaml",
-      "hashicorp.terraform",
     ],
   },
 }
