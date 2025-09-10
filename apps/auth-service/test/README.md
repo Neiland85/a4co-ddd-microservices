@@ -59,6 +59,7 @@ Configuración global para todos los tests:
 
 ## Ejecutar Tests
 
+
 ```bash
 # Desde el directorio auth-service
 npm test
@@ -71,7 +72,9 @@ npm run test:cov
 
 # Ejecutar en modo watch
 npm run test:watch
+
 ```
+
 
 ## Problemas Conocidos y Soluciones
 
@@ -107,15 +110,19 @@ El módulo `@shared` se mockea en setup.ts para evitar dependencias circulares.
 
 ### RegisterUserDto de Ejemplo
 
+
 ```typescript
 {
   email: 'test@example.com',
   name: 'Test User',
   password: 'Password123'
 }
+
 ```
 
+
 ### User Mock Esperado
+
 
 ```typescript
 {
@@ -128,7 +135,9 @@ El módulo `@shared` se mockea en setup.ts para evitar dependencias circulares.
   createdAt: new Date(),
   updatedAt: new Date()
 }
+
 ```
+
 
 ## Casos de Test Cubiertos
 
@@ -155,6 +164,7 @@ El módulo `@shared` se mockea en setup.ts para evitar dependencias circulares.
 
 ## Comandos Útiles
 
+
 ```bash
 # Limpiar cache de Jest
 npx jest --clearCache
@@ -164,4 +174,6 @@ npm run test:debug -- --testNamePattern="should register"
 
 # Ver coverage detallado
 npm run test:cov -- --coverageReporters=html
+
 ```
+

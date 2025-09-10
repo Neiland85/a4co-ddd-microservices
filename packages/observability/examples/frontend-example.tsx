@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   initializeFrontendObservability,
   useErrorLogger,
   useUILogger,
   useComponentTracing,
   createObservableFetch,
-  withObservability
+  withObservability,
 } from '../src/frontend';
 import {
   ObservableButton,
@@ -14,7 +14,7 @@ import {
   useDSObservability,
   useDSPerformanceTracking,
   logDSError,
-  logDSMetric
+  logDSMetric,
 } from '../src/design-system';
 
 // Inicializar observabilidad del frontend
@@ -48,7 +48,13 @@ interface Product {
 
 // Componente de lista de productos con observabilidad
 const ProductList: React.FC = withObservability(
-  ({ products, onProductSelect }: { products: Product[]; onProductSelect: (product: Product) => void }) => {
+  ({
+    products,
+    onProductSelect,
+  }: {
+    products: Product[];
+    onProductSelect: (product: Product) => void;
+  }) => {
     const { logUIEvent } = useUILogger();
     const { createChildSpan } = useComponentTracing('ProductList');
     const { renderCount } = useDSPerformanceTracking('ProductList');
@@ -80,7 +86,7 @@ const ProductList: React.FC = withObservability(
     return (
       <div className="product-list">
         <h2>Productos ({products.length})</h2>
-        {products.map((product) => (
+        {products.map(product => (
           <ObservableCard
             key={product.id}
             variant="elevated"
@@ -107,8 +113,11 @@ const ProductList: React.FC = withObservability(
 
 // Componente de formulario de producto con observabilidad
 const ProductForm: React.FC = withObservability(
-  ({ onSubmit, initialData }: { 
-    onSubmit: (data: Partial<Product>) => void; 
+  ({
+    onSubmit,
+    initialData,
+  }: {
+    onSubmit: (data: Partial<Product>) => void;
     initialData?: Product;
   }) => {
     const { logUIEvent } = useUILogger();
@@ -123,7 +132,7 @@ const ProductForm: React.FC = withObservability(
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      
+
       const span = createChildSpan('form_submit');
       if (span) {
         span.setAttributes({
@@ -149,14 +158,14 @@ const ProductForm: React.FC = withObservability(
     return (
       <form onSubmit={handleSubmit} className="product-form">
         <h2>{initialData ? 'Editar Producto' : 'Crear Producto'}</h2>
-        
+
         <div className="form-group">
           <label htmlFor="name">Nombre:</label>
           <ObservableInput
             id="name"
             type="text"
             value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
+            onChange={e => handleInputChange('name', e.target.value)}
             variant="default"
             size="md"
             required
@@ -169,7 +178,7 @@ const ProductForm: React.FC = withObservability(
             id="price"
             type="number"
             value={formData.price}
-            onChange={(e) => handleInputChange('price', parseFloat(e.target.value))}
+            onChange={e => handleInputChange('price', parseFloat(e.target.value))}
             variant="default"
             size="md"
             required
@@ -182,7 +191,7 @@ const ProductForm: React.FC = withObservability(
             id="stock"
             type="number"
             value={formData.stock}
-            onChange={(e) => handleInputChange('stock', parseInt(e.target.value))}
+            onChange={e => handleInputChange('stock', parseInt(e.target.value))}
             variant="default"
             size="md"
             required
@@ -226,7 +235,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadProducts = async () => {
       const span = createChildSpan('load_products');
-      
+
       try {
         setLoading(true);
         setError(null);
@@ -249,12 +258,11 @@ const App: React.FC = () => {
         logDSMetric('App', 'products_load_time', performance.now(), {
           count: data.products?.length || 0,
         });
-
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
         logError(error, 'loadProducts');
         setError('Error al cargar productos');
-        
+
         // Registrar error del DS
         logDSError('App', error, {
           operation: 'load_products',
@@ -272,14 +280,12 @@ const App: React.FC = () => {
   // Manejar creación/actualización de producto
   const handleProductSubmit = async (productData: Partial<Product>) => {
     const span = createChildSpan('product_submit');
-    
+
     try {
-      const url = selectedProduct 
-        ? `/products/${selectedProduct.id}` 
-        : '/products';
-      
+      const url = selectedProduct ? `/products/${selectedProduct.id}` : '/products';
+
       const method = selectedProduct ? 'PUT' : 'POST';
-      
+
       const response = await apiClient(url, {
         method,
         headers: {
@@ -307,12 +313,11 @@ const App: React.FC = () => {
 
       setShowForm(false);
       setSelectedProduct(null);
-
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       logError(error, 'productSubmit');
       setError('Error al guardar producto');
-      
+
       logDSError('App', error, {
         operation: 'product_submit',
         productData,
@@ -326,7 +331,7 @@ const App: React.FC = () => {
   const handleProductSelect = (product: Product) => {
     setSelectedProduct(product);
     setShowForm(true);
-    
+
     logUIEvent({
       component: 'App',
       action: 'product_selected',
@@ -338,7 +343,7 @@ const App: React.FC = () => {
   const handleCreateNew = () => {
     setSelectedProduct(null);
     setShowForm(true);
-    
+
     logUIEvent({
       component: 'App',
       action: 'create_new_product',
@@ -379,11 +384,7 @@ const App: React.FC = () => {
         <div className="error">
           <ObservableCard variant="outlined" size="md">
             <p>Error: {error}</p>
-            <ObservableButton
-              variant="secondary"
-              size="sm"
-              onClick={() => setError(null)}
-            >
+            <ObservableButton variant="secondary" size="sm" onClick={() => setError(null)}>
               Cerrar
             </ObservableButton>
           </ObservableCard>
@@ -392,15 +393,9 @@ const App: React.FC = () => {
 
       <main className="app-main">
         {showForm ? (
-          <ProductForm
-            onSubmit={handleProductSubmit}
-            initialData={selectedProduct || undefined}
-          />
+          <ProductForm onSubmit={handleProductSubmit} initialData={selectedProduct || undefined} />
         ) : (
-          <ProductList
-            products={products}
-            onProductSelect={handleProductSelect}
-          />
+          <ProductList products={products} onProductSelect={handleProductSelect} />
         )}
       </main>
 

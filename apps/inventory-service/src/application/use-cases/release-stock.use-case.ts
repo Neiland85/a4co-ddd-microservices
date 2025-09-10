@@ -53,7 +53,7 @@ export class ReleaseStockUseCase {
         productId,
         quantity,
         availableStock: product.availableStock,
-        message: `Cannot release ${quantity} units. Reserved: ${product.reservedStock}`
+        message: `Cannot release ${quantity} units. Reserved: ${product.reservedStock}`,
       };
     }
 
@@ -68,7 +68,7 @@ export class ReleaseStockUseCase {
       productId,
       quantity,
       availableStock: product.availableStock,
-      message: `Successfully released ${quantity} units of ${product.name}. Reason: ${reason}`
+      message: `Successfully released ${quantity} units of ${product.name}. Reason: ${reason}`,
     };
   }
 }

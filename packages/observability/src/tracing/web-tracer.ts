@@ -140,11 +140,11 @@ export async function traceWebOperation<T>(
       code: SpanStatusCode.ERROR,
       message: error instanceof Error ? error.message : String(error),
     });
-    
+
     if (error instanceof Error) {
       span.recordException(error);
     }
-    
+
     throw error;
   } finally {
     span.end();
@@ -154,10 +154,7 @@ export async function traceWebOperation<T>(
 /**
  * Trace React component render
  */
-export function traceComponentRender(
-  componentName: string,
-  props?: Record<string, any>
-): Span {
+export function traceComponentRender(componentName: string, props?: Record<string, any>): Span {
   const span = startWebSpan(`Component: ${componentName}`, {
     kind: SpanKind.INTERNAL,
     attributes: {
@@ -165,17 +162,14 @@ export function traceComponentRender(
       'component.props': props ? Object.keys(props).join(',') : '',
     },
   });
-  
+
   return span;
 }
 
 /**
  * Trace route navigation
  */
-export function traceRouteNavigation(
-  fromRoute: string,
-  toRoute: string
-): Span {
+export function traceRouteNavigation(fromRoute: string, toRoute: string): Span {
   const span = startWebSpan('Route Navigation', {
     kind: SpanKind.INTERNAL,
     attributes: {
@@ -184,7 +178,7 @@ export function traceRouteNavigation(
       'navigation.timestamp': new Date().toISOString(),
     },
   });
-  
+
   return span;
 }
 
@@ -204,7 +198,7 @@ export function traceUserInteraction(
       ...metadata,
     },
   });
-  
+
   return span;
 }
 
@@ -221,29 +215,29 @@ export interface PerformanceMetrics {
 
 export function collectPerformanceMetrics(): PerformanceMetrics {
   const metrics: PerformanceMetrics = {};
-  
+
   if (typeof window !== 'undefined' && 'performance' in window) {
     const paintEntries = performance.getEntriesByType('paint');
     const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
-    
+
     if (fcpEntry) {
       metrics.firstContentfulPaint = fcpEntry.startTime;
     }
-    
+
     // Collect Web Vitals if available
     if ('PerformanceObserver' in window) {
       try {
         // LCP
-        const lcpObserver = new PerformanceObserver((list) => {
+        const lcpObserver = new PerformanceObserver(list => {
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1];
           metrics.largestContentfulPaint = lastEntry.startTime;
         });
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-        
+
         // CLS
         let clsValue = 0;
-        const clsObserver = new PerformanceObserver((list) => {
+        const clsObserver = new PerformanceObserver(list => {
           for (const entry of list.getEntries()) {
             if (!(entry as any).hadRecentInput) {
               clsValue += (entry as any).value;
@@ -252,9 +246,9 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
           metrics.cumulativeLayoutShift = clsValue;
         });
         clsObserver.observe({ entryTypes: ['layout-shift'] });
-        
+
         // FID
-        const fidObserver = new PerformanceObserver((list) => {
+        const fidObserver = new PerformanceObserver(list => {
           const firstEntry = list.getEntries()[0];
           metrics.firstInputDelay = (firstEntry as any).processingStart - firstEntry.startTime;
         });
@@ -264,7 +258,7 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
       }
     }
   }
-  
+
   return metrics;
 }
 
@@ -273,10 +267,10 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
  */
 export function addPerformanceMetricsToSpan(): void {
   const span = trace.getActiveSpan();
-  
+
   if (span) {
     const metrics = collectPerformanceMetrics();
-    
+
     Object.entries(metrics).forEach(([key, value]) => {
       if (value !== undefined) {
         span.setAttribute(`performance.${key}`, value);

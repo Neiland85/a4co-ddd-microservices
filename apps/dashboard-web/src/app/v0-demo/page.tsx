@@ -22,29 +22,29 @@ export default function V0DemoPage() {
       type: 'catalog',
       description: 'Catálogo de productos con filtros y búsqueda',
       status: 'ready',
-      url: 'https://v0.dev/r/example-product-catalog'
+      url: 'https://v0.dev/r/example-product-catalog',
     },
     {
       name: 'UserDashboard',
       type: 'dashboard',
       description: 'Dashboard de usuario con métricas y gráficos',
       status: 'ready',
-      url: 'https://v0.dev/r/example-user-dashboard'
+      url: 'https://v0.dev/r/example-user-dashboard',
     },
     {
       name: 'ArtisanForm',
       type: 'form',
       description: 'Formulario de registro de artesanos',
       status: 'pending',
-      url: null
+      url: null,
     },
     {
       name: 'SalesMetrics',
       type: 'dashboard',
       description: 'Métricas de ventas con visualizaciones',
       status: 'ready',
-      url: 'https://v0.dev/r/example-sales-metrics'
-    }
+      url: 'https://v0.dev/r/example-sales-metrics',
+    },
   ];
 
   const getStatusColor = (status: string) => {
@@ -74,25 +74,23 @@ export default function V0DemoPage() {
   };
 
   // Funciones para contar componentes
-  const readyComponentsCount = v0Components.filter((c) => c.status === 'ready').length;
-  const pendingComponentsCount = v0Components.filter((c) => c.status === 'pending').length;
+  const readyComponentsCount = v0Components.filter(c => c.status === 'ready').length;
+  const pendingComponentsCount = v0Components.filter(c => c.status === 'pending').length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🎨 Demo de Componentes V0.dev
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Visualiza y prueba la integración de componentes generados con v0.dev
-            en tu proyecto Next.js con personalización avanzada.
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900">🎨 Demo de Componentes V0.dev</h1>
+          <p className="mx-auto max-w-3xl text-xl text-gray-600">
+            Visualiza y prueba la integración de componentes generados con v0.dev en tu proyecto
+            Next.js con personalización avanzada.
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-4">
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -100,7 +98,7 @@ export default function V0DemoPage() {
                   <p className="text-sm font-medium text-gray-600">Componentes V0</p>
                   <p className="text-2xl font-bold text-gray-900">{v0Components.length}</p>
                 </div>
-                <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
                   <span className="text-2xl">🎨</span>
                 </div>
               </div>
@@ -112,11 +110,9 @@ export default function V0DemoPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Listos</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {readyComponentsCount}
-                  </p>
+                  <p className="text-2xl font-bold text-green-600">{readyComponentsCount}</p>
                 </div>
-                <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
                   <span className="text-2xl">✅</span>
                 </div>
               </div>
@@ -128,11 +124,9 @@ export default function V0DemoPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Pendientes</p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {pendingComponentsCount}
-                  </p>
+                  <p className="text-2xl font-bold text-yellow-600">{pendingComponentsCount}</p>
                 </div>
-                <div className="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100">
                   <span className="text-2xl">⏳</span>
                 </div>
               </div>
@@ -146,7 +140,7 @@ export default function V0DemoPage() {
                   <p className="text-sm font-medium text-gray-600">Temas</p>
                   <p className="text-2xl font-bold text-purple-600">3</p>
                 </div>
-                <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
                   <span className="text-2xl">🎭</span>
                 </div>
               </div>
@@ -155,12 +149,13 @@ export default function V0DemoPage() {
         </div>
 
         {/* Componentes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {v0Components.map((component) => (
+        <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {v0Components.map(component => (
             <Card
               key={component.name}
-              className={`bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer ${selectedComponent === component.name ? 'ring-2 ring-blue-500' : ''
-                }`}
+              className={`cursor-pointer bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-lg ${
+                selectedComponent === component.name ? 'ring-2 ring-blue-500' : ''
+              }`}
               onClick={() => setSelectedComponent(component.name)}
             >
               <CardHeader>
@@ -189,8 +184,8 @@ export default function V0DemoPage() {
                         href={component.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline text-sm"
-                        onClick={(e) => e.stopPropagation()}
+                        className="text-sm text-blue-600 hover:underline"
+                        onClick={e => e.stopPropagation()}
                       >
                         Ver original
                       </a>
@@ -201,7 +196,7 @@ export default function V0DemoPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         console.log(`Abriendo ejemplo de ${component.name}`);
                       }}
@@ -211,7 +206,7 @@ export default function V0DemoPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         console.log(`Integrando ${component.name}`);
                       }}
@@ -234,7 +229,7 @@ export default function V0DemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="space-y-3">
                 <h4 className="font-semibold">📋 Integración Manual</h4>
                 <div className="space-y-2">
@@ -322,20 +317,20 @@ export default function V0DemoPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 🫒 Demo: ProductCatalogV0Raw
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
                   ✅ Implementado
                 </Badge>
               </CardTitle>
               <CardDescription>
-                Componente de catálogo de productos funcional sin TODO tags.
-                Incluye filtros, estados de carga, y datos de ejemplo del mercado local de Jaén.
+                Componente de catálogo de productos funcional sin TODO tags. Incluye filtros,
+                estados de carga, y datos de ejemplo del mercado local de Jaén.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ProductCatalogV0Raw
                 showFilters={true}
                 maxItems={6}
-                onProductSelect={(product) => {
+                onProductSelect={product => {
                   console.log('Producto seleccionado:', product);
                   alert(`Producto seleccionado: ${product.name} - ${product.price}€`);
                 }}
@@ -348,7 +343,9 @@ export default function V0DemoPage() {
         <div className="mt-12 text-center">
           <Separator className="my-6" />
           <p className="text-gray-600">
-            💡 <strong>Tip:</strong> Usa el script <code className="bg-gray-100 px-2 py-1 rounded">./scripts/integrate-v0.sh</code> para automatizar la integración de nuevos componentes v0
+            💡 <strong>Tip:</strong> Usa el script{' '}
+            <code className="rounded bg-gray-100 px-2 py-1">./scripts/integrate-v0.sh</code> para
+            automatizar la integración de nuevos componentes v0
           </p>
           <div className="mt-4 space-x-4">
             <Button variant="outline" size="sm">
@@ -365,4 +362,4 @@ export default function V0DemoPage() {
       </div>
     </div>
   );
-} 
+}

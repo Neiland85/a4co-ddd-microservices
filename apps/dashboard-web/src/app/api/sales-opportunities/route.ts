@@ -5,14 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 interface LocalProduct {
   id: string;
   name: string;
-  category:
-    | 'aceite'
-    | 'queso'
-    | 'jamón'
-    | 'miel'
-    | 'vino'
-    | 'aceitunas'
-    | 'artesanía';
+  category: 'aceite' | 'queso' | 'jamón' | 'miel' | 'vino' | 'aceitunas' | 'artesanía';
   producer: string;
   location: {
     municipality: string;
@@ -98,8 +91,7 @@ const mockProducts: LocalProduct[] = [
     unit: 'tarro 500g',
     seasonal: true,
     harvestDate: '2024-05-20',
-    description:
-      'Miel pura de azahar recolectada en los campos de naranjos de la Sierra Mágina.',
+    description: 'Miel pura de azahar recolectada en los campos de naranjos de la Sierra Mágina.',
     images: ['/images/miel-azahar.jpg'],
     certifications: ['100% Natural', 'Sin Aditivos'],
     available: true,
@@ -161,28 +153,26 @@ export async function GET(request: NextRequest) {
 
   try {
     // Simular delay de API real
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     let filteredOpportunities = [...mockSalesOpportunities];
 
     // Filtrar por tipo si se especifica
     if (type) {
-      filteredOpportunities = filteredOpportunities.filter(
-        (opp) => opp.type === type
-      );
+      filteredOpportunities = filteredOpportunities.filter(opp => opp.type === type);
     }
 
     // Filtrar por ubicación si se especifica
     if (location) {
-      filteredOpportunities = filteredOpportunities.filter((opp) =>
+      filteredOpportunities = filteredOpportunities.filter(opp =>
         opp.location.toLowerCase().includes(location.toLowerCase())
       );
     }
 
     // Filtrar por categoría de producto si se especifica
     if (category) {
-      filteredOpportunities = filteredOpportunities.filter((opp) =>
-        opp.products.some((product) => product.category === category)
+      filteredOpportunities = filteredOpportunities.filter(opp =>
+        opp.products.some(product => product.category === category)
       );
     }
 
@@ -248,7 +238,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Simular delay de API
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     return NextResponse.json(
       {

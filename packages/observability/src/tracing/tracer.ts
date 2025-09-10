@@ -57,11 +57,14 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
   });
 
   // Create Prometheus exporter
-  const prometheusExporter = new PrometheusExporter({
-    port: prometheusPort,
-  }, () => {
-    logger?.info(`Prometheus metrics server started on port ${prometheusPort}`);
-  });
+  const prometheusExporter = new PrometheusExporter(
+    {
+      port: prometheusPort,
+    },
+    () => {
+      logger?.info(`Prometheus metrics server started on port ${prometheusPort}`);
+    }
+  );
 
   // Register instrumentations
   registerInstrumentations({
@@ -124,36 +127,38 @@ export function startSpan(
   }
 ): Span {
   const tracer = getTracer('default');
-  
+
   if (options?.parent) {
     const ctx = trace.setSpan(context.active(), options.parent);
-    return tracer.startSpan(name, {
-      kind: options.kind,
-      attributes: options.attributes,
-    }, ctx);
+    return tracer.startSpan(
+      name,
+      {
+        kind: options.kind,
+        attributes: options.attributes,
+      },
+      ctx
+    );
   }
-  
-  return tracer.startActiveSpan(name, {
-    kind: options?.kind,
-    attributes: options?.attributes,
-  }, (span) => span);
+
+  return tracer.startActiveSpan(
+    name,
+    {
+      kind: options?.kind,
+      attributes: options?.attributes,
+    },
+    span => span
+  );
 }
 
 /**
  * Decorator for tracing class methods
  */
-export function Trace(
-  options?: {
-    name?: string;
-    kind?: SpanKind;
-    attributes?: Record<string, any>;
-  }
-) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+export function Trace(options?: {
+  name?: string;
+  kind?: SpanKind;
+  attributes?: Record<string, any>;
+}) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -176,11 +181,11 @@ export function Trace(
           code: SpanStatusCode.ERROR,
           message: error instanceof Error ? error.message : String(error),
         });
-        
+
         if (error instanceof Error) {
           span.recordException(error);
         }
-        
+
         throw error;
       } finally {
         span.end();
@@ -213,11 +218,11 @@ export async function withSpan<T>(
       code: SpanStatusCode.ERROR,
       message: error instanceof Error ? error.message : String(error),
     });
-    
+
     if (error instanceof Error) {
       span.recordException(error);
     }
-    
+
     throw error;
   } finally {
     span.end();
@@ -229,13 +234,13 @@ export async function withSpan<T>(
  */
 export function getTracingContext(): TracingContext | null {
   const span = trace.getActiveSpan();
-  
+
   if (!span) {
     return null;
   }
-  
+
   const spanContext = span.spanContext();
-  
+
   return {
     traceId: spanContext.traceId,
     spanId: spanContext.spanId,
@@ -245,12 +250,9 @@ export function getTracingContext(): TracingContext | null {
 /**
  * Add event to current span
  */
-export function addSpanEvent(
-  name: string,
-  attributes?: Record<string, any>
-): void {
+export function addSpanEvent(name: string, attributes?: Record<string, any>): void {
   const span = trace.getActiveSpan();
-  
+
   if (span) {
     span.addEvent(name, attributes);
   }
@@ -261,7 +263,7 @@ export function addSpanEvent(
  */
 export function setSpanAttributes(attributes: Record<string, any>): void {
   const span = trace.getActiveSpan();
-  
+
   if (span) {
     span.setAttributes(attributes);
   }

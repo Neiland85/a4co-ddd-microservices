@@ -1,33 +1,12 @@
-interface SafeExecOptions {
-    timeout?: number;
-    maxBuffer?: number;
-    cwd?: string;
-    env?: NodeJS.ProcessEnv;
-    allowedCommands?: string[];
-}
-export declare class SafeExec {
-    private allowedCommands;
-    constructor(options?: SafeExecOptions);
-    execute(command: string, args?: string[], options?: SafeExecOptions): Promise<string>;
-    executeSync(command: string, args?: string[], options?: SafeExecOptions): string;
-    private isCommandAllowed;
-    private validateArguments;
-    private isSafeFlag;
-    addAllowedCommand(command: string): void;
-    removeAllowedCommand(command: string): void;
-}
-export declare const safeExec: SafeExec;
-export declare function execSafe(command: string, args?: string[], options?: SafeExecOptions): Promise<string>;
-export declare function execSafeSync(command: string, args?: string[], options?: SafeExecOptions): string;
-export declare class CommandBuilder {
-    private command;
-    private args;
-    constructor(command: string);
-    addArg(arg: string): this;
-    addFlag(flag: string, value?: string): this;
-    execute(options?: SafeExecOptions): Promise<string>;
-    executeSync(options?: SafeExecOptions): string;
-    toString(): string;
-}
-export {};
+/**
+ * Safe Exec - Utilidad segura para ejecutar comandos del sistema
+ * Mitiga vulnerabilidades de inyección de comandos detectadas por SonarQube
+ */
+export declare const safeExec: (command: string) => Promise<string>;
+/**
+ * Executes a whitelisted command with arguments and parses the output as JSON.
+ * @param command The command to execute (must be in whitelist)
+ * @param args Array of arguments to pass to the command
+ */
+export declare const safeExecAndParseJson: <T>(command: string, args?: string[]) => Promise<T>;
 //# sourceMappingURL=safe-exec.d.ts.map

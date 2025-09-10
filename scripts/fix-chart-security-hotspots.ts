@@ -15,7 +15,7 @@ const findChartFiles = (): string[] => {
 
 const fixChartFile = (filePath: string) => {
   const content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Verificar si el archivo ya usa dangerouslySetInnerHTML
   if (!content.includes('dangerouslySetInnerHTML')) {
     console.log(`  ✓ ${filePath} - No requiere cambios`);
@@ -24,10 +24,10 @@ const fixChartFile = (filePath: string) => {
 
   // Patrón para encontrar el bloque de style con dangerouslySetInnerHTML
   const styleBlockRegex = /<style\s+dangerouslySetInnerHTML=\{\{[\s\S]*?\}\}\s*\/>/g;
-  
+
   // Reemplazar con una implementación más segura
   let updatedContent = content;
-  
+
   // Opción 1: Si es un componente simple, usar children en lugar de dangerouslySetInnerHTML
   if (content.includes('__html: Object.entries(THEMES)')) {
     updatedContent = content.replace(
@@ -35,7 +35,7 @@ const fixChartFile = (filePath: string) => {
       (match, styleContent) => {
         // Extraer la lógica de generación de estilos
         const styleLogic = styleContent.trim();
-        
+
         // Generar el nuevo código usando children
         return `<style
       type="text/css"
@@ -82,7 +82,7 @@ const main = async () => {
   }
 
   console.log(`\n✅ Proceso completado: ${fixedCount} archivos actualizados`);
-  
+
   // Crear archivo de documentación para SonarCloud
   const securityDoc = `# Security Hotspots - Chart Components
 

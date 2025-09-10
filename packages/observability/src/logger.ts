@@ -31,14 +31,14 @@ function getSpanId(): string | undefined {
 // Crear logger con configuración estructurada
 export function createLogger(config: LoggerConfig): pino.Logger {
   const isProduction = config.environment === 'production';
-  
+
   const pinoConfig: pino.LoggerOptions = {
     name: config.serviceName,
     level: config.level || (isProduction ? 'info' : 'debug'),
     // Formateo estructurado en JSON
     formatters: {
-      level: (label) => ({ level: label }),
-      bindings: (bindings) => ({
+      level: label => ({ level: label }),
+      bindings: bindings => ({
         service: bindings.name || config.serviceName,
         pid: bindings.pid,
         hostname: bindings.hostname,
@@ -50,20 +50,20 @@ export function createLogger(config: LoggerConfig): pino.Logger {
       const traceId = getTraceId();
       const spanId = getSpanId();
       const contextData: any = {};
-      
+
       if (traceId) {
         contextData.traceId = traceId;
       }
       if (spanId) {
         contextData.spanId = spanId;
       }
-      
+
       // Agregar contexto adicional si está disponible
       const baggage = context.active().getValue(Symbol.for('baggage'));
       if (baggage) {
         contextData.baggage = baggage;
       }
-      
+
       return contextData;
     },
     // Timestamp en ISO format
@@ -113,7 +113,7 @@ export function createLogger(config: LoggerConfig): pino.Logger {
 // Logger middleware para HTTP requests
 export function createHttpLogger(logger: pino.Logger) {
   const pinoHttp = require('pino-http');
-  
+
   return pinoHttp({
     logger,
     // Personalizar la generación de request ID
@@ -171,7 +171,7 @@ export class StructuredLogger {
         span.setAttribute(key, value as any);
       });
     }
-    
+
     (this.logger as any)[level]({
       ...context,
       msg: message,
@@ -186,11 +186,13 @@ export class StructuredLogger {
   error(message: string, error?: Error, context?: Record<string, any>) {
     this.logWithContext('error', message, {
       ...(context || {}),
-      error: error ? {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-      } : undefined,
+      error: error
+        ? {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+          }
+        : undefined,
     });
   }
 

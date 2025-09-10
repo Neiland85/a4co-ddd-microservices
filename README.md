@@ -5,12 +5,12 @@ Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para
 ## 🗂️ Estructura del repositorio
 
 a4co-ddd-microservices/
-├── apps/          # Microservicios y frontends (ej: auth, web)
-├── packages/      # Librerías compartidas (DTOs, config, schemas)
-├── infra/         # Terraform, Docker, scripts de infraestructura
-├── docs/          # Documentación viva, ADRs, onboarding
-├── .vscode/       # Configuración de entorno y Copilot
-├── .gitignore     # Ignora outputs, secrets, cache, etc.
+├── apps/ # Microservicios y frontends (ej: auth, web)
+├── packages/ # Librerías compartidas (DTOs, config, schemas)
+├── infra/ # Terraform, Docker, scripts de infraestructura
+├── docs/ # Documentación viva, ADRs, onboarding
+├── .vscode/ # Configuración de entorno y Copilot
+├── .gitignore # Ignora outputs, secrets, cache, etc.
 ├── pnpm-workspace.yaml
 └── README.md
 
@@ -47,24 +47,29 @@ Prompts incluyen:
 ## Prompts recomendados para Copilot
 
 ### Frontend
+
 - **✦ frontend-styles**: ¿Cómo implementar un diseño responsive con Tailwind y shadcn/ui?
-  - *Descripción*: Guía para diseño responsive usando Tailwind y shadcn/ui.
+  - _Descripción_: Guía para diseño responsive usando Tailwind y shadcn/ui.
 
 ### Backend
+
 - **✦ backend-dtos**: ¿Cómo estructurar DTOs validados con class-validator en NestJS?
-  - *Descripción*: Estructuración de DTOs con validación en NestJS.
+  - _Descripción_: Estructuración de DTOs con validación en NestJS.
 
 ### DevOps
+
 - **✦ devops-docker**: ¿Cómo optimizar este Dockerfile para reducir el tamaño de la imagen?
-  - *Descripción*: Optimización de Dockerfile para imágenes más pequeñas.
+  - _Descripción_: Optimización de Dockerfile para imágenes más pequeñas.
 
 ### QA
+
 - **✦ qa-tests**: ¿Cómo escribir pruebas e2e efectivas con Jest y Supertest?
-  - *Descripción*: Guía para pruebas e2e usando Jest y Supertest.
+  - _Descripción_: Guía para pruebas e2e usando Jest y Supertest.
 
 ### Documentación
+
 - **✦ docs-jsdoc**: ¿Cómo documentar esta función con JSDoc para claridad y mantenimiento?
-  - *Descripción*: Documentación de funciones con JSDoc.
+  - _Descripción_: Documentación de funciones con JSDoc.
 
 ##### 📚 Documentación técnica
 
@@ -77,4 +82,3 @@ Prompts incluyen:
 
 Apache License 2.0
 (c) 2025 - Jesús Sánchez Campos (cliente titular) & Neil Muñoz Lago (autor técnico titular)
-

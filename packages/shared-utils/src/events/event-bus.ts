@@ -6,7 +6,11 @@ export interface IEventBus {
   disconnect(): Promise<void>;
   publish(subject: string, event: DomainEvent): Promise<void>;
   subscribe(subject: string, handler: (event: DomainEvent) => Promise<void>): Promise<Subscription>;
-  subscribeQueue(subject: string, queue: string, handler: (event: DomainEvent) => Promise<void>): Promise<Subscription>;
+  subscribeQueue(
+    subject: string,
+    queue: string,
+    handler: (event: DomainEvent) => Promise<void>
+  ): Promise<Subscription>;
   isConnected(): boolean;
 }
 
@@ -36,13 +40,13 @@ export class NatsEventBus implements IEventBus {
 
   async connect(servers = ['nats://localhost:4222']): Promise<void> {
     try {
-      this.nc = await connect({ 
+      this.nc = await connect({
         servers,
         name: this.serviceName,
         reconnect: true,
         maxReconnectAttempts: 10,
         reconnectTimeWait: 1000,
-        timeout: 5000
+        timeout: 5000,
       });
 
       console.log(`✅ ${this.serviceName} connected to NATS at ${servers.join(', ')}`);
@@ -53,7 +57,6 @@ export class NatsEventBus implements IEventBus {
           console.log(`🔄 NATS ${status.type}: ${status.data}`);
         }
       })();
-
     } catch (error) {
       console.error(`❌ Failed to connect to NATS:`, error);
       throw error;
@@ -88,12 +91,12 @@ export class NatsEventBus implements IEventBus {
         correlationId: this.generateCorrelationId(),
         publishedAt: new Date().toISOString(),
         version: '1.0',
-        source: this.serviceName
-      }
+        source: this.serviceName,
+      },
     };
 
     const eventData = JSON.stringify(enhancedEvent, null, 0);
-    
+
     try {
       this.nc.publish(subject, this.codec.encode(eventData));
       console.log(`📤 Published event ${event.eventType} to ${subject}`);
@@ -103,7 +106,10 @@ export class NatsEventBus implements IEventBus {
     }
   }
 
-  async subscribe(subject: string, handler: (event: DomainEvent) => Promise<void>): Promise<Subscription> {
+  async subscribe(
+    subject: string,
+    handler: (event: DomainEvent) => Promise<void>
+  ): Promise<Subscription> {
     if (!this.nc) {
       throw new Error('NATS connection not established. Call connect() first.');
     }
@@ -120,8 +126,8 @@ export class NatsEventBus implements IEventBus {
   }
 
   async subscribeQueue(
-    subject: string, 
-    queue: string, 
+    subject: string,
+    queue: string,
     handler: (event: DomainEvent) => Promise<void>
   ): Promise<Subscription> {
     if (!this.nc) {
@@ -140,7 +146,7 @@ export class NatsEventBus implements IEventBus {
   }
 
   private async processMessages(
-    sub: Subscription, 
+    sub: Subscription,
     handler: (event: DomainEvent) => Promise<void>,
     subject: string,
     queue?: string
@@ -148,20 +154,21 @@ export class NatsEventBus implements IEventBus {
     for await (const msg of sub) {
       try {
         const eventData = JSON.parse(this.codec.decode(msg.data)) as EnhancedDomainEvent;
-        
-        console.log(`📨 Received event ${eventData.eventType} on ${subject}${queue ? ` (queue: ${queue})` : ''}`);
-        
+
+        console.log(
+          `📨 Received event ${eventData.eventType} on ${subject}${queue ? ` (queue: ${queue})` : ''}`
+        );
+
         // Add processing timestamp
         const startTime = Date.now();
-        
+
         await handler(eventData);
-        
+
         const duration = Date.now() - startTime;
         console.log(`✅ Processed event ${eventData.eventType} in ${duration}ms`);
-        
       } catch (error) {
         console.error(`❌ Error processing event on ${subject}:`, error);
-        
+
         // Implement retry logic or dead letter queue here
         await this.handleEventError(msg, error as Error, subject);
       }
@@ -172,34 +179,44 @@ export class NatsEventBus implements IEventBus {
     try {
       const eventData = JSON.parse(this.codec.decode(msg.data)) as EnhancedDomainEvent;
       const retryCount = (eventData.metadata.retryCount || 0) + 1;
-      
-      if (retryCount <= 3) { // Max 3 retries
+
+      if (retryCount <= 3) {
+        // Max 3 retries
         console.log(`🔄 Retrying event ${eventData.eventType} (attempt ${retryCount})`);
-        
+
         // Update retry count
         eventData.metadata.retryCount = retryCount;
-        
+
         // Republish with delay
-        setTimeout(() => {
-          if (this.nc) {
-            this.nc.publish(subject, this.codec.encode(JSON.stringify(eventData)));
-          }
-        }, Math.pow(2, retryCount) * 1000); // Exponential backoff
-        
+        setTimeout(
+          () => {
+            if (this.nc) {
+              this.nc.publish(subject, this.codec.encode(JSON.stringify(eventData)));
+            }
+          },
+          Math.pow(2, retryCount) * 1000
+        ); // Exponential backoff
       } else {
         // Send to dead letter queue
-        console.error(`💀 Sending event ${eventData.eventType} to dead letter queue after ${retryCount} retries`);
-        
+        console.error(
+          `💀 Sending event ${eventData.eventType} to dead letter queue after ${retryCount} retries`
+        );
+
         if (this.nc) {
-          this.nc.publish(`${subject}.dlq`, this.codec.encode(JSON.stringify({
-            originalSubject: subject,
-            event: eventData,
-            error: {
-              message: error.message,
-              stack: error.stack
-            },
-            failedAt: new Date().toISOString()
-          })));
+          this.nc.publish(
+            `${subject}.dlq`,
+            this.codec.encode(
+              JSON.stringify({
+                originalSubject: subject,
+                event: eventData,
+                error: {
+                  message: error.message,
+                  stack: error.stack,
+                },
+                failedAt: new Date().toISOString(),
+              })
+            )
+          );
         }
       }
     } catch (parseError) {
@@ -219,7 +236,7 @@ export function EventHandler(subject: string) {
     target._eventHandlers.push({
       subject,
       method: propertyName,
-      handler: descriptor.value
+      handler: descriptor.value,
     });
   };
 }
@@ -246,12 +263,9 @@ export abstract class EventDrivenService {
 
   private async registerEventHandlers(): Promise<void> {
     const eventHandlers = (this.constructor.prototype as any)._eventHandlers || [];
-    
+
     for (const { subject, handler } of eventHandlers) {
-      const subscription = await this.eventBus.subscribe(
-        subject, 
-        handler.bind(this)
-      );
+      const subscription = await this.eventBus.subscribe(subject, handler.bind(this));
       this.handlerRegistrations.push(subscription);
     }
   }

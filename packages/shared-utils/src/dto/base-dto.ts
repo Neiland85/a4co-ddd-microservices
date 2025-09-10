@@ -3,10 +3,7 @@ export abstract class BaseDto {
     return JSON.parse(JSON.stringify(this));
   }
 
-  public static fromJSON<T extends BaseDto>(
-    this: new () => T,
-    json: Record<string, any>
-  ): T {
+  public static fromJSON<T extends BaseDto>(this: new () => T, json: Record<string, any>): T {
     const instance = new this();
     Object.assign(instance, json);
     return instance;

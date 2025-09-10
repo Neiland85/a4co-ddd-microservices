@@ -1,46 +1,86 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env.*local", "**/tsconfig.json", "**/package.json"],
+  "globalEnv": ["NODE_ENV", "CI", "VERCEL", "DATABASE_URL"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "inputs": ["src/**", "public/**", "next.config.js", "tsconfig.json", "package.json"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "build/**", "lib/**"],
+      "env": ["NODE_ENV", "NEXT_PUBLIC_*"]
     },
     "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"]
+    },
+    "start": {
+      "dependsOn": ["build"],
       "cache": false,
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
+      "inputs": ["src/**", "*.js", "*.ts", "*.tsx", ".eslintrc*", "package.json"],
+      "outputs": [".eslintcache"]
     },
     "lint:fix": {
+      "inputs": ["src/**", "*.js", "*.ts", "*.tsx", ".eslintrc*", "package.json"],
+      "outputs": [],
+      "cache": false
+    },
+    "type-check": {
       "dependsOn": ["^build"],
+      "inputs": ["src/**", "*.ts", "*.tsx", "tsconfig.json"],
       "outputs": []
     },
     "test": {
-      "dependsOn": ["build"],
-      "outputs": ["coverage/**"]
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "test/**", "jest.config.*", "package.json"],
+      "outputs": ["coverage/**", "test-results/**"],
+      "env": ["NODE_ENV"]
     },
     "test:watch": {
       "cache": false,
       "persistent": true
     },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "test/**", "jest.config.*"],
+      "outputs": ["coverage/**"]
+    },
     "clean": {
-      "cache": false
+      "cache": false,
+      "outputs": []
     },
     "db:generate": {
-      "cache": false
+      "cache": false,
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["prisma/generated/**"]
     },
     "db:push": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["db:generate"]
     },
     "db:migrate": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["db:generate"]
     },
     "deploy": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "test", "lint"],
+      "cache": false,
+      "env": ["NODE_ENV", "VERCEL_*"]
+    },
+    "format": {
+      "inputs": ["src/**", "*.js", "*.ts", "*.tsx", "*.json", "*.md"],
+      "outputs": [],
       "cache": false
+    },
+    "format:check": {
+      "inputs": ["src/**", "*.js", "*.ts", "*.tsx", "*.json", "*.md"],
+      "outputs": []
     }
+  },
+  "remoteCache": {
+    "enabled": true
   }
 }

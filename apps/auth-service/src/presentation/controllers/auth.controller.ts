@@ -10,11 +10,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegisterUserUseCase } from '../../application/use-cases/register-user.use-case';
 import { LoginUserUseCase } from '../../application/use-cases/login-user.use-case';
-import {
-  RegisterUserDto,
-  LoginUserDto,
-  UserResponseDto,
-} from '../../application/dto/user.dto';
+import { RegisterUserDto, LoginUserDto, UserResponseDto } from '../../application/dto/user.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -41,9 +37,7 @@ export class AuthController {
     status: 409,
     description: 'Email ya registrado',
   })
-  async register(
-    @Body() registerDto: RegisterUserDto
-  ): Promise<UserResponseDto> {
+  async register(@Body() registerDto: RegisterUserDto): Promise<UserResponseDto> {
     try {
       return await this.registerUserUseCase.execute(registerDto);
     } catch (error: any) {

@@ -9,14 +9,15 @@
 
 El análisis de complejidad ciclomática revela hotspots críticos:
 
-| Capa DDD | Complejidad Promedio | Target | Gap |
-|----------|---------------------|--------|-----|
-| Domain Entities | 8.2 | 5 | -3.2 |
-| Use Cases | 12.5 | 8 | -4.5 |
-| Handlers | 9.7 | 5 | -4.7 |
-| Repositories | 7.3 | 5 | -2.3 |
+| Capa DDD        | Complejidad Promedio | Target | Gap  |
+| --------------- | -------------------- | ------ | ---- |
+| Domain Entities | 8.2                  | 5      | -3.2 |
+| Use Cases       | 12.5                 | 8      | -4.5 |
+| Handlers        | 9.7                  | 5      | -4.7 |
+| Repositories    | 7.3                  | 5      | -2.3 |
 
 Impactos identificados:
+
 - **Bugs**: Funciones con complejidad > 10 tienen 50% más bugs
 - **Testing**: Cobertura difícil en funciones complejas
 - **Onboarding**: Nuevos devs tardan más en entender el código
@@ -28,38 +29,46 @@ Implementaremos un programa de reducción de complejidad basado en:
 
 ### 1. Establecimiento de Límites por Capa
 
+
 ```typescript
 // .eslintrc.js
 module.exports = {
   rules: {
-    'complexity': ['error', {
-      max: 5  // Default
-    }],
+    complexity: [
+      'error',
+      {
+        max: 5, // Default
+      },
+    ],
     overrides: [
       {
         files: ['**/domain/entities/**/*.ts'],
-        rules: { 'complexity': ['error', 5] }
+        rules: { complexity: ['error', 5] },
       },
       {
         files: ['**/domain/value-objects/**/*.ts'],
-        rules: { 'complexity': ['error', 3] }
+        rules: { complexity: ['error', 3] },
       },
       {
         files: ['**/application/use-cases/**/*.ts'],
-        rules: { 'complexity': ['error', 8] }
+        rules: { complexity: ['error', 8] },
       },
       {
         files: ['**/application/handlers/**/*.ts'],
-        rules: { 'complexity': ['error', 5] }
-      }
-    ]
-  }
+        rules: { complexity: ['error', 5] },
+      },
+    ],
+  },
 };
+
 ```
+
 
 ### 2. Patrones de Refactoring por Tipo
 
 #### Para Domain Entities (Target: 5)
+
+
 ```typescript
 // ANTES: Complejidad 12
 class Order {
@@ -76,27 +85,29 @@ class Order {
 // DESPUÉS: Complejidad 3
 class Order {
   validate(): boolean {
-    return this.validateBasicFields() &&
-           this.validateItems() &&
-           this.validateStatusConsistency();
+    return this.validateBasicFields() && this.validateItems() && this.validateStatusConsistency();
   }
-  
+
   private validateBasicFields(): boolean {
     return !!this.id && !!this.customerId;
   }
-  
+
   private validateItems(): boolean {
     return this.items?.length > 0;
   }
-  
+
   private validateStatusConsistency(): boolean {
     const rules = this.getValidationRules();
     return rules[this.status]?.(this) ?? true;
   }
 }
+
 ```
 
+
 #### Para Use Cases (Target: 8)
+
+
 ```typescript
 // ANTES: Complejidad 15
 class CreateOrderUseCase {
@@ -112,19 +123,23 @@ class CreateOrderUseCase {
     if (!validationResult.isValid) {
       throw new ValidationError(validationResult.errors);
     }
-    
+
     const order = this.orderFactory.create(dto);
     const pricedOrder = await this.pricingService.calculate(order);
     const savedOrder = await this.repository.save(pricedOrder);
-    
+
     await this.eventBus.publish(new OrderCreatedEvent(savedOrder));
-    
+
     return savedOrder;
   }
 }
+
 ```
 
+
 #### Para Handlers (Target: 5)
+
+
 ```typescript
 // DESPUÉS: Handler simple que delega
 class OrderHandler {
@@ -134,7 +149,9 @@ class OrderHandler {
     return this.presenter.toResponse(result);
   }
 }
+
 ```
+
 
 ### 3. Técnicas de Reducción
 
@@ -155,16 +172,19 @@ class OrderHandler {
 ## Opciones Consideradas
 
 ### Opción 1: Refactor Manual Completo
+
 - ❌ Tiempo excesivo (6+ meses)
 - ❌ Alto riesgo de regresión
 - ✅ Máximo control
 
 ### Opción 2: Herramientas Automatizadas
+
 - ❌ Pueden romper lógica de negocio
 - ❌ No entienden contexto DDD
 - ✅ Rápido
 
 ### Opción 3: Refactor Incremental Guiado (SELECCIONADA)
+
 - ✅ Riesgo controlado
 - ✅ Aprendizaje continuo
 - ✅ Métricas de progreso claras
@@ -173,17 +193,20 @@ class OrderHandler {
 ## Consecuencias
 
 ### Positivas
+
 - Código más legible y mantenible
 - Reducción estimada 30% en bugs
 - Tests más simples y rápidos
 - Onboarding más eficiente
 
 ### Negativas
+
 - Inversión inicial de tiempo
 - Posibles conflictos con features en desarrollo
 - Curva de aprendizaje para patterns
 
 ### Plan de Ataque por Prioridad
+
 
 ```typescript
 // scripts/complexity-priorities.ts
@@ -192,22 +215,24 @@ export const REFACTOR_PRIORITIES = [
     priority: 1,
     criteria: 'complexity > 20',
     action: 'Refactor inmediato',
-    technique: 'Extract Use Cases'
+    technique: 'Extract Use Cases',
   },
   {
     priority: 2,
     criteria: 'complexity > 15 && changes > 10',
     action: 'Refactor en próximo sprint',
-    technique: 'Strategy Pattern'
+    technique: 'Strategy Pattern',
   },
   {
     priority: 3,
     criteria: 'complexity > 10',
     action: 'Refactor oportunista',
-    technique: 'Extract Methods'
-  }
+    technique: 'Extract Methods',
+  },
 ];
+
 ```
+
 
 ## Métricas de Éxito
 
@@ -217,6 +242,7 @@ export const REFACTOR_PRIORITIES = [
 - **Bugs post-refactor**: -30%
 
 ## Recursos y Herramientas
+
 
 ```bash
 # Herramientas de análisis
@@ -232,7 +258,9 @@ npm install -D \
   "complexity:report": "cr --format json --output reports/complexity.json src/",
   "complexity:visualize": "plato -r -d reports/complexity-visual src/"
 }
+
 ```
+
 
 ## Timeline
 

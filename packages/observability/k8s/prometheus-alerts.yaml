@@ -24,10 +24,10 @@ spec:
             severity: critical
             team: platform
           annotations:
-            summary: "High error rate detected for {{ $labels.service }}"
-            description: "Service {{ $labels.service }} in namespace {{ $labels.namespace }} has error rate of {{ $value | humanizePercentage }} (threshold: 1%)"
-            runbook_url: "https://docs.a4co.com/runbooks/high-error-rate"
-            dashboard_url: "https://grafana.a4co.com/d/a4co-microservices"
+            summary: 'High error rate detected for {{ $labels.service }}'
+            description: 'Service {{ $labels.service }} in namespace {{ $labels.namespace }} has error rate of {{ $value | humanizePercentage }} (threshold: 1%)'
+            runbook_url: 'https://docs.a4co.com/runbooks/high-error-rate'
+            dashboard_url: 'https://grafana.a4co.com/d/a4co-microservices'
 
         # High Latency Alert
         - alert: HighLatency
@@ -40,9 +40,9 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "High latency detected for {{ $labels.service }}"
-            description: "Service {{ $labels.service }} in namespace {{ $labels.namespace }} has P95 latency of {{ $value }}ms (threshold: 300ms)"
-            runbook_url: "https://docs.a4co.com/runbooks/high-latency"
+            summary: 'High latency detected for {{ $labels.service }}'
+            description: 'Service {{ $labels.service }} in namespace {{ $labels.namespace }} has P95 latency of {{ $value }}ms (threshold: 300ms)'
+            runbook_url: 'https://docs.a4co.com/runbooks/high-latency'
 
         # Service Down Alert
         - alert: ServiceDown
@@ -52,9 +52,9 @@ spec:
             severity: critical
             team: platform
           annotations:
-            summary: "Service {{ $labels.service }} is down"
-            description: "Service {{ $labels.service }} in namespace {{ $labels.namespace }} has been down for more than 2 minutes"
-            runbook_url: "https://docs.a4co.com/runbooks/service-down"
+            summary: 'Service {{ $labels.service }} is down'
+            description: 'Service {{ $labels.service }} in namespace {{ $labels.namespace }} has been down for more than 2 minutes'
+            runbook_url: 'https://docs.a4co.com/runbooks/service-down'
 
         # High Memory Usage Alert
         - alert: HighMemoryUsage
@@ -69,9 +69,9 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "High memory usage for pod {{ $labels.pod }}"
-            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of memory limit"
-            runbook_url: "https://docs.a4co.com/runbooks/high-memory-usage"
+            summary: 'High memory usage for pod {{ $labels.pod }}'
+            description: 'Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of memory limit'
+            runbook_url: 'https://docs.a4co.com/runbooks/high-memory-usage'
 
         # High CPU Usage Alert
         - alert: HighCPUUsage
@@ -86,9 +86,9 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "High CPU usage for pod {{ $labels.pod }}"
-            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of CPU limit"
-            runbook_url: "https://docs.a4co.com/runbooks/high-cpu-usage"
+            summary: 'High CPU usage for pod {{ $labels.pod }}'
+            description: 'Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of CPU limit'
+            runbook_url: 'https://docs.a4co.com/runbooks/high-cpu-usage'
 
     - name: a4co.ddd
       interval: 30s
@@ -106,9 +106,9 @@ spec:
             severity: warning
             team: backend
           annotations:
-            summary: "High failure rate for command {{ $labels.command }}"
-            description: "Command {{ $labels.command }} on aggregate {{ $labels.aggregate }} has failure rate of {{ $value | humanizePercentage }}"
-            runbook_url: "https://docs.a4co.com/runbooks/command-failures"
+            summary: 'High failure rate for command {{ $labels.command }}'
+            description: 'Command {{ $labels.command }} on aggregate {{ $labels.aggregate }} has failure rate of {{ $value | humanizePercentage }}'
+            runbook_url: 'https://docs.a4co.com/runbooks/command-failures'
 
         # Event Processing Lag
         - alert: EventProcessingLag
@@ -123,9 +123,9 @@ spec:
             severity: warning
             team: backend
           annotations:
-            summary: "Event processing lag for {{ $labels.event }}"
-            description: "Event {{ $labels.event }} on aggregate {{ $labels.aggregate }} has {{ $value }} unprocessed events"
-            runbook_url: "https://docs.a4co.com/runbooks/event-lag"
+            summary: 'Event processing lag for {{ $labels.event }}'
+            description: 'Event {{ $labels.event }} on aggregate {{ $labels.aggregate }} has {{ $value }} unprocessed events'
+            runbook_url: 'https://docs.a4co.com/runbooks/event-lag'
 
     - name: a4co.messaging
       interval: 30s
@@ -138,9 +138,9 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "High message queue size in NATS"
-            description: "NATS queue {{ $labels.subject }} has {{ $value }} messages pending"
-            runbook_url: "https://docs.a4co.com/runbooks/message-queue-size"
+            summary: 'High message queue size in NATS'
+            description: 'NATS queue {{ $labels.subject }} has {{ $value }} messages pending'
+            runbook_url: 'https://docs.a4co.com/runbooks/message-queue-size'
 
         # Message Processing Errors
         - alert: MessageProcessingErrors
@@ -151,9 +151,9 @@ spec:
             severity: warning
             team: platform
           annotations:
-            summary: "High message processing error rate"
-            description: "NATS subject {{ $labels.subject }} has {{ $value }} errors per second"
-            runbook_url: "https://docs.a4co.com/runbooks/message-errors"
+            summary: 'High message processing error rate'
+            description: 'NATS subject {{ $labels.subject }} has {{ $value }} errors per second'
+            runbook_url: 'https://docs.a4co.com/runbooks/message-errors'
 
     - name: a4co.frontend
       interval: 30s
@@ -171,9 +171,9 @@ spec:
             severity: warning
             team: frontend
           annotations:
-            summary: "High error rate in frontend component {{ $labels.component }}"
-            description: "Component {{ $labels.component }} on page {{ $labels.page }} has error rate of {{ $value | humanizePercentage }}"
-            runbook_url: "https://docs.a4co.com/runbooks/frontend-errors"
+            summary: 'High error rate in frontend component {{ $labels.component }}'
+            description: 'Component {{ $labels.component }} on page {{ $labels.page }} has error rate of {{ $value | humanizePercentage }}'
+            runbook_url: 'https://docs.a4co.com/runbooks/frontend-errors'
 
         # Poor Page Performance
         - alert: PoorPagePerformance
@@ -186,6 +186,6 @@ spec:
             severity: warning
             team: frontend
           annotations:
-            summary: "Poor performance on page {{ $labels.page }}"
-            description: "Page {{ $labels.page }} has P95 load time of {{ $value }}ms (threshold: 3000ms)"
-            runbook_url: "https://docs.a4co.com/runbooks/page-performance"
+            summary: 'Poor performance on page {{ $labels.page }}'
+            description: 'Page {{ $labels.page }} has P95 load time of {{ $value }}ms (threshold: 3000ms)'
+            runbook_url: 'https://docs.a4co.com/runbooks/page-performance'

@@ -55,22 +55,54 @@ export class Product {
   }
 
   // Getters
-  get id(): string { return this._id; }
-  get name(): string { return this._name; }
-  get description(): string | undefined { return this._description; }
-  get sku(): string { return this._sku; }
-  get category(): string { return this._category; }
-  get brand(): string | undefined { return this._brand; }
-  get unitPrice(): number { return this._unitPrice; }
-  get currency(): string { return this._currency; }
-  get currentStock(): number { return this._currentStock; }
-  get reservedStock(): number { return this._reservedStock; }
-  get minimumStock(): number { return this._minimumStock; }
-  get maximumStock(): number { return this._maximumStock; }
-  get isActive(): boolean { return this._isActive; }
-  get artisanId(): string { return this._artisanId; }
-  get createdAt(): Date { return this._createdAt; }
-  get updatedAt(): Date { return this._updatedAt; }
+  get id(): string {
+    return this._id;
+  }
+  get name(): string {
+    return this._name;
+  }
+  get description(): string | undefined {
+    return this._description;
+  }
+  get sku(): string {
+    return this._sku;
+  }
+  get category(): string {
+    return this._category;
+  }
+  get brand(): string | undefined {
+    return this._brand;
+  }
+  get unitPrice(): number {
+    return this._unitPrice;
+  }
+  get currency(): string {
+    return this._currency;
+  }
+  get currentStock(): number {
+    return this._currentStock;
+  }
+  get reservedStock(): number {
+    return this._reservedStock;
+  }
+  get minimumStock(): number {
+    return this._minimumStock;
+  }
+  get maximumStock(): number {
+    return this._maximumStock;
+  }
+  get isActive(): boolean {
+    return this._isActive;
+  }
+  get artisanId(): string {
+    return this._artisanId;
+  }
+  get createdAt(): Date {
+    return this._createdAt;
+  }
+  get updatedAt(): Date {
+    return this._updatedAt;
+  }
 
   // Computed properties
   get availableStock(): number {
@@ -154,7 +186,7 @@ export class Product {
       ...props,
       id: `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     });
   }
 
@@ -180,7 +212,7 @@ export class Product {
       isActive: this._isActive,
       artisanId: this._artisanId,
       createdAt: this._createdAt,
-      updatedAt: this._updatedAt
+      updatedAt: this._updatedAt,
     };
   }
 }

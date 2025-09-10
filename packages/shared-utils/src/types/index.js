@@ -14,7 +14,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./common-types"), exports);
-__exportStar(require("./api-types"), exports);
-__exportStar(require("./event-types"), exports);
+__exportStar(require("./common.types"), exports);
+// Las siguientes líneas han sido comentadas porque los archivos correspondientes no se encontraron en la estructura del proyecto.
+// Si estos archivos existen con otros nombres o ubicaciones, se debe ajustar la ruta de exportación.
+// export * from './api.types';
+// export * from './event.types';
 //# sourceMappingURL=index.js.map

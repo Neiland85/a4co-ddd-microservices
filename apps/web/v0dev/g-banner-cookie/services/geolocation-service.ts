@@ -1,50 +1,50 @@
 export interface GeolocationResult {
-  lat: number
-  lng: number
-  accuracy: number
-  address?: string
+  lat: number;
+  lng: number;
+  accuracy: number;
+  address?: string;
 }
 
 export class GeolocationService {
   static async getCurrentPosition(): Promise<GeolocationResult> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
-        reject(new Error("Geolocation is not supported by this browser"))
-        return
+        reject(new Error('Geolocation is not supported by this browser'));
+        return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           resolve({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
             accuracy: position.coords.accuracy,
-          })
+          });
         },
-        (error) => {
-          let message = "Unable to retrieve your location"
+        error => {
+          let message = 'Unable to retrieve your location';
 
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              message = "Location access denied by user"
-              break
+              message = 'Location access denied by user';
+              break;
             case error.POSITION_UNAVAILABLE:
-              message = "Location information is unavailable"
-              break
+              message = 'Location information is unavailable';
+              break;
             case error.TIMEOUT:
-              message = "Location request timed out"
-              break
+              message = 'Location request timed out';
+              break;
           }
 
-          reject(new Error(message))
+          reject(new Error(message));
         },
         {
           enableHighAccuracy: true,
           timeout: 10000,
           maximumAge: 300000, // 5 minutes
-        },
-      )
-    })
+        }
+      );
+    });
   }
 
   static async reverseGeocode(lat: number, lng: number): Promise<string> {
@@ -54,20 +54,20 @@ export class GeolocationService {
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
         {
           headers: {
-            "User-Agent": "A4CO-Map-App",
+            'User-Agent': 'A4CO-Map-App',
           },
-        },
-      )
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Reverse geocoding failed")
+        throw new Error('Reverse geocoding failed');
       }
 
-      const data = await response.json()
-      return data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+      const data = await response.json();
+      return data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
     } catch (error) {
-      console.warn("Reverse geocoding failed:", error)
-      return `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+      console.warn('Reverse geocoding failed:', error);
+      return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
     }
   }
 }

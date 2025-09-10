@@ -14,10 +14,7 @@ export class BcryptCryptographyAdapter implements CryptographyServicePort {
     return await bcrypt.hash(plainPassword, this.SALT_ROUNDS);
   }
 
-  async validatePassword(
-    plainPassword: string,
-    hashedPassword: string
-  ): Promise<boolean> {
+  async validatePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
     return await bcrypt.compare(plainPassword, hashedPassword);
   }
 

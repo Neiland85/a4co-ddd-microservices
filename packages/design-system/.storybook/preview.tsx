@@ -1,6 +1,6 @@
-import type { Preview } from '@storybook/react'
-import React from 'react'
-import '../src/styles/main.css'
+import type { Preview } from '@storybook/react';
+import React from 'react';
+import '../src/styles/main.css';
 
 const preview: Preview = {
   parameters: {
@@ -61,15 +61,15 @@ const preview: Preview = {
       ],
     },
   },
-  
+
   decorators: [
-    (Story) => (
+    Story => (
       <div className="font-sans antialiased">
         <Story />
       </div>
     ),
   ],
-  
+
   globalTypes: {
     theme: {
       name: 'Theme',
@@ -99,8 +99,8 @@ const preview: Preview = {
       },
     },
   },
-  
-  tags: ['autodocs', 'visual-test'],
-}
 
-export default preview
+  tags: ['autodocs', 'visual-test'],
+};
+
+export default preview;

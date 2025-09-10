@@ -11,10 +11,7 @@ interface ProductCardProps {
   onViewDetails?: (product: LocalProduct) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({
-  product,
-  onViewDetails,
-}) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails }) => {
   const getCategoryIcon = (category: string) => {
     const icons = {
       aceite: '🫒',
@@ -45,29 +42,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
       embutidos: 'from-red-200 via-orange-200 to-red-300',
     };
     return (
-      gradients[category as keyof typeof gradients] ||
-      'from-stone-100 via-amber-50 to-stone-200'
+      gradients[category as keyof typeof gradients] || 'from-stone-100 via-amber-50 to-stone-200'
     );
   };
 
   const getAvailabilityStatus = () => {
-    if (!product.available)
-      return { text: 'No disponible', color: 'text-red-600' };
-    if (product.stock <= 5)
-      return { text: 'Pocas unidades', color: 'text-orange-600' };
+    if (!product.available) return { text: 'No disponible', color: 'text-red-600' };
+    if (product.stock <= 5) return { text: 'Pocas unidades', color: 'text-orange-600' };
     return { text: 'Disponible', color: 'text-green-600' };
   };
 
   const availability = getAvailabilityStatus();
 
   return (
-    <div className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-amber-100">
+    <div className="group transform overflow-hidden rounded-xl border border-amber-100 bg-white shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
       <div className="relative overflow-hidden">
         <div
-          className={`h-52 bg-gradient-to-br ${getCategoryGradient(product.category)} flex items-center justify-center relative`}
+          className={`h-52 bg-gradient-to-br ${getCategoryGradient(product.category)} relative flex items-center justify-center`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-amber-200/20"></div>
-          <span className="text-7xl drop-shadow-lg z-10 group-hover:scale-110 transition-transform duration-300">
+          <span className="z-10 text-7xl drop-shadow-lg transition-transform duration-300 group-hover:scale-110">
             {getCategoryIcon(product.category)}
           </span>
           {/* Patrón decorativo tipo Jaén */}
@@ -75,30 +69,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Badge de categoría mejorado */}
-        <div className="absolute top-3 right-3 bg-gradient-to-r from-amber-500 to-yellow-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg uppercase tracking-wide">
+        <div className="absolute right-3 top-3 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white shadow-lg">
           {product.category}
         </div>
 
         {product.seasonal && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
+          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
             🌿 Temporada
           </div>
         )}
 
         {/* Indicador de origen Jaén */}
-        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium text-amber-800 border border-amber-200">
+        <div className="absolute bottom-3 left-3 rounded-full border border-amber-200 bg-white/90 px-2 py-1 text-xs font-medium text-amber-800 backdrop-blur-sm">
           🏛️ Jaén
         </div>
       </div>
 
-      <div className="p-5 space-y-3">
+      <div className="space-y-3 p-5">
         <div>
-          <h3 className="font-bold text-xl text-amber-900 mb-1 line-clamp-2 group-hover:text-amber-800 transition-colors">
+          <h3 className="mb-1 line-clamp-2 text-xl font-bold text-amber-900 transition-colors group-hover:text-amber-800">
             {product.name}
           </h3>
-          <p className="text-sm text-amber-700 font-medium">
-            👨‍🌾 {product.producer}
-          </p>
+          <p className="text-sm font-medium text-amber-700">👨‍🌾 {product.producer}</p>
         </div>
 
         <div className="flex items-center text-sm text-amber-600">
@@ -106,14 +98,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <span>{product.location.municipality}</span>
         </div>
 
-        <div className="flex justify-between items-center py-2">
+        <div className="flex items-center justify-between py-2">
           <div className="text-right">
-            <span className="text-2xl font-bold text-amber-800">
-              €{product.price.toFixed(2)}
-            </span>
-            <span className="text-sm text-amber-600 ml-1">
-              / {product.unit}
-            </span>
+            <span className="text-2xl font-bold text-amber-800">€{product.price.toFixed(2)}</span>
+            <span className="ml-1 text-sm text-amber-600">/ {product.unit}</span>
           </div>
           <div className="text-right">
             <span className={`text-sm font-semibold ${availability.color}`}>
@@ -126,16 +114,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {product.certifications.length > 0 && (
           <div className="space-y-2">
             <div className="flex flex-wrap gap-1.5">
-              {product.certifications.slice(0, 2).map((cert) => (
+              {product.certifications.slice(0, 2).map(cert => (
                 <span
                   key={cert}
-                  className="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-medium border border-emerald-200"
+                  className="rounded-full border border-emerald-200 bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-800"
                 >
                   ✓ {cert}
                 </span>
               ))}
               {product.certifications.length > 2 && (
-                <span className="text-xs text-amber-600 font-medium">
+                <span className="text-xs font-medium text-amber-600">
                   +{product.certifications.length - 2} más certificaciones
                 </span>
               )}
@@ -145,7 +133,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         <button
           onClick={() => onViewDetails?.(product)}
-          className="w-full bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-600 hover:from-amber-700 hover:via-yellow-700 hover:to-amber-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2"
+          className="flex w-full transform items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-600 px-4 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:from-amber-700 hover:via-yellow-700 hover:to-amber-700 hover:shadow-xl"
         >
           👁️ Ver Detalles
         </button>
@@ -200,30 +188,28 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   ];
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 via-white to-amber-50 p-6 rounded-2xl shadow-xl mb-8 border border-amber-200">
-      <div className="flex items-center gap-3 mb-6">
+    <div className="mb-8 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-amber-50 p-6 shadow-xl">
+      <div className="mb-6 flex items-center gap-3">
         <span className="text-2xl">🔍</span>
-        <h3 className="font-bold text-2xl text-amber-900">
-          Filtros del Mercado
-        </h3>
-        <div className="flex-1 h-px bg-gradient-to-r from-amber-300 to-transparent"></div>
+        <h3 className="text-2xl font-bold text-amber-900">Filtros del Mercado</h3>
+        <div className="h-px flex-1 bg-gradient-to-r from-amber-300 to-transparent"></div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
           <label
             htmlFor="category-select"
-            className="text-sm font-semibold text-amber-800 mb-2 flex items-center gap-2"
+            className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-800"
           >
             🏷️ Categoría
           </label>
           <select
             id="category-select"
             value={filters.category || ''}
-            onChange={(e) => onCategoryChange(e.target.value)}
-            className="w-full border-2 border-amber-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white shadow-sm transition-all duration-200 hover:border-amber-300"
+            onChange={e => onCategoryChange(e.target.value)}
+            className="w-full rounded-xl border-2 border-amber-200 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-amber-300 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
-            {categories.map((category) => (
+            {categories.map(category => (
               <option key={category.value} value={category.value}>
                 {category.icon} {category.label}
               </option>
@@ -234,17 +220,17 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="space-y-2">
           <label
             htmlFor="location-select"
-            className="text-sm font-semibold text-amber-800 mb-2 flex items-center gap-2"
+            className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-800"
           >
             📍 Ubicación
           </label>
           <select
             id="location-select"
             value={filters.location || ''}
-            onChange={(e) => onLocationChange(e.target.value)}
-            className="w-full border-2 border-amber-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white shadow-sm transition-all duration-200 hover:border-amber-300"
+            onChange={e => onLocationChange(e.target.value)}
+            className="w-full rounded-xl border-2 border-amber-200 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:border-amber-300 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
-            {municipalities.map((municipality) => (
+            {municipalities.map(municipality => (
               <option key={municipality.value} value={municipality.value}>
                 {municipality.icon} {municipality.label}
               </option>
@@ -253,28 +239,28 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         </div>
 
         <div className="flex items-center justify-center">
-          <label className="flex items-center gap-3 bg-white p-4 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all duration-200 cursor-pointer shadow-sm">
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-green-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-green-300">
             <input
               type="checkbox"
               checked={filters.seasonal || false}
-              onChange={(e) => onSeasonalToggle(e.target.checked)}
-              className="w-5 h-5 text-green-600 focus:ring-green-500 focus:ring-2 rounded border-2 border-green-300"
+              onChange={e => onSeasonalToggle(e.target.checked)}
+              className="h-5 w-5 rounded border-2 border-green-300 text-green-600 focus:ring-2 focus:ring-green-500"
             />
-            <span className="text-sm font-medium text-green-800 flex items-center gap-2">
+            <span className="flex items-center gap-2 text-sm font-medium text-green-800">
               🌿 Solo Temporada
             </span>
           </label>
         </div>
 
         <div className="flex items-center justify-center">
-          <label className="flex items-center gap-3 bg-white p-4 rounded-xl border-2 border-emerald-200 hover:border-emerald-300 transition-all duration-200 cursor-pointer shadow-sm">
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-emerald-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-emerald-300">
             <input
               type="checkbox"
               checked={filters.available || false}
-              onChange={(e) => onAvailableToggle(e.target.checked)}
-              className="w-5 h-5 text-emerald-600 focus:ring-emerald-500 focus:ring-2 rounded border-2 border-emerald-300"
+              onChange={e => onAvailableToggle(e.target.checked)}
+              className="h-5 w-5 rounded border-2 border-emerald-300 text-emerald-600 focus:ring-2 focus:ring-emerald-500"
             />
-            <span className="text-sm font-medium text-emerald-800 flex items-center gap-2">
+            <span className="flex items-center gap-2 text-sm font-medium text-emerald-800">
               ✅ Solo Disponibles
             </span>
           </label>
@@ -295,9 +281,7 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
   showFilters = true,
   maxItems,
 }) => {
-  const [selectedProduct, setSelectedProduct] = useState<LocalProduct | null>(
-    null
-  );
+  const [selectedProduct, setSelectedProduct] = useState<LocalProduct | null>(null);
   const [filters, setFilters] = useState({
     category: '',
     location: '',
@@ -305,21 +289,14 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
     available: true,
   });
 
-  const {
-    products,
-    loading,
-    error,
-    pagination,
-    fetchProducts,
-    loadMore,
-    canLoadMore,
-  } = useProducts({
-    ...filters,
-    category: filters.category || undefined,
-    location: filters.location || undefined,
-    limit: maxItems || 12,
-    autoFetch: true,
-  });
+  const { products, loading, error, pagination, fetchProducts, loadMore, canLoadMore } =
+    useProducts({
+      ...filters,
+      category: filters.category || undefined,
+      location: filters.location || undefined,
+      limit: maxItems || 12,
+      autoFetch: true,
+    });
 
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
     const updatedFilters = { ...filters, ...newFilters };
@@ -331,11 +308,11 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
         <p className="text-red-600">Error: {error}</p>
         <button
           onClick={() => fetchProducts()}
-          className="mt-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+          className="mt-2 rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
         >
           Reintentar
         </button>
@@ -344,50 +321,46 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
+    <div className="mx-auto max-w-7xl px-4">
       {/* Header del Catálogo con estilo Jaén */}
-      <div className="text-center mb-8">
+      <div className="mb-8 text-center">
         <div className="relative inline-block">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800 bg-clip-text text-transparent mb-2">
+          <h2 className="mb-2 bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
             {title}
           </h2>
-          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent rounded-full"></div>
+          <div className="absolute -bottom-2 left-1/2 h-1 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
         </div>
-        <p className="text-amber-700 text-lg mt-4 max-w-2xl mx-auto">
-          🫒 Descubre los mejores productos artesanales de la provincia de Jaén,
-          directamente de nuestros productores locales 🏺
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-amber-700">
+          🫒 Descubre los mejores productos artesanales de la provincia de Jaén, directamente de
+          nuestros productores locales 🏺
         </p>
       </div>
 
       {showFilters && (
         <ProductFilters
           filters={filters}
-          onCategoryChange={(category) => handleFilterChange({ category })}
-          onLocationChange={(location) => handleFilterChange({ location })}
-          onSeasonalToggle={(seasonal) => handleFilterChange({ seasonal })}
-          onAvailableToggle={(available) => handleFilterChange({ available })}
+          onCategoryChange={category => handleFilterChange({ category })}
+          onLocationChange={location => handleFilterChange({ location })}
+          onSeasonalToggle={seasonal => handleFilterChange({ seasonal })}
+          onAvailableToggle={available => handleFilterChange({ available })}
         />
       )}
 
       {loading && products.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <div className="relative inline-block">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-amber-200 border-t-amber-600 mx-auto"></div>
-            <span className="absolute inset-0 flex items-center justify-center text-2xl">
-              🫒
-            </span>
+            <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-amber-200 border-t-amber-600"></div>
+            <span className="absolute inset-0 flex items-center justify-center text-2xl">🫒</span>
           </div>
-          <p className="mt-6 text-amber-700 text-lg font-medium">
+          <p className="mt-6 text-lg font-medium text-amber-700">
             Cargando productos del mercado...
           </p>
-          <p className="text-amber-600 text-sm">
-            Buscando los mejores productos de Jaén
-          </p>
+          <p className="text-sm text-amber-600">Buscando los mejores productos de Jaén</p>
         </div>
       ) : (
         <>
           {/* Estadísticas del catálogo */}
-          <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-4 mb-6 border border-amber-200">
+          <div className="mb-6 rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 p-4">
             <div className="flex items-center justify-between text-amber-800">
               <span className="flex items-center gap-2 font-medium">
                 <span>📊</span>
@@ -396,30 +369,26 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 {displayedProducts.length !== 1 ? 's' : ''}
               </span>
               {filters.category && (
-                <span className="text-sm bg-amber-200 px-3 py-1 rounded-full">
+                <span className="rounded-full bg-amber-200 px-3 py-1 text-sm">
                   📂 {filters.category}
                 </span>
               )}
               {filters.location && (
-                <span className="text-sm bg-amber-200 px-3 py-1 rounded-full">
+                <span className="rounded-full bg-amber-200 px-3 py-1 text-sm">
                   📍 {filters.location}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {displayedProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onViewDetails={setSelectedProduct}
-              />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {displayedProducts.map(product => (
+              <ProductCard key={product.id} product={product} onViewDetails={setSelectedProduct} />
             ))}
           </div>
 
           {displayedProducts.length === 0 && !loading && (
-            <div className="text-center py-8">
+            <div className="py-8 text-center">
               <p className="text-gray-600">
                 No se encontraron productos con los filtros aplicados.
               </p>
@@ -427,11 +396,11 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
           )}
 
           {canLoadMore && !maxItems && (
-            <div className="text-center mt-8">
+            <div className="mt-8 text-center">
               <button
                 onClick={loadMore}
                 disabled={loading}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                className="rounded-lg bg-green-600 px-6 py-3 text-white hover:bg-green-700 disabled:opacity-50"
               >
                 {loading ? 'Cargando...' : 'Cargar más productos'}
               </button>
@@ -439,9 +408,8 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
           )}
 
           {pagination.total > 0 && (
-            <div className="text-center mt-4 text-sm text-gray-600">
-              Mostrando {displayedProducts.length} de {pagination.total}{' '}
-              productos
+            <div className="mt-4 text-center text-sm text-gray-600">
+              Mostrando {displayedProducts.length} de {pagination.total} productos
             </div>
           )}
         </>
@@ -449,9 +417,9 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
       {/* Modal de detalles del producto (simplificado) */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-6">
+            <div className="mb-4 flex items-start justify-between">
               <h3 className="text-xl font-bold">{selectedProduct.name}</h3>
               <button
                 onClick={() => setSelectedProduct(null)}
@@ -465,8 +433,7 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 <strong>Productor:</strong> {selectedProduct.producer}
               </p>
               <p>
-                <strong>Ubicación:</strong>{' '}
-                {selectedProduct.location.municipality}
+                <strong>Ubicación:</strong> {selectedProduct.location.municipality}
               </p>
               <p>
                 <strong>Precio:</strong> €{selectedProduct.price.toFixed(2)} /{' '}
@@ -478,11 +445,11 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
               {selectedProduct.certifications.length > 0 && (
                 <div>
                   <strong>Certificaciones:</strong>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {selectedProduct.certifications.map((cert) => (
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    {selectedProduct.certifications.map(cert => (
                       <span
                         key={cert}
-                        className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm"
+                        className="rounded-full bg-green-100 px-2 py-1 text-sm text-green-800"
                       >
                         {cert}
                       </span>
@@ -492,12 +459,12 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({
               )}
             </div>
             <div className="mt-6 flex space-x-3">
-              <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">
+              <button className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700">
                 Contactar Productor
               </button>
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300"
+                className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300"
               >
                 Cerrar
               </button>

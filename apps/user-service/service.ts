@@ -9,9 +9,9 @@ export class UserService extends BaseService {
     try {
       const validatedUsername = this.validateRequired(username, 'username');
       const validatedEmail = this.validateRequired(email, 'email');
-      
+
       this.log('Creating user', { username, email });
-      
+
       return this.createSuccessMessage(
         'User',
         'created',
@@ -25,14 +25,10 @@ export class UserService extends BaseService {
   getUser(username: string): string {
     try {
       const validatedUsername = this.validateId(username, 'username');
-      
+
       this.log('Getting user', { username: validatedUsername });
-      
-      return this.createSuccessMessage(
-        'User',
-        'retrieved',
-        validatedUsername
-      );
+
+      return this.createSuccessMessage('User', 'retrieved', validatedUsername);
     } catch (error) {
       return this.handleServiceError(error, 'getUser');
     }

@@ -24,7 +24,9 @@
 
 ### Estructura del Monorepo
 
+
 ```
+
 /workspace
 ├── apps/
 │   ├── auth-service/
@@ -37,7 +39,9 @@
 ├── packages/
 │   ├── shared-utils/
 │   └── observability/
+
 ```
+
 
 ### Bounded Contexts Identificados
 
@@ -54,10 +58,13 @@
 
 **Problema:**
 
+
 ```typescript
 // apps/web/v0dev/f-modern-backoffice/app/api/security/scan/route.ts
 import { notificationService } from '@/lib/notifications/notification-service';
+
 ```
+
 
 **Por qué es una violación:**
 
@@ -91,6 +98,7 @@ import { notificationService } from '@/lib/notifications/notification-service';
 
 **Acción inmediata:**
 
+
 ```typescript
 // ANTES (INCORRECTO)
 import { notificationService } from '@/lib/notifications/notification-service';
@@ -101,7 +109,9 @@ import { NotificationApiClient } from '@a4co/shared-utils/api-clients';
 const notificationClient = new NotificationApiClient({
   baseURL: process.env.NOTIFICATION_SERVICE_URL,
 });
+
 ```
+
 
 **Pasos de refactoring:**
 
@@ -112,6 +122,7 @@ const notificationClient = new NotificationApiClient({
 ### 2. Implementar Anti-Corruption Layer (ACL)
 
 **Crear adaptadores para la comunicación entre bounded contexts:**
+
 
 ```typescript
 // packages/shared-utils/src/adapters/notification.adapter.ts
@@ -127,11 +138,14 @@ export class NotificationHttpAdapter implements NotificationPort {
     await this.httpClient.post('/api/v1/notifications', params);
   }
 }
+
 ```
+
 
 ### 3. Establecer Contratos Explícitos
 
 **Crear un paquete de contratos compartidos:**
+
 
 ```typescript
 // packages/contracts/src/notification/index.ts
@@ -149,7 +163,9 @@ export interface NotificationResponse {
   status: 'queued' | 'sent' | 'failed';
   timestamp: string;
 }
+
 ```
+
 
 ### 4. Refactorizar la Aplicación Web
 
@@ -157,6 +173,7 @@ export interface NotificationResponse {
 
 1. Remover `/apps/web/v0dev/f-modern-backoffice/lib/notifications/notification-service.ts`
 2. Reemplazar con llamadas al API del microservicio
+
 
 ```typescript
 // apps/web/v0dev/f-modern-backoffice/app/api/security/scan/route.ts
@@ -172,11 +189,14 @@ export async function POST(request: NextRequest) {
     // ... resto de parámetros
   });
 }
+
 ```
+
 
 ### 5. Implementar Event-Driven Communication
 
 **Para reducir acoplamiento, usar eventos de dominio:**
+
 
 ```typescript
 // packages/shared-utils/src/events/security.events.ts
@@ -191,13 +211,17 @@ export class SecurityThreatDetectedEvent {
 
 // El notification-service se suscribe a estos eventos
 // En lugar de ser llamado directamente
+
 ```
+
 
 ### 6. Mejorar la Separación de Concerns
 
 **Estructura recomendada por servicio:**
 
+
 ```
+
 apps/[service-name]/
 ├── domain/           # Lógica de negocio pura
 │   ├── entities/
@@ -213,7 +237,9 @@ apps/[service-name]/
 │   ├── persistence/
 │   └── messaging/
 └── presentation/     # Controllers/GraphQL
+
 ```
+
 
 ## 📋 PLAN DE ACCIÓN
 
@@ -245,11 +271,15 @@ apps/[service-name]/
 
 ### 1. Regla de Dependencias
 
+
 ```
+
 Aplicaciones Web → API Clients → Microservicios → Domain Logic
                 ↓
            Shared Contracts
+
 ```
+
 
 ### 2. Prohibiciones Estrictas
 
@@ -268,6 +298,7 @@ Aplicaciones Web → API Clients → Microservicios → Domain Logic
 ## 🔧 HERRAMIENTAS DE VALIDACIÓN
 
 ### ESLint Rules Recomendadas
+
 
 ```javascript
 // .eslintrc.js
@@ -288,9 +319,12 @@ module.exports = {
     ],
   },
 };
+
 ```
 
+
 ### Script de Validación
+
 
 ```bash
 #!/bin/bash
@@ -305,7 +339,9 @@ if grep -r "from.*apps/" apps/ --include="*.ts" --include="*.tsx" | grep -v test
 fi
 
 echo "✅ No DDD violations found"
+
 ```
+
 
 ## 📚 RECURSOS Y REFERENCIAS
 

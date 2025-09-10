@@ -22,8 +22,7 @@ export enum ErrorCodes {
 }
 
 export const ErrorMessages = {
-  [ErrorCodes.INVALID_CREDENTIALS]:
-    'Las credenciales proporcionadas no son válidas',
+  [ErrorCodes.INVALID_CREDENTIALS]: 'Las credenciales proporcionadas no son válidas',
   [ErrorCodes.TOKEN_EXPIRED]: 'El token ha expirado',
   [ErrorCodes.TOKEN_INVALID]: 'El token no es válido',
   [ErrorCodes.UNAUTHORIZED]: 'No autorizado para realizar esta operación',

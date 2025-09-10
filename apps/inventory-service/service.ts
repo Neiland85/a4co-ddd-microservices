@@ -9,9 +9,9 @@ export class InventoryService extends BaseService {
     try {
       const validatedProductId = this.validateId(productId, 'inventory');
       const validatedQuantity = this.validateRequired(quantity, 'quantity');
-      
+
       this.log('Updating inventory', { productId, quantity });
-      
+
       return this.createSuccessMessage(
         'Inventory',
         'updated',
@@ -25,14 +25,10 @@ export class InventoryService extends BaseService {
   getStock(productId: string): string {
     try {
       const validatedProductId = this.validateId(productId, 'productId');
-      
+
       this.log('Getting inventory', { productId: validatedProductId });
-      
-      return this.createSuccessMessage(
-        'Inventory',
-        'retrieved',
-        validatedProductId
-      );
+
+      return this.createSuccessMessage('Inventory', 'retrieved', validatedProductId);
     } catch (error) {
       return this.handleServiceError(error, 'getStock');
     }

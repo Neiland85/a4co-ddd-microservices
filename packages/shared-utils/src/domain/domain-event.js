@@ -9,13 +9,15 @@ class DomainEvent {
     eventVersion;
     occurredOn;
     eventData;
-    constructor(aggregateId, eventData, eventVersion = 1) {
+    sagaId; // Añadir sagaId como opcional
+    constructor(aggregateId, eventData, eventVersion = 1, sagaId) {
         this.eventId = (0, uuid_1.v4)();
         this.eventType = this.constructor.name;
         this.aggregateId = aggregateId;
         this.eventVersion = eventVersion;
         this.occurredOn = new Date();
         this.eventData = eventData;
+        this.sagaId = sagaId; // Asignar sagaId
     }
 }
 exports.DomainEvent = DomainEvent;

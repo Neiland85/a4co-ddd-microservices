@@ -14,8 +14,8 @@ interface TestSectionProps {
 }
 
 const TestSection: React.FC<TestSectionProps> = ({ title, children }) => (
-  <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 className="text-xl font-bold text-gray-800 mb-4">{title}</h2>
+  <div className="mb-6 rounded-lg bg-white p-6 shadow-md">
+    <h2 className="mb-4 text-xl font-bold text-gray-800">{title}</h2>
     {children}
   </div>
 );
@@ -29,39 +29,32 @@ interface ApiTestProps {
   error: string | null;
 }
 
-const ApiTest: React.FC<ApiTestProps> = ({
-  title,
-  endpoint,
-  onTest,
-  loading,
-  data,
-  error,
-}) => (
-  <div className="border rounded-lg p-4 mb-4">
-    <div className="flex justify-between items-center mb-2">
+const ApiTest: React.FC<ApiTestProps> = ({ title, endpoint, onTest, loading, data, error }) => (
+  <div className="mb-4 rounded-lg border p-4">
+    <div className="mb-2 flex items-center justify-between">
       <h3 className="font-medium text-gray-800">{title}</h3>
       <button
         onClick={onTest}
         disabled={loading}
-        className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+        className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
       >
         {loading ? 'Testing...' : 'Test API'}
       </button>
     </div>
-    <p className="text-sm text-gray-600 mb-2">
+    <p className="mb-2 text-sm text-gray-600">
       Endpoint: <code>{endpoint}</code>
     </p>
 
     {error && (
-      <div className="bg-red-50 border border-red-200 rounded p-2 mb-2">
-        <p className="text-red-600 text-sm">Error: {error}</p>
+      <div className="mb-2 rounded border border-red-200 bg-red-50 p-2">
+        <p className="text-sm text-red-600">Error: {error}</p>
       </div>
     )}
 
     {data && (
-      <div className="bg-green-50 border border-green-200 rounded p-2">
-        <p className="text-green-600 text-sm mb-1">✅ Respuesta exitosa:</p>
-        <pre className="text-xs text-gray-600 overflow-x-auto">
+      <div className="rounded border border-green-200 bg-green-50 p-2">
+        <p className="mb-1 text-sm text-green-600">✅ Respuesta exitosa:</p>
+        <pre className="overflow-x-auto text-xs text-gray-600">
           {JSON.stringify(data, null, 2).slice(0, 200)}...
         </pre>
       </div>
@@ -82,21 +75,21 @@ const IntegrationTestPage: React.FC = () => {
   const geolocation = useGeolocation({ autoStart: false });
 
   const testApi = async (key: string, endpoint: string, params?: string) => {
-    setApiLoading((prev) => ({ ...prev, [key]: true }));
-    setApiErrors((prev) => ({ ...prev, [key]: '' }));
+    setApiLoading(prev => ({ ...prev, [key]: true }));
+    setApiErrors(prev => ({ ...prev, [key]: '' }));
 
     try {
       const url = params ? `${endpoint}?${params}` : endpoint;
       const response = await fetch(url);
       const data = await response.json();
-      setApiResults((prev) => ({ ...prev, [key]: data }));
+      setApiResults(prev => ({ ...prev, [key]: data }));
     } catch (error) {
-      setApiErrors((prev) => ({
+      setApiErrors(prev => ({
         ...prev,
         [key]: error instanceof Error ? error.message : 'Error desconocido',
       }));
     } finally {
-      setApiLoading((prev) => ({ ...prev, [key]: false }));
+      setApiLoading(prev => ({ ...prev, [key]: false }));
     }
   };
 
@@ -106,9 +99,9 @@ const IntegrationTestPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="mb-8 text-center">
+          <h1 className="mb-2 text-3xl font-bold text-gray-800">
             🧪 Test de Integraciones API + Hooks + UI
           </h1>
           <p className="text-gray-600">
@@ -118,13 +111,11 @@ const IntegrationTestPage: React.FC = () => {
 
         {/* Tests de APIs */}
         <TestSection title="🌐 Tests de APIs Backend">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <ApiTest
               title="Sales Opportunities API"
               endpoint="/api/sales-opportunities"
-              onTest={() =>
-                testApi('opportunities', '/api/sales-opportunities')
-              }
+              onTest={() => testApi('opportunities', '/api/sales-opportunities')}
               loading={apiLoading.opportunities || false}
               data={apiResults.opportunities}
               error={apiErrors.opportunities || null}
@@ -152,11 +143,7 @@ const IntegrationTestPage: React.FC = () => {
               title="Products with Filters"
               endpoint="/api/products?category=aceite"
               onTest={() =>
-                testApi(
-                  'productsFiltered',
-                  '/api/products',
-                  'category=aceite&available=true'
-                )
+                testApi('productsFiltered', '/api/products', 'category=aceite&available=true')
               }
               loading={apiLoading.productsFiltered || false}
               data={apiResults.productsFiltered}
@@ -167,63 +154,53 @@ const IntegrationTestPage: React.FC = () => {
 
         {/* Tests de Hooks */}
         <TestSection title="🎣 Tests de Hooks Personalizados">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Sales Opportunities Hook */}
-            <div className="border rounded-lg p-4">
-              <h3 className="font-medium text-gray-800 mb-3">
-                useSalesOpportunities
-              </h3>
+            <div className="rounded-lg border p-4">
+              <h3 className="mb-3 font-medium text-gray-800">useSalesOpportunities</h3>
               <button
                 onClick={() => salesOpportunities.fetchOpportunities()}
                 disabled={salesOpportunities.loading}
-                className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 disabled:opacity-50 mb-2"
+                className="mb-2 rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700 disabled:opacity-50"
               >
-                {salesOpportunities.loading
-                  ? 'Cargando...'
-                  : 'Cargar Oportunidades'}
+                {salesOpportunities.loading ? 'Cargando...' : 'Cargar Oportunidades'}
               </button>
 
-              <div className="text-sm space-y-1">
+              <div className="space-y-1 text-sm">
                 <p>📊 Total: {salesOpportunities.total}</p>
                 <p>🔄 Loading: {salesOpportunities.loading ? 'Sí' : 'No'}</p>
                 <p>❌ Error: {salesOpportunities.error || 'Ninguno'}</p>
-                <p>
-                  📋 Datos:{' '}
-                  {salesOpportunities.hasData ? 'Disponibles' : 'Sin datos'}
-                </p>
+                <p>📋 Datos: {salesOpportunities.hasData ? 'Disponibles' : 'Sin datos'}</p>
               </div>
 
               {salesOpportunities.opportunities.length > 0 && (
-                <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
-                  <p>
-                    Última oportunidad:{' '}
-                    {salesOpportunities.opportunities[0].title}
-                  </p>
+                <div className="mt-2 rounded bg-gray-50 p-2 text-xs">
+                  <p>Última oportunidad: {salesOpportunities.opportunities[0].title}</p>
                 </div>
               )}
             </div>
 
             {/* Products Hook */}
-            <div className="border rounded-lg p-4">
-              <h3 className="font-medium text-gray-800 mb-3">useProducts</h3>
-              <div className="space-x-2 mb-2">
+            <div className="rounded-lg border p-4">
+              <h3 className="mb-3 font-medium text-gray-800">useProducts</h3>
+              <div className="mb-2 space-x-2">
                 <button
                   onClick={() => products.fetchProducts()}
                   disabled={products.loading}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                  className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                   Cargar Productos
                 </button>
                 <button
                   onClick={() => products.filterByCategory('aceite')}
                   disabled={products.loading}
-                  className="px-3 py-1 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 disabled:opacity-50"
+                  className="rounded bg-amber-600 px-3 py-1 text-sm text-white hover:bg-amber-700 disabled:opacity-50"
                 >
                   Filtrar Aceite
                 </button>
               </div>
 
-              <div className="text-sm space-y-1">
+              <div className="space-y-1 text-sm">
                 <p>📦 Productos: {products.products.length}</p>
                 <p>📄 Total: {products.pagination.total}</p>
                 <p>➕ Más páginas: {products.canLoadMore ? 'Sí' : 'No'}</p>
@@ -232,54 +209,44 @@ const IntegrationTestPage: React.FC = () => {
             </div>
 
             {/* Artisans Hook */}
-            <div className="border rounded-lg p-4">
-              <h3 className="font-medium text-gray-800 mb-3">useArtisans</h3>
+            <div className="rounded-lg border p-4">
+              <h3 className="mb-3 font-medium text-gray-800">useArtisans</h3>
               <button
                 onClick={() => artisans.fetchArtisans()}
                 disabled={artisans.loading}
-                className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 disabled:opacity-50 mb-2"
+                className="mb-2 rounded bg-purple-600 px-3 py-1 text-sm text-white hover:bg-purple-700 disabled:opacity-50"
               >
                 {artisans.loading ? 'Cargando...' : 'Cargar Artesanos'}
               </button>
 
-              <div className="text-sm space-y-1">
+              <div className="space-y-1 text-sm">
                 <p>👨‍🌾 Artesanos: {artisans.artisans.length}</p>
                 <p>✅ Verificados: {artisans.verifiedArtisans.length}</p>
                 <p>⭐ Top rated: {artisans.topRatedArtisans.length}</p>
                 <p>
                   🏘️ Ubicaciones:{' '}
-                  {
-                    new Set(
-                      artisans.artisans.map((a) => a.location.municipality)
-                    ).size
-                  }
+                  {new Set(artisans.artisans.map(a => a.location.municipality)).size}
                 </p>
               </div>
             </div>
 
             {/* Geolocation Hook */}
-            <div className="border rounded-lg p-4">
-              <h3 className="font-medium text-gray-800 mb-3">useGeolocation</h3>
+            <div className="rounded-lg border p-4">
+              <h3 className="mb-3 font-medium text-gray-800">useGeolocation</h3>
               <button
                 onClick={testGeolocation}
                 disabled={geolocation.loading}
-                className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 disabled:opacity-50 mb-2"
+                className="mb-2 rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700 disabled:opacity-50"
               >
                 {geolocation.loading ? 'Obteniendo...' : 'Obtener Ubicación'}
               </button>
 
-              <div className="text-sm space-y-1">
-                <p>
-                  📍 Ubicación:{' '}
-                  {geolocation.hasLocation ? 'Disponible' : 'No disponible'}
-                </p>
+              <div className="space-y-1 text-sm">
+                <p>📍 Ubicación: {geolocation.hasLocation ? 'Disponible' : 'No disponible'}</p>
                 <p>🏛️ En Jaén: {geolocation.isLocationInJaen ? 'Sí' : 'No'}</p>
                 <p>❌ Error: {geolocation.error || 'Ninguno'}</p>
                 {geolocation.location && (
-                  <p>
-                    📌 Municipio:{' '}
-                    {geolocation.location.municipality || 'Desconocido'}
-                  </p>
+                  <p>📌 Municipio: {geolocation.location.municipality || 'Desconocido'}</p>
                 )}
               </div>
             </div>
@@ -292,7 +259,7 @@ const IntegrationTestPage: React.FC = () => {
             <div>
               <label
                 htmlFor="product-search-input"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Buscar productos (con debounce):
               </label>
@@ -300,35 +267,26 @@ const IntegrationTestPage: React.FC = () => {
                 id="product-search-input"
                 type="text"
                 value={productSearch.searchTerm}
-                onChange={(e) => productSearch.setSearchTerm(e.target.value)}
+                onChange={e => productSearch.setSearchTerm(e.target.value)}
                 placeholder="Escribe 'aceite', 'queso', 'miel'..."
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div className="text-sm text-gray-600">
               <p>Resultados encontrados: {productSearch.products.length}</p>
               {productSearch.loading && <p>🔄 Buscando...</p>}
-              {productSearch.isSearching && (
-                <p>🔍 Búsqueda activa: "{productSearch.searchTerm}"</p>
-              )}
+              {productSearch.isSearching && <p>🔍 Búsqueda activa: "{productSearch.searchTerm}"</p>}
             </div>
 
             {productSearch.products.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {productSearch.products.slice(0, 3).map((product) => (
-                  <div
-                    key={product.id}
-                    className="border rounded-lg p-3 bg-gray-50"
-                  >
-                    <h4 className="font-medium text-sm">{product.name}</h4>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {productSearch.products.slice(0, 3).map(product => (
+                  <div key={product.id} className="rounded-lg border bg-gray-50 p-3">
+                    <h4 className="text-sm font-medium">{product.name}</h4>
                     <p className="text-xs text-gray-600">{product.producer}</p>
-                    <p className="text-xs text-gray-600">
-                      📍 {product.location.municipality}
-                    </p>
-                    <p className="text-sm font-medium text-green-600">
-                      €{product.price}
-                    </p>
+                    <p className="text-xs text-gray-600">📍 {product.location.municipality}</p>
+                    <p className="text-sm font-medium text-green-600">€{product.price}</p>
                   </div>
                 ))}
               </div>
@@ -339,18 +297,18 @@ const IntegrationTestPage: React.FC = () => {
         {/* Test de filtros combinados */}
         <TestSection title="🎛️ Test de Filtros Combinados">
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
                 <label
                   htmlFor="category-filter-select"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="mb-1 block text-sm font-medium text-gray-700"
                 >
                   Categoría:
                 </label>
                 <select
                   id="category-filter-select"
-                  onChange={(e) => products.filterByCategory(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  onChange={e => products.filterByCategory(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
                 >
                   <option value="">Todas</option>
                   <option value="aceite">Aceite</option>
@@ -362,14 +320,14 @@ const IntegrationTestPage: React.FC = () => {
               <div>
                 <label
                   htmlFor="location-filter-select"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="mb-1 block text-sm font-medium text-gray-700"
                 >
                   Ubicación:
                 </label>
                 <select
                   id="location-filter-select"
-                  onChange={(e) => products.filterByLocation(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  onChange={e => products.filterByLocation(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2"
                 >
                   <option value="">Todas</option>
                   <option value="Úbeda">Úbeda</option>
@@ -379,20 +337,18 @@ const IntegrationTestPage: React.FC = () => {
               </div>
 
               <div>
-                <fieldset className="border border-gray-200 rounded-md p-3">
-                  <legend className="text-sm font-medium text-gray-700 px-2">
-                    Especiales:
-                  </legend>
-                  <div className="space-y-1 mt-2">
+                <fieldset className="rounded-md border border-gray-200 p-3">
+                  <legend className="px-2 text-sm font-medium text-gray-700">Especiales:</legend>
+                  <div className="mt-2 space-y-1">
                     <button
                       onClick={() => products.getSeasonalProducts()}
-                      className="w-full px-3 py-1 bg-orange-600 text-white rounded text-sm hover:bg-orange-700"
+                      className="w-full rounded bg-orange-600 px-3 py-1 text-sm text-white hover:bg-orange-700"
                     >
                       Solo Temporada
                     </button>
                     <button
                       onClick={() => products.getAvailableProducts()}
-                      className="w-full px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                      className="w-full rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
                     >
                       Solo Disponibles
                     </button>
@@ -405,26 +361,22 @@ const IntegrationTestPage: React.FC = () => {
 
         {/* Resumen de estado */}
         <TestSection title="📊 Resumen de Estado Global">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-4">
+            <div className="rounded-lg bg-blue-50 p-4">
               <div className="text-2xl font-bold text-blue-600">
                 {salesOpportunities.opportunities.length}
               </div>
               <div className="text-sm text-blue-800">Oportunidades</div>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
-                {products.products.length}
-              </div>
+            <div className="rounded-lg bg-green-50 p-4">
+              <div className="text-2xl font-bold text-green-600">{products.products.length}</div>
               <div className="text-sm text-green-800">Productos</div>
             </div>
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">
-                {artisans.artisans.length}
-              </div>
+            <div className="rounded-lg bg-purple-50 p-4">
+              <div className="text-2xl font-bold text-purple-600">{artisans.artisans.length}</div>
               <div className="text-sm text-purple-800">Artesanos</div>
             </div>
-            <div className="bg-red-50 p-4 rounded-lg">
+            <div className="rounded-lg bg-red-50 p-4">
               <div className="text-2xl font-bold text-red-600">
                 {geolocation.hasLocation ? '✅' : '❌'}
               </div>
@@ -444,10 +396,10 @@ const IntegrationTestPage: React.FC = () => {
         </TestSection>
 
         {/* Link al dashboard principal */}
-        <div className="text-center mt-8">
+        <div className="mt-8 text-center">
           <a
             href="/"
-            className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="inline-block rounded-lg bg-green-600 px-6 py-3 text-white transition-colors hover:bg-green-700"
           >
             🏠 Volver al Dashboard Principal
           </a>

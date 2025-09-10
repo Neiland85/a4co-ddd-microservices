@@ -26,7 +26,7 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
 
     // Extract trace context from headers
     const parentContext = extractContext(req.headers);
-    
+
     // Start span
     const tracer = trace.getTracer('@a4co/observability');
     const span = tracer.startSpan(
@@ -49,15 +49,15 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
 
     // Set trace context
     const ctx = trace.setSpan(context.active(), span);
-    
+
     // Generate request ID
-    const requestId = req.headers['x-request-id'] as string || uuidv4();
+    const requestId = (req.headers['x-request-id'] as string) || uuidv4();
     const traceId = span.spanContext().traceId;
     const spanId = span.spanContext().spanId;
-    
+
     // Add to request
     req.id = requestId;
-    
+
     // Create logger with context
     req.log = logger.withContext({
       requestId,
@@ -74,11 +74,11 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
       url: req.url,
       headers: filterHeaders(req.headers, redactHeaders),
     };
-    
+
     if (includeRequestBody && req.body) {
       requestLog.body = req.body;
     }
-    
+
     req.log.info(requestLog, 'Request received');
 
     // Track response
@@ -86,7 +86,7 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
     const originalSend = res.send;
     let responseBody: any;
 
-    res.send = function(data: any) {
+    res.send = function (data: any) {
       responseBody = data;
       return originalSend.call(this, data);
     };
@@ -94,19 +94,19 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
     // Handle response completion
     res.on('finish', () => {
       const duration = Date.now() - startTime;
-      
+
       // Update span
       span.setAttributes({
         'http.status_code': res.statusCode,
         'http.response.size': res.get('content-length'),
       });
-      
+
       if (res.statusCode >= 400) {
         span.setStatus({ code: SpanStatusCode.ERROR, message: `HTTP ${res.statusCode}` });
       } else {
         span.setStatus({ code: SpanStatusCode.OK });
       }
-      
+
       span.end();
 
       // Log response
@@ -115,11 +115,11 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
         duration,
         headers: filterHeaders(res.getHeaders(), redactHeaders),
       };
-      
+
       if (includeResponseBody && responseBody) {
         responseLog.body = responseBody;
       }
-      
+
       const level = res.statusCode >= 400 ? 'error' : 'info';
       req.log[level](responseLog, 'Request completed');
 
@@ -128,7 +128,7 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
     });
 
     // Handle errors
-    res.on('error', (error) => {
+    res.on('error', error => {
       span.recordException(error);
       span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
       req.log.error({ error }, 'Response error');
@@ -160,7 +160,7 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
 
     // Extract trace context from headers
     const parentContext = extractContext(ctx.headers);
-    
+
     // Start span
     const tracer = trace.getTracer('@a4co/observability');
     const span = tracer.startSpan(
@@ -183,17 +183,17 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
 
     // Set trace context
     const traceCtx = trace.setSpan(context.active(), span);
-    
+
     // Generate request ID
-    const requestId = ctx.headers['x-request-id'] as string || uuidv4();
+    const requestId = (ctx.headers['x-request-id'] as string) || uuidv4();
     const traceId = span.spanContext().traceId;
     const spanId = span.spanContext().spanId;
-    
+
     // Add to context
     ctx.id = requestId;
     ctx.state.traceId = traceId;
     ctx.state.spanId = spanId;
-    
+
     // Create logger with context
     ctx.log = logger.withContext({
       requestId,
@@ -214,11 +214,11 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
       url: ctx.url,
       headers: filterHeaders(ctx.headers, redactHeaders),
     };
-    
+
     if (includeRequestBody && ctx.request.body) {
       requestLog.body = ctx.request.body;
     }
-    
+
     ctx.log.info(requestLog, 'Request received');
 
     const startTime = Date.now();
@@ -236,7 +236,7 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
         'http.status_code': ctx.status,
         'http.response.size': ctx.response.length,
       });
-      
+
       if (ctx.status >= 400) {
         span.setStatus({ code: SpanStatusCode.ERROR, message: `HTTP ${ctx.status}` });
       } else {
@@ -249,28 +249,27 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
         duration,
         headers: filterHeaders(ctx.response.headers, redactHeaders),
       };
-      
+
       if (includeResponseBody && ctx.body) {
         responseLog.body = ctx.body;
       }
-      
+
       const level = ctx.status >= 400 ? 'error' : 'info';
       ctx.log[level](responseLog, 'Request completed');
 
       // Record metrics
       recordHttpRequest(ctx.method, ctx.path, ctx.status, duration);
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       span.recordException(error as Error);
       span.setStatus({ code: SpanStatusCode.ERROR, message: (error as Error).message });
-      
+
       ctx.log.error({ error, duration }, 'Request failed');
-      
+
       // Record error metrics
       recordHttpRequest(ctx.method, ctx.path, 500, duration);
-      
+
       throw error;
     } finally {
       span.end();
@@ -294,13 +293,16 @@ function filterHeaders(headers: any, redactList: string[]): any {
 export function expressErrorHandler() {
   return (err: Error, req: Request & { log?: any }, res: Response, next: NextFunction) => {
     const logger = req.log || getLogger();
-    
-    logger.error({
-      error: err,
-      stack: err.stack,
-      url: req.url,
-      method: req.method,
-    }, 'Unhandled error');
+
+    logger.error(
+      {
+        error: err,
+        stack: err.stack,
+        url: req.url,
+        method: req.method,
+      },
+      'Unhandled error'
+    );
 
     // Get current span if available
     const span = trace.getActiveSpan();
@@ -325,13 +327,16 @@ export function koaErrorHandler() {
     } catch (err) {
       const error = err as Error;
       const logger = ctx.log || getLogger();
-      
-      logger.error({
-        error,
-        stack: error.stack,
-        url: ctx.url,
-        method: ctx.method,
-      }, 'Unhandled error');
+
+      logger.error(
+        {
+          error,
+          stack: error.stack,
+          url: ctx.url,
+          method: ctx.method,
+        },
+        'Unhandled error'
+      );
 
       // Get current span if available
       const span = trace.getActiveSpan();

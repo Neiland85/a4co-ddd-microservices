@@ -1,4 +1,13 @@
-import { IsString, IsNumber, IsBoolean, IsOptional, Min, IsUUID, IsEnum, IsEmail } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsOptional,
+  Min,
+  IsUUID,
+  IsEnum,
+  IsEmail,
+} from 'class-validator';
 
 // ========================================
 // PAYMENT SERVICE DTOs
@@ -9,7 +18,7 @@ export enum PaymentMethodType {
   DEBIT_CARD = 'debit_card',
   BANK_TRANSFER = 'bank_transfer',
   DIGITAL_WALLET = 'digital_wallet',
-  CASH_ON_DELIVERY = 'cash_on_delivery'
+  CASH_ON_DELIVERY = 'cash_on_delivery',
 }
 
 export enum PaymentStatus {
@@ -18,7 +27,7 @@ export enum PaymentStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  REFUNDED = 'refunded'
+  REFUNDED = 'refunded',
 }
 
 export class ValidatePaymentMethodRequestDto {

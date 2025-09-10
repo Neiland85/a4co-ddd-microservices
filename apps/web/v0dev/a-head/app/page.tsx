@@ -1,9 +1,9 @@
-import Header from "@/components/header"
-import Hero from "@/components/hero"
-import AdvantagesSection from "@/components/advantages-section"
-import Footer from "@/components/footer"
-import CookieBanner from "@/banner-cookie"
-import { FeaturedBusinessesAndFestival } from "@/components/featured-businesses-and-festival"
+import Header from '@/components/header';
+import Hero from '@/components/hero';
+import AdvantagesSection from '@/components/advantages-section';
+import Footer from '@/components/footer';
+import CookieBanner from '@/banner-cookie';
+import { FeaturedBusinessesAndFestival } from '@/components/featured-businesses-and-festival';
 
 export default function HomePage() {
   return (
@@ -15,5 +15,5 @@ export default function HomePage() {
       <Footer />
       <CookieBanner />
     </main>
-  )
+  );
 }

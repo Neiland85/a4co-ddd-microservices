@@ -2,7 +2,6 @@
 // import { Logger } from 'pino';
 // import { Span, Tracer } from '@opentelemetry/api';
 
-
 // Tipos de configuración
 export interface ObservabilityConfig {
   serviceName: string;

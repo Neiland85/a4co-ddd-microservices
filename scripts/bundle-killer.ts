@@ -21,7 +21,7 @@ const LARGE_MODULE_KB = 10;
 
 export const analyzeBundle = async (): Promise<BundleAnalysis> => {
   console.log('🔍 Iniciando análisis de bundle...\n');
-  
+
   try {
     // Verificar si existe el directorio
     if (!existsSync('apps/dashboard-web')) {
@@ -30,19 +30,21 @@ export const analyzeBundle = async (): Promise<BundleAnalysis> => {
 
     // Ejecutar build con análisis
     console.log('📦 Construyendo con análisis activado...');
-    execSync('cd apps/dashboard-web && ANALYZE=true next build', { 
+    execSync('cd apps/dashboard-web && ANALYZE=true next build', {
       encoding: 'utf8',
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
 
     // Buscar el archivo de stats
     const statsPath = path.join('apps/dashboard-web/.next/analyze/client.json');
     if (!existsSync(statsPath)) {
-      throw new Error('No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.');
+      throw new Error(
+        'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.'
+      );
     }
 
     const stats = JSON.parse(readFileSync(statsPath, 'utf8'));
-    
+
     // Analizar chunks problemáticos
     const problematicChunks: ChunkInfo[] = [];
     const moduleOccurrences = new Map<string, string[]>();
@@ -51,7 +53,7 @@ export const analyzeBundle = async (): Promise<BundleAnalysis> => {
     Object.entries(stats.chunks || {}).forEach(([name, chunk]: [string, WebpackChunk]) => {
       const size = chunk.size || 0;
       totalSize += size;
-      
+
       if (size > THRESHOLD_KB * 1024) {
         const largeModules = (chunk.modules || [])
           .filter((m: WebpackModule) => m.size > LARGE_MODULE_KB * 1024)
@@ -62,7 +64,7 @@ export const analyzeBundle = async (): Promise<BundleAnalysis> => {
           name,
           size,
           sizeKB: `${(size / 1024).toFixed(2)}KB`,
-          modules: largeModules
+          modules: largeModules,
         });
       }
 
@@ -96,16 +98,15 @@ export const analyzeBundle = async (): Promise<BundleAnalysis> => {
       problematicChunks,
       duplicatedModules,
       totalSize,
-      recommendations
+      recommendations,
     });
 
     return {
       problematicChunks,
       duplicatedModules,
       totalSize,
-      recommendations
+      recommendations,
     };
-
   } catch (error) {
     console.error('❌ Error durante el análisis:', error);
     throw error;
@@ -120,7 +121,8 @@ function generateRecommendations(
   const recommendations: string[] = [];
 
   // Recomendaciones por tamaño
-  if (totalSize > 1024 * 1024) { // > 1MB
+  if (totalSize > 1024 * 1024) {
+    // > 1MB
     recommendations.push(
       `⚠️ Bundle total excede 1MB (${(totalSize / 1024 / 1024).toFixed(2)}MB). Considera:`
     );
@@ -130,13 +132,12 @@ function generateRecommendations(
 
   // Recomendaciones por chunks grandes
   chunks.forEach(chunk => {
-    if (chunk.size > 200 * 1024) { // > 200KB
-      recommendations.push(
-        `🔴 Chunk "${chunk.name}" es muy grande (${chunk.sizeKB}). Acciones:`
-      );
+    if (chunk.size > 200 * 1024) {
+      // > 200KB
+      recommendations.push(`🔴 Chunk "${chunk.name}" es muy grande (${chunk.sizeKB}). Acciones:`);
       recommendations.push('  - Dividir en chunks más pequeños');
       recommendations.push('  - Mover a lazy loading si no es crítico');
-      
+
       if (chunk.modules.length > 0) {
         recommendations.push(`  - Revisar módulos grandes: ${chunk.modules[0]}`);
       }
@@ -148,7 +149,8 @@ function generateRecommendations(
     recommendations.push(`\n📦 Se encontraron ${duplicates.size} módulos duplicados:`);
     let count = 0;
     duplicates.forEach((chunks, module) => {
-      if (count++ < 5) { // Mostrar solo top 5
+      if (count++ < 5) {
+        // Mostrar solo top 5
         recommendations.push(`  - ${module} aparece en: ${chunks.join(', ')}`);
       }
     });
@@ -214,7 +216,7 @@ function displayResults(analysis: BundleAnalysis): void {
   if (analysis.problematicChunks.length > 0) {
     console.log('🚨 CHUNKS PROBLEMÁTICOS (> 50KB):');
     console.log('-'.repeat(60));
-    
+
     analysis.problematicChunks.forEach(chunk => {
       console.log(`\n📌 ${chunk.name}: ${chunk.sizeKB}`);
       if (chunk.modules.length > 0) {
@@ -227,7 +229,7 @@ function displayResults(analysis: BundleAnalysis): void {
   if (analysis.duplicatedModules.size > 0) {
     console.log('\n\n🔁 MÓDULOS DUPLICADOS:');
     console.log('-'.repeat(60));
-    
+
     let count = 0;
     analysis.duplicatedModules.forEach((chunks, module) => {
       if (count++ < 10) {
@@ -235,7 +237,7 @@ function displayResults(analysis: BundleAnalysis): void {
         console.log(`   Aparece en: ${chunks.join(', ')}`);
       }
     });
-    
+
     if (analysis.duplicatedModules.size > 10) {
       console.log(`\n   ... y ${analysis.duplicatedModules.size - 10} más`);
     }

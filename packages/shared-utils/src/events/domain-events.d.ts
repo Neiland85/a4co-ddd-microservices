@@ -248,8 +248,8 @@ export declare class ArtisanStatusChangedEvent extends DomainEvent {
         newStatus: 'pending' | 'verified' | 'suspended' | 'inactive';
         reason: string;
         changedBy: string;
-        changedAt: Date;
-        effectiveDate?: Date;
+        changedAt: globalThis.Date;
+        effectiveDate?: globalThis.Date;
         notificationSent: boolean;
     });
 }
@@ -365,6 +365,43 @@ export declare class ServiceErrorEvent extends DomainEvent {
         occurredAt: Date;
         userId?: string;
         requestId?: string;
+    });
+}
+export declare class SagaCompletedEvent extends DomainEvent {
+    constructor(sagaId: string, data: {
+        result: any;
+        completedAt: Date;
+    });
+}
+export declare class SagaFailedEvent extends DomainEvent {
+    constructor(sagaId: string, data: {
+        error: string;
+        compensations: string[];
+        failedAt: Date;
+    });
+}
+export declare class ProductInformationRequestedEvent extends DomainEvent {
+    constructor(sagaId: string, data: {
+        orderId: string;
+        productIds: string[];
+        requestedAt: Date;
+    });
+}
+export declare class StockValidationRequestedEvent extends DomainEvent {
+    constructor(sagaId: string, data: {
+        orderId: string;
+        items: Array<{
+            productId: string;
+            quantity: number;
+        }>;
+        requestedAt: Date;
+    });
+}
+export declare class UserInformationRequestedEvent extends DomainEvent {
+    constructor(sagaId: string, data: {
+        userId: string;
+        requestedFields: string[];
+        requestedAt: Date;
     });
 }
 export declare class DomainEventFactory {

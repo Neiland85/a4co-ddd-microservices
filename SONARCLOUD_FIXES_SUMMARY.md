@@ -14,6 +14,8 @@
 **Problema**: 7 archivos `chart.tsx` usando `dangerouslySetInnerHTML` para inyectar estilos CSS.
 
 **Solución aplicada**:
+
+
 ```tsx
 // Antes (Security Hotspot):
 <style
@@ -29,12 +31,16 @@
 >
   {Object.entries(THEMES)...}
 </style>
+
 ```
 
+
 **Archivos actualizados**:
+
 - `apps/web/v0dev/*/components/ui/chart.tsx` (7 archivos)
 
 **Justificación de seguridad**:
+
 - Solo se inyectan variables CSS, no HTML
 - Los valores son estáticos y validados
 - No hay entrada de usuario
@@ -43,6 +49,7 @@
 ### 2. Configuración de Coverage
 
 **Agregado**:
+
 - `.github/workflows/sonarcloud.yml` - Workflow con generación de coverage
 - Configuración en `package.json` para reportes lcov
 - Script para merge de reportes de coverage
@@ -50,6 +57,7 @@
 ### 3. Configuración de SonarCloud
 
 **Archivos creados**:
+
 - `.sonarcloud.properties` - Configuración específica para SonarCloud
 - Exclusiones para archivos de demo/desarrollo
 - Supresión de falsos positivos
@@ -68,17 +76,20 @@ Para cada uno de los 7 hotspots en archivos `chart.tsx`:
 1. Ir a Security Hotspots en SonarCloud
 2. Seleccionar cada hotspot de `chart.tsx`
 3. Marcar como "Safe" con la justificación:
+
    ```
-   CSS-only injection with validated color values from static configuration. 
+   CSS-only injection with validated color values from static configuration.
    No user input or HTML injection possible. Only CSS variables are injected.
    ```
 
 ### 2. Configurar Secrets en GitHub
 
 Agregar en Settings > Secrets:
+
 - `SONAR_TOKEN` - Token de SonarCloud
 
 ## 🔄 Comandos para Verificar Localmente
+
 
 ```bash
 # 1. Ejecutar tests con coverage
@@ -93,7 +104,9 @@ sonar-scanner \
   -Dsonar.organization=a4co \
   -Dsonar.host.url=https://sonarcloud.io \
   -Dsonar.token=YOUR_TOKEN_HERE
+
 ```
+
 
 ## 📊 Métricas Esperadas Post-Fix
 
@@ -106,6 +119,7 @@ sonar-scanner \
 ## 🚀 Próximos Pasos
 
 1. **Commit los cambios**:
+
    ```bash
    git add apps/web/v0dev/*/components/ui/chart.tsx
    git add .sonarcloud.properties
@@ -121,6 +135,7 @@ sonar-scanner \
    ```
 
 2. **Push al PR**:
+
    ```bash
    git push origin cursor/address-critical-sonarqube-technical-debt-ee4c
    ```

@@ -15,4 +15,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./notification-client"), exports);
+// Aquí se agregarán otros clientes API conforme se vayan creando
+// export * from './user-client';
+// export * from './product-client';
+// export * from './order-client';
+// etc.
 //# sourceMappingURL=index.js.map

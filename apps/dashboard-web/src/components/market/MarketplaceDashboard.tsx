@@ -4,10 +4,7 @@
 import React, { useState } from 'react';
 import { useMarketLocations } from '../../hooks/useGeolocation';
 import { useHighPriorityOpportunities } from '../../hooks/useSalesOpportunities';
-import {
-  useSeasonalProducts,
-  useAvailableProducts,
-} from '../../hooks/useProducts';
+import { useSeasonalProducts, useAvailableProducts } from '../../hooks/useProducts';
 import { useVerifiedArtisans } from '../../hooks/useArtisans';
 import ProductCatalog from './ProductCatalog';
 import ProductSearch from './ProductSearch';
@@ -33,9 +30,9 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
         <div className="flex items-center">
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mr-3"></div>
+          <div className="mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <span className="text-blue-800">Obteniendo tu ubicación...</span>
         </div>
       </div>
@@ -44,12 +41,12 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
 
   if (error) {
     return (
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+      <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
         <div className="flex items-center justify-between">
           <span className="text-amber-800">📍 {error}</span>
           <button
             onClick={onRequestLocation}
-            className="px-3 py-1 bg-amber-600 text-white rounded text-sm hover:bg-amber-700"
+            className="rounded bg-amber-600 px-3 py-1 text-sm text-white hover:bg-amber-700"
           >
             Reintentar
           </button>
@@ -60,14 +57,14 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
 
   if (!location) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+      <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
         <div className="flex items-center justify-between">
           <span className="text-green-800">
             📍 Habilita la ubicación para ver productos cercanos
           </span>
           <button
             onClick={onRequestLocation}
-            className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+            className="rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
           >
             Activar ubicación
           </button>
@@ -78,8 +75,8 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
 
   return (
     <div
-      className={`border rounded-lg p-4 mb-6 ${
-        isInJaen ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'
+      className={`mb-6 rounded-lg border p-4 ${
+        isInJaen ? 'border-green-200 bg-green-50' : 'border-blue-200 bg-blue-50'
       }`}
     >
       <div className="flex items-center justify-between">
@@ -88,14 +85,10 @@ const LocationInfo: React.FC<LocationInfoProps> = ({
             📍 {location.municipality ? `${location.municipality}, ` : ''}
             {location.province || 'Tu ubicación'}
           </span>
-          {isInJaen && (
-            <span className="ml-2 text-sm">
-              🎉 ¡Estás en la provincia de Jaén!
-            </span>
-          )}
+          {isInJaen && <span className="ml-2 text-sm">🎉 ¡Estás en la provincia de Jaén!</span>}
         </div>
         {!isInJaen && (
-          <span className="text-blue-600 text-sm">
+          <span className="text-sm text-blue-600">
             Visita Jaén para disfrutar de productos locales
           </span>
         )}
@@ -112,17 +105,11 @@ interface StatsCardProps {
   color: string;
 }
 
-const StatsCard: React.FC<StatsCardProps> = ({
-  title,
-  value,
-  subtitle,
-  icon,
-  color,
-}) => {
+const StatsCard: React.FC<StatsCardProps> = ({ title, value, subtitle, icon, color }) => {
   return (
-    <div className={`bg-white border-l-4 ${color} p-4 rounded-lg shadow-sm`}>
+    <div className={`border-l-4 bg-white ${color} rounded-lg p-4 shadow-sm`}>
       <div className="flex items-center">
-        <div className="text-2xl mr-3">{icon}</div>
+        <div className="mr-3 text-2xl">{icon}</div>
         <div>
           <div className="text-2xl font-bold text-gray-800">{value}</div>
           <div className="text-sm font-medium text-gray-600">{title}</div>
@@ -148,14 +135,11 @@ const MarketStats: React.FC<MarketStatsProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="bg-white p-4 rounded-lg shadow-sm animate-pulse"
-          >
-            <div className="h-8 bg-gray-200 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="animate-pulse rounded-lg bg-white p-4 shadow-sm">
+            <div className="mb-2 h-8 rounded bg-gray-200"></div>
+            <div className="h-4 rounded bg-gray-200"></div>
           </div>
         ))}
       </div>
@@ -163,7 +147,7 @@ const MarketStats: React.FC<MarketStatsProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
       <StatsCard
         title="Productos Locales"
         value={productsCount}
@@ -225,15 +209,15 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-      {actions.map((action) => (
+    <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+      {actions.map(action => (
         <button
           key={action.title}
           onClick={action.action}
-          className={`${action.color} text-white p-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105`}
+          className={`${action.color} transform rounded-lg p-6 text-white shadow-md transition-all duration-200 hover:scale-105`}
         >
-          <div className="text-3xl mb-2">{action.icon}</div>
-          <h3 className="font-bold text-lg mb-1">{action.title}</h3>
+          <div className="mb-2 text-3xl">{action.icon}</div>
+          <h3 className="mb-1 text-lg font-bold">{action.title}</h3>
           <p className="text-sm opacity-90">{action.description}</p>
         </button>
       ))}
@@ -242,9 +226,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
 };
 
 const MarketplaceDashboard: React.FC = () => {
-  const [activeView, setActiveView] = useState<
-    'dashboard' | 'search' | 'catalog'
-  >('dashboard');
+  const [activeView, setActiveView] = useState<'dashboard' | 'search' | 'catalog'>('dashboard');
 
   // Hooks para datos
   const geolocation = useMarketLocations();
@@ -288,22 +270,18 @@ const MarketplaceDashboard: React.FC = () => {
             {/* Acciones rápidas */}
             <QuickActions
               onSearchProducts={() => setActiveView('search')}
-              onViewOpportunities={() =>
-                window.open('/api/sales-opportunities', '_blank')
-              }
+              onViewOpportunities={() => window.open('/api/sales-opportunities', '_blank')}
               onContactArtisans={() => alert('Funcionalidad en desarrollo')}
             />
 
             {/* Vista previa de productos estacionales */}
             {seasonalProducts.products.length > 0 && (
               <div className="mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-2xl font-bold text-gray-800">
-                    🌿 Productos de Temporada
-                  </h3>
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-2xl font-bold text-gray-800">🌿 Productos de Temporada</h3>
                   <button
                     onClick={() => setActiveView('catalog')}
-                    className="text-green-600 hover:text-green-700 font-medium"
+                    className="font-medium text-green-600 hover:text-green-700"
                   >
                     Ver todos →
                   </button>
@@ -314,26 +292,21 @@ const MarketplaceDashboard: React.FC = () => {
 
             {/* Información sobre ubicaciones cercanas */}
             {geolocation.nearbyLocations.length > 0 && (
-              <div className="bg-blue-50 rounded-lg p-6">
-                <h3 className="text-xl font-bold text-blue-800 mb-4">
+              <div className="rounded-lg bg-blue-50 p-6">
+                <h3 className="mb-4 text-xl font-bold text-blue-800">
                   📍 Lugares de Interés Cercanos
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {geolocation.nearbyLocations.slice(0, 4).map((location) => {
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {geolocation.nearbyLocations.slice(0, 4).map(location => {
                     // Destructuración segura para evitar problemas de tipos
-                    const { name, type, distance, ...extraProps } =
-                      location as any;
+                    const { name, type, distance, ...extraProps } = location as any;
                     const description = extraProps.description;
 
                     return (
-                      <div key={name} className="bg-white p-4 rounded-lg">
+                      <div key={name} className="rounded-lg bg-white p-4">
                         <h4 className="font-medium text-gray-800">{name}</h4>
-                        <p className="text-sm text-gray-600 mb-1">{type}</p>
-                        {description && (
-                          <p className="text-xs text-gray-500 mb-2">
-                            {description}
-                          </p>
-                        )}
+                        <p className="mb-1 text-sm text-gray-600">{type}</p>
+                        {description && <p className="mb-2 text-xs text-gray-500">{description}</p>}
                         <p className="text-xs text-blue-600">
                           📍 {distance?.toFixed(1)} km de distancia
                         </p>
@@ -351,8 +324,8 @@ const MarketplaceDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-amber-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <header className="border-b bg-white shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
@@ -370,7 +343,7 @@ const MarketplaceDashboard: React.FC = () => {
             <nav className="flex space-x-4">
               <button
                 onClick={() => setActiveView('dashboard')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`rounded-lg px-4 py-2 font-medium transition-colors ${
                   activeView === 'dashboard'
                     ? 'bg-green-600 text-white'
                     : 'text-gray-600 hover:text-green-600'
@@ -380,7 +353,7 @@ const MarketplaceDashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('search')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`rounded-lg px-4 py-2 font-medium transition-colors ${
                   activeView === 'search'
                     ? 'bg-green-600 text-white'
                     : 'text-gray-600 hover:text-green-600'
@@ -390,7 +363,7 @@ const MarketplaceDashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('catalog')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`rounded-lg px-4 py-2 font-medium transition-colors ${
                   activeView === 'catalog'
                     ? 'bg-green-600 text-white'
                     : 'text-gray-600 hover:text-green-600'
@@ -404,18 +377,15 @@ const MarketplaceDashboard: React.FC = () => {
       </header>
 
       {/* Contenido principal */}
-      <main className="max-w-7xl mx-auto px-4 py-8">{renderContent()}</main>
+      <main className="mx-auto max-w-7xl px-4 py-8">{renderContent()}</main>
 
       {/* Footer */}
-      <footer className="bg-white border-t mt-16">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+      <footer className="mt-16 border-t bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-8">
           <div className="text-center text-gray-600">
-            <p className="mb-2">
-              🌿 Mercado Local de Jaén - Conectando productores y consumidores
-            </p>
+            <p className="mb-2">🌿 Mercado Local de Jaén - Conectando productores y consumidores</p>
             <p className="text-sm">
-              Promoviendo el comercio sostenible y los productos artesanales de
-              nuestra región
+              Promoviendo el comercio sostenible y los productos artesanales de nuestra región
             </p>
           </div>
         </div>

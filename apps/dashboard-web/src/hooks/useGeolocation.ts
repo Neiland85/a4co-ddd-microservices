@@ -94,14 +94,14 @@ function processSuccessfulPosition(
   const { latitude, longitude, accuracy } = position.coords;
 
   return reverseGeocode(latitude, longitude)
-    .then((locationInfo) => {
+    .then(locationInfo => {
       const locationData: LocationData = {
         coordinates: { latitude, longitude },
         accuracy,
         ...locationInfo,
       };
 
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         location: locationData,
         loading: false,
@@ -116,7 +116,7 @@ function processSuccessfulPosition(
         accuracy,
       };
 
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         location: locationData,
         loading: false,
@@ -147,7 +147,7 @@ function processGeolocationError(
       errorMessage = 'Error desconocido de geolocalización';
   }
 
-  setState((prev) => ({
+  setState(prev => ({
     ...prev,
     loading: false,
     error: errorMessage,
@@ -178,13 +178,10 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
         const permission = await navigator.permissions.query({
           name: 'geolocation',
         });
-        setState((prev) => ({ ...prev, permission: permission.state }));
+        setState(prev => ({ ...prev, permission: permission.state }));
         return permission.state;
       } catch (error) {
-        console.warn(
-          'No se pudieron verificar permisos de geolocalización:',
-          error
-        );
+        console.warn('No se pudieron verificar permisos de geolocalización:', error);
         return null;
       }
     }
@@ -192,62 +189,55 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
   }, []);
 
   // Obtener ubicación actual
-  const getCurrentLocation =
-    useCallback(async (): Promise<LocationData | null> => {
-      if (!navigator.geolocation) {
-        setState((prev) => ({
-          ...prev,
-          error: 'Geolocalización no soportada en este navegador',
-          loading: false,
-        }));
-        return null;
-      }
+  const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
+    if (!navigator.geolocation) {
+      setState(prev => ({
+        ...prev,
+        error: 'Geolocalización no soportada en este navegador',
+        loading: false,
+      }));
+      return null;
+    }
 
-      setState((prev) => ({ ...prev, loading: true, error: null }));
+    setState(prev => ({ ...prev, loading: true, error: null }));
 
-      return new Promise((resolve) => {
-        const onSuccess = async (position: GeolocationPosition) => {
-          try {
-            const locationData = await processSuccessfulPosition(
-              position,
-              setState
-            );
-            resolve(locationData);
-          } catch {
-            resolve(null);
-          }
-        };
-
-        const onError = (error: GeolocationPositionError) => {
-          processGeolocationError(error, setState);
+    return new Promise(resolve => {
+      const onSuccess = async (position: GeolocationPosition) => {
+        try {
+          const locationData = await processSuccessfulPosition(position, setState);
+          resolve(locationData);
+        } catch {
           resolve(null);
-        };
+        }
+      };
 
-        navigator.geolocation.getCurrentPosition(onSuccess, onError, {
-          enableHighAccuracy,
-          timeout,
-          maximumAge,
-        });
+      const onError = (error: GeolocationPositionError) => {
+        processGeolocationError(error, setState);
+        resolve(null);
+      };
+
+      navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+        enableHighAccuracy,
+        timeout,
+        maximumAge,
       });
-    }, [enableHighAccuracy, timeout, maximumAge]);
+    });
+  }, [enableHighAccuracy, timeout, maximumAge]);
 
   // Calcular distancia entre dos puntos
-  const calculateDistance = useCallback(
-    (coords1: Coordinates, coords2: Coordinates): number => {
-      const R = 6371; // Radio de la Tierra en km
-      const dLat = ((coords2.latitude - coords1.latitude) * Math.PI) / 180;
-      const dLon = ((coords2.longitude - coords1.longitude) * Math.PI) / 180;
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos((coords1.latitude * Math.PI) / 180) *
-          Math.cos((coords2.latitude * Math.PI) / 180) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c; // Distancia en km
-    },
-    []
-  );
+  const calculateDistance = useCallback((coords1: Coordinates, coords2: Coordinates): number => {
+    const R = 6371; // Radio de la Tierra en km
+    const dLat = ((coords2.latitude - coords1.latitude) * Math.PI) / 180;
+    const dLon = ((coords2.longitude - coords1.longitude) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((coords1.latitude * Math.PI) / 180) *
+        Math.cos((coords2.latitude * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distancia en km
+  }, []);
 
   // Verificar si estamos en la provincia de Jaén
   const isInJaen = useCallback((coordinates: Coordinates): boolean => {
@@ -276,21 +266,21 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
       if (!state.location) return [];
 
       return locations
-        .map((location) => ({
+        .map(location => ({
           ...location,
           distance: calculateDistance(state.location!.coordinates, {
             latitude: location.coordinates[0],
             longitude: location.coordinates[1],
           }),
         }))
-        .filter((location) => location.distance <= maxDistance)
+        .filter(location => location.distance <= maxDistance)
         .sort((a, b) => a.distance - b.distance);
     },
     [state.location, calculateDistance]
   );
 
   const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
+    setState(prev => ({ ...prev, error: null }));
   }, []);
 
   // Auto-start si está habilitado
@@ -312,9 +302,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
     clearError,
     // Utilities
     hasLocation: !!state.location,
-    isLocationInJaen: state.location
-      ? isInJaen(state.location.coordinates)
-      : false,
+    isLocationInJaen: state.location ? isInJaen(state.location.coordinates) : false,
   };
 }
 
@@ -360,8 +348,8 @@ export function useMarketLocations() {
     ...geolocation,
     marketLocations,
     nearbyLocations,
-    nearbyMarkets: nearbyLocations.filter((loc) => loc.type === 'market'),
-    nearbyProducers: nearbyLocations.filter((loc) => loc.type === 'producer'),
-    nearbyEvents: nearbyLocations.filter((loc) => loc.type === 'event'),
+    nearbyMarkets: nearbyLocations.filter(loc => loc.type === 'market'),
+    nearbyProducers: nearbyLocations.filter(loc => loc.type === 'producer'),
+    nearbyEvents: nearbyLocations.filter(loc => loc.type === 'event'),
   };
 }

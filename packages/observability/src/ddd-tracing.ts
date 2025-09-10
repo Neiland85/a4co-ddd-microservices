@@ -43,7 +43,7 @@ export interface DomainEvent {
 export function TraceAggregateMethod(aggregateName: string) {
   return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       const tracer = getTracer('ddd-aggregate');
       const span = tracer.startSpan(`${aggregateName}.${propertyName}`, {
@@ -60,7 +60,7 @@ export function TraceAggregateMethod(aggregateName: string) {
         const activeContext = context.active();
         const correlationId = activeContext.getValue('correlationId');
         const userId = activeContext.getValue('userId');
-        
+
         if (correlationId) {
           span.setAttribute('ddd.correlation_id', correlationId as string);
         }
@@ -70,7 +70,7 @@ export function TraceAggregateMethod(aggregateName: string) {
 
         // Ejecutar el método original
         const result = await method.apply(this, args);
-        
+
         span.setStatus({ code: SpanStatusCode.OK });
         return result;
       } catch (error) {
@@ -91,7 +91,7 @@ export function TraceAggregateMethod(aggregateName: string) {
 export function TraceCommand(commandName: string) {
   return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       const tracer = getTracer('ddd-command');
       const span = tracer.startSpan(`command.${commandName}`, {
@@ -123,7 +123,7 @@ export function TraceCommand(commandName: string) {
 
         // Ejecutar el comando
         const result = await method.apply(this, args);
-        
+
         span.setStatus({ code: SpanStatusCode.OK });
         return result;
       } catch (error) {
@@ -144,7 +144,7 @@ export function TraceCommand(commandName: string) {
 export function TraceEventHandler(eventName: string) {
   return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       const tracer = getTracer('ddd-event');
       const span = tracer.startSpan(`event.${eventName}`, {
@@ -176,7 +176,7 @@ export function TraceEventHandler(eventName: string) {
 
         // Ejecutar el handler
         const result = await method.apply(this, args);
-        
+
         span.setStatus({ code: SpanStatusCode.OK });
         return result;
       } catch (error) {
@@ -229,7 +229,7 @@ export class DDDContext {
     causationId?: string;
   }) {
     let ctx = context.active();
-    
+
     if (metadata.correlationId) {
       ctx = ctx.setValue(this.correlationIdKey, metadata.correlationId);
     }
@@ -239,7 +239,7 @@ export class DDDContext {
     if (metadata.causationId) {
       ctx = ctx.setValue(this.causationIdKey, metadata.causationId);
     }
-    
+
     return ctx;
   }
 }
@@ -258,7 +258,7 @@ export function createDomainSpan(
     span.setAttribute('ddd.aggregate.name', metadata.aggregateName);
     span.setAttribute('ddd.aggregate.id', metadata.aggregateId);
   }
-  
+
   if ('commandName' in metadata) {
     span.setAttribute('ddd.command.name', metadata.commandName);
     span.setAttribute('ddd.command.id', metadata.commandId);
@@ -272,7 +272,7 @@ export function createDomainSpan(
       span.setAttribute('ddd.correlation.id', metadata.correlationId);
     }
   }
-  
+
   if ('eventName' in metadata) {
     span.setAttribute('ddd.event.name', metadata.eventName);
     span.setAttribute('ddd.event.id', metadata.eventId);
@@ -307,7 +307,7 @@ export function injectNATSTraceContext(headers: Record<string, string>): Record<
   // Inyectar contexto de OpenTelemetry
   const tracer = getTracer('ddd-nats');
   const span = tracer.startSpan('nats.message.inject');
-  
+
   try {
     // Aquí se inyectaría el contexto de trace en los headers
     // usando el propagator de OpenTelemetry
@@ -341,7 +341,7 @@ export function extractNATSTraceContext(headers: Record<string, string>): void {
   // Extraer contexto de trace de OpenTelemetry
   const tracer = getTracer('ddd-nats');
   const span = tracer.startSpan('nats.message.extract');
-  
+
   try {
     span.setAttributes({
       'messaging.system': 'nats',
@@ -388,25 +388,28 @@ export function traceDomainTransaction<T>(
   fn: () => Promise<T>
 ): Promise<T> {
   const span = createDomainSpan(operation, metadata);
-  
-  return context.with(DDDContext.createContext({
-    correlationId: metadata.correlationId,
-    userId: metadata.userId,
-    causationId: metadata.causationId,
-  }), async () => {
-    try {
-      const result = await fn();
-      span.setStatus({ code: SpanStatusCode.OK });
-      return result;
-    } catch (error) {
-      span.setStatus({
-        code: SpanStatusCode.ERROR,
-        message: error instanceof Error ? error.message : String(error),
-      });
-      span.recordException(error as Error);
-      throw error;
-    } finally {
-      span.end();
+
+  return context.with(
+    DDDContext.createContext({
+      correlationId: metadata.correlationId,
+      userId: metadata.userId,
+      causationId: metadata.causationId,
+    }),
+    async () => {
+      try {
+        const result = await fn();
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error instanceof Error ? error.message : String(error),
+        });
+        span.recordException(error as Error);
+        throw error;
+      } finally {
+        span.end();
+      }
     }
-  });
+  );
 }

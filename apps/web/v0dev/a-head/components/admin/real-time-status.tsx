@@ -1,49 +1,49 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Wifi, WifiOff, Activity, AlertCircle, CheckCircle, RefreshCw } from "lucide-react"
-import { useWebSocket } from "@/hooks/use-websocket"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Wifi, WifiOff, Activity, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
+import { useWebSocket } from '@/hooks/use-websocket';
 
 export function RealTimeStatus() {
-  const { connectionStatus, connect, disconnect } = useWebSocket()
+  const { connectionStatus, connect, disconnect } = useWebSocket();
 
   const getStatusIcon = () => {
     if (connectionStatus.isConnected) {
-      return <CheckCircle className="w-4 h-4 text-green-600" />
+      return <CheckCircle className="h-4 w-4 text-green-600" />;
     } else if (connectionStatus.error) {
-      return <AlertCircle className="w-4 h-4 text-red-600" />
+      return <AlertCircle className="h-4 w-4 text-red-600" />;
     } else {
-      return <WifiOff className="w-4 h-4 text-yellow-600" />
+      return <WifiOff className="h-4 w-4 text-yellow-600" />;
     }
-  }
+  };
 
   const getStatusText = () => {
     if (connectionStatus.isConnected) {
-      return "Conectado"
+      return 'Conectado';
     } else if (connectionStatus.error) {
-      return "Error de conexión"
+      return 'Error de conexión';
     } else {
-      return "Desconectado"
+      return 'Desconectado';
     }
-  }
+  };
 
   const getStatusColor = () => {
     if (connectionStatus.isConnected) {
-      return "bg-green-100 text-green-800"
+      return 'bg-green-100 text-green-800';
     } else if (connectionStatus.error) {
-      return "bg-red-100 text-red-800"
+      return 'bg-red-100 text-red-800';
     } else {
-      return "bg-yellow-100 text-yellow-800"
+      return 'bg-yellow-100 text-yellow-800';
     }
-  }
+  };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="w-5 h-5 text-blue-600" />
+          <Activity className="h-5 w-5 text-blue-600" />
           Estado de Conexión en Tiempo Real
         </CardTitle>
       </CardHeader>
@@ -60,18 +60,22 @@ export function RealTimeStatus() {
               )}
             </div>
           </div>
-          <Badge className={getStatusColor()}>{connectionStatus.isConnected ? "Online" : "Offline"}</Badge>
+          <Badge className={getStatusColor()}>
+            {connectionStatus.isConnected ? 'Online' : 'Offline'}
+          </Badge>
         </div>
 
         {connectionStatus.error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+          <div className="rounded-md border border-red-200 bg-red-50 p-3">
             <p className="text-sm text-red-600">{connectionStatus.error}</p>
           </div>
         )}
 
         {connectionStatus.reconnectAttempts > 0 && (
-          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-sm text-yellow-700">Intentos de reconexión: {connectionStatus.reconnectAttempts}</p>
+          <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3">
+            <p className="text-sm text-yellow-700">
+              Intentos de reconexión: {connectionStatus.reconnectAttempts}
+            </p>
           </div>
         )}
 
@@ -81,9 +85,9 @@ export function RealTimeStatus() {
               variant="outline"
               size="sm"
               onClick={disconnect}
-              className="text-red-600 border-red-200 hover:bg-red-50 bg-transparent"
+              className="border-red-200 bg-transparent text-red-600 hover:bg-red-50"
             >
-              <WifiOff className="w-4 h-4 mr-2" />
+              <WifiOff className="mr-2 h-4 w-4" />
               Desconectar
             </Button>
           ) : (
@@ -91,18 +95,18 @@ export function RealTimeStatus() {
               variant="outline"
               size="sm"
               onClick={connect}
-              className="text-green-600 border-green-200 hover:bg-green-50 bg-transparent"
+              className="border-green-200 bg-transparent text-green-600 hover:bg-green-50"
             >
-              <Wifi className="w-4 h-4 mr-2" />
+              <Wifi className="mr-2 h-4 w-4" />
               Conectar
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Actualizar
           </Button>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

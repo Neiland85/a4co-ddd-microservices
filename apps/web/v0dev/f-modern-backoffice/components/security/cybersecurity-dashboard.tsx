@@ -1,15 +1,22 @@
-"use client"
+'use client';
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { XAxis, YAxis, ResponsiveContainer, Area, AreaChart, Bar, BarChart } from "recharts"
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { XAxis, YAxis, ResponsiveContainer, Area, AreaChart, Bar, BarChart } from 'recharts';
 import {
   Shield,
   AlertTriangle,
@@ -28,61 +35,61 @@ import {
   Target,
   Radar,
   Settings,
-} from "lucide-react"
+} from 'lucide-react';
 
 interface ThreatData {
-  id: string
-  type: "malware" | "phishing" | "ddos" | "brute_force" | "sql_injection" | "xss"
-  severity: "low" | "medium" | "high" | "critical"
-  source: string
-  target: string
-  timestamp: Date
-  status: "detected" | "blocked" | "investigating" | "resolved"
-  description: string
+  id: string;
+  type: 'malware' | 'phishing' | 'ddos' | 'brute_force' | 'sql_injection' | 'xss';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  source: string;
+  target: string;
+  timestamp: Date;
+  status: 'detected' | 'blocked' | 'investigating' | 'resolved';
+  description: string;
 }
 
 interface SecurityMetrics {
-  threatLevel: number
-  blockedAttacks: number
-  vulnerabilities: number
-  securityScore: number
-  uptime: number
-  lastScan: Date
+  threatLevel: number;
+  blockedAttacks: number;
+  vulnerabilities: number;
+  securityScore: number;
+  uptime: number;
+  lastScan: Date;
 }
 
 export function CybersecurityDashboard() {
   const [threats, setThreats] = useState<ThreatData[]>([
     {
-      id: "1",
-      type: "brute_force",
-      severity: "high",
-      source: "192.168.1.100",
-      target: "/api/auth/login",
+      id: '1',
+      type: 'brute_force',
+      severity: 'high',
+      source: '192.168.1.100',
+      target: '/api/auth/login',
       timestamp: new Date(Date.now() - 300000),
-      status: "blocked",
-      description: "Múltiples intentos de login fallidos desde IP sospechosa",
+      status: 'blocked',
+      description: 'Múltiples intentos de login fallidos desde IP sospechosa',
     },
     {
-      id: "2",
-      type: "sql_injection",
-      severity: "critical",
-      source: "10.0.0.50",
-      target: "/api/users",
+      id: '2',
+      type: 'sql_injection',
+      severity: 'critical',
+      source: '10.0.0.50',
+      target: '/api/users',
       timestamp: new Date(Date.now() - 600000),
-      status: "blocked",
-      description: "Intento de inyección SQL detectado y bloqueado",
+      status: 'blocked',
+      description: 'Intento de inyección SQL detectado y bloqueado',
     },
     {
-      id: "3",
-      type: "ddos",
-      severity: "medium",
-      source: "Multiple IPs",
-      target: "Main Server",
+      id: '3',
+      type: 'ddos',
+      severity: 'medium',
+      source: 'Multiple IPs',
+      target: 'Main Server',
       timestamp: new Date(Date.now() - 900000),
-      status: "investigating",
-      description: "Tráfico anómalo detectado desde múltiples fuentes",
+      status: 'investigating',
+      description: 'Tráfico anómalo detectado desde múltiples fuentes',
     },
-  ])
+  ]);
 
   const [metrics, setMetrics] = useState<SecurityMetrics>({
     threatLevel: 75,
@@ -91,126 +98,132 @@ export function CybersecurityDashboard() {
     securityScore: 92,
     uptime: 99.97,
     lastScan: new Date(),
-  })
+  });
 
-  const [realTimeData, setRealTimeData] = useState<any[]>([])
+  const [realTimeData, setRealTimeData] = useState<any[]>([]);
 
   useEffect(() => {
     // Generar datos de tiempo real
     const generateRealTimeData = () => {
       const data = Array.from({ length: 24 }, (_, i) => ({
-        hour: `${i.toString().padStart(2, "0")}:00`,
+        hour: `${i.toString().padStart(2, '0')}:00`,
         threats: Math.floor(Math.random() * 50 + 10),
         blocked: Math.floor(Math.random() * 45 + 5),
         allowed: Math.floor(Math.random() * 1000 + 500),
-      }))
-      setRealTimeData(data)
-    }
+      }));
+      setRealTimeData(data);
+    };
 
-    generateRealTimeData()
+    generateRealTimeData();
 
     // Simular actualizaciones en tiempo real
     const interval = setInterval(() => {
-      setMetrics((prev) => ({
+      setMetrics(prev => ({
         ...prev,
         threatLevel: Math.max(0, Math.min(100, prev.threatLevel + (Math.random() - 0.5) * 10)),
         blockedAttacks: prev.blockedAttacks + Math.floor(Math.random() * 3),
         securityScore: Math.max(80, Math.min(100, prev.securityScore + (Math.random() - 0.5) * 2)),
         lastScan: new Date(),
-      }))
+      }));
 
       // Simular nuevas amenazas ocasionalmente
       if (Math.random() < 0.1) {
         const newThreat: ThreatData = {
           id: Date.now().toString(),
-          type: ["malware", "phishing", "ddos", "brute_force", "sql_injection", "xss"][
+          type: ['malware', 'phishing', 'ddos', 'brute_force', 'sql_injection', 'xss'][
             Math.floor(Math.random() * 6)
           ] as any,
-          severity: ["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)] as any,
+          severity: ['low', 'medium', 'high', 'critical'][Math.floor(Math.random() * 4)] as any,
           source: `192.168.1.${Math.floor(Math.random() * 255)}`,
-          target: ["/api/auth", "/api/users", "/api/data", "Main Server"][Math.floor(Math.random() * 4)],
+          target: ['/api/auth', '/api/users', '/api/data', 'Main Server'][
+            Math.floor(Math.random() * 4)
+          ],
           timestamp: new Date(),
-          status: ["detected", "blocked", "investigating"][Math.floor(Math.random() * 3)] as any,
-          description: "Nueva amenaza detectada por el sistema de monitoreo",
-        }
-        setThreats((prev) => [newThreat, ...prev.slice(0, 9)])
+          status: ['detected', 'blocked', 'investigating'][Math.floor(Math.random() * 3)] as any,
+          description: 'Nueva amenaza detectada por el sistema de monitoreo',
+        };
+        setThreats(prev => [newThreat, ...prev.slice(0, 9)]);
       }
-    }, 5000)
+    }, 5000);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   const getThreatIcon = (type: string) => {
     switch (type) {
-      case "malware":
-        return <Skull className="h-4 w-4" />
-      case "phishing":
-        return <Target className="h-4 w-4" />
-      case "ddos":
-        return <Zap className="h-4 w-4" />
-      case "brute_force":
-        return <Lock className="h-4 w-4" />
-      case "sql_injection":
-        return <Database className="h-4 w-4" />
-      case "xss":
-        return <Globe className="h-4 w-4" />
+      case 'malware':
+        return <Skull className="h-4 w-4" />;
+      case 'phishing':
+        return <Target className="h-4 w-4" />;
+      case 'ddos':
+        return <Zap className="h-4 w-4" />;
+      case 'brute_force':
+        return <Lock className="h-4 w-4" />;
+      case 'sql_injection':
+        return <Database className="h-4 w-4" />;
+      case 'xss':
+        return <Globe className="h-4 w-4" />;
       default:
-        return <AlertTriangle className="h-4 w-4" />
+        return <AlertTriangle className="h-4 w-4" />;
     }
-  }
+  };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical":
-        return "destructive"
-      case "high":
-        return "destructive"
-      case "medium":
-        return "secondary"
-      case "low":
-        return "outline"
+      case 'critical':
+        return 'destructive';
+      case 'high':
+        return 'destructive';
+      case 'medium':
+        return 'secondary';
+      case 'low':
+        return 'outline';
       default:
-        return "outline"
+        return 'outline';
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "blocked":
-        return <Ban className="h-3 w-3 text-red-500" />
-      case "resolved":
-        return <CheckCircle className="h-3 w-3 text-green-500" />
-      case "investigating":
-        return <Eye className="h-3 w-3 text-yellow-500" />
-      case "detected":
-        return <AlertTriangle className="h-3 w-3 text-orange-500" />
+      case 'blocked':
+        return <Ban className="h-3 w-3 text-red-500" />;
+      case 'resolved':
+        return <CheckCircle className="h-3 w-3 text-green-500" />;
+      case 'investigating':
+        return <Eye className="h-3 w-3 text-yellow-500" />;
+      case 'detected':
+        return <AlertTriangle className="h-3 w-3 text-orange-500" />;
       default:
-        return <Clock className="h-3 w-3 text-gray-500" />
+        return <Clock className="h-3 w-3 text-gray-500" />;
     }
-  }
+  };
 
   const getThreatLevelColor = (level: number) => {
-    if (level >= 80) return "text-red-500"
-    if (level >= 60) return "text-yellow-500"
-    return "text-green-500"
-  }
+    if (level >= 80) return 'text-red-500';
+    if (level >= 60) return 'text-yellow-500';
+    return 'text-green-500';
+  };
 
   return (
     <div className="space-y-6">
       {/* Panel de estado general */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Nivel de Amenaza</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
+            <Shield className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${getThreatLevelColor(metrics.threatLevel)}`}>
               {metrics.threatLevel}%
             </div>
             <Progress value={metrics.threatLevel} className="mt-2" />
-            <p className="text-xs text-muted-foreground mt-1">
-              {metrics.threatLevel >= 80 ? "Crítico" : metrics.threatLevel >= 60 ? "Alto" : "Normal"}
+            <p className="text-muted-foreground mt-1 text-xs">
+              {metrics.threatLevel >= 80
+                ? 'Crítico'
+                : metrics.threatLevel >= 60
+                  ? 'Alto'
+                  : 'Normal'}
             </p>
           </CardContent>
         </Card>
@@ -218,12 +231,12 @@ export function CybersecurityDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Ataques Bloqueados</CardTitle>
-            <Ban className="h-4 w-4 text-muted-foreground" />
+            <Ban className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-500">{metrics.blockedAttacks}</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
+            <div className="text-muted-foreground flex items-center text-xs">
+              <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
               +15% últimas 24h
             </div>
           </CardContent>
@@ -232,12 +245,12 @@ export function CybersecurityDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vulnerabilidades</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+            <AlertTriangle className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-500">{metrics.vulnerabilities}</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingDown className="h-3 w-3 mr-1 text-green-500" />
+            <div className="text-muted-foreground flex items-center text-xs">
+              <TrendingDown className="mr-1 h-3 w-3 text-green-500" />
               -2 resueltas hoy
             </div>
           </CardContent>
@@ -246,24 +259,24 @@ export function CybersecurityDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Puntuación Seguridad</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            <CheckCircle className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-500">{metrics.securityScore}/100</div>
             <Progress value={metrics.securityScore} className="mt-2" />
-            <p className="text-xs text-muted-foreground mt-1">Excelente</p>
+            <p className="text-muted-foreground mt-1 text-xs">Excelente</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Disponibilidad</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-500">{metrics.uptime}%</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
+            <div className="text-muted-foreground flex items-center text-xs">
+              <CheckCircle className="mr-1 h-3 w-3 text-green-500" />
               Sistema operativo
             </div>
           </CardContent>
@@ -280,7 +293,7 @@ export function CybersecurityDashboard() {
         </TabsList>
 
         <TabsContent value="monitoring" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -292,9 +305,9 @@ export function CybersecurityDashboard() {
               <CardContent>
                 <ChartContainer
                   config={{
-                    threats: { label: "Amenazas", color: "hsl(var(--chart-4))" },
-                    blocked: { label: "Bloqueadas", color: "hsl(var(--chart-1))" },
-                    allowed: { label: "Permitidas", color: "hsl(var(--chart-2))" },
+                    threats: { label: 'Amenazas', color: 'hsl(var(--chart-4))' },
+                    blocked: { label: 'Bloqueadas', color: 'hsl(var(--chart-1))' },
+                    allowed: { label: 'Permitidas', color: 'hsl(var(--chart-2))' },
                   }}
                   className="h-[300px]"
                 >
@@ -342,26 +355,33 @@ export function CybersecurityDashboard() {
                 <CardDescription>Últimas amenazas detectadas</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 max-h-[300px] overflow-y-auto">
-                  {threats.slice(0, 5).map((threat) => (
+                <div className="max-h-[300px] space-y-3 overflow-y-auto">
+                  {threats.slice(0, 5).map(threat => (
                     <Alert key={threat.id} className="p-3">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-2">
                           {getThreatIcon(threat.type)}
                           <div className="flex-1 space-y-1">
                             <div className="flex items-center space-x-2">
-                              <Badge variant={getSeverityColor(threat.severity)} className="text-xs">
+                              <Badge
+                                variant={getSeverityColor(threat.severity)}
+                                className="text-xs"
+                              >
                                 {threat.severity.toUpperCase()}
                               </Badge>
                               {getStatusIcon(threat.status)}
-                              <span className="text-xs text-muted-foreground capitalize">{threat.status}</span>
+                              <span className="text-muted-foreground text-xs capitalize">
+                                {threat.status}
+                              </span>
                             </div>
                             <AlertDescription className="text-xs">
                               <div className="font-medium">{threat.description}</div>
                               <div className="text-muted-foreground mt-1">
                                 {threat.source} → {threat.target}
                               </div>
-                              <div className="text-muted-foreground">{threat.timestamp.toLocaleString("es-ES")}</div>
+                              <div className="text-muted-foreground">
+                                {threat.timestamp.toLocaleString('es-ES')}
+                              </div>
                             </AlertDescription>
                           </div>
                         </div>
@@ -374,10 +394,10 @@ export function CybersecurityDashboard() {
           </div>
 
           {/* Panel de estado de servicios */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 text-sm">
                   <Shield className="h-4 w-4" />
                   <span>Firewall</span>
                 </CardTitle>
@@ -385,20 +405,20 @@ export function CybersecurityDashboard() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <Badge variant="default" className="bg-green-500">
-                    <CheckCircle className="h-3 w-3 mr-1" />
+                    <CheckCircle className="mr-1 h-3 w-3" />
                     Activo
                   </Badge>
-                  <span className="text-sm text-muted-foreground">1,247 bloqueados</span>
+                  <span className="text-muted-foreground text-sm">1,247 bloqueados</span>
                 </div>
-                <div className="mt-2 text-xs text-muted-foreground">
-                  Última actualización: {new Date().toLocaleTimeString("es-ES")}
+                <div className="text-muted-foreground mt-2 text-xs">
+                  Última actualización: {new Date().toLocaleTimeString('es-ES')}
                 </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 text-sm">
                   <Radar className="h-4 w-4" />
                   <span>IDS/IPS</span>
                 </CardTitle>
@@ -406,18 +426,18 @@ export function CybersecurityDashboard() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <Badge variant="default" className="bg-green-500">
-                    <Eye className="h-3 w-3 mr-1" />
+                    <Eye className="mr-1 h-3 w-3" />
                     Monitoreando
                   </Badge>
-                  <span className="text-sm text-muted-foreground">3 amenazas activas</span>
+                  <span className="text-muted-foreground text-sm">3 amenazas activas</span>
                 </div>
-                <div className="mt-2 text-xs text-muted-foreground">Sensibilidad: Alta</div>
+                <div className="text-muted-foreground mt-2 text-xs">Sensibilidad: Alta</div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 text-sm">
                   <Lock className="h-4 w-4" />
                   <span>Cifrado</span>
                 </CardTitle>
@@ -425,12 +445,14 @@ export function CybersecurityDashboard() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <Badge variant="default" className="bg-green-500">
-                    <Lock className="h-3 w-3 mr-1" />
+                    <Lock className="mr-1 h-3 w-3" />
                     TLS 1.3
                   </Badge>
-                  <span className="text-sm text-muted-foreground">256-bit AES</span>
+                  <span className="text-muted-foreground text-sm">256-bit AES</span>
                 </div>
-                <div className="mt-2 text-xs text-muted-foreground">Certificado válido hasta 2025</div>
+                <div className="text-muted-foreground mt-2 text-xs">
+                  Certificado válido hasta 2025
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -445,11 +467,13 @@ export function CybersecurityDashboard() {
                   <span>Centro de Detección de Amenazas</span>
                 </div>
                 <Button>
-                  <Zap className="h-4 w-4 mr-2" />
+                  <Zap className="mr-2 h-4 w-4" />
                   Escaneo Completo
                 </Button>
               </CardTitle>
-              <CardDescription>Sistema avanzado de detección y análisis de amenazas</CardDescription>
+              <CardDescription>
+                Sistema avanzado de detección y análisis de amenazas
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -465,12 +489,12 @@ export function CybersecurityDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {threats.map((threat) => (
+                  {threats.map(threat => (
                     <TableRow key={threat.id}>
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           {getThreatIcon(threat.type)}
-                          <span className="capitalize">{threat.type.replace("_", " ")}</span>
+                          <span className="capitalize">{threat.type.replace('_', ' ')}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -481,10 +505,12 @@ export function CybersecurityDashboard() {
                       <TableCell>
                         <div className="flex items-center space-x-1">
                           {getStatusIcon(threat.status)}
-                          <span className="capitalize text-sm">{threat.status}</span>
+                          <span className="text-sm capitalize">{threat.status}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{threat.timestamp.toLocaleString("es-ES")}</TableCell>
+                      <TableCell className="text-sm">
+                        {threat.timestamp.toLocaleString('es-ES')}
+                      </TableCell>
                       <TableCell>
                         <div className="flex space-x-1">
                           <Button size="sm" variant="outline">
@@ -504,7 +530,7 @@ export function CybersecurityDashboard() {
         </TabsContent>
 
         <TabsContent value="firewall" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -515,52 +541,58 @@ export function CybersecurityDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 border rounded">
+                  <div className="flex items-center justify-between rounded border p-3">
                     <div>
                       <div className="font-medium">Bloqueo de IPs Sospechosas</div>
-                      <div className="text-sm text-muted-foreground">Bloqueo automático tras 5 intentos fallidos</div>
+                      <div className="text-muted-foreground text-sm">
+                        Bloqueo automático tras 5 intentos fallidos
+                      </div>
                     </div>
                     <Badge variant="default" className="bg-green-500">
                       Activo
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 border rounded">
+                  <div className="flex items-center justify-between rounded border p-3">
                     <div>
                       <div className="font-medium">Filtrado de Contenido</div>
-                      <div className="text-sm text-muted-foreground">Análisis de payloads maliciosos</div>
+                      <div className="text-muted-foreground text-sm">
+                        Análisis de payloads maliciosos
+                      </div>
                     </div>
                     <Badge variant="default" className="bg-green-500">
                       Activo
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 border rounded">
+                  <div className="flex items-center justify-between rounded border p-3">
                     <div>
                       <div className="font-medium">Rate Limiting</div>
-                      <div className="text-sm text-muted-foreground">100 requests/min por IP</div>
+                      <div className="text-muted-foreground text-sm">100 requests/min por IP</div>
                     </div>
                     <Badge variant="default" className="bg-green-500">
                       Activo
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 border rounded">
+                  <div className="flex items-center justify-between rounded border p-3">
                     <div>
                       <div className="font-medium">Geo-blocking</div>
-                      <div className="text-sm text-muted-foreground">Bloqueo de países de alto riesgo</div>
+                      <div className="text-muted-foreground text-sm">
+                        Bloqueo de países de alto riesgo
+                      </div>
                     </div>
                     <Badge variant="secondary">Configurar</Badge>
                   </div>
                 </div>
 
-                <div className="pt-4 space-y-2">
+                <div className="space-y-2 pt-4">
                   <Button className="w-full">
-                    <Settings className="h-4 w-4 mr-2" />
+                    <Settings className="mr-2 h-4 w-4" />
                     Configurar Reglas
                   </Button>
                   <Button variant="outline" className="w-full bg-transparent">
-                    <Activity className="h-4 w-4 mr-2" />
+                    <Activity className="mr-2 h-4 w-4" />
                     Ver Logs del Firewall
                   </Button>
                 </div>
@@ -576,15 +608,18 @@ export function CybersecurityDashboard() {
                 <CardDescription>Lista de direcciones IP bloqueadas</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                <div className="max-h-[300px] space-y-2 overflow-y-auto">
                   {[
-                    { ip: "192.168.1.100", reason: "Brute force attack", time: "2 min ago" },
-                    { ip: "10.0.0.50", reason: "SQL injection attempt", time: "5 min ago" },
-                    { ip: "172.16.0.25", reason: "Suspicious activity", time: "12 min ago" },
-                    { ip: "203.0.113.45", reason: "DDoS attempt", time: "18 min ago" },
-                    { ip: "198.51.100.30", reason: "Malware distribution", time: "25 min ago" },
+                    { ip: '192.168.1.100', reason: 'Brute force attack', time: '2 min ago' },
+                    { ip: '10.0.0.50', reason: 'SQL injection attempt', time: '5 min ago' },
+                    { ip: '172.16.0.25', reason: 'Suspicious activity', time: '12 min ago' },
+                    { ip: '203.0.113.45', reason: 'DDoS attempt', time: '18 min ago' },
+                    { ip: '198.51.100.30', reason: 'Malware distribution', time: '25 min ago' },
                   ].map((blocked, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 border rounded text-sm">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between rounded border p-2 text-sm"
+                    >
                       <div>
                         <div className="font-mono font-medium">{blocked.ip}</div>
                         <div className="text-muted-foreground">{blocked.reason}</div>
@@ -610,27 +645,29 @@ export function CybersecurityDashboard() {
                 <Activity className="h-5 w-5" />
                 <span>Análisis Forense y Tendencias</span>
               </CardTitle>
-              <CardDescription>Análisis detallado de patrones de ataque y tendencias de seguridad</CardDescription>
+              <CardDescription>
+                Análisis detallado de patrones de ataque y tendencias de seguridad
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div>
-                  <h4 className="font-medium mb-3">Tipos de Amenazas (Últimos 30 días)</h4>
+                  <h4 className="mb-3 font-medium">Tipos de Amenazas (Últimos 30 días)</h4>
                   <ChartContainer
                     config={{
-                      count: { label: "Cantidad", color: "hsl(var(--chart-1))" },
+                      count: { label: 'Cantidad', color: 'hsl(var(--chart-1))' },
                     }}
                     className="h-[250px]"
                   >
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={[
-                          { type: "Brute Force", count: 45 },
-                          { type: "SQL Injection", count: 23 },
-                          { type: "XSS", count: 18 },
-                          { type: "DDoS", count: 12 },
-                          { type: "Malware", count: 8 },
-                          { type: "Phishing", count: 5 },
+                          { type: 'Brute Force', count: 45 },
+                          { type: 'SQL Injection', count: 23 },
+                          { type: 'XSS', count: 18 },
+                          { type: 'DDoS', count: 12 },
+                          { type: 'Malware', count: 8 },
+                          { type: 'Phishing', count: 5 },
                         ]}
                       >
                         <XAxis dataKey="type" fontSize={10} />
@@ -643,34 +680,34 @@ export function CybersecurityDashboard() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-3">Estadísticas de Seguridad</h4>
+                  <h4 className="mb-3 font-medium">Estadísticas de Seguridad</h4>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4 text-center">
-                      <div className="p-3 border rounded">
+                      <div className="rounded border p-3">
                         <div className="text-2xl font-bold text-red-500">1,247</div>
-                        <div className="text-sm text-muted-foreground">Ataques Bloqueados</div>
+                        <div className="text-muted-foreground text-sm">Ataques Bloqueados</div>
                       </div>
-                      <div className="p-3 border rounded">
+                      <div className="rounded border p-3">
                         <div className="text-2xl font-bold text-green-500">99.2%</div>
-                        <div className="text-sm text-muted-foreground">Tasa de Detección</div>
+                        <div className="text-muted-foreground text-sm">Tasa de Detección</div>
                       </div>
-                      <div className="p-3 border rounded">
+                      <div className="rounded border p-3">
                         <div className="text-2xl font-bold text-blue-500">0.8s</div>
-                        <div className="text-sm text-muted-foreground">Tiempo de Respuesta</div>
+                        <div className="text-muted-foreground text-sm">Tiempo de Respuesta</div>
                       </div>
-                      <div className="p-3 border rounded">
+                      <div className="rounded border p-3">
                         <div className="text-2xl font-bold text-purple-500">156</div>
-                        <div className="text-sm text-muted-foreground">IPs Bloqueadas</div>
+                        <div className="text-muted-foreground text-sm">IPs Bloqueadas</div>
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <Button className="w-full">
-                        <Activity className="h-4 w-4 mr-2" />
+                        <Activity className="mr-2 h-4 w-4" />
                         Generar Reporte Completo
                       </Button>
                       <Button variant="outline" className="w-full bg-transparent">
-                        <TrendingUp className="h-4 w-4 mr-2" />
+                        <TrendingUp className="mr-2 h-4 w-4" />
                         Exportar Métricas
                       </Button>
                     </div>
@@ -682,5 +719,5 @@ export function CybersecurityDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

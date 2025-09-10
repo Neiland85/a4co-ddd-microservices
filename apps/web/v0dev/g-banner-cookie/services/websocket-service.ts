@@ -6,23 +6,23 @@ import type {
   RealTimeOrderUpdate,
   RealTimeCustomerUpdate,
   RealTimeProductUpdate,
-} from "../types/websocket-types"
+} from '../types/websocket-types';
 
 export class WebSocketService {
-  private ws: WebSocket | null = null
-  private config: WebSocketConfig
-  private listeners: Map<string, Set<(data: any) => void>> = new Map()
+  private ws: WebSocket | null = null;
+  private config: WebSocketConfig;
+  private listeners: Map<string, Set<(data: any) => void>> = new Map();
   private connectionStatus: ConnectionStatus = {
     connected: false,
     reconnecting: false,
     reconnectAttempts: 0,
-  }
-  private statusListeners: Set<(status: ConnectionStatus) => void> = new Set()
-  private heartbeatInterval: NodeJS.Timeout | null = null
-  private reconnectTimeout: NodeJS.Timeout | null = null
+  };
+  private statusListeners: Set<(status: ConnectionStatus) => void> = new Set();
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+  private reconnectTimeout: NodeJS.Timeout | null = null;
 
   constructor(config: WebSocketConfig) {
-    this.config = config
+    this.config = config;
   }
 
   connect(): Promise<void> {
@@ -30,7 +30,7 @@ export class WebSocketService {
       try {
         // For demo purposes, we'll simulate a WebSocket connection
         // In production, this would be: this.ws = new WebSocket(this.config.url)
-        this.simulateConnection()
+        this.simulateConnection();
 
         this.updateConnectionStatus({
           connected: true,
@@ -38,65 +38,65 @@ export class WebSocketService {
           lastConnected: new Date(),
           reconnectAttempts: 0,
           error: undefined,
-        })
+        });
 
-        this.startHeartbeat()
-        this.startDataSimulation()
-        resolve()
+        this.startHeartbeat();
+        this.startDataSimulation();
+        resolve();
       } catch (error) {
         this.updateConnectionStatus({
           connected: false,
           reconnecting: false,
           reconnectAttempts: this.connectionStatus.reconnectAttempts,
-          error: error instanceof Error ? error.message : "Connection failed",
-        })
-        reject(error)
+          error: error instanceof Error ? error.message : 'Connection failed',
+        });
+        reject(error);
       }
-    })
+    });
   }
 
   private simulateConnection() {
     // Simulate WebSocket connection for demo
-    console.log("🔌 WebSocket connection established (simulated)")
+    console.log('🔌 WebSocket connection established (simulated)');
   }
 
   private startHeartbeat() {
     this.heartbeatInterval = setInterval(() => {
       if (this.connectionStatus.connected) {
         // Send heartbeat
-        console.log("💓 Heartbeat sent")
+        console.log('💓 Heartbeat sent');
       }
-    }, this.config.heartbeatInterval)
+    }, this.config.heartbeatInterval);
   }
 
   private startDataSimulation() {
     // Simulate real-time sales updates
     setInterval(() => {
       if (this.connectionStatus.connected) {
-        this.simulateSalesUpdate()
+        this.simulateSalesUpdate();
       }
-    }, 5000)
+    }, 5000);
 
     // Simulate real-time order updates
     setInterval(() => {
       if (this.connectionStatus.connected) {
-        this.simulateOrderUpdate()
+        this.simulateOrderUpdate();
       }
-    }, 8000)
+    }, 8000);
 
     // Simulate real-time customer updates
     setInterval(() => {
       if (this.connectionStatus.connected) {
-        this.simulateCustomerUpdate()
+        this.simulateCustomerUpdate();
       }
-    }, 12000)
+    }, 12000);
 
     // Simulate real-time product updates
     setInterval(() => {
       if (this.connectionStatus.connected) {
-        this.simulateProductUpdate()
+        this.simulateProductUpdate();
       }
-    }, 15000)
+    }, 15000);
   }
 
   private simulateSalesUpdate() {
@@ -110,21 +110,21 @@ export class WebSocketService {
         orders: Math.floor((Math.random() - 0.5) * 4),
         customers: Math.floor((Math.random() - 0.5) * 2),
       },
-    }
+    };
 
-    this.emit("SALES_UPDATE", salesUpdate)
+    this.emit('SALES_UPDATE', salesUpdate);
   }
 
   private simulateOrderUpdate() {
     const products = [
-      "Ochío Tradicional",
-      "Aceite de Oliva Virgen",
-      "Queso Semicurado",
-      "Miel de Azahar",
-      "Jamón Ibérico",
-      "Pan de Pueblo",
-    ]
-    const categories = ["panaderia", "aceite", "queseria", "miel", "embutidos"]
+      'Ochío Tradicional',
+      'Aceite de Oliva Virgen',
+      'Queso Semicurado',
+      'Miel de Azahar',
+      'Jamón Ibérico',
+      'Pan de Pueblo',
+    ];
+    const categories = ['panaderia', 'aceite', 'queseria', 'miel', 'embutidos'];
 
     const orderUpdate: RealTimeOrderUpdate = {
       orderId: `ORD-${Date.now()}`,
@@ -132,34 +132,34 @@ export class WebSocketService {
       category: categories[Math.floor(Math.random() * categories.length)],
       amount: Math.random() * 50 + 10,
       customerId: `CUST-${Math.floor(Math.random() * 1000)}`,
-      status: Math.random() > 0.8 ? "pending" : "confirmed",
+      status: Math.random() > 0.8 ? 'pending' : 'confirmed',
       timestamp: new Date().toISOString(),
-    }
+    };
 
-    this.emit("ORDER_UPDATE", orderUpdate)
+    this.emit('ORDER_UPDATE', orderUpdate);
   }
 
   private simulateCustomerUpdate() {
     const customerUpdate: RealTimeCustomerUpdate = {
       customerId: `CUST-${Date.now()}`,
-      type: Math.random() > 0.6 ? "new" : "returning",
-      location: ["Madrid", "Barcelona", "Valencia", "Sevilla"][Math.floor(Math.random() * 4)],
+      type: Math.random() > 0.6 ? 'new' : 'returning',
+      location: ['Madrid', 'Barcelona', 'Valencia', 'Sevilla'][Math.floor(Math.random() * 4)],
       totalSpent: Math.random() * 200 + 25,
       timestamp: new Date().toISOString(),
-    }
+    };
 
-    this.emit("CUSTOMER_UPDATE", customerUpdate)
+    this.emit('CUSTOMER_UPDATE', customerUpdate);
   }
 
   private simulateProductUpdate() {
     const products = [
-      { name: "Ochío Tradicional", category: "panaderia" },
-      { name: "Aceite de Oliva Virgen", category: "aceite" },
-      { name: "Queso Semicurado", category: "queseria" },
-      { name: "Miel de Azahar", category: "miel" },
-    ]
+      { name: 'Ochío Tradicional', category: 'panaderia' },
+      { name: 'Aceite de Oliva Virgen', category: 'aceite' },
+      { name: 'Queso Semicurado', category: 'queseria' },
+      { name: 'Miel de Azahar', category: 'miel' },
+    ];
 
-    const product = products[Math.floor(Math.random() * products.length)]
+    const product = products[Math.floor(Math.random() * products.length)];
 
     const productUpdate: RealTimeProductUpdate = {
       productId: `PROD-${Date.now()}`,
@@ -169,107 +169,107 @@ export class WebSocketService {
       revenue: Math.random() * 100 + 20,
       stockLevel: Math.floor(Math.random() * 50) + 10,
       timestamp: new Date().toISOString(),
-    }
+    };
 
-    this.emit("PRODUCT_UPDATE", productUpdate)
+    this.emit('PRODUCT_UPDATE', productUpdate);
   }
 
-  private emit(type: WebSocketMessage["type"], data: any) {
+  private emit(type: WebSocketMessage['type'], data: any) {
     const message: WebSocketMessage = {
       type,
       data,
       timestamp: new Date().toISOString(),
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    }
+    };
 
-    const listeners = this.listeners.get(type)
+    const listeners = this.listeners.get(type);
     if (listeners) {
-      listeners.forEach((listener) => {
+      listeners.forEach(listener => {
         try {
-          listener(data)
+          listener(data);
         } catch (error) {
-          console.error("Error in WebSocket listener:", error)
+          console.error('Error in WebSocket listener:', error);
         }
-      })
+      });
     }
 
     // Also emit to general analytics listeners
-    const analyticsListeners = this.listeners.get("ANALYTICS_UPDATE")
+    const analyticsListeners = this.listeners.get('ANALYTICS_UPDATE');
     if (analyticsListeners) {
-      analyticsListeners.forEach((listener) => {
+      analyticsListeners.forEach(listener => {
         try {
-          listener({ type, data, timestamp: message.timestamp })
+          listener({ type, data, timestamp: message.timestamp });
         } catch (error) {
-          console.error("Error in analytics listener:", error)
+          console.error('Error in analytics listener:', error);
         }
-      })
+      });
     }
   }
 
-  subscribe(eventType: WebSocketMessage["type"], callback: (data: any) => void): () => void {
+  subscribe(eventType: WebSocketMessage['type'], callback: (data: any) => void): () => void {
     if (!this.listeners.has(eventType)) {
-      this.listeners.set(eventType, new Set())
+      this.listeners.set(eventType, new Set());
     }
 
-    this.listeners.get(eventType)!.add(callback)
+    this.listeners.get(eventType)!.add(callback);
 
     // Return unsubscribe function
     return () => {
-      const listeners = this.listeners.get(eventType)
+      const listeners = this.listeners.get(eventType);
       if (listeners) {
-        listeners.delete(callback)
+        listeners.delete(callback);
         if (listeners.size === 0) {
-          this.listeners.delete(eventType)
+          this.listeners.delete(eventType);
         }
       }
-    }
+    };
   }
 
   subscribeToConnectionStatus(callback: (status: ConnectionStatus) => void): () => void {
-    this.statusListeners.add(callback)
+    this.statusListeners.add(callback);
 
     // Send current status immediately
-    callback(this.connectionStatus)
+    callback(this.connectionStatus);
 
     return () => {
-      this.statusListeners.delete(callback)
-    }
+      this.statusListeners.delete(callback);
+    };
   }
 
   private updateConnectionStatus(status: Partial<ConnectionStatus>) {
-    this.connectionStatus = { ...this.connectionStatus, ...status }
-    this.statusListeners.forEach((listener) => {
+    this.connectionStatus = { ...this.connectionStatus, ...status };
+    this.statusListeners.forEach(listener => {
       try {
-        listener(this.connectionStatus)
+        listener(this.connectionStatus);
       } catch (error) {
-        console.error("Error in connection status listener:", error)
+        console.error('Error in connection status listener:', error);
       }
-    })
+    });
   }
 
   disconnect() {
     if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval)
-      this.heartbeatInterval = null
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
     }
 
     if (this.reconnectTimeout) {
-      clearTimeout(this.reconnectTimeout)
-      this.reconnectTimeout = null
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
     }
 
     if (this.ws) {
-      this.ws.close()
-      this.ws = null
+      this.ws.close();
+      this.ws = null;
     }
 
     this.updateConnectionStatus({
       connected: false,
       reconnecting: false,
       reconnectAttempts: 0,
-    })
+    });
 
-    console.log("🔌 WebSocket disconnected")
+    console.log('🔌 WebSocket disconnected');
   }
 
   private async reconnect() {
@@ -277,47 +277,47 @@ export class WebSocketService {
       this.updateConnectionStatus({
         connected: false,
         reconnecting: false,
-        error: "Max reconnection attempts reached",
-      })
-      return
+        error: 'Max reconnection attempts reached',
+      });
+      return;
     }
 
     this.updateConnectionStatus({
       connected: false,
       reconnecting: true,
       reconnectAttempts: this.connectionStatus.reconnectAttempts + 1,
-    })
+    });
 
     this.reconnectTimeout = setTimeout(async () => {
       try {
-        await this.connect()
+        await this.connect();
       } catch (error) {
-        console.error("Reconnection failed:", error)
-        this.reconnect()
+        console.error('Reconnection failed:', error);
+        this.reconnect();
       }
-    }, this.config.reconnectInterval)
+    }, this.config.reconnectInterval);
   }
 
   getConnectionStatus(): ConnectionStatus {
-    return { ...this.connectionStatus }
+    return { ...this.connectionStatus };
   }
 
   isConnected(): boolean {
-    return this.connectionStatus.connected
+    return this.connectionStatus.connected;
   }
 }
 
 // Singleton instance
-let wsService: WebSocketService | null = null
+let wsService: WebSocketService | null = null;
 
 export const getWebSocketService = (): WebSocketService => {
   if (!wsService) {
     wsService = new WebSocketService({
-      url: process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8080/ws",
+      url: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws',
       reconnectInterval: 3000,
       maxReconnectAttempts: 5,
       heartbeatInterval: 30000,
-    })
+    });
   }
-  return wsService
-}
+  return wsService;
+};

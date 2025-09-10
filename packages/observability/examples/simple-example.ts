@@ -8,16 +8,16 @@ const { logger, httpLogger, getTracer, shutdown } = initializeObservability({
   environment: process.env.NODE_ENV || 'development',
   logging: {
     level: 'debug',
-    prettyPrint: true
+    prettyPrint: true,
   },
   tracing: {
     enabled: true,
-    jaegerEndpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces'
+    jaegerEndpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces',
   },
   metrics: {
     enabled: true,
-    port: 9464
-  }
+    port: 9464,
+  },
 });
 
 // Crear aplicación Express
@@ -31,40 +31,40 @@ app.use(express.json());
 app.get('/hello/:name', async (req, res) => {
   const tracer = getTracer('hello-endpoint');
   const span = tracer.startSpan('process-hello-request');
-  
+
   try {
     // Log con contexto
     logger.info('Processing hello request', {
       name: req.params.name,
-      userAgent: req.headers['user-agent']
+      userAgent: req.headers['user-agent'],
     });
-    
+
     // Simular algún procesamiento
     span.addEvent('processing-start');
     await new Promise(resolve => setTimeout(resolve, 100));
-    
+
     // Agregar atributos al span
     span.setAttributes({
       'user.name': req.params.name,
-      'response.type': 'greeting'
+      'response.type': 'greeting',
     });
-    
+
     const message = `Hello, ${req.params.name}!`;
-    
+
     span.addEvent('processing-complete');
     span.setStatus({ code: 0 }); // OK
-    
-    res.json({ 
+
+    res.json({
       message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
     logger.error('Error processing request', error);
     span.recordException(error);
     span.setStatus({ code: 2, message: error.message }); // ERROR
-    
-    res.status(500).json({ 
-      error: 'Internal server error' 
+
+    res.status(500).json({
+      error: 'Internal server error',
     });
   } finally {
     span.end();
@@ -73,10 +73,10 @@ app.get('/hello/:name', async (req, res) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'healthy',
     service: 'example-service',
-    uptime: process.uptime()
+    uptime: process.uptime(),
   });
 });
 
@@ -89,29 +89,29 @@ const server = app.listen(PORT, () => {
   logger.info('Example service started', {
     port: PORT,
     pid: process.pid,
-    node_version: process.version
+    node_version: process.version,
   });
 });
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   logger.info('SIGTERM received, shutting down gracefully');
-  
+
   server.close(() => {
     logger.info('HTTP server closed');
   });
-  
+
   await shutdown();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
   logger.info('SIGINT received, shutting down gracefully');
-  
+
   server.close(() => {
     logger.info('HTTP server closed');
   });
-  
+
   await shutdown();
   process.exit(0);
 });

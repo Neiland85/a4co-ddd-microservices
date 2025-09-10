@@ -6,7 +6,7 @@ export interface EventMessage {
     data: any;
     metadata?: Record<string, any>;
 }
-export interface EventHandler<T = any> {
+export interface INatsEventHandler<T = any> {
     (event: EventMessage): Promise<void> | void;
 }
 export interface NatsEventBusConfig {
@@ -28,7 +28,7 @@ export declare class NatsEventBus extends EventEmitter {
     disconnect(): Promise<void>;
     private setupConnectionListeners;
     publish<T = any>(subject: string, event: EventMessage): Promise<void>;
-    subscribe(subject: string, handler: EventHandler, queueGroup?: string): Promise<void>;
+    subscribe(subject: string, handler: INatsEventHandler, queueGroup?: string): Promise<void>;
     private setupMessageHandler;
     unsubscribe(subject: string, queueGroup?: string): Promise<void>;
     unsubscribeAll(): Promise<void>;
@@ -37,7 +37,7 @@ export declare class NatsEventBus extends EventEmitter {
     getActiveSubscriptions(): string[];
     publishOrderCreated(orderId: string, orderData: any): Promise<void>;
     publishStockReserved(orderId: string, stockData: any): Promise<void>;
-    subscribeToOrderCreated(handler: EventHandler): Promise<void>;
-    subscribeToStockReserved(handler: EventHandler): Promise<void>;
+    subscribeToOrderCreated(handler: INatsEventHandler): Promise<void>;
+    subscribeToStockReserved(handler: INatsEventHandler): Promise<void>;
 }
 //# sourceMappingURL=nats-event-bus.d.ts.map

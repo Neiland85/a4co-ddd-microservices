@@ -3,16 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorMessages = exports.ErrorCodes = void 0;
 var ErrorCodes;
 (function (ErrorCodes) {
+    // Authentication errors
     ErrorCodes["INVALID_CREDENTIALS"] = "AUTH_001";
     ErrorCodes["TOKEN_EXPIRED"] = "AUTH_002";
     ErrorCodes["TOKEN_INVALID"] = "AUTH_003";
     ErrorCodes["UNAUTHORIZED"] = "AUTH_004";
+    // Validation errors
     ErrorCodes["VALIDATION_ERROR"] = "VAL_001";
     ErrorCodes["REQUIRED_FIELD_MISSING"] = "VAL_002";
     ErrorCodes["INVALID_FORMAT"] = "VAL_003";
+    // Business logic errors
     ErrorCodes["RESOURCE_NOT_FOUND"] = "BIZ_001";
     ErrorCodes["RESOURCE_ALREADY_EXISTS"] = "BIZ_002";
     ErrorCodes["OPERATION_NOT_ALLOWED"] = "BIZ_003";
+    // System errors
     ErrorCodes["INTERNAL_SERVER_ERROR"] = "SYS_001";
     ErrorCodes["DATABASE_ERROR"] = "SYS_002";
     ErrorCodes["EXTERNAL_SERVICE_ERROR"] = "SYS_003";

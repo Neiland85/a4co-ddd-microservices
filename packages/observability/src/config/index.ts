@@ -109,10 +109,7 @@ export async function shutdownObservability(): Promise<void> {
   logger.info('Shutting down observability');
 
   try {
-    await Promise.all([
-      shutdownTracing(),
-      shutdownMetrics(),
-    ]);
+    await Promise.all([shutdownTracing(), shutdownMetrics()]);
     logger.info('Observability shutdown complete');
   } catch (error) {
     logger.error({ error }, 'Error during observability shutdown');
@@ -146,7 +143,7 @@ function setupGracefulShutdown(): void {
   process.on('SIGUSR2', () => shutdown('SIGUSR2'));
 
   // Handle uncaught exceptions
-  process.on('uncaughtException', (error) => {
+  process.on('uncaughtException', error => {
     logger.fatal({ error }, 'Uncaught exception');
     shutdown('uncaughtException');
   });
@@ -172,7 +169,7 @@ export function getEnvironmentConfig(environment: string): Partial<Observability
           samplingRate: 0.1, // Sample 10% in production
         },
       };
-    
+
     case 'staging':
       return {
         logging: {
@@ -184,7 +181,7 @@ export function getEnvironmentConfig(environment: string): Partial<Observability
           samplingRate: 0.5, // Sample 50% in staging
         },
       };
-    
+
     case 'development':
     default:
       return {
@@ -220,10 +217,13 @@ export function validateConfig(config: ObservabilityConfig): void {
 }
 
 // Quick start helper
-export async function quickStart(serviceName: string, options: Partial<ObservabilityConfig> = {}): Promise<void> {
+export async function quickStart(
+  serviceName: string,
+  options: Partial<ObservabilityConfig> = {}
+): Promise<void> {
   const environment = process.env.NODE_ENV || 'development';
   const envConfig = getEnvironmentConfig(environment);
-  
+
   const config: ObservabilityConfig = {
     serviceName,
     environment,

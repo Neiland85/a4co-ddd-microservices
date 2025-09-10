@@ -12,7 +12,7 @@ export class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
 
   async findByEmail(email: string): Promise<User | null> {
     const user = Array.from(this.users.values()).find(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
+      u => u.email.toLowerCase() === email.toLowerCase()
     );
     return user || null;
   }
@@ -37,9 +37,7 @@ export class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
   }
 
   async findActiveUsers(): Promise<User[]> {
-    return Array.from(this.users.values()).filter(
-      (user) => user.status === UserStatus.ACTIVE
-    );
+    return Array.from(this.users.values()).filter(user => user.status === UserStatus.ACTIVE);
   }
 
   async findPaginated(
