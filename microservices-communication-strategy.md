@@ -47,6 +47,7 @@ GET /api/products/{id} - Obtener detalles del producto
 GET /api/products/search - Buscar productos
 GET /api/products/{id}/availability - Verificar disponibilidad
 
+
 ```
 
 
@@ -58,6 +59,7 @@ POST /api/orders - Crear nuevo pedido
 GET /api/orders/{id} - Obtener detalles del pedido
 GET /api/orders/customer/{customerId} - Pedidos por cliente
 
+
 ```
 
 
@@ -68,6 +70,7 @@ GET /api/orders/customer/{customerId} - Pedidos por cliente
 GET /api/inventory/{productId} - Consultar stock actual
 POST /api/inventory/check-availability - Verificar disponibilidad múltiple
 
+
 ```
 
 
@@ -77,6 +80,7 @@ POST /api/inventory/check-availability - Verificar disponibilidad múltiple
 ```http
 GET /api/customers/{id} - Obtener datos del cliente
 POST /api/customers/validate - Validar cliente para pedido
+
 
 ```
 
@@ -452,6 +456,7 @@ payment.initiated
 payment.completed
 payment.failed
 payment.refunded
+
 
 ```
 

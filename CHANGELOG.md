@@ -21,10 +21,13 @@ Cada entrada debe seguir la siguiente estructura por versión:
 ### Formato de encabezado
 
 
+
 ```md
 ## [vX.Y.Z-nombre] - YYYY-MM-DD
 
+
 ```
+
 
 
 ### Categorías permitidas
@@ -67,6 +70,7 @@ Este documento es obligatorio a partir de la versión `v0.4.0-dev-env` y será r
 ## 💾 Ejemplo
 
 
+
 ```md
 ## [v0.4.0-dev-env] - 2025-07-15
 
@@ -81,7 +85,9 @@ Este documento es obligatorio a partir de la versión `v0.4.0-dev-env` y será r
 - Publicado `README.md` actualizado con plan técnico (Fase 0 a 10)
 - Documentación de entorno Copilot alineado a ADR-0010
 
+
 ```
+
 
 
 ---

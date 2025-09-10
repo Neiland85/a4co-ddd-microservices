@@ -32,6 +32,7 @@
   {Object.entries(THEMES)...}
 </style>
 
+
 ```
 
 
@@ -104,6 +105,7 @@ sonar-scanner \
   -Dsonar.organization=a4co \
   -Dsonar.host.url=https://sonarcloud.io \
   -Dsonar.token=YOUR_TOKEN_HERE
+
 
 ```
 

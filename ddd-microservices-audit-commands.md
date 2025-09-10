@@ -15,6 +15,7 @@ find . -type d -name "presentation" | head -20
 # Analizar distribución de código por capas
 cloc --by-dir domain/ application/ infrastructure/ presentation/
 
+
 ```
 
 
@@ -27,6 +28,7 @@ grep -r "BoundedContext\|Context\|Module" --include="*.java" --include="*.cs" --
 
 # Analizar agregados
 grep -r "Aggregate\|AggregateRoot" --include="*.java" --include="*.cs" --include="*.ts" --include="*.go" .
+
 
 ```
 
@@ -43,6 +45,7 @@ find . -name "*ValueObject*" -o -name "*VO*" | grep -E "\.(java|cs|ts|go|py)$" |
 
 # Ratio entidades vs value objects
 echo "scale=2; $(find . -name "*ValueObject*" | wc -l) / $(find . -name "*Entity*" | wc -l)" | bc
+
 
 ```
 
@@ -63,6 +66,7 @@ sonar-scanner \
 # Obtener métricas específicas
 curl -u $SONAR_TOKEN: "http://localhost:9000/api/measures/component?component=ddd-microservices&metricKeys=coverage,bugs,vulnerabilities,code_smells,duplicated_lines_density,complexity"
 
+
 ```
 
 
@@ -76,6 +80,7 @@ pmd -d ./src -R rulesets/java/quickstart.xml -f text -r pmd-report.txt
 # Para .NET
 dotnet tool install -g dotnet-pmd
 dotnet pmd analyze -d ./src -R rulesets/net/quickstart.xml
+
 
 ```
 
@@ -92,6 +97,7 @@ lizard -l java,csharp,python,javascript -o complexity-report.html .
 
 # Obtener métricas específicas
 lizard -C 10 -L 100 -a 5 . | grep -E "NLOC|CCN|token|PARAM"
+
 
 ```
 
@@ -111,6 +117,7 @@ find . -name "*.sql" -o -name "*.ddl" | xargs grep -l "CREATE TABLE" | sort | un
 # Distributed Monolith (alto acoplamiento)
 grep -r "import.*\.domain\." --include="*.java" | grep -v "same.package" | wc -l
 
+
 ```
 
 
@@ -128,6 +135,7 @@ grep -r "v[0-9]\|version" --include="*.yaml" --include="*.yml" api/ swagger/
 swagger-cli validate api-docs/*.yaml
 spectral lint api-docs/*.yaml
 
+
 ```
 
 
@@ -143,6 +151,7 @@ dotnet list package --include-transitive
 
 # Análisis de acoplamiento
 madge --circular --extensions js,ts src/
+
 
 ```
 
@@ -163,6 +172,7 @@ public void domainShouldNotDependOnInfrastructure() {
         .check(classes);
 }
 
+
 ```
 
 
@@ -172,6 +182,7 @@ public void domainShouldNotDependOnInfrastructure() {
 ```bash
 mvn test -Dtest=ArchitectureTest
 gradle test --tests ArchitectureTest
+
 
 ```
 
@@ -185,6 +196,7 @@ java -jar structure101-java.jar -project myproject.prj -report -outputDirectory 
 
 # Análisis de complejidad estructural
 s101 -project myproject.s101prj -report-tangles -report-fat -report-xl
+
 
 ```
 
@@ -209,6 +221,7 @@ EOF
 chmod +x iso-metrics.sh
 ./iso-metrics.sh
 
+
 ```
 
 
@@ -221,6 +234,7 @@ echo "=== ECSS Software Quality Metrics ==="
 echo "Code Coverage: $(grep -oP 'coverage="\K[^"]+' coverage.xml | head -1)%"
 echo "Static Analysis Violations: $(wc -l < pmd-report.txt)"
 echo "Cyclomatic Complexity Average: $(lizard . | tail -1 | awk '{print $3}')"
+
 
 ```
 
@@ -259,6 +273,7 @@ echo "  Media Europea: $EU_COMPLEXITY"
 echo "  Media Nacional: $NATIONAL_COMPLEXITY"
 EOF
 chmod +x benchmark-comparison.sh
+
 
 ```
 
@@ -368,6 +383,7 @@ HTML
 EOF
 chmod +x generate-report.sh
 
+
 ```
 
 
@@ -388,6 +404,7 @@ echo "[$(find . -name "*Factory*" | wc -l) > 0] ✓ Factories"
 echo "[$(find . -name "*DTO*" | wc -l) > 0] ✓ DTOs para comunicación"
 EOF
 chmod +x ddd-checklist.sh
+
 
 ```
 

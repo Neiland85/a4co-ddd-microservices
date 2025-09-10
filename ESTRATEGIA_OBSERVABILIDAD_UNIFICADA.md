@@ -32,6 +32,7 @@ Se ha implementado una estrategia completa de observabilidad unificada para la p
 │  (Tracing)  │     │  (Metrics)  │     │(Dashboards) │
 └─────────────┘     └─────────────┘     └─────────────┘
 
+
 ```
 
 
@@ -98,6 +99,7 @@ Se ha implementado una estrategia completa de observabilidad unificada para la p
 ```bash
 pnpm add @a4co/observability
 
+
 ```
 
 
@@ -161,6 +163,7 @@ helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
 # Alertas
 kubectl apply -f packages/observability/k8s/prometheus-alerts.yaml
 
+
 ```
 
 
@@ -194,6 +197,7 @@ JAEGER_ENDPOINT=http://jaeger:14268/api/traces
 METRICS_PORT=9090
 LOG_LEVEL=info
 
+
 ```
 
 
@@ -202,6 +206,7 @@ LOG_LEVEL=info
 
 ```bash
 REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
+
 
 ```
 

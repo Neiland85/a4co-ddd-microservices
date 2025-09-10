@@ -33,6 +33,7 @@
 - apps/user-service/
 - apps/inventory-service/
 
+
 ```
 
 
@@ -47,6 +48,7 @@
 # CSP headers actualizados
 - apps/web/v0dev/f-modern-backoffice/middleware.ts
 
+
 ```
 
 
@@ -57,6 +59,7 @@
 # Tests de cobertura crítica
 - apps/*/service.test.ts (4 archivos)
 - packages/shared-utils/src/base/*.test.ts (2 archivos)
+
 
 ```
 
@@ -80,6 +83,7 @@ npx madge apps/ --circular --extensions ts,tsx
 # Detectar código muerto
 npx ts-prune --error
 
+
 ```
 
 
@@ -98,6 +102,7 @@ pnpm run coverage:merge
 
 # Ver reporte HTML
 open coverage/lcov-report/index.html
+
 
 ```
 
@@ -119,6 +124,7 @@ sonar-scanner \
 # O usar el comando configurado
 pnpm run quality:check
 
+
 ```
 
 
@@ -136,6 +142,7 @@ git commit -m "refactor: add BaseController and BaseService to reduce duplicatio
 - Extract common service patterns into BaseService
 - Reduce code duplication from 29.69% to estimated <3%
 - Part of technical debt reduction (SonarQube PR #71)"
+
 
 ```
 
@@ -155,6 +162,7 @@ git commit -m "refactor: migrate services to use base classes
 - Use BaseService for common validation and logging
 - Addresses SonarQube duplicated lines issue"
 
+
 ```
 
 
@@ -170,6 +178,7 @@ git commit -m "security: add DOM sanitizer and safe exec utilities
 - Add SafeExec wrapper for secure command execution
 - Update CSP headers to remove unsafe-inline in production
 - Addresses 10 security hotspots from SonarQube"
+
 
 ```
 
@@ -187,6 +196,7 @@ git commit -m "test: add unit tests for critical domain services
 - Add tests for BaseController and BaseService
 - Target 80%+ coverage on critical business logic
 - Configure lcov reporter for SonarQube integration"
+
 
 ```
 
@@ -207,6 +217,7 @@ git commit -m "chore: add quality tools and SonarQube configuration
 - Add test generation script for critical paths
 - Update package.json with quality check commands"
 
+
 ```
 
 
@@ -222,6 +233,7 @@ git commit -m "docs: document security hotspots and debt reduction plan
 - Provide actionable plan for technical debt reduction
 - Include commands and verification steps
 - Reference SonarQube PR #71 findings"
+
 
 ```
 
@@ -250,6 +262,7 @@ pnpm run lint
 
 # Análisis final de deuda técnica
 npx tsx scripts/analyze-technical-debt.ts
+
 
 ```
 

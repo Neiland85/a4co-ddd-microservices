@@ -35,6 +35,7 @@ Esta documentación describe todos los endpoints REST implementados para la comu
 ```bash
 GET /inventory/check/123e4567-e89b-12d3-a456-426614174000?quantity=5
 
+
 ```
 
 
@@ -504,6 +505,7 @@ NATS_SERVERS=nats://localhost:4222
 LOG_LEVEL=info
 LOG_FORMAT=json
 
+
 ```
 
 
@@ -518,6 +520,7 @@ GET /{service}/health
 
 # Verificar métricas
 GET /{service}/metrics
+
 
 ```
 
@@ -576,6 +579,7 @@ GET /{service}/metrics
 
 # Endpoint de prueba (solo en desarrollo)
 POST /{service}/test/reset
+
 
 ```
 
