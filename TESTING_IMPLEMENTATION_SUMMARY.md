@@ -38,6 +38,7 @@ test/
 ├── run-tests.sh          # Script de ejecución
 └── README.md             # Documentación completa
 
+
 ```
 
 
@@ -50,6 +51,7 @@ tests/
 ├── setup.ts               # Configuración global de Jest
 ├── run-tests.sh           # Script de ejecución
 └── README.md              # Documentación completa
+
 
 ```
 
@@ -161,6 +163,7 @@ pnpm test:coverage --filter=auth-service
 # Modo watch
 pnpm test:watch --filter=product-service
 
+
 ```
 
 
@@ -175,6 +178,7 @@ cd apps/auth-service/test
 # Product Service
 cd apps/product-service/tests
 ./run-tests.sh -w -f "ProductService"
+
 
 ```
 
@@ -219,6 +223,7 @@ expect(() => function()).toThrow();
 
 // Validaciones de tipo
 expect(typeof service.method).toBe('function');
+
 
 ```
 

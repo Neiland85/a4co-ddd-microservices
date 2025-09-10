@@ -25,6 +25,7 @@ Esta documentación presenta una implementación completa de **Persistencia DDD*
 
 ```
 
+
 ┌─────────────────────────────────────────┐
 │           PRESENTATION LAYER            │
 │         (Controllers, DTOs)             │
@@ -39,6 +40,7 @@ Esta documentación presenta una implementación completa de **Persistencia DDD*
 │    (Repositories, Prisma, EventBus)     │
 └─────────────────────────────────────────┘
 
+
 ```
 
 
@@ -48,6 +50,7 @@ Esta documentación presenta una implementación completa de **Persistencia DDD*
 ```typescript
 // Separación clara entre dominio e infraestructura
 Domain Entity ←→ Repository Interface ←→ Prisma Repository ←→ Database
+
 
 ```
 
@@ -100,6 +103,7 @@ model Product {
   @@index([categoryId])
   @@index([status, availability])
 }
+
 
 ```
 
@@ -389,6 +393,7 @@ ProductPriceChangedEvent →
   - analytics-service (track price changes)
   - notification-service (alertas de precio)
   - order-service (recalcular órdenes pendientes)
+
 
 ```
 

@@ -28,6 +28,7 @@ El proyecto A4CO DDD Microservices ha evolucionado significativamente, transform
 
 ```
 
+
 a4co-ddd-microservices/
 ├── 📱 apps/ (17 aplicaciones)
 │   ├── dashboard-web/          ✅ REDISEÑADO - MERCADO JAÉN
@@ -51,6 +52,7 @@ a4co-ddd-microservices/
 ├── 📖 docs/                   ✅ 15 ADRs DOCUMENTADOS
 ├── 🏗️ infrastructure/        📁 PREPARADO
 └── 🗄️ prisma/               ✅ ESQUEMA BASE
+
 
 ```
 
@@ -89,6 +91,7 @@ a4co-ddd-microservices/
 - ✨ Efectos hover y transiciones suaves
 - 🏞️ Temática de productos locales y artesanales
 
+
 ```
 
 
@@ -126,6 +129,7 @@ El paquete `shared-utils` implementa completamente los patrones DDD:
 └── presentation/
     ├── controllers/      // Controladores
     └── dto/             // Data Transfer Objects
+
 
 ```
 
@@ -215,9 +219,11 @@ Cada uno de los 17 microservicios implementa:
 
 ```
 
+
 main              ✅ Branch principal actualizado
 ├── develop       ✅ Merged to main exitosamente
 └── (limpias)     ✅ Branches obsoletas eliminadas
+
 
 ```
 
@@ -271,6 +277,7 @@ main              ✅ Branch principal actualizado
 
 ```
 
+
 📱 Aplicación Web Pública
 ├── 🏠 Landing Page
 │   ├── Hero section con productos locales
@@ -292,6 +299,7 @@ main              ✅ Branch principal actualizado
     ├── Geolocalización nativa
     ├── Notificaciones push
     └── Modo offline básico
+
 
 ```
 
@@ -329,6 +337,7 @@ main              ✅ Branch principal actualizado
 ├── ReviewSystem.tsx       // Sistema de reseñas
 ├── BookingCalendar.tsx    // Calendario de eventos
 └── MobileNav.tsx          // Navegación móvil
+
 
 ```
 

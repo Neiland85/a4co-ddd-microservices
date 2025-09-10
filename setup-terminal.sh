@@ -18,16 +18,9 @@ export PATH="$PROJECT_ROOT/scripts:$PATH"
 
 # --- 3. Configurar variables de entorno específicas
 export NODE_ENV="development"
-export TERRAFORM_WORKSPACE="a4co-ddd-microservices"
 export AWS_REGION="us-east-1"
 
 # --- 4. Configurar alias útiles para el proyecto
-alias tf="terraform"
-alias tfp="terraform plan"
-alias tfa="terraform apply"
-alias tfw="terraform workspace"
-alias tfws="terraform workspace select"
-
 alias dev="npm run dev"
 alias build="npm run build"
 alias test="npm test"
@@ -54,7 +47,6 @@ function status() {
     echo "🌿 Rama Git: $(git branch --show-current)"
     echo "📦 Node: $(node --version)"
     echo "🔧 NPM: $(npm --version)"
-    echo "🏗️  Terraform: $(terraform version | head -1)"
 }
 
 # --- 7. Función para limpiar el proyecto
@@ -83,7 +75,6 @@ echo "   - a4co: Cambiar al directorio del proyecto"
 echo "   - status: Ver estado del proyecto"
 echo "   - clean: Limpiar archivos generados"
 echo "   - reinstall: Reinstalar dependencias"
-echo "   - tf: Alias para terraform"
 echo "   - dev/build/test/lint: Alias para npm scripts"
 
 # --- 10. Cambiar al directorio del proyecto
