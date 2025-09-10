@@ -1,15 +1,18 @@
-import { 
-  Product, 
-  ProductVariant, 
-  ProductImage, 
+import {
+  Product,
+  ProductVariant,
+  ProductImage,
   ProductSpecification,
   Money,
   ProductCreatedEvent,
   ProductPublishedEvent,
   ProductPriceChangedEvent,
-  ProductDiscontinuedEvent
+  ProductDiscontinuedEvent,
 } from '../../domain/entities/product.entity';
-import { IProductRepository, SearchFilters } from '../../infrastructure/repositories/product.repository';
+import {
+  IProductRepository,
+  SearchFilters,
+} from '../../infrastructure/repositories/product.repository';
 import { IEventBus } from '@a4co/shared-utils/events/event-bus';
 import { EventSubjects } from '@a4co/shared-utils/events/subjects';
 
@@ -127,7 +130,7 @@ export class ProductService {
 
     // Crear el objeto Money
     const price = new Money(dto.price, dto.currency || 'EUR');
-    const originalPrice = dto.originalPrice 
+    const originalPrice = dto.originalPrice
       ? new Money(dto.originalPrice, dto.currency || 'EUR')
       : undefined;
 
@@ -173,10 +176,10 @@ export class ProductService {
     // Actualizar precio si ha cambiado
     if (dto.price !== undefined) {
       const newPrice = new Money(dto.price, product.price.currency);
-      const newOriginalPrice = dto.originalPrice 
+      const newOriginalPrice = dto.originalPrice
         ? new Money(dto.originalPrice, product.price.currency)
         : undefined;
-      
+
       if (!newPrice.equals(product.price)) {
         product.updatePrice(newPrice, newOriginalPrice);
         hasChanges = true;
@@ -225,7 +228,7 @@ export class ProductService {
     }
 
     product.publish();
-    
+
     await this.productRepository.update(product);
     await this.publishDomainEvents(product);
   }
@@ -237,7 +240,7 @@ export class ProductService {
     }
 
     product.archive();
-    
+
     await this.productRepository.update(product);
     await this.publishDomainEvents(product);
   }
@@ -249,7 +252,7 @@ export class ProductService {
     }
 
     product.discontinue(reason);
-    
+
     await this.productRepository.update(product);
     await this.publishDomainEvents(product);
   }
@@ -261,7 +264,7 @@ export class ProductService {
     }
 
     product.markAsOutOfStock();
-    
+
     await this.productRepository.update(product);
   }
 
@@ -272,7 +275,7 @@ export class ProductService {
     }
 
     product.markAsAvailable();
-    
+
     await this.productRepository.update(product);
   }
 
@@ -300,18 +303,20 @@ export class ProductService {
       dto.attributes,
       dto.stockQuantity ?? 0,
       dto.weight,
-      dto.dimensions ? {
-        length: dto.dimensions.length,
-        width: dto.dimensions.width,
-        height: dto.dimensions.height,
-        unit: dto.dimensions.unit ?? 'cm'
-      } as any : undefined,
+      dto.dimensions
+        ? ({
+            length: dto.dimensions.length,
+            width: dto.dimensions.width,
+            height: dto.dimensions.height,
+            unit: dto.dimensions.unit ?? 'cm',
+          } as any)
+        : undefined,
       true,
       dto.isDefault ?? false
     );
 
     product.addVariant(variant);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -322,7 +327,7 @@ export class ProductService {
     }
 
     product.removeVariant(variantId);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -339,13 +344,13 @@ export class ProductService {
     const image = new ProductImage(
       dto.url,
       dto.altText,
-      dto.type as any ?? 'GALLERY' as any,
+      (dto.type as any) ?? ('GALLERY' as any),
       dto.isPrimary ?? false,
       dto.sortOrder ?? 0
     );
 
     product.addImage(image);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -356,7 +361,7 @@ export class ProductService {
     }
 
     product.removeImage(imageUrl);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -373,13 +378,13 @@ export class ProductService {
     const specification = new ProductSpecification(
       dto.name,
       dto.value,
-      dto.type as any ?? 'TEXT' as any,
+      (dto.type as any) ?? ('TEXT' as any),
       dto.unit,
       dto.category
     );
 
     product.addSpecification(specification);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -390,7 +395,7 @@ export class ProductService {
     }
 
     product.removeSpecification(specificationName);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -414,14 +419,14 @@ export class ProductService {
       priceMin: dto.priceMin,
       priceMax: dto.priceMax,
       featured: dto.featured,
-      tags: dto.tags
+      tags: dto.tags,
     };
 
     const [products, total] = await Promise.all([
-      dto.query 
+      dto.query
         ? this.productRepository.search(dto.query, filters)
         : this.productRepository.findPublished(page, limit),
-      this.productRepository.count(filters)
+      this.productRepository.count(filters),
     ]);
 
     return {
@@ -429,7 +434,7 @@ export class ProductService {
       total,
       page,
       limit,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
     };
   }
 
@@ -438,16 +443,16 @@ export class ProductService {
   }
 
   async getProductsByArtisan(
-    artisanId: string, 
-    page: number = 1, 
+    artisanId: string,
+    page: number = 1,
     limit: number = 10
   ): Promise<Product[]> {
     return await this.productRepository.findByArtisan(artisanId, page, limit);
   }
 
   async getProductsByCategory(
-    categoryId: string, 
-    page: number = 1, 
+    categoryId: string,
+    page: number = 1,
     limit: number = 10
   ): Promise<Product[]> {
     return await this.productRepository.findByCategory(categoryId, page, limit);
@@ -458,8 +463,8 @@ export class ProductService {
   // ========================================
 
   async updateProductRating(
-    productId: string, 
-    averageRating: number, 
+    productId: string,
+    averageRating: number,
     reviewCount: number
   ): Promise<void> {
     const product = await this.productRepository.findById(productId);
@@ -468,7 +473,7 @@ export class ProductService {
     }
 
     product.updateRating(averageRating, reviewCount);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -479,7 +484,7 @@ export class ProductService {
     }
 
     product.incrementSoldCount(quantity);
-    
+
     await this.productRepository.update(product);
   }
 
@@ -489,7 +494,7 @@ export class ProductService {
 
   private async publishDomainEvents(product: Product): Promise<void> {
     const events = product.domainEvents;
-    
+
     for (const event of events) {
       if (event instanceof ProductCreatedEvent) {
         await this.eventBus.publish(EventSubjects.PRODUCT_CREATED, event);
@@ -518,14 +523,14 @@ export class ProductService {
 
 /**
  * Ejemplo de uso del ProductService con eventos de dominio:
- * 
+ *
  * ```typescript
  * // Configuración
  * const prisma = new PrismaClient();
  * const eventBus = new NatsEventBus('product-service');
  * const productRepository = new PrismaProductRepository(prisma);
  * const productService = new ProductService(productRepository, eventBus);
- * 
+ *
  * // Crear un producto
  * const product = await productService.createProduct({
  *   name: "Cerámica Artesanal de Jaén",
@@ -536,7 +541,7 @@ export class ProductService {
  *   categoryId: "ceramica",
  *   slug: "ceramica-artesanal-jaen"
  * });
- * 
+ *
  * // Agregar variantes
  * await productService.addVariant({
  *   productId: product.id,
@@ -545,7 +550,7 @@ export class ProductService {
  *   price: 65.99,
  *   attributes: { size: "Large", color: "Azul" }
  * });
- * 
+ *
  * // Agregar imágenes
  * await productService.addImage({
  *   productId: product.id,
@@ -553,10 +558,10 @@ export class ProductService {
  *   isPrimary: true,
  *   altText: "Cerámica artesanal azul"
  * });
- * 
+ *
  * // Publicar producto
  * await productService.publishProduct(product.id);
- * 
+ *
  * // Los eventos de dominio se publican automáticamente:
  * // - ProductCreatedEvent → inventory-service, analytics-service
  * // - ProductPublishedEvent → notification-service, search-service

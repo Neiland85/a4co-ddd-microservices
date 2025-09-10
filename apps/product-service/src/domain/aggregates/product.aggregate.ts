@@ -1,5 +1,11 @@
 import { AggregateRoot } from '@a4co/shared-utils';
-import { ProductId, ProductName, ProductDescription, Price, CategoryId } from '../value-objects/product-value-objects';
+import {
+  ProductId,
+  ProductName,
+  ProductDescription,
+  Price,
+  CategoryId,
+} from '../value-objects/product-value-objects';
 import { ProductVariant } from '../entities/product-variant.entity';
 import { ProductImage } from '../entities/product-image.entity';
 import { ProductTag } from '../entities/product-tag.entity';

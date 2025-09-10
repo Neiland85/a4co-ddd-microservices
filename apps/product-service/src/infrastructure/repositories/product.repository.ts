@@ -1,15 +1,15 @@
 import { PrismaClient } from '../generated/prisma';
-import { 
-  Product, 
-  ProductVariant, 
-  ProductImage, 
+import {
+  Product,
+  ProductVariant,
+  ProductImage,
   ProductSpecification,
   Money,
   Dimensions,
   ProductStatus,
   ProductAvailability,
   ImageType,
-  SpecificationType
+  SpecificationType,
 } from '../../domain/entities/product.entity';
 
 export interface IProductRepository {
@@ -48,15 +48,15 @@ export class PrismaProductRepository implements IProductRepository {
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
-      }
+        inventory: true,
+      },
     });
 
     if (!productData) {
@@ -72,15 +72,15 @@ export class PrismaProductRepository implements IProductRepository {
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
-      }
+        inventory: true,
+      },
     });
 
     return productsData.map(productData => this.mapToDomainEntity(productData));
@@ -92,15 +92,15 @@ export class PrismaProductRepository implements IProductRepository {
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
-      }
+        inventory: true,
+      },
     });
 
     if (!productData) {
@@ -116,15 +116,15 @@ export class PrismaProductRepository implements IProductRepository {
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
-      }
+        inventory: true,
+      },
     });
 
     if (!productData) {
@@ -136,54 +136,55 @@ export class PrismaProductRepository implements IProductRepository {
 
   async findByArtisan(artisanId: string, page: number = 1, limit: number = 10): Promise<Product[]> {
     const skip = (page - 1) * limit;
-    
+
     const productsData = await this.prisma.product.findMany({
       where: { artisanId },
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
+        inventory: true,
       },
       skip,
       take: limit,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return productsData.map(productData => this.mapToDomainEntity(productData));
   }
 
-  async findByCategory(categoryId: string, page: number = 1, limit: number = 10): Promise<Product[]> {
+  async findByCategory(
+    categoryId: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<Product[]> {
     const skip = (page - 1) * limit;
-    
+
     const productsData = await this.prisma.product.findMany({
-      where: { 
-        OR: [
-          { categoryId },
-          { categories: { some: { categoryId } } }
-        ]
+      where: {
+        OR: [{ categoryId }, { categories: { some: { categoryId } } }],
       },
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
+        inventory: true,
       },
       skip,
       take: limit,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return productsData.map(productData => this.mapToDomainEntity(productData));
@@ -191,25 +192,25 @@ export class PrismaProductRepository implements IProductRepository {
 
   async findFeatured(limit: number = 10): Promise<Product[]> {
     const productsData = await this.prisma.product.findMany({
-      where: { 
+      where: {
         featured: true,
         status: 'PUBLISHED',
-        availability: 'AVAILABLE'
+        availability: 'AVAILABLE',
       },
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
+        inventory: true,
       },
       take: limit,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return productsData.map(productData => this.mapToDomainEntity(productData));
@@ -217,27 +218,27 @@ export class PrismaProductRepository implements IProductRepository {
 
   async findPublished(page: number = 1, limit: number = 10): Promise<Product[]> {
     const skip = (page - 1) * limit;
-    
+
     const productsData = await this.prisma.product.findMany({
-      where: { 
+      where: {
         status: 'PUBLISHED',
-        availability: 'AVAILABLE'
+        availability: 'AVAILABLE',
       },
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
+        inventory: true,
       },
       skip,
       take: limit,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return productsData.map(productData => this.mapToDomainEntity(productData));
@@ -251,10 +252,10 @@ export class PrismaProductRepository implements IProductRepository {
             { name: { contains: query, mode: 'insensitive' } },
             { description: { contains: query, mode: 'insensitive' } },
             { tags: { hasSome: [query] } },
-            { keywords: { hasSome: [query] } }
-          ]
-        }
-      ]
+            { keywords: { hasSome: [query] } },
+          ],
+        },
+      ],
     };
 
     if (filters) {
@@ -293,27 +294,23 @@ export class PrismaProductRepository implements IProductRepository {
       include: {
         variants: {
           include: {
-            images: true
-          }
+            images: true,
+          },
         },
         images: true,
         specifications: true,
         category: true,
         artisan: true,
-        inventory: true
+        inventory: true,
       },
-      orderBy: [
-        { featured: 'desc' },
-        { averageRating: 'desc' },
-        { createdAt: 'desc' }
-      ]
+      orderBy: [{ featured: 'desc' }, { averageRating: 'desc' }, { createdAt: 'desc' }],
     });
 
     return productsData.map(productData => this.mapToDomainEntity(productData));
   }
 
   async save(product: Product): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async tx => {
       // Crear el producto principal
       await tx.product.create({
         data: {
@@ -340,8 +337,8 @@ export class PrismaProductRepository implements IProductRepository {
           featured: product.featured,
           averageRating: product.averageRating,
           reviewCount: product.reviewCount,
-          totalSold: product.totalSold
-        }
+          totalSold: product.totalSold,
+        },
       });
 
       // Crear variantes
@@ -357,15 +354,17 @@ export class PrismaProductRepository implements IProductRepository {
             attributes: variant.attributes,
             stockQuantity: variant.stockQuantity,
             weight: variant.weight,
-            dimensions: variant.dimensions ? {
-              length: variant.dimensions.length,
-              width: variant.dimensions.width,
-              height: variant.dimensions.height,
-              unit: variant.dimensions.unit
-            } : undefined,
+            dimensions: variant.dimensions
+              ? {
+                  length: variant.dimensions.length,
+                  width: variant.dimensions.width,
+                  height: variant.dimensions.height,
+                  unit: variant.dimensions.unit,
+                }
+              : undefined,
             isActive: variant.isActive,
-            isDefault: variant.isDefault
-          }))
+            isDefault: variant.isDefault,
+          })),
         });
       }
 
@@ -378,8 +377,8 @@ export class PrismaProductRepository implements IProductRepository {
             altText: image.altText,
             type: image.type,
             isPrimary: image.isPrimary,
-            sortOrder: image.sortOrder || index
-          }))
+            sortOrder: image.sortOrder || index,
+          })),
         });
       }
 
@@ -392,15 +391,15 @@ export class PrismaProductRepository implements IProductRepository {
             value: spec.value,
             type: spec.type,
             unit: spec.unit,
-            category: spec.category
-          }))
+            category: spec.category,
+          })),
         });
       }
     });
   }
 
   async update(product: Product): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async tx => {
       // Actualizar producto principal
       await tx.product.update({
         where: { id: product.id },
@@ -419,13 +418,13 @@ export class PrismaProductRepository implements IProductRepository {
           featured: product.featured,
           averageRating: product.averageRating,
           reviewCount: product.reviewCount,
-          totalSold: product.totalSold
-        }
+          totalSold: product.totalSold,
+        },
       });
 
       // Eliminar y recrear variantes (enfoque simple)
       await tx.productVariant.deleteMany({
-        where: { productId: product.id }
+        where: { productId: product.id },
       });
 
       if (product.variants.length > 0) {
@@ -439,21 +438,23 @@ export class PrismaProductRepository implements IProductRepository {
             attributes: variant.attributes,
             stockQuantity: variant.stockQuantity,
             weight: variant.weight,
-            dimensions: variant.dimensions ? {
-              length: variant.dimensions.length,
-              width: variant.dimensions.width,
-              height: variant.dimensions.height,
-              unit: variant.dimensions.unit
-            } : undefined,
+            dimensions: variant.dimensions
+              ? {
+                  length: variant.dimensions.length,
+                  width: variant.dimensions.width,
+                  height: variant.dimensions.height,
+                  unit: variant.dimensions.unit,
+                }
+              : undefined,
             isActive: variant.isActive,
-            isDefault: variant.isDefault
-          }))
+            isDefault: variant.isDefault,
+          })),
         });
       }
 
       // Eliminar y recrear imágenes
       await tx.productImage.deleteMany({
-        where: { productId: product.id }
+        where: { productId: product.id },
       });
 
       if (product.images.length > 0) {
@@ -464,14 +465,14 @@ export class PrismaProductRepository implements IProductRepository {
             altText: image.altText,
             type: image.type,
             isPrimary: image.isPrimary,
-            sortOrder: image.sortOrder || index
-          }))
+            sortOrder: image.sortOrder || index,
+          })),
         });
       }
 
       // Eliminar y recrear especificaciones
       await tx.productSpecification.deleteMany({
-        where: { productId: product.id }
+        where: { productId: product.id },
       });
 
       if (product.specifications.length > 0) {
@@ -482,8 +483,8 @@ export class PrismaProductRepository implements IProductRepository {
             value: spec.value,
             type: spec.type,
             unit: spec.unit,
-            category: spec.category
-          }))
+            category: spec.category,
+          })),
         });
       }
     });
@@ -491,7 +492,7 @@ export class PrismaProductRepository implements IProductRepository {
 
   async delete(id: string): Promise<void> {
     await this.prisma.product.delete({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -526,7 +527,7 @@ export class PrismaProductRepository implements IProductRepository {
   private mapToDomainEntity(productData: any): Product {
     // Crear el objeto Money para el precio
     const price = new Money(productData.price.toNumber(), productData.currency);
-    const originalPrice = productData.originalPrice 
+    const originalPrice = productData.originalPrice
       ? new Money(productData.originalPrice.toNumber(), productData.currency)
       : undefined;
 
@@ -570,16 +571,18 @@ export class PrismaProductRepository implements IProductRepository {
           variantData.attributes,
           variantData.stockQuantity,
           variantData.weight,
-          variantData.dimensions ? new Dimensions(
-            variantData.dimensions.length,
-            variantData.dimensions.width,
-            variantData.dimensions.height,
-            variantData.dimensions.unit
-          ) : undefined,
+          variantData.dimensions
+            ? new Dimensions(
+                variantData.dimensions.length,
+                variantData.dimensions.width,
+                variantData.dimensions.height,
+                variantData.dimensions.unit
+              )
+            : undefined,
           variantData.isActive,
           variantData.isDefault
         );
-        
+
         product.addVariant(variant);
       });
     }
@@ -594,7 +597,7 @@ export class PrismaProductRepository implements IProductRepository {
           imageData.isPrimary,
           imageData.sortOrder
         );
-        
+
         product.addImage(image);
       });
     }
@@ -609,7 +612,7 @@ export class PrismaProductRepository implements IProductRepository {
           specData.unit,
           specData.category
         );
-        
+
         product.addSpecification(specification);
       });
     }
