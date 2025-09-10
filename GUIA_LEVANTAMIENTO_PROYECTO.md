@@ -21,6 +21,7 @@
 ```bash
 npm install -g pnpm
 
+
 ```
 
 
@@ -35,6 +36,7 @@ npm install -g pnpm
 git clone https://github.com/Neiland85/a4co-ddd-microservices.git
 cd a4co-ddd-microservices
 
+
 ```
 
 
@@ -43,6 +45,7 @@ cd a4co-ddd-microservices
 
 ```bash
 pnpm install
+
 
 ```
 
@@ -66,6 +69,7 @@ pnpm run docker:up
 
 # O directamente
 docker-compose -f docker-compose.dev.yml up -d
+
 
 ```
 
@@ -92,6 +96,7 @@ pnpm run docker:logs
 # O para un servicio específico
 docker-compose -f docker-compose.dev.yml logs -f [nombre-servicio]
 
+
 ```
 
 
@@ -100,6 +105,7 @@ docker-compose -f docker-compose.dev.yml logs -f [nombre-servicio]
 
 ```bash
 pnpm run docker:down
+
 
 ```
 
@@ -140,6 +146,7 @@ docker run -d \
   -p 8222:8222 \
   nats:2.10-alpine --jetstream
 
+
 ```
 
 
@@ -152,6 +159,7 @@ pnpm run db:generate
 
 # Ejecutar migraciones
 pnpm run db:migrate
+
 
 ```
 
@@ -169,6 +177,7 @@ pnpm run db:migrate
 cd apps/dashboard-web
 pnpm dev --port 3001
 
+
 ```
 
 
@@ -181,6 +190,7 @@ Accesible en: http://localhost:3001
 cd apps/web/v0dev/a-head
 pnpm dev
 
+
 ```
 
 
@@ -191,6 +201,7 @@ Accesible en: http://localhost:3000
 
 ```bash
 pnpm run storybook:dev
+
 
 ```
 
@@ -203,6 +214,7 @@ Accesible en: http://localhost:6006
 ```bash
 pnpm run dev:backend
 
+
 ```
 
 
@@ -212,6 +224,7 @@ pnpm run dev:backend
 ```bash
 pnpm run dev:frontend
 
+
 ```
 
 
@@ -220,6 +233,7 @@ pnpm run dev:frontend
 
 ```bash
 pnpm run dev
+
 
 ```
 
@@ -250,6 +264,7 @@ pnpm run test
 pnpm run test:watch
 pnpm run test:coverage
 
+
 ```
 
 
@@ -265,6 +280,7 @@ pnpm run db:push
 
 # Ejecutar migraciones
 pnpm run db:migrate
+
 
 ```
 
@@ -316,6 +332,7 @@ sudo netstat -tlnp | grep PUERTO
 # Matar el proceso
 kill -9 PID
 
+
 ```
 
 
@@ -332,6 +349,7 @@ docker logs a4co-postgres
 # Reiniciar el contenedor
 docker restart a4co-postgres
 
+
 ```
 
 
@@ -345,6 +363,7 @@ pnpm store prune
 # Reinstalar todo
 pnpm run reinstall
 
+
 ```
 
 
@@ -356,6 +375,7 @@ pnpm run reinstall
 docker ps | grep sync
 
 # Para desarrollo local, asegurarse de que nodemon esté configurado
+
 
 ```
 
@@ -375,6 +395,7 @@ pnpm run docker:logs
 cd apps/[servicio]
 pnpm dev
 
+
 ```
 
 
@@ -393,6 +414,7 @@ redis-cli ping
 
 # Verificar NATS
 curl http://localhost:8222/varz
+
 
 ```
 

@@ -128,6 +128,7 @@ GET /api/products?category=aceites&search=oliva&limit=10
 GET /api/artisans?speciality=aceites&location=Jaén
 GET /api/sales-opportunities?status=active&category=aceites
 
+
 ```
 
 
@@ -152,6 +153,7 @@ ESPECIFICACIONES:
 
 PROPS INTERFACE:
 
+
 ```typescript
 interface ProductCatalogProps {
   products: LocalProduct[];
@@ -173,6 +175,7 @@ interface LocalProduct {
   seasonal: boolean;
 }
 
+
 ````
 
 CARACTERÍSTICAS ESPECIALES:
@@ -189,6 +192,7 @@ CARACTERÍSTICAS ESPECIALES:
 ### **2. 🔍 ProductSearch Avanzado**
 
 
+
 ```prompt
 Crear un componente de búsqueda avanzada para productos locales de Jaén con autocompletado y filtros inteligentes.
 
@@ -201,6 +205,7 @@ ESPECIFICACIONES:
 - Tema: Paleta amber/yellow con iconografía de Jaén
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface ProductSearchProps {
@@ -218,6 +223,7 @@ interface SearchFilters {
   certified?: boolean;
 }
 
+
 ````
 
 CARACTERÍSTICAS:
@@ -234,6 +240,7 @@ CARACTERÍSTICAS:
 ### **3. 👥 ArtisanDirectory Premium**
 
 
+
 ```prompt
 Diseñar un directorio elegante de artesanos y productores locales de Jaén con mapas integrados y perfiles detallados.
 
@@ -246,6 +253,7 @@ ESPECIFICACIONES:
 - Tema: Paleta earth tones + gold accents
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface ArtisanDirectoryProps {
@@ -268,6 +276,7 @@ interface LocalArtisan {
   contact: { phone: string; email: string; };
 }
 
+
 ````
 
 CARACTERÍSTICAS:
@@ -284,6 +293,7 @@ CARACTERÍSTICAS:
 ### **4. 💼 SalesOpportunityBoard**
 
 
+
 ```prompt
 Crear un tablero Kanban moderno para oportunidades de venta de productos locales de Jaén.
 
@@ -296,6 +306,7 @@ ESPECIFICACIONES:
 - Tema: Business colors con gold accents
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface SalesOpportunityBoardProps {
@@ -317,6 +328,7 @@ interface SalesOpportunity {
   producer: string;
 }
 
+
 ````
 
 CARACTERÍSTICAS:
@@ -333,6 +345,7 @@ CARACTERÍSTICAS:
 ### **5. 🗺️ MarketplaceDashboard Principal**
 
 
+
 ```prompt
 Diseñar un dashboard ejecutivo para el mercado local de Jaén con métricas, mapas y resumen de actividad.
 
@@ -345,6 +358,7 @@ ESPECIFICACIONES:
 - Tema: Executive dashboard con gold/amber palette
 
 PROPS INTERFACE:
+
 
 ```typescript
 interface MarketplaceDashboardProps {
@@ -362,6 +376,7 @@ interface DashboardStats {
   averageRating: number;
 }
 
+
 ````
 
 CARACTERÍSTICAS:
@@ -374,6 +389,7 @@ CARACTERÍSTICAS:
 
 
 ```
+
 
 
 ---
@@ -396,6 +412,7 @@ CARACTERÍSTICAS:
 4. **Sync automático** con cambios en V0
 
 ### **📁 Estructura de Archivos Sugerida**
+
 
 
 ```
@@ -421,9 +438,11 @@ src/components/
 ```
 
 
+
 ### **🔗 Scripts de Integración**
 
 Voy a crear scripts para facilitar la integración:
+
 
 ```
 

@@ -21,11 +21,13 @@ Se ha implementado una **integración completa de APIs, hooks y componentes UI**
 
 ```
 
+
 Frontend: Next.js 15.4.1 + React 19 + TypeScript
 Styling: Tailwind CSS 4 + Radix UI
 State Management: Custom Hooks + Zustand
 APIs: Next.js API Routes
 Development: Turbopack + pnpm workspaces
+
 
 ```
 
@@ -34,6 +36,7 @@ Development: Turbopack + pnpm workspaces
 
 
 ```
+
 
 apps/dashboard-web/
 ├── src/
@@ -54,6 +57,7 @@ apps/dashboard-web/
 │       ├── ProductSearch.tsx      # Búsqueda en tiempo real
 │       └── MarketplaceDashboard.tsx # Dashboard integrado
 └── package.json                   # Configuración del proyecto
+
 
 ```
 
@@ -86,6 +90,7 @@ apps/dashboard-web/
   "page": 1,
   "limit": 10
 }
+
 
 ```
 
@@ -125,6 +130,7 @@ apps/dashboard-web/
   "limit": 10
 }
 
+
 ```
 
 
@@ -160,6 +166,7 @@ apps/dashboard-web/
   "page": 1,
   "limit": 10
 }
+
 
 ```
 
@@ -418,11 +425,13 @@ Esta página incluye:
 
 ```
 
+
 ✅ API Response Time: < 100ms
 ✅ Component Render: < 50ms
 ✅ Search Debounce: 300ms
 ✅ Bundle Size: Optimizado
 ✅ Lighthouse Score: 95+
+
 
 ```
 
@@ -441,6 +450,7 @@ Esta página incluye:
 # O manualmente
 cd apps/dashboard-web
 pnpm dev --port 3001
+
 
 ```
 
@@ -507,6 +517,7 @@ pnpm dev --port 3001
 # Solución: El package.json estaba corrupto, ya fue reparado
 # Archivo limpio en: /package.json
 
+
 ```
 
 
@@ -516,6 +527,7 @@ pnpm dev --port 3001
 ```bash
 # Solución: Actualizar clases de Tailwind CSS v4
 # Reemplazar: border-border → border-gray-200
+
 
 ```
 
@@ -527,6 +539,7 @@ pnpm dev --port 3001
 # Solución: Las fuentes Geist no están disponibles
 # Se usan fallbacks automáticamente, no afecta funcionalidad
 
+
 ```
 
 
@@ -536,6 +549,7 @@ pnpm dev --port 3001
 ```bash
 # Información: El sistema detectó un filesystem lento
 # Recomendación: Mover .next a disco local si es necesario
+
 
 ```
 
@@ -604,9 +618,11 @@ pnpm dev --port 3001
 
 ```
 
+
 GitHub: https://github.com/Neiland85/a4co-ddd-microservices
 Rama: main
 Workspace: apps/dashboard-web
+
 
 ```
 

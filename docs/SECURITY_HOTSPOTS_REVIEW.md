@@ -34,6 +34,7 @@ dangerouslySetInnerHTML={{ __html: content }}
 import DOMPurify from 'dompurify';
 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
 
+
 ```
 
 
@@ -117,6 +118,7 @@ fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
 ```typescript
 { name: "SQL Injection", regex: /(union|select|insert|update|delete|drop|create|alter|exec|execute)/i }
+
 
 ```
 
@@ -263,6 +265,7 @@ npm run sonar-scanner
 
 # Verificar que no hay nuevos hotspots
 # Security Hotspots: 0 new
+
 
 ```
 

@@ -11,6 +11,7 @@ apps/dashboard-web/src/components/v0/
 ├── SalesOpportunityV0.tsx   # Componente de V0 → SalesOpportunityBoard
 └── MarketplaceDashboardV0.tsx # Componente de V0 → MarketplaceDashboard
 
+
 ```
 
 
@@ -31,6 +32,7 @@ touch src/components/v0/ProductCatalogV0.tsx
 # Pegar código de V0 y ajustar imports
 # import { useProducts } from '../../hooks/useProducts';
 # import type { LocalProduct } from '../../app/api/sales-opportunities/route';
+
 
 ```
 

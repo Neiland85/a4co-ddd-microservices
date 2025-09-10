@@ -19,6 +19,7 @@ Este paquete proporciona una configuración unificada para:
 ```bash
 pnpm add @a4co/observability
 
+
 ```
 
 
@@ -160,6 +161,7 @@ logger.debug('Debug information', { data: { foo: 'bar' } });
 ```bash
 pnpm build
 
+
 ```
 
 
@@ -169,6 +171,7 @@ pnpm build
 ```bash
 pnpm dev
 
+
 ```
 
 
@@ -177,6 +180,7 @@ pnpm dev
 
 ```bash
 pnpm test
+
 
 ```
 
@@ -199,6 +203,7 @@ JAEGER_ENDPOINT=http://jaeger:14268/api/traces
 
 # Metrics
 METRICS_PORT=9464
+
 
 ```
 
@@ -241,10 +246,12 @@ interface ObservabilityConfig {
 
 ```
 
+
 [12:34:56] INFO (user-service/1234): User created successfully
     traceId: "1234567890abcdef"
     spanId: "abcdef1234"
     userId: "usr_123"
+
 
 ```
 
@@ -390,6 +397,7 @@ npm install @a4co/observability
 # Con yarn
 yarn add @a4co/observability
 
+
 ```
 
 
@@ -435,6 +443,7 @@ import { getLogger } from '@a4co/observability';
 const logger = getLogger();
 
 logger.info({ userId: '123' }, 'User logged in');
+
 
 ```
 
@@ -505,6 +514,7 @@ pnpm add @a4co/observability
 
 # Instalar dependencias peer si usas React
 pnpm add react@^18.0.0 || pnpm add react@^19.0.0
+
 
 ```
 
@@ -640,6 +650,7 @@ import { ObservableButton, ObservableInput, ObservableCard } from '@a4co/observa
   Crear Producto
 </ObservableButton>
 
+
 ```
 
 
@@ -659,6 +670,7 @@ const MyComponent = () => {
 
   return <button onClick={handleClick}>Click me</button>;
 };
+
 
 ```
 
@@ -691,6 +703,7 @@ LOG_LEVEL=info
 REACT_APP_LOG_ENDPOINT=http://api:3000/api/logs
 REACT_APP_TRACE_ENDPOINT=http://jaeger:4318/v1/traces
 REACT_APP_API_BASE_URL=http://api:3000
+
 
 ```
 
@@ -729,6 +742,7 @@ app.use(express.json()); // 3. Body parser
 ### Propagación de Contexto en NATS
 
 
+
 ```typescript
 import { injectNATSTraceContext, extractNATSTraceContext } from '@a4co/observability';
 
@@ -739,6 +753,7 @@ const headers = injectNATSTraceContext({
 
 // Al consumir mensaje
 extractNATSTraceContext(headers);
+
 
 ````
 
@@ -775,6 +790,7 @@ kubectl apply -f k8s/grafana.yaml
 
 # Verificar estado
 kubectl get pods -n observability
+
 
 ```
 
@@ -877,6 +893,7 @@ pnpm test:watch
 
 # Coverage
 pnpm test:coverage
+
 
 ```
 
@@ -1310,6 +1327,7 @@ helm install jaeger jaegertracing/jaeger \
   -f packages/observability/k8s/jaeger-values.yaml \
   -n a4co-monitoring
 
+
 ```
 
 
@@ -1322,6 +1340,7 @@ helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
   -f packages/observability/k8s/prometheus-values.yaml \
   -n a4co-monitoring
 
+
 ```
 
 
@@ -1330,6 +1349,7 @@ helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
 
 ```bash
 kubectl apply -f packages/observability/k8s/prometheus-alerts.yaml
+
 
 ```
 
@@ -1356,6 +1376,7 @@ METRICS_PORT=9090
 # Frontend
 REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 
+
 ```
 
 
@@ -1363,6 +1384,7 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
 
 
 ```
+
 
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   Frontend  │────▶│   Backend   │────▶│    NATS     │
@@ -1387,6 +1409,7 @@ REACT_APP_OBSERVABILITY_ENDPOINT=https://api.a4co.com/observability
                     │   Grafana   │
                     │(Dashboards) │
                     └─────────────┘
+
 
 ```
 
@@ -1420,6 +1443,7 @@ export { logger, tracer };
 ````
 
 ### Frontend (React)
+
 
 
 ```tsx
@@ -1466,6 +1490,7 @@ function App() {
     </TracingProvider>
   );
 }
+
 
 ````
 
@@ -1766,6 +1791,7 @@ helm install a4co-observability ./packages/observability/helm/a4co-observability
 
 # Verificar instalación
 kubectl get all -n observability
+
 
 ```
 

@@ -297,6 +297,7 @@ export interface ArtisanStatusChangedEvent {
 // En caso de fallo en cualquier paso:
 PaymentFailedEvent → OrderCancelledEvent → StockReleasedEvent
 
+
 ```
 
 

@@ -23,6 +23,7 @@ pnpm add -D @next/bundle-analyzer webpack-bundle-analyzer source-map-explorer
 "analyze:server": "BUNDLE_ANALYZE=server next build",
 "analyze:browser": "BUNDLE_ANALYZE=browser next build"
 
+
 ```
 
 
@@ -108,6 +109,7 @@ export const ProfilerWrapper = ({ id, children }) => (
   </Profiler>
 );
 
+
 ```
 
 
@@ -131,6 +133,7 @@ pnpm add -D complexity-report code-complexity eslint-plugin-complexity
     "max-depth": ["error", 4]
   }
 }
+
 
 ```
 
@@ -223,6 +226,7 @@ pnpm add -D \
 "audit:circular": "madge --circular --extensions ts,tsx apps/",
 "audit:duplicate": "jscpd apps/ --min-lines 5 --min-tokens 50",
 "audit:complexity": "plato -r -d reports/complexity apps/"
+
 
 ```
 
@@ -320,6 +324,7 @@ export const LazyBoundary = ({ children, fallback }) => (
     </Suspense>
   </ErrorBoundary>
 );
+
 
 ```
 
@@ -431,6 +436,7 @@ export const OptimizedList = memo(({ items, filter }) => {
     />
   );
 });
+
 
 ```
 
@@ -656,6 +662,7 @@ node scripts/generate-metrics-report.js
 
 # Enviar alertas si hay degradación
 node scripts/check-metrics-threshold.js
+
 
 ```
 

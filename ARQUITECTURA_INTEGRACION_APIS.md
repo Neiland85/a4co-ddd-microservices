@@ -47,6 +47,7 @@ interface SalesOpportunity {
   priority: 'alta' | 'media' | 'baja';
 }
 
+
 ```
 
 
@@ -77,6 +78,7 @@ interface SalesOpportunity {
 - 🫒 Aceitunas (Aceitunas Aliñadas de Mengíbar)
 - 🏺 Artesanía (Cerámica de Úbeda)
 
+
 ```
 
 
@@ -97,6 +99,7 @@ interface SalesOpportunity {
 - Cooperativa Olivarera San José (Úbeda)
 - Quesería Los Olivos (Cazorla)
 - Taller Cerámico Paco Tito (Úbeda)
+
 
 ```
 
@@ -127,6 +130,7 @@ const { opportunities, loading, error, fetchOpportunities } = useSalesOpportunit
   location: 'Úbeda',
   autoFetch: true
 });
+
 
 ```
 
@@ -162,6 +166,7 @@ const {
   limit: 12
 });
 
+
 ```
 
 
@@ -186,6 +191,7 @@ const {
 // Estadísticas automáticas:
 const { stats } = useArtisanStats();
 // stats.total, stats.verified, stats.municipalities, etc.
+
 
 ```
 
@@ -212,6 +218,7 @@ const {
   findNearbyLocations,
   calculateDistance
 } = useGeolocation({ autoStart: true });
+
 
 ```
 
@@ -241,6 +248,7 @@ const {
 - ProductCard (tarjeta individual)
 - ProductFilters (filtros avanzados)
 
+
 ```
 
 
@@ -263,6 +271,7 @@ const {
 - SearchBar (barra de búsqueda)
 - QuickFilters (filtros rápidos)
 - SearchResults (resultados)
+
 
 ```
 
@@ -289,6 +298,7 @@ const {
 - QuickActions: Navegación rápida
 - StatsCard: Tarjetas de estadísticas
 
+
 ```
 
 
@@ -301,6 +311,7 @@ const {
 
 ```
 
+
 🌐 APIs Backend (Next.js Route Handlers)
     ↓ HTTP Requests
 🎣 Custom Hooks (Estado + Lógica)
@@ -308,6 +319,7 @@ const {
 🎨 UI Components (Presentación)
     ↓ User Interactions
 🔄 Estado Global (React + TypeScript)
+
 
 ```
 
@@ -341,12 +353,14 @@ const {
 
 ```
 
+
 ✅ 3/3 APIs principales completamente funcionales
 ✅ 12+ endpoints diferentes
 ✅ Filtros, paginación, búsqueda implementados
 ✅ Datos mock realistas de 6 productos y 3 artesanos
 ✅ Manejo de errores robusto
 ✅ Tipos TypeScript completos
+
 
 ```
 
@@ -356,12 +370,14 @@ const {
 
 ```
 
+
 ✅ 4 hooks principales + 8 hooks especializados
 ✅ 100% tipado con TypeScript
 ✅ Estados optimizados (loading, error, data)
 ✅ Debounce implementado donde necesario
 ✅ Cache y optimizaciones automáticas
 ✅ Reutilización y composición avanzada
+
 
 ```
 
@@ -371,12 +387,14 @@ const {
 
 ```
 
+
 ✅ 5 componentes principales + 10 subcomponentes
 ✅ Responsive design completo
 ✅ Estados de carga y error elegantes
 ✅ Accesibilidad considerada
 ✅ Integración completa con hooks
 ✅ Tailwind CSS optimizado
+
 
 ```
 

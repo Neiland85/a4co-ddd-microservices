@@ -10,6 +10,7 @@
 pnpm add -D @next/bundle-analyzer
 ANALYZE=true pnpm --filter dashboard-web build
 
+
 ```
 
 
@@ -90,6 +91,7 @@ module.exports = {
 # Instalar y ejecutar
 pnpm add -D ts-prune
 npx ts-prune --project tsconfig.json --ignore "*.test.ts|*.spec.ts" > dead-code-report.txt
+
 
 ```
 
@@ -173,6 +175,7 @@ pnpm add -D eslint-plugin-complexity
 npx eslint "apps/*/src/domain/**/*.ts" "apps/*/src/application/handlers/**/*.ts" \
   --rule 'complexity: ["error", 10]' \
   --format json > complexity-report.json
+
 
 ```
 
@@ -259,6 +262,7 @@ console.table(top10.slice(0, 10));
 # Profiler en desarrollo
 NEXT_PUBLIC_PROFILE=true pnpm --filter dashboard-web dev
 
+
 ```
 
 
@@ -314,6 +318,7 @@ export const withRenderTracking = <P extends object>(
     return <Component {...props} />;
   };
 };
+
 
 ```
 
@@ -392,6 +397,7 @@ export const OptimizedDataTable = memo(({
   );
 });
 
+
 ```
 
 
@@ -407,6 +413,7 @@ npx madge --circular --extensions ts,tsx apps/ > circular-deps.txt
 
 # Visualizar gráfico de dependencias
 npx madge --image graph.svg apps/dashboard-web/src
+
 
 ```
 
@@ -563,6 +570,7 @@ echo "\n📊 GENERANDO REPORTE EJECUTIVO..."
 node scripts/generate-impact-report.js
 
 echo "\n✅ Análisis completo en: ./reports/impact-summary.html"
+
 
 ```
 

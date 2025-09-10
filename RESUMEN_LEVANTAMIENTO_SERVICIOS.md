@@ -69,6 +69,7 @@ pnpm dev:frontend
 # Opción 4: Solo backend
 pnpm dev:backend
 
+
 ```
 
 
