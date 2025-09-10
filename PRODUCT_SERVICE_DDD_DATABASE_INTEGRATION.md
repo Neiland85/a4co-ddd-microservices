@@ -1113,6 +1113,7 @@ enum ProductAvailability {
   SEASONAL
 }
 
+
 ```
 
 
@@ -1243,6 +1244,7 @@ COMMENT ON TABLE "product_variants" IS 'Product variants with different attribut
 COMMENT ON TABLE "product_images" IS 'Product images with ordering and primary image designation';
 COMMENT ON TABLE "product_tags" IS 'Product tags for categorization and search';
 COMMENT ON TABLE "categories" IS 'Product categories with hierarchical structure';
+
 
 ```
 
@@ -2276,6 +2278,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Run migrations and start app
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+
 
 ```
 

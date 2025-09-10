@@ -22,6 +22,7 @@ chmod +x scripts/*.sh
 # Ejecutar auditoría completa
 ./scripts/ddd-audit-runner.sh
 
+
 ```
 
 
@@ -31,6 +32,7 @@ chmod +x scripts/*.sh
 ```bash
 # Detecta automáticamente el lenguaje y ejecuta análisis específico
 ./scripts/language-specific-metrics.sh
+
 
 ```
 
@@ -163,6 +165,7 @@ El workflow incluido (`./github/workflows/ddd-audit.yml`) ejecuta automáticamen
 SONAR_TOKEN      # Token de SonarQube
 SONAR_HOST_URL   # URL del servidor SonarQube
 
+
 ```
 
 
@@ -173,12 +176,14 @@ SONAR_HOST_URL   # URL del servidor SonarQube
 
 ```
 
+
 === ANÁLISIS DE ESTRUCTURA DDD ===
 Bounded Contexts: 3
 Aggregates: 7
 Entities: 15
 Value Objects: 32
 Domain Events: 18
+
 
 ```
 
@@ -226,6 +231,7 @@ INTL_COVERAGE=80    # Cambiar a tu estándar
 EU_COVERAGE=75      # Ajustar según necesidad
 NATIONAL_COVERAGE=70 # Basado en tu país/industria
 
+
 ```
 
 
@@ -263,6 +269,7 @@ pip install lizard
 sudo apt-get install cloc
 npm install -g madge
 
+
 ```
 
 
@@ -271,6 +278,7 @@ npm install -g madge
 
 ```bash
 chmod +x scripts/*.sh
+
 
 ```
 

@@ -27,6 +27,7 @@
 
 ```
 
+
 /workspace
 ├── apps/
 │   ├── auth-service/
@@ -39,6 +40,7 @@
 ├── packages/
 │   ├── shared-utils/
 │   └── observability/
+
 
 ```
 
@@ -222,6 +224,7 @@ export class SecurityThreatDetectedEvent {
 
 ```
 
+
 apps/[service-name]/
 ├── domain/           # Lógica de negocio pura
 │   ├── entities/
@@ -237,6 +240,7 @@ apps/[service-name]/
 │   ├── persistence/
 │   └── messaging/
 └── presentation/     # Controllers/GraphQL
+
 
 ```
 
@@ -274,9 +278,11 @@ apps/[service-name]/
 
 ```
 
+
 Aplicaciones Web → API Clients → Microservicios → Domain Logic
                 ↓
            Shared Contracts
+
 
 ```
 
@@ -339,6 +345,7 @@ if grep -r "from.*apps/" apps/ --include="*.ts" --include="*.tsx" | grep -v test
 fi
 
 echo "✅ No DDD violations found"
+
 
 ```
 

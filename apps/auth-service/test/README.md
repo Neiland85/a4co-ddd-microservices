@@ -73,6 +73,7 @@ npm run test:cov
 # Ejecutar en modo watch
 npm run test:watch
 
+
 ```
 
 
@@ -118,6 +119,7 @@ El módulo `@shared` se mockea en setup.ts para evitar dependencias circulares.
   password: 'Password123'
 }
 
+
 ```
 
 
@@ -135,6 +137,7 @@ El módulo `@shared` se mockea en setup.ts para evitar dependencias circulares.
   createdAt: new Date(),
   updatedAt: new Date()
 }
+
 
 ```
 
@@ -174,6 +177,7 @@ npm run test:debug -- --testNamePattern="should register"
 
 # Ver coverage detallado
 npm run test:cov -- --coverageReporters=html
+
 
 ```
 

@@ -13,6 +13,7 @@
 cd apps/dashboard-web
 pnpm dev --port 3001
 
+
 ```
 
 
@@ -21,8 +22,10 @@ pnpm dev --port 3001
 
 ```
 
+
 🏠 Dashboard Principal:    http://localhost:3001/
 🧪 Página de Testing:     http://localhost:3001/test-integrations
+
 
 ```
 
@@ -32,6 +35,7 @@ pnpm dev --port 3001
 
 ```
 
+
 📊 Oportunidades de Venta:  http://localhost:3001/api/sales-opportunities
 🛒 Productos Locales:      http://localhost:3001/api/products
 👨‍🌾 Artesanos:             http://localhost:3001/api/artisans
@@ -40,6 +44,7 @@ pnpm dev --port 3001
      /api/products?category=aceite
      /api/products?search=queso&location=Cazorla
      /api/artisans?verified=true
+
 
 ```
 
@@ -203,6 +208,7 @@ pnpm install
 
 # Arrancar manualmente
 pnpm dev --port 3001
+
 
 ```
 

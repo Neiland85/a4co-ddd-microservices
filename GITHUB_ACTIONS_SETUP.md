@@ -48,6 +48,7 @@ SONAR_TOKEN=tu_token_de_sonarcloud
 DOCKER_USERNAME=tu_usuario_docker
 DOCKER_PASSWORD=tu_password_docker
 
+
 ```
 
 
@@ -58,6 +59,7 @@ DOCKER_PASSWORD=tu_password_docker
 # Configuración del proyecto
 NODE_VERSION=18
 PNPM_VERSION=8
+
 
 ```
 
@@ -119,6 +121,7 @@ graph LR
     E --> F[Notify Results]
     F --> G[Ready to Merge]
 
+
 ```
 
 
@@ -132,6 +135,7 @@ graph LR
     C --> D[Build Production]
     D --> E[Deploy]
     E --> F[Notify Success]
+
 
 ```
 
@@ -151,6 +155,7 @@ curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
 act pull_request
 act push
 
+
 ```
 
 
@@ -167,6 +172,7 @@ act push -e .github/workflows/ci-cd.yml
 # Simular schedule
 act schedule -e .github/workflows/dependencies.yml
 
+
 ```
 
 
@@ -182,6 +188,7 @@ ls -la .github/workflows/
 # Verificar sintaxis YAML
 yamllint .github/workflows/*.yml
 
+
 ```
 
 
@@ -192,6 +199,7 @@ yamllint .github/workflows/*.yml
 # Verificar permisos del repositorio
 # Settings → Actions → General → Workflow permissions
 # Seleccionar: "Read and write permissions"
+
 
 ```
 
@@ -204,6 +212,7 @@ yamllint .github/workflows/*.yml
 # Settings → Secrets and variables → Actions
 # Añadir el secret requerido
 
+
 ```
 
 
@@ -214,6 +223,7 @@ yamllint .github/workflows/*.yml
 # Verificar configuración de branch protection
 # Settings → Branches → Add rule
 # Configurar status checks requeridos
+
 
 ```
 

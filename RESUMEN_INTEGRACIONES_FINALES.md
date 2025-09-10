@@ -21,6 +21,7 @@
 ✅ Responses estructuradas con metadatos
 ✅ Manejo robusto de errores
 
+
 ```
 
 
@@ -40,6 +41,7 @@
    - Cerámica (Úbeda)
 ✅ Filtros: categoría, ubicación, temporada, disponibilidad
 
+
 ```
 
 
@@ -54,6 +56,7 @@
    - Quesería Los Olivos
    - Taller Cerámico Paco Tito
 ✅ Info completa: contacto, horarios, servicios, ratings
+
 
 ```
 
@@ -74,6 +77,7 @@
    - useHighPriorityOpportunities()
    - useLocalOpportunities(municipality)
 
+
 ```
 
 
@@ -91,6 +95,7 @@
    - useAvailableProducts()
    - useProductSearch() con debounce
 
+
 ```
 
 
@@ -106,6 +111,7 @@
    - useArtisansByMunicipality()
    - useArtisanStats()
 
+
 ```
 
 
@@ -118,6 +124,7 @@
 ✅ Cálculo distancias
 ✅ Detección automática provincia Jaén
 ✅ Hook especializado: useMarketLocations()
+
 
 ```
 
@@ -138,6 +145,7 @@
 ✅ Paginación "cargar más"
 ✅ Badges temporada/certificaciones
 
+
 ```
 
 
@@ -150,6 +158,7 @@
 ✅ Sugerencias productos populares
 ✅ Estados vacíos elegantes
 ✅ Integración completa con hooks
+
 
 ```
 
@@ -167,6 +176,7 @@
 ✅ Header/footer cohesivos
 ✅ Responsive completo
 
+
 ```
 
 
@@ -179,11 +189,13 @@
 
 ```
 
+
 Usuario abre dashboard
 → useGeolocation obtiene ubicación
 → useSeasonalProducts llama /api/products?seasonal=true
 → ProductCatalog renderiza productos
 → Todo funciona integrado ✅
+
 
 ```
 
@@ -193,11 +205,13 @@ Usuario abre dashboard
 
 ```
 
+
 Usuario escribe "aceite"
 → useProductSearch con debounce (300ms)
 → Hook llama /api/products?search=aceite
 → ProductSearch actualiza resultados
 → Sin delays, fluido ✅
+
 
 ```
 
@@ -207,10 +221,12 @@ Usuario escribe "aceite"
 
 ```
 
+
 Usuario selecciona categoría "queso" + ubicación "Cazorla"
 → Hook combina filtros
 → API: /api/products?category=queso&location=Cazorla
 → UI actualiza automáticamente ✅
+
 
 ```
 
@@ -220,11 +236,13 @@ Usuario selecciona categoría "queso" + ubicación "Cazorla"
 
 ```
 
+
 Usuario permite ubicación
 → useGeolocation detecta coordenadas
 → Determina si está en Jaén
 → Calcula distancia a productores
 → Muestra ubicaciones cercanas ✅
+
 
 ```
 
@@ -236,6 +254,7 @@ Usuario permite ubicación
 
 ```
 
+
 📡 APIs: 3/3 completas (12+ endpoints)
 🎣 Hooks: 4 principales + 8 especializados
 🎨 UI: 5 componentes + 10 subcomponentes
@@ -243,6 +262,7 @@ Usuario permite ubicación
 📱 Responsive: Mobile-first completo
 ⚡ Performance: Debounce, cache, paginación
 🧪 Testing: Página test-integrations implementada
+
 
 ```
 
@@ -261,6 +281,7 @@ Usuario permite ubicación
 - Navegación entre vistas
 - Productos estacionales
 
+
 ```
 
 
@@ -275,6 +296,7 @@ Usuario permite ubicación
 - Filtros combinados
 - Estado global
 
+
 ```
 
 
@@ -287,6 +309,7 @@ localhost:3001/api/sales-opportunities
 localhost:3001/api/products?category=aceite
 localhost:3001/api/artisans?verified=true
 localhost:3001/api/products?search=queso&location=Cazorla
+
 
 ```
 

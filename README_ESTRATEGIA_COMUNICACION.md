@@ -32,6 +32,7 @@ pnpm install
 pnpm add nats
 pnpm add -D @types/node
 
+
 ```
 
 
@@ -42,6 +43,7 @@ pnpm add -D @types/node
 # Ejecutar script de inicio (crear primero si no existe)
 chmod +x scripts/start-messaging-infrastructure.sh
 ./scripts/start-messaging-infrastructure.sh
+
 
 ```
 
@@ -62,6 +64,7 @@ Una vez iniciado, verifica que los servicios estén corriendo:
 # Compilar y ejecutar ejemplo
 npx tsx examples/order-creation-saga-example.ts
 
+
 ```
 
 
@@ -73,6 +76,7 @@ npx tsx examples/order-creation-saga-example.ts
 
 
 ```
+
 
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Order Service │    │ Payment Service │    │Inventory Service│
@@ -95,6 +99,7 @@ npx tsx examples/order-creation-saga-example.ts
                     │  └─────────────────────┘  │
                     └───────────────────────────┘
 
+
 ```
 
 
@@ -102,6 +107,7 @@ npx tsx examples/order-creation-saga-example.ts
 
 
 ```
+
 
 1. Order Created
    ↓
@@ -111,6 +117,7 @@ npx tsx examples/order-creation-saga-example.ts
    ↓
 4a. Payment Succeeded → Order Confirmed → Email Sent
 4b. Payment Failed → Order Cancelled → Stock Released
+
 
 ```
 
@@ -167,6 +174,7 @@ const orderCreatedEvent = new OrderCreatedEvent(orderId, {
 });
 
 await eventBus.publish(EventSubjects.ORDER_CREATED, orderCreatedEvent);
+
 
 ```
 
@@ -318,6 +326,7 @@ NATS_CLUSTER_NAME=a4co-marketplace
 SERVICE_NAME=order-service
 LOG_LEVEL=info
 
+
 ```
 
 
@@ -456,6 +465,7 @@ docker logs a4co-nats
 # Verificar conectividad
 telnet localhost 4222
 
+
 ```
 
 
@@ -500,6 +510,7 @@ docker stats
 # Configurar límites en docker-compose.yml
 mem_limit: 512m
 
+
 ```
 
 
@@ -513,6 +524,7 @@ export LOG_LEVEL=debug
 
 # Ejecutar servicio
 npm start
+
 
 ```
 
