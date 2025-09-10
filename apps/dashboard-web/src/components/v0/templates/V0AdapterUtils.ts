@@ -25,9 +25,7 @@ export function createV0Adapter<T extends Record<string, any>>(
   OriginalComponent: React.ComponentType<T>,
   config: V0AdapterConfig = {}
 ) {
-  return function AdaptedComponent(
-    props: Partial<T> & AdaptedComponentProps
-  ) {
+  return function AdaptedComponent(props: Partial<T> & AdaptedComponentProps) {
     const { customData, onCustomEvent, ...restProps } = props;
 
     // Validación de props requeridas
@@ -40,15 +38,16 @@ export function createV0Adapter<T extends Record<string, any>>(
     }
 
     // Mapeo de datos personalizados
-    const mappedData = config.dataMapping && customData
-      ? Object.entries(config.dataMapping).reduce((acc, [v0Key, localKey]) => {
-          const value = customData[localKey];
-          if (value !== undefined) {
-            acc[v0Key] = value;
-          }
-          return acc;
-        }, {} as any)
-      : {};
+    const mappedData =
+      config.dataMapping && customData
+        ? Object.entries(config.dataMapping).reduce((acc, [v0Key, localKey]) => {
+            const value = customData[localKey];
+            if (value !== undefined) {
+              acc[v0Key] = value;
+            }
+            return acc;
+          }, {} as any)
+        : {};
 
     // Configuración de event handlers
     const eventHandlers = config.eventHandlers
@@ -58,7 +57,7 @@ export function createV0Adapter<T extends Record<string, any>>(
             if (typeof handler === 'function') {
               handler(...args);
             }
-            
+
             // Notificar evento personalizado
             onCustomEvent?.(eventName, args);
           };
@@ -72,14 +71,12 @@ export function createV0Adapter<T extends Record<string, any>>(
       ...mappedData,
       ...eventHandlers,
       ...config.customProps,
-      style: { 
-        ...config.styleOverrides, 
-        ...props.style 
+      style: {
+        ...config.styleOverrides,
+        ...props.style,
       },
-      className: [
-        props.className,
-        config.customProps?.className
-      ].filter(Boolean).join(' ') || undefined
+      className:
+        [props.className, config.customProps?.className].filter(Boolean).join(' ') || undefined,
     } as unknown as React.ComponentProps<typeof OriginalComponent>;
 
     return React.createElement(OriginalComponent, finalProps);
@@ -95,10 +92,10 @@ export function mapCommonV0Data(localData: any) {
     error: localData?.error || localData?.errorMessage || null,
     title: localData?.title || localData?.heading || '',
     description: localData?.description || localData?.subtitle || '',
-    
+
     // Datos de usuario
     user: localData?.user || localData?.currentUser || null,
-    
+
     // Configuración de UI
     theme: localData?.theme || 'default',
     variant: localData?.variant || 'default',
@@ -108,15 +105,18 @@ export function mapCommonV0Data(localData: any) {
 
 // Hook para manejo de eventos v0
 export function useV0Events(onCustomEvent?: (event: string, data: any) => void) {
-  const handleEvent = React.useCallback((eventName: string, ...args: any[]) => {
-    // Log para debugging
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`V0 Event: ${eventName}`, args);
-    }
-    
-    // Ejecutar callback personalizado
-    onCustomEvent?.(eventName, args);
-  }, [onCustomEvent]);
+  const handleEvent = React.useCallback(
+    (eventName: string, ...args: any[]) => {
+      // Log para debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`V0 Event: ${eventName}`, args);
+      }
+
+      // Ejecutar callback personalizado
+      onCustomEvent?.(eventName, args);
+    },
+    [onCustomEvent]
+  );
 
   return {
     onClick: (data: any) => handleEvent('click', data),
@@ -136,7 +136,7 @@ export function transformV0Styles(
   return {
     ...originalStyles,
     ...customizations,
-    
+
     // Aplicar variables CSS personalizadas
     '--v0-primary': customizations.primaryColor || 'var(--primary)',
     '--v0-secondary': customizations.secondaryColor || 'var(--secondary)',
@@ -157,7 +157,7 @@ export function validateV0Props<T>(
   }
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   // Validar props requeridas
   if (schema.required) {
     for (const prop of schema.required) {
@@ -166,7 +166,7 @@ export function validateV0Props<T>(
       }
     }
   }
-  
+
   // Validar tipos
   if (schema.types) {
     for (const [prop, expectedType] of Object.entries(schema.types)) {
@@ -176,10 +176,10 @@ export function validateV0Props<T>(
       }
     }
   }
-  
+
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -192,17 +192,17 @@ export const adapterPresets = {
       loading: 'loading',
       error: 'error',
       searchQuery: 'searchQuery',
-      filters: 'filters'
+      filters: 'filters',
     },
     eventHandlers: {
       onProductClick: (product: any) => console.log('Product clicked:', product),
       onSearchChange: (query: string) => console.log('Search query:', query),
-      onFilterChange: (filters: any) => console.log('Filters changed:', filters)
+      onFilterChange: (filters: any) => console.log('Filters changed:', filters),
     },
     validation: {
       required: ['products'],
-      optional: ['loading', 'error', 'searchQuery', 'filters']
-    }
+      optional: ['loading', 'error', 'searchQuery', 'filters'],
+    },
   }),
 
   // Preset para dashboards
@@ -211,16 +211,16 @@ export const adapterPresets = {
       metrics: 'metrics',
       charts: 'chartData',
       loading: 'loading',
-      user: 'currentUser'
+      user: 'currentUser',
     },
     eventHandlers: {
       onMetricClick: (metric: any) => console.log('Metric clicked:', metric),
-      onChartInteraction: (data: any) => console.log('Chart interaction:', data)
+      onChartInteraction: (data: any) => console.log('Chart interaction:', data),
     },
     validation: {
       required: ['metrics'],
-      optional: ['charts', 'loading', 'user']
-    }
+      optional: ['charts', 'loading', 'user'],
+    },
   }),
 
   // Preset para formularios
@@ -228,26 +228,22 @@ export const adapterPresets = {
     dataMapping: {
       initialValues: 'defaultValues',
       errors: 'validationErrors',
-      loading: 'isSubmitting'
+      loading: 'isSubmitting',
     },
     eventHandlers: {
       onSubmit: (values: any) => console.log('Form submitted:', values),
       onChange: (field: string, value: any) => console.log('Field changed:', { field, value }),
-      onValidation: (errors: any) => console.log('Validation errors:', errors)
+      onValidation: (errors: any) => console.log('Validation errors:', errors),
     },
     validation: {
       required: [],
-      optional: ['initialValues', 'errors', 'loading']
-    }
-  })
+      optional: ['initialValues', 'errors', 'loading'],
+    },
+  }),
 };
 
 // Utilidad para debugging de componentes v0
-export function debugV0Component(
-  componentName: string,
-  props: any,
-  config: V0AdapterConfig
-) {
+export function debugV0Component(componentName: string, props: any, config: V0AdapterConfig) {
   if (process.env.NODE_ENV === 'development') {
     console.group(`🎨 V0 Component Debug: ${componentName}`);
     console.log('Props:', props);

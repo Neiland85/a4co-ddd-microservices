@@ -1,19 +1,7 @@
 {
   "threshold": 0,
-  "reporters": [
-    "json"
-  ],
+  "reporters": ["json"],
   "output": "./",
-  "ignore": [
-    "**/*.test.*",
-    "**/*.spec.*",
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/build/**"
-  ],
-  "format": [
-    "javascript",
-    "typescript",
-    "tsx"
-  ]
+  "ignore": ["**/*.test.*", "**/*.spec.*", "**/node_modules/**", "**/dist/**", "**/build/**"],
+  "format": ["javascript", "typescript", "tsx"]
 }

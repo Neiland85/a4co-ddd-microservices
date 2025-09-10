@@ -1,98 +1,104 @@
 "use strict";
+/// <reference lib="dom" />
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.domSanitizer = exports.DOMSanitizer = void 0;
-exports.sanitizeHTML = sanitizeHTML;
-exports.useSanitizedHTML = useSanitizedHTML;
-const DEFAULT_ALLOWED_TAGS = [
-    'p', 'div', 'span', 'a', 'b', 'i', 'em', 'strong',
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'ul', 'ol', 'li', 'br', 'hr'
-];
-const DEFAULT_ALLOWED_ATTRIBUTES = {
-    'a': ['href', 'title', 'target'],
-    '*': ['class', 'id']
-};
-const DEFAULT_ALLOWED_PROTOCOLS = ['http:', 'https:', 'mailto:'];
-class DOMSanitizer {
+exports.DomSanitizer = void 0;
+class DomSanitizer {
     options;
-    constructor(options = {}) {
+    constructor(options) {
         this.options = {
-            allowedTags: options.allowedTags || DEFAULT_ALLOWED_TAGS,
-            allowedAttributes: options.allowedAttributes || DEFAULT_ALLOWED_ATTRIBUTES,
-            allowedProtocols: options.allowedProtocols || DEFAULT_ALLOWED_PROTOCOLS
+            allowedTags: ['p', 'b', 'i', 'u', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'br', 'span', 'div'],
+            allowedAttributes: {
+                a: ['href', 'target', 'rel'],
+                img: ['src', 'alt', 'width', 'height'],
+                // Add other element-specific attributes here
+            },
+            allowedClasses: {},
+            allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+            allowDataAttributes: false,
+            ...options,
         };
     }
-    sanitize(html) {
-        if (!html)
-            return '';
-        const template = document.createElement('template');
-        template.innerHTML = html;
-        this.sanitizeNode(template.content);
-        return template.innerHTML;
+    async sanitize(html) {
+        // Hacer el método asíncrono
+        if (typeof window === 'undefined' || typeof document === 'undefined') {
+            // Si no estamos en un entorno de navegador, usar JSDOM para la sanitización
+            // Importación dinámica para que no se bundle en el lado del cliente
+            const { JSDOM } = await import('jsdom');
+            const dom = new JSDOM(html);
+            const doc = dom.window.document;
+            this.sanitizeNode(doc.body);
+            return doc.body.innerHTML;
+        }
+        else {
+            // En entorno de navegador, usar DOM Parser nativo
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            this.sanitizeNode(doc.body);
+            return doc.body.innerHTML;
+        }
     }
     sanitizeNode(node) {
-        const childNodes = Array.from(node.childNodes);
-        childNodes.forEach(child => {
+        const children = Array.from(node.childNodes);
+        for (const child of children) {
             if (child.nodeType === Node.ELEMENT_NODE) {
                 const element = child;
+                // Remover tags no permitidos
                 if (!this.options.allowedTags.includes(element.tagName.toLowerCase())) {
                     const textNode = document.createTextNode(element.textContent || '');
                     node.replaceChild(textNode, element);
-                    return;
                 }
-                this.sanitizeAttributes(element);
-                this.sanitizeNode(element);
+                else {
+                    // Remover atributos no permitidos
+                    this.sanitizeAttributes(element);
+                    // Recorrer hijos recursivamente
+                    this.sanitizeNode(element);
+                }
             }
             else if (child.nodeType === Node.TEXT_NODE) {
+                // Dejar nodos de texto como están
             }
-            else {
+            else if (child.nodeType === Node.COMMENT_NODE) {
+                // Remover comentarios
                 node.removeChild(child);
             }
-        });
+            else {
+                // Remover otros tipos de nodos (doctype, etc.)
+                node.removeChild(child);
+            }
+        }
     }
     sanitizeAttributes(element) {
-        const attributes = Array.from(element.attributes);
-        attributes.forEach(attr => {
-            const tagName = element.tagName.toLowerCase();
-            const allowedForTag = this.options.allowedAttributes[tagName] || [];
-            const allowedGlobal = this.options.allowedAttributes['*'] || [];
+        const tagName = element.tagName.toLowerCase();
+        const allowedForTag = this.options.allowedAttributes[tagName] || [];
+        const allowedGlobal = this.options.allowedAttributes['*'] || []; // Atributos permitidos globalmente
+        const attributesToRemove = [];
+        for (const attr of Array.from(element.attributes)) {
+            // Remover atributos no permitidos para el tag o globalmente
             if (!allowedForTag.includes(attr.name) && !allowedGlobal.includes(attr.name)) {
-                element.removeAttribute(attr.name);
-                return;
+                attributesToRemove.push(attr.name);
             }
+            // Sanitizar URLs en href/src
             if (attr.name === 'href' || attr.name === 'src') {
                 if (!this.isValidUrl(attr.value)) {
-                    element.removeAttribute(attr.name);
+                    attributesToRemove.push(attr.name);
                 }
             }
+            // Remover event handlers (on* attributes)
             if (attr.name.startsWith('on')) {
-                element.removeAttribute(attr.name);
+                attributesToRemove.push(attr.name);
             }
-        });
+        }
+        attributesToRemove.forEach(attrName => element.removeAttribute(attrName));
     }
     isValidUrl(url) {
         try {
-            const base = typeof window !== 'undefined' && window.location && window.location.href
-                ? window.location.href
-                : 'http://localhost';
-            const parsedUrl = new URL(url, base);
-            return this.options.allowedProtocols.includes(parsedUrl.protocol);
+            const parsedUrl = new URL(url, typeof window !== 'undefined' ? window.location.href : 'http://localhost/');
+            return this.options.allowedSchemes.includes(parsedUrl.protocol.replace(':', ''));
         }
-        catch {
+        catch (e) {
             return false;
         }
     }
 }
-exports.DOMSanitizer = DOMSanitizer;
-exports.domSanitizer = new DOMSanitizer();
-function sanitizeHTML(html, options) {
-    if (options) {
-        const customSanitizer = new DOMSanitizer(options);
-        return customSanitizer.sanitize(html);
-    }
-    return exports.domSanitizer.sanitize(html);
-}
-function useSanitizedHTML(html, options) {
-    return sanitizeHTML(html, options);
-}
+exports.DomSanitizer = DomSanitizer;
 //# sourceMappingURL=dom-sanitizer.js.map

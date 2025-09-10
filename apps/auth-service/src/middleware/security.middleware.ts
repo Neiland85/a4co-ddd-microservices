@@ -15,23 +15,23 @@ export class SecurityMiddleware implements NestMiddleware {
   constructor(jwtService: JwtService, configService: ConfigService) {
     this.jwtService = jwtService;
     this.configService = configService;
-    
+
     // Configurar rate limiting
     this.rateLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutos
       max: 100, // máximo 100 requests por ventana
       message: {
         error: 'Too many requests from this IP, please try again later.',
-        retryAfter: '15 minutes'
+        retryAfter: '15 minutes',
       },
       standardHeaders: true,
       legacyHeaders: false,
       skipSuccessfulRequests: false,
       skipFailedRequests: false,
-      keyGenerator: (req) => {
+      keyGenerator: req => {
         // Usar IP + User ID si está autenticado
         return req.user?.id ? `${req.ip}-${req.user.id}` : req.ip;
-      }
+      },
     });
   }
 
@@ -49,7 +49,7 @@ export class SecurityMiddleware implements NestMiddleware {
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
       credentials: true,
-      maxAge: 86400 // 24 horas
+      maxAge: 86400, // 24 horas
     };
     cors(corsOptions)(req, res, () => {});
 
@@ -60,7 +60,7 @@ export class SecurityMiddleware implements NestMiddleware {
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https:"],
+          imgSrc: ["'self'", 'data:', 'https:'],
           connectSrc: ["'self'"],
           fontSrc: ["'self'"],
           objectSrc: ["'none'"],
@@ -71,10 +71,10 @@ export class SecurityMiddleware implements NestMiddleware {
       hsts: {
         maxAge: 31536000, // 1 año
         includeSubDomains: true,
-        preload: true
+        preload: true,
       },
       noSniff: true,
-      referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     })(req, res, () => {});
 
     // Validar JWT si la ruta lo requiere
@@ -91,9 +91,9 @@ export class SecurityMiddleware implements NestMiddleware {
       '/auth/profile',
       '/auth/change-password',
       '/auth/logout',
-      '/auth/refresh'
+      '/auth/refresh',
     ];
-    
+
     // Rutas que NO requieren autenticación
     const publicRoutes = [
       '/auth/login',
@@ -101,24 +101,26 @@ export class SecurityMiddleware implements NestMiddleware {
       '/auth/forgot-password',
       '/auth/reset-password',
       '/health',
-      '/metrics'
+      '/metrics',
     ];
 
     // Verificar si la ruta está protegida
-    return protectedRoutes.some(route => path.startsWith(route)) ||
-           !publicRoutes.some(route => path.startsWith(route));
+    return (
+      protectedRoutes.some(route => path.startsWith(route)) ||
+      !publicRoutes.some(route => path.startsWith(route))
+    );
   }
 
   private validateJWT(req: Request, res: Response, next: NextFunction) {
     try {
       const authHeader = req.headers.authorization;
-      
+
       if (!authHeader) {
         throw new HttpException('Authorization header missing', HttpStatus.UNAUTHORIZED);
       }
 
       const [bearer, token] = authHeader.split(' ');
-      
+
       if (bearer !== 'Bearer' || !token) {
         throw new HttpException('Invalid authorization header format', HttpStatus.UNAUTHORIZED);
       }
@@ -126,12 +128,12 @@ export class SecurityMiddleware implements NestMiddleware {
       // Verificar y decodificar JWT
       const payload = this.jwtService.verify(token, {
         secret: this.configService.get<string>('JWT_SECRET'),
-        algorithms: ['HS256']
+        algorithms: ['HS256'],
       });
 
       // Agregar información del usuario al request
       req.user = payload;
-      
+
       // Verificar si el token no ha expirado
       if (payload.exp && Date.now() >= payload.exp * 1000) {
         throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
@@ -169,19 +171,19 @@ export class LoginRateLimitMiddleware implements NestMiddleware {
       max: 5, // máximo 5 intentos de login por IP
       message: {
         error: 'Too many login attempts, please try again later.',
-        retryAfter: '15 minutes'
+        retryAfter: '15 minutes',
       },
       standardHeaders: true,
       legacyHeaders: false,
       skipSuccessfulRequests: true, // No contar logins exitosos
-      keyGenerator: (req) => req.ip,
+      keyGenerator: req => req.ip,
       handler: (req, res) => {
         res.status(429).json({
           error: 'Too many login attempts',
           retryAfter: '15 minutes',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
-      }
+      },
     });
   }
 
@@ -206,7 +208,7 @@ export class InputValidationMiddleware implements NestMiddleware {
     // Validar tamaño de payload
     const contentLength = parseInt(req.headers['content-length'] || '0');
     const maxPayloadSize = 1024 * 1024; // 1MB
-    
+
     if (contentLength > maxPayloadSize) {
       throw new HttpException('Payload too large', HttpStatus.PAYLOAD_TOO_LARGE);
     }
@@ -239,10 +241,12 @@ export class InputValidationMiddleware implements NestMiddleware {
 export class SecurityLoggingMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const startTime = Date.now();
-    
+
     // Log de request
-    console.log(`[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`);
-    
+    console.log(
+      `[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`
+    );
+
     // Log de autenticación
     if (req.user) {
       console.log(`[SECURITY] Authenticated user: ${req.user.id} - Role: ${req.user.role}`);
@@ -250,15 +254,17 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
 
     // Interceptar response para logging
     const originalSend = res.send;
-    res.send = function(data) {
+    res.send = function (data) {
       const duration = Date.now() - startTime;
-      console.log(`[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`);
-      
+      console.log(
+        `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`
+      );
+
       // Log de errores de seguridad
       if (res.statusCode >= 400) {
         console.error(`[SECURITY] Error on ${req.method} ${req.path}: ${res.statusCode} - ${data}`);
       }
-      
+
       return originalSend.call(this, data);
     };
 

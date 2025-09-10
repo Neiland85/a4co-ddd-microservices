@@ -35,13 +35,12 @@ export interface NotificationStatus {
 export class NotificationApiClient {
   private client: AxiosInstance;
 
-  constructor(config?: {
-    baseURL?: string;
-    timeout?: number;
-    headers?: Record<string, string>;
-  }) {
+  constructor(config?: { baseURL?: string; timeout?: number; headers?: Record<string, string> }) {
     this.client = axios.create({
-      baseURL: config?.baseURL || process.env['NOTIFICATION_SERVICE_URL'] || 'http://notification-service:3000',
+      baseURL:
+        config?.baseURL ||
+        process.env['NOTIFICATION_SERVICE_URL'] ||
+        'http://notification-service:3000',
       timeout: config?.timeout || 5000,
       headers: {
         'Content-Type': 'application/json',
@@ -51,11 +50,13 @@ export class NotificationApiClient {
 
     // Interceptor para manejar errores
     this.client.interceptors.response.use(
-      (response) => response,
-      (error) => {
+      response => response,
+      error => {
         if (error.response) {
           // El servidor respondió con un código de estado fuera del rango 2xx
-          throw new Error(`Notification service error: ${error.response.status} - ${error.response.data?.message || error.message}`);
+          throw new Error(
+            `Notification service error: ${error.response.status} - ${error.response.data?.message || error.message}`
+          );
         } else if (error.request) {
           // La solicitud se hizo pero no se recibió respuesta
           throw new Error('Notification service is not available');
@@ -72,7 +73,10 @@ export class NotificationApiClient {
    */
   async sendNotification(request: NotificationRequest): Promise<NotificationResponse> {
     try {
-      const response = await this.client.post<NotificationResponse>('/api/v1/notifications', request);
+      const response = await this.client.post<NotificationResponse>(
+        '/api/v1/notifications',
+        request
+      );
       return response.data;
     } catch (error) {
       console.error('Error sending notification:', error);
@@ -85,7 +89,9 @@ export class NotificationApiClient {
    */
   async getNotificationStatus(notificationId: string): Promise<NotificationResponse> {
     try {
-      const response = await this.client.get<NotificationResponse>(`/api/v1/notifications/${notificationId}`);
+      const response = await this.client.get<NotificationResponse>(
+        `/api/v1/notifications/${notificationId}`
+      );
       return response.data;
     } catch (error) {
       console.error('Error getting notification status:', error);
@@ -124,7 +130,7 @@ export class NotificationApiClient {
       message: params.message,
       recipients: params.recipients,
       channels: params.channels,
-      data: params.data || {}
+      data: params.data || {},
     });
   }
 
@@ -133,7 +139,9 @@ export class NotificationApiClient {
    */
   async retryNotification(notificationId: string): Promise<NotificationResponse> {
     try {
-      const response = await this.client.post<NotificationResponse>(`/api/v1/notifications/${notificationId}/retry`);
+      const response = await this.client.post<NotificationResponse>(
+        `/api/v1/notifications/${notificationId}/retry`
+      );
       return response.data;
     } catch (error) {
       console.error('Error retrying notification:', error);

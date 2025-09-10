@@ -19,26 +19,21 @@ export function setupPaymentRoutes(): Router {
    */
   router.post('/validate', async (req, res) => {
     try {
-      const { 
-        paymentMethodType, 
-        paymentMethodId, 
-        customerId, 
-        amount, 
-        currency, 
-        orderId 
-      } = req.body;
+      const { paymentMethodType, paymentMethodId, customerId, amount, currency, orderId } =
+        req.body;
 
       if (!paymentMethodType || !paymentMethodId || !customerId || !amount || !currency) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Missing required fields',
-          message: 'paymentMethodType, paymentMethodId, customerId, amount y currency son obligatorios' 
+          message:
+            'paymentMethodType, paymentMethodId, customerId, amount y currency son obligatorios',
         });
       }
 
       if (amount <= 0) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Invalid amount',
-          message: 'El monto debe ser mayor a 0' 
+          message: 'El monto debe ser mayor a 0',
         });
       }
 
@@ -48,14 +43,14 @@ export function setupPaymentRoutes(): Router {
         customerId,
         amount,
         currency,
-        orderId
+        orderId,
       });
       res.json(result);
     } catch (error) {
       console.error('Error validating payment method:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -66,30 +61,39 @@ export function setupPaymentRoutes(): Router {
    */
   router.post('/process', async (req, res) => {
     try {
-      const { 
-        orderId, 
-        customerId, 
-        paymentMethodType, 
-        paymentMethodId, 
-        amount, 
-        currency, 
+      const {
+        orderId,
+        customerId,
+        paymentMethodType,
+        paymentMethodId,
+        amount,
+        currency,
         description,
         customerEmail,
         customerPhone,
-        billingAddress
+        billingAddress,
       } = req.body;
 
-      if (!orderId || !customerId || !paymentMethodType || !paymentMethodId || !amount || !currency || !description) {
-        return res.status(400).json({ 
+      if (
+        !orderId ||
+        !customerId ||
+        !paymentMethodType ||
+        !paymentMethodId ||
+        !amount ||
+        !currency ||
+        !description
+      ) {
+        return res.status(400).json({
           error: 'Missing required fields',
-          message: 'orderId, customerId, paymentMethodType, paymentMethodId, amount, currency y description son obligatorios' 
+          message:
+            'orderId, customerId, paymentMethodType, paymentMethodId, amount, currency y description son obligatorios',
         });
       }
 
       if (amount <= 0) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Invalid amount',
-          message: 'El monto debe ser mayor a 0' 
+          message: 'El monto debe ser mayor a 0',
         });
       }
 
@@ -103,14 +107,14 @@ export function setupPaymentRoutes(): Router {
         description,
         customerEmail,
         customerPhone,
-        billingAddress
+        billingAddress,
       });
       res.json(result);
     } catch (error) {
       console.error('Error processing payment:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -125,22 +129,22 @@ export function setupPaymentRoutes(): Router {
       const { activeOnly } = req.query;
 
       if (!customerId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'customerId is required',
-          message: 'El ID del cliente es obligatorio' 
+          message: 'El ID del cliente es obligatorio',
         });
       }
 
       const result = await paymentController.getCustomerPaymentMethods({
         customerId,
-        activeOnly: activeOnly === 'true'
+        activeOnly: activeOnly === 'true',
       });
       res.json(result);
     } catch (error) {
       console.error('Error getting customer payment methods:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -154,16 +158,16 @@ export function setupPaymentRoutes(): Router {
       const { paymentId, orderId, refundAmount, reason, customerId } = req.body;
 
       if (!paymentId || !orderId || !refundAmount || !reason) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Missing required fields',
-          message: 'paymentId, orderId, refundAmount y reason son obligatorios' 
+          message: 'paymentId, orderId, refundAmount y reason son obligatorios',
         });
       }
 
       if (refundAmount <= 0) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Invalid refund amount',
-          message: 'El monto del reembolso debe ser mayor a 0' 
+          message: 'El monto del reembolso debe ser mayor a 0',
         });
       }
 
@@ -172,14 +176,14 @@ export function setupPaymentRoutes(): Router {
         orderId,
         refundAmount,
         reason,
-        customerId
+        customerId,
       });
       res.json(result);
     } catch (error) {
       console.error('Error processing refund:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -197,9 +201,9 @@ export function setupPaymentRoutes(): Router {
       const { paymentId } = req.params;
 
       if (!paymentId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'paymentId is required',
-          message: 'El ID del pago es obligatorio' 
+          message: 'El ID del pago es obligatorio',
         });
       }
 
@@ -207,9 +211,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting payment details:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -223,9 +227,9 @@ export function setupPaymentRoutes(): Router {
       const { orderId } = req.params;
 
       if (!orderId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'orderId is required',
-          message: 'El ID de la orden es obligatorio' 
+          message: 'El ID de la orden es obligatorio',
         });
       }
 
@@ -233,9 +237,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting payments by order:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -250,9 +254,9 @@ export function setupPaymentRoutes(): Router {
       const { limit, offset } = req.query;
 
       if (!customerId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'customerId is required',
-          message: 'El ID del cliente es obligatorio' 
+          message: 'El ID del cliente es obligatorio',
         });
       }
 
@@ -264,9 +268,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting customer payment history:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -280,9 +284,9 @@ export function setupPaymentRoutes(): Router {
       const { customerId, ...paymentMethodData } = req.body;
 
       if (!customerId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'customerId is required',
-          message: 'El ID del cliente es obligatorio' 
+          message: 'El ID del cliente es obligatorio',
         });
       }
 
@@ -290,9 +294,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error adding payment method:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -307,9 +311,9 @@ export function setupPaymentRoutes(): Router {
       const updateData = req.body;
 
       if (!methodId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'methodId is required',
-          message: 'El ID del método de pago es obligatorio' 
+          message: 'El ID del método de pago es obligatorio',
         });
       }
 
@@ -317,9 +321,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error updating payment method:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -333,9 +337,9 @@ export function setupPaymentRoutes(): Router {
       const { methodId } = req.params;
 
       if (!methodId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'methodId is required',
-          message: 'El ID del método de pago es obligatorio' 
+          message: 'El ID del método de pago es obligatorio',
         });
       }
 
@@ -343,9 +347,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error deleting payment method:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -364,9 +368,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting health status:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -381,9 +385,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting metrics:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -397,9 +401,9 @@ export function setupPaymentRoutes(): Router {
       const { paymentId } = req.params;
 
       if (!paymentId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'paymentId is required',
-          message: 'El ID del pago es obligatorio' 
+          message: 'El ID del pago es obligatorio',
         });
       }
 
@@ -407,9 +411,9 @@ export function setupPaymentRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting payment status:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -430,7 +434,7 @@ export function setupPaymentRoutes(): Router {
   // ========================================
 
   router.use('*', (req, res) => {
-    res.status(404).json({ 
+    res.status(404).json({
       error: 'Route not found',
       message: `La ruta ${req.originalUrl} no existe`,
       availableEndpoints: [
@@ -446,8 +450,8 @@ export function setupPaymentRoutes(): Router {
         'DELETE /payments/methods/:methodId',
         'GET /payments/health',
         'GET /payments/metrics',
-        'GET /payments/status/:paymentId'
-      ]
+        'GET /payments/status/:paymentId',
+      ],
     });
   });
 

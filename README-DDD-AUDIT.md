@@ -14,24 +14,31 @@ Conjunto completo de herramientas y comandos para auditar código de microservic
 
 ### 1. Ejecutar Auditoría Completa
 
+
 ```bash
 # Dar permisos de ejecución
 chmod +x scripts/*.sh
 
 # Ejecutar auditoría completa
 ./scripts/ddd-audit-runner.sh
+
 ```
 
+
 ### 2. Análisis por Lenguaje
+
 
 ```bash
 # Detecta automáticamente el lenguaje y ejecuta análisis específico
 ./scripts/language-specific-metrics.sh
+
 ```
+
 
 ## 📊 Métricas Evaluadas
 
 ### Estructura DDD
+
 - ✅ Bounded Contexts
 - ✅ Aggregates
 - ✅ Entities
@@ -41,6 +48,7 @@ chmod +x scripts/*.sh
 - ✅ Domain Services
 
 ### Calidad de Código
+
 - 📈 Cobertura de tests
 - 📉 Complejidad ciclomática
 - 🔄 Duplicación de código
@@ -48,6 +56,7 @@ chmod +x scripts/*.sh
 - 💰 Deuda técnica
 
 ### Patrones de Microservicios
+
 - 🌐 APIs REST
 - 📡 Comunicación entre servicios
 - 🚫 Anti-patrones detectados
@@ -56,18 +65,21 @@ chmod +x scripts/*.sh
 ## 📏 Estándares de Comparación
 
 ### Internacional (ISO/IEC 25010)
+
 - Coverage: 80%
 - Complejidad: <10
 - Duplicación: <5%
 - Deuda técnica: <5 días
 
 ### Europeo (ECSS)
+
 - Coverage: 75%
 - Complejidad: <12
 - Duplicación: <7%
 - Deuda técnica: <10 días
 
 ### Nacional
+
 - Coverage: 70%
 - Complejidad: <15
 - Duplicación: <10%
@@ -76,6 +88,7 @@ chmod +x scripts/*.sh
 ## 🛠️ Herramientas Utilizadas
 
 ### Análisis General
+
 - **Lizard**: Complejidad ciclomática
 - **CLOC**: Líneas de código
 - **SonarQube**: Análisis completo de calidad
@@ -83,6 +96,7 @@ chmod +x scripts/*.sh
 ### Por Lenguaje
 
 #### Java
+
 - Maven/Gradle
 - SpotBugs
 - JaCoCo (coverage)
@@ -90,24 +104,28 @@ chmod +x scripts/*.sh
 - ArchUnit
 
 #### C#/.NET
+
 - dotnet CLI
 - SonarScanner for .NET
 - Coverlet
 - StyleCop
 
 #### TypeScript/JavaScript
+
 - ESLint/TSLint
 - Jest (coverage)
 - npm audit
 - Madge (dependencias)
 
 #### Python
+
 - Pylint
 - Coverage.py
 - Bandit (seguridad)
 - Black (formato)
 
 #### Go
+
 - go vet
 - golint
 - gocyclo
@@ -127,40 +145,53 @@ El workflow incluido (`./github/workflows/ddd-audit.yml`) ejecuta automáticamen
 
 ### Configuración
 
+
 ```yaml
-# Ejecutar en:
+# Ejecutar en
 - Push a main/develop
 - Pull requests
 - Programado (lunes 9 AM)
 - Manual (workflow_dispatch)
+
 ```
 
+
 ### Secrets Necesarios
+
 
 ```bash
 SONAR_TOKEN      # Token de SonarQube
 SONAR_HOST_URL   # URL del servidor SonarQube
+
 ```
+
 
 ## 📈 Reportes Generados
 
 ### 1. Reporte de Estructura (`ddd-structure-analysis.txt`)
+
+
 ```
+
 === ANÁLISIS DE ESTRUCTURA DDD ===
 Bounded Contexts: 3
 Aggregates: 7
 Entities: 15
 Value Objects: 32
 Domain Events: 18
+
 ```
 
+
 ### 2. Reporte HTML Interactivo
+
 - Dashboard visual con métricas
 - Comparación con estándares
 - Recomendaciones específicas
 - Gráficos de progreso
 
 ### 3. Reporte de Lenguaje Específico
+
 - Métricas propias del lenguaje
 - Herramientas específicas
 - Mejores prácticas
@@ -168,14 +199,17 @@ Domain Events: 18
 ## 🎯 Cómo Interpretar los Resultados
 
 ### 🟢 Verde (Bueno)
+
 - Cumple o supera estándares internacionales
 - No requiere acción inmediata
 
 ### 🟡 Amarillo (Advertencia)
+
 - Por debajo de estándares pero aceptable
 - Considerar mejoras a mediano plazo
 
 ### 🔴 Rojo (Crítico)
+
 - Significativamente por debajo de estándares
 - Requiere atención inmediata
 
@@ -185,12 +219,15 @@ Domain Events: 18
 
 Edita los scripts para cambiar umbrales según tu contexto:
 
+
 ```bash
 # En scripts/ddd-audit-runner.sh
 INTL_COVERAGE=80    # Cambiar a tu estándar
 EU_COVERAGE=75      # Ajustar según necesidad
 NATIONAL_COVERAGE=70 # Basado en tu país/industria
+
 ```
+
 
 ### Agregar Herramientas
 
@@ -218,19 +255,28 @@ Para agregar nuevas herramientas de análisis:
 ## 🐛 Troubleshooting
 
 ### Error: Herramienta no encontrada
+
+
 ```bash
 # Instalar herramientas básicas
 pip install lizard
 sudo apt-get install cloc
 npm install -g madge
+
 ```
+
 
 ### Error: Permisos denegados
+
+
 ```bash
 chmod +x scripts/*.sh
+
 ```
 
+
 ### Error: No se encuentran archivos DDD
+
 - Verifica que tu proyecto siga convenciones de nomenclatura DDD
 - Ajusta los patrones de búsqueda en los scripts
 

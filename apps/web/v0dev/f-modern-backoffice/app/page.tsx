@@ -1,102 +1,102 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Sidebar } from "@/components/layout/sidebar"
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
-import { MetricsOverview } from "@/components/dashboard/metrics-overview"
-import { PerformanceMonitoring } from "@/components/dashboard/performance-monitoring"
-import { SecurityMonitoring } from "@/components/dashboard/security-monitoring"
-import { UserManagement } from "@/components/dashboard/user-management"
-import { ContentModeration } from "@/components/dashboard/content-moderation"
-import { EventHistory } from "@/components/dashboard/event-history"
-import { NotificationSystem } from "@/components/notifications/notification-system"
-import { AuthGuard } from "@/components/security/auth-guard"
-import { PerformanceDashboard } from "@/components/performance/performance-dashboard"
-import { UserManagementDashboard } from "@/components/users/user-management-dashboard"
-import { CybersecurityDashboard } from "@/components/security/cybersecurity-dashboard"
-import { OffersManagementDashboard } from "@/components/offers/offers-management-dashboard"
-import { SettingsDashboard } from "@/components/settings/settings-dashboard"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { useState } from 'react';
+import { Sidebar } from '@/components/layout/sidebar';
+import { DashboardHeader } from '@/components/dashboard/dashboard-header';
+import { MetricsOverview } from '@/components/dashboard/metrics-overview';
+import { PerformanceMonitoring } from '@/components/dashboard/performance-monitoring';
+import { SecurityMonitoring } from '@/components/dashboard/security-monitoring';
+import { UserManagement } from '@/components/dashboard/user-management';
+import { ContentModeration } from '@/components/dashboard/content-moderation';
+import { EventHistory } from '@/components/dashboard/event-history';
+import { NotificationSystem } from '@/components/notifications/notification-system';
+import { AuthGuard } from '@/components/security/auth-guard';
+import { PerformanceDashboard } from '@/components/performance/performance-dashboard';
+import { UserManagementDashboard } from '@/components/users/user-management-dashboard';
+import { CybersecurityDashboard } from '@/components/security/cybersecurity-dashboard';
+import { OffersManagementDashboard } from '@/components/offers/offers-management-dashboard';
+import { SettingsDashboard } from '@/components/settings/settings-dashboard';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function BackofficePage() {
-  const [activeSection, setActiveSection] = useState("dashboard")
+  const [activeSection, setActiveSection] = useState('dashboard');
 
   const renderContent = () => {
     switch (activeSection) {
-      case "dashboard":
+      case 'dashboard':
         return (
           <div className="space-y-6">
             <MetricsOverview />
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
               <PerformanceMonitoring />
               <SecurityMonitoring />
             </div>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
               <UserManagement />
               <ContentModeration />
             </div>
             <EventHistory />
           </div>
-        )
+        );
 
       // Performance sections
-      case "performance-metrics":
-      case "performance-analytics":
-      case "performance-database":
-      case "performance":
-        return <PerformanceDashboard />
+      case 'performance-metrics':
+      case 'performance-analytics':
+      case 'performance-database':
+      case 'performance':
+        return <PerformanceDashboard />;
 
       // User management sections
-      case "users-businesses":
-      case "users-customers":
-      case "users-analytics":
-      case "users":
-        return <UserManagementDashboard />
+      case 'users-businesses':
+      case 'users-customers':
+      case 'users-analytics':
+      case 'users':
+        return <UserManagementDashboard />;
 
       // Security sections
-      case "security-monitoring":
-      case "security-threats":
-      case "security-firewall":
-      case "security":
-        return <CybersecurityDashboard />
+      case 'security-monitoring':
+      case 'security-threats':
+      case 'security-firewall':
+      case 'security':
+        return <CybersecurityDashboard />;
 
       // Offers sections
-      case "offers-featured":
-      case "offers-promotions":
-      case "offers-analytics":
-      case "offers":
-        return <OffersManagementDashboard />
+      case 'offers-featured':
+      case 'offers-promotions':
+      case 'offers-analytics':
+      case 'offers':
+        return <OffersManagementDashboard />;
 
-      case "settings":
-        return <SettingsDashboard />
+      case 'settings':
+        return <SettingsDashboard />;
 
-      case "notifications":
+      case 'notifications':
         return (
-          <div className="flex items-center justify-center h-96">
+          <div className="flex h-96 items-center justify-center">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Centro de Notificaciones</h2>
+              <h2 className="mb-4 text-2xl font-bold">Centro de Notificaciones</h2>
               <p className="text-muted-foreground">Gestión de notificaciones en desarrollo</p>
             </div>
           </div>
-        )
+        );
 
       default:
-        return <LoadingSpinner />
+        return <LoadingSpinner />;
     }
-  }
+  };
 
   return (
-    <AuthGuard requiredPermissions={["system:read"]}>
-      <div className="min-h-screen bg-background flex">
+    <AuthGuard requiredPermissions={['system:read']}>
+      <div className="bg-background flex min-h-screen">
         <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex flex-1 flex-col">
           <DashboardHeader />
           <NotificationSystem />
 
-          <main className="flex-1 p-6 overflow-auto">{renderContent()}</main>
+          <main className="flex-1 overflow-auto p-6">{renderContent()}</main>
         </div>
       </div>
     </AuthGuard>
-  )
+  );
 }

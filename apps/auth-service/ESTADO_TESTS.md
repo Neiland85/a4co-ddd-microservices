@@ -25,6 +25,7 @@
 
 #### `jest.config.js` (NUEVO)
 
+
 ```javascript
 module.exports = {
   displayName: 'auth-service',
@@ -37,7 +38,9 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   // ... más configuración
 };
+
 ```
+
 
 #### `test/setup.ts` (NUEVO)
 
@@ -102,6 +105,7 @@ module.exports = {
 
 ## 🚀 Cómo Ejecutar los Tests
 
+
 ```bash
 # Instalar dependencias (desde la raíz del monorepo)
 pnpm install
@@ -115,7 +119,9 @@ npm test -- --testPathPattern=register-user-unit
 
 # Ejecutar con coverage
 npm run test:cov
+
 ```
+
 
 ## 📋 Tests Disponibles
 
@@ -147,6 +153,7 @@ npm run test:cov
 
 ## 🛠️ Comandos de Desarrollo
 
+
 ```bash
 # Limpiar y reinstalar dependencias
 rm -rf node_modules && pnpm install
@@ -160,23 +167,25 @@ open coverage/lcov-report/index.html
 
 # Debug de tests específicos
 npm run test:debug -- --testNamePattern="should register"
+
 ```
+
 
 ## 🔧 Troubleshooting
 
-### Si los tests no se ejecutan:
+### Si los tests no se ejecutan
 
 1. Verificar que las dependencias estén instaladas: `pnpm install`
 2. Verificar configuración de TypeScript: `npx tsc --noEmit`
 3. Limpiar cache de Jest: `npx jest --clearCache`
 
-### Si hay errores de imports:
+### Si hay errores de imports
 
 1. Verificar mapeo de módulos en `jest.config.js`
 2. Verificar paths en `tsconfig.json`
 3. Verificar que shared-utils esté compilado
 
-### Si hay errores de decoradores:
+### Si hay errores de decoradores
 
 1. Verificar `experimentalDecorators: true` en tsconfig
 2. Verificar configuración de ts-jest en jest.config.js

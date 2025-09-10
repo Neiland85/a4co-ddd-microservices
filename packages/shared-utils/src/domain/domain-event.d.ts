@@ -5,6 +5,7 @@ export interface IDomainEvent {
     eventVersion: number;
     occurredOn: Date;
     eventData: any;
+    sagaId?: string;
 }
 export declare abstract class DomainEvent implements IDomainEvent {
     readonly eventId: string;
@@ -13,6 +14,7 @@ export declare abstract class DomainEvent implements IDomainEvent {
     readonly eventVersion: number;
     readonly occurredOn: Date;
     readonly eventData: any;
-    constructor(aggregateId: string, eventData: any, eventVersion?: number);
+    readonly sagaId?: string;
+    constructor(aggregateId: string, eventData: any, eventVersion?: number, sagaId?: string);
 }
 //# sourceMappingURL=domain-event.d.ts.map

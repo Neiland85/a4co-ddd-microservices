@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
+// Test básico para verificar que las importaciones funcionan
 console.log('Testing shared-utils imports...');
+// Test BaseEntity
 class TestEntity extends index_1.BaseEntity {
     name;
     constructor(name, id) {
@@ -11,6 +13,7 @@ class TestEntity extends index_1.BaseEntity {
 }
 const entity = new TestEntity('Test Entity');
 console.log('✅ BaseEntity works:', entity.id);
+// Test ValueObject
 class TestValue extends index_1.ValueObject {
     constructor(value) {
         super(value);
@@ -18,8 +21,8 @@ class TestValue extends index_1.ValueObject {
 }
 const valueObj = new TestValue('test-value');
 console.log('✅ ValueObject works:', valueObj.value);
-const uuid = index_1.UuidUtil.generate();
-console.log('✅ UuidUtil works:', uuid);
-console.log('✅ ErrorCodes works:', index_1.ErrorCodes.INVALID_CREDENTIALS);
+// Test generateId
+const uuid = (0, index_1.generateId)(16);
+console.log('✅ generateId works:', uuid);
 console.log('🎉 All imports are working correctly!');
 //# sourceMappingURL=import-test.js.map

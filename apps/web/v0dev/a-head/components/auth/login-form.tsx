@@ -19,10 +19,7 @@ import { useActionState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 export function LoginForm() {
-  const [state, formAction, isPending] = useActionState<AuthState, FormData>(
-    loginAction,
-    null
-  );
+  const [state, formAction, isPending] = useActionState<AuthState, FormData>(loginAction, null);
   const { toast } = useToast();
   const { playSuccess, playError } = useSoundEffects();
 

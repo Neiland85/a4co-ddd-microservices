@@ -2,30 +2,24 @@
 /**
  * Pino logger implementation for A4CO observability
  */
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PinoLoggerAdapter = void 0;
 exports.createLogger = createLogger;
-var pino_1 = require("pino");
-var PinoLoggerAdapter = /** @class */ (function () {
-    function PinoLoggerAdapter(config) {
-        var _a = config.level, level = _a === void 0 ? 'info' : _a, _b = config.pretty, pretty = _b === void 0 ? false : _b, service = config.service, environment = config.environment, version = config.version, _c = config.customSerializers, customSerializers = _c === void 0 ? {} : _c, destination = config.destination, _d = config.redact, redact = _d === void 0 ? [] : _d;
+const pino_1 = __importDefault(require("pino"));
+class PinoLoggerAdapter {
+    logger;
+    baseContext;
+    constructor(config) {
+        const { level = 'info', pretty = false, service, environment, version, customSerializers = {}, destination, redact = [], } = config;
         this.baseContext = {
-            service: service,
-            environment: environment,
-            version: version,
+            service,
+            environment,
+            version,
         };
-        var transport = pretty
+        const transport = pretty
             ? {
                 target: 'pino-pretty',
                 options: {
@@ -36,34 +30,44 @@ var PinoLoggerAdapter = /** @class */ (function () {
             }
             : undefined;
         this.logger = (0, pino_1.default)({
-            level: level,
-            transport: transport,
+            level,
+            transport,
             base: this.baseContext,
-            serializers: __assign(__assign(__assign({}, pino_1.default.stdSerializers), customSerializers), { ddd: function (value) { return value; }, http: function (value) { return value; }, error: pino_1.default.stdSerializers.err }),
-            redact: redact,
+            serializers: {
+                ...pino_1.default.stdSerializers,
+                ...customSerializers,
+                ddd: value => value,
+                http: value => value,
+                error: pino_1.default.stdSerializers.err,
+            },
+            redact,
             timestamp: pino_1.default.stdTimeFunctions.isoTime,
             formatters: {
-                level: function (label) { return ({ level: label }); },
+                level: label => ({ level: label }),
             },
         }, destination ? pino_1.default.destination(destination) : undefined);
     }
-    PinoLoggerAdapter.prototype.mergeContext = function (context) {
-        return __assign(__assign(__assign({}, this.baseContext), context), { timestamp: new Date().toISOString() });
-    };
-    PinoLoggerAdapter.prototype.trace = function (message, context) {
+    mergeContext(context) {
+        return {
+            ...this.baseContext,
+            ...context,
+            timestamp: new Date().toISOString(),
+        };
+    }
+    trace(message, context) {
         this.logger.trace(this.mergeContext(context), message);
-    };
-    PinoLoggerAdapter.prototype.debug = function (message, context) {
+    }
+    debug(message, context) {
         this.logger.debug(this.mergeContext(context), message);
-    };
-    PinoLoggerAdapter.prototype.info = function (message, context) {
+    }
+    info(message, context) {
         this.logger.info(this.mergeContext(context), message);
-    };
-    PinoLoggerAdapter.prototype.warn = function (message, context) {
+    }
+    warn(message, context) {
         this.logger.warn(this.mergeContext(context), message);
-    };
-    PinoLoggerAdapter.prototype.error = function (message, error, context) {
-        var errorContext = error instanceof Error
+    }
+    error(message, error, context) {
+        const errorContext = error instanceof Error
             ? {
                 error: {
                     message: error.message,
@@ -72,12 +76,15 @@ var PinoLoggerAdapter = /** @class */ (function () {
                 },
             }
             : error
-                ? { error: error }
+                ? { error }
                 : {};
-        this.logger.error(__assign(__assign({}, this.mergeContext(context)), errorContext), message);
-    };
-    PinoLoggerAdapter.prototype.fatal = function (message, error, context) {
-        var errorContext = error instanceof Error
+        this.logger.error({
+            ...this.mergeContext(context),
+            ...errorContext,
+        }, message);
+    }
+    fatal(message, error, context) {
+        const errorContext = error instanceof Error
             ? {
                 error: {
                     message: error.message,
@@ -86,18 +93,20 @@ var PinoLoggerAdapter = /** @class */ (function () {
                 },
             }
             : error
-                ? { error: error }
+                ? { error }
                 : {};
-        this.logger.fatal(__assign(__assign({}, this.mergeContext(context)), errorContext), message);
-    };
-    PinoLoggerAdapter.prototype.child = function (context) {
-        var childLogger = Object.create(this);
+        this.logger.fatal({
+            ...this.mergeContext(context),
+            ...errorContext,
+        }, message);
+    }
+    child(context) {
+        const childLogger = Object.create(this);
         childLogger.logger = this.logger.child(context);
-        childLogger.baseContext = __assign(__assign({}, this.baseContext), context);
+        childLogger.baseContext = { ...this.baseContext, ...context };
         return childLogger;
-    };
-    return PinoLoggerAdapter;
-}());
+    }
+}
 exports.PinoLoggerAdapter = PinoLoggerAdapter;
 /**
  * Factory function to create a logger instance
@@ -105,3 +114,4 @@ exports.PinoLoggerAdapter = PinoLoggerAdapter;
 function createLogger(config) {
     return new PinoLoggerAdapter(config);
 }
+//# sourceMappingURL=pino-logger.js.map

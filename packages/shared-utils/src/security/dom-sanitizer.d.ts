@@ -1,18 +1,16 @@
-interface SanitizeOptions {
-    allowedTags?: string[];
-    allowedAttributes?: Record<string, string[]>;
-    allowedProtocols?: string[];
+export interface SanitizeOptions {
+    allowedTags: string[];
+    allowedAttributes: Record<string, string[]>;
+    allowedClasses: Record<string, string[]>;
+    allowedSchemes: string[];
+    allowDataAttributes: boolean;
 }
-export declare class DOMSanitizer {
+export declare class DomSanitizer {
     private options;
-    constructor(options?: SanitizeOptions);
-    sanitize(html: string): string;
+    constructor(options?: Partial<SanitizeOptions>);
+    sanitize(html: string): Promise<string>;
     private sanitizeNode;
     private sanitizeAttributes;
     private isValidUrl;
 }
-export declare const domSanitizer: DOMSanitizer;
-export declare function sanitizeHTML(html: string, options?: SanitizeOptions): string;
-export declare function useSanitizedHTML(html: string, options?: SanitizeOptions): string;
-export {};
 //# sourceMappingURL=dom-sanitizer.d.ts.map

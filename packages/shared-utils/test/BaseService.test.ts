@@ -35,7 +35,7 @@ describe('BaseService', () => {
     const startTime = Date.now();
     await service.testAsyncMethod();
     const endTime = Date.now();
-    
+
     // Should take at least 50ms due to simulateDelay
     expect(endTime - startTime).toBeGreaterThanOrEqual(40);
   });

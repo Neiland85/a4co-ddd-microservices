@@ -1,1 +1,1 @@
-{"version":3,"file":"base-dto.d.ts","sourceRoot":"","sources":["base-dto.ts"],"names":[],"mappings":"AAAA,8BAAsB,OAAO;IACpB,MAAM,IAAI,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC;WAItB,QAAQ,CAAC,CAAC,SAAS,OAAO,EACtC,IAAI,EAAE,UAAU,CAAC,EACjB,IAAI,EAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,GACxB,CAAC;CAKL"}
+{"version":3,"file":"base-dto.d.ts","sourceRoot":"","sources":["base-dto.ts"],"names":[],"mappings":"AAAA,8BAAsB,OAAO;IACpB,MAAM,IAAI,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC;WAItB,QAAQ,CAAC,CAAC,SAAS,OAAO,EAAE,IAAI,EAAE,UAAU,CAAC,EAAE,IAAI,EAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,GAAG,CAAC;CAK3F"}

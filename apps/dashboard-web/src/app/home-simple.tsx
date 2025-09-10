@@ -4,9 +4,7 @@ function HomePage() {
       <div className="demo-card">
         <h1 className="demo-title">🎉 A4CO Dashboard FUNCIONA! 🎉</h1>
 
-        <p className="demo-subtitle">
-          El servidor Next.js está corriendo correctamente
-        </p>
+        <p className="demo-subtitle">El servidor Next.js está corriendo correctamente</p>
 
         <div className="demo-section">
           <h2 className="demo-section-title">✅ Sistema Operativo</h2>
@@ -20,9 +18,7 @@ function HomePage() {
         </div>
 
         <div className="demo-success-section">
-          <h3 className="demo-success-title">
-            🚀 Listo para desarrollar el dashboard completo!
-          </h3>
+          <h3 className="demo-success-title">🚀 Listo para desarrollar el dashboard completo!</h3>
         </div>
       </div>
     </div>

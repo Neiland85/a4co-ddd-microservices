@@ -35,7 +35,7 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
 
   return (req: Request, res: Response, next: NextFunction) => {
     // Extract trace headers
-    let traceId = req.headers['x-trace-id'] as string || uuidv4();
+    let traceId = (req.headers['x-trace-id'] as string) || uuidv4();
     let parentSpanId = req.headers['x-span-id'] as string;
 
     const tracer = trace.getTracer(serviceName);
@@ -57,7 +57,7 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
 
     // Set trace context
     const ctx = trace.setSpan(context.active(), span);
-    
+
     // Add request body if enabled
     if (captureRequestBody && req.body) {
       span.setAttribute('http.request.body', JSON.stringify(req.body));
@@ -91,7 +91,7 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
     const originalJson = res.json;
     const startTime = Date.now();
 
-    res.send = function(data: any) {
+    res.send = function (data: any) {
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_content_length', Buffer.byteLength(data));
       span.setAttribute('http.duration', Date.now() - startTime);
@@ -123,7 +123,7 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
       return originalSend.call(this, data);
     };
 
-    res.json = function(data: any) {
+    res.json = function (data: any) {
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_content_type', 'application/json');
       span.setAttribute('http.duration', Date.now() - startTime);
@@ -178,7 +178,7 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
 
   return async (ctx: Context, next: Next) => {
     // Extract trace headers
-    let traceId = ctx.headers['x-trace-id'] as string || uuidv4();
+    let traceId = (ctx.headers['x-trace-id'] as string) || uuidv4();
     let parentSpanId = ctx.headers['x-span-id'] as string;
 
     const tracer = trace.getTracer(serviceName);
@@ -200,7 +200,7 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
 
     // Set trace context
     const tracingContext = trace.setSpan(context.active(), span);
-    
+
     // Add request body if enabled
     if (captureRequestBody && ctx.request.body) {
       span.setAttribute('http.request.body', JSON.stringify(ctx.request.body));
@@ -243,7 +243,8 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
       span.setAttribute('http.duration', Date.now() - startTime);
 
       if (captureResponseBody && ctx.body) {
-        span.setAttribute('http.response.body', 
+        span.setAttribute(
+          'http.response.body',
           typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body)
         );
       }
@@ -293,32 +294,26 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
 /**
  * Decorator for controller methods to add span
  */
-export function TraceController(
-  options?: {
-    name?: string;
-    captureArgs?: boolean;
-    captureResult?: boolean;
-  }
-) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+export function TraceController(options?: {
+  name?: string;
+  captureArgs?: boolean;
+  captureResult?: boolean;
+}) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
       // Get request object (Express or Koa)
       const req = args[0];
       const parentSpan = req.__span || req.state?.span;
-      
+
       if (!parentSpan) {
         return originalMethod.apply(this, args);
       }
 
       const tracer = trace.getTracer('controller');
       const spanName = options?.name || `${target.constructor.name}.${propertyKey}`;
-      
+
       const span = tracer.startSpan(spanName, {
         kind: SpanKind.INTERNAL,
         attributes: {
@@ -333,11 +328,11 @@ export function TraceController(
 
       try {
         const result = await originalMethod.apply(this, args);
-        
+
         if (options?.captureResult) {
           span.setAttribute('controller.result', JSON.stringify(result));
         }
-        
+
         span.setStatus({ code: SpanStatusCode.OK });
         return result;
       } catch (error) {

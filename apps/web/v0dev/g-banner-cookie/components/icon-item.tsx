@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import type { IconItemProps } from "../types/icon-grid-types"
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import type { IconItemProps } from '../types/icon-grid-types';
 
 /**
  * IconItem Component
@@ -21,32 +21,32 @@ import type { IconItemProps } from "../types/icon-grid-types"
 export default function IconItem({
   config,
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
-  variant = "default",
-  className = "",
+  variant = 'default',
+  className = '',
 }: IconItemProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const IconComponent = config.icon
+  const [isHovered, setIsHovered] = useState(false);
+  const IconComponent = config.icon;
 
   const handleClick = () => {
-    config.onClick?.()
-  }
+    config.onClick?.();
+  };
 
   const getVariantClasses = () => {
-    const baseClasses = "group relative overflow-hidden transition-all duration-300 ease-in-out"
+    const baseClasses = 'group relative overflow-hidden transition-all duration-300 ease-in-out';
 
     switch (variant) {
-      case "outline":
-        return `${baseClasses} border-2 border-gray-200 dark:border-gray-700 bg-transparent hover:border-a4co-olive-400 hover:bg-a4co-olive-50 dark:hover:bg-a4co-olive-900/20`
-      case "ghost":
-        return `${baseClasses} bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800`
-      case "secondary":
-        return `${baseClasses} bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700`
+      case 'outline':
+        return `${baseClasses} border-2 border-gray-200 dark:border-gray-700 bg-transparent hover:border-a4co-olive-400 hover:bg-a4co-olive-50 dark:hover:bg-a4co-olive-900/20`;
+      case 'ghost':
+        return `${baseClasses} bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800`;
+      case 'secondary':
+        return `${baseClasses} bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700`;
       default:
-        return `${baseClasses} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:bg-a4co-olive-50 dark:hover:bg-a4co-olive-900/20 hover:border-a4co-olive-300 dark:hover:border-a4co-olive-600 shadow-natural hover:shadow-natural-md`
+        return `${baseClasses} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:bg-a4co-olive-50 dark:hover:bg-a4co-olive-900/20 hover:border-a4co-olive-300 dark:hover:border-a4co-olive-600 shadow-natural hover:shadow-natural-md`;
     }
-  }
+  };
 
   return (
     <TooltipProvider>
@@ -60,8 +60,8 @@ export default function IconItem({
             onMouseLeave={() => setIsHovered(false)}
             className={`
               ${getVariantClasses()}
-              h-20 w-full p-4 flex flex-col items-center justify-center space-y-2
-              focus:ring-2 focus:ring-a4co-olive-500 focus:ring-offset-2
+              focus:ring-a4co-olive-500 flex h-20 w-full flex-col items-center justify-center space-y-2
+              p-4 focus:ring-2 focus:ring-offset-2
               active:scale-95
               ${className}
             `}
@@ -75,7 +75,7 @@ export default function IconItem({
                 strokeWidth={strokeWidth}
                 className={`
                   transition-all duration-300 ease-in-out
-                  ${isHovered ? "text-a4co-olive-600 dark:text-a4co-olive-400" : "text-gray-600 dark:text-gray-400"}
+                  ${isHovered ? 'text-a4co-olive-600 dark:text-a4co-olive-400' : 'text-gray-600 dark:text-gray-400'}
                 `}
                 aria-hidden="true"
               />
@@ -83,16 +83,16 @@ export default function IconItem({
               {/* Hover Effect Ring */}
               <div
                 className={`
-                  absolute inset-0 rounded-full border-2 border-a4co-olive-400 opacity-0 scale-75
+                  border-a4co-olive-400 absolute inset-0 scale-75 rounded-full border-2 opacity-0
                   transition-all duration-300 ease-in-out
-                  ${isHovered ? "opacity-30 scale-110" : ""}
+                  ${isHovered ? 'scale-110 opacity-30' : ''}
                 `}
                 style={{
                   width: size + 16,
                   height: size + 16,
-                  left: "50%",
-                  top: "50%",
-                  transform: "translate(-50%, -50%)",
+                  left: '50%',
+                  top: '50%',
+                  transform: 'translate(-50%, -50%)',
                 }}
               />
             </div>
@@ -100,9 +100,9 @@ export default function IconItem({
             {/* Label */}
             <span
               className={`
-              text-xs font-medium text-center leading-tight
+              text-center text-xs font-medium leading-tight
               transition-colors duration-300
-              ${isHovered ? "text-a4co-olive-700 dark:text-a4co-olive-300" : "text-gray-700 dark:text-gray-300"}
+              ${isHovered ? 'text-a4co-olive-700 dark:text-a4co-olive-300' : 'text-gray-700 dark:text-gray-300'}
             `}
             >
               {config.label}
@@ -111,10 +111,10 @@ export default function IconItem({
             {/* Background Gradient Effect */}
             <div
               className={`
-                absolute inset-0 bg-gradient-to-br from-a4co-olive-100/50 to-a4co-clay-100/50 
-                dark:from-a4co-olive-900/20 dark:to-a4co-clay-900/20
+                from-a4co-olive-100/50 to-a4co-clay-100/50 dark:from-a4co-olive-900/20 dark:to-a4co-clay-900/20 absolute 
+                inset-0 bg-gradient-to-br
                 opacity-0 transition-opacity duration-300
-                ${isHovered ? "opacity-100" : ""}
+                ${isHovered ? 'opacity-100' : ''}
               `}
             />
           </Button>
@@ -124,11 +124,11 @@ export default function IconItem({
           <div className="text-center">
             <p className="font-medium">{config.label}</p>
             {config.description && (
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{config.description}</p>
+              <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">{config.description}</p>
             )}
           </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }

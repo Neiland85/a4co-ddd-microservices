@@ -117,6 +117,7 @@ This document summarizes the security vulnerabilities that were detected by Depe
 
 To fully mitigate NextAuth.js vulnerabilities, ensure proper configuration:
 
+
 ```javascript
 // Example secure NextAuth.js configuration
 export const authOptions = {
@@ -134,11 +135,14 @@ export const authOptions = {
   // Enable PKCE for OAuth providers
   useSecureCookies: process.env.NODE_ENV === 'production',
 };
+
 ```
+
 
 ### 2. Nodemailer Security
 
 To fully mitigate Nodemailer vulnerabilities:
+
 
 ```javascript
 // Example secure Nodemailer configuration
@@ -162,11 +166,14 @@ const transporter = nodemailer.createTransporter({
   secure: true,
   // Validate all inputs before sending
 });
+
 ```
+
 
 ### 3. Next.js Security Headers
 
 Add security headers to your Next.js configuration:
+
 
 ```javascript
 // next.config.js
@@ -193,7 +200,9 @@ const nextConfig = {
     ];
   },
 };
+
 ```
+
 
 ## Monitoring
 

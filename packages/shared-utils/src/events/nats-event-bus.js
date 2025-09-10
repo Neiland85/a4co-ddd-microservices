@@ -64,6 +64,7 @@ class NatsEventBus extends events_1.EventEmitter {
             this.emit('disconnected');
             console.log('🔌 Conexión NATS cerrada');
         });
+        // NATS status es un AsyncIterable, no un Observable
         (async () => {
             try {
                 for await (const status of this.connection.status()) {
@@ -174,6 +175,7 @@ class NatsEventBus extends events_1.EventEmitter {
     getActiveSubscriptions() {
         return Array.from(this.subscriptions.keys());
     }
+    // Métodos de conveniencia para eventos específicos
     async publishOrderCreated(orderId, orderData) {
         const event = {
             eventId: this.generateEventId(),

@@ -11,9 +11,5 @@ module.exports = {
     '^@a4co/shared-utils/(.*)$': '<rootDir>/packages/shared-utils/src/$1',
   },
   coverageReporters: ['text', 'lcov', 'html'],
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.d.ts',
-    '!src/main.ts',
-  ],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/main.ts'],
 };

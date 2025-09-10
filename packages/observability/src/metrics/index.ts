@@ -128,7 +128,7 @@ function initializeAppMetrics(serviceName: string): void {
 // Register system metrics observers
 function registerSystemMetrics(metrics: AppMetrics): void {
   // Memory usage observer
-  metrics.memoryUsage.addCallback((result) => {
+  metrics.memoryUsage.addCallback(result => {
     const memUsage = process.memoryUsage();
     result.observe(memUsage.heapUsed, { type: 'heap_used' });
     result.observe(memUsage.heapTotal, { type: 'heap_total' });
@@ -138,7 +138,7 @@ function registerSystemMetrics(metrics: AppMetrics): void {
 
   // CPU usage observer (simplified)
   let previousCpuUsage = process.cpuUsage();
-  metrics.cpuUsage.addCallback((result) => {
+  metrics.cpuUsage.addCallback(result => {
     const currentCpuUsage = process.cpuUsage(previousCpuUsage);
     const totalUsage = (currentCpuUsage.user + currentCpuUsage.system) / 1000000; // Convert to seconds
     const percentage = (totalUsage / 1) * 100; // Assuming 1 second interval
@@ -181,7 +181,11 @@ export function recordCommandExecution(
   duration?: number
 ): void {
   const metrics = getMetrics();
-  const labels = { command: commandName, aggregate: aggregateName, status: success ? 'success' : 'error' };
+  const labels = {
+    command: commandName,
+    aggregate: aggregateName,
+    status: success ? 'success' : 'error',
+  };
 
   metrics.commandExecutions.add(1, labels);
   if (!success) {
@@ -199,7 +203,11 @@ export function recordCommandExecution(
 }
 
 // Record DDD event
-export function recordEvent(eventName: string, aggregateName: string, action: 'published' | 'processed'): void {
+export function recordEvent(
+  eventName: string,
+  aggregateName: string,
+  action: 'published' | 'processed'
+): void {
   const metrics = getMetrics();
   const labels = { event: eventName, aggregate: aggregateName };
 
@@ -221,7 +229,11 @@ export function createCustomHistogram(name: string, description: string, unit?: 
   return meter.createHistogram(name, { description, unit });
 }
 
-export function createCustomGauge(name: string, description: string, unit?: string): ObservableGauge {
+export function createCustomGauge(
+  name: string,
+  description: string,
+  unit?: string
+): ObservableGauge {
   const meter = metrics.getMeter('@a4co/observability');
   return meter.createObservableGauge(name, { description, unit });
 }

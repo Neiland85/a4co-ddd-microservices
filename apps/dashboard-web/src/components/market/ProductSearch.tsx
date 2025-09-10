@@ -37,11 +37,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
           value={localTerm}
           onChange={handleChange}
           placeholder={placeholder}
-          className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+          className="w-full rounded-lg border border-gray-300 py-3 pl-12 pr-4 text-lg focus:border-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
         />
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           {loading ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+            <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-green-600"></div>
           ) : (
             <svg
               className="h-5 w-5 text-gray-400"
@@ -68,10 +68,7 @@ interface QuickFiltersProps {
   selectedCategory?: string;
 }
 
-const QuickFilters: React.FC<QuickFiltersProps> = ({
-  onCategorySelect,
-  selectedCategory,
-}) => {
+const QuickFilters: React.FC<QuickFiltersProps> = ({ onCategorySelect, selectedCategory }) => {
   const categories = [
     { value: '', label: 'Todo', icon: '🛒' },
     { value: 'aceite', label: 'Aceite', icon: '🫒' },
@@ -83,12 +80,12 @@ const QuickFilters: React.FC<QuickFiltersProps> = ({
   ];
 
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
-      {categories.map((category) => (
+    <div className="mb-6 flex flex-wrap gap-2">
+      {categories.map(category => (
         <button
           key={category.value}
           onClick={() => onCategorySelect(category.value)}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+          className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
             selectedCategory === category.value
               ? 'bg-green-600 text-white shadow-md'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -107,12 +104,9 @@ interface SearchResultsProps {
   onClearSearch: () => void;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({
-  searchTerm,
-  onClearSearch,
-}) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ searchTerm, onClearSearch }) => {
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+    <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-blue-800">
@@ -121,7 +115,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         </div>
         <button
           onClick={onClearSearch}
-          className="text-blue-600 hover:text-blue-800 text-sm underline"
+          className="text-sm text-blue-600 underline hover:text-blue-800"
         >
           Limpiar búsqueda
         </button>
@@ -143,16 +137,8 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  const {
-    products,
-    loading,
-    error,
-    searchTerm,
-    setSearchTerm,
-    isSearching,
-    isEmpty,
-    hasData,
-  } = useProductSearch();
+  const { products, loading, error, searchTerm, setSearchTerm, isSearching, isEmpty, hasData } =
+    useProductSearch();
 
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
@@ -169,21 +155,17 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
   };
 
   const filteredProducts = selectedCategory
-    ? products.filter((product) => product.category === selectedCategory)
+    ? products.filter(product => product.category === selectedCategory)
     : products;
 
-  const displayedProducts = maxResults
-    ? filteredProducts.slice(0, maxResults)
-    : filteredProducts;
+  const displayedProducts = maxResults ? filteredProducts.slice(0, maxResults) : filteredProducts;
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-        {title}
-      </h2>
+    <div className="mx-auto max-w-7xl px-4">
+      <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">{title}</h2>
 
       {/* Barra de búsqueda */}
-      <div className="max-w-2xl mx-auto mb-8">
+      <div className="mx-auto mb-8 max-w-2xl">
         <SearchBar
           onSearch={setSearchTerm}
           loading={loading}
@@ -193,7 +175,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
 
       {/* Filtros rápidos */}
       {showQuickFilters && (
-        <div className="text-center mb-8">
+        <div className="mb-8 text-center">
           <QuickFilters
             onCategorySelect={handleCategorySelect}
             selectedCategory={selectedCategory}
@@ -202,55 +184,47 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
       )}
 
       {/* Resultados de búsqueda */}
-      {isSearching && (
-        <SearchResults
-          searchTerm={searchTerm}
-          onClearSearch={handleClearSearch}
-        />
-      )}
+      {isSearching && <SearchResults searchTerm={searchTerm} onClearSearch={handleClearSearch} />}
 
       {/* Estados de carga y error */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center mb-6">
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
           <p className="text-red-600">Error: {error}</p>
         </div>
       )}
 
       {loading && !hasData && (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+        <div className="py-12 text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-green-600"></div>
           <p className="mt-4 text-gray-600">Buscando productos...</p>
         </div>
       )}
 
       {/* Mensaje cuando no hay búsqueda activa */}
       {!isSearching && !selectedCategory && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🔍</div>
-          <h3 className="text-xl font-medium text-gray-700 mb-2">
+        <div className="py-12 text-center">
+          <div className="mb-4 text-6xl">🔍</div>
+          <h3 className="mb-2 text-xl font-medium text-gray-700">
             Busca productos locales de Jaén
           </h3>
-          <p className="text-gray-500 max-w-md mx-auto">
-            Encuentra aceite de oliva, quesos artesanales, miel, jamón ibérico y
-            productos únicos de nuestra región.
+          <p className="mx-auto max-w-md text-gray-500">
+            Encuentra aceite de oliva, quesos artesanales, miel, jamón ibérico y productos únicos de
+            nuestra región.
           </p>
         </div>
       )}
 
       {/* Resultados vacíos */}
       {(isSearching || selectedCategory) && isEmpty && !loading && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🤷‍♂️</div>
-          <h3 className="text-xl font-medium text-gray-700 mb-2">
-            No se encontraron productos
-          </h3>
-          <p className="text-gray-500 mb-4">
-            Intenta con otros términos de búsqueda o explora diferentes
-            categorías.
+        <div className="py-12 text-center">
+          <div className="mb-4 text-6xl">🤷‍♂️</div>
+          <h3 className="mb-2 text-xl font-medium text-gray-700">No se encontraron productos</h3>
+          <p className="mb-4 text-gray-500">
+            Intenta con otros términos de búsqueda o explora diferentes categorías.
           </p>
           <button
             onClick={handleClearSearch}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700"
           >
             Ver todos los productos
           </button>
@@ -260,12 +234,12 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
       {/* Grid de productos */}
       {displayedProducts.length > 0 && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-            {displayedProducts.map((product) => (
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {displayedProducts.map(product => (
               <ProductCard
                 key={product.id}
                 product={product}
-                onViewDetails={(product) => {
+                onViewDetails={product => {
                   // Aquí podrías abrir un modal o navegar a una página de detalle
                   console.log('Ver detalles de:', product.name);
                 }}
@@ -277,8 +251,8 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
           <div className="text-center text-sm text-gray-600">
             {filteredProducts.length > maxResults ? (
               <p>
-                Mostrando {displayedProducts.length} de{' '}
-                {filteredProducts.length} productos encontrados
+                Mostrando {displayedProducts.length} de {filteredProducts.length} productos
+                encontrados
               </p>
             ) : (
               <p>{displayedProducts.length} productos encontrados</p>
@@ -289,8 +263,8 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
 
       {/* Sugerencias de búsqueda */}
       {!isSearching && !selectedCategory && (
-        <div className="mt-12 bg-gray-50 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-800 mb-4 text-center">
+        <div className="mt-12 rounded-lg bg-gray-50 p-6">
+          <h3 className="mb-4 text-center text-lg font-medium text-gray-800">
             Productos populares
           </h3>
           <div className="flex flex-wrap justify-center gap-2">
@@ -301,11 +275,11 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
               'Jamón ibérico',
               'Cerámica de Úbeda',
               'Aceitunas aliñadas',
-            ].map((suggestion) => (
+            ].map(suggestion => (
               <button
                 key={suggestion}
                 onClick={() => setSearchTerm(suggestion)}
-                className="px-3 py-1 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:bg-gray-100 hover:border-gray-300 transition-colors"
+                className="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-100"
               >
                 {suggestion}
               </button>

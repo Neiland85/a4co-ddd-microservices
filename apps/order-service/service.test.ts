@@ -32,7 +32,9 @@ describe('OrderService', () => {
     });
 
     it('should validate items array', () => {
-      expect(() => service.createOrder('ORD-001', [])).toThrow('Order must contain at least one item');
+      expect(() => service.createOrder('ORD-001', [])).toThrow(
+        'Order must contain at least one item'
+      );
     });
   });
 
@@ -46,14 +48,14 @@ describe('OrderService', () => {
     it('should validate order ID', () => {
       expect(() => service.getOrder('')).toThrow('Invalid order ID');
     });
-  })
+  });
 
   describe('error handling', () => {
     it('should handle errors gracefully', () => {
       const invalidData = null as any;
-      
+
       expect(() => {
-        service.createOrder(invalidData, invalidData)
+        service.createOrder(invalidData, invalidData);
       }).toThrow();
     });
   });
@@ -61,7 +63,7 @@ describe('OrderService', () => {
   describe('logging', () => {
     it('should log operations', () => {
       service.createOrder('ORD-001', ['item1']);
-      
+
       expect(console.log).toHaveBeenCalled();
     });
   });

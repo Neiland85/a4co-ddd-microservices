@@ -8,14 +8,6 @@
     "noImplicitAny": false,
     "strictNullChecks": false
   },
-  "include": [
-    "**/*.ts",
-    "tests/**/*.ts",
-    "*.test.ts",
-    "*.spec.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["**/*.ts", "tests/**/*.ts", "*.test.ts", "*.spec.ts"],
+  "exclude": ["node_modules", "dist"]
 }

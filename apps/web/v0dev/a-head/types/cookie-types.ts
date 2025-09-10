@@ -1,15 +1,15 @@
 export interface CookiePreferences {
-  necessary: boolean
-  analytics: boolean
-  marketing: boolean
-  functional: boolean
+  necessary: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  functional: boolean;
 }
 
 export interface CookieConsentState {
-  hasConsented: boolean
-  preferences: CookiePreferences
-  consentDate?: Date
-  version: string
+  hasConsented: boolean;
+  preferences: CookiePreferences;
+  consentDate?: Date;
+  version: string;
 }
 
 export const DEFAULT_COOKIE_PREFERENCES: CookiePreferences = {
@@ -17,7 +17,7 @@ export const DEFAULT_COOKIE_PREFERENCES: CookiePreferences = {
   analytics: false,
   marketing: false,
   functional: false,
-}
+};
 
-export const COOKIE_CONSENT_KEY = "cookie-consent"
-export const COOKIE_CONSENT_VERSION = "1.0"
+export const COOKIE_CONSENT_KEY = 'cookie-consent';
+export const COOKIE_CONSENT_VERSION = '1.0';

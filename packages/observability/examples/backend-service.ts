@@ -3,14 +3,14 @@
  */
 
 import express from 'express';
-import { 
-  createLogger, 
+import {
+  createLogger,
   initializeTracer,
   expressTracingMiddleware,
   Trace,
   withSpan,
   TracedNatsClient,
-  getTracingContext
+  getTracingContext,
 } from '@a4co/observability';
 
 // Initialize observability
@@ -39,9 +39,7 @@ const natsClient = new TracedNatsClient({
 
 // Domain service with observability
 class OrderService {
-  constructor(
-    private logger = logger.child({ component: 'OrderService' })
-  ) {}
+  constructor(private logger = logger.child({ component: 'OrderService' })) {}
 
   @Trace({ name: 'OrderService.createOrder' })
   async createOrder(command: CreateOrderCommand): Promise<Order> {
@@ -58,17 +56,17 @@ class OrderService {
 
     try {
       // Validate order
-      await withSpan('validate-order', async (span) => {
+      await withSpan('validate-order', async span => {
         span.setAttribute('order.items', command.items.length);
         span.setAttribute('order.total', command.total);
-        
+
         if (command.total <= 0) {
           throw new Error('Invalid order total');
         }
       });
 
       // Create order aggregate
-      const order = await withSpan('create-order-aggregate', async (span) => {
+      const order = await withSpan('create-order-aggregate', async span => {
         const order = new Order({
           id: command.orderId,
           userId: command.userId,
@@ -76,16 +74,16 @@ class OrderService {
           total: command.total,
           status: 'pending',
         });
-        
+
         span.setAttribute('order.id', order.id);
         return order;
       });
 
       // Save to database
-      await withSpan('save-order-to-db', async (span) => {
+      await withSpan('save-order-to-db', async span => {
         span.setAttribute('db.operation', 'insert');
         span.setAttribute('db.table', 'orders');
-        
+
         // Simulated DB operation
         await new Promise(resolve => setTimeout(resolve, 50));
       });
@@ -134,15 +132,17 @@ const app = express();
 app.use(express.json());
 
 // Add observability middleware
-app.use(expressTracingMiddleware({
-  serviceName: 'order-service',
-  logger,
-  captureRequestBody: true,
-}));
+app.use(
+  expressTracingMiddleware({
+    serviceName: 'order-service',
+    logger,
+    captureRequestBody: true,
+  })
+);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'healthy',
     service: 'order-service',
     version: process.env.SERVICE_VERSION || '1.0.0',
@@ -161,7 +161,7 @@ const orderService = new OrderService();
 
 app.post('/orders', async (req, res) => {
   const tracingContext = getTracingContext();
-  
+
   try {
     const command: CreateOrderCommand = {
       id: generateId(),
@@ -173,7 +173,7 @@ app.post('/orders', async (req, res) => {
     };
 
     const order = await orderService.createOrder(command);
-    
+
     res.status(201).json({
       success: true,
       data: order,
@@ -199,17 +199,17 @@ natsClient.subscribeToEvents('inventory.reserved', async (event, span) => {
   });
 
   span.setAttribute('order.id', event.data.orderId);
-  
+
   // Process the event...
 });
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   logger.info('Shutting down service...');
-  
+
   // Close connections
   await new Promise(resolve => setTimeout(resolve, 1000));
-  
+
   logger.info('Service shut down complete');
   process.exit(0);
 });

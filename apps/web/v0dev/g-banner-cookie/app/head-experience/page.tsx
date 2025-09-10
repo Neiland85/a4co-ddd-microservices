@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import HeadExperience from "../../components/head-experience/head-experience"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { SoundSettings } from "../../types/head-experience-types"
+import { useState } from 'react';
+import HeadExperience from '../../components/head-experience/head-experience';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { SoundSettings } from '../../types/head-experience-types';
 
 export default function HeadExperiencePage() {
   const [soundSettings, setSoundSettings] = useState<SoundSettings>({
@@ -12,17 +12,17 @@ export default function HeadExperiencePage() {
     clickSound: true,
     hoverSound: true,
     menuSound: true,
-  })
+  });
 
   const handleSearch = (query: string) => {
-    console.log("Búsqueda realizada:", query)
+    console.log('Búsqueda realizada:', query);
     // Aquí implementarías la lógica de búsqueda real
-  }
+  };
 
   const handleLanguageChange = (language: string) => {
-    console.log("Idioma cambiado a:", language)
+    console.log('Idioma cambiado a:', language);
     // Aquí implementarías el cambio de idioma real
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -36,17 +36,19 @@ export default function HeadExperiencePage() {
       />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="mx-auto max-w-4xl space-y-8">
           <Card className="border-a4co-olive-200 shadow-natural-lg">
             <CardHeader>
-              <CardTitle className="text-2xl text-a4co-olive-700">HeadExperience - Demostración</CardTitle>
+              <CardTitle className="text-a4co-olive-700 text-2xl">
+                HeadExperience - Demostración
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-700">
                 Este componente HeadExperience incluye todas las características solicitadas:
               </p>
 
-              <ul className="list-disc list-inside space-y-2 text-gray-700">
+              <ul className="list-inside list-disc space-y-2 text-gray-700">
                 <li>
                   <strong>Navegación responsiva</strong> con menú móvil animado
                 </li>
@@ -76,9 +78,11 @@ export default function HeadExperiencePage() {
                 </li>
               </ul>
 
-              <div className="mt-6 p-4 bg-a4co-olive-50 rounded-lg border border-a4co-olive-200">
-                <h3 className="font-semibold text-a4co-olive-700 mb-2">Características Técnicas:</h3>
-                <ul className="text-sm text-a4co-olive-600 space-y-1">
+              <div className="bg-a4co-olive-50 border-a4co-olive-200 mt-6 rounded-lg border p-4">
+                <h3 className="text-a4co-olive-700 mb-2 font-semibold">
+                  Características Técnicas:
+                </h3>
+                <ul className="text-a4co-olive-600 space-y-1 text-sm">
                   <li>• Next.js 15 con App Router</li>
                   <li>• Tailwind CSS v4.1 con colores personalizados A4CO</li>
                   <li>• shadcn/ui para componentes base</li>
@@ -89,9 +93,11 @@ export default function HeadExperiencePage() {
                 </ul>
               </div>
 
-              <div className="mt-6 p-4 bg-a4co-clay-50 rounded-lg border border-a4co-clay-200">
-                <h3 className="font-semibold text-a4co-clay-700 mb-2">Interacciones Disponibles:</h3>
-                <ul className="text-sm text-a4co-clay-600 space-y-1">
+              <div className="bg-a4co-clay-50 border-a4co-clay-200 mt-6 rounded-lg border p-4">
+                <h3 className="text-a4co-clay-700 mb-2 font-semibold">
+                  Interacciones Disponibles:
+                </h3>
+                <ul className="text-a4co-clay-600 space-y-1 text-sm">
                   <li>• Haz clic en el menú móvil para ver las animaciones deslizantes</li>
                   <li>• Prueba la búsqueda con términos como "ochío" o "aceite"</li>
                   <li>• Cambia el idioma y observa las transiciones</li>
@@ -105,30 +111,34 @@ export default function HeadExperiencePage() {
 
           <Card className="border-a4co-clay-200 shadow-warm-lg">
             <CardHeader>
-              <CardTitle className="text-xl text-a4co-clay-700">Configuración Actual de Sonido</CardTitle>
+              <CardTitle className="text-a4co-clay-700 text-xl">
+                Configuración Actual de Sonido
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="font-medium">Estado:</span>{" "}
-                  <span className={soundSettings.enabled ? "text-green-600" : "text-red-600"}>
-                    {soundSettings.enabled ? "Activado" : "Desactivado"}
+                  <span className="font-medium">Estado:</span>{' '}
+                  <span className={soundSettings.enabled ? 'text-green-600' : 'text-red-600'}>
+                    {soundSettings.enabled ? 'Activado' : 'Desactivado'}
                   </span>
                 </div>
                 <div>
-                  <span className="font-medium">Volumen:</span>{" "}
-                  <span className="text-a4co-olive-600">{Math.round(soundSettings.volume * 100)}%</span>
-                </div>
-                <div>
-                  <span className="font-medium">Clicks:</span>{" "}
-                  <span className={soundSettings.clickSound ? "text-green-600" : "text-gray-400"}>
-                    {soundSettings.clickSound ? "Sí" : "No"}
+                  <span className="font-medium">Volumen:</span>{' '}
+                  <span className="text-a4co-olive-600">
+                    {Math.round(soundSettings.volume * 100)}%
                   </span>
                 </div>
                 <div>
-                  <span className="font-medium">Hover:</span>{" "}
-                  <span className={soundSettings.hoverSound ? "text-green-600" : "text-gray-400"}>
-                    {soundSettings.hoverSound ? "Sí" : "No"}
+                  <span className="font-medium">Clicks:</span>{' '}
+                  <span className={soundSettings.clickSound ? 'text-green-600' : 'text-gray-400'}>
+                    {soundSettings.clickSound ? 'Sí' : 'No'}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-medium">Hover:</span>{' '}
+                  <span className={soundSettings.hoverSound ? 'text-green-600' : 'text-gray-400'}>
+                    {soundSettings.hoverSound ? 'Sí' : 'No'}
                   </span>
                 </div>
               </div>
@@ -137,5 +147,5 @@ export default function HeadExperiencePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

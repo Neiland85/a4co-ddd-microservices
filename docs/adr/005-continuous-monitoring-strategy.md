@@ -23,6 +23,7 @@ Implementaremos un sistema de monitoreo continuo en 4 capas:
 
 ### 1. Performance Gates en CI/CD
 
+
 ```yaml
 # .github/workflows/performance-gates.yml
 name: Performance Gates
@@ -34,18 +35,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Check Bundle Size
         run: |
           npm run build
           npm run analyze:ci
-          
+
       - name: Bundle Size Guard
         uses: andresz1/size-limit-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           skip_step: build
-          
+
   complexity-check:
     runs-on: ubuntu-latest
     steps:
@@ -53,7 +54,7 @@ jobs:
         run: |
           npx eslint . --rule 'complexity: ["error", 10]' --format json > complexity.json
           node scripts/check-complexity-thresholds.js
-          
+
       - name: Comment PR
         uses: actions/github-script@v6
         if: failure()
@@ -65,7 +66,7 @@ jobs:
               repo: context.repo.repo,
               body: '❌ Complexity threshold exceeded. Please refactor before merging.'
             })
-            
+
   lighthouse-ci:
     runs-on: ubuntu-latest
     steps:
@@ -77,9 +78,12 @@ jobs:
             http://localhost:3000/dashboard
           budgetPath: ./lighthouse-budget.json
           uploadArtifacts: true
+
 ```
 
+
 ### 2. Real-time Performance Dashboard
+
 
 ```typescript
 // monitoring/dashboard-config.ts
@@ -88,12 +92,13 @@ export const DASHBOARD_CONFIG = {
     {
       id: 'bundle-size',
       name: 'Bundle Size Trend',
-      query: 'SELECT date, first_load_js, total_size FROM bundle_metrics ORDER BY date DESC LIMIT 30',
+      query:
+        'SELECT date, first_load_js, total_size FROM bundle_metrics ORDER BY date DESC LIMIT 30',
       visualization: 'line-chart',
       thresholds: {
-        warning: 100_000,  // 100KB
-        critical: 150_000  // 150KB
-      }
+        warning: 100_000, // 100KB
+        critical: 150_000, // 150KB
+      },
     },
     {
       id: 'complexity',
@@ -102,8 +107,8 @@ export const DASHBOARD_CONFIG = {
       visualization: 'heatmap',
       thresholds: {
         warning: 10,
-        critical: 15
-      }
+        critical: 15,
+      },
     },
     {
       id: 'react-performance',
@@ -111,42 +116,46 @@ export const DASHBOARD_CONFIG = {
       query: 'SELECT component, render_count, render_time FROM react_metrics',
       visualization: 'scatter-plot',
       thresholds: {
-        renderTime: 16,    // 60fps
-        renderCount: 10
-      }
+        renderTime: 16, // 60fps
+        renderCount: 10,
+      },
     },
     {
       id: 'web-vitals',
       name: 'Core Web Vitals',
-      query: 'SELECT lcp, fid, cls, inp FROM web_vitals WHERE timestamp > NOW() - INTERVAL 24 HOURS',
+      query:
+        'SELECT lcp, fid, cls, inp FROM web_vitals WHERE timestamp > NOW() - INTERVAL 24 HOURS',
       visualization: 'gauge',
       thresholds: {
         lcp: 2500,
         fid: 100,
         cls: 0.1,
-        inp: 200
-      }
-    }
+        inp: 200,
+      },
+    },
   ],
-  
+
   alerts: [
     {
       name: 'Bundle Size Regression',
       condition: 'bundle_size > previous_bundle_size * 1.1',
       severity: 'high',
-      channels: ['slack', 'email']
+      channels: ['slack', 'email'],
     },
     {
       name: 'Complexity Spike',
       condition: 'max_complexity > 20',
       severity: 'critical',
-      channels: ['slack', 'pagerduty']
-    }
-  ]
+      channels: ['slack', 'pagerduty'],
+    },
+  ],
 };
+
 ```
 
+
 ### 3. Automated Performance Testing
+
 
 ```typescript
 // tests/performance/benchmarks.ts
@@ -156,41 +165,41 @@ import lighthouse from 'lighthouse';
 test.describe('Performance Benchmarks', () => {
   test('Dashboard should load within performance budget', async ({ page }) => {
     await page.goto('/dashboard');
-    
+
     const metrics = await page.evaluate(() => {
       return {
         fcp: performance.getEntriesByName('first-contentful-paint')[0]?.startTime,
         lcp: performance.getEntriesByName('largest-contentful-paint')[0]?.startTime,
-        tbt: performance.measure('tbt').duration
+        tbt: performance.measure('tbt').duration,
       };
     });
-    
+
     expect(metrics.fcp).toBeLessThan(1500);
     expect(metrics.lcp).toBeLessThan(2500);
     expect(metrics.tbt).toBeLessThan(300);
   });
-  
+
   test('Heavy operations should not block main thread', async ({ page }) => {
     await page.goto('/dashboard');
-    
+
     const startTime = Date.now();
     await page.click('[data-testid="heavy-operation"]');
-    
+
     // Check if UI remains responsive
     const inputDelay = await page.evaluate(() => {
       return new Promise(resolve => {
         const input = document.createElement('input');
         document.body.appendChild(input);
-        
+
         const start = performance.now();
         input.focus();
-        
+
         requestAnimationFrame(() => {
           resolve(performance.now() - start);
         });
       });
     });
-    
+
     expect(inputDelay).toBeLessThan(50); // Should respond within 50ms
   });
 });
@@ -201,12 +210,15 @@ test('Lighthouse Performance Score', async ({ page }) => {
     port: 9222,
     onlyCategories: ['performance'],
   });
-  
+
   expect(result.lhr.categories.performance.score).toBeGreaterThan(0.9);
 });
+
 ```
 
+
 ### 4. Performance Budget Configuration
+
 
 ```json
 // performance-budget.json
@@ -235,7 +247,9 @@ test('Lighthouse Performance Score', async ({ page }) => {
     "filesOverLimit": 10
   }
 }
+
 ```
+
 
 ## Drivers de la Decisión
 
@@ -247,16 +261,19 @@ test('Lighthouse Performance Score', async ({ page }) => {
 ## Opciones Consideradas
 
 ### Opción 1: Monitoreo Manual
+
 - ❌ Propenso a olvidos
 - ❌ No escalable
 - ✅ Sin costo adicional
 
 ### Opción 2: APM Comercial (DataDog, New Relic)
+
 - ✅ Features completas
 - ❌ Costo alto
 - ❌ Vendor lock-in
 
 ### Opción 3: Stack Open Source (SELECCIONADA)
+
 - ✅ Customizable
 - ✅ Sin vendor lock-in
 - ✅ Integración profunda
@@ -265,17 +282,20 @@ test('Lighthouse Performance Score', async ({ page }) => {
 ## Consecuencias
 
 ### Positivas
+
 - Detección temprana de regresiones
 - Cultura de performance en el equipo
 - Datos para decisiones informadas
 - Mejora continua automatizada
 
 ### Negativas
+
 - Overhead en CI/CD (mitigado con paralelización)
 - Curva de aprendizaje inicial
 - Mantenimiento de infraestructura
 
 ### Stack Tecnológico
+
 
 ```typescript
 // monitoring/stack.ts
@@ -284,47 +304,53 @@ export const MONITORING_STACK = {
     metrics: 'Prometheus',
     logs: 'Loki',
     traces: 'Tempo',
-    realUser: 'Google Analytics 4'
+    realUser: 'Google Analytics 4',
   },
-  
+
   storage: {
     timeSeries: 'InfluxDB',
     events: 'PostgreSQL',
-    artifacts: 'S3'
+    artifacts: 'S3',
   },
-  
+
   visualization: {
     dashboards: 'Grafana',
     alerts: 'AlertManager',
-    reports: 'Custom React Dashboard'
+    reports: 'Custom React Dashboard',
   },
-  
+
   integration: {
     ci: 'GitHub Actions',
     cd: 'ArgoCD',
-    communication: 'Slack'
-  }
+    communication: 'Slack',
+  },
 };
+
 ```
+
 
 ## Plan de Implementación
 
 ### Fase 1: CI/CD Gates (Semana 1)
+
 - [ ] Configurar size-limit
 - [ ] Implementar complexity checks
 - [ ] Setup Lighthouse CI
 
 ### Fase 2: Monitoring Infrastructure (Semana 2-3)
+
 - [ ] Deploy Prometheus + Grafana
 - [ ] Configurar data collectors
 - [ ] Crear dashboards básicos
 
 ### Fase 3: Alerting (Semana 4)
+
 - [ ] Configurar AlertManager
 - [ ] Integrar con Slack
 - [ ] Definir SLOs
 
 ### Fase 4: Advanced Analytics (Semana 5-6)
+
 - [ ] Implement trend analysis
 - [ ] Predictive alerts
 - [ ] Automated reports
@@ -338,12 +364,12 @@ export const MONITORING_STACK = {
 
 ## Presupuesto Estimado
 
-| Item | Costo Mensual | Anual |
-|------|---------------|-------|
-| Infraestructura (AWS) | $200 | $2,400 |
-| Storage (100GB) | $50 | $600 |
-| Herramientas | $0 (OSS) | $0 |
-| **Total** | **$250** | **$3,000** |
+| Item                  | Costo Mensual | Anual      |
+| --------------------- | ------------- | ---------- |
+| Infraestructura (AWS) | $200          | $2,400     |
+| Storage (100GB)       | $50           | $600       |
+| Herramientas          | $0 (OSS)      | $0         |
+| **Total**             | **$250**      | **$3,000** |
 
 ## Referencias
 

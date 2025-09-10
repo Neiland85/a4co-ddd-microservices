@@ -23,13 +23,13 @@ export function runWithContext<T>(ctx: ObservabilityContext, fn: () => T): T {
 // Create context from OpenTelemetry span
 export function createContextFromSpan(span?: any): ObservabilityContext {
   const activeSpan = span || trace.getActiveSpan();
-  
+
   if (!activeSpan) {
     return {};
   }
 
   const spanContext = activeSpan.spanContext();
-  
+
   return {
     traceId: spanContext.traceId,
     spanId: spanContext.spanId,
@@ -37,15 +37,21 @@ export function createContextFromSpan(span?: any): ObservabilityContext {
 }
 
 // Merge contexts
-export function mergeContext(base: ObservabilityContext, ...contexts: Partial<ObservabilityContext>[]): ObservabilityContext {
-  return contexts.reduce((acc, ctx) => ({
-    ...acc,
-    ...ctx,
-    metadata: {
-      ...acc.metadata,
-      ...ctx.metadata,
-    },
-  }), base);
+export function mergeContext(
+  base: ObservabilityContext,
+  ...contexts: Partial<ObservabilityContext>[]
+): ObservabilityContext {
+  return contexts.reduce(
+    (acc, ctx) => ({
+      ...acc,
+      ...ctx,
+      metadata: {
+        ...acc.metadata,
+        ...ctx.metadata,
+      },
+    }),
+    base
+  );
 }
 
 // Context middleware for async operations
@@ -56,17 +62,19 @@ export function withObservabilityContext<T extends (...args: any[]) => any>(
   return ((...args: any[]) => {
     const currentContext = getContext();
     const mergedContext = ctx ? mergeContext(currentContext || {}, ctx) : currentContext;
-    
+
     if (mergedContext) {
       return runWithContext(mergedContext, () => fn(...args));
     }
-    
+
     return fn(...args);
   }) as T;
 }
 
 // Extract context from HTTP headers
-export function extractContextFromHeaders(headers: Record<string, string | string[] | undefined>): ObservabilityContext {
+export function extractContextFromHeaders(
+  headers: Record<string, string | string[] | undefined>
+): ObservabilityContext {
   const ctx: ObservabilityContext = {};
 
   // Standard trace headers
@@ -77,8 +85,8 @@ export function extractContextFromHeaders(headers: Record<string, string | strin
 
   // Custom headers
   if (headers['x-correlation-id']) {
-    ctx.correlationId = Array.isArray(headers['x-correlation-id']) 
-      ? headers['x-correlation-id'][0] 
+    ctx.correlationId = Array.isArray(headers['x-correlation-id'])
+      ? headers['x-correlation-id'][0]
       : headers['x-correlation-id'];
   }
 
@@ -143,6 +151,6 @@ export function injectNatsContext(ctx: ObservabilityContext, message: any): void
   if (!message.headers) {
     message.headers = {};
   }
-  
+
   Object.assign(message.headers, injectContextToHeaders(ctx));
 }

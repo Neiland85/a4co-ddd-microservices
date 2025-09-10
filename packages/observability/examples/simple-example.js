@@ -1,165 +1,105 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var src_1 = require("../src");
+const express_1 = __importDefault(require("express"));
+const src_1 = require("../src");
 // Inicializar observabilidad
-var _a = (0, src_1.initializeObservability)({
+const { logger, httpLogger, getTracer, shutdown } = (0, src_1.initializeObservability)({
     serviceName: 'example-service',
     serviceVersion: '1.0.0',
     environment: process.env.NODE_ENV || 'development',
     logging: {
         level: 'debug',
-        prettyPrint: true
+        prettyPrint: true,
     },
     tracing: {
         enabled: true,
-        jaegerEndpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces'
+        jaegerEndpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces',
     },
     metrics: {
         enabled: true,
-        port: 9464
-    }
-}), logger = _a.logger, httpLogger = _a.httpLogger, getTracer = _a.getTracer, shutdown = _a.shutdown;
+        port: 9464,
+    },
+});
 // Crear aplicación Express
-var app = (0, express_1.default)();
+const app = (0, express_1.default)();
 // Aplicar middleware de logging HTTP
 app.use(httpLogger);
 app.use(express_1.default.json());
 // Ruta de ejemplo con tracing manual
-app.get('/hello/:name', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var tracer, span, message, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                tracer = getTracer('hello-endpoint');
-                span = tracer.startSpan('process-hello-request');
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                // Log con contexto
-                logger.info('Processing hello request', {
-                    name: req.params.name,
-                    userAgent: req.headers['user-agent']
-                });
-                // Simular algún procesamiento
-                span.addEvent('processing-start');
-                return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, 100); })];
-            case 2:
-                _a.sent();
-                // Agregar atributos al span
-                span.setAttributes({
-                    'user.name': req.params.name,
-                    'response.type': 'greeting'
-                });
-                message = "Hello, ".concat(req.params.name, "!");
-                span.addEvent('processing-complete');
-                span.setStatus({ code: 0 }); // OK
-                res.json({
-                    message: message,
-                    timestamp: new Date().toISOString()
-                });
-                return [3 /*break*/, 5];
-            case 3:
-                error_1 = _a.sent();
-                logger.error('Error processing request', error_1);
-                span.recordException(error_1);
-                span.setStatus({ code: 2, message: error_1.message }); // ERROR
-                res.status(500).json({
-                    error: 'Internal server error'
-                });
-                return [3 /*break*/, 5];
-            case 4:
-                span.end();
-                return [7 /*endfinally*/];
-            case 5: return [2 /*return*/];
-        }
-    });
-}); });
+app.get('/hello/:name', async (req, res) => {
+    const tracer = getTracer('hello-endpoint');
+    const span = tracer.startSpan('process-hello-request');
+    try {
+        // Log con contexto
+        logger.info('Processing hello request', {
+            name: req.params.name,
+            userAgent: req.headers['user-agent'],
+        });
+        // Simular algún procesamiento
+        span.addEvent('processing-start');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        // Agregar atributos al span
+        span.setAttributes({
+            'user.name': req.params.name,
+            'response.type': 'greeting',
+        });
+        const message = `Hello, ${req.params.name}!`;
+        span.addEvent('processing-complete');
+        span.setStatus({ code: 0 }); // OK
+        res.json({
+            message,
+            timestamp: new Date().toISOString(),
+        });
+    }
+    catch (error) {
+        logger.error('Error processing request', error);
+        span.recordException(error);
+        span.setStatus({ code: 2, message: error.message }); // ERROR
+        res.status(500).json({
+            error: 'Internal server error',
+        });
+    }
+    finally {
+        span.end();
+    }
+});
 // Health check endpoint
-app.get('/health', function (req, res) {
+app.get('/health', (req, res) => {
     res.json({
         status: 'healthy',
         service: 'example-service',
-        uptime: process.uptime()
+        uptime: process.uptime(),
     });
 });
 // Métricas endpoint (automáticamente creado por Prometheus)
 // Disponible en http://localhost:9464/metrics
 // Iniciar servidor
-var PORT = process.env.PORT || 3000;
-var server = app.listen(PORT, function () {
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, () => {
     logger.info('Example service started', {
         port: PORT,
         pid: process.pid,
-        node_version: process.version
+        node_version: process.version,
     });
 });
 // Graceful shutdown
-process.on('SIGTERM', function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                logger.info('SIGTERM received, shutting down gracefully');
-                server.close(function () {
-                    logger.info('HTTP server closed');
-                });
-                return [4 /*yield*/, shutdown()];
-            case 1:
-                _a.sent();
-                process.exit(0);
-                return [2 /*return*/];
-        }
+process.on('SIGTERM', async () => {
+    logger.info('SIGTERM received, shutting down gracefully');
+    server.close(() => {
+        logger.info('HTTP server closed');
     });
-}); });
-process.on('SIGINT', function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                logger.info('SIGINT received, shutting down gracefully');
-                server.close(function () {
-                    logger.info('HTTP server closed');
-                });
-                return [4 /*yield*/, shutdown()];
-            case 1:
-                _a.sent();
-                process.exit(0);
-                return [2 /*return*/];
-        }
+    await shutdown();
+    process.exit(0);
+});
+process.on('SIGINT', async () => {
+    logger.info('SIGINT received, shutting down gracefully');
+    server.close(() => {
+        logger.info('HTTP server closed');
     });
-}); });
+    await shutdown();
+    process.exit(0);
+});
+//# sourceMappingURL=simple-example.js.map

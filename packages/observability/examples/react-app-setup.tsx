@@ -50,7 +50,7 @@ function App() {
 function HomePage() {
   const { logger, sessionId } = useObservability();
   const { trackClick, trackCustom } = useEventTracking();
-  
+
   useComponentTracking('HomePage');
 
   useEffect(() => {
@@ -114,7 +114,7 @@ function FeaturedProducts() {
         const tracedFetch = createTracedFetch(OBSERVABILITY_ENDPOINT, 'session-123');
         const response = await tracedFetch('/api/products/featured');
         const data = await response.json();
-        
+
         setProducts(data);
         logger.info('Featured products loaded', { count: data.length });
       } catch (error) {
@@ -167,13 +167,13 @@ function NewsletterSignup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     trackCustom('NewsletterForm', 'submit', { email: email.includes('@') });
-    
+
     try {
       // Simular API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       setSubscribed(true);
       logger.info('Newsletter subscription successful', { email });
     } catch (error) {
@@ -197,15 +197,11 @@ function NewsletterSignup() {
           type="email"
           placeholder="Enter your email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           trackingName="newsletter-email-input"
           required
         />
-        <TrackedButton
-          type="submit"
-          variant="secondary"
-          trackingName="newsletter-submit-button"
-        >
+        <TrackedButton type="submit" variant="secondary" trackingName="newsletter-submit-button">
           Subscribe
         </TrackedButton>
       </form>
@@ -228,21 +224,33 @@ const ProductsPage = withObservability(function ProductsPage() {
       value,
       previousValue: filters[filterType as keyof typeof filters],
     });
-    
+
     setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
   return (
     <div className="products-page">
       <h1>All Products</h1>
-      
+
       <TrackedTabs
         trackingName="product-categories"
         tabs={[
           { id: 'all', label: 'All Products', content: <ProductGrid filters={filters} /> },
-          { id: 'artisan', label: 'Artisan Crafts', content: <ProductGrid filters={{ ...filters, category: 'artisan' }} /> },
-          { id: 'coffee', label: 'Coffee', content: <ProductGrid filters={{ ...filters, category: 'coffee' }} /> },
-          { id: 'textiles', label: 'Textiles', content: <ProductGrid filters={{ ...filters, category: 'textiles' }} /> },
+          {
+            id: 'artisan',
+            label: 'Artisan Crafts',
+            content: <ProductGrid filters={{ ...filters, category: 'artisan' }} />,
+          },
+          {
+            id: 'coffee',
+            label: 'Coffee',
+            content: <ProductGrid filters={{ ...filters, category: 'coffee' }} />,
+          },
+          {
+            id: 'textiles',
+            label: 'Textiles',
+            content: <ProductGrid filters={{ ...filters, category: 'textiles' }} />,
+          },
         ]}
       />
     </div>
@@ -263,20 +271,20 @@ function ProductGrid({ filters }: { filters: any }) {
 
   const loadProducts = async () => {
     setLoading(true);
-    
+
     await measurePerformance('ProductGrid.loadProducts', async () => {
       try {
         // Simular carga de productos
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         const newProducts = Array.from({ length: 12 }, (_, i) => ({
           id: `product-${page}-${i}`,
           name: `Product ${page * 12 + i}`,
           price: Math.floor(Math.random() * 100) + 20,
           image: `https://via.placeholder.com/300x300?text=Product+${i}`,
         }));
-        
-        setProducts(prev => page === 1 ? newProducts : [...prev, ...newProducts]);
+
+        setProducts(prev => (page === 1 ? newProducts : [...prev, ...newProducts]));
       } finally {
         setLoading(false);
       }
@@ -293,17 +301,13 @@ function ProductGrid({ filters }: { filters: any }) {
       {products.map(product => (
         <ProductCard key={product.id} product={product} />
       ))}
-      
+
       {!loading && (
-        <TrackedButton
-          onClick={handleLoadMore}
-          variant="ghost"
-          trackingName="load-more-products"
-        >
+        <TrackedButton onClick={handleLoadMore} variant="ghost" trackingName="load-more-products">
           Load More
         </TrackedButton>
       )}
-      
+
       {loading && <LoadingSpinner />}
     </div>
   );
@@ -322,7 +326,7 @@ function ProductCard({ product }: { product: any }) {
       productName: product.name,
       price: product.price,
     });
-    
+
     // Lógica de agregar al carrito
   };
 
@@ -341,7 +345,7 @@ function ProductCard({ product }: { product: any }) {
         <img src={product.image} alt={product.name} />
         <h3>{product.name}</h3>
         <p className="price">${product.price}</p>
-        
+
         <div className="actions">
           <TrackedButton
             size="small"
@@ -351,7 +355,7 @@ function ProductCard({ product }: { product: any }) {
           >
             Add to Cart
           </TrackedButton>
-          
+
           <TrackedButton
             size="small"
             variant="ghost"
@@ -373,11 +377,8 @@ function ProductCard({ product }: { product: any }) {
         <img src={product.image} alt={product.name} />
         <p>{product.description || 'Beautiful artisan product from Colombia'}</p>
         <p className="price">${product.price}</p>
-        
-        <TrackedButton
-          onClick={handleAddToCart}
-          trackingName="quick-view-add-to-cart"
-        >
+
+        <TrackedButton onClick={handleAddToCart} trackingName="quick-view-add-to-cart">
           Add to Cart
         </TrackedButton>
       </TrackedModal>
@@ -400,7 +401,7 @@ function CheckoutPage() {
       step: stepNumber,
       nextStep: stepNumber + 1,
     });
-    
+
     setStep(stepNumber + 1);
     logger.info('Checkout step completed', { step: stepNumber });
   };
@@ -408,7 +409,7 @@ function CheckoutPage() {
   return (
     <div className="checkout-page">
       <h1>Checkout</h1>
-      
+
       <div className="checkout-progress">
         <div className={`step ${step >= 1 ? 'active' : ''}`}>1. Shipping</div>
         <div className={`step ${step >= 2 ? 'active' : ''}`}>2. Payment</div>
@@ -437,32 +438,29 @@ function ShippingStep({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="shipping-step">
       <h2>Shipping Information</h2>
-      
+
       <TrackedInput
         label="Street Address"
         value={address.street}
-        onChange={(e) => setAddress(prev => ({ ...prev, street: e.target.value }))}
+        onChange={e => setAddress(prev => ({ ...prev, street: e.target.value }))}
         trackingName="shipping-street"
       />
-      
+
       <TrackedInput
         label="City"
         value={address.city}
-        onChange={(e) => setAddress(prev => ({ ...prev, city: e.target.value }))}
+        onChange={e => setAddress(prev => ({ ...prev, city: e.target.value }))}
         trackingName="shipping-city"
       />
-      
+
       <TrackedInput
         label="ZIP Code"
         value={address.zip}
-        onChange={(e) => setAddress(prev => ({ ...prev, zip: e.target.value }))}
+        onChange={e => setAddress(prev => ({ ...prev, zip: e.target.value }))}
         trackingName="shipping-zip"
       />
-      
-      <TrackedButton
-        onClick={onComplete}
-        trackingName="continue-to-payment"
-      >
+
+      <TrackedButton onClick={onComplete} trackingName="continue-to-payment">
         Continue to Payment
       </TrackedButton>
     </div>
@@ -484,7 +482,9 @@ function ReviewStep({ onComplete }: { onComplete: () => void }) {
     <div className="review-step">
       <h2>Review Your Order</h2>
       {/* Order review implementation */}
-      <TrackedButton onClick={onComplete} variant="primary">Place Order</TrackedButton>
+      <TrackedButton onClick={onComplete} variant="primary">
+        Place Order
+      </TrackedButton>
     </div>
   );
 }

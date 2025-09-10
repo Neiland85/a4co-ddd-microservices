@@ -15,16 +15,18 @@ export const SafeChartStyles: React.FC<ChartStylesProps> = ({ id, colorConfig })
   }
 
   // Generar estilos de forma segura usando CSS-in-JS
-  const styles = colorConfig.map(({ theme, colors }) => {
-    const cssVariables = Object.entries(colors)
-      .map(([key, value]) => `--color-${key}: ${value};`)
-      .join('\n  ');
+  const styles = colorConfig
+    .map(({ theme, colors }) => {
+      const cssVariables = Object.entries(colors)
+        .map(([key, value]) => `--color-${key}: ${value};`)
+        .join('\n  ');
 
-    return `
+      return `
 ${theme} [data-chart="${id}"] {
   ${cssVariables}
 }`;
-  }).join('\n\n');
+    })
+    .join('\n\n');
 
   // Usar un ID único para evitar colisiones
   const styleId = `chart-styles-${id}`;
@@ -43,7 +45,10 @@ ${theme} [data-chart="${id}"] {
 /**
  * Hook para generar estilos de chart de forma segura
  */
-export function useChartStyles(id: string, colorConfig: Array<{ theme: string; colors: Record<string, string> }>) {
+export function useChartStyles(
+  id: string,
+  colorConfig: Array<{ theme: string; colors: Record<string, string> }>
+) {
   return React.useMemo(() => {
     if (!colorConfig.length) {
       return null;
@@ -51,10 +56,13 @@ export function useChartStyles(id: string, colorConfig: Array<{ theme: string; c
 
     return colorConfig.map(({ theme, colors }) => ({
       selector: `${theme} [data-chart="${id}"]`,
-      styles: Object.entries(colors).reduce((acc, [key, value]) => ({
-        ...acc,
-        [`--color-${key}`]: value
-      }), {})
+      styles: Object.entries(colors).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [`--color-${key}`]: value,
+        }),
+        {}
+      ),
     }));
   }, [id, colorConfig]);
 }
@@ -62,15 +70,20 @@ export function useChartStyles(id: string, colorConfig: Array<{ theme: string; c
 /**
  * Alternativa usando CSS Modules o styled-components
  */
-export function createChartStyleSheet(id: string, colorConfig: Array<{ theme: string; colors: Record<string, string> }>): string {
-  return colorConfig.map(({ theme, colors }) => {
-    const cssVariables = Object.entries(colors)
-      .map(([key, value]) => `--color-${key}: ${value};`)
-      .join('\n  ');
+export function createChartStyleSheet(
+  id: string,
+  colorConfig: Array<{ theme: string; colors: Record<string, string> }>
+): string {
+  return colorConfig
+    .map(({ theme, colors }) => {
+      const cssVariables = Object.entries(colors)
+        .map(([key, value]) => `--color-${key}: ${value};`)
+        .join('\n  ');
 
-    return `
+      return `
 ${theme} [data-chart="${id}"] {
   ${cssVariables}
 }`;
-  }).join('\n\n');
+    })
+    .join('\n\n');
 }

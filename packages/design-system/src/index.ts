@@ -1,14 +1,14 @@
 // Exportar todos los componentes
-export * from './components'
+export * from './components';
 
 // Exportar tokens de diseño
-export * from './tokens'
+export * from './tokens';
 
 // Exportar utilidades
-export * from './utils'
+export * from './utils';
 
 // Exportar hooks personalizados
-export * from './hooks'
+export * from './hooks';
 
 // Exportar tipos
-export * from './types'
+export * from './types';

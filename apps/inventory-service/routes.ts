@@ -24,16 +24,16 @@ export function setupInventoryRoutes(): Router {
       const quantity = parseInt(req.query.quantity as string) || 1;
 
       if (!productId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'productId is required',
-          message: 'El ID del producto es obligatorio' 
+          message: 'El ID del producto es obligatorio',
         });
       }
 
       if (quantity < 1) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Invalid quantity',
-          message: 'La cantidad debe ser mayor a 0' 
+          message: 'La cantidad debe ser mayor a 0',
         });
       }
 
@@ -41,9 +41,9 @@ export function setupInventoryRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error checking inventory:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -57,9 +57,9 @@ export function setupInventoryRoutes(): Router {
       const { items } = req.body;
 
       if (!items || !Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Invalid items',
-          message: 'Se requiere un array de items válido' 
+          message: 'Se requiere un array de items válido',
         });
       }
 
@@ -67,9 +67,9 @@ export function setupInventoryRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error bulk checking inventory:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -83,31 +83,31 @@ export function setupInventoryRoutes(): Router {
       const { orderId, productId, quantity, customerId } = req.body;
 
       if (!orderId || !productId || !quantity) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Missing required fields',
-          message: 'orderId, productId y quantity son obligatorios' 
+          message: 'orderId, productId y quantity son obligatorios',
         });
       }
 
       if (quantity < 1) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Invalid quantity',
-          message: 'La cantidad debe ser mayor a 0' 
+          message: 'La cantidad debe ser mayor a 0',
         });
       }
 
-      const result = await inventoryController.reserveStock({ 
-        orderId, 
-        productId, 
-        quantity, 
-        customerId 
+      const result = await inventoryController.reserveStock({
+        orderId,
+        productId,
+        quantity,
+        customerId,
       });
       res.json(result);
     } catch (error) {
       console.error('Error reserving stock:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -121,30 +121,30 @@ export function setupInventoryRoutes(): Router {
       const { orderId, productId, quantity } = req.body;
 
       if (!orderId || !productId || !quantity) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Missing required fields',
-          message: 'orderId, productId y quantity son obligatorios' 
+          message: 'orderId, productId y quantity son obligatorios',
         });
       }
 
       if (quantity < 1) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Invalid quantity',
-          message: 'La cantidad debe ser mayor a 0' 
+          message: 'La cantidad debe ser mayor a 0',
         });
       }
 
-      const result = await inventoryController.releaseStock({ 
-        orderId, 
-        productId, 
-        quantity 
+      const result = await inventoryController.releaseStock({
+        orderId,
+        productId,
+        quantity,
       });
       res.json(result);
     } catch (error) {
       console.error('Error releasing stock:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -162,9 +162,9 @@ export function setupInventoryRoutes(): Router {
       const { productId } = req.params;
 
       if (!productId) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'productId is required',
-          message: 'El ID del producto es obligatorio' 
+          message: 'El ID del producto es obligatorio',
         });
       }
 
@@ -172,9 +172,9 @@ export function setupInventoryRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting product inventory:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -189,9 +189,9 @@ export function setupInventoryRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting inventory status:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -205,9 +205,9 @@ export function setupInventoryRoutes(): Router {
       const { productId, quantity, reason } = req.body;
 
       if (!productId || quantity === undefined || !reason) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: 'Missing required fields',
-          message: 'productId, quantity y reason son obligatorios' 
+          message: 'productId, quantity y reason son obligatorios',
         });
       }
 
@@ -215,9 +215,9 @@ export function setupInventoryRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error updating product stock:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -236,9 +236,9 @@ export function setupInventoryRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting health status:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -253,9 +253,9 @@ export function setupInventoryRoutes(): Router {
       res.json(result);
     } catch (error) {
       console.error('Error getting metrics:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Error interno del servidor'
+        message: error instanceof Error ? error.message : 'Error interno del servidor',
       });
     }
   });
@@ -276,7 +276,7 @@ export function setupInventoryRoutes(): Router {
   // ========================================
 
   router.use('*', (req, res) => {
-    res.status(404).json({ 
+    res.status(404).json({
       error: 'Route not found',
       message: `La ruta ${req.originalUrl} no existe`,
       availableEndpoints: [
@@ -288,8 +288,8 @@ export function setupInventoryRoutes(): Router {
         'GET /inventory/status',
         'POST /inventory/update',
         'GET /inventory/health',
-        'GET /inventory/metrics'
-      ]
+        'GET /inventory/metrics',
+      ],
     });
   });
 

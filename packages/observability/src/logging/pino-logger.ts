@@ -10,7 +10,16 @@ export class PinoLoggerAdapter implements Logger {
   private baseContext: Partial<LogContext>;
 
   constructor(config: LoggerConfig) {
-    const { level = 'info', pretty = false, service, environment, version, customSerializers = {}, destination, redact = [] } = config;
+    const {
+      level = 'info',
+      pretty = false,
+      service,
+      environment,
+      version,
+      customSerializers = {},
+      destination,
+      redact = [],
+    } = config;
 
     this.baseContext = {
       service,
@@ -29,23 +38,26 @@ export class PinoLoggerAdapter implements Logger {
         }
       : undefined;
 
-    this.logger = pino({
-      level,
-      transport,
-      base: this.baseContext,
-      serializers: {
-        ...pino.stdSerializers,
-        ...customSerializers,
-        ddd: (value) => value,
-        http: (value) => value,
-        error: pino.stdSerializers.err,
+    this.logger = pino(
+      {
+        level,
+        transport,
+        base: this.baseContext,
+        serializers: {
+          ...pino.stdSerializers,
+          ...customSerializers,
+          ddd: value => value,
+          http: value => value,
+          error: pino.stdSerializers.err,
+        },
+        redact,
+        timestamp: pino.stdTimeFunctions.isoTime,
+        formatters: {
+          level: label => ({ level: label }),
+        },
       },
-      redact,
-      timestamp: pino.stdTimeFunctions.isoTime,
-      formatters: {
-        level: (label) => ({ level: label }),
-      },
-    }, destination ? pino.destination(destination) : undefined);
+      destination ? pino.destination(destination) : undefined
+    );
   }
 
   private mergeContext(context?: Partial<LogContext>): any {
@@ -73,41 +85,49 @@ export class PinoLoggerAdapter implements Logger {
   }
 
   error(message: string, error?: Error | unknown, context?: Partial<LogContext>): void {
-    const errorContext = error instanceof Error
-      ? {
-          error: {
-            message: error.message,
-            stackTrace: error.stack,
-            name: error.name,
-          },
-        }
-      : error
-      ? { error }
-      : {};
+    const errorContext =
+      error instanceof Error
+        ? {
+            error: {
+              message: error.message,
+              stackTrace: error.stack,
+              name: error.name,
+            },
+          }
+        : error
+          ? { error }
+          : {};
 
-    this.logger.error({
-      ...this.mergeContext(context),
-      ...errorContext,
-    }, message);
+    this.logger.error(
+      {
+        ...this.mergeContext(context),
+        ...errorContext,
+      },
+      message
+    );
   }
 
   fatal(message: string, error?: Error | unknown, context?: Partial<LogContext>): void {
-    const errorContext = error instanceof Error
-      ? {
-          error: {
-            message: error.message,
-            stackTrace: error.stack,
-            name: error.name,
-          },
-        }
-      : error
-      ? { error }
-      : {};
+    const errorContext =
+      error instanceof Error
+        ? {
+            error: {
+              message: error.message,
+              stackTrace: error.stack,
+              name: error.name,
+            },
+          }
+        : error
+          ? { error }
+          : {};
 
-    this.logger.fatal({
-      ...this.mergeContext(context),
-      ...errorContext,
-    }, message);
+    this.logger.fatal(
+      {
+        ...this.mergeContext(context),
+        ...errorContext,
+      },
+      message
+    );
   }
 
   child(context: Partial<LogContext>): Logger {

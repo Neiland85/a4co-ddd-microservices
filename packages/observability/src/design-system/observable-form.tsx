@@ -28,7 +28,7 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
   const logger = useLogger();
   const [fieldValues, setFieldValues] = useState<Record<string, any>>({});
   const submitStartTime = useRef<number>();
-  
+
   const traceFormInteraction = useInteractionTracing('form-interaction', formId, {
     attributes: {
       'ui.component': 'Form',
@@ -37,99 +37,104 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
     },
   });
 
-  const handleFieldChange = useCallback((fieldName: string, value: any) => {
-    if (trackFieldChanges) {
-      setFieldValues(prev => ({ ...prev, [fieldName]: value }));
-      
-      logger.trace('Form field changed', {
-        custom: {
-          formId,
+  const handleFieldChange = useCallback(
+    (fieldName: string, value: any) => {
+      if (trackFieldChanges) {
+        setFieldValues(prev => ({ ...prev, [fieldName]: value }));
+
+        logger.trace('Form field changed', {
+          custom: {
+            formId,
+            fieldName,
+            hasValue: !!value,
+            valueLength: typeof value === 'string' ? value.length : undefined,
+          },
+        });
+
+        traceFormInteraction({
+          action: 'field-change',
           fieldName,
-          hasValue: !!value,
-          valueLength: typeof value === 'string' ? value.length : undefined,
-        },
-      });
-
-      traceFormInteraction({
-        action: 'field-change',
-        fieldName,
-        timestamp: new Date().toISOString(),
-      });
-    }
-  }, [formId, trackFieldChanges, logger, traceFormInteraction]);
-
-  const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
-    submitStartTime.current = Date.now();
-    const submitSpan = traceUserInteraction('form-submit', formId, {
-      'form.fields': Object.keys(fieldValues),
-      'form.field_count': Object.keys(fieldValues).length,
-      ...trackingMetadata,
-    });
-
-    logger.info('Form submission started', {
-      custom: {
-        formId,
-        fieldCount: Object.keys(fieldValues).length,
-        fields: Object.keys(fieldValues),
-      },
-    });
-
-    try {
-      if (onSubmit) {
-        await onSubmit(event);
+          timestamp: new Date().toISOString(),
+        });
       }
+    },
+    [formId, trackFieldChanges, logger, traceFormInteraction]
+  );
 
-      const duration = Date.now() - submitStartTime.current;
-      
-      logger.info('Form submission successful', {
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      submitStartTime.current = Date.now();
+      const submitSpan = traceUserInteraction('form-submit', formId, {
+        'form.fields': Object.keys(fieldValues),
+        'form.field_count': Object.keys(fieldValues).length,
+        ...trackingMetadata,
+      });
+
+      logger.info('Form submission started', {
         custom: {
           formId,
-          duration,
           fieldCount: Object.keys(fieldValues).length,
+          fields: Object.keys(fieldValues),
         },
       });
 
-      submitSpan.setAttribute('form.submit_success', true);
-      submitSpan.setAttribute('form.submit_duration', duration);
-      
-      if (onSubmitSuccess) {
-        onSubmitSuccess(fieldValues);
-      }
-    } catch (error) {
-      const duration = Date.now() - submitStartTime.current;
-      
-      logger.error('Form submission failed', error as Error, {
-        custom: {
-          formId,
-          duration,
-          fieldCount: Object.keys(fieldValues).length,
-        },
-      });
+      try {
+        if (onSubmit) {
+          await onSubmit(event);
+        }
 
-      submitSpan.setAttribute('form.submit_success', false);
-      submitSpan.setAttribute('form.submit_duration', duration);
-      submitSpan.recordException(error as Error);
-      
-      if (onSubmitError) {
-        onSubmitError(error as Error);
+        const duration = Date.now() - submitStartTime.current;
+
+        logger.info('Form submission successful', {
+          custom: {
+            formId,
+            duration,
+            fieldCount: Object.keys(fieldValues).length,
+          },
+        });
+
+        submitSpan.setAttribute('form.submit_success', true);
+        submitSpan.setAttribute('form.submit_duration', duration);
+
+        if (onSubmitSuccess) {
+          onSubmitSuccess(fieldValues);
+        }
+      } catch (error) {
+        const duration = Date.now() - submitStartTime.current;
+
+        logger.error('Form submission failed', error as Error, {
+          custom: {
+            formId,
+            duration,
+            fieldCount: Object.keys(fieldValues).length,
+          },
+        });
+
+        submitSpan.setAttribute('form.submit_success', false);
+        submitSpan.setAttribute('form.submit_duration', duration);
+        submitSpan.recordException(error as Error);
+
+        if (onSubmitError) {
+          onSubmitError(error as Error);
+        }
+      } finally {
+        submitSpan.end();
       }
-    } finally {
-      submitSpan.end();
-    }
-  }, [formId, fieldValues, trackingMetadata, onSubmit, onSubmitSuccess, onSubmitError, logger]);
+    },
+    [formId, fieldValues, trackingMetadata, onSubmit, onSubmitSuccess, onSubmitError, logger]
+  );
 
   return (
-    <form
-      {...props}
-      data-form-id={formId}
-      onSubmit={handleSubmit}
-    >
+    <form {...props} data-form-id={formId} onSubmit={handleSubmit}>
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && trackFieldChanges) {
           // Inject onChange handler to track field changes
-          if (child.props.name && (child.type === 'input' || child.type === 'textarea' || child.type === 'select')) {
+          if (
+            child.props.name &&
+            (child.type === 'input' || child.type === 'textarea' || child.type === 'select')
+          ) {
             return React.cloneElement(child as any, {
               onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                 handleFieldChange(child.props.name, e.target.value);
@@ -167,22 +172,25 @@ export const ObservableField: React.FC<ObservableFieldProps> = ({
   const logger = useLogger();
   const traceInteraction = useInteractionTracing('field-interaction', name);
 
-  const handleChange = useCallback((newValue: any) => {
-    logger.trace('Field value changed', {
-      custom: {
-        fieldName: name,
-        hasValue: !!newValue,
-        ...trackingMetadata,
-      },
-    });
+  const handleChange = useCallback(
+    (newValue: any) => {
+      logger.trace('Field value changed', {
+        custom: {
+          fieldName: name,
+          hasValue: !!newValue,
+          ...trackingMetadata,
+        },
+      });
 
-    traceInteraction({
-      action: 'value-change',
-      timestamp: new Date().toISOString(),
-    });
+      traceInteraction({
+        action: 'value-change',
+        timestamp: new Date().toISOString(),
+      });
 
-    onChange(newValue);
-  }, [name, onChange, trackingMetadata, logger, traceInteraction]);
+      onChange(newValue);
+    },
+    [name, onChange, trackingMetadata, logger, traceInteraction]
+  );
 
   return (
     <div className="ds-field" data-field-name={name}>

@@ -8,9 +8,7 @@ import { User } from '../../domain/aggregates/user.aggregate';
 import { RegisterUserDto, UserResponseDto } from '../dto/user.dto';
 
 @Injectable()
-export class RegisterUserUseCase
-  implements UseCase<RegisterUserDto, UserResponseDto>
-{
+export class RegisterUserUseCase implements UseCase<RegisterUserDto, UserResponseDto> {
   constructor(
     @Inject('UserRepositoryPort')
     private readonly userRepository: UserRepositoryPort,
@@ -27,16 +25,10 @@ export class RegisterUserUseCase
       await this.userDomainService.validateUniqueEmail(request.email);
 
       // Hash de la contraseña usando el adapter
-      const hashedPassword = await this.cryptographyService.hashPassword(
-        request.password
-      );
+      const hashedPassword = await this.cryptographyService.hashPassword(request.password);
 
       // Crear el usuario con contraseña ya hasheada
-      const user = await User.createWithHashedPassword(
-        request.email,
-        request.name,
-        hashedPassword
-      );
+      const user = await User.createWithHashedPassword(request.email, request.name, hashedPassword);
 
       // Persistir el usuario usando el adapter
       const savedUser = await this.userRepository.save(user);
