@@ -22,11 +22,11 @@ export class RabbitMQEventPublisher implements EventPublisher {
 
       // Configurar exchange
       await this.channel.assertExchange(this.exchangeName, 'topic', {
-        durable: true
+        durable: true,
       });
 
       // Manejar desconexiones
-      this.connection.on('error', (err) => {
+      this.connection.on('error', err => {
         console.error('RabbitMQ connection error:', err);
         this.reconnect();
       });
@@ -64,8 +64,8 @@ export class RabbitMQEventPublisher implements EventPublisher {
           headers: {
             eventType: event.constructor.name,
             aggregateId: event.aggregateId,
-            version: event.version
-          }
+            version: event.version,
+          },
         }
       );
 
@@ -118,15 +118,15 @@ export class RabbitMQEventPublisher implements EventPublisher {
   private getRoutingKey(event: DomainEvent): string {
     // Mapear eventos a routing keys
     const eventTypeMap: Record<string, string> = {
-      'ProductCreatedEvent': 'product.created',
-      'ProductUpdatedEvent': 'product.updated',
-      'ProductDeletedEvent': 'product.deleted',
-      'ProductPriceUpdatedEvent': 'product.price.updated',
-      'ProductActivatedEvent': 'product.activated',
-      'ProductDeactivatedEvent': 'product.deactivated',
-      'ProductVariantAddedEvent': 'product.variant.added',
-      'ProductVariantRemovedEvent': 'product.variant.removed',
-      'ProductCategoryChangedEvent': 'product.category.changed'
+      ProductCreatedEvent: 'product.created',
+      ProductUpdatedEvent: 'product.updated',
+      ProductDeletedEvent: 'product.deleted',
+      ProductPriceUpdatedEvent: 'product.price.updated',
+      ProductActivatedEvent: 'product.activated',
+      ProductDeactivatedEvent: 'product.deactivated',
+      ProductVariantAddedEvent: 'product.variant.added',
+      ProductVariantRemovedEvent: 'product.variant.removed',
+      ProductCategoryChangedEvent: 'product.category.changed',
     };
 
     return eventTypeMap[event.constructor.name] || 'product.unknown';
@@ -139,17 +139,17 @@ export class RabbitMQEventPublisher implements EventPublisher {
       aggregateId: event.aggregateId,
       occurredAt: event.occurredAt,
       version: event.version,
-      data: this.extractEventData(event)
+      data: this.extractEventData(event),
     };
   }
 
   private extractEventData(event: any): any {
     // Extraer solo los datos relevantes del evento
     const { eventId, occurredAt, aggregateId, version, ...data } = event;
-    
+
     // Serializar objetos complejos
     const serialized: any = {};
-    
+
     for (const [key, value] of Object.entries(data)) {
       if (value && typeof value === 'object' && 'toJSON' in value) {
         serialized[key] = value.toJSON();

@@ -30,13 +30,13 @@ export class FetchWrapper {
 
   private generateTraceHeaders(traceId?: string, spanId?: string): Record<string, string> {
     const headers: Record<string, string> = {};
-    
+
     if (this.config.propagateTrace) {
       headers['X-Trace-Id'] = traceId || uuidv4();
       headers['X-Span-Id'] = spanId || uuidv4();
       headers['X-Parent-Span-Id'] = spanId || '';
     }
-    
+
     return headers;
   }
 
@@ -44,7 +44,7 @@ export class FetchWrapper {
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
-    
+
     return this.config.baseURL ? `${this.config.baseURL}${url}` : url;
   }
 
@@ -53,7 +53,7 @@ export class FetchWrapper {
     const traceId = config?.traceId || uuidv4();
     const spanId = config?.spanId || uuidv4();
     const logger = config?.logger || this.config.logger;
-    
+
     const startTime = Date.now();
 
     const headers = {
@@ -189,7 +189,7 @@ export class InterceptorManager<T = any> {
   }
 
   forEach(fn: (handler: Interceptor<T>) => void): void {
-    this.handlers.forEach((handler) => {
+    this.handlers.forEach(handler => {
       if (handler !== null) {
         fn(handler);
       }
@@ -210,8 +210,10 @@ export class FetchWrapperWithInterceptors extends FetchWrapper {
     let finalConfig = config || {};
 
     // Apply request interceptors
-    const requestInterceptorChain: Array<(config: RequestConfig) => RequestConfig | Promise<RequestConfig>> = [];
-    this.interceptors.request.forEach((interceptor) => {
+    const requestInterceptorChain: Array<
+      (config: RequestConfig) => RequestConfig | Promise<RequestConfig>
+    > = [];
+    this.interceptors.request.forEach(interceptor => {
       if (interceptor.onFulfilled) {
         requestInterceptorChain.push(interceptor.onFulfilled);
       }
@@ -229,8 +231,9 @@ export class FetchWrapperWithInterceptors extends FetchWrapper {
       let response = await super.request(url, finalConfig);
 
       // Apply response interceptors
-      const responseInterceptorChain: Array<(response: Response) => Response | Promise<Response>> = [];
-      this.interceptors.response.forEach((interceptor) => {
+      const responseInterceptorChain: Array<(response: Response) => Response | Promise<Response>> =
+        [];
+      this.interceptors.response.forEach(interceptor => {
         if (interceptor.onFulfilled) {
           responseInterceptorChain.push(interceptor.onFulfilled);
         }
@@ -244,7 +247,7 @@ export class FetchWrapperWithInterceptors extends FetchWrapper {
     } catch (error) {
       // Apply error interceptors
       let finalError = error;
-      this.interceptors.response.forEach((interceptor) => {
+      this.interceptors.response.forEach(interceptor => {
         if (interceptor.onRejected) {
           finalError = interceptor.onRejected(finalError);
         }

@@ -65,14 +65,17 @@ export class Product extends AggregateRoot<ProductProps> {
     return this.props.attributes;
   }
 
-  public static create(props: {
-    sku: string;
-    name: string;
-    description?: string;
-    price: number;
-    currency: string;
-    categoryId: string;
-  }, id?: ProductId): Result<Product> {
+  public static create(
+    props: {
+      sku: string;
+      name: string;
+      description?: string;
+      price: number;
+      currency: string;
+      categoryId: string;
+    },
+    id?: ProductId
+  ): Result<Product> {
     // Validaciones de negocio
     if (!props.name || props.name.trim().length === 0) {
       return Result.fail<Product>('Product name is required');
@@ -90,23 +93,26 @@ export class Product extends AggregateRoot<ProductProps> {
 
     const moneyOrError = Money.create({
       amount: props.price,
-      currency: props.currency
+      currency: props.currency,
     });
     if (moneyOrError.isFailure) {
       return Result.fail<Product>(moneyOrError.error as string);
     }
 
-    const product = new Product({
-      sku: skuOrError.getValue(),
-      name: props.name,
-      description: props.description,
-      price: moneyOrError.getValue(),
-      categoryId: props.categoryId,
-      isActive: true,
-      variants: [],
-      images: [],
-      attributes: []
-    }, id);
+    const product = new Product(
+      {
+        sku: skuOrError.getValue(),
+        name: props.name,
+        description: props.description,
+        price: moneyOrError.getValue(),
+        categoryId: props.categoryId,
+        isActive: true,
+        variants: [],
+        images: [],
+        attributes: [],
+      },
+      id
+    );
 
     // Agregar evento de dominio
     if (!id) {
@@ -124,11 +130,7 @@ export class Product extends AggregateRoot<ProductProps> {
     const oldPrice = this.props.price;
     this.props.price = newPrice;
 
-    this.addDomainEvent(new ProductPriceUpdatedEvent(
-      this.productId,
-      oldPrice,
-      newPrice
-    ));
+    this.addDomainEvent(new ProductPriceUpdatedEvent(this.productId, oldPrice, newPrice));
 
     return Result.ok<void>();
   }
@@ -149,9 +151,7 @@ export class Product extends AggregateRoot<ProductProps> {
 
   public addVariant(variant: ProductVariant): Result<void> {
     // Verificar que no exista un variante con el mismo SKU
-    const existingVariant = this.props.variants.find(
-      v => v.sku.value === variant.sku.value
-    );
+    const existingVariant = this.props.variants.find(v => v.sku.value === variant.sku.value);
 
     if (existingVariant) {
       return Result.fail<void>('Variant with this SKU already exists');
@@ -164,9 +164,7 @@ export class Product extends AggregateRoot<ProductProps> {
   }
 
   public removeVariant(variantId: string): Result<void> {
-    const variantIndex = this.props.variants.findIndex(
-      v => v.id.toString() === variantId
-    );
+    const variantIndex = this.props.variants.findIndex(v => v.id.toString() === variantId);
 
     if (variantIndex === -1) {
       return Result.fail<void>('Variant not found');
@@ -174,7 +172,7 @@ export class Product extends AggregateRoot<ProductProps> {
 
     const removedVariant = this.props.variants[variantIndex];
     this.props.variants.splice(variantIndex, 1);
-    
+
     this.addDomainEvent(new ProductVariantRemovedEvent(this.productId, removedVariant.id));
 
     return Result.ok<void>();
@@ -196,19 +194,14 @@ export class Product extends AggregateRoot<ProductProps> {
   public updateCategory(newCategoryId: string): void {
     const oldCategoryId = this.props.categoryId;
     this.props.categoryId = newCategoryId;
-    
-    this.addDomainEvent(new ProductCategoryChangedEvent(
-      this.productId,
-      oldCategoryId,
-      newCategoryId
-    ));
+
+    this.addDomainEvent(
+      new ProductCategoryChangedEvent(this.productId, oldCategoryId, newCategoryId)
+    );
   }
 
   public getTotalStock(): number {
-    return this.props.variants.reduce(
-      (total, variant) => total + variant.availableQuantity,
-      0
-    );
+    return this.props.variants.reduce((total, variant) => total + variant.availableQuantity, 0);
   }
 
   public isInStock(): boolean {

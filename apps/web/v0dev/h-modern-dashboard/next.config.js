@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  transpilePackages: ["@a4co/shared-utils"],
-}
+  transpilePackages: ['@a4co/shared-utils'],
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

@@ -18,17 +18,23 @@ Se ha implementado una **integración completa de APIs, hooks y componentes UI**
 
 ### **Stack Tecnológico**
 
+
 ```
+
 Frontend: Next.js 15.4.1 + React 19 + TypeScript
 Styling: Tailwind CSS 4 + Radix UI
 State Management: Custom Hooks + Zustand
 APIs: Next.js API Routes
 Development: Turbopack + pnpm workspaces
+
 ```
+
 
 ### **Estructura del Proyecto**
 
+
 ```
+
 apps/dashboard-web/
 ├── src/
 │   ├── app/
@@ -48,13 +54,16 @@ apps/dashboard-web/
 │       ├── ProductSearch.tsx      # Búsqueda en tiempo real
 │       └── MarketplaceDashboard.tsx # Dashboard integrado
 └── package.json                   # Configuración del proyecto
+
 ```
+
 
 ---
 
 ## 🔌 **APIs Implementadas**
 
 ### **1. Products API** - `/api/products`
+
 
 ```typescript
 // GET /api/products?category=aceites&search=oliva&limit=10
@@ -77,7 +86,9 @@ apps/dashboard-web/
   "page": 1,
   "limit": 10
 }
+
 ```
+
 
 **Características:**
 
@@ -87,6 +98,7 @@ apps/dashboard-web/
 - ✅ Respuesta estructurada con metadatos
 
 ### **2. Artisans API** - `/api/artisans`
+
 
 ```typescript
 // GET /api/artisans?speciality=aceites&location=Jaén
@@ -112,7 +124,9 @@ apps/dashboard-web/
   "page": 1,
   "limit": 10
 }
+
 ```
+
 
 **Características:**
 
@@ -122,6 +136,7 @@ apps/dashboard-web/
 - ✅ Sistema de valoraciones
 
 ### **3. Sales Opportunities API** - `/api/sales-opportunities`
+
 
 ```typescript
 // GET /api/sales-opportunities?status=active&category=aceites
@@ -145,7 +160,9 @@ apps/dashboard-web/
   "page": 1,
   "limit": 10
 }
+
 ```
+
 
 **Características:**
 
@@ -160,10 +177,12 @@ apps/dashboard-web/
 
 ### **1. useProducts** - Gestión de Catálogo
 
+
 ```typescript
-const { products, loading, error, searchProducts, filterByCategory, loadMore } =
-  useProducts();
+const { products, loading, error, searchProducts, filterByCategory, loadMore } = useProducts();
+
 ```
+
 
 **Funcionalidades:**
 
@@ -175,15 +194,12 @@ const { products, loading, error, searchProducts, filterByCategory, loadMore } =
 
 ### **2. useArtisans** - Directorio de Productores
 
+
 ```typescript
-const {
-  artisans,
-  loading,
-  searchArtisans,
-  filterBySpeciality,
-  filterByLocation,
-} = useArtisans();
+const { artisans, loading, searchArtisans, filterBySpeciality, filterByLocation } = useArtisans();
+
 ```
+
 
 **Funcionalidades:**
 
@@ -194,15 +210,13 @@ const {
 
 ### **3. useSalesOpportunities** - Oportunidades de Negocio
 
+
 ```typescript
-const {
-  opportunities,
-  loading,
-  createOpportunity,
-  updateStatus,
-  filterByStatus,
-} = useSalesOpportunities();
+const { opportunities, loading, createOpportunity, updateStatus, filterByStatus } =
+  useSalesOpportunities();
+
 ```
+
 
 **Funcionalidades:**
 
@@ -213,10 +227,12 @@ const {
 
 ### **4. useGeolocation** - Servicios de Ubicación
 
+
 ```typescript
-const { position, loading, error, getNearbyArtisans, calculateDistance } =
-  useGeolocation();
+const { position, loading, error, getNearbyArtisans, calculateDistance } = useGeolocation();
+
 ```
+
 
 **Funcionalidades:**
 
@@ -231,6 +247,7 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
 
 ### **1. ProductCatalog** - Catálogo Principal
 
+
 ```tsx
 <ProductCatalog
   categories={categories}
@@ -238,7 +255,9 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
   showFilters={true}
   layout="grid"
 />
+
 ```
+
 
 **Características:**
 
@@ -249,13 +268,16 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
 
 ### **2. ProductSearch** - Búsqueda en Tiempo Real
 
+
 ```tsx
 <ProductSearch
   onSearch={handleSearch}
   placeholder="Buscar productos de Jaén..."
   showSuggestions={true}
 />
+
 ```
+
 
 **Características:**
 
@@ -266,9 +288,12 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
 
 ### **3. MarketplaceDashboard** - Dashboard Integrado
 
+
 ```tsx
 <MarketplaceDashboard showStats={true} showMap={true} theme="jaen" />
+
 ```
+
 
 **Características:**
 
@@ -279,9 +304,12 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
 
 ### **4. ArtisanDirectory** - Directorio de Productores
 
+
 ```tsx
 <ArtisanDirectory showMap={true} sortBy="rating" filterByDistance={true} />
+
 ```
+
 
 **Características:**
 
@@ -292,13 +320,12 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
 
 ### **5. SalesOpportunityBoard** - Tablero de Oportunidades
 
+
 ```tsx
-<SalesOpportunityBoard
-  status="active"
-  showCreateForm={true}
-  autoRefresh={true}
-/>
+<SalesOpportunityBoard status="active" showCreateForm={true} autoRefresh={true} />
+
 ```
+
 
 **Características:**
 
@@ -312,6 +339,7 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
 ## 🎨 **Sistema de Diseño Jaén**
 
 ### **Paleta de Colores**
+
 
 ```css
 :root {
@@ -327,9 +355,12 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
   --error: #ef4444; /* Rojo error */
   --info: #3b82f6; /* Azul información */
 }
+
 ```
 
+
 ### **Tipografía**
+
 
 ```css
 .jaen-heading {
@@ -343,7 +374,9 @@ const { position, loading, error, getNearbyArtisans, calculateDistance } =
   font-weight: 400;
   color: #374151;
 }
+
 ```
+
 
 ### **Componentes de UI**
 
@@ -382,19 +415,24 @@ Esta página incluye:
 
 ### **Métricas de Rendimiento**
 
+
 ```
+
 ✅ API Response Time: < 100ms
 ✅ Component Render: < 50ms
 ✅ Search Debounce: 300ms
 ✅ Bundle Size: Optimizado
 ✅ Lighthouse Score: 95+
+
 ```
+
 
 ---
 
 ## 🚀 **Instrucciones de Ejecución**
 
 ### **Inicio Rápido**
+
 
 ```bash
 # Desde la raíz del proyecto
@@ -403,7 +441,9 @@ Esta página incluye:
 # O manualmente
 cd apps/dashboard-web
 pnpm dev --port 3001
+
 ```
+
 
 ### **URLs Disponibles**
 
@@ -415,6 +455,7 @@ pnpm dev --port 3001
 
 ### **Scripts Disponibles**
 
+
 ```json
 {
   "dev": "next dev --turbopack --port 3001",
@@ -423,7 +464,9 @@ pnpm dev --port 3001
   "test": "jest",
   "lint": "next lint"
 }
+
 ```
+
 
 ---
 
@@ -459,31 +502,43 @@ pnpm dev --port 3001
 
 #### ❌ Error: "Invalid package.json"
 
+
 ```bash
 # Solución: El package.json estaba corrupto, ya fue reparado
 # Archivo limpio en: /package.json
+
 ```
 
+
 #### ⚠️ Warning: "border-border utility class"
+
 
 ```bash
 # Solución: Actualizar clases de Tailwind CSS v4
 # Reemplazar: border-border → border-gray-200
+
 ```
 
+
 #### 🔤 Warning: Google Fonts 404
+
 
 ```bash
 # Solución: Las fuentes Geist no están disponibles
 # Se usan fallbacks automáticamente, no afecta funcionalidad
+
 ```
 
+
 #### 🐌 Warning: "Slow filesystem detected"
+
 
 ```bash
 # Información: El sistema detectó un filesystem lento
 # Recomendación: Mover .next a disco local si es necesario
+
 ```
+
 
 ### **Estados del Sistema**
 
@@ -546,11 +601,15 @@ pnpm dev --port 3001
 
 ### **Repositorio**
 
+
 ```
+
 GitHub: https://github.com/Neiland85/a4co-ddd-microservices
 Rama: main
 Workspace: apps/dashboard-web
+
 ```
+
 
 ---
 

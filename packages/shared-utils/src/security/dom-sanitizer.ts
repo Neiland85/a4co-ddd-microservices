@@ -28,11 +28,12 @@ export class DomSanitizer {
     };
   }
 
-  public async sanitize(html: string): Promise<string> { // Hacer el método asíncrono
+  public async sanitize(html: string): Promise<string> {
+    // Hacer el método asíncrono
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       // Si no estamos en un entorno de navegador, usar JSDOM para la sanitización
       // Importación dinámica para que no se bundle en el lado del cliente
-      const { JSDOM } = await import('jsdom'); 
+      const { JSDOM } = await import('jsdom');
       const dom = new JSDOM(html);
       const doc = dom.window.document;
       this.sanitizeNode(doc.body);
@@ -48,11 +49,11 @@ export class DomSanitizer {
 
   private sanitizeNode(node: Node): void {
     const children = Array.from(node.childNodes);
-    
+
     for (const child of children) {
       if (child.nodeType === Node.ELEMENT_NODE) {
         const element = child as HTMLElement;
-        
+
         // Remover tags no permitidos
         if (!this.options.allowedTags.includes(element.tagName.toLowerCase())) {
           const textNode = document.createTextNode(element.textContent || '');
@@ -76,24 +77,24 @@ export class DomSanitizer {
   }
 
   private sanitizeAttributes(element: HTMLElement): void {
-      const tagName = element.tagName.toLowerCase();
-      const allowedForTag = this.options.allowedAttributes[tagName] || [];
+    const tagName = element.tagName.toLowerCase();
+    const allowedForTag = this.options.allowedAttributes[tagName] || [];
     const allowedGlobal = this.options.allowedAttributes['*'] || []; // Atributos permitidos globalmente
-      
+
     const attributesToRemove: string[] = [];
     for (const attr of Array.from(element.attributes)) {
       // Remover atributos no permitidos para el tag o globalmente
       if (!allowedForTag.includes(attr.name) && !allowedGlobal.includes(attr.name)) {
         attributesToRemove.push(attr.name);
       }
-      
+
       // Sanitizar URLs en href/src
       if (attr.name === 'href' || attr.name === 'src') {
         if (!this.isValidUrl(attr.value)) {
           attributesToRemove.push(attr.name);
         }
       }
-      
+
       // Remover event handlers (on* attributes)
       if (attr.name.startsWith('on')) {
         attributesToRemove.push(attr.name);
@@ -105,7 +106,10 @@ export class DomSanitizer {
 
   private isValidUrl(url: string): boolean {
     try {
-      const parsedUrl = new URL(url, typeof window !== 'undefined' ? window.location.href : 'http://localhost/');
+      const parsedUrl = new URL(
+        url,
+        typeof window !== 'undefined' ? window.location.href : 'http://localhost/'
+      );
       return this.options.allowedSchemes.includes(parsedUrl.protocol.replace(':', ''));
     } catch (e) {
       return false;

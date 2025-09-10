@@ -1,12 +1,6 @@
-import {
-  RegisterUserDto,
-  UserResponseDto,
-} from '../src/application/dto/user.dto';
+import { RegisterUserDto, UserResponseDto } from '../src/application/dto/user.dto';
 import { UserStatus } from '../src/domain/aggregates/user.aggregate';
-import {
-  Email,
-  UserName,
-} from '../src/domain/value-objects/user-value-objects';
+import { Email, UserName } from '../src/domain/value-objects/user-value-objects';
 
 describe('Auth Service - Basic Integration', () => {
   it('should create RegisterUserDto with valid data', () => {

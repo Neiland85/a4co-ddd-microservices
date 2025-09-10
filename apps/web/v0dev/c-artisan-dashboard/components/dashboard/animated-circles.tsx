@@ -1,61 +1,61 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
-import type { DashboardMetrics } from "@/hooks/use-dashboard-metrics"
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import type { DashboardMetrics } from '@/hooks/use-dashboard-metrics';
 import {
   getMonitorAnimationParams,
   getRecommendationsAnimationParams,
   getCommentsAnimationParams,
   getSettingsAnimationParams,
   type AnimationParams,
-} from "@/utils/metrics-to-animation"
+} from '@/utils/metrics-to-animation';
 
 interface AnimatedCirclesProps {
-  activeSection: string
-  metrics: DashboardMetrics
+  activeSection: string;
+  metrics: DashboardMetrics;
 }
 
 export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps) {
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
   const [animationParams, setAnimationParams] = useState<AnimationParams>({
     intensity: 1,
     speed: 8,
     opacity: 0.15,
     scale: 1,
-    colors: ["#3b82f6", "#06b6d4", "#8b5cf6"],
+    colors: ['#3b82f6', '#06b6d4', '#8b5cf6'],
     particleCount: 6,
     pulseRate: 4,
-  })
+  });
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
-    let params: AnimationParams
+    let params: AnimationParams;
 
     switch (activeSection) {
-      case "monitor":
-        params = getMonitorAnimationParams(metrics.monitor)
-        break
-      case "recommendations":
-        params = getRecommendationsAnimationParams(metrics.recommendations)
-        break
-      case "comments":
-        params = getCommentsAnimationParams(metrics.comments)
-        break
-      case "settings":
-        params = getSettingsAnimationParams(metrics.settings)
-        break
+      case 'monitor':
+        params = getMonitorAnimationParams(metrics.monitor);
+        break;
+      case 'recommendations':
+        params = getRecommendationsAnimationParams(metrics.recommendations);
+        break;
+      case 'comments':
+        params = getCommentsAnimationParams(metrics.comments);
+        break;
+      case 'settings':
+        params = getSettingsAnimationParams(metrics.settings);
+        break;
       default:
-        params = getMonitorAnimationParams(metrics.monitor)
+        params = getMonitorAnimationParams(metrics.monitor);
     }
 
-    setAnimationParams(params)
-  }, [activeSection, metrics])
+    setAnimationParams(params);
+  }, [activeSection, metrics]);
 
-  if (!mounted) return null
+  if (!mounted) return null;
 
   const circles = Array.from({ length: animationParams.particleCount }, (_, i) => ({
     id: i,
@@ -64,20 +64,22 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
     initialY: Math.random() * 100,
     color: animationParams.colors[i % animationParams.colors.length],
     delay: i * 0.3,
-  }))
+  }));
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {circles.map((circle) => (
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      {circles.map(circle => (
         <motion.div
           key={`${activeSection}-${circle.id}-${animationParams.intensity}`}
           className="absolute rounded-full blur-3xl"
           style={{
             width: circle.size,
             height: circle.size,
-            background: `radial-gradient(circle, ${circle.color}${Math.floor(animationParams.opacity * 255)
+            background: `radial-gradient(circle, ${circle.color}${Math.floor(
+              animationParams.opacity * 255
+            )
               .toString(16)
-              .padStart(2, "0")}, transparent)`,
+              .padStart(2, '0')}, transparent)`,
           }}
           initial={{
             x: `${circle.initialX}vw`,
@@ -103,7 +105,7 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
           transition={{
             duration: animationParams.speed + circle.delay,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
+            ease: 'easeInOut',
             delay: circle.delay,
           }}
         />
@@ -111,32 +113,36 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
 
       {/* Círculo de pulso central basado en métricas */}
       <motion.div
-        className="absolute top-1/2 left-1/2 rounded-full blur-2xl"
+        className="absolute left-1/2 top-1/2 rounded-full blur-2xl"
         style={{
           width: 200 * animationParams.scale,
           height: 200 * animationParams.scale,
           background: `radial-gradient(circle, ${animationParams.colors[0]}${Math.floor(
-            animationParams.opacity * 0.5 * 255,
+            animationParams.opacity * 0.5 * 255
           )
             .toString(16)
-            .padStart(2, "0")}, transparent)`,
-          transform: "translate(-50%, -50%)",
+            .padStart(2, '0')}, transparent)`,
+          transform: 'translate(-50%, -50%)',
         }}
         animate={{
           scale: [0.8, 1.2, 0.8],
-          opacity: [animationParams.opacity * 0.3, animationParams.opacity * 0.8, animationParams.opacity * 0.3],
+          opacity: [
+            animationParams.opacity * 0.3,
+            animationParams.opacity * 0.8,
+            animationParams.opacity * 0.3,
+          ],
         }}
         transition={{
           duration: animationParams.pulseRate,
           repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut",
+          ease: 'easeInOut',
         }}
       />
 
       {/* Indicador visual de métricas críticas */}
-      {activeSection === "monitor" && metrics.monitor.activityLevel === "critical" && (
+      {activeSection === 'monitor' && metrics.monitor.activityLevel === 'critical' && (
         <motion.div
-          className="absolute top-4 right-4 w-4 h-4 bg-red-500 rounded-full"
+          className="absolute right-4 top-4 h-4 w-4 rounded-full bg-red-500"
           animate={{
             scale: [1, 1.5, 1],
             opacity: [0.6, 1, 0.6],
@@ -148,19 +154,20 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
         />
       )}
 
-      {activeSection === "recommendations" && metrics.recommendations.campaignActivity === "peak" && (
-        <motion.div
-          className="absolute top-4 right-4 w-4 h-4 bg-orange-500 rounded-full"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 0.8,
-            repeat: Number.POSITIVE_INFINITY,
-          }}
-        />
-      )}
+      {activeSection === 'recommendations' &&
+        metrics.recommendations.campaignActivity === 'peak' && (
+          <motion.div
+            className="absolute right-4 top-4 h-4 w-4 rounded-full bg-orange-500"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.7, 1, 0.7],
+            }}
+            transition={{
+              duration: 0.8,
+              repeat: Number.POSITIVE_INFINITY,
+            }}
+          />
+        )}
     </div>
-  )
+  );
 }

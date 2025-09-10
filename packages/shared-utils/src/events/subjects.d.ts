@@ -1,3 +1,7 @@
+/**
+ * Event Subjects/Topics para NATS
+ * Organizados por dominio para facilitar el mantenimiento
+ */
 export declare const EventSubjects: {
     readonly ORDER_CREATED: "order.created";
     readonly ORDER_CONFIRMED: "order.confirmed";
@@ -100,7 +104,10 @@ export declare const EventSubjects: {
     readonly RETRY_SUFFIX: ".retry";
 };
 export type EventSubjectKeys = keyof typeof EventSubjects;
-export type EventSubjectValues = typeof EventSubjects[EventSubjectKeys];
+export type EventSubjectValues = (typeof EventSubjects)[EventSubjectKeys];
+/**
+ * Subject patterns for subscription wildcards
+ */
 export declare const SubjectPatterns: {
     readonly ALL_ORDER_EVENTS: "order.*";
     readonly ALL_PAYMENT_EVENTS: "payment.*";
@@ -116,6 +123,9 @@ export declare const SubjectPatterns: {
     readonly ALL_DLQ_EVENTS: "*.dlq";
     readonly ALL_RETRY_EVENTS: "*.retry";
 };
+/**
+ * Queue names for load balancing
+ */
 export declare const QueueNames: {
     readonly ORDER_PROCESSING: "order-processing-queue";
     readonly PAYMENT_PROCESSING: "payment-processing-queue";
@@ -130,26 +140,56 @@ export declare const QueueNames: {
     readonly HIGH_PRIORITY: "high-priority-queue";
     readonly LOW_PRIORITY: "low-priority-queue";
 };
+/**
+ * Utility functions for subject management
+ */
 export declare class SubjectUtils {
+    /**
+     * Create a dead letter queue subject for a given subject
+     */
     static createDLQSubject(originalSubject: string): string;
+    /**
+     * Create a retry subject for a given subject
+     */
     static createRetrySubject(originalSubject: string): string;
+    /**
+     * Extract domain from subject
+     */
     static extractDomain(subject: string): string;
+    /**
+     * Extract event type from subject
+     */
     static extractEventType(subject: string): string;
+    /**
+     * Check if subject is a DLQ subject
+     */
     static isDLQSubject(subject: string): boolean;
+    /**
+     * Check if subject is a retry subject
+     */
     static isRetrySubject(subject: string): boolean;
+    /**
+     * Validate subject format
+     */
     static isValidSubject(subject: string): boolean;
 }
+/**
+ * Event priority levels for routing
+ */
 export declare enum EventPriority {
     LOW = "low",
     NORMAL = "normal",
     HIGH = "high",
     CRITICAL = "critical"
 }
+/**
+ * Event categories for filtering and routing
+ */
 export declare enum EventCategory {
-    BUSINESS = "business",
-    SYSTEM = "system",
-    INTEGRATION = "integration",
-    ANALYTICS = "analytics",
+    BUSINESS = "business",// Core business events
+    SYSTEM = "system",// System/infrastructure events
+    INTEGRATION = "integration",// External system integration events
+    ANALYTICS = "analytics",// Analytics and tracking events
     SECURITY = "security"
 }
 //# sourceMappingURL=subjects.d.ts.map

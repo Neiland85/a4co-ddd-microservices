@@ -4,10 +4,7 @@ module.exports = {
   ...baseConfig,
   displayName: 'product-service',
   rootDir: '.',
-  testMatch: [
-    '<rootDir>/tests/**/*.spec.ts',
-    '<rootDir>/*.test.ts'
-  ],
+  testMatch: ['<rootDir>/tests/**/*.spec.ts', '<rootDir>/*.test.ts'],
   collectCoverageFrom: [
     ...baseConfig.collectCoverageFrom,
     '!src/**/*.interface.ts',

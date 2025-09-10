@@ -8,7 +8,7 @@ export const testConfig = {
     password: process.env.TEST_PASSWORD || 'test_password',
     email: process.env.TEST_EMAIL || 'test@example.com',
   },
-  
+
   // Datos de prueba para diferentes escenarios
   testData: {
     validUser: {
@@ -21,7 +21,7 @@ export const testConfig = {
     emptyString: '',
     numericInput: '12345',
   },
-  
+
   // Configuración de seguridad para pruebas
   security: {
     minPasswordLength: 8,

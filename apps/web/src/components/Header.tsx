@@ -4,35 +4,31 @@ import React from 'react';
 
 export function Header() {
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-gray-900">
-              🎨 Mercado Local de Jaén
-            </h1>
-            <span className="text-sm text-gray-600">
-              Artesanías y Productos Locales
-            </span>
+            <h1 className="text-2xl font-bold text-gray-900">🎨 Mercado Local de Jaén</h1>
+            <span className="text-sm text-gray-600">Artesanías y Productos Locales</span>
           </div>
-          
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">
+
+          <nav className="hidden items-center space-x-8 md:flex">
+            <a href="#" className="text-gray-700 transition-colors hover:text-gray-900">
               Inicio
             </a>
-            <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">
+            <a href="#" className="text-gray-700 transition-colors hover:text-gray-900">
               Productos
             </a>
-            <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">
+            <a href="#" className="text-gray-700 transition-colors hover:text-gray-900">
               Artesanos
             </a>
-            <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">
+            <a href="#" className="text-gray-700 transition-colors hover:text-gray-900">
               Contacto
             </a>
           </nav>
 
           <div className="flex items-center space-x-4">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            <button className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700">
               Iniciar Sesión
             </button>
           </div>

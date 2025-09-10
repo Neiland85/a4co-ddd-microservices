@@ -47,15 +47,15 @@ const useLoadingState = (
   });
 
   const setLoading = useCallback((loading: boolean) => {
-    setState((prev) => ({ ...prev, isLoading: loading }));
+    setState(prev => ({ ...prev, isLoading: loading }));
   }, []);
 
   const setError = useCallback((error: string | null) => {
-    setState((prev) => ({ ...prev, error, isLoading: false }));
+    setState(prev => ({ ...prev, error, isLoading: false }));
   }, []);
 
   const setData = useCallback((data: unknown) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       data: data as { success?: boolean } | null, // Type assertion para cumplir con el tipo esperado
       isLoading: false,
@@ -71,9 +71,7 @@ const useLoadingState = (
 };
 
 // Componentes auxiliares reutilizables
-const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({
-  size = 'md',
-}) => {
+const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-6 w-6',
@@ -94,15 +92,15 @@ const ErrorMessage: React.FC<{ message: string; onRetry?: () => void }> = ({
   message,
   onRetry,
 }) => (
-  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+  <div className="rounded-lg border border-red-200 bg-red-50 p-4">
     <div className="flex items-center">
-      <div className="text-red-600 mr-3">⚠️</div>
+      <div className="mr-3 text-red-600">⚠️</div>
       <div className="flex-1">
-        <p className="text-red-800 text-sm">{message}</p>
+        <p className="text-sm text-red-800">{message}</p>
         {onRetry && (
           <button
             onClick={onRetry}
-            className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700"
+            className="mt-2 rounded bg-red-600 px-3 py-1 text-xs text-white hover:bg-red-700"
           >
             Reintentar
           </button>
@@ -117,12 +115,10 @@ const EmptyState: React.FC<{
   description?: string;
   icon?: string;
 }> = ({ title, description, icon = '📋' }) => (
-  <div className="text-center py-12">
-    <div className="text-4xl mb-4">{icon}</div>
-    <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
-    {description && (
-      <p className="text-gray-600 text-sm max-w-sm mx-auto">{description}</p>
-    )}
+  <div className="py-12 text-center">
+    <div className="mb-4 text-4xl">{icon}</div>
+    <h3 className="mb-2 text-lg font-medium text-gray-900">{title}</h3>
+    {description && <p className="mx-auto max-w-sm text-sm text-gray-600">{description}</p>}
   </div>
 );
 
@@ -139,8 +135,7 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
   className,
   children,
 }) => {
-  const [loadingState, { setLoading, setError, setData, reset }] =
-    useLoadingState();
+  const [loadingState, { setLoading, setError, setData, reset }] = useLoadingState();
 
   // Variantes de estilo
   const variantClasses = useMemo(
@@ -169,7 +164,7 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
     try {
       setLoading(true);
       // Simular operación async
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       if (onAction) {
         await Promise.resolve(onAction());
@@ -191,7 +186,7 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
   // Renderizado condicional basado en estados
   if (loadingState.error) {
     return (
-      <div className={cn('border rounded-lg', className)}>
+      <div className={cn('rounded-lg border', className)}>
         <ErrorMessage
           message={loadingState.error}
           onRetry={() => {
@@ -229,20 +224,18 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
   return (
     <div
       className={cn(
-        'border rounded-lg',
+        'rounded-lg border',
         variantClasses[variant],
         sizeClasses[size],
-        disabled && 'opacity-50 cursor-not-allowed',
+        disabled && 'cursor-not-allowed opacity-50',
         className
       )}
     >
       {/* Header */}
       {(title || description) && (
         <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">{title}</h2>
-          {description && (
-            <p className="text-gray-600 text-sm">{description}</p>
-          )}
+          <h2 className="mb-2 text-xl font-semibold">{title}</h2>
+          {description && <p className="text-sm text-gray-600">{description}</p>}
         </div>
       )}
 
@@ -251,12 +244,12 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
 
       {/* Footer con acciones */}
       {(onAction || onCancel) && (
-        <div className="flex gap-3 pt-4 border-t border-gray-200">
+        <div className="flex gap-3 border-t border-gray-200 pt-4">
           {onCancel && (
             <button
               onClick={handleCancel}
               disabled={disabled || loading || loadingState.isLoading}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -265,14 +258,10 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
             <button
               onClick={handleAction}
               disabled={disabled || loading || loadingState.isLoading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="flex items-center rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {(loading || loadingState.isLoading) && (
-                <LoadingSpinner size="sm" />
-              )}
-              <span className={loading || loadingState.isLoading ? 'ml-2' : ''}>
-                Acción
-              </span>
+              {(loading || loadingState.isLoading) && <LoadingSpinner size="sm" />}
+              <span className={loading || loadingState.isLoading ? 'ml-2' : ''}>Acción</span>
             </button>
           )}
         </div>
@@ -280,8 +269,8 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
 
       {/* Estado de éxito */}
       {loadingState.data?.success && (
-        <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
-          <p className="text-green-800 text-sm flex items-center">
+        <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-3">
+          <p className="flex items-center text-sm text-green-800">
             ✅ Operación completada exitosamente
           </p>
         </div>
@@ -300,22 +289,18 @@ export const V0CardTemplate: React.FC<
 > = ({ title, content, footer, className, children }) => (
   <div
     className={cn(
-      'bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden',
+      'overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm',
       className
     )}
   >
-    <div className="px-6 py-4 border-b border-gray-200">
+    <div className="border-b border-gray-200 px-6 py-4">
       <h3 className="text-lg font-medium text-gray-900">{title}</h3>
     </div>
     <div className="px-6 py-4">
       {content}
       {children}
     </div>
-    {footer && (
-      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-        {footer}
-      </div>
-    )}
+    {footer && <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">{footer}</div>}
   </div>
 );
 
@@ -346,17 +331,14 @@ export const V0ModalTemplate: React.FC<
         />
         <div
           className={cn(
-            'relative bg-white rounded-lg shadow-xl w-full',
+            'relative w-full rounded-lg bg-white shadow-xl',
             sizeClasses[size],
             className
           )}
         >
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between border-b border-gray-200 p-6">
             <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
               ✕
             </button>
           </div>
@@ -379,7 +361,7 @@ export const useV0State = <T,>(initialValue: T) => {
       setError(null);
 
       if (typeof newValue === 'function') {
-        setValue((prev) => (newValue as (prev: T) => T)(prev));
+        setValue(prev => (newValue as (prev: T) => T)(prev));
       } else {
         setValue(newValue);
       }

@@ -5,7 +5,12 @@ import { Money } from '../../domain/value-objects/Money';
 import { ProductVariant } from '../../domain/entities/ProductVariant';
 import { ProductImage } from '../../domain/value-objects/ProductImage';
 import { ProductAttribute } from '../../domain/value-objects/ProductAttribute';
-import { Product as PrismaProduct, ProductVariant as PrismaVariant, ProductImage as PrismaImage, ProductAttribute as PrismaAttribute } from '@prisma/client';
+import {
+  Product as PrismaProduct,
+  ProductVariant as PrismaVariant,
+  ProductImage as PrismaImage,
+  ProductAttribute as PrismaAttribute,
+} from '@prisma/client';
 
 type ProductWithRelations = PrismaProduct & {
   variants: PrismaVariant[];
@@ -30,7 +35,7 @@ export class ProductMapper {
       version: 1, // Se maneja con optimistic locking en la DB
       variants: product.variants.map(v => this.variantToPersistence(v)),
       images: product.images.map((img, index) => this.imageToPersistence(img, index)),
-      attributes: product.attributes.map(attr => this.attributeToPersistence(attr))
+      attributes: product.attributes.map(attr => this.attributeToPersistence(attr)),
     };
   }
 
@@ -43,13 +48,11 @@ export class ProductMapper {
     const sku = ProductSku.create(raw.sku).getValue();
     const price = Money.create({
       amount: raw.price.toNumber(),
-      currency: raw.currency
+      currency: raw.currency,
     }).getValue();
 
     // Mapear variantes
-    const variants = await Promise.all(
-      raw.variants.map(v => this.variantToDomain(v))
-    );
+    const variants = await Promise.all(raw.variants.map(v => this.variantToDomain(v)));
 
     // Mapear imágenes
     const images = raw.images.map(img => this.imageToDomain(img));
@@ -58,14 +61,17 @@ export class ProductMapper {
     const attributes = raw.attributes.map(attr => this.attributeToDomain(attr));
 
     // Reconstruir la entidad de dominio
-    const productOrError = Product.create({
-      sku: raw.sku,
-      name: raw.name,
-      description: raw.description || undefined,
-      price: raw.price.toNumber(),
-      currency: raw.currency,
-      categoryId: raw.categoryId
-    }, productId);
+    const productOrError = Product.create(
+      {
+        sku: raw.sku,
+        name: raw.name,
+        description: raw.description || undefined,
+        price: raw.price.toNumber(),
+        currency: raw.currency,
+        categoryId: raw.categoryId,
+      },
+      productId
+    );
 
     if (productOrError.isFailure) {
       throw new Error(`Failed to create product from persistence: ${productOrError.error}`);
@@ -95,16 +101,18 @@ export class ProductMapper {
       stockQuantity: variant.stockQuantity,
       reservedQuantity: variant.reservedQuantity,
       attributes: variant.attributes,
-      isActive: variant.isActive
+      isActive: variant.isActive,
     };
   }
 
   private async variantToDomain(raw: PrismaVariant): Promise<ProductVariant> {
     const sku = ProductSku.create(raw.sku).getValue();
-    const price = raw.price ? Money.create({
-      amount: raw.price.toNumber(),
-      currency: 'USD' // Asumimos la misma moneda que el producto
-    }).getValue() : undefined;
+    const price = raw.price
+      ? Money.create({
+          amount: raw.price.toNumber(),
+          currency: 'USD', // Asumimos la misma moneda que el producto
+        }).getValue()
+      : undefined;
 
     return ProductVariant.create({
       id: raw.id,
@@ -115,7 +123,7 @@ export class ProductMapper {
       stockQuantity: raw.stockQuantity,
       reservedQuantity: raw.reservedQuantity,
       attributes: raw.attributes as Record<string, any>,
-      isActive: raw.isActive
+      isActive: raw.isActive,
     }).getValue();
   }
 
@@ -125,7 +133,7 @@ export class ProductMapper {
       url: image.url,
       alt: image.alt,
       isPrimary: image.isPrimary,
-      sortOrder: sortOrder
+      sortOrder: sortOrder,
     };
   }
 
@@ -135,7 +143,7 @@ export class ProductMapper {
       url: raw.url,
       alt: raw.alt || undefined,
       isPrimary: raw.isPrimary,
-      sortOrder: raw.sortOrder
+      sortOrder: raw.sortOrder,
     }).getValue();
   }
 
@@ -144,7 +152,7 @@ export class ProductMapper {
       id: attribute.id,
       name: attribute.name,
       value: attribute.value,
-      groupName: attribute.groupName
+      groupName: attribute.groupName,
     };
   }
 
@@ -153,7 +161,7 @@ export class ProductMapper {
       id: raw.id,
       name: raw.name,
       value: raw.value,
-      groupName: raw.groupName || undefined
+      groupName: raw.groupName || undefined,
     }).getValue();
   }
 

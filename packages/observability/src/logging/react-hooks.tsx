@@ -21,11 +21,7 @@ export interface LoggerProviderProps {
 }
 
 export function LoggerProvider({ logger, children }: LoggerProviderProps): JSX.Element {
-  return (
-    <LoggerContext.Provider value={{ logger }}>
-      {children}
-    </LoggerContext.Provider>
-  );
+  return <LoggerContext.Provider value={{ logger }}>{children}</LoggerContext.Provider>;
 }
 
 /**
@@ -42,10 +38,7 @@ export function useLogger(): Logger {
 /**
  * Hook to log component lifecycle events
  */
-export function useComponentLogger(
-  componentName: string,
-  props?: Record<string, any>
-): Logger {
+export function useComponentLogger(componentName: string, props?: Record<string, any>): Logger {
   const logger = useLogger();
   const componentLogger = useRef<Logger>();
   const renderCount = useRef(0);
@@ -70,7 +63,7 @@ export function useComponentLogger(
 
   useEffect(() => {
     componentLogger.current?.debug(`Component mounted`);
-    
+
     return () => {
       componentLogger.current?.debug(`Component unmounted`, {
         custom: {
@@ -101,7 +94,7 @@ export function useInteractionLogger(
 
   return (eventData?: any) => {
     const now = Date.now();
-    
+
     if (options?.throttle && now - lastLogTime.current < options.throttle) {
       return;
     }
@@ -145,7 +138,7 @@ export function useApiLogger() {
   return {
     logRequest: (options: ApiCallOptions, traceId?: string) => {
       const startTime = Date.now();
-      
+
       logger.info(`API request started`, {
         traceId,
         http: {
@@ -168,7 +161,7 @@ export function useApiLogger() {
       traceId?: string
     ) => {
       const duration = Date.now() - startTime;
-      
+
       logger.info(`API request completed`, {
         traceId,
         http: {
@@ -180,14 +173,9 @@ export function useApiLogger() {
       });
     },
 
-    logError: (
-      startTime: number,
-      options: ApiCallOptions,
-      error: Error,
-      traceId?: string
-    ) => {
+    logError: (startTime: number, options: ApiCallOptions, error: Error, traceId?: string) => {
       const duration = Date.now() - startTime;
-      
+
       logger.error(`API request failed`, error, {
         traceId,
         http: {
@@ -232,7 +220,7 @@ export class LoggingErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     const logger = this.context?.logger;
-    
+
     if (logger) {
       logger.error('React error boundary caught error', error, {
         custom: {
@@ -247,17 +235,15 @@ export class LoggingErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       const Fallback = this.props.fallback;
-      
+
       if (Fallback) {
         return <Fallback error={this.state.error} />;
       }
-      
+
       return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
           <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error?.toString()}
-          </details>
+          <details style={{ whiteSpace: 'pre-wrap' }}>{this.state.error?.toString()}</details>
         </div>
       );
     }

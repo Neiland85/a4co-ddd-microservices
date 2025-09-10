@@ -1,20 +1,35 @@
 "use strict";
-/**
- * React hooks and HOCs for logging integration
- */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
     };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,19 +40,20 @@ exports.useComponentLogger = useComponentLogger;
 exports.useInteractionLogger = useInteractionLogger;
 exports.useApiLogger = useApiLogger;
 exports.withLogging = withLogging;
-var react_1 = require("react");
-var LoggerContext = (0, react_1.createContext)(null);
-function LoggerProvider(_a) {
-    var logger = _a.logger, children = _a.children;
-    return (<LoggerContext.Provider value={{ logger: logger }}>
-      {children}
-    </LoggerContext.Provider>);
+const jsx_runtime_1 = require("react/jsx-runtime");
+/**
+ * React hooks and HOCs for logging integration
+ */
+const react_1 = __importStar(require("react"));
+const LoggerContext = (0, react_1.createContext)(null);
+function LoggerProvider({ logger, children }) {
+    return (0, jsx_runtime_1.jsx)(LoggerContext.Provider, { value: { logger }, children: children });
 }
 /**
  * Hook to access the logger instance
  */
 function useLogger() {
-    var context = (0, react_1.useContext)(LoggerContext);
+    const context = (0, react_1.useContext)(LoggerContext);
     if (!context) {
         throw new Error('useLogger must be used within a LoggerProvider');
     }
@@ -47,9 +63,9 @@ function useLogger() {
  * Hook to log component lifecycle events
  */
 function useComponentLogger(componentName, props) {
-    var logger = useLogger();
-    var componentLogger = (0, react_1.useRef)();
-    var renderCount = (0, react_1.useRef)(0);
+    const logger = useLogger();
+    const componentLogger = (0, react_1.useRef)();
+    const renderCount = (0, react_1.useRef)(0);
     if (!componentLogger.current) {
         componentLogger.current = logger.child({
             custom: {
@@ -58,21 +74,18 @@ function useComponentLogger(componentName, props) {
             },
         });
     }
-    (0, react_1.useEffect)(function () {
-        var _a;
+    (0, react_1.useEffect)(() => {
         renderCount.current++;
-        (_a = componentLogger.current) === null || _a === void 0 ? void 0 : _a.trace("Component rendered", {
+        componentLogger.current?.trace(`Component rendered`, {
             custom: {
                 renderCount: renderCount.current,
             },
         });
     });
-    (0, react_1.useEffect)(function () {
-        var _a;
-        (_a = componentLogger.current) === null || _a === void 0 ? void 0 : _a.debug("Component mounted");
-        return function () {
-            var _a;
-            (_a = componentLogger.current) === null || _a === void 0 ? void 0 : _a.debug("Component unmounted", {
+    (0, react_1.useEffect)(() => {
+        componentLogger.current?.debug(`Component mounted`);
+        return () => {
+            componentLogger.current?.debug(`Component unmounted`, {
                 custom: {
                     totalRenders: renderCount.current,
                 },
@@ -82,18 +95,18 @@ function useComponentLogger(componentName, props) {
     return componentLogger.current;
 }
 function useInteractionLogger(interactionType, options) {
-    var logger = useLogger();
-    var lastLogTime = (0, react_1.useRef)(0);
-    var debounceTimer = (0, react_1.useRef)();
-    return function (eventData) {
-        var now = Date.now();
-        if ((options === null || options === void 0 ? void 0 : options.throttle) && now - lastLogTime.current < options.throttle) {
+    const logger = useLogger();
+    const lastLogTime = (0, react_1.useRef)(0);
+    const debounceTimer = (0, react_1.useRef)();
+    return (eventData) => {
+        const now = Date.now();
+        if (options?.throttle && now - lastLogTime.current < options.throttle) {
             return;
         }
-        if (options === null || options === void 0 ? void 0 : options.debounce) {
+        if (options?.debounce) {
             clearTimeout(debounceTimer.current);
-            debounceTimer.current = setTimeout(function () {
-                logger.info("User interaction: ".concat(interactionType), {
+            debounceTimer.current = setTimeout(() => {
+                logger.info(`User interaction: ${interactionType}`, {
                     custom: {
                         interaction: interactionType,
                         data: eventData,
@@ -103,7 +116,7 @@ function useInteractionLogger(interactionType, options) {
             }, options.debounce);
         }
         else {
-            logger.info("User interaction: ".concat(interactionType), {
+            logger.info(`User interaction: ${interactionType}`, {
                 custom: {
                     interaction: interactionType,
                     data: eventData,
@@ -114,12 +127,12 @@ function useInteractionLogger(interactionType, options) {
     };
 }
 function useApiLogger() {
-    var logger = useLogger();
+    const logger = useLogger();
     return {
-        logRequest: function (options, traceId) {
-            var startTime = Date.now();
-            logger.info("API request started", {
-                traceId: traceId,
+        logRequest: (options, traceId) => {
+            const startTime = Date.now();
+            logger.info(`API request started`, {
+                traceId,
                 http: {
                     method: options.method,
                     url: options.url,
@@ -131,44 +144,43 @@ function useApiLogger() {
             });
             return startTime;
         },
-        logResponse: function (startTime, options, response, traceId) {
-            var duration = Date.now() - startTime;
-            logger.info("API request completed", {
-                traceId: traceId,
+        logResponse: (startTime, options, response, traceId) => {
+            const duration = Date.now() - startTime;
+            logger.info(`API request completed`, {
+                traceId,
                 http: {
                     method: options.method,
                     url: options.url,
                     statusCode: response.status,
-                    duration: duration,
+                    duration,
                 },
             });
         },
-        logError: function (startTime, options, error, traceId) {
-            var duration = Date.now() - startTime;
-            logger.error("API request failed", error, {
-                traceId: traceId,
+        logError: (startTime, options, error, traceId) => {
+            const duration = Date.now() - startTime;
+            logger.error(`API request failed`, error, {
+                traceId,
                 http: {
                     method: options.method,
                     url: options.url,
-                    duration: duration,
+                    duration,
                 },
             });
         },
     };
 }
-var LoggingErrorBoundary = /** @class */ (function (_super) {
-    __extends(LoggingErrorBoundary, _super);
-    function LoggingErrorBoundary(props) {
-        var _this = _super.call(this, props) || this;
-        _this.state = { hasError: false };
-        return _this;
+class LoggingErrorBoundary extends react_1.default.Component {
+    static contextType = LoggerContext;
+    context;
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
     }
-    LoggingErrorBoundary.getDerivedStateFromError = function (error) {
-        return { hasError: true, error: error };
-    };
-    LoggingErrorBoundary.prototype.componentDidCatch = function (error, errorInfo) {
-        var _a, _b, _c;
-        var logger = (_a = this.context) === null || _a === void 0 ? void 0 : _a.logger;
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error, errorInfo) {
+        const logger = this.context?.logger;
         if (logger) {
             logger.error('React error boundary caught error', error, {
                 custom: {
@@ -176,42 +188,35 @@ var LoggingErrorBoundary = /** @class */ (function (_super) {
                 },
             });
         }
-        (_c = (_b = this.props).onError) === null || _c === void 0 ? void 0 : _c.call(_b, error, errorInfo);
-    };
-    LoggingErrorBoundary.prototype.render = function () {
-        var _a;
+        this.props.onError?.(error, errorInfo);
+    }
+    render() {
         if (this.state.hasError) {
-            var Fallback = this.props.fallback;
+            const Fallback = this.props.fallback;
             if (Fallback) {
-                return <Fallback error={this.state.error}/>;
+                return (0, jsx_runtime_1.jsx)(Fallback, { error: this.state.error });
             }
-            return (<div style={{ padding: '20px', textAlign: 'center' }}>
-          <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {(_a = this.state.error) === null || _a === void 0 ? void 0 : _a.toString()}
-          </details>
-        </div>);
+            return ((0, jsx_runtime_1.jsxs)("div", { style: { padding: '20px', textAlign: 'center' }, children: [(0, jsx_runtime_1.jsx)("h2", { children: "Something went wrong." }), (0, jsx_runtime_1.jsx)("details", { style: { whiteSpace: 'pre-wrap' }, children: this.state.error?.toString() })] }));
         }
         return this.props.children;
-    };
-    LoggingErrorBoundary.contextType = LoggerContext;
-    return LoggingErrorBoundary;
-}(react_1.default.Component));
+    }
+}
 exports.LoggingErrorBoundary = LoggingErrorBoundary;
 /**
  * HOC to add logging to any component
  */
 function withLogging(Component, componentName) {
-    var displayName = componentName || Component.displayName || Component.name || 'Component';
-    return react_1.default.forwardRef(function (props, ref) {
-        var logger = useComponentLogger(displayName, props);
-        (0, react_1.useEffect)(function () {
-            logger.trace("Props updated", {
+    const displayName = componentName || Component.displayName || Component.name || 'Component';
+    return react_1.default.forwardRef((props, ref) => {
+        const logger = useComponentLogger(displayName, props);
+        (0, react_1.useEffect)(() => {
+            logger.trace(`Props updated`, {
                 custom: {
                     props: Object.keys(props),
                 },
             });
         }, [props, logger]);
-        return <Component {...props} ref={ref}/>;
+        return (0, jsx_runtime_1.jsx)(Component, { ...props, ref: ref });
     });
 }
+//# sourceMappingURL=react-hooks.js.map

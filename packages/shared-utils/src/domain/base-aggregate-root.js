@@ -1,4 +1,5 @@
 "use strict";
+// Clase base para Aggregate Roots en DDD
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseAggregateRoot = void 0;
 const base_entity_1 = require("./base-entity");
@@ -21,6 +22,8 @@ class BaseAggregateRoot extends base_entity_1.BaseEntity {
         this._version++;
     }
     markEventsForDispatch() {
+        // Este método se puede sobrescribir en implementaciones específicas
+        // para marcar eventos para dispatch
     }
 }
 exports.BaseAggregateRoot = BaseAggregateRoot;

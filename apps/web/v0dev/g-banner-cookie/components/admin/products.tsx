@@ -1,11 +1,17 @@
-"use client"
+'use client';
 
-import { useState, useMemo } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -13,131 +19,141 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Plus, Search, Filter, Edit, Trash2, Eye, Package, TrendingUp, AlertTriangle } from "lucide-react"
-import { cn } from "@/lib/utils"
-import type { Product } from "../../types/admin-types"
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Plus,
+  Search,
+  Filter,
+  Edit,
+  Trash2,
+  Eye,
+  Package,
+  TrendingUp,
+  AlertTriangle,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { Product } from '../../types/admin-types';
 
 // Mock products data
 const mockProducts: Product[] = [
   {
-    id: "1",
-    name: "Ochío Tradicional",
-    category: "panaderia",
+    id: '1',
+    name: 'Ochío Tradicional',
+    category: 'panaderia',
     price: 3.5,
     stock: 25,
-    description: "Pan tradicional jiennense elaborado con masa madre",
-    image: "/placeholder.svg?height=100&width=100",
-    status: "active",
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-20"),
+    description: 'Pan tradicional jiennense elaborado con masa madre',
+    image: '/placeholder.svg?height=100&width=100',
+    status: 'active',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-20'),
   },
   {
-    id: "2",
-    name: "Aceite de Oliva Virgen Extra",
-    category: "aceite",
+    id: '2',
+    name: 'Aceite de Oliva Virgen Extra',
+    category: 'aceite',
     price: 12.0,
     stock: 5,
-    description: "Aceite de oliva de primera presión en frío",
-    image: "/placeholder.svg?height=100&width=100",
-    status: "active",
-    createdAt: new Date("2024-01-10"),
-    updatedAt: new Date("2024-01-18"),
+    description: 'Aceite de oliva de primera presión en frío',
+    image: '/placeholder.svg?height=100&width=100',
+    status: 'active',
+    createdAt: new Date('2024-01-10'),
+    updatedAt: new Date('2024-01-18'),
   },
   {
-    id: "3",
-    name: "Queso de Cabra Semicurado",
-    category: "queseria",
+    id: '3',
+    name: 'Queso de Cabra Semicurado',
+    category: 'queseria',
     price: 15.5,
     stock: 0,
-    description: "Queso artesanal de cabra con 6 meses de curación",
-    image: "/placeholder.svg?height=100&width=100",
-    status: "out_of_stock",
-    createdAt: new Date("2024-01-05"),
-    updatedAt: new Date("2024-01-22"),
+    description: 'Queso artesanal de cabra con 6 meses de curación',
+    image: '/placeholder.svg?height=100&width=100',
+    status: 'out_of_stock',
+    createdAt: new Date('2024-01-05'),
+    updatedAt: new Date('2024-01-22'),
   },
   {
-    id: "4",
-    name: "Miel de Azahar",
-    category: "miel",
+    id: '4',
+    name: 'Miel de Azahar',
+    category: 'miel',
     price: 8.5,
     stock: 15,
-    description: "Miel pura de flores de azahar",
-    image: "/placeholder.svg?height=100&width=100",
-    status: "active",
-    createdAt: new Date("2024-01-12"),
-    updatedAt: new Date("2024-01-19"),
+    description: 'Miel pura de flores de azahar',
+    image: '/placeholder.svg?height=100&width=100',
+    status: 'active',
+    createdAt: new Date('2024-01-12'),
+    updatedAt: new Date('2024-01-19'),
   },
-]
+];
 
 const categoryLabels = {
-  panaderia: "Panadería",
-  queseria: "Quesería",
-  aceite: "Aceite",
-  embutidos: "Embutidos",
-  miel: "Miel",
-  conservas: "Conservas",
-  vinos: "Vinos",
-  dulces: "Dulces",
-  artesania: "Artesanía",
-}
+  panaderia: 'Panadería',
+  queseria: 'Quesería',
+  aceite: 'Aceite',
+  embutidos: 'Embutidos',
+  miel: 'Miel',
+  conservas: 'Conservas',
+  vinos: 'Vinos',
+  dulces: 'Dulces',
+  artesania: 'Artesanía',
+};
 
 const statusLabels = {
-  active: "Activo",
-  inactive: "Inactivo",
-  out_of_stock: "Sin Stock",
-}
+  active: 'Activo',
+  inactive: 'Inactivo',
+  out_of_stock: 'Sin Stock',
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "active":
-      return "bg-green-100 text-green-800"
-    case "inactive":
-      return "bg-gray-100 text-gray-800"
-    case "out_of_stock":
-      return "bg-red-100 text-red-800"
+    case 'active':
+      return 'bg-green-100 text-green-800';
+    case 'inactive':
+      return 'bg-gray-100 text-gray-800';
+    case 'out_of_stock':
+      return 'bg-red-100 text-red-800';
     default:
-      return "bg-gray-100 text-gray-800"
+      return 'bg-gray-100 text-gray-800';
   }
-}
+};
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>(mockProducts)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState<string>("all")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage] = useState(10)
-  const [hoveredRow, setHoveredRow] = useState<string | null>(null)
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   // Filter and search products
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return products.filter(product => {
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter
-      const matchesStatus = statusFilter === "all" || product.status === statusFilter
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
+      const matchesStatus = statusFilter === 'all' || product.status === statusFilter;
 
-      return matchesSearch && matchesCategory && matchesStatus
-    })
-  }, [products, searchQuery, categoryFilter, statusFilter])
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  }, [products, searchQuery, categoryFilter, statusFilter]);
 
   // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage)
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
   // Stats
   const stats = {
     total: products.length,
-    active: products.filter((p) => p.status === "active").length,
-    lowStock: products.filter((p) => p.stock <= 5 && p.stock > 0).length,
-    outOfStock: products.filter((p) => p.stock === 0).length,
-  }
+    active: products.filter(p => p.status === 'active').length,
+    lowStock: products.filter(p => p.stock <= 5 && p.stock > 0).length,
+    outOfStock: products.filter(p => p.stock === 0).length,
+  };
 
   return (
     <div className="space-y-8">
@@ -145,12 +161,12 @@ export default function Products() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Productos</h1>
-          <p className="text-gray-600 mt-1">Gestiona tu catálogo de productos artesanales</p>
+          <p className="mt-1 text-gray-600">Gestiona tu catálogo de productos artesanales</p>
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="mt-4 sm:mt-0 bg-gradient-to-r from-a4co-olive-500 to-a4co-clay-500 hover:from-a4co-olive-600 hover:to-a4co-clay-600 text-white shadow-mixed hover:shadow-mixed-lg transition-all duration-300 hover:scale-105">
-              <Plus className="h-4 w-4 mr-2" />
+            <Button className="from-a4co-olive-500 to-a4co-clay-500 hover:from-a4co-olive-600 hover:to-a4co-clay-600 shadow-mixed hover:shadow-mixed-lg mt-4 bg-gradient-to-r text-white transition-all duration-300 hover:scale-105 sm:mt-0">
+              <Plus className="mr-2 h-4 w-4" />
               Nuevo Producto
             </Button>
           </DialogTrigger>
@@ -207,7 +223,7 @@ export default function Products() {
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Cancelar
               </Button>
-              <Button className="bg-gradient-to-r from-a4co-olive-500 to-a4co-clay-500 hover:from-a4co-olive-600 hover:to-a4co-clay-600">
+              <Button className="from-a4co-olive-500 to-a4co-clay-500 hover:from-a4co-olive-600 hover:to-a4co-clay-600 bg-gradient-to-r">
                 Guardar Producto
               </Button>
             </div>
@@ -216,42 +232,42 @@ export default function Products() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         {[
           {
-            label: "Total Productos",
+            label: 'Total Productos',
             value: stats.total,
             icon: Package,
-            color: "text-blue-600",
-            bgColor: "bg-blue-50",
+            color: 'text-blue-600',
+            bgColor: 'bg-blue-50',
           },
           {
-            label: "Productos Activos",
+            label: 'Productos Activos',
             value: stats.active,
             icon: TrendingUp,
-            color: "text-green-600",
-            bgColor: "bg-green-50",
+            color: 'text-green-600',
+            bgColor: 'bg-green-50',
           },
           {
-            label: "Stock Bajo",
+            label: 'Stock Bajo',
             value: stats.lowStock,
             icon: AlertTriangle,
-            color: "text-yellow-600",
-            bgColor: "bg-yellow-50",
+            color: 'text-yellow-600',
+            bgColor: 'bg-yellow-50',
           },
           {
-            label: "Sin Stock",
+            label: 'Sin Stock',
             value: stats.outOfStock,
             icon: AlertTriangle,
-            color: "text-red-600",
-            bgColor: "bg-red-50",
+            color: 'text-red-600',
+            bgColor: 'bg-red-50',
           },
         ].map((stat, index) => {
-          const Icon = stat.icon
+          const Icon = stat.icon;
           return (
             <Card
               key={stat.label}
-              className="transition-all duration-300 hover:scale-105 hover:shadow-natural-lg cursor-pointer group"
+              className="hover:shadow-natural-lg group cursor-pointer transition-all duration-300 hover:scale-105"
             >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -261,16 +277,16 @@ export default function Products() {
                   </div>
                   <div
                     className={cn(
-                      "p-3 rounded-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-12",
-                      stat.bgColor,
+                      'rounded-lg p-3 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110',
+                      stat.bgColor
                     )}
                   >
-                    <Icon className={cn("h-6 w-6", stat.color)} />
+                    <Icon className={cn('h-6 w-6', stat.color)} />
                   </div>
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
@@ -278,19 +294,19 @@ export default function Products() {
       <Card className="shadow-natural-lg">
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Filter className="h-5 w-5 mr-2" />
+            <Filter className="mr-2 h-5 w-5" />
             Filtros y Búsqueda
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                 <Input
                   placeholder="Buscar productos..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -338,58 +354,66 @@ export default function Products() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Producto</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Categoría</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Precio</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Stock</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Estado</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Acciones</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-900">Producto</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-900">Categoría</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-900">Precio</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-900">Stock</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-900">Estado</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-900">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedProducts.map((product) => (
+                {paginatedProducts.map(product => (
                   <tr
                     key={product.id}
                     onMouseEnter={() => setHoveredRow(product.id)}
                     onMouseLeave={() => setHoveredRow(null)}
                     className={cn(
-                      "border-b border-gray-100 transition-all duration-300 hover:bg-gray-50 cursor-pointer",
-                      hoveredRow === product.id && "scale-[1.02] shadow-natural-md bg-a4co-olive-50/30",
+                      'cursor-pointer border-b border-gray-100 transition-all duration-300 hover:bg-gray-50',
+                      hoveredRow === product.id &&
+                        'shadow-natural-md bg-a4co-olive-50/30 scale-[1.02]'
                     )}
                   >
-                    <td className="py-4 px-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
+                        <div className="h-12 w-12 overflow-hidden rounded-lg bg-gray-200">
                           <img
-                            src={product.image || "/placeholder.svg"}
+                            src={product.image || '/placeholder.svg'}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover"
                           />
                         </div>
                         <div>
                           <div className="font-medium text-gray-900">{product.name}</div>
-                          <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
+                          <div className="max-w-xs truncate text-sm text-gray-500">
+                            {product.description}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-4">
-                      <Badge variant="outline" className="bg-a4co-olive-50 text-a4co-olive-700 border-a4co-olive-200">
+                    <td className="px-4 py-4">
+                      <Badge
+                        variant="outline"
+                        className="bg-a4co-olive-50 text-a4co-olive-700 border-a4co-olive-200"
+                      >
                         {categoryLabels[product.category]}
                       </Badge>
                     </td>
-                    <td className="py-4 px-4">
-                      <span className="font-semibold text-gray-900">€{product.price.toFixed(2)}</span>
+                    <td className="px-4 py-4">
+                      <span className="font-semibold text-gray-900">
+                        €{product.price.toFixed(2)}
+                      </span>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center space-x-2">
                         <span
                           className={cn(
-                            "font-medium",
+                            'font-medium',
                             product.stock === 0
-                              ? "text-red-600"
+                              ? 'text-red-600'
                               : product.stock <= 5
-                                ? "text-yellow-600"
-                                : "text-green-600",
+                                ? 'text-yellow-600'
+                                : 'text-green-600'
                           )}
                         >
                           {product.stock}
@@ -399,31 +423,31 @@ export default function Products() {
                         )}
                       </div>
                     </td>
-                    <td className="py-4 px-4">
-                      <Badge className={cn("text-xs", getStatusColor(product.status))}>
+                    <td className="px-4 py-4">
+                      <Badge className={cn('text-xs', getStatusColor(product.status))}>
                         {statusLabels[product.status]}
                       </Badge>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center space-x-2">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="hover:scale-110 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600"
+                          className="transition-all duration-300 hover:scale-110 hover:bg-blue-50 hover:text-blue-600"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="hover:scale-110 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
+                          className="transition-all duration-300 hover:scale-110 hover:bg-green-50 hover:text-green-600"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="hover:scale-110 transition-all duration-300 hover:bg-red-50 hover:text-red-600"
+                          className="transition-all duration-300 hover:scale-110 hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -437,9 +461,10 @@ export default function Products() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-6">
+            <div className="mt-6 flex items-center justify-between">
               <div className="text-sm text-gray-500">
-                Mostrando {startIndex + 1} a {Math.min(startIndex + itemsPerPage, filteredProducts.length)} de{" "}
+                Mostrando {startIndex + 1} a{' '}
+                {Math.min(startIndex + itemsPerPage, filteredProducts.length)} de{' '}
                 {filteredProducts.length} productos
               </div>
               <div className="flex items-center space-x-2">
@@ -448,19 +473,20 @@ export default function Products() {
                   size="sm"
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="hover:scale-105 transition-all duration-300"
+                  className="transition-all duration-300 hover:scale-105"
                 >
                   Anterior
                 </Button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                   <Button
                     key={page}
-                    variant={currentPage === page ? "default" : "outline"}
+                    variant={currentPage === page ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setCurrentPage(page)}
                     className={cn(
-                      "hover:scale-110 transition-all duration-300",
-                      currentPage === page && "bg-gradient-to-r from-a4co-olive-500 to-a4co-clay-500",
+                      'transition-all duration-300 hover:scale-110',
+                      currentPage === page &&
+                        'from-a4co-olive-500 to-a4co-clay-500 bg-gradient-to-r'
                     )}
                   >
                     {page}
@@ -471,7 +497,7 @@ export default function Products() {
                   size="sm"
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
-                  className="hover:scale-105 transition-all duration-300"
+                  className="transition-all duration-300 hover:scale-105"
                 >
                   Siguiente
                 </Button>
@@ -481,5 +507,5 @@ export default function Products() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

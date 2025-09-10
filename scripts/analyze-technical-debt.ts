@@ -33,7 +33,7 @@ interface ComplexityReport {
 
 async function analyzeComplexity(): Promise<ComplexityReport> {
   console.log('🔍 Iniciando análisis de deuda técnica...\n');
-  
+
   const report: ComplexityReport = {
     hotspots: [],
     duplications: [],
@@ -44,8 +44,8 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
       totalLOC: 0,
       avgComplexity: 0,
       duplicatedLines: 0,
-      duplicatedPercentage: 0
-    }
+      duplicatedPercentage: 0,
+    },
   };
 
   // 1. Análisis de dependencias circulares con madge
@@ -53,9 +53,9 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   try {
     const madgeOutput = execSync('npx madge apps/ --circular --extensions ts,tsx --json', {
       encoding: 'utf8',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
-    
+
     const madgeResult = JSON.parse(madgeOutput);
     report.circularDependencies = Array.isArray(madgeResult) ? madgeResult : [];
     console.log(`  ✓ Encontradas ${report.circularDependencies.length} dependencias circulares\n`);
@@ -66,11 +66,11 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   // 2. Análisis de código muerto con ts-prune
   console.log('🗑️ Buscando código muerto...');
   try {
-    const tsPruneOutput = execSync('npx ts-prune --error --skip test 2>&1 || true', { 
+    const tsPruneOutput = execSync('npx ts-prune --error --skip test 2>&1 || true', {
       encoding: 'utf8',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
-    
+
     const deadCodeLines = tsPruneOutput.split('\n').filter(line => line.includes(' - '));
     deadCodeLines.forEach(line => {
       const match = line.match(/(.+):(\d+) - (.+)/);
@@ -78,7 +78,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
         report.deadCode.push({
           file: match[1],
           export: match[3],
-          type: 'unused'
+          type: 'unused',
         });
       }
     });
@@ -89,16 +89,19 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
 
   // 3. Análisis de complejidad por módulo con turbo
   console.log('🌀 Analizando complejidad por módulo...');
-  
+
   // Analizar auth-service específicamente
   try {
     console.log('  📦 Analizando auth-service...');
-    const authComplexity = execSync('npx eslint src --ext .ts,.tsx --format json 2>/dev/null || true', {
-      encoding: 'utf8',
-      maxBuffer: 1024 * 1024 * 10,
-      cwd: path.join(process.cwd(), 'apps/auth-service')
-    });
-    
+    const authComplexity = execSync(
+      'npx eslint src --ext .ts,.tsx --format json 2>/dev/null || true',
+      {
+        encoding: 'utf8',
+        maxBuffer: 1024 * 1024 * 10,
+        cwd: path.join(process.cwd(), 'apps/auth-service'),
+      }
+    );
+
     if (authComplexity && authComplexity.trim() !== '') {
       try {
         const results = JSON.parse(authComplexity);
@@ -110,7 +113,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
               complexity: file.errorCount + file.warningCount, // Aproximación
               loc: file.source.split('\n').length,
               duplications: 0,
-              dependencies: 0
+              dependencies: 0,
             });
           }
         });
@@ -131,26 +134,26 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
       reporters: ['json'],
       output: './',
       ignore: ['**/*.test.*', '**/*.spec.*', '**/node_modules/**', '**/dist/**', '**/build/**'],
-      format: ['javascript', 'typescript', 'tsx']
+      format: ['javascript', 'typescript', 'tsx'],
     };
-    
+
     fs.writeFileSync('.jscpd.json', JSON.stringify(jscpdConfig, null, 2));
-    
+
     execSync('npx jscpd apps packages --config .jscpd.json', {
-      stdio: 'ignore'
+      stdio: 'ignore',
     });
-    
+
     if (fs.existsSync('jscpd-report.json')) {
       const jscpdReport = JSON.parse(fs.readFileSync('jscpd-report.json', 'utf8'));
-      
+
       if (jscpdReport.duplicates) {
         jscpdReport.duplicates.forEach((dup: any) => {
           report.duplications.push({
             files: [dup.firstFile.name, dup.secondFile.name],
             lines: dup.lines,
-            tokens: dup.tokens
+            tokens: dup.tokens,
           });
-          
+
           // Actualizar hotspots con info de duplicación
           [dup.firstFile.name, dup.secondFile.name].forEach(file => {
             const hotspot = report.hotspots.find(h => h.file === file);
@@ -162,19 +165,19 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
                 complexity: 0,
                 loc: 0,
                 duplications: dup.lines,
-                dependencies: 0
+                dependencies: 0,
               });
             }
           });
         });
       }
-      
+
       report.metrics.duplicatedLines = jscpdReport.statistics?.duplicatedLines || 0;
       report.metrics.duplicatedPercentage = jscpdReport.statistics?.percentage || 0;
-      
+
       fs.unlinkSync('jscpd-report.json');
     }
-    
+
     fs.unlinkSync('.jscpd.json');
     console.log(`  ✓ Encontradas ${report.duplications.length} duplicaciones\n`);
   } catch (error) {
@@ -187,24 +190,26 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
     'apps/order-service',
     'apps/product-service',
     'apps/user-service',
-    'apps/inventory-service'
+    'apps/inventory-service',
   ];
-  
+
   servicesToAnalyze.forEach(servicePath => {
     ['controller.ts', 'service.ts'].forEach(file => {
       const filePath = path.join(servicePath, file);
       if (fs.existsSync(filePath)) {
         const content = fs.readFileSync(filePath, 'utf8');
         const lines = content.split('\n').length;
-        
+
         // Buscar complejidad básica
-        const functionMatches = content.match(/(?:function|async\s+function|\w+\s*\(.*?\)\s*{)/g) || [];
+        const functionMatches =
+          content.match(/(?:function|async\s+function|\w+\s*\(.*?\)\s*{)/g) || [];
         const ifMatches = content.match(/\bif\s*\(/g) || [];
         const forMatches = content.match(/\bfor\s*\(/g) || [];
         const whileMatches = content.match(/\bwhile\s*\(/g) || [];
-        
-        const complexity = functionMatches.length + ifMatches.length + forMatches.length + whileMatches.length;
-        
+
+        const complexity =
+          functionMatches.length + ifMatches.length + forMatches.length + whileMatches.length;
+
         const existingHotspot = report.hotspots.find(h => h.file === filePath);
         if (existingHotspot) {
           existingHotspot.complexity = Math.max(existingHotspot.complexity, complexity);
@@ -215,7 +220,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
             complexity: complexity,
             loc: lines,
             duplications: 0,
-            dependencies: 0
+            dependencies: 0,
           });
         }
       }
@@ -227,14 +232,15 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   const allFiles = new Set([
     ...report.hotspots.map(h => h.file),
     ...report.deadCode.map(d => d.file),
-    ...report.duplications.flatMap(d => d.files)
+    ...report.duplications.flatMap(d => d.files),
   ]);
-  
+
   report.metrics.totalFiles = allFiles.size;
   report.metrics.totalLOC = report.hotspots.reduce((sum, h) => sum + h.loc, 0);
-  report.metrics.avgComplexity = report.hotspots.length > 0
-    ? report.hotspots.reduce((sum, h) => sum + h.complexity, 0) / report.hotspots.length
-    : 0;
+  report.metrics.avgComplexity =
+    report.hotspots.length > 0
+      ? report.hotspots.reduce((sum, h) => sum + h.complexity, 0) / report.hotspots.length
+      : 0;
 
   // 7. Ordenar hotspots por criticidad
   report.hotspots.sort((a, b) => {
@@ -246,7 +252,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   // 8. Generar reporte
   const reportPath = path.join(process.cwd(), 'technical-debt-report.json');
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-  
+
   console.log('\n✅ Análisis completado!');
   console.log(`📄 Reporte guardado en: ${reportPath}\n`);
 
@@ -256,17 +262,21 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   console.log(`Total de archivos analizados: ${report.metrics.totalFiles}`);
   console.log(`Líneas de código: ${report.metrics.totalLOC}`);
   console.log(`Complejidad promedio: ${report.metrics.avgComplexity.toFixed(2)}`);
-  console.log(`Líneas duplicadas: ${report.metrics.duplicatedLines} (${report.metrics.duplicatedPercentage.toFixed(2)}%)`);
+  console.log(
+    `Líneas duplicadas: ${report.metrics.duplicatedLines} (${report.metrics.duplicatedPercentage.toFixed(2)}%)`
+  );
   console.log(`Dependencias circulares: ${report.circularDependencies.length}`);
   console.log(`Código muerto: ${report.deadCode.length} exports`);
-  
+
   if (report.hotspots.length > 0) {
     console.log('\n🔥 TOP 10 HOTSPOTS DE COMPLEJIDAD:');
     console.log('─────────────────────────────────────────');
     report.hotspots.slice(0, 10).forEach((hotspot, index) => {
       const score = hotspot.complexity * 2 + hotspot.duplications + hotspot.dependencies;
       console.log(`${index + 1}. ${hotspot.file}`);
-      console.log(`   Complejidad: ${hotspot.complexity} | Duplicaciones: ${hotspot.duplications} líneas | Score: ${score}`);
+      console.log(
+        `   Complejidad: ${hotspot.complexity} | Duplicaciones: ${hotspot.duplications} líneas | Score: ${score}`
+      );
     });
   }
 

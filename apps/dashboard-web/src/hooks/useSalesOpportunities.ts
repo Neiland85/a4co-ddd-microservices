@@ -1,6 +1,6 @@
 // Hook para gestión de oportunidades de venta
 'use client';
-import { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 
 interface SalesOpportunity {
   id: string;
@@ -35,16 +35,11 @@ interface SalesOpportunitiesState {
   };
 }
 
-export function useSalesOpportunities(
-  options: UseSalesOpportunitiesOptions = {}
-) {
+export function useSalesOpportunities(options: UseSalesOpportunitiesOptions = {}) {
   const { autoFetch = false, type, location, category } = options;
 
   // Memoizar las opciones para evitar recreación en cada render
-  const memoizedOptions = useMemo(
-    () => ({ type, location, category }),
-    [type, location, category]
-  );
+  const memoizedOptions = useMemo(() => ({ type, location, category }), [type, location, category]);
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
@@ -56,21 +51,17 @@ export function useSalesOpportunities(
 
   const fetchOpportunities = useCallback(
     async (customFilters = {}) => {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
+      setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
         const params = new URLSearchParams();
         const finalFilters = { ...memoizedOptions, ...customFilters };
 
         if (finalFilters.type) params.append('type', finalFilters.type);
-        if (finalFilters.location)
-          params.append('location', finalFilters.location);
-        if (finalFilters.category)
-          params.append('category', finalFilters.category);
+        if (finalFilters.location) params.append('location', finalFilters.location);
+        if (finalFilters.category) params.append('category', finalFilters.category);
 
-        const response = await fetch(
-          `/api/sales-opportunities?${params.toString()}`
-        );
+        const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
 
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -79,7 +70,7 @@ export function useSalesOpportunities(
         const result = await response.json();
 
         if (result.success) {
-          setState((prev) => ({
+          setState(prev => ({
             ...prev,
             opportunities: result.data.opportunities || [],
             total: result.data.total || 0,
@@ -91,13 +82,10 @@ export function useSalesOpportunities(
           throw new Error(result.error || 'Error al cargar oportunidades');
         }
       } catch (error) {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           loading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : 'Error al cargar oportunidades',
+          error: error instanceof Error ? error.message : 'Error al cargar oportunidades',
         }));
       }
     },
@@ -108,53 +96,47 @@ export function useSalesOpportunities(
   const fetchOpportunitiesRef = useRef(fetchOpportunities);
   fetchOpportunitiesRef.current = fetchOpportunities;
 
-  const createOpportunity = useCallback(
-    async (opportunityData: Partial<SalesOpportunity>) => {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
+  const createOpportunity = useCallback(async (opportunityData: Partial<SalesOpportunity>) => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
 
-      try {
-        const response = await fetch('/api/sales-opportunities', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(opportunityData),
-        });
+    try {
+      const response = await fetch('/api/sales-opportunities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(opportunityData),
+      });
 
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
-          // Refrescar la lista después de crear
-          await fetchOpportunitiesRef.current();
-          return result.data;
-        } else {
-          throw new Error(result.error || 'Error al crear oportunidad');
-        }
-      } catch (error) {
-        setState((prev) => ({
-          ...prev,
-          loading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : 'Error al crear oportunidad',
-        }));
-        throw error;
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
-    },
-    []
-  );
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Refrescar la lista después de crear
+        await fetchOpportunitiesRef.current();
+        return result.data;
+      } else {
+        throw new Error(result.error || 'Error al crear oportunidad');
+      }
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Error al crear oportunidad',
+      }));
+      throw error;
+    }
+  }, []);
 
   const refetch = useCallback(() => {
     return fetchOpportunitiesRef.current();
   }, []);
 
   const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
+    setState(prev => ({ ...prev, error: null }));
   }, []);
 
   // Auto-fetch en mount si está habilitado
@@ -174,7 +156,7 @@ export function useSalesOpportunities(
     hasData: state.opportunities.length > 0,
     isEmpty: !state.loading && state.opportunities.length === 0,
     isFiltered: Object.keys(state.filters).some(
-      (key) => state.filters[key as keyof typeof state.filters]
+      key => state.filters[key as keyof typeof state.filters]
     ),
   };
 }
@@ -185,9 +167,7 @@ export function useHighPriorityOpportunities() {
     autoFetch: true,
   });
 
-  const highPriorityOpportunities = opportunities.filter(
-    (opp) => opp.priority === 'alta'
-  );
+  const highPriorityOpportunities = opportunities.filter(opp => opp.priority === 'alta');
 
   return {
     opportunities: highPriorityOpportunities,

@@ -1,11 +1,11 @@
-"use client"
+'use client';
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import {
   Line,
   LineChart,
@@ -19,7 +19,7 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts"
+} from 'recharts';
 import {
   Activity,
   Cpu,
@@ -30,29 +30,29 @@ import {
   TrendingDown,
   AlertTriangle,
   CheckCircle,
-} from "lucide-react"
+} from 'lucide-react';
 
 interface PerformanceMetrics {
-  cpu: number
-  memory: number
-  disk: number
-  network: number
-  responseTime: number
-  throughput: number
-  errorRate: number
-  uptime: number
+  cpu: number;
+  memory: number;
+  disk: number;
+  network: number;
+  responseTime: number;
+  throughput: number;
+  errorRate: number;
+  uptime: number;
 }
 
 interface ChartData {
-  time: string
-  cpu: number
-  memory: number
-  responseTime: number
-  requests: number
-  errors: number
+  time: string;
+  cpu: number;
+  memory: number;
+  responseTime: number;
+  requests: number;
+  errors: number;
 }
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"]
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export function PerformanceDashboard() {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
@@ -64,84 +64,84 @@ export function PerformanceDashboard() {
     throughput: 1250,
     errorRate: 0.8,
     uptime: 99.97,
-  })
+  });
 
-  const [chartData, setChartData] = useState<ChartData[]>([])
-  const [realTimeData, setRealTimeData] = useState<any[]>([])
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [realTimeData, setRealTimeData] = useState<any[]>([]);
 
   useEffect(() => {
     // Generar datos iniciales
     const initialData = Array.from({ length: 30 }, (_, i) => ({
-      time: new Date(Date.now() - (29 - i) * 60000).toLocaleTimeString("es-ES", {
-        hour: "2-digit",
-        minute: "2-digit",
+      time: new Date(Date.now() - (29 - i) * 60000).toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
       }),
       cpu: Math.floor(Math.random() * 30 + 50),
       memory: Math.floor(Math.random() * 20 + 40),
       responseTime: Math.floor(Math.random() * 100 + 200),
       requests: Math.floor(Math.random() * 500 + 1000),
       errors: Math.floor(Math.random() * 10 + 2),
-    }))
-    setChartData(initialData)
+    }));
+    setChartData(initialData);
 
     // Datos para gráfico de distribución
     const distributionData = [
-      { name: "API Calls", value: 45, color: "#0088FE" },
-      { name: "Database", value: 25, color: "#00C49F" },
-      { name: "Cache", value: 15, color: "#FFBB28" },
-      { name: "External", value: 10, color: "#FF8042" },
-      { name: "Other", value: 5, color: "#8884D8" },
-    ]
-    setRealTimeData(distributionData)
+      { name: 'API Calls', value: 45, color: '#0088FE' },
+      { name: 'Database', value: 25, color: '#00C49F' },
+      { name: 'Cache', value: 15, color: '#FFBB28' },
+      { name: 'External', value: 10, color: '#FF8042' },
+      { name: 'Other', value: 5, color: '#8884D8' },
+    ];
+    setRealTimeData(distributionData);
 
     // Actualizar datos en tiempo real
     const interval = setInterval(() => {
       const newPoint = {
-        time: new Date().toLocaleTimeString("es-ES", {
-          hour: "2-digit",
-          minute: "2-digit",
+        time: new Date().toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
         }),
         cpu: Math.floor(Math.random() * 30 + 50),
         memory: Math.floor(Math.random() * 20 + 40),
         responseTime: Math.floor(Math.random() * 100 + 200),
         requests: Math.floor(Math.random() * 500 + 1000),
         errors: Math.floor(Math.random() * 10 + 2),
-      }
+      };
 
-      setChartData((prev) => [...prev.slice(1), newPoint])
-      setMetrics((prev) => ({
+      setChartData(prev => [...prev.slice(1), newPoint]);
+      setMetrics(prev => ({
         ...prev,
         cpu: newPoint.cpu,
         memory: newPoint.memory,
         responseTime: newPoint.responseTime,
         throughput: newPoint.requests,
         errorRate: (newPoint.errors / newPoint.requests) * 100,
-      }))
-    }, 3000)
+      }));
+    }, 3000);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   const getStatusColor = (value: number, thresholds: { warning: number; critical: number }) => {
-    if (value >= thresholds.critical) return "text-red-500"
-    if (value >= thresholds.warning) return "text-yellow-500"
-    return "text-green-500"
-  }
+    if (value >= thresholds.critical) return 'text-red-500';
+    if (value >= thresholds.warning) return 'text-yellow-500';
+    return 'text-green-500';
+  };
 
   const getStatusIcon = (value: number, thresholds: { warning: number; critical: number }) => {
-    if (value >= thresholds.critical) return <AlertTriangle className="h-4 w-4 text-red-500" />
-    if (value >= thresholds.warning) return <AlertTriangle className="h-4 w-4 text-yellow-500" />
-    return <CheckCircle className="h-4 w-4 text-green-500" />
-  }
+    if (value >= thresholds.critical) return <AlertTriangle className="h-4 w-4 text-red-500" />;
+    if (value >= thresholds.warning) return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+    return <CheckCircle className="h-4 w-4 text-green-500" />;
+  };
 
   return (
     <div className="space-y-6">
       {/* Métricas principales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">CPU</CardTitle>
-            <Cpu className="h-4 w-4 text-muted-foreground" />
+            <Cpu className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -149,9 +149,9 @@ export function PerformanceDashboard() {
               {getStatusIcon(metrics.cpu, { warning: 70, critical: 85 })}
             </div>
             <Progress value={metrics.cpu} className="mt-2" />
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-xs">
               <span className={getStatusColor(metrics.cpu, { warning: 70, critical: 85 })}>
-                {metrics.cpu < 70 ? "Normal" : metrics.cpu < 85 ? "Advertencia" : "Crítico"}
+                {metrics.cpu < 70 ? 'Normal' : metrics.cpu < 85 ? 'Advertencia' : 'Crítico'}
               </span>
             </p>
           </CardContent>
@@ -160,7 +160,7 @@ export function PerformanceDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Memoria</CardTitle>
-            <HardDrive className="h-4 w-4 text-muted-foreground" />
+            <HardDrive className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -168,9 +168,9 @@ export function PerformanceDashboard() {
               {getStatusIcon(metrics.memory, { warning: 75, critical: 90 })}
             </div>
             <Progress value={metrics.memory} className="mt-2" />
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-xs">
               <span className={getStatusColor(metrics.memory, { warning: 75, critical: 90 })}>
-                {metrics.memory < 75 ? "Normal" : metrics.memory < 90 ? "Advertencia" : "Crítico"}
+                {metrics.memory < 75 ? 'Normal' : metrics.memory < 90 ? 'Advertencia' : 'Crítico'}
               </span>
             </p>
           </CardContent>
@@ -179,18 +179,18 @@ export function PerformanceDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Tiempo de Respuesta</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.responseTime}ms</div>
-            <div className="flex items-center mt-2">
+            <div className="mt-2 flex items-center">
               {metrics.responseTime < 300 ? (
-                <TrendingDown className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingDown className="mr-1 h-3 w-3 text-green-500" />
               ) : (
-                <TrendingUp className="h-3 w-3 text-red-500 mr-1" />
+                <TrendingUp className="mr-1 h-3 w-3 text-red-500" />
               )}
-              <span className="text-xs text-muted-foreground">
-                {metrics.responseTime < 300 ? "Excelente" : "Necesita atención"}
+              <span className="text-muted-foreground text-xs">
+                {metrics.responseTime < 300 ? 'Excelente' : 'Necesita atención'}
               </span>
             </div>
           </CardContent>
@@ -199,13 +199,13 @@ export function PerformanceDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Disponibilidad</CardTitle>
-            <Server className="h-4 w-4 text-muted-foreground" />
+            <Server className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.uptime}%</div>
-            <div className="flex items-center mt-2">
-              <CheckCircle className="h-3 w-3 text-green-500 mr-1" />
-              <span className="text-xs text-muted-foreground">Operativo</span>
+            <div className="mt-2 flex items-center">
+              <CheckCircle className="mr-1 h-3 w-3 text-green-500" />
+              <span className="text-muted-foreground text-xs">Operativo</span>
             </div>
           </CardContent>
         </Card>
@@ -221,7 +221,7 @@ export function PerformanceDashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Métricas del Sistema</CardTitle>
@@ -230,8 +230,8 @@ export function PerformanceDashboard() {
               <CardContent>
                 <ChartContainer
                   config={{
-                    cpu: { label: "CPU (%)", color: "hsl(var(--chart-1))" },
-                    memory: { label: "Memoria (%)", color: "hsl(var(--chart-2))" },
+                    cpu: { label: 'CPU (%)', color: 'hsl(var(--chart-1))' },
+                    memory: { label: 'Memoria (%)', color: 'hsl(var(--chart-2))' },
                   }}
                   className="h-[300px]"
                 >
@@ -270,7 +270,7 @@ export function PerformanceDashboard() {
               <CardContent>
                 <ChartContainer
                   config={{
-                    responseTime: { label: "Tiempo (ms)", color: "hsl(var(--chart-3))" },
+                    responseTime: { label: 'Tiempo (ms)', color: 'hsl(var(--chart-3))' },
                   }}
                   className="h-[300px]"
                 >
@@ -301,7 +301,7 @@ export function PerformanceDashboard() {
               <CardDescription>Métricas avanzadas del sistema</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <div className="space-y-4">
                   <h4 className="font-medium">Recursos del Sistema</h4>
                   <div className="space-y-3">
@@ -339,9 +339,9 @@ export function PerformanceDashboard() {
                 <div className="lg:col-span-2">
                   <ChartContainer
                     config={{
-                      cpu: { label: "CPU", color: "hsl(var(--chart-1))" },
-                      memory: { label: "Memoria", color: "hsl(var(--chart-2))" },
-                      responseTime: { label: "Respuesta", color: "hsl(var(--chart-3))" },
+                      cpu: { label: 'CPU', color: 'hsl(var(--chart-1))' },
+                      memory: { label: 'Memoria', color: 'hsl(var(--chart-2))' },
+                      responseTime: { label: 'Respuesta', color: 'hsl(var(--chart-3))' },
                     }}
                     className="h-[250px]"
                   >
@@ -350,7 +350,13 @@ export function PerformanceDashboard() {
                         <XAxis dataKey="time" fontSize={10} />
                         <YAxis fontSize={10} />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="cpu" stroke="var(--color-cpu)" strokeWidth={2} dot={false} />
+                        <Line
+                          type="monotone"
+                          dataKey="cpu"
+                          stroke="var(--color-cpu)"
+                          strokeWidth={2}
+                          dot={false}
+                        />
                         <Line
                           type="monotone"
                           dataKey="memory"
@@ -376,8 +382,8 @@ export function PerformanceDashboard() {
             <CardContent>
               <ChartContainer
                 config={{
-                  requests: { label: "Solicitudes", color: "hsl(var(--chart-1))" },
-                  errors: { label: "Errores", color: "hsl(var(--chart-4))" },
+                  requests: { label: 'Solicitudes', color: 'hsl(var(--chart-1))' },
+                  errors: { label: 'Errores', color: 'hsl(var(--chart-4))' },
                 }}
                 className="h-[400px]"
               >
@@ -402,11 +408,11 @@ export function PerformanceDashboard() {
               <CardDescription>Análisis de uso por componente</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div>
                   <ChartContainer
                     config={{
-                      value: { label: "Porcentaje", color: "hsl(var(--chart-1))" },
+                      value: { label: 'Porcentaje', color: 'hsl(var(--chart-1))' },
                     }}
                     className="h-[300px]"
                   >
@@ -439,7 +445,7 @@ export function PerformanceDashboard() {
                       <div key={item.name} className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <div
-                            className="w-3 h-3 rounded-full"
+                            className="h-3 w-3 rounded-full"
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                           />
                           <span className="text-sm">{item.name}</span>
@@ -451,11 +457,11 @@ export function PerformanceDashboard() {
 
                   <div className="mt-6 space-y-2">
                     <Button className="w-full" size="sm">
-                      <Zap className="h-4 w-4 mr-2" />
+                      <Zap className="mr-2 h-4 w-4" />
                       Optimizar Rendimiento
                     </Button>
                     <Button variant="outline" className="w-full bg-transparent" size="sm">
-                      <Activity className="h-4 w-4 mr-2" />
+                      <Activity className="mr-2 h-4 w-4" />
                       Generar Reporte
                     </Button>
                   </div>
@@ -466,5 +472,5 @@ export function PerformanceDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

@@ -20,7 +20,7 @@ export const TrackedButton: React.FC<TrackedButtonProps> = ({
 }) => {
   const { trackClick } = useEventTracking();
   const componentName = trackingName || 'ds-button';
-  
+
   useComponentTracking(componentName, {
     trackProps: ['variant', 'size'],
   });
@@ -73,7 +73,7 @@ export const TrackedInput: React.FC<TrackedInputProps> = ({
   const { trackInput, trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-input';
   const debounceTimer = React.useRef<NodeJS.Timeout>();
-  
+
   useComponentTracking(componentName, {
     trackProps: ['type', 'required', 'disabled'],
   });
@@ -161,14 +161,14 @@ export const TrackedSelect: React.FC<TrackedSelectProps> = ({
 }) => {
   const { trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-select';
-  
+
   useComponentTracking(componentName, {
     trackProps: ['required', 'disabled'],
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = options.find(opt => opt.value === e.target.value);
-    
+
     trackCustom(componentName, 'change', {
       value: e.target.value,
       label: selectedOption?.label,
@@ -223,7 +223,7 @@ export const TrackedCard: React.FC<TrackedCardProps> = ({
 }) => {
   const { trackClick, trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-card';
-  
+
   useComponentTracking(componentName, {
     trackProps: ['variant'],
   });
@@ -324,20 +324,18 @@ export const TrackedModal: React.FC<TrackedModalProps> = ({
   };
 
   return (
-    <div 
-      className="ds-modal-backdrop" 
+    <div
+      className="ds-modal-backdrop"
       onClick={handleBackdropClick}
       data-tracking-component={componentName}
     >
       <div className="ds-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         {title && (
           <div className="ds-modal-header">
-            <h2 id="modal-title" className="ds-modal-title">{title}</h2>
-            <button
-              className="ds-modal-close"
-              onClick={handleCloseClick}
-              aria-label="Close modal"
-            >
+            <h2 id="modal-title" className="ds-modal-title">
+              {title}
+            </h2>
+            <button className="ds-modal-close" onClick={handleCloseClick} aria-label="Close modal">
               ×
             </button>
           </div>
@@ -365,14 +363,14 @@ export const TrackedTabs: React.FC<TrackedTabsProps> = ({
   const { trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-tabs';
   const [activeTab, setActiveTab] = React.useState(defaultTab || tabs[0]?.id);
-  
+
   useComponentTracking(componentName, {
     trackProps: ['defaultTab'],
   });
 
   const handleTabClick = (tabId: string) => {
     const tab = tabs.find(t => t.id === tabId);
-    
+
     trackCustom(componentName, 'tab_change', {
       fromTab: activeTab,
       toTab: tabId,

@@ -1,4 +1,5 @@
 "use strict";
+// Clase base para Value Objects en DDD
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseValueObject = void 0;
 class BaseValueObject {

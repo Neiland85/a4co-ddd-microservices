@@ -13,7 +13,7 @@ export class ProductInformationRequestedEvent extends DomainEvent {
     requestId: string,
     data: {
       orderId: string;
-      productIds: string[];  // Solo IDs, no datos completos
+      productIds: string[]; // Solo IDs, no datos completos
       requestedAt: Date;
     }
   ) {
@@ -97,7 +97,7 @@ export class UserInformationRequestedEvent extends DomainEvent {
     requestId: string,
     data: {
       userId: string;
-      requestedFields: string[];  // ['email', 'address', 'preferences']
+      requestedFields: string[]; // ['email', 'address', 'preferences']
       requestedAt: Date;
     }
   ) {

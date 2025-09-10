@@ -4,11 +4,11 @@
 
 import React, { useEffect, useRef, useCallback } from 'react';
 import { Span } from '@opentelemetry/api';
-import { 
-  traceComponentRender, 
-  traceRouteNavigation, 
+import {
+  traceComponentRender,
+  traceRouteNavigation,
   traceUserInteraction,
-  addPerformanceMetricsToSpan 
+  addPerformanceMetricsToSpan,
 } from './web-tracer';
 
 /**
@@ -64,7 +64,7 @@ export function useRouteTracing(currentRoute: string) {
 
       // Start new navigation span
       spanRef.current = traceRouteNavigation(previousRouteRef.current, currentRoute);
-      
+
       // Add performance metrics after navigation
       setTimeout(() => {
         if (spanRef.current) {
@@ -94,21 +94,24 @@ export function useInteractionTracing(
 ) {
   const lastInteractionTime = useRef(0);
 
-  const traceInteraction = useCallback((metadata?: Record<string, any>) => {
-    const now = Date.now();
-    
-    if (options?.throttle && now - lastInteractionTime.current < options.throttle) {
-      return;
-    }
+  const traceInteraction = useCallback(
+    (metadata?: Record<string, any>) => {
+      const now = Date.now();
 
-    const span = traceUserInteraction(interactionType, target, {
-      ...options?.attributes,
-      ...metadata,
-    });
+      if (options?.throttle && now - lastInteractionTime.current < options.throttle) {
+        return;
+      }
 
-    span.end();
-    lastInteractionTime.current = now;
-  }, [interactionType, target, options]);
+      const span = traceUserInteraction(interactionType, target, {
+        ...options?.attributes,
+        ...metadata,
+      });
+
+      span.end();
+      lastInteractionTime.current = now;
+    },
+    [interactionType, target, options]
+  );
 
   return traceInteraction;
 }
@@ -126,19 +129,22 @@ export function useApiTracing() {
     return traceId;
   }, []);
 
-  const endApiTrace = useCallback((traceId: string, success: boolean, metadata?: Record<string, any>) => {
-    const span = activeSpans.current.get(traceId);
-    if (span) {
-      span.setAttribute('api.success', success);
-      if (metadata) {
-        Object.entries(metadata).forEach(([key, value]) => {
-          span.setAttribute(`api.${key}`, value);
-        });
+  const endApiTrace = useCallback(
+    (traceId: string, success: boolean, metadata?: Record<string, any>) => {
+      const span = activeSpans.current.get(traceId);
+      if (span) {
+        span.setAttribute('api.success', success);
+        if (metadata) {
+          Object.entries(metadata).forEach(([key, value]) => {
+            span.setAttribute(`api.${key}`, value);
+          });
+        }
+        span.end();
+        activeSpans.current.delete(traceId);
       }
-      span.end();
-      activeSpans.current.delete(traceId);
-    }
-  }, []);
+    },
+    []
+  );
 
   return { startApiTrace, endApiTrace };
 }
@@ -155,27 +161,31 @@ export function withTracing<P extends object>(
   Component: React.ComponentType<P>,
   options?: WithTracingOptions
 ): React.ComponentType<P> {
-  const displayName = options?.componentName || Component.displayName || Component.name || 'Component';
+  const displayName =
+    options?.componentName || Component.displayName || Component.name || 'Component';
 
   return React.forwardRef<any, P>((props, ref) => {
     const span = useComponentTracing(displayName, props);
 
     // Track specific prop changes
-    useEffect(() => {
-      if (span && options?.trackProps) {
-        const trackedProps: Record<string, any> = {};
-        options.trackProps.forEach(propName => {
-          if (propName in props) {
-            trackedProps[propName] = (props as any)[propName];
-          }
-        });
-        
-        span.addEvent('props.updated', {
-          props: trackedProps,
-          timestamp: new Date().toISOString(),
-        });
-      }
-    }, options?.trackProps?.map(prop => (props as any)[prop]) || []);
+    useEffect(
+      () => {
+        if (span && options?.trackProps) {
+          const trackedProps: Record<string, any> = {};
+          options.trackProps.forEach(propName => {
+            if (propName in props) {
+              trackedProps[propName] = (props as any)[propName];
+            }
+          });
+
+          span.addEvent('props.updated', {
+            props: trackedProps,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      },
+      options?.trackProps?.map(prop => (props as any)[prop]) || []
+    );
 
     return <Component {...props} ref={ref} />;
   });
@@ -191,11 +201,11 @@ export interface TracingProviderProps {
   environment: string;
 }
 
-export function TracingProvider({ 
-  children, 
-  serviceName, 
-  serviceVersion, 
-  environment 
+export function TracingProvider({
+  children,
+  serviceName,
+  serviceVersion,
+  environment,
 }: TracingProviderProps): JSX.Element {
   useEffect(() => {
     // Initialize web tracer on mount
@@ -248,7 +258,7 @@ export class TracingErrorBoundary extends React.Component<
       errorStack: error.stack,
       componentStack: errorInfo.componentStack,
     });
-    
+
     this.span.recordException(error);
     this.span.end();
   }
@@ -256,17 +266,15 @@ export class TracingErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       const Fallback = this.props.fallback;
-      
+
       if (Fallback) {
         return <Fallback error={this.state.error} />;
       }
-      
+
       return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
           <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error?.toString()}
-          </details>
+          <details style={{ whiteSpace: 'pre-wrap' }}>{this.state.error?.toString()}</details>
         </div>
       );
     }

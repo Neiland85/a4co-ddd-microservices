@@ -1,12 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DomainEventValidator = exports.DomainEventFactory = exports.ServiceErrorEvent = exports.ServiceStartedEvent = exports.LocationUpdatedEvent = exports.PointsRedeemedEvent = exports.PointsEarnedEvent = exports.UserActionTrackedEvent = exports.SalesRecordedEvent = exports.SMSSentEvent = exports.EmailSentEvent = exports.ArtisanStatusChangedEvent = exports.NewProductListedEvent = exports.ArtisanVerifiedEvent = exports.UserPreferencesChangedEvent = exports.UserProfileUpdatedEvent = exports.UserRegisteredEvent = exports.RefundProcessedEvent = exports.PaymentFailedEvent = exports.PaymentSucceededEvent = exports.PaymentInitiatedEvent = exports.StockUpdatedEvent = exports.LowStockWarningEvent = exports.StockReleasedEvent = exports.StockReservedEvent = exports.OrderDeliveredEvent = exports.OrderCancelledEvent = exports.OrderConfirmedEvent = exports.OrderCreatedEvent = void 0;
+exports.DomainEventValidator = exports.DomainEventFactory = exports.UserInformationRequestedEvent = exports.StockValidationRequestedEvent = exports.ProductInformationRequestedEvent = exports.SagaFailedEvent = exports.SagaCompletedEvent = exports.ServiceErrorEvent = exports.ServiceStartedEvent = exports.LocationUpdatedEvent = exports.PointsRedeemedEvent = exports.PointsEarnedEvent = exports.UserActionTrackedEvent = exports.SalesRecordedEvent = exports.SMSSentEvent = exports.EmailSentEvent = exports.ArtisanStatusChangedEvent = exports.NewProductListedEvent = exports.ArtisanVerifiedEvent = exports.UserPreferencesChangedEvent = exports.UserProfileUpdatedEvent = exports.UserRegisteredEvent = exports.RefundProcessedEvent = exports.PaymentFailedEvent = exports.PaymentSucceededEvent = exports.PaymentInitiatedEvent = exports.StockUpdatedEvent = exports.LowStockWarningEvent = exports.StockReleasedEvent = exports.StockReservedEvent = exports.OrderDeliveredEvent = exports.OrderCancelledEvent = exports.OrderConfirmedEvent = exports.OrderCreatedEvent = void 0;
 exports.isOrderEvent = isOrderEvent;
 exports.isPaymentEvent = isPaymentEvent;
 exports.isInventoryEvent = isInventoryEvent;
 exports.isUserEvent = isUserEvent;
 exports.isNotificationEvent = isNotificationEvent;
 const domain_event_1 = require("../domain/domain-event");
+// ========================================
+// ORDER DOMAIN EVENTS
+// ========================================
 class OrderCreatedEvent extends domain_event_1.DomainEvent {
     constructor(orderId, data) {
         super(orderId, data);
@@ -31,6 +34,9 @@ class OrderDeliveredEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.OrderDeliveredEvent = OrderDeliveredEvent;
+// ========================================
+// INVENTORY DOMAIN EVENTS
+// ========================================
 class StockReservedEvent extends domain_event_1.DomainEvent {
     constructor(productId, data) {
         super(productId, data);
@@ -55,6 +61,9 @@ class StockUpdatedEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.StockUpdatedEvent = StockUpdatedEvent;
+// ========================================
+// PAYMENT DOMAIN EVENTS
+// ========================================
 class PaymentInitiatedEvent extends domain_event_1.DomainEvent {
     constructor(paymentId, data) {
         super(paymentId, data);
@@ -79,6 +88,9 @@ class RefundProcessedEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.RefundProcessedEvent = RefundProcessedEvent;
+// ========================================
+// USER DOMAIN EVENTS
+// ========================================
 class UserRegisteredEvent extends domain_event_1.DomainEvent {
     constructor(userId, data) {
         super(userId, data);
@@ -97,6 +109,9 @@ class UserPreferencesChangedEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.UserPreferencesChangedEvent = UserPreferencesChangedEvent;
+// ========================================
+// ARTISAN DOMAIN EVENTS
+// ========================================
 class ArtisanVerifiedEvent extends domain_event_1.DomainEvent {
     constructor(artisanId, data) {
         super(artisanId, data);
@@ -115,6 +130,9 @@ class ArtisanStatusChangedEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.ArtisanStatusChangedEvent = ArtisanStatusChangedEvent;
+// ========================================
+// NOTIFICATION DOMAIN EVENTS
+// ========================================
 class EmailSentEvent extends domain_event_1.DomainEvent {
     constructor(notificationId, data) {
         super(notificationId, data);
@@ -127,6 +145,9 @@ class SMSSentEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.SMSSentEvent = SMSSentEvent;
+// ========================================
+// ANALYTICS DOMAIN EVENTS
+// ========================================
 class SalesRecordedEvent extends domain_event_1.DomainEvent {
     constructor(recordId, data) {
         super(recordId, data);
@@ -139,6 +160,9 @@ class UserActionTrackedEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.UserActionTrackedEvent = UserActionTrackedEvent;
+// ========================================
+// LOYALTY DOMAIN EVENTS
+// ========================================
 class PointsEarnedEvent extends domain_event_1.DomainEvent {
     constructor(transactionId, data) {
         super(transactionId, data);
@@ -151,12 +175,18 @@ class PointsRedeemedEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.PointsRedeemedEvent = PointsRedeemedEvent;
+// ========================================
+// GEO DOMAIN EVENTS
+// ========================================
 class LocationUpdatedEvent extends domain_event_1.DomainEvent {
     constructor(locationId, data) {
         super(locationId, data);
     }
 }
 exports.LocationUpdatedEvent = LocationUpdatedEvent;
+// ========================================
+// SYSTEM DOMAIN EVENTS
+// ========================================
 class ServiceStartedEvent extends domain_event_1.DomainEvent {
     constructor(serviceId, data) {
         super(serviceId, data);
@@ -169,6 +199,42 @@ class ServiceErrorEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.ServiceErrorEvent = ServiceErrorEvent;
+// ========================================
+// SAGA DOMAIN EVENTS
+// ========================================
+class SagaCompletedEvent extends domain_event_1.DomainEvent {
+    constructor(sagaId, data) {
+        super(sagaId, data, 1, sagaId);
+    }
+}
+exports.SagaCompletedEvent = SagaCompletedEvent;
+class SagaFailedEvent extends domain_event_1.DomainEvent {
+    constructor(sagaId, data) {
+        super(sagaId, data, 1, sagaId);
+    }
+}
+exports.SagaFailedEvent = SagaFailedEvent;
+class ProductInformationRequestedEvent extends domain_event_1.DomainEvent {
+    constructor(sagaId, data) {
+        super(sagaId, data, 1, sagaId);
+    }
+}
+exports.ProductInformationRequestedEvent = ProductInformationRequestedEvent;
+class StockValidationRequestedEvent extends domain_event_1.DomainEvent {
+    constructor(sagaId, data) {
+        super(sagaId, data, 1, sagaId);
+    }
+}
+exports.StockValidationRequestedEvent = StockValidationRequestedEvent;
+class UserInformationRequestedEvent extends domain_event_1.DomainEvent {
+    constructor(sagaId, data) {
+        super(sagaId, data, 1, sagaId);
+    }
+}
+exports.UserInformationRequestedEvent = UserInformationRequestedEvent;
+// ========================================
+// EVENT FACTORY FOR TYPE SAFETY
+// ========================================
 class DomainEventFactory {
     static createOrderCreatedEvent(orderId, data) {
         return new OrderCreatedEvent(orderId, data);
@@ -181,6 +247,9 @@ class DomainEventFactory {
     }
 }
 exports.DomainEventFactory = DomainEventFactory;
+// ========================================
+// EVENT TYPE GUARDS
+// ========================================
 function isOrderEvent(event) {
     return event.eventType.startsWith('Order');
 }
@@ -210,7 +279,7 @@ class DomainEventValidator {
         }
         return {
             isValid: errors.length === 0,
-            errors
+            errors,
         };
     }
 }

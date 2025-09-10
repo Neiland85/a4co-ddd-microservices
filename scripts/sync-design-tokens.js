@@ -32,22 +32,22 @@ function notify(message, type = 'info') {
 // Función para sincronizar tokens
 async function syncTokens() {
   notify('Sincronizando tokens de diseño...', 'info');
-  
+
   try {
     // Reconstruir el Design System
-    execSync('pnpm --filter @a4co/design-system build', { 
+    execSync('pnpm --filter @a4co/design-system build', {
       stdio: 'inherit',
-      cwd: path.join(__dirname, '..')
+      cwd: path.join(__dirname, '..'),
     });
-    
+
     // Invalidar cache de require para el preset
     delete require.cache[require.resolve(TAILWIND_PRESET_PATH)];
-    
+
     // Notificar a las apps para que recarguen
     for (const app of APPS_TO_SYNC) {
       const appPath = path.join(__dirname, '..', app);
       const touchFile = path.join(appPath, 'tailwind.config.ts');
-      
+
       if (fs.existsSync(touchFile)) {
         // Touch el archivo para forzar recarga
         const now = new Date();
@@ -55,7 +55,7 @@ async function syncTokens() {
         notify(`Actualizado: ${app}`, 'success');
       }
     }
-    
+
     notify('✨ Tokens sincronizados exitosamente', 'success');
   } catch (error) {
     notify(`Error al sincronizar: ${error.message}`, 'error');
@@ -65,33 +65,36 @@ async function syncTokens() {
 // Función para watch mode
 function watchTokens() {
   notify('👀 Observando cambios en el Design System...', 'info');
-  
-  const watcher = chokidar.watch([
-    path.join(TOKENS_PATH, '**/*.ts'),
-    path.join(DESIGN_SYSTEM_PATH, 'src/styles/**/*.css'),
-    TAILWIND_PRESET_PATH,
-  ], {
-    persistent: true,
-    ignoreInitial: true,
-  });
-  
+
+  const watcher = chokidar.watch(
+    [
+      path.join(TOKENS_PATH, '**/*.ts'),
+      path.join(DESIGN_SYSTEM_PATH, 'src/styles/**/*.css'),
+      TAILWIND_PRESET_PATH,
+    ],
+    {
+      persistent: true,
+      ignoreInitial: true,
+    }
+  );
+
   let syncTimeout;
-  
+
   watcher.on('all', (event, filePath) => {
     const relativePath = path.relative(DESIGN_SYSTEM_PATH, filePath);
     notify(`Cambio detectado: ${relativePath}`, 'info');
-    
+
     // Debounce para evitar múltiples sincronizaciones
     clearTimeout(syncTimeout);
     syncTimeout = setTimeout(() => {
       syncTokens();
     }, 300);
   });
-  
+
   watcher.on('error', error => {
     notify(`Error en watcher: ${error}`, 'error');
   });
-  
+
   // Manejar cierre graceful
   process.on('SIGINT', () => {
     notify('Deteniendo observador...', 'info');

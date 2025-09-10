@@ -1,23 +1,27 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { Navigation } from "./navigation"
-import { SearchBar } from "./search-bar"
-import { LanguageSelector } from "./language-selector"
-import { ThemeToggle } from "./theme-toggle"
-import { SoundControls } from "./sound-controls"
-import { CookieBanner } from "./cookie-banner"
-import { useSoundEffects } from "../../hooks/use-sound-effects"
-import type { HeadExperienceProps, SoundSettings, LanguageOption } from "../../types/head-experience-types"
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Navigation } from './navigation';
+import { SearchBar } from './search-bar';
+import { LanguageSelector } from './language-selector';
+import { ThemeToggle } from './theme-toggle';
+import { SoundControls } from './sound-controls';
+import { CookieBanner } from './cookie-banner';
+import { useSoundEffects } from '../../hooks/use-sound-effects';
+import type {
+  HeadExperienceProps,
+  SoundSettings,
+  LanguageOption,
+} from '../../types/head-experience-types';
 
 const defaultLanguages: LanguageOption[] = [
-  { code: "es", label: "Español", flag: "🇪🇸" },
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "fr", label: "Français", flag: "🇫🇷" },
-]
+  { code: 'es', label: 'Español', flag: '🇪🇸' },
+  { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'fr', label: 'Français', flag: '🇫🇷' },
+];
 
 const defaultSoundSettings: SoundSettings = {
   enabled: true,
@@ -25,64 +29,72 @@ const defaultSoundSettings: SoundSettings = {
   clickSound: true,
   hoverSound: true,
   menuSound: true,
-}
+};
 
 export default function HeadExperience({
-  logo = "/images/logo-green.jpeg",
-  companyName = "A4CO",
+  logo = '/images/logo-green.jpeg',
+  companyName = 'A4CO',
   navigationItems,
   languages = defaultLanguages,
-  currentLanguage = "es",
+  currentLanguage = 'es',
   onLanguageChange,
   onSearch,
   soundSettings = defaultSoundSettings,
   onSoundSettingsChange,
 }: HeadExperienceProps) {
-  const [currentPath, setCurrentPath] = useState("/")
-  const [localSoundSettings, setLocalSoundSettings] = useState(soundSettings)
-  const { setGlobalVolume, setEnabled } = useSoundEffects()
+  const [currentPath, setCurrentPath] = useState('/');
+  const [localSoundSettings, setLocalSoundSettings] = useState(soundSettings);
+  const { setGlobalVolume, setEnabled } = useSoundEffects();
 
   useEffect(() => {
-    setCurrentPath(window.location.pathname)
-  }, [])
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   useEffect(() => {
-    setGlobalVolume(localSoundSettings.volume)
-    setEnabled(localSoundSettings.enabled)
-  }, [localSoundSettings, setGlobalVolume, setEnabled])
+    setGlobalVolume(localSoundSettings.volume);
+    setEnabled(localSoundSettings.enabled);
+  }, [localSoundSettings, setGlobalVolume, setEnabled]);
 
   const handleSoundSettingsChange = (settings: SoundSettings) => {
-    setLocalSoundSettings(settings)
-    onSoundSettingsChange?.(settings)
-  }
+    setLocalSoundSettings(settings);
+    onSoundSettingsChange?.(settings);
+  };
 
   const handleSearch = (query: string) => {
-    console.log("Searching for:", query)
-    onSearch?.(query)
-  }
+    console.log('Searching for:', query);
+    onSearch?.(query);
+  };
 
   const handleLanguageChange = (language: string) => {
-    console.log("Language changed to:", language)
-    onLanguageChange?.(language)
-  }
+    console.log('Language changed to:', language);
+    onLanguageChange?.(language);
+  };
 
   return (
     <>
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="sticky top-0 z-40 w-full border-b border-a4co-olive-200 bg-white/95 backdrop-blur-sm shadow-natural-sm"
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="border-a4co-olive-200 shadow-natural-sm sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur-sm"
         role="banner"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Logo and Brand */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-3" aria-label={`Ir a inicio de ${companyName}`}>
-                <div className="relative h-10 w-10 overflow-hidden rounded-lg shadow-natural">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-3"
+            >
+              <Link
+                href="/"
+                className="flex items-center gap-3"
+                aria-label={`Ir a inicio de ${companyName}`}
+              >
+                <div className="shadow-natural relative h-10 w-10 overflow-hidden rounded-lg">
                   <Image
-                    src={logo || "/placeholder.svg"}
+                    src={logo || '/placeholder.svg'}
                     alt={`Logo de ${companyName}`}
                     fill
                     className="object-cover"
@@ -90,14 +102,16 @@ export default function HeadExperience({
                   />
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-xl font-bold text-a4co-olive-700 tracking-tight">{companyName}</h1>
-                  <p className="text-xs text-a4co-clay-600 -mt-1">Artesanía Auténtica</p>
+                  <h1 className="text-a4co-olive-700 text-xl font-bold tracking-tight">
+                    {companyName}
+                  </h1>
+                  <p className="text-a4co-clay-600 -mt-1 text-xs">Artesanía Auténtica</p>
                 </div>
               </Link>
             </motion.div>
 
             {/* Navigation */}
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <Navigation items={navigationItems} currentPath={currentPath} />
             </div>
 
@@ -110,14 +124,17 @@ export default function HeadExperience({
             >
               <SearchBar onSearch={handleSearch} />
 
-              <div className="hidden sm:flex items-center gap-1">
+              <div className="hidden items-center gap-1 sm:flex">
                 <LanguageSelector
                   languages={languages}
                   currentLanguage={currentLanguage}
                   onLanguageChange={handleLanguageChange}
                 />
                 <ThemeToggle />
-                <SoundControls settings={localSoundSettings} onSettingsChange={handleSoundSettingsChange} />
+                <SoundControls
+                  settings={localSoundSettings}
+                  onSettingsChange={handleSoundSettingsChange}
+                />
               </div>
             </motion.div>
           </div>
@@ -127,5 +144,5 @@ export default function HeadExperience({
       {/* Cookie Banner */}
       <CookieBanner companyName={companyName} privacyPolicyUrl="/politica-privacidad" />
     </>
-  )
+  );
 }

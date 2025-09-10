@@ -23,9 +23,7 @@ export interface ComponentObservabilityConfig {
 /**
  * Create an observability plugin for a component
  */
-export function createComponentPlugin(
-  config: ComponentObservabilityConfig
-): ObservabilityPlugin {
+export function createComponentPlugin(config: ComponentObservabilityConfig): ObservabilityPlugin {
   return {
     name: `${config.componentName}-observability`,
     version: '1.0.0',
@@ -127,7 +125,7 @@ export class ComponentPerformanceTracker {
       // Log aggregated metrics every 100 renders
       const avg = times.reduce((a, b) => a + b, 0) / times.length;
       const p95 = this.calculatePercentile(times, 0.95);
-      
+
       this.logger.info('Component render performance', {
         custom: {
           component: componentName,
@@ -147,7 +145,7 @@ export class ComponentPerformanceTracker {
 
   getPerformanceReport(): Record<string, any> {
     const report: Record<string, any> = {};
-    
+
     this.renderTimes.forEach((times, component) => {
       report[component] = {
         count: times.length,
@@ -157,7 +155,7 @@ export class ComponentPerformanceTracker {
         p99: this.calculatePercentile(times, 0.99),
       };
     });
-    
+
     return report;
   }
 }
@@ -168,22 +166,19 @@ export class ComponentPerformanceTracker {
 export const ObservabilityStyleGuide = {
   // Span naming patterns
   spans: {
-    interaction: (component: string, action: string) => 
+    interaction: (component: string, action: string) =>
       `ds.${component.toLowerCase()}.${action.toLowerCase()}`,
-    render: (component: string) => 
-      `ds.${component.toLowerCase()}.render`,
-    api: (component: string, operation: string) => 
+    render: (component: string) => `ds.${component.toLowerCase()}.render`,
+    api: (component: string, operation: string) =>
       `ds.${component.toLowerCase()}.api.${operation.toLowerCase()}`,
   },
 
   // Log message patterns
   logs: {
-    interaction: (component: string, action: string) => 
+    interaction: (component: string, action: string) =>
       `User interaction: ${action} on ${component}`,
-    state: (component: string, state: string) => 
-      `Component state: ${component} - ${state}`,
-    error: (component: string, error: string) => 
-      `Component error: ${component} - ${error}`,
+    state: (component: string, state: string) => `Component state: ${component} - ${state}`,
+    error: (component: string, error: string) => `Component error: ${component} - ${error}`,
   },
 
   // Attribute naming conventions
@@ -198,11 +193,9 @@ export const ObservabilityStyleGuide = {
 
   // Metric naming conventions
   metrics: {
-    renderTime: (component: string) => 
-      `ds_${component.toLowerCase()}_render_duration_ms`,
-    interactionCount: (component: string, interaction: string) => 
+    renderTime: (component: string) => `ds_${component.toLowerCase()}_render_duration_ms`,
+    interactionCount: (component: string, interaction: string) =>
       `ds_${component.toLowerCase()}_${interaction.toLowerCase()}_total`,
-    errorCount: (component: string) => 
-      `ds_${component.toLowerCase()}_errors_total`,
+    errorCount: (component: string) => `ds_${component.toLowerCase()}_errors_total`,
   },
 };

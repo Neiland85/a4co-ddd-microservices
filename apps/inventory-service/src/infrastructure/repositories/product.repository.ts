@@ -35,7 +35,7 @@ export class InMemoryProductRepository implements ProductRepository {
         minimumStock: 10,
         maximumStock: 100,
         isActive: true,
-        artisanId: 'artisan_001'
+        artisanId: 'artisan_001',
       },
       {
         name: 'Wooden Cutting Board',
@@ -50,7 +50,7 @@ export class InMemoryProductRepository implements ProductRepository {
         minimumStock: 8,
         maximumStock: 80,
         isActive: true,
-        artisanId: 'artisan_002'
+        artisanId: 'artisan_002',
       },
       {
         name: 'Handwoven Cotton Scarf',
@@ -65,8 +65,8 @@ export class InMemoryProductRepository implements ProductRepository {
         minimumStock: 5,
         maximumStock: 60,
         isActive: true,
-        artisanId: 'artisan_003'
-      }
+        artisanId: 'artisan_003',
+      },
     ];
 
     sampleProducts.forEach((props, index) => {
@@ -98,22 +98,20 @@ export class InMemoryProductRepository implements ProductRepository {
   }
 
   async findByCategory(category: string): Promise<Product[]> {
-    return Array.from(this.products.values())
-      .filter(product => product.category === category);
+    return Array.from(this.products.values()).filter(product => product.category === category);
   }
 
   async findByArtisan(artisanId: string): Promise<Product[]> {
-    return Array.from(this.products.values())
-      .filter(product => product.artisanId === artisanId);
+    return Array.from(this.products.values()).filter(product => product.artisanId === artisanId);
   }
 
   async findLowStock(): Promise<Product[]> {
-    return Array.from(this.products.values())
-      .filter(product => product.needsRestock);
+    return Array.from(this.products.values()).filter(product => product.needsRestock);
   }
 
   async findOutOfStock(): Promise<Product[]> {
-    return Array.from(this.products.values())
-      .filter(product => product.stockStatus === 'out_of_stock');
+    return Array.from(this.products.values()).filter(
+      product => product.stockStatus === 'out_of_stock'
+    );
   }
 }

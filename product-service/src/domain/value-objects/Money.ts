@@ -8,7 +8,7 @@ interface MoneyProps {
 
 export class Money extends ValueObject<MoneyProps> {
   private static readonly SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'MXN'];
-  
+
   get amount(): number {
     return this.props.amount;
   }
@@ -33,10 +33,12 @@ export class Money extends ValueObject<MoneyProps> {
     // Redondear a 2 decimales
     const roundedAmount = Math.round(props.amount * 100) / 100;
 
-    return Result.ok<Money>(new Money({
-      amount: roundedAmount,
-      currency: props.currency
-    }));
+    return Result.ok<Money>(
+      new Money({
+        amount: roundedAmount,
+        currency: props.currency,
+      })
+    );
   }
 
   public add(money: Money): Result<Money> {
@@ -46,7 +48,7 @@ export class Money extends ValueObject<MoneyProps> {
 
     return Money.create({
       amount: this.amount + money.amount,
-      currency: this.currency
+      currency: this.currency,
     });
   }
 
@@ -57,14 +59,14 @@ export class Money extends ValueObject<MoneyProps> {
 
     return Money.create({
       amount: this.amount - money.amount,
-      currency: this.currency
+      currency: this.currency,
     });
   }
 
   public multiply(factor: number): Result<Money> {
     return Money.create({
       amount: this.amount * factor,
-      currency: this.currency
+      currency: this.currency,
     });
   }
 

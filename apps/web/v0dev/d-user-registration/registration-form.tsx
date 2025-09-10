@@ -1,29 +1,39 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { registrationSchema, type RegistrationFormData } from "@/lib/validation"
-import { AnimatedCircles } from "@/components/animated-circles"
-import { CookieBanner } from "@/components/cookie-banner"
-import { OffersSection } from "@/components/offers-section"
-import { TwoFactorVerification } from "@/components/two-factor-verification"
-import { User, Mail, Lock, Phone, Eye, EyeOff, UserPlus, CheckCircle, Sparkles } from "lucide-react"
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { registrationSchema, type RegistrationFormData } from '@/lib/validation';
+import { AnimatedCircles } from '@/components/animated-circles';
+import { CookieBanner } from '@/components/cookie-banner';
+import { OffersSection } from '@/components/offers-section';
+import { TwoFactorVerification } from '@/components/two-factor-verification';
+import {
+  User,
+  Mail,
+  Lock,
+  Phone,
+  Eye,
+  EyeOff,
+  UserPlus,
+  CheckCircle,
+  Sparkles,
+} from 'lucide-react';
 
-type Step = "registration" | "verification" | "success"
+type Step = 'registration' | 'verification' | 'success';
 
 export default function RegistrationForm() {
-  const [currentStep, setCurrentStep] = useState<Step>("registration")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [registrationData, setRegistrationData] = useState<RegistrationFormData | null>(null)
+  const [currentStep, setCurrentStep] = useState<Step>('registration');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [registrationData, setRegistrationData] = useState<RegistrationFormData | null>(null);
 
   const {
     register,
@@ -32,75 +42,79 @@ export default function RegistrationForm() {
     watch,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
-  })
+  });
 
-  const watchedFields = watch()
+  const watchedFields = watch();
 
   const onSubmit = async (data: RegistrationFormData) => {
-    setIsLoading(true)
-    setRegistrationData(data)
+    setIsLoading(true);
+    setRegistrationData(data);
 
     // Simular registro
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    setIsLoading(false)
-    setCurrentStep("verification")
-  }
+    setIsLoading(false);
+    setCurrentStep('verification');
+  };
 
   const handleVerificationSuccess = () => {
-    setCurrentStep("success")
-  }
+    setCurrentStep('success');
+  };
 
   const handleBackToRegistration = () => {
-    setCurrentStep("registration")
-  }
+    setCurrentStep('registration');
+  };
 
   const getProgressPercentage = () => {
-    const fields = ["name", "email", "password", "confirmPassword"]
-    const filledFields = fields.filter((field) => watchedFields[field as keyof RegistrationFormData])
-    return (filledFields.length / fields.length) * 100
-  }
+    const fields = ['name', 'email', 'password', 'confirmPassword'];
+    const filledFields = fields.filter(field => watchedFields[field as keyof RegistrationFormData]);
+    return (filledFields.length / fields.length) * 100;
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
       <AnimatedCircles section={currentStep} />
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div className="container relative z-10 mx-auto px-4 py-8">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-3">
           {/* Columna Principal - Formulario */}
           <div className="lg:col-span-2">
             <AnimatePresence mode="wait">
-              {currentStep === "registration" && (
+              {currentStep === 'registration' && (
                 <motion.div
                   key="registration"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="w-full max-w-2xl mx-auto"
+                  className="mx-auto w-full max-w-2xl"
                 >
-                  <Card className="p-8 bg-white/95 backdrop-blur-lg border-2 border-purple-200 shadow-2xl">
+                  <Card className="border-2 border-purple-200 bg-white/95 p-8 shadow-2xl backdrop-blur-lg">
                     {/* Header */}
-                    <div className="text-center mb-8">
+                    <div className="mb-8 text-center">
                       <motion.div
                         animate={{ rotate: [0, 10, -10, 0] }}
                         transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
-                        className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-white mb-4"
+                        className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white"
                       >
                         <UserPlus size={40} />
                       </motion.div>
-                      <h1 className="text-3xl font-bold text-gray-900 mb-2">¡Únete a Nuestra Comunidad!</h1>
-                      <p className="text-gray-600">Crea tu cuenta y descubre un mundo de posibilidades</p>
+                      <h1 className="mb-2 text-3xl font-bold text-gray-900">
+                        ¡Únete a Nuestra Comunidad!
+                      </h1>
+                      <p className="text-gray-600">
+                        Crea tu cuenta y descubre un mundo de posibilidades
+                      </p>
                     </div>
 
                     {/* Barra de Progreso */}
                     <div className="mb-6">
-                      <div className="flex justify-between text-sm text-gray-600 mb-2">
+                      <div className="mb-2 flex justify-between text-sm text-gray-600">
                         <span>Progreso del registro</span>
                         <span>{Math.round(getProgressPercentage())}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="h-2 w-full rounded-full bg-gray-200">
                         <motion.div
-                          className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full"
+                          className="h-2 rounded-full bg-gradient-to-r from-purple-600 to-blue-600"
                           initial={{ width: 0 }}
                           animate={{ width: `${getProgressPercentage()}%` }}
                           transition={{ duration: 0.3 }}
@@ -109,7 +123,7 @@ export default function RegistrationForm() {
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-4">
+                      <div className="grid gap-4 md:grid-cols-2">
                         {/* Nombre */}
                         <div className="space-y-2">
                           <Label htmlFor="name" className="flex items-center gap-2">
@@ -117,10 +131,10 @@ export default function RegistrationForm() {
                             Nombre Completo
                           </Label>
                           <Input
-                            {...register("name")}
+                            {...register('name')}
                             id="name"
                             placeholder="Tu nombre completo"
-                            className="border-2 border-gray-200 focus:border-purple-500 transition-colors"
+                            className="border-2 border-gray-200 transition-colors focus:border-purple-500"
                           />
                           {errors.name && (
                             <motion.p
@@ -140,11 +154,11 @@ export default function RegistrationForm() {
                             Correo Electrónico
                           </Label>
                           <Input
-                            {...register("email")}
+                            {...register('email')}
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="border-2 border-gray-200 focus:border-purple-500 transition-colors"
+                            className="border-2 border-gray-200 transition-colors focus:border-purple-500"
                           />
                           {errors.email && (
                             <motion.p
@@ -158,7 +172,7 @@ export default function RegistrationForm() {
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-4">
+                      <div className="grid gap-4 md:grid-cols-2">
                         {/* Contraseña */}
                         <div className="space-y-2">
                           <Label htmlFor="password" className="flex items-center gap-2">
@@ -167,16 +181,16 @@ export default function RegistrationForm() {
                           </Label>
                           <div className="relative">
                             <Input
-                              {...register("password")}
+                              {...register('password')}
                               id="password"
-                              type={showPassword ? "text" : "password"}
+                              type={showPassword ? 'text' : 'password'}
                               placeholder="Mínimo 8 caracteres"
-                              className="border-2 border-gray-200 focus:border-purple-500 transition-colors pr-10"
+                              className="border-2 border-gray-200 pr-10 transition-colors focus:border-purple-500"
                             />
                             <button
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-purple-600"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-purple-600"
                             >
                               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
@@ -200,16 +214,16 @@ export default function RegistrationForm() {
                           </Label>
                           <div className="relative">
                             <Input
-                              {...register("confirmPassword")}
+                              {...register('confirmPassword')}
                               id="confirmPassword"
-                              type={showConfirmPassword ? "text" : "password"}
+                              type={showConfirmPassword ? 'text' : 'password'}
                               placeholder="Repite tu contraseña"
-                              className="border-2 border-gray-200 focus:border-purple-500 transition-colors pr-10"
+                              className="border-2 border-gray-200 pr-10 transition-colors focus:border-purple-500"
                             />
                             <button
                               type="button"
                               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-purple-600"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-purple-600"
                             >
                               {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
@@ -231,30 +245,37 @@ export default function RegistrationForm() {
                         <Label htmlFor="phone" className="flex items-center gap-2">
                           <Phone size={16} className="text-purple-600" />
                           Número de Teléfono (Opcional)
-                          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+                          <span className="rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-700">
                             Para verificación 2FA
                           </span>
                         </Label>
                         <Input
-                          {...register("phone")}
+                          {...register('phone')}
                           id="phone"
                           type="tel"
                           placeholder="+1 (555) 123-4567"
-                          className="border-2 border-gray-200 focus:border-purple-500 transition-colors"
+                          className="border-2 border-gray-200 transition-colors focus:border-purple-500"
                         />
                       </div>
 
                       {/* Checkboxes */}
                       <div className="space-y-4">
                         <div className="flex items-start space-x-3">
-                          <Checkbox {...register("acceptTerms")} id="acceptTerms" className="mt-1" />
-                          <Label htmlFor="acceptTerms" className="text-sm text-gray-700 leading-relaxed">
-                            Acepto los{" "}
-                            <a href="#" className="text-purple-600 hover:underline font-medium">
+                          <Checkbox
+                            {...register('acceptTerms')}
+                            id="acceptTerms"
+                            className="mt-1"
+                          />
+                          <Label
+                            htmlFor="acceptTerms"
+                            className="text-sm leading-relaxed text-gray-700"
+                          >
+                            Acepto los{' '}
+                            <a href="#" className="font-medium text-purple-600 hover:underline">
                               Términos y Condiciones
-                            </a>{" "}
-                            y la{" "}
-                            <a href="#" className="text-purple-600 hover:underline font-medium">
+                            </a>{' '}
+                            y la{' '}
+                            <a href="#" className="font-medium text-purple-600 hover:underline">
                               Política de Privacidad
                             </a>
                           </Label>
@@ -270,8 +291,15 @@ export default function RegistrationForm() {
                         )}
 
                         <div className="flex items-start space-x-3">
-                          <Checkbox {...register("marketingEmails")} id="marketingEmails" className="mt-1" />
-                          <Label htmlFor="marketingEmails" className="text-sm text-gray-700 leading-relaxed">
+                          <Checkbox
+                            {...register('marketingEmails')}
+                            id="marketingEmails"
+                            className="mt-1"
+                          />
+                          <Label
+                            htmlFor="marketingEmails"
+                            className="text-sm leading-relaxed text-gray-700"
+                          >
                             Quiero recibir ofertas especiales y noticias por correo electrónico
                           </Label>
                         </div>
@@ -282,11 +310,11 @@ export default function RegistrationForm() {
                         <Button
                           type="submit"
                           disabled={isLoading}
-                          className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                          className="h-12 w-full bg-gradient-to-r from-purple-600 to-blue-600 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:from-purple-700 hover:to-blue-700 hover:shadow-xl"
                         >
                           {isLoading ? (
                             <div className="flex items-center gap-2">
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                               Creando tu cuenta...
                             </div>
                           ) : (
@@ -301,8 +329,8 @@ export default function RegistrationForm() {
                       {/* Login Link */}
                       <div className="text-center">
                         <p className="text-gray-600">
-                          ¿Ya tienes una cuenta?{" "}
-                          <a href="#" className="text-purple-600 hover:underline font-medium">
+                          ¿Ya tienes una cuenta?{' '}
+                          <a href="#" className="font-medium text-purple-600 hover:underline">
                             Inicia sesión aquí
                           </a>
                         </p>
@@ -312,7 +340,7 @@ export default function RegistrationForm() {
                 </motion.div>
               )}
 
-              {currentStep === "verification" && registrationData && (
+              {currentStep === 'verification' && registrationData && (
                 <TwoFactorVerification
                   email={registrationData.email}
                   phone={registrationData.phone}
@@ -321,24 +349,27 @@ export default function RegistrationForm() {
                 />
               )}
 
-              {currentStep === "success" && (
+              {currentStep === 'success' && (
                 <motion.div
                   key="success"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="w-full max-w-md mx-auto"
+                  className="mx-auto w-full max-w-md"
                 >
-                  <Card className="p-8 bg-white/95 backdrop-blur-lg border-2 border-green-200 shadow-2xl text-center">
+                  <Card className="border-2 border-green-200 bg-white/95 p-8 text-center shadow-2xl backdrop-blur-lg">
                     <motion.div
                       animate={{ scale: [1, 1.1, 1] }}
                       transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full text-white mb-6"
+                      className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white"
                     >
                       <CheckCircle size={40} />
                     </motion.div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">¡Cuenta Creada Exitosamente!</h2>
-                    <p className="text-gray-600 mb-6">
-                      Bienvenido a nuestra comunidad. Tu cuenta ha sido verificada y está lista para usar.
+                    <h2 className="mb-4 text-2xl font-bold text-gray-900">
+                      ¡Cuenta Creada Exitosamente!
+                    </h2>
+                    <p className="mb-6 text-gray-600">
+                      Bienvenido a nuestra comunidad. Tu cuenta ha sido verificada y está lista para
+                      usar.
                     </p>
                     <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600">
                       Comenzar a Explorar
@@ -360,5 +391,5 @@ export default function RegistrationForm() {
 
       <CookieBanner />
     </div>
-  )
+  );
 }

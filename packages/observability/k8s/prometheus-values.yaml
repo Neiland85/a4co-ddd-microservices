@@ -6,8 +6,8 @@ prometheus:
   prometheusSpec:
     replicas: 2
     retention: 30d
-    retentionSize: "50GB"
-    
+    retentionSize: '50GB'
+
     # Resource limits
     resources:
       requests:
@@ -16,31 +16,31 @@ prometheus:
       limits:
         cpu: 2000m
         memory: 8Gi
-    
+
     # Storage configuration
     storageSpec:
       volumeClaimTemplate:
         spec:
-          accessModes: ["ReadWriteOnce"]
+          accessModes: ['ReadWriteOnce']
           resources:
             requests:
               storage: 100Gi
-    
+
     # Service monitors to discover
     serviceMonitorSelector:
       matchLabels:
         app.kubernetes.io/part-of: a4co
-    
+
     # Pod monitors to discover
     podMonitorSelector:
       matchLabels:
         app.kubernetes.io/part-of: a4co
-    
+
     # Rules to include
     ruleSelector:
       matchLabels:
         app.kubernetes.io/part-of: a4co
-    
+
     # Additional scrape configs
     additionalScrapeConfigs:
       - job_name: 'a4co-microservices'
@@ -80,11 +80,11 @@ alertmanager:
     storage:
       volumeClaimTemplate:
         spec:
-          accessModes: ["ReadWriteOnce"]
+          accessModes: ['ReadWriteOnce']
           resources:
             requests:
               storage: 10Gi
-    
+
     resources:
       requests:
         cpu: 100m
@@ -97,9 +97,9 @@ alertmanager:
 grafana:
   enabled: true
   replicas: 2
-  
+
   adminPassword: ${GRAFANA_ADMIN_PASSWORD}
-  
+
   ingress:
     enabled: true
     annotations:
@@ -111,11 +111,11 @@ grafana:
       - secretName: grafana-tls
         hosts:
           - grafana.a4co.com
-  
+
   persistence:
     enabled: true
     size: 10Gi
-  
+
   resources:
     requests:
       cpu: 100m
@@ -123,7 +123,7 @@ grafana:
     limits:
       cpu: 500m
       memory: 512Mi
-  
+
   # Grafana datasources
   datasources:
     datasources.yaml:
@@ -142,7 +142,7 @@ grafana:
           type: loki
           url: http://loki:3100
           access: proxy
-  
+
   # Pre-configured dashboards
   dashboardProviders:
     dashboardproviders.yaml:

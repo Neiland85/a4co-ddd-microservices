@@ -6,7 +6,7 @@ global:
   # Global values that can be accessed by all subcharts
   domain: a4co.local
   storageClass: standard
-  
+
 prometheus:
   enabled: true
   alertmanager:
@@ -18,7 +18,7 @@ prometheus:
     persistentVolume:
       enabled: true
       size: 50Gi
-    retention: "30d"
+    retention: '30d'
     global:
       scrape_interval: 15s
       evaluation_interval: 15s
@@ -35,7 +35,7 @@ prometheus:
 
 grafana:
   enabled: true
-  adminPassword: "admin" # Change in production
+  adminPassword: 'admin' # Change in production
   persistence:
     enabled: true
     size: 10Gi
@@ -65,7 +65,7 @@ grafana:
           options:
             path: /var/lib/grafana/dashboards/default
   dashboardsConfigMaps:
-    default: "grafana-dashboards"
+    default: 'grafana-dashboards'
   ingress:
     enabled: true
     annotations:
@@ -146,9 +146,9 @@ opentelemetry-collector:
             action: upsert
     exporters:
       prometheus:
-        endpoint: "0.0.0.0:8889"
+        endpoint: '0.0.0.0:8889'
       jaeger:
-        endpoint: "{{ .Release.Name }}-jaeger-collector:14250"
+        endpoint: '{{ .Release.Name }}-jaeger-collector:14250'
         tls:
           insecure: true
       logging:
@@ -167,7 +167,7 @@ opentelemetry-collector:
 # Additional components
 elasticsearch:
   enabled: false # Enable if using Elasticsearch for Jaeger storage
-  
+
 # Custom A4CO configurations
 a4co:
   microservices:
@@ -199,18 +199,18 @@ a4co:
         port: 9090
       - name: artisan-service
         port: 9090
-    
+
   frontend:
     services:
       - name: web
         port: 9090
       - name: dashboard-web
         port: 9090
-  
+
   alerts:
     enabled: true
     # Custom alert rules will be created
-    
+
   dashboards:
     enabled: true
     # Custom Grafana dashboards will be provisioned

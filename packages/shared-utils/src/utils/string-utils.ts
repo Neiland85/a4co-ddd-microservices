@@ -5,7 +5,7 @@ export const capitalize = (str: string): string => {
 };
 
 export const camelCase = (str: string): string => {
-  return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+  return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
 };
 
 export const kebabCase = (str: string): string => {
@@ -59,5 +59,5 @@ export const removeAccents = (str: string): string => {
 
 export function kebabToCamelCase(str: string): string {
   if (!str) return str;
-  return str.replace(/-([a-z])/g, (g) => g[1]?.toUpperCase() || g[1]);
+  return str.replace(/-([a-z])/g, g => g[1]?.toUpperCase() || g[1]);
 }
