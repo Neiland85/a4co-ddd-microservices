@@ -107,7 +107,7 @@ export enum ProductStatus {
   PENDING_REVIEW = 'PENDING_REVIEW',
   PUBLISHED = 'PUBLISHED',
   ARCHIVED = 'ARCHIVED',
-  REJECTED = 'REJECTED'
+  REJECTED = 'REJECTED',
 }
 
 export enum ProductAvailability {
@@ -115,7 +115,7 @@ export enum ProductAvailability {
   OUT_OF_STOCK = 'OUT_OF_STOCK',
   DISCONTINUED = 'DISCONTINUED',
   COMING_SOON = 'COMING_SOON',
-  PRE_ORDER = 'PRE_ORDER'
+  PRE_ORDER = 'PRE_ORDER',
 }
 
 export enum ImageType {
@@ -123,7 +123,7 @@ export enum ImageType {
   THUMBNAIL = 'THUMBNAIL',
   HERO = 'HERO',
   DETAIL = 'DETAIL',
-  LIFESTYLE = 'LIFESTYLE'
+  LIFESTYLE = 'LIFESTYLE',
 }
 
 export enum SpecificationType {
@@ -132,7 +132,7 @@ export enum SpecificationType {
   BOOLEAN = 'BOOLEAN',
   DATE = 'DATE',
   URL = 'URL',
-  COLOR = 'COLOR'
+  COLOR = 'COLOR',
 }
 
 // ========================================
@@ -318,13 +318,15 @@ export class Product extends AggregateRoot {
     this._availability = ProductAvailability.AVAILABLE;
 
     // Evento de dominio
-    this.addDomainEvent(new ProductCreatedEvent(id, {
-      name,
-      price,
-      artisanId,
-      categoryId,
-      createdAt: new Date()
-    }));
+    this.addDomainEvent(
+      new ProductCreatedEvent(id, {
+        name,
+        price,
+        artisanId,
+        categoryId,
+        createdAt: new Date(),
+      })
+    );
   }
 
   // ========================================
@@ -385,13 +387,15 @@ export class Product extends AggregateRoot {
     }
 
     this._status = ProductStatus.PUBLISHED;
-    
-    this.addDomainEvent(new ProductPublishedEvent(this.id, {
-      name: this.name,
-      price: this._price,
-      artisanId: this.artisanId,
-      publishedAt: new Date()
-    }));
+
+    this.addDomainEvent(
+      new ProductPublishedEvent(this.id, {
+        name: this.name,
+        price: this._price,
+        artisanId: this.artisanId,
+        publishedAt: new Date(),
+      })
+    );
   }
 
   archive(): void {
@@ -408,20 +412,24 @@ export class Product extends AggregateRoot {
     this._price = newPrice;
     this._originalPrice = originalPrice;
 
-    this.addDomainEvent(new ProductPriceChangedEvent(this.id, {
-      previousPrice,
-      newPrice,
-      changedAt: new Date()
-    }));
+    this.addDomainEvent(
+      new ProductPriceChangedEvent(this.id, {
+        previousPrice,
+        newPrice,
+        changedAt: new Date(),
+      })
+    );
   }
 
   discontinue(reason: string): void {
     this._availability = ProductAvailability.DISCONTINUED;
-    
-    this.addDomainEvent(new ProductDiscontinuedEvent(this.id, {
-      reason,
-      discontinuedAt: new Date()
-    }));
+
+    this.addDomainEvent(
+      new ProductDiscontinuedEvent(this.id, {
+        reason,
+        discontinuedAt: new Date(),
+      })
+    );
   }
 
   markAsOutOfStock(): void {
@@ -440,9 +448,20 @@ export class Product extends AggregateRoot {
 
     // Si es el primer variant y es default, o no hay variants default
     if (variant.isDefault || !this._variants.some(v => v.isDefault)) {
-      this._variants = this._variants.map(v => 
-        new ProductVariant(v.id, v.name, v.sku, v.price, v.attributes, 
-          v.stockQuantity, v.weight, v.dimensions, v.isActive, false)
+      this._variants = this._variants.map(
+        v =>
+          new ProductVariant(
+            v.id,
+            v.name,
+            v.sku,
+            v.price,
+            v.attributes,
+            v.stockQuantity,
+            v.weight,
+            v.dimensions,
+            v.isActive,
+            false
+          )
       );
     }
 
@@ -461,8 +480,8 @@ export class Product extends AggregateRoot {
   addImage(image: ProductImage): void {
     // Si es la primera imagen o se marca como primary, hacer que sea la única primary
     if (image.isPrimary || this._images.length === 0) {
-      this._images = this._images.map(img => 
-        new ProductImage(img.url, img.altText, img.type, false, img.sortOrder)
+      this._images = this._images.map(
+        img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder)
       );
     }
 
@@ -518,8 +537,7 @@ export class Product extends AggregateRoot {
   }
 
   hasDiscount(): boolean {
-    return this._originalPrice !== undefined && 
-           this._originalPrice.isGreaterThan(this._price);
+    return this._originalPrice !== undefined && this._originalPrice.isGreaterThan(this._price);
   }
 
   getDiscountPercentage(): number {
@@ -541,9 +559,8 @@ export class Product extends AggregateRoot {
   }
 
   canBePurchased(): boolean {
-    return this.isAvailable() && (
-      this._variants.length === 0 || 
-      this._variants.some(v => v.isInStock())
+    return (
+      this.isAvailable() && (this._variants.length === 0 || this._variants.some(v => v.isInStock()))
     );
   }
 

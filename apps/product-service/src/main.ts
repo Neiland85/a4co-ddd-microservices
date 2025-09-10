@@ -2,10 +2,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
-import { AuthModule } from './auth.module';
+import { ProductModule } from './product.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AuthModule);
+  const app = await NestFactory.create(ProductModule);
 
   // Security middleware
   app.use(
@@ -41,24 +41,24 @@ async function bootstrap() {
 
   // Swagger documentation
   const config = new DocumentBuilder()
-    .setTitle('A4CO Auth Service')
-    .setDescription('Servicio de autenticación para la plataforma A4CO')
+    .setTitle('A4CO Product Service')
+    .setDescription('Servicio de gestión de productos para la plataforma A4CO')
     .setVersion('1.0')
     .addBearerAuth()
-    .addTag('Authentication')
+    .addTag('Products')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api', app, document);
 
-  // Global prefix
-  app.setGlobalPrefix('api/v1');
+  const port = process.env.PORT || 3003;
+  console.log(`🚀 Product Service iniciado en puerto ${port}`);
+  console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
 
-  const port = process.env.PORT || 3001;
   await app.listen(port);
-
-  console.log(`🚀 Auth Service running on: http://localhost:${port}`);
-  console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 
-bootstrap();
+bootstrap().catch(err => {
+  console.error('Error al iniciar el servicio:', err);
+  process.exit(1);
+});
