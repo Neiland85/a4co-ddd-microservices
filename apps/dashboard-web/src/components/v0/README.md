@@ -70,6 +70,7 @@ function MiComponente() {
 <V0ComponentTemplate size="md" />  // Estándar
 <V0ComponentTemplate size="lg" />  // Amplio
 
+
 ```
 
 

@@ -57,6 +57,7 @@ pnpm test --filter=product-service
 cd apps/product-service
 pnpm test
 
+
 ```
 
 
@@ -66,6 +67,7 @@ pnpm test
 ```bash
 pnpm test:coverage --filter=product-service
 
+
 ```
 
 
@@ -74,6 +76,7 @@ pnpm test:coverage --filter=product-service
 
 ```bash
 pnpm test:watch --filter=product-service
+
 
 ```
 
@@ -90,6 +93,7 @@ pnpm test --testNamePattern="ProductController"
 
 # Solo tests de casos de error
 pnpm test --testNamePattern="Casos de Error"
+
 
 ```
 
@@ -195,6 +199,7 @@ expect(() => controller.addProduct(invalidRequest)).toThrow();
 # Verificar que setup.ts esté configurado correctamente
 jest.setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 
+
 ```
 
 
@@ -205,6 +210,7 @@ jest.setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 # Verificar tsconfig.spec.json
 # Asegurar que types incluye "jest"
 
+
 ```
 
 
@@ -214,6 +220,7 @@ jest.setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 ```bash
 # Verificar collectCoverageFrom en jest.config.js
 # Excluir archivos que no necesitan coverage
+
 
 ```
 
@@ -227,6 +234,7 @@ pnpm test --verbose
 
 # Ejecutar test específico con debug
 pnpm test --testNamePattern="should create a product" --verbose
+
 
 ```
 

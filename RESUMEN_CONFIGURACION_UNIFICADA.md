@@ -69,11 +69,13 @@ Se ha completado exitosamente la **unificación y optimización** del monorepo A
 
 ```
 
+
 ├── scripts/generate-microservice-packages.js
 ├── scripts/setup-unified.sh
 ├── tsconfig.base.json
 ├── CONFIGURACION_UNIFICADA.md
 └── RESUMEN_CONFIGURACION_UNIFICADA.md
+
 
 ```
 
@@ -82,6 +84,7 @@ Se ha completado exitosamente la **unificación y optimización** del monorepo A
 
 
 ```
+
 
 ├── package.json                    # Scripts y dependencias unificados
 ├── turbo.json                      # Configuración optimizada
@@ -92,6 +95,7 @@ Se ha completado exitosamente la **unificación y optimización** del monorepo A
 ├── apps/order-service/package.json      # Generado automáticamente
 ├── apps/web/package.json                # Configuración Next.js
 └── apps/dashboard-web/package.json      # Actualizado al patrón
+
 
 ```
 
@@ -104,6 +108,7 @@ Se ha completado exitosamente la **unificación y optimización** del monorepo A
 ```bash
 # Ejecutar configuración automática
 ./scripts/setup-unified.sh
+
 
 ```
 
@@ -121,6 +126,7 @@ pnpm run build
 # Ejecutar tests
 pnpm run test
 
+
 ```
 
 
@@ -133,6 +139,7 @@ pnpm dev
 
 # En otra terminal
 pnpm test:watch
+
 
 ```
 

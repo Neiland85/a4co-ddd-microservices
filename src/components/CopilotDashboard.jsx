@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState } from 'react';
 
 const shortcuts = [
   { label: 'Revisar UI', command: '✦ revisar-ui', role: 'frontend' },
@@ -14,7 +14,6 @@ const shortcuts = [
   { label: 'Prisma Schema', command: '✦ prisma-schema', role: 'backend' },
   { label: 'Endpoint seguro', command: '✦ secure-endpoint', role: 'backend' },
   { label: 'Pipeline Deploy', command: '✦ deploy-pipeline', role: 'devops' },
-  { label: 'Terraform Docs', command: '✦ tf-module-doc', role: 'devops' },
   { label: 'Docker Healthcheck', command: '✦ docker-health', role: 'devops' },
   { label: 'Escalado ECS', command: '✦ ecs-scale-check', role: 'devops' },
   { label: 'Test unitario', command: '✦ test-unit', role: 'qa' },

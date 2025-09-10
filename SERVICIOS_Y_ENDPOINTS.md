@@ -51,6 +51,7 @@ El monorepo A4CO contiene los siguientes servicios y aplicaciones:
 ```bash
 pnpm dev
 
+
 ```
 
 
@@ -59,6 +60,7 @@ pnpm dev
 
 ```bash
 ./scripts/start-dev-services.sh
+
 
 ```
 
@@ -71,6 +73,7 @@ pnpm dev
 ```bash
 pnpm dev:frontend
 
+
 ```
 
 
@@ -79,6 +82,7 @@ pnpm dev:frontend
 
 ```bash
 pnpm dev:backend
+
 
 ```
 
@@ -89,6 +93,7 @@ pnpm dev:backend
 ```bash
 pnpm storybook:dev
 
+
 ```
 
 
@@ -97,6 +102,7 @@ pnpm storybook:dev
 
 ```bash
 docker compose -f docker-compose.messaging.yml up
+
 
 ```
 
@@ -147,6 +153,7 @@ netstat -tulpn | grep LISTEN
 # o
 lsof -i -P -n | grep LISTEN
 
+
 ```
 
 
@@ -159,6 +166,7 @@ tail -f logs/*/[servicio].log
 
 # Si usaste pnpm dev
 # Los logs aparecen en la terminal
+
 
 ```
 
@@ -174,6 +182,7 @@ lsof -i :3000
 # Matar el proceso
 kill -9 [PID]
 
+
 ```
 
 
@@ -184,6 +193,7 @@ kill -9 [PID]
 pnpm clean:all
 pnpm install
 pnpm build
+
 
 ```
 
@@ -197,6 +207,7 @@ pnpm build
 pnpm clean
 # Iniciar de nuevo
 pnpm dev
+
 
 ```
 
