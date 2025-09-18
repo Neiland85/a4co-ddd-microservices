@@ -1,0 +1,64 @@
+{
+  "$schema": "https://swc.rs/schema.json",
+  "jsc": {
+    "target": "es2022",
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": true,
+      "dynamicImport": true,
+      "privateMethod": true,
+      "functionBind": false,
+      "exportDefaultFrom": true,
+      "exportNamespaceFrom": true,
+      "decoratorsBeforeExport": true
+    },
+    "transform": {
+      "react": {
+        "runtime": "automatic",
+        "importSource": "react",
+        "refresh": true,
+        "development": true,
+        "useBuiltins": true
+      },
+      "decoratorMetadata": true,
+      "legacyDecorator": true,
+      "useDefineForClassFields": false
+    },
+    "loose": true,
+    "externalHelpers": false,
+    "keepClassNames": true,
+    "preserveAllComments": false,
+    "experimental": {
+      "plugins": []
+    }
+  },
+  "module": {
+    "type": "es6",
+    "strict": false,
+    "strictMode": false,
+    "lazy": false,
+    "noInterop": false,
+    "ignoreDynamic": false
+  },
+  "minify": false,
+  "isModule": true,
+  "sourceMaps": true,
+  "inlineSourcesContent": true,
+  "env": {
+    "targets": {
+      "node": "18",
+      "browsers": [
+        "last 2 versions",
+        "> 1%",
+        "not dead",
+        "not ie 11"
+      ]
+    },
+    "mode": "entry",
+    "coreJs": "3.34",
+    "forceAllTransforms": false,
+    "ignoreBrowserslistConfig": false,
+    "shippedProposals": false
+  }
+}

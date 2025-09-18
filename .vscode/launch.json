@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node", // Cambiado de "pwa-node" a "node" para evitar problemas de compatibilidad
+      "request": "launch",
+      "name": "Launch Extension",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "preLaunchTask": "build"
+    }
+  ]
+}

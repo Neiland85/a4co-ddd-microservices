@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "NodeNext",
+    "moduleResolution": "NodeNext", // Asegurar que coincide con el módulo
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,

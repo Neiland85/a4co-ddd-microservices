@@ -1,26 +1,49 @@
-const js = require('@eslint/js');
-const tseslint = require('@typescript-eslint/eslint-plugin');
-const tsparser = require('@typescript-eslint/parser');
+module.exports = {
+  extends: ['../../.eslintrc.js'],
+  parserOptions: {
+    project: './tsconfig.json',
+    sourceType: 'module',
+  },
+  env: {
+    node: true,
+    jest: true,
+  },
+  plugins: ['node'],
+  extends: [
+    '../../.eslintrc.js',
+    'plugin:node/recommended',
+  ],
+  rules: {
+    // NestJS específicas
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
 
-module.exports = [
-  js.configs.recommended,
-  {
-    files: ['**/*.ts'],
-    languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: './tsconfig.json'
-      }
+    // Node.js específicas
+    'node/no-missing-import': 'off',
+    'node/no-extraneous-import': 'off',
+    'node/no-unsupported-features/es-syntax': 'off',
+    'node/no-unpublished-import': 'off',
+
+    // Seguridad específica para product service
+    'security/detect-non-literal-fs-filename': 'error',
+    'security/detect-unsafe-regex': 'error',
+    'security/detect-object-injection': 'warn',
+
+    // Desactivar reglas de React para backend
+    'react/prop-types': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'jsx-a11y/alt-text': 'off',
+    'jsx-a11y/anchor-has-content': 'off',
+  },
+  overrides: [
+    {
+      files: ['*.e2e-spec.ts', '*.spec.ts'],
+      rules: {
+        'security/detect-object-injection': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
     },
-    plugins: {
-      '@typescript-eslint': tseslint
-    },
-    rules: {
-      ...tseslint.configs.recommended.rules,
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/explicit-function-return-type': 'off'
-    }
-  }
-];
+  ],
+};

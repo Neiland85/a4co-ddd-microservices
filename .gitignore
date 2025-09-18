@@ -1,112 +1,57 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+# Dependencies
+node_modules
+.pnp
+.pnp.js
 
-# Diagnostic reports
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage
+# Testing
 coverage
 *.lcov
 .nyc_output
-*.tgz
 
-# TypeScript / TSBuild
-*.tsbuildinfo
-
-# ESLint / Stylelint
-.eslintcache
-.stylelintcache
-
-# Node / Package managers
-node_modules/
-jspm_packages/
-.pnpm-store/
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# pnpm lock
-pnpm-lock.yaml
-
-# Cache
-.cache
-.parcel-cache
-.vitepress/
-.temp
-.vuepress/dist
-.web_modules/
-.svelte-kit/
-
-# Framework outputs
+# Next.js
 .next/
 out/
-dist/
-.nuxt/
-.docusaurus/
 build/
-.serverless/
+dist/
 
-# Dotenv
-.env
-.env.*
-!.env.example
+# Production
+*.local
 
-# Editor/IDE
-.vscode/
-.vscode-test
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea
 *.swp
 *.swo
+*~
 
-# Firebase, Dynamo, Serverless, FuseBox
-.firebase/
-.dynamodb/
-.fusebox/
-
-# Docker
-docker-compose.override.yml
-docker-compose.local.yml
-
-# SQLite dev dbs
-*.sqlite
-*.sqlite3
-
-# Playwright
-test-results/
-playwright-report/
-
-# GitHub Copilot / prompts
-copilot-chat.log
-copilot-prompts-sandbox/
-
-# MacOS / System
+# OS
 .DS_Store
 Thumbs.db
 
-# Misc
-*.bak
-*.tmp
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-/src/generated/prisma
-.terraform/
-.terraform/
-*.tfstate
-*.tfstate.backup
-.terraform.lock.hcl
-.terraform/
-*.tfstate
-*.tfstate.backup
-.turbo/
+# Turbo
+.turbo
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts

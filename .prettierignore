@@ -1,2 +1,11 @@
-node_modules/
-dist/
+**/node_modules
+**/.next
+**/out
+**/dist
+**/build
+**/coverage
+**/.turbo
+**/*.min.js
+**/*.min.css
+.git
+.DS_Store

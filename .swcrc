@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "target": "es2022",
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": true,
+      "dynamicImport": true
+    },
+    "transform": {
+      "react": {
+        "runtime": "automatic",
+        "importSource": "react",
+        "refresh": true,
+        "development": true
+      },
+      "decoratorMetadata": true,
+      "legacyDecorator": true
+    },
+    "loose": true,
+    "externalHelpers": false,
+    "keepClassNames": true,
+    "preserveAllComments": false
+  },
+  "module": {
+    "type": "es6",
+    "strict": false,
+    "strictMode": false,
+    "lazy": false,
+    "noInterop": false
+  },
+  "minify": false,
+  "isModule": true,
+  "sourceMaps": true,
+  "inlineSourcesContent": true,
+  "env": {
+    "targets": {
+      "node": "18",
+      "browsers": [
+        "last 2 versions",
+        "> 1%",
+        "not dead"
+      ]
+    },
+    "mode": "entry",
+    "coreJs": "3.30"
+  }
+}

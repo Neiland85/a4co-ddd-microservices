@@ -1,16 +1,65 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+module.exports = {
+  extends: ['../../.eslintrc.js'],
+  parserOptions: {
+    project: './tsconfig.json',
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+  env: {
+    browser: true,
+    es2022: true,
+    node: true,
+  },
+  extends: [
+    '../../.eslintrc.js',
+    'next/core-web-vitals',
+    'next/typescript',
+    'plugin:jsx-a11y/recommended',
+  ],
+  rules: {
+    // Next.js específicas
+    '@next/next/no-html-link-for-pages': 'error',
+    '@next/next/no-img-element': 'warn',
+    '@next/next/no-sync-scripts': 'error',
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+    // React específicas
+    'react/jsx-props-no-spreading': 'off',
+    'react/require-default-props': 'off',
+    'react/function-component-definition': [
+      'error',
+      {
+        namedComponents: 'arrow-function',
+      },
+    ],
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+    // Accesibilidad
+    'jsx-a11y/anchor-is-valid': [
+      'error',
+      {
+        components: ['Link'],
+        specialLink: ['hrefLeft', 'hrefRight'],
+        aspects: ['invalidHref', 'preferButton'],
+      },
+    ],
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-];
+    // Seguridad
+    'security/detect-object-injection': 'warn',
+    'security/detect-unsafe-regex': 'error',
 
-export default eslintConfig;
+    // Desactivar reglas de Node.js para frontend
+    'node/no-missing-import': 'off',
+    'node/no-extraneous-import': 'off',
+    'node/no-unsupported-features/es-syntax': 'off',
+  },
+  overrides: [
+    {
+      files: ['app/**/*.tsx', 'pages/**/*.tsx'],
+      rules: {
+        'import/no-default-export': 'off',
+        'import/prefer-default-export': 'error',
+      },
+    },
+  ],
+};

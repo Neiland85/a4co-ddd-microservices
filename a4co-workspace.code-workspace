@@ -1,0 +1,30 @@
+{
+  "folders": [
+    {
+      "name": "🏠 Root",
+      "path": "."
+    },
+    {
+      "name": "🌐 Frontend (Web)",
+      "path": "apps/web"
+    },
+    {
+      "name": "🔧 Backend Services",
+      "path": "apps"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.turbo": true,
+      "**/.next": true,
+      "**/dist": true,
+      "**/.DS_Store": true
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  }
+}

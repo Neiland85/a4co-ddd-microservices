@@ -1,0 +1,74 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Apps specific settings optimized for SWC
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": [
+      "ES2022"
+    ],
+    "outDir": "./dist",
+    "rootDir": "./",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    // SWC optimizations for apps
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "verbatimModuleSyntax": false,
+    // Relaxed settings for faster compilation
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    // Path mapping for monorepo apps
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@/shared/*": [
+        "../libs/shared/*"
+      ],
+      "@/domain/*": [
+        "../libs/domain/*"
+      ],
+      "@/infrastructure/*": [
+        "../libs/infrastructure/*"
+      ],
+      "@/application/*": [
+        "../libs/application/*"
+      ],
+      "@/utils/*": [
+        "../libs/utils/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ],
+  "references": [
+    {
+      "path": "./dashboard-web"
+    },
+    {
+      "path": "./backend"
+    }
+  ]
+}

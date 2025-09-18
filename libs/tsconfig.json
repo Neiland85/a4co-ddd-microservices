@@ -1,0 +1,59 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Library-specific settings optimized for SWC
+    "target": "ES2022",
+    "lib": [
+      "ES2022"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    // SWC optimizations for libraries
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "verbatimModuleSyntax": false,
+    // Library specific settings
+    "strict": true,
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    // Path mapping for libraries
+    "baseUrl": ".",
+    "paths": {
+      "@/shared/*": [
+        "./src/shared/*"
+      ],
+      "@/domain/*": [
+        "./src/domain/*"
+      ],
+      "@/infrastructure/*": [
+        "./src/infrastructure/*"
+      ],
+      "@/application/*": [
+        "./src/application/*"
+      ],
+      "@/utils/*": [
+        "./src/utils/*"
+      ],
+      "@/types/*": [
+        "./src/types/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
+}

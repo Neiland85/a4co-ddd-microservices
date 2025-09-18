@@ -16,7 +16,7 @@
     "skipLibCheck": true,
     "target": "ES2022",
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
@@ -26,7 +26,10 @@
     "emitDecoratorMetadata": true,
     "strictNullChecks": false,
     "exactOptionalPropertyTypes": false,
-    "types": ["jest", "node"]
+    "types": [
+      "jest",
+      "node"
+    ]
   },
   "include": [
     "index.ts",
