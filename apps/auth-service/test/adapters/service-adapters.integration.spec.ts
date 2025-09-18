@@ -38,8 +38,7 @@ describe('Service Adapters Integration', () => {
   describe('CryptographyService Adapter', () => {
     it('should hash password securely', async () => {
       const plainPassword = 'SecurePassword123!';
-      const hashedPassword =
-        await cryptographyService.hashPassword(plainPassword);
+      const hashedPassword = await cryptographyService.hashPassword(plainPassword);
 
       expect(hashedPassword).toBeDefined();
       expect(hashedPassword).not.toBe(plainPassword);
@@ -48,17 +47,10 @@ describe('Service Adapters Integration', () => {
 
     it('should validate password correctly', async () => {
       const plainPassword = 'SecurePassword123!';
-      const hashedPassword =
-        await cryptographyService.hashPassword(plainPassword);
+      const hashedPassword = await cryptographyService.hashPassword(plainPassword);
 
-      const isValid = await cryptographyService.validatePassword(
-        plainPassword,
-        hashedPassword
-      );
-      const isInvalid = await cryptographyService.validatePassword(
-        'WrongPassword',
-        hashedPassword
-      );
+      const isValid = await cryptographyService.validatePassword(plainPassword, hashedPassword);
+      const isInvalid = await cryptographyService.validatePassword('WrongPassword', hashedPassword);
 
       expect(isValid).toBe(true);
       expect(isInvalid).toBe(false);
@@ -127,9 +119,7 @@ describe('Service Adapters Integration', () => {
       // Verify events were published
       const events = eventBus.getPublishedEvents();
       expect(events.length).toBeGreaterThan(0);
-      expect(events.some((e: any) => e.type === 'UserRegisteredEvent')).toBe(
-        true
-      );
+      expect(events.some((e: any) => e.type === 'UserRegisteredEvent')).toBe(true);
     });
 
     it('should prevent duplicate email registration', async () => {
@@ -142,9 +132,7 @@ describe('Service Adapters Integration', () => {
       await registerUserUseCase.execute(dto);
 
       // Second registration should fail
-      await expect(registerUserUseCase.execute(dto)).rejects.toThrow(
-        'El email ya está registrado'
-      );
+      await expect(registerUserUseCase.execute(dto)).rejects.toThrow('El email ya está registrado');
     });
   });
 });

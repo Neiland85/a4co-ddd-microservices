@@ -56,8 +56,7 @@ const mockProducts: LocalProduct[] = [
     unit: 'tarro 500g',
     seasonal: true,
     harvestDate: '2024-05-20',
-    description:
-      'Miel pura de azahar recolectada en los campos de naranjos de la Sierra Mágina.',
+    description: 'Miel pura de azahar recolectada en los campos de naranjos de la Sierra Mágina.',
     images: ['/images/miel-azahar.jpg'],
     certifications: ['100% Natural', 'Sin Aditivos'],
     available: true,
@@ -75,8 +74,7 @@ const mockProducts: LocalProduct[] = [
     price: 45.0,
     unit: 'kg',
     seasonal: false,
-    description:
-      'Jamón ibérico de cerdos criados en libertad en dehesas de encinas centenarias.',
+    description: 'Jamón ibérico de cerdos criados en libertad en dehesas de encinas centenarias.',
     images: ['/images/jamon-iberico.jpg'],
     certifications: ['Denominación de Origen', 'Bellota 100%'],
     available: true,
@@ -134,39 +132,33 @@ export async function GET(request: NextRequest) {
 
   try {
     // Simular delay de API
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    await new Promise(resolve => setTimeout(resolve, 600));
 
     let filteredProducts = [...mockProducts];
 
     // Aplicar filtros
     if (category) {
-      filteredProducts = filteredProducts.filter(
-        (product) => product.category === category
-      );
+      filteredProducts = filteredProducts.filter(product => product.category === category);
     }
 
     if (location) {
-      filteredProducts = filteredProducts.filter((product) =>
-        product.location.municipality
-          .toLowerCase()
-          .includes(location.toLowerCase())
+      filteredProducts = filteredProducts.filter(product =>
+        product.location.municipality.toLowerCase().includes(location.toLowerCase())
       );
     }
 
     if (seasonal === 'true') {
-      filteredProducts = filteredProducts.filter((product) => product.seasonal);
+      filteredProducts = filteredProducts.filter(product => product.seasonal);
     }
 
     if (available === 'true') {
-      filteredProducts = filteredProducts.filter(
-        (product) => product.available && product.stock > 0
-      );
+      filteredProducts = filteredProducts.filter(product => product.available && product.stock > 0);
     }
 
     if (search) {
       const searchLower = search.toLowerCase();
       filteredProducts = filteredProducts.filter(
-        (product) =>
+        product =>
           product.name.toLowerCase().includes(searchLower) ||
           product.producer.toLowerCase().includes(searchLower) ||
           product.description.toLowerCase().includes(searchLower)
@@ -198,15 +190,7 @@ export async function GET(request: NextRequest) {
       meta: {
         timestamp: new Date().toISOString(),
         region: 'Jaén, Andalucía',
-        categories: [
-          'aceite',
-          'queso',
-          'jamón',
-          'miel',
-          'vino',
-          'aceitunas',
-          'artesanía',
-        ],
+        categories: ['aceite', 'queso', 'jamón', 'miel', 'vino', 'aceitunas', 'artesanía'],
       },
     });
   } catch (error) {
@@ -224,7 +208,7 @@ export async function GET(request: NextRequest) {
 
 // GET específico por ID
 export async function getProductById(id: string) {
-  const product = mockProducts.find((p) => p.id === id);
+  const product = mockProducts.find(p => p.id === id);
 
   if (!product) {
     return NextResponse.json(

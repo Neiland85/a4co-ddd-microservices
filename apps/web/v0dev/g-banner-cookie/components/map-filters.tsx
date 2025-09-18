@@ -1,94 +1,94 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Badge } from "@/components/ui/badge"
-import { Search, Filter, X, MapPin, Star } from "lucide-react"
-import type { MapFilters, ProducerCategory } from "../types/producer-types"
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Badge } from '@/components/ui/badge';
+import { Search, Filter, X, MapPin, Star } from 'lucide-react';
+import type { MapFilters, ProducerCategory } from '../types/producer-types';
 
 interface MapFiltersProps {
-  filters: MapFilters
-  onFiltersChange: (filters: MapFilters) => void
-  isOpen: boolean
-  onToggle: () => void
-  className?: string
+  filters: MapFilters;
+  onFiltersChange: (filters: MapFilters) => void;
+  isOpen: boolean;
+  onToggle: () => void;
+  className?: string;
 }
 
 const categoryOptions: { value: ProducerCategory; label: string; emoji: string }[] = [
-  { value: "panaderia", label: "Panaderías", emoji: "🥖" },
-  { value: "queseria", label: "Queserías", emoji: "🧀" },
-  { value: "aceite", label: "Almazaras", emoji: "🫒" },
-  { value: "embutidos", label: "Embutidos", emoji: "🥓" },
-  { value: "miel", label: "Apicultores", emoji: "🍯" },
-  { value: "conservas", label: "Conservas", emoji: "🥫" },
-  { value: "vinos", label: "Bodegas", emoji: "🍷" },
-  { value: "dulces", label: "Repostería", emoji: "🍰" },
-  { value: "artesania", label: "Artesanía", emoji: "🏺" },
-]
+  { value: 'panaderia', label: 'Panaderías', emoji: '🥖' },
+  { value: 'queseria', label: 'Queserías', emoji: '🧀' },
+  { value: 'aceite', label: 'Almazaras', emoji: '🫒' },
+  { value: 'embutidos', label: 'Embutidos', emoji: '🥓' },
+  { value: 'miel', label: 'Apicultores', emoji: '🍯' },
+  { value: 'conservas', label: 'Conservas', emoji: '🥫' },
+  { value: 'vinos', label: 'Bodegas', emoji: '🍷' },
+  { value: 'dulces', label: 'Repostería', emoji: '🍰' },
+  { value: 'artesania', label: 'Artesanía', emoji: '🏺' },
+];
 
 export default function ProducerFilters({
   filters,
   onFiltersChange,
   isOpen,
   onToggle,
-  className = "",
+  className = '',
 }: MapFiltersProps) {
-  const [searchInput, setSearchInput] = useState(filters.searchQuery)
+  const [searchInput, setSearchInput] = useState(filters.searchQuery);
 
   const handleCategoryToggle = (category: ProducerCategory) => {
     const newCategories = filters.categories.includes(category)
-      ? filters.categories.filter((c) => c !== category)
-      : [...filters.categories, category]
+      ? filters.categories.filter(c => c !== category)
+      : [...filters.categories, category];
 
     onFiltersChange({
       ...filters,
       categories: newCategories,
-    })
-  }
+    });
+  };
 
   const handleDistanceChange = (value: number[]) => {
     onFiltersChange({
       ...filters,
       maxDistance: value[0],
-    })
-  }
+    });
+  };
 
   const handleRatingChange = (value: number[]) => {
     onFiltersChange({
       ...filters,
       minRating: value[0],
-    })
-  }
+    });
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     onFiltersChange({
       ...filters,
       searchQuery: searchInput,
-    })
-  }
+    });
+  };
 
   const clearAllFilters = () => {
-    setSearchInput("")
+    setSearchInput('');
     onFiltersChange({
       categories: [],
       maxDistance: 50,
-      searchQuery: "",
+      searchQuery: '',
       minRating: 0,
-    })
-  }
+    });
+  };
 
   const activeFiltersCount =
     filters.categories.length +
     (filters.searchQuery ? 1 : 0) +
     (filters.maxDistance < 50 ? 1 : 0) +
-    (filters.minRating > 0 ? 1 : 0)
+    (filters.minRating > 0 ? 1 : 0);
 
   return (
     <>
@@ -97,14 +97,17 @@ export default function ProducerFilters({
         onClick={onToggle}
         variant="outline"
         size="sm"
-        className={`fixed top-20 left-4 z-[1000] bg-white/95 backdrop-blur-sm border-a4co-olive-200 hover:bg-a4co-olive-50 shadow-natural-lg ${className}`}
-        aria-label={`${isOpen ? "Cerrar" : "Abrir"} filtros del mapa`}
+        className={`border-a4co-olive-200 hover:bg-a4co-olive-50 shadow-natural-lg fixed left-4 top-20 z-[1000] bg-white/95 backdrop-blur-sm ${className}`}
+        aria-label={`${isOpen ? 'Cerrar' : 'Abrir'} filtros del mapa`}
         aria-expanded={isOpen}
       >
-        <Filter className="h-4 w-4 mr-2" />
+        <Filter className="mr-2 h-4 w-4" />
         Filtros
         {activeFiltersCount > 0 && (
-          <Badge variant="secondary" className="ml-2 bg-a4co-olive-500 text-white text-xs px-1.5 py-0.5">
+          <Badge
+            variant="secondary"
+            className="bg-a4co-olive-500 ml-2 px-1.5 py-0.5 text-xs text-white"
+          >
             {activeFiltersCount}
           </Badge>
         )}
@@ -112,11 +115,11 @@ export default function ProducerFilters({
 
       {/* Filters Panel */}
       {isOpen && (
-        <Card className="fixed top-20 left-4 w-80 max-h-[calc(100vh-6rem)] overflow-y-auto z-[1000] bg-white/95 backdrop-blur-sm shadow-natural-xl border-a4co-olive-200">
+        <Card className="shadow-natural-xl border-a4co-olive-200 fixed left-4 top-20 z-[1000] max-h-[calc(100vh-6rem)] w-80 overflow-y-auto bg-white/95 backdrop-blur-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-                <Filter className="h-5 w-5 mr-2 text-a4co-olive-600" />
+              <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
+                <Filter className="text-a4co-olive-600 mr-2 h-5 w-5" />
                 Filtrar Productores
               </CardTitle>
               <Button
@@ -134,7 +137,7 @@ export default function ProducerFilters({
                 variant="outline"
                 size="sm"
                 onClick={clearAllFilters}
-                className="text-xs border-gray-300 hover:bg-gray-50 bg-transparent"
+                className="border-gray-300 bg-transparent text-xs hover:bg-gray-50"
               >
                 Limpiar filtros
               </Button>
@@ -144,19 +147,22 @@ export default function ProducerFilters({
           <CardContent className="space-y-6">
             {/* Search */}
             <div>
-              <Label htmlFor="search-input" className="text-sm font-medium text-gray-700 mb-2 block">
+              <Label
+                htmlFor="search-input"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Buscar por nombre
               </Label>
               <form onSubmit={handleSearchSubmit} className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                   <Input
                     id="search-input"
                     type="text"
                     placeholder="Ej: Panadería El Ochío..."
                     value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    className="pl-10 border-gray-300 focus:border-a4co-olive-500 focus:ring-a4co-olive-500"
+                    onChange={e => setSearchInput(e.target.value)}
+                    className="focus:border-a4co-olive-500 focus:ring-a4co-olive-500 border-gray-300 pl-10"
                     aria-describedby="search-help"
                   />
                 </div>
@@ -169,28 +175,30 @@ export default function ProducerFilters({
                   <Search className="h-4 w-4" />
                 </Button>
               </form>
-              <p id="search-help" className="text-xs text-gray-500 mt-1">
+              <p id="search-help" className="mt-1 text-xs text-gray-500">
                 Busca por nombre del productor o descripción
               </p>
             </div>
 
             {/* Categories */}
             <div>
-              <Label className="text-sm font-medium text-gray-700 mb-3 block">Categorías de Productores</Label>
+              <Label className="mb-3 block text-sm font-medium text-gray-700">
+                Categorías de Productores
+              </Label>
               <div className="grid grid-cols-2 gap-2">
-                {categoryOptions.map((option) => (
+                {categoryOptions.map(option => (
                   <button
                     key={option.value}
                     onClick={() => handleCategoryToggle(option.value)}
-                    className={`flex items-center p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                    className={`flex items-center rounded-lg border-2 p-3 text-left transition-all duration-200 ${
                       filters.categories.includes(option.value)
-                        ? "border-a4co-olive-500 bg-a4co-olive-50 text-a4co-olive-700"
-                        : "border-gray-200 hover:border-a4co-olive-300 hover:bg-gray-50"
+                        ? 'border-a4co-olive-500 bg-a4co-olive-50 text-a4co-olive-700'
+                        : 'hover:border-a4co-olive-300 border-gray-200 hover:bg-gray-50'
                     }`}
                     aria-pressed={filters.categories.includes(option.value)}
                     aria-label={`Filtrar por ${option.label}`}
                   >
-                    <span className="text-lg mr-2" role="img" aria-hidden="true">
+                    <span className="mr-2 text-lg" role="img" aria-hidden="true">
                       {option.emoji}
                     </span>
                     <span className="text-sm font-medium">{option.label}</span>
@@ -201,8 +209,8 @@ export default function ProducerFilters({
 
             {/* Distance */}
             <div>
-              <Label className="text-sm font-medium text-gray-700 mb-3 block flex items-center">
-                <MapPin className="h-4 w-4 mr-1" />
+              <Label className="mb-3 block flex items-center text-sm font-medium text-gray-700">
+                <MapPin className="mr-1 h-4 w-4" />
                 Distancia máxima: {filters.maxDistance} km
               </Label>
               <Slider
@@ -214,7 +222,7 @@ export default function ProducerFilters({
                 className="w-full"
                 aria-label={`Distancia máxima: ${filters.maxDistance} kilómetros`}
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="mt-1 flex justify-between text-xs text-gray-500">
                 <span>1 km</span>
                 <span>50 km</span>
               </div>
@@ -222,9 +230,10 @@ export default function ProducerFilters({
 
             {/* Rating */}
             <div>
-              <Label className="text-sm font-medium text-gray-700 mb-3 block flex items-center">
-                <Star className="h-4 w-4 mr-1" />
-                Valoración mínima: {filters.minRating > 0 ? `${filters.minRating.toFixed(1)} estrellas` : "Cualquiera"}
+              <Label className="mb-3 block flex items-center text-sm font-medium text-gray-700">
+                <Star className="mr-1 h-4 w-4" />
+                Valoración mínima:{' '}
+                {filters.minRating > 0 ? `${filters.minRating.toFixed(1)} estrellas` : 'Cualquiera'}
               </Label>
               <Slider
                 value={[filters.minRating]}
@@ -235,7 +244,7 @@ export default function ProducerFilters({
                 className="w-full"
                 aria-label={`Valoración mínima: ${filters.minRating} estrellas`}
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="mt-1 flex justify-between text-xs text-gray-500">
                 <span>Cualquiera</span>
                 <span>5 estrellas</span>
               </div>
@@ -243,17 +252,20 @@ export default function ProducerFilters({
 
             {/* Active Filters Summary */}
             {activeFiltersCount > 0 && (
-              <div className="pt-4 border-t border-gray-200">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Filtros activos:</h4>
+              <div className="border-t border-gray-200 pt-4">
+                <h4 className="mb-2 text-sm font-medium text-gray-700">Filtros activos:</h4>
                 <div className="space-y-1 text-xs text-gray-600">
                   {filters.categories.length > 0 && (
                     <div>
-                      • {filters.categories.length} categoría{filters.categories.length > 1 ? "s" : ""} seleccionada
-                      {filters.categories.length > 1 ? "s" : ""}
+                      • {filters.categories.length} categoría
+                      {filters.categories.length > 1 ? 's' : ''} seleccionada
+                      {filters.categories.length > 1 ? 's' : ''}
                     </div>
                   )}
                   {filters.searchQuery && <div>• Búsqueda: "{filters.searchQuery}"</div>}
-                  {filters.maxDistance < 50 && <div>• Máximo {filters.maxDistance} km de distancia</div>}
+                  {filters.maxDistance < 50 && (
+                    <div>• Máximo {filters.maxDistance} km de distancia</div>
+                  )}
                   {filters.minRating > 0 && <div>• Mínimo {filters.minRating} estrellas</div>}
                 </div>
               </div>
@@ -262,5 +274,5 @@ export default function ProducerFilters({
         </Card>
       )}
     </>
-  )
+  );
 }

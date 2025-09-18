@@ -18,13 +18,19 @@ Asegurar la trazabilidad de todos los cambios técnicos realizados en el proyect
 
 Cada entrada debe seguir la siguiente estructura por versión:
 
-### Formato de encabezado:
+### Formato de encabezado
+
+
 
 ```md
 ## [vX.Y.Z-nombre] - YYYY-MM-DD
+
+
 ```
 
-### Categorías permitidas:
+
+
+### Categorías permitidas
 
 - `### ✨ feat:` (features nuevas)
 - `### 🔧 fix:` (bugs corregidos)
@@ -63,20 +69,26 @@ Este documento es obligatorio a partir de la versión `v0.4.0-dev-env` y será r
 
 ## 💾 Ejemplo
 
+
+
 ```md
 ## [v0.4.0-dev-env] - 2025-07-15
 
-### 📄 chore:
+### 📄 chore
 
 - Se crea el workspace `a4co-ddd-microservices.code-workspace`
 - Se configura `.vscode/settings.json`, `.copilot-chat.json`, `.extensions.json`
 - Se elimina workspace anterior y MCPs conflictivos
 
-### 📈 docs:
+### 📈 docs
 
 - Publicado `README.md` actualizado con plan técnico (Fase 0 a 10)
 - Documentación de entorno Copilot alineado a ADR-0010
+
+
 ```
+
+
 
 ---
 

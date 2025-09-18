@@ -1,91 +1,101 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Users, Package, ShoppingCart, DollarSign, TrendingUp, TrendingDown, Activity } from "lucide-react"
-import type { DashboardStats } from "@/types/admin-types"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Users,
+  Package,
+  ShoppingCart,
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+} from 'lucide-react';
+import type { DashboardStats } from '@/types/admin-types';
 
 interface AdminDashboardProps {
-  stats: DashboardStats
+  stats: DashboardStats;
 }
 
 export function AdminDashboard({ stats }: AdminDashboardProps) {
   const statCards = [
     {
-      title: "Total Usuarios",
+      title: 'Total Usuarios',
       value: stats.totalUsers.toLocaleString(),
       change: stats.monthlyGrowth.users,
       icon: Users,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
     },
     {
-      title: "Productos",
+      title: 'Productos',
       value: stats.totalProducts.toLocaleString(),
       change: stats.monthlyGrowth.products,
       icon: Package,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
     },
     {
-      title: "Pedidos",
+      title: 'Pedidos',
       value: stats.totalOrders.toLocaleString(),
       change: stats.monthlyGrowth.orders,
       icon: ShoppingCart,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
     },
     {
-      title: "Ingresos",
+      title: 'Ingresos',
       value: `€${stats.totalRevenue.toLocaleString()}`,
       change: stats.monthlyGrowth.revenue,
       icon: DollarSign,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
     },
-  ]
+  ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
         <Badge className="bg-green-100 text-green-800">
-          <Activity className="w-3 h-3 mr-1" />
+          <Activity className="mr-1 h-3 w-3" />
           Sistema Activo
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat, index) => {
-          const IconComponent = stat.icon
-          const isPositive = stat.change >= 0
+          const IconComponent = stat.icon;
+          const isPositive = stat.change >= 0;
 
           return (
-            <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+            <Card key={index} className="transition-shadow duration-300 hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">{stat.title}</CardTitle>
-                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <IconComponent className={`w-4 h-4 ${stat.color}`} />
+                <div className={`rounded-lg p-2 ${stat.bgColor}`}>
+                  <IconComponent className={`h-4 w-4 ${stat.color}`} />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900 mb-2">{stat.value}</div>
+                <div className="mb-2 text-2xl font-bold text-gray-900">{stat.value}</div>
                 <div className="flex items-center text-sm">
                   {isPositive ? (
-                    <TrendingUp className="w-3 h-3 text-green-600 mr-1" />
+                    <TrendingUp className="mr-1 h-3 w-3 text-green-600" />
                   ) : (
-                    <TrendingDown className="w-3 h-3 text-red-600 mr-1" />
+                    <TrendingDown className="mr-1 h-3 w-3 text-red-600" />
                   )}
-                  <span className={isPositive ? "text-green-600" : "text-red-600"}>{Math.abs(stat.change)}%</span>
-                  <span className="text-gray-500 ml-1">vs mes anterior</span>
+                  <span className={isPositive ? 'text-green-600' : 'text-red-600'}>
+                    {Math.abs(stat.change)}%
+                  </span>
+                  <span className="ml-1 text-gray-500">vs mes anterior</span>
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Actividad Reciente</CardTitle>
@@ -93,12 +103,15 @@ export function AdminDashboard({ stats }: AdminDashboardProps) {
           <CardContent>
             <div className="space-y-4">
               {[
-                { action: "Nuevo usuario registrado", user: "María García", time: "Hace 5 min" },
-                { action: "Producto actualizado", user: "Admin", time: "Hace 12 min" },
-                { action: "Pedido completado", user: "Carlos López", time: "Hace 23 min" },
-                { action: "Nueva reseña", user: "Ana Martín", time: "Hace 1 hora" },
+                { action: 'Nuevo usuario registrado', user: 'María García', time: 'Hace 5 min' },
+                { action: 'Producto actualizado', user: 'Admin', time: 'Hace 12 min' },
+                { action: 'Pedido completado', user: 'Carlos López', time: 'Hace 23 min' },
+                { action: 'Nueva reseña', user: 'Ana Martín', time: 'Hace 1 hora' },
               ].map((activity, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                <div
+                  key={index}
+                  className="flex items-center justify-between border-b py-2 last:border-b-0"
+                >
                   <div>
                     <p className="text-sm font-medium text-gray-900">{activity.action}</p>
                     <p className="text-xs text-gray-500">{activity.user}</p>
@@ -137,5 +150,5 @@ export function AdminDashboard({ stats }: AdminDashboardProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -45,18 +45,19 @@ Esta estrategia define patrones de comunicación robustos entre microservicios d
 
 ### Matriz de Interacciones Síncronas
 
-| Servicio Origen | Servicio Destino | Endpoint | Propósito | Justificación | Timeout |
-|-----------------|------------------|----------|-----------|---------------|---------|
-| **order-service** | **inventory-service** | `GET /api/v1/inventory/availability/{productId}` | Verificar stock disponible | Validación crítica antes de crear orden | 3s |
-| **order-service** | **payment-service** | `POST /api/v1/payments/validate` | Pre-validar método de pago | Fallo rápido si método de pago inválido | 5s |
-| **payment-service** | **user-service** | `GET /api/v1/users/{userId}/payment-methods` | Obtener métodos de pago activos | Datos requeridos para procesamiento | 3s |
-| **dashboard-web** | **product-service** | `GET /api/v1/products/search` | Búsqueda de productos | UI requiere respuesta inmediata | 5s |
-| **dashboard-web** | **user-service** | `GET /api/v1/users/profile` | Datos del perfil de usuario | Información de sesión crítica | 2s |
-| **geo-service** | **artisan-service** | `GET /api/v1/artisans/nearby` | Productores cercanos por geolocalización | Consulta geográfica en tiempo real | 4s |
-| **admin-service** | **analytics-service** | `GET /api/v1/analytics/dashboard` | Métricas del dashboard | Dashboard administrativo en tiempo real | 6s |
-| **auth-service** | **user-service** | `POST /api/v1/users/validate-token` | Validar JWT token | Seguridad crítica para autorización | 2s |
+| Servicio Origen     | Servicio Destino      | Endpoint                                         | Propósito                                | Justificación                           | Timeout |
+| ------------------- | --------------------- | ------------------------------------------------ | ---------------------------------------- | --------------------------------------- | ------- |
+| **order-service**   | **inventory-service** | `GET /api/v1/inventory/availability/{productId}` | Verificar stock disponible               | Validación crítica antes de crear orden | 3s      |
+| **order-service**   | **payment-service**   | `POST /api/v1/payments/validate`                 | Pre-validar método de pago               | Fallo rápido si método de pago inválido | 5s      |
+| **payment-service** | **user-service**      | `GET /api/v1/users/{userId}/payment-methods`     | Obtener métodos de pago activos          | Datos requeridos para procesamiento     | 3s      |
+| **dashboard-web**   | **product-service**   | `GET /api/v1/products/search`                    | Búsqueda de productos                    | UI requiere respuesta inmediata         | 5s      |
+| **dashboard-web**   | **user-service**      | `GET /api/v1/users/profile`                      | Datos del perfil de usuario              | Información de sesión crítica           | 2s      |
+| **geo-service**     | **artisan-service**   | `GET /api/v1/artisans/nearby`                    | Productores cercanos por geolocalización | Consulta geográfica en tiempo real      | 4s      |
+| **admin-service**   | **analytics-service** | `GET /api/v1/analytics/dashboard`                | Métricas del dashboard                   | Dashboard administrativo en tiempo real | 6s      |
+| **auth-service**    | **user-service**      | `POST /api/v1/users/validate-token`              | Validar JWT token                        | Seguridad crítica para autorización     | 2s      |
 
 ### Patrones de Resilencia para APIs REST
+
 
 ```typescript
 // packages/shared-utils/src/http/resilient-http-client.ts
@@ -64,17 +65,19 @@ export class ResilientHttpClient {
   private circuitBreaker: CircuitBreaker;
   private retryPolicy: RetryPolicy;
 
-  constructor(private config: {
-    baseURL: string;
-    timeout: number;
-    retries: number;
-    circuitBreakerThreshold: number;
-  }) {
+  constructor(
+    private config: {
+      baseURL: string;
+      timeout: number;
+      retries: number;
+      circuitBreakerThreshold: number;
+    }
+  ) {
     this.circuitBreaker = new CircuitBreaker({
       failureThreshold: config.circuitBreakerThreshold,
       recoveryTimeout: 30000,
     });
-    
+
     this.retryPolicy = new RetryPolicy({
       maxRetries: config.retries,
       backoffStrategy: 'exponential',
@@ -83,7 +86,7 @@ export class ResilientHttpClient {
   }
 
   async get<T>(endpoint: string, options?: RequestOptions): Promise<ApiResponse<T>> {
-    return this.executeWithResilience(() => 
+    return this.executeWithResilience(() =>
       this.httpClient.get<T>(endpoint, {
         ...options,
         timeout: this.config.timeout,
@@ -101,12 +104,12 @@ export class ResilientHttpClient {
   }
 
   private async executeWithResilience<T>(operation: () => Promise<T>): Promise<T> {
-    return this.circuitBreaker.execute(() =>
-      this.retryPolicy.execute(operation)
-    );
+    return this.circuitBreaker.execute(() => this.retryPolicy.execute(operation));
   }
 }
+
 ```
+
 
 ---
 
@@ -124,37 +127,42 @@ export class ResilientHttpClient {
 
 ### Configuración NATS Productiva
 
+
 ```yaml
 # docker-compose.messaging.yml (enhanced)
 services:
   nats:
     image: nats:2.10-alpine
-    command: [
-      "--jetstream",
-      "--store_dir=/data", 
-      "--max_file_store=10GB",
-      "--max_memory_store=1GB",
-      "--max_msgs=10000000",
-      "--max_bytes=1GB", 
-      "--max_age=7d",
-      "--replicas=1",
-      "--http_port=8222",
-      "--cluster_name=a4co-marketplace",
-      "--auth_token=${NATS_AUTH_TOKEN}"
-    ]
+    command:
+      [
+        '--jetstream',
+        '--store_dir=/data',
+        '--max_file_store=10GB',
+        '--max_memory_store=1GB',
+        '--max_msgs=10000000',
+        '--max_bytes=1GB',
+        '--max_age=7d',
+        '--replicas=1',
+        '--http_port=8222',
+        '--cluster_name=a4co-marketplace',
+        '--auth_token=${NATS_AUTH_TOKEN}',
+      ]
     volumes:
       - nats_data:/data
       - ./config/nats/server.conf:/etc/nats/server.conf
     healthcheck:
-      test: ["CMD", "nats", "server", "check", "--server=nats://localhost:4222"]
+      test: ['CMD', 'nats', 'server', 'check', '--server=nats://localhost:4222']
       interval: 10s
       timeout: 5s
       retries: 3
+
 ```
+
 
 ### Eventos de Dominio Críticos
 
 #### 1. 🛒 Order Domain Events
+
 
 ```typescript
 // packages/shared-utils/src/events/order-events.ts
@@ -206,7 +214,11 @@ export class OrderCancelledEvent extends DomainEvent {
   constructor(
     orderId: string,
     data: {
-      reason: 'customer-request' | 'payment-failed' | 'inventory-unavailable' | 'artisan-unavailable';
+      reason:
+        | 'customer-request'
+        | 'payment-failed'
+        | 'inventory-unavailable'
+        | 'artisan-unavailable';
       cancelledAt: Date;
       refundRequired: boolean;
       refundAmount?: number;
@@ -234,7 +246,9 @@ export class OrderDeliveredEvent extends DomainEvent {
     super(orderId, data);
   }
 }
+
 ```
+
 
 **Suscriptores:**
 
@@ -244,6 +258,7 @@ export class OrderDeliveredEvent extends DomainEvent {
 - `OrderDeliveredEvent` → `loyalty-service`, `analytics-service`, `notification-service`, `review-service`
 
 #### 2. 📦 Inventory Domain Events
+
 
 ```typescript
 // packages/shared-utils/src/events/inventory-events.ts
@@ -316,7 +331,9 @@ export class InventoryAdjustedEvent extends DomainEvent {
     super(productId, data);
   }
 }
+
 ```
+
 
 **Suscriptores:**
 
@@ -326,6 +343,7 @@ export class InventoryAdjustedEvent extends DomainEvent {
 - `InventoryAdjustedEvent` → `product-service`, `analytics-service`, `audit-service`
 
 #### 3. 💳 Payment Domain Events
+
 
 ```typescript
 // packages/shared-utils/src/events/payment-events.ts
@@ -402,7 +420,9 @@ export class RefundProcessedEvent extends DomainEvent {
     super(refundId, data);
   }
 }
+
 ```
+
 
 **Suscriptores:**
 
@@ -412,6 +432,7 @@ export class RefundProcessedEvent extends DomainEvent {
 - `RefundProcessedEvent` → `order-service`, `notification-service`, `analytics-service`, `accounting-service`
 
 #### 4. 👤 User Domain Events
+
 
 ```typescript
 // packages/shared-utils/src/events/user-events.ts
@@ -486,7 +507,9 @@ export class UserPreferencesChangedEvent extends DomainEvent {
     super(userId, data);
   }
 }
+
 ```
+
 
 **Suscriptores:**
 
@@ -495,6 +518,7 @@ export class UserPreferencesChangedEvent extends DomainEvent {
 - `UserPreferencesChangedEvent` → `notification-service`, `product-service`, `recommendation-service`
 
 #### 5. 🎨 Artisan Domain Events
+
 
 ```typescript
 // packages/shared-utils/src/events/artisan-events.ts
@@ -571,7 +595,9 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
     super(artisanId, data);
   }
 }
+
 ```
+
 
 **Suscriptores:**
 
@@ -585,9 +611,17 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
 
 ### Event Bus Avanzado con NATS
 
+
 ```typescript
 // packages/shared-utils/src/events/enhanced-event-bus.ts
-import { connect, NatsConnection, Codec, StringCodec, JetStreamManager, JetStreamClient } from 'nats';
+import {
+  connect,
+  NatsConnection,
+  Codec,
+  StringCodec,
+  JetStreamManager,
+  JetStreamClient,
+} from 'nats';
 import { DomainEvent } from '../domain/domain-event';
 import { Logger } from '../utils/logger';
 import { MetricsCollector } from '../observability/metrics-collector';
@@ -644,7 +678,7 @@ export class EnhancedEventBus {
 
   async publishDomainEvent(subject: string, event: DomainEvent): Promise<void> {
     const startTime = Date.now();
-    
+
     try {
       const eventPayload = {
         ...event,
@@ -653,7 +687,7 @@ export class EnhancedEventBus {
           version: '1.0',
           correlationId: event.eventId,
           causationId: event.aggregateId,
-        }
+        },
       };
 
       const message = this.codec.encode(JSON.stringify(eventPayload));
@@ -665,7 +699,7 @@ export class EnhancedEventBus {
             'Event-Type': event.eventType,
             'Aggregate-Id': event.aggregateId,
             'Event-Version': event.eventVersion.toString(),
-          }
+          },
         });
       } else {
         this.nc.publish(subject, message);
@@ -673,7 +707,6 @@ export class EnhancedEventBus {
 
       this.metrics.recordEventPublished(subject, event.eventType, Date.now() - startTime);
       this.logger.debug(`Event published: ${event.eventType} to ${subject}`);
-
     } catch (error) {
       this.metrics.recordEventPublishFailed(subject, event.eventType, error as Error);
       this.logger.error(`Failed to publish event ${event.eventType}`, error);
@@ -710,7 +743,7 @@ export class EnhancedEventBus {
             const eventData = JSON.parse(this.codec.decode(msg.data));
             await handler(eventData);
             msg.ack();
-            
+
             this.metrics.recordEventProcessed(subject, eventData.eventType, Date.now() - startTime);
           } catch (error) {
             this.metrics.recordEventProcessingFailed(subject, 'unknown', error as Error);
@@ -721,13 +754,13 @@ export class EnhancedEventBus {
       } else {
         // Regular subscription
         const subscription = this.nc.subscribe(subject, { queue: options.queue });
-        
+
         for await (const msg of subscription) {
           const startTime = Date.now();
           try {
             const eventData = JSON.parse(this.codec.decode(msg.data));
             await handler(eventData);
-            
+
             this.metrics.recordEventProcessed(subject, eventData.eventType, Date.now() - startTime);
           } catch (error) {
             this.metrics.recordEventProcessingFailed(subject, 'unknown', error as Error);
@@ -752,7 +785,7 @@ export class EnhancedEventBus {
           max_msgs: streamConfig.maxMsgs,
           storage: streamConfig.storage,
         });
-        
+
         this.logger.info(`Stream ${streamConfig.name} configured successfully`);
       } catch (error) {
         this.logger.warn(`Stream ${streamConfig.name} already exists or failed to create`, error);
@@ -765,9 +798,12 @@ export class EnhancedEventBus {
     this.logger.info('EventBus disconnected');
   }
 }
+
 ```
 
+
 ### Configuración de Streams para Dominios
+
 
 ```typescript
 // config/nats-streams.ts
@@ -813,13 +849,16 @@ export const marketplaceStreams: StreamConfig[] = [
     storage: 'file',
   },
 ];
+
 ```
+
 
 ---
 
 ## 🔄 PATRONES DE ORQUESTACIÓN
 
 ### Saga Pattern para Procesos Complejos
+
 
 ```typescript
 // packages/shared-utils/src/sagas/order-fulfillment-saga.ts
@@ -833,7 +872,7 @@ export class OrderFulfillmentSaga {
   // Orchestrator que maneja el flujo completo de un pedido
   async handleOrderCreated(event: OrderCreatedEvent): Promise<void> {
     const sagaId = `order-fulfillment-${event.aggregateId}`;
-    
+
     try {
       // 1. Inicializar estado de la saga
       await this.sagaStore.initializeSaga(sagaId, {
@@ -847,7 +886,8 @@ export class OrderFulfillmentSaga {
 
       // 2. Verificar stock para todos los productos
       for (const item of event.eventData.items) {
-        await this.eventBus.publishDomainEvent('inventory.stock.check', 
+        await this.eventBus.publishDomainEvent(
+          'inventory.stock.check',
           new StockCheckRequestedEvent(item.productId, {
             orderId: event.aggregateId,
             quantityRequested: item.quantity,
@@ -857,7 +897,6 @@ export class OrderFulfillmentSaga {
       }
 
       this.logger.info(`Order fulfillment saga started for order ${event.aggregateId}`);
-
     } catch (error) {
       await this.handleSagaFailure(sagaId, 'stock-check-failed', error);
     }
@@ -884,9 +923,8 @@ export class OrderFulfillmentSaga {
       // Verificar si todos los items están reservados
       const order = await this.getOrderDetails(event.eventData.orderId);
       const allItemsReserved = order.items.every(item =>
-        sagaState.reservedItems.some(reserved => 
-          reserved.productId === item.productId && 
-          reserved.quantity >= item.quantity
+        sagaState.reservedItems.some(
+          reserved => reserved.productId === item.productId && reserved.quantity >= item.quantity
         )
       );
 
@@ -896,7 +934,8 @@ export class OrderFulfillmentSaga {
         sagaState.currentStep = 1;
         await this.sagaStore.updateSagaState(sagaId, sagaState);
 
-        await this.eventBus.publishDomainEvent('payment.process',
+        await this.eventBus.publishDomainEvent(
+          'payment.process',
           new PaymentProcessRequestedEvent(uuidv4(), {
             orderId: event.eventData.orderId,
             amount: order.totalAmount,
@@ -908,7 +947,6 @@ export class OrderFulfillmentSaga {
       } else {
         await this.sagaStore.updateSagaState(sagaId, sagaState);
       }
-
     } catch (error) {
       await this.handleSagaFailure(sagaId, 'stock-reservation-processing-failed', error);
     }
@@ -930,14 +968,14 @@ export class OrderFulfillmentSaga {
       sagaState.paymentReference = event.eventData.transactionId;
       await this.sagaStore.updateSagaState(sagaId, sagaState);
 
-      await this.eventBus.publishDomainEvent('order.confirm',
+      await this.eventBus.publishDomainEvent(
+        'order.confirm',
         new OrderConfirmRequestedEvent(event.eventData.orderId, {
           paymentReference: event.eventData.transactionId,
           confirmedAt: new Date(),
           sagaId,
         })
       );
-
     } catch (error) {
       await this.handleSagaFailure(sagaId, 'order-confirmation-failed', error);
     }
@@ -945,12 +983,13 @@ export class OrderFulfillmentSaga {
 
   async handlePaymentFailed(event: PaymentFailedEvent): Promise<void> {
     const sagaId = `order-fulfillment-${event.eventData.orderId}`;
-    
+
     // Compensating actions: liberar stock reservado
     await this.compensateStockReservations(sagaId, event.eventData.orderId);
-    
+
     // Cancelar pedido
-    await this.eventBus.publishDomainEvent('order.cancel',
+    await this.eventBus.publishDomainEvent(
+      'order.cancel',
       new OrderCancelRequestedEvent(event.eventData.orderId, {
         reason: 'payment-failed',
         cancelledAt: new Date(),
@@ -963,10 +1002,11 @@ export class OrderFulfillmentSaga {
 
   private async compensateStockReservations(sagaId: string, orderId: string): Promise<void> {
     const sagaState = await this.sagaStore.getSagaState(sagaId);
-    
+
     if (sagaState?.reservedItems) {
       for (const reserved of sagaState.reservedItems) {
-        await this.eventBus.publishDomainEvent('inventory.stock.release',
+        await this.eventBus.publishDomainEvent(
+          'inventory.stock.release',
           new StockReleaseRequestedEvent(reserved.productId, {
             orderId,
             reservationId: reserved.reservationId,
@@ -981,18 +1021,21 @@ export class OrderFulfillmentSaga {
   private async handleSagaFailure(sagaId: string, reason: string, error: any): Promise<void> {
     this.logger.error(`Saga ${sagaId} failed: ${reason}`, error);
     await this.sagaStore.completeSaga(sagaId, 'failed', reason);
-    
+
     // Implement compensation logic based on failure point
     // ...
   }
 }
+
 ```
+
 
 ---
 
 ## 📊 OBSERVABILIDAD Y MONITOREO
 
 ### Métricas de Comunicación
+
 
 ```typescript
 // packages/observability/src/communication-metrics.ts
@@ -1031,7 +1074,13 @@ export class CommunicationMetrics {
     buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5],
   });
 
-  recordSyncRequest(sourceService: string, targetService: string, endpoint: string, duration: number, status: string): void {
+  recordSyncRequest(
+    sourceService: string,
+    targetService: string,
+    endpoint: string,
+    duration: number,
+    status: string
+  ): void {
     this.syncRequestsTotal.labels(sourceService, targetService, endpoint, status).inc();
     this.syncRequestDuration.labels(sourceService, targetService, endpoint).observe(duration);
   }
@@ -1040,14 +1089,23 @@ export class CommunicationMetrics {
     this.asyncEventsPublished.labels(service, eventType, subject).inc();
   }
 
-  recordEventProcessed(service: string, eventType: string, subject: string, duration: number, status: string): void {
+  recordEventProcessed(
+    service: string,
+    eventType: string,
+    subject: string,
+    duration: number,
+    status: string
+  ): void {
     this.asyncEventsProcessed.labels(service, eventType, subject, status).inc();
     this.eventProcessingDuration.labels(service, eventType, subject).observe(duration);
   }
 }
+
 ```
 
+
 ### Dashboard de Monitoreo (Grafana)
+
 
 ```json
 {
@@ -1066,7 +1124,7 @@ export class CommunicationMetrics {
       },
       {
         "title": "Event Publishing Rate",
-        "type": "graph", 
+        "type": "graph",
         "targets": [
           {
             "expr": "rate(microservices_events_published_total[5m])",
@@ -1101,13 +1159,16 @@ export class CommunicationMetrics {
     ]
   }
 }
+
 ```
+
 
 ---
 
 ## 🔒 SEGURIDAD EN COMUNICACIONES
 
 ### Autenticación entre Servicios
+
 
 ```typescript
 // packages/shared-utils/src/security/service-auth.ts
@@ -1134,7 +1195,7 @@ export class ServiceAuthenticationManager {
   validateServiceToken(token: string): { serviceId: string; permissions: string[] } {
     try {
       const decoded = jwt.verify(token, this.jwtSecret) as any;
-      
+
       if (decoded.type !== 'service-to-service') {
         throw new Error('Invalid token type');
       }
@@ -1150,16 +1211,18 @@ export class ServiceAuthenticationManager {
 
   createAuthenticatedHttpClient(serviceId: string, permissions: string[]): ResilientHttpClient {
     const token = this.generateServiceToken(serviceId, permissions);
-    
+
     return new ResilientHttpClient({
       defaultHeaders: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'X-Service-ID': serviceId,
       },
     });
   }
 }
+
 ```
+
 
 ---
 
@@ -1169,7 +1232,7 @@ export class ServiceAuthenticationManager {
 
 - ✅ Configurar NATS con JetStream en entorno dev/staging
 - ✅ Implementar EventBus avanzado con métricas
-- ✅ Configurar streams para cada dominio  
+- ✅ Configurar streams para cada dominio
 - ✅ Implementar autenticación entre servicios
 - ✅ Setup básico de observabilidad (Prometheus + Grafana)
 

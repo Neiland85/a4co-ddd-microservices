@@ -15,7 +15,10 @@ export function generateCausationId(correlationId: string): string {
 }
 
 // Sanitize sensitive data
-export function sanitize(data: any, sensitiveKeys: string[] = ['password', 'token', 'apiKey', 'secret']): any {
+export function sanitize(
+  data: any,
+  sensitiveKeys: string[] = ['password', 'token', 'apiKey', 'secret']
+): any {
   if (!data || typeof data !== 'object') {
     return data;
   }
@@ -25,10 +28,10 @@ export function sanitize(data: any, sensitiveKeys: string[] = ['password', 'toke
   }
 
   const sanitized = { ...data };
-  
+
   Object.keys(sanitized).forEach(key => {
     const lowerKey = key.toLowerCase();
-    
+
     if (sensitiveKeys.some(sensitive => lowerKey.includes(sensitive.toLowerCase()))) {
       sanitized[key] = '[REDACTED]';
     } else if (typeof sanitized[key] === 'object') {
@@ -57,9 +60,9 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
 
   // Request interceptor
   client.interceptors.request.use(
-    (config) => {
+    config => {
       const ctx = getContext();
-      
+
       // Inject context headers
       if (ctx) {
         config.headers = {
@@ -69,31 +72,33 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
       }
 
       // Start span
-      const span = trace.getTracer('@a4co/observability').startSpan(
-        `HTTP ${config.method?.toUpperCase()} ${config.url}`,
-        {
+      const span = trace
+        .getTracer('@a4co/observability')
+        .startSpan(`HTTP ${config.method?.toUpperCase()} ${config.url}`, {
           kind: SpanKind.CLIENT,
           attributes: {
             'http.method': config.method?.toUpperCase(),
             'http.url': config.url,
             'http.target': new URL(config.url || '', config.baseURL || 'http://localhost').pathname,
           },
-        }
-      );
+        });
 
       // Attach span to config for response
       (config as any).__span = span;
       (config as any).__startTime = Date.now();
 
-      logger.debug({
-        method: config.method,
-        url: config.url,
-        headers: sanitize(config.headers),
-      }, 'HTTP request started');
+      logger.debug(
+        {
+          method: config.method,
+          url: config.url,
+          headers: sanitize(config.headers),
+        },
+        'HTTP request started'
+      );
 
       return config;
     },
-    (error) => {
+    error => {
       logger.error({ error }, 'HTTP request failed to start');
       return Promise.reject(error);
     }
@@ -101,7 +106,7 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
 
   // Response interceptor
   client.interceptors.response.use(
-    (response) => {
+    response => {
       const span = (response.config as any).__span;
       const startTime = (response.config as any).__startTime;
       const duration = Date.now() - startTime;
@@ -115,16 +120,19 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         span.end();
       }
 
-      logger.debug({
-        method: response.config.method,
-        url: response.config.url,
-        status: response.status,
-        duration,
-      }, 'HTTP request completed');
+      logger.debug(
+        {
+          method: response.config.method,
+          url: response.config.url,
+          status: response.status,
+          duration,
+        },
+        'HTTP request completed'
+      );
 
       return response;
     },
-    (error) => {
+    error => {
       const span = (error.config as any)?.__span;
       const startTime = (error.config as any)?.__startTime;
       const duration = startTime ? Date.now() - startTime : 0;
@@ -132,23 +140,26 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
       if (span) {
         span.setAttributes({
           'http.status_code': error.response?.status || 0,
-          'error': true,
+          error: true,
         });
         span.recordException(error);
-        span.setStatus({ 
-          code: SpanStatusCode.ERROR, 
-          message: error.message 
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error.message,
         });
         span.end();
       }
 
-      logger.error({
-        method: error.config?.method,
-        url: error.config?.url,
-        status: error.response?.status,
-        duration,
-        error: error.message,
-      }, 'HTTP request failed');
+      logger.error(
+        {
+          method: error.config?.method,
+          url: error.config?.url,
+          status: error.response?.status,
+          duration,
+          error: error.message,
+        },
+        'HTTP request failed'
+      );
 
       return Promise.reject(error);
     }
@@ -168,13 +179,7 @@ export async function retryWithBackoff<T>(
     onRetry?: (error: Error, attempt: number) => void;
   } = {}
 ): Promise<T> {
-  const {
-    maxRetries = 3,
-    initialDelay = 1000,
-    maxDelay = 30000,
-    factor = 2,
-    onRetry,
-  } = options;
+  const { maxRetries = 3, initialDelay = 1000, maxDelay = 30000, factor = 2, onRetry } = options;
 
   const logger = getLogger();
   let lastError: Error;
@@ -184,19 +189,22 @@ export async function retryWithBackoff<T>(
       return await fn();
     } catch (error) {
       lastError = error as Error;
-      
+
       if (attempt === maxRetries) {
         logger.error({ error: lastError, attempts: attempt + 1 }, 'All retry attempts failed');
         throw lastError;
       }
 
       const delay = Math.min(initialDelay * Math.pow(factor, attempt), maxDelay);
-      
-      logger.warn({
-        error: lastError.message,
-        attempt: attempt + 1,
-        nextRetryIn: delay,
-      }, 'Operation failed, retrying');
+
+      logger.warn(
+        {
+          error: lastError.message,
+          attempt: attempt + 1,
+          nextRetryIn: delay,
+        },
+        'Operation failed, retrying'
+      );
 
       if (onRetry) {
         onRetry(lastError, attempt + 1);
@@ -214,7 +222,7 @@ export class CircuitBreaker<T> {
   private failures = 0;
   private lastFailureTime = 0;
   private state: 'closed' | 'open' | 'half-open' = 'closed';
-  
+
   constructor(
     private readonly fn: () => Promise<T>,
     private readonly options: {
@@ -240,27 +248,30 @@ export class CircuitBreaker<T> {
 
     try {
       const result = await this.fn();
-      
+
       if (this.state === 'half-open') {
         this.setState('closed');
         this.failures = 0;
       }
-      
+
       return result;
     } catch (error) {
       this.failures++;
       this.lastFailureTime = Date.now();
-      
+
       if (this.failures >= failureThreshold) {
         this.setState('open');
       }
-      
-      logger.error({
-        error,
-        failures: this.failures,
-        state: this.state,
-      }, 'Circuit breaker execution failed');
-      
+
+      logger.error(
+        {
+          error,
+          failures: this.failures,
+          state: this.state,
+        },
+        'Circuit breaker execution failed'
+      );
+
       throw error;
     }
   }
@@ -268,15 +279,18 @@ export class CircuitBreaker<T> {
   private setState(state: 'closed' | 'open' | 'half-open'): void {
     if (this.state !== state) {
       this.state = state;
-      
+
       if (this.options.onStateChange) {
         this.options.onStateChange(state);
       }
-      
-      getLogger().info({ 
-        previousState: this.state, 
-        newState: state 
-      }, 'Circuit breaker state changed');
+
+      getLogger().info(
+        {
+          previousState: this.state,
+          newState: state,
+        },
+        'Circuit breaker state changed'
+      );
     }
   }
 }
@@ -293,20 +307,23 @@ export class PerformanceTimer {
   measure(name: string, startMark?: string, endMark?: string): number {
     const start = startMark ? this.marks.get(startMark) : this.startTime;
     const end = endMark ? this.marks.get(endMark) : Date.now();
-    
+
     if (!start || !end) {
       throw new Error('Invalid marks for measurement');
     }
-    
+
     const duration = end - start;
-    
-    getLogger().debug({
-      measurement: name,
-      duration,
-      startMark,
-      endMark,
-    }, 'Performance measurement');
-    
+
+    getLogger().debug(
+      {
+        measurement: name,
+        duration,
+        startMark,
+        endMark,
+      },
+      'Performance measurement'
+    );
+
     return duration;
   }
 
@@ -320,7 +337,7 @@ export class PerformanceTimer {
 export class BatchProcessor<T, R> {
   private batch: T[] = [];
   private timer: NodeJS.Timeout | null = null;
-  
+
   constructor(
     private readonly processor: (items: T[]) => Promise<R[]>,
     private readonly options: {
@@ -332,9 +349,9 @@ export class BatchProcessor<T, R> {
 
   async add(item: T): Promise<void> {
     const { maxBatchSize = 100, flushInterval = 1000 } = this.options;
-    
+
     this.batch.push(item);
-    
+
     if (this.batch.length >= maxBatchSize) {
       await this.flush();
     } else if (!this.timer) {
@@ -347,19 +364,19 @@ export class BatchProcessor<T, R> {
       clearTimeout(this.timer);
       this.timer = null;
     }
-    
+
     if (this.batch.length === 0) {
       return;
     }
-    
+
     const items = [...this.batch];
     this.batch = [];
-    
+
     try {
       await this.processor(items);
     } catch (error) {
       getLogger().error({ error, batchSize: items.length }, 'Batch processing failed');
-      
+
       if (this.options.onError) {
         this.options.onError(error as Error, items);
       }

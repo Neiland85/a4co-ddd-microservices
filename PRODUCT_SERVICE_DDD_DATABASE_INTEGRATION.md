@@ -1,4 +1,5 @@
 # 🗄️ INTEGRACIÓN DDD CON BASE DE DATOS - PRODUCT SERVICE
+
 **Proyecto:** A4CO DDD Marketplace Local de Jaén  
 **Fecha:** Enero 2025  
 **Enfoque:** Domain-Driven Design + Prisma ORM
@@ -7,7 +8,8 @@
 
 Este documento detalla la implementación de persistencia DDD para el **product-service**, diseñando un esquema de base de datos que refleje fielmente el modelo de dominio, respetando aggregates, entidades y value objects, con implementación de repositorios usando Prisma ORM.
 
-### Principios DDD en Persistencia:
+### Principios DDD en Persistencia
+
 - **Agregados como unidades de consistencia**: Cada agregado se persiste como una transacción atómica
 - **Separación dominio-infraestructura**: El dominio no depende de detalles de persistencia
 - **Mapeo dominio-relacional**: Los objetos de dominio se mapean correctamente a tablas relacionales
@@ -19,10 +21,17 @@ Este documento detalla la implementación de persistencia DDD para el **product-
 
 ### Product Aggregate Root
 
+
 ```typescript
 // apps/product-service/src/domain/aggregates/product.aggregate.ts
 import { AggregateRoot } from '@a4co/shared-utils';
-import { ProductId, ProductName, ProductDescription, Price, CategoryId } from '../value-objects/product-value-objects';
+import {
+  ProductId,
+  ProductName,
+  ProductDescription,
+  Price,
+  CategoryId,
+} from '../value-objects/product-value-objects';
 import { ProductVariant } from '../entities/product-variant.entity';
 import { ProductImage } from '../entities/product-image.entity';
 import { ProductTag } from '../entities/product-tag.entity';
@@ -474,9 +483,12 @@ export class Product extends AggregateRoot {
     };
   }
 }
+
 ```
 
+
 ### Value Objects
+
 
 ```typescript
 // apps/product-service/src/domain/value-objects/product-value-objects.ts
@@ -571,9 +583,12 @@ export class SKU extends ValueObject<string> {
     super(value.toUpperCase());
   }
 }
+
 ```
 
+
 ### Entidades
+
 
 ```typescript
 // apps/product-service/src/domain/entities/product-variant.entity.ts
@@ -862,15 +877,8 @@ export class ProductTag extends BaseEntity {
     if (updatedAt) (this as any).updatedAt = updatedAt;
   }
 
-  public static create(data: {
-    productId: string;
-    name: string;
-  }): ProductTag {
-    return new ProductTag(
-      uuidv4(),
-      data.productId,
-      data.name.toLowerCase().trim()
-    );
+  public static create(data: { productId: string; name: string }): ProductTag {
+    return new ProductTag(uuidv4(), data.productId, data.name.toLowerCase().trim());
   }
 
   public static reconstruct(data: {
@@ -880,13 +888,7 @@ export class ProductTag extends BaseEntity {
     createdAt: Date;
     updatedAt: Date;
   }): ProductTag {
-    return new ProductTag(
-      data.id,
-      data.productId,
-      data.name,
-      data.createdAt,
-      data.updatedAt
-    );
+    return new ProductTag(data.id, data.productId, data.name, data.createdAt, data.updatedAt);
   }
 
   // Getters
@@ -914,13 +916,16 @@ export class ProductTag extends BaseEntity {
     };
   }
 }
+
 ```
+
 
 ---
 
 ## 🗄️ ESQUEMA DE BASE DE DATOS CON PRISMA
 
 ### Prisma Schema Completo
+
 
 ```prisma
 // apps/product-service/prisma/schema.prisma
@@ -939,43 +944,43 @@ model Product {
   // Identificadores
   id         String @id @default(uuid()) @db.Uuid
   productId  String @unique @default(uuid()) @db.Uuid // Business ID
-  
+
   // Información básica
   name        String @db.VarChar(200)
   description String @db.Text
-  
+
   // Precio
   price    Decimal @db.Decimal(10, 2)
   currency String  @db.VarChar(3) @default("EUR")
-  
+
   // Relaciones externas
   categoryId String @db.Uuid
   artisanId  String @db.Uuid
-  
+
   // Estados
   status       ProductStatus       @default(DRAFT)
   availability ProductAvailability @default(IN_STOCK)
-  
+
   // Información de artesanía
   craftingTimeHours   Int     @default(0)
   sustainabilityScore Int?    @db.SmallInt // 0-100
   isCustomizable      Boolean @default(false)
-  
+
   // Arrays JSON para simplicidad
   materials String[] @default([])
-  
+
   // Dimensiones (JSON para flexibilidad)
   dimensions Json?
-  
+
   // Timestamps
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
-  
+
   // ENTIDADES DEL AGREGADO
   variants ProductVariant[]
   images   ProductImage[]
   tags     ProductTag[]
-  
+
   // Índices
   @@index([categoryId])
   @@index([artisanId])
@@ -991,31 +996,31 @@ model ProductVariant {
   // Identificadores
   id        String @id @default(uuid()) @db.Uuid
   productId String @db.Uuid
-  
+
   // Información básica
   name        String  @db.VarChar(200)
   description String? @db.Text
-  
+
   // Precio específico de la variante
   price    Decimal @db.Decimal(10, 2)
   currency String  @db.VarChar(3) @default("EUR")
-  
+
   // SKU único por variante
   sku String? @unique @db.VarChar(100)
-  
+
   // Atributos específicos (JSON para flexibilidad)
   attributes Json @default("{}")
-  
+
   // Estado
   isActive Boolean @default(true)
-  
+
   // Timestamps
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
-  
+
   // Relación con Product (parte del agregado)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  
+
   // Índices
   @@index([productId])
   @@index([isActive])
@@ -1028,22 +1033,22 @@ model ProductImage {
   // Identificadores
   id        String @id @default(uuid()) @db.Uuid
   productId String @db.Uuid
-  
+
   // Información de la imagen
   url     String @db.VarChar(500)
   altText String @db.VarChar(200)
-  
+
   // Ordenamiento y características
   isPrimary Boolean @default(false)
   sortOrder Int     @default(0)
-  
+
   // Timestamps
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
-  
+
   // Relación con Product (parte del agregado)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  
+
   // Índices
   @@index([productId])
   @@index([isPrimary])
@@ -1056,17 +1061,17 @@ model ProductTag {
   // Identificadores
   id        String @id @default(uuid()) @db.Uuid
   productId String @db.Uuid
-  
+
   // Información del tag
   name String @db.VarChar(50)
-  
+
   // Timestamps
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
-  
+
   // Relación con Product (parte del agregado)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  
+
   // Índices
   @@index([productId])
   @@index([name])
@@ -1080,15 +1085,15 @@ model Category {
   name        String  @db.VarChar(100)
   description String? @db.Text
   parentId    String? @db.Uuid
-  
+
   // Jerarquía
   parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children Category[] @relation("CategoryHierarchy")
-  
+
   // Timestamps
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
-  
+
   @@index([parentId])
   @@map("categories")
 }
@@ -1107,9 +1112,13 @@ enum ProductAvailability {
   MADE_TO_ORDER
   SEASONAL
 }
+
+
 ```
 
+
 ### Migraciones de Base de Datos
+
 
 ```sql
 -- Migration: 001_create_products_schema.sql
@@ -1235,13 +1244,17 @@ COMMENT ON TABLE "product_variants" IS 'Product variants with different attribut
 COMMENT ON TABLE "product_images" IS 'Product images with ordering and primary image designation';
 COMMENT ON TABLE "product_tags" IS 'Product tags for categorization and search';
 COMMENT ON TABLE "categories" IS 'Product categories with hierarchical structure';
+
+
 ```
+
 
 ---
 
 ## 🔄 IMPLEMENTACIÓN DEL REPOSITORIO
 
 ### Repository Interface
+
 
 ```typescript
 // apps/product-service/src/domain/repositories/product.repository.ts
@@ -1254,18 +1267,18 @@ export interface ProductRepository {
   findById(id: string): Promise<Product | null>;
   findByProductId(productId: ProductId): Promise<Product | null>;
   delete(id: string): Promise<void>;
-  
+
   // Consultas de negocio
   findByArtisanId(artisanId: string, options?: PaginationOptions): Promise<Product[]>;
   findByCategoryId(categoryId: string, options?: PaginationOptions): Promise<Product[]>;
   findActiveProducts(options?: PaginationOptions): Promise<Product[]>;
-  
+
   // Búsquedas avanzadas
   searchProducts(criteria: ProductSearchCriteria): Promise<ProductSearchResult>;
   findByPriceRange(minPrice: number, maxPrice: number, currency: string): Promise<Product[]>;
   findByMaterials(materials: string[]): Promise<Product[]>;
   findCustomizableProducts(): Promise<Product[]>;
-  
+
   // Métricas y validaciones
   countByArtisanId(artisanId: string): Promise<number>;
   existsByName(name: string, excludeId?: string): Promise<boolean>;
@@ -1303,16 +1316,28 @@ export interface ProductSearchResult {
   page: number;
   totalPages: number;
 }
+
 ```
 
+
 ### Prisma Repository Implementation
+
 
 ```typescript
 // apps/product-service/src/infrastructure/repositories/prisma-product.repository.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaClient, Prisma } from '../generated/prisma';
-import { ProductRepository, ProductSearchCriteria, ProductSearchResult, PaginationOptions } from '../../domain/repositories/product.repository';
-import { Product, ProductStatus, ProductAvailability } from '../../domain/aggregates/product.aggregate';
+import {
+  ProductRepository,
+  ProductSearchCriteria,
+  ProductSearchResult,
+  PaginationOptions,
+} from '../../domain/repositories/product.repository';
+import {
+  Product,
+  ProductStatus,
+  ProductAvailability,
+} from '../../domain/aggregates/product.aggregate';
 import { ProductId } from '../../domain/value-objects/product-value-objects';
 import { Logger } from '@a4co/shared-utils';
 
@@ -1324,9 +1349,9 @@ export class PrismaProductRepository implements ProductRepository {
 
   async save(product: Product): Promise<void> {
     const productData = product.toPersistence();
-    
+
     try {
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(async tx => {
         // Upsert del producto principal
         await tx.product.upsert({
           where: { id: productData.id },
@@ -1471,7 +1496,7 @@ export class PrismaProductRepository implements ProductRepository {
 
   async findByArtisanId(artisanId: string, options?: PaginationOptions): Promise<Product[]> {
     const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = options || {};
-    
+
     try {
       const productsData = await this.prisma.product.findMany({
         where: { artisanId },
@@ -1496,12 +1521,12 @@ export class PrismaProductRepository implements ProductRepository {
 
   async findByCategoryId(categoryId: string, options?: PaginationOptions): Promise<Product[]> {
     const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = options || {};
-    
+
     try {
       const productsData = await this.prisma.product.findMany({
-        where: { 
+        where: {
           categoryId,
-          status: ProductStatus.ACTIVE 
+          status: ProductStatus.ACTIVE,
         },
         include: {
           variants: true,
@@ -1524,14 +1549,14 @@ export class PrismaProductRepository implements ProductRepository {
 
   async findActiveProducts(options?: PaginationOptions): Promise<Product[]> {
     const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = options || {};
-    
+
     try {
       const productsData = await this.prisma.product.findMany({
-        where: { 
+        where: {
           status: ProductStatus.ACTIVE,
           availability: {
-            in: [ProductAvailability.IN_STOCK, ProductAvailability.MADE_TO_ORDER]
-          }
+            in: [ProductAvailability.IN_STOCK, ProductAvailability.MADE_TO_ORDER],
+          },
         },
         include: {
           variants: true,
@@ -1555,11 +1580,11 @@ export class PrismaProductRepository implements ProductRepository {
   async searchProducts(criteria: ProductSearchCriteria): Promise<ProductSearchResult> {
     const { pagination = { page: 1, limit: 20 } } = criteria;
     const { page, limit, sortBy = 'createdAt', sortOrder = 'desc' } = pagination;
-    
+
     try {
       // Construir filtros dinámicamente
       const where: Prisma.ProductWhereInput = {};
-      
+
       if (criteria.query) {
         where.OR = [
           { name: { contains: criteria.query, mode: 'insensitive' } },
@@ -1567,39 +1592,39 @@ export class PrismaProductRepository implements ProductRepository {
           { materials: { has: criteria.query } },
         ];
       }
-      
+
       if (criteria.categoryId) {
         where.categoryId = criteria.categoryId;
       }
-      
+
       if (criteria.artisanId) {
         where.artisanId = criteria.artisanId;
       }
-      
+
       if (criteria.minPrice || criteria.maxPrice) {
         where.price = {};
         if (criteria.minPrice) where.price.gte = criteria.minPrice;
         if (criteria.maxPrice) where.price.lte = criteria.maxPrice;
       }
-      
+
       if (criteria.currency) {
         where.currency = criteria.currency;
       }
-      
+
       if (criteria.materials && criteria.materials.length > 0) {
         where.materials = {
           hasSome: criteria.materials,
         };
       }
-      
+
       if (criteria.isCustomizable !== undefined) {
         where.isCustomizable = criteria.isCustomizable;
       }
-      
+
       if (criteria.availability) {
         where.availability = criteria.availability as ProductAvailability;
       }
-      
+
       if (criteria.sustainabilityScore) {
         where.sustainabilityScore = {};
         if (criteria.sustainabilityScore.min) {
@@ -1609,7 +1634,7 @@ export class PrismaProductRepository implements ProductRepository {
           where.sustainabilityScore.lte = criteria.sustainabilityScore.max;
         }
       }
-      
+
       if (criteria.tags && criteria.tags.length > 0) {
         where.tags = {
           some: {
@@ -1639,7 +1664,7 @@ export class PrismaProductRepository implements ProductRepository {
       ]);
 
       const products = productsData.map(p => this.mapToDomainProduct(p));
-      
+
       return {
         products,
         total,
@@ -1675,7 +1700,10 @@ export class PrismaProductRepository implements ProductRepository {
 
       return productsData.map(p => this.mapToDomainProduct(p));
     } catch (error) {
-      this.logger.error(`Failed to find products by price range ${minPrice}-${maxPrice} ${currency}`, error);
+      this.logger.error(
+        `Failed to find products by price range ${minPrice}-${maxPrice} ${currency}`,
+        error
+      );
       throw new Error(`Failed to find products: ${error.message}`);
     }
   }
@@ -1747,7 +1775,7 @@ export class PrismaProductRepository implements ProductRepository {
           mode: 'insensitive',
         },
       };
-      
+
       if (excludeId) {
         where.id = { not: excludeId };
       }
@@ -1814,13 +1842,16 @@ export class PrismaProductRepository implements ProductRepository {
     });
   }
 }
+
 ```
+
 
 ---
 
 ## 🧪 EJEMPLO DE USO DEL REPOSITORIO
 
 ### Application Service
+
 
 ```typescript
 // apps/product-service/src/application/services/product-application.service.ts
@@ -1846,10 +1877,10 @@ export class ProductApplicationService {
     try {
       // Validar que no exista un producto con el mismo nombre para el artesano
       const existingProducts = await this.productRepository.findByArtisanId(command.artisanId);
-      const duplicateName = existingProducts.some(p => 
-        p.name.toLowerCase() === command.name.toLowerCase()
+      const duplicateName = existingProducts.some(
+        p => p.name.toLowerCase() === command.name.toLowerCase()
       );
-      
+
       if (duplicateName) {
         throw new Error('Product with this name already exists for this artisan');
       }
@@ -1900,13 +1931,12 @@ export class ProductApplicationService {
       }
       product.clearEvents();
 
-      this.logger.info('Product created successfully', { 
+      this.logger.info('Product created successfully', {
         productId: product.id,
-        businessId: product.productId 
+        businessId: product.productId,
       });
 
       return { productId: product.productId };
-
     } catch (error) {
       this.logger.error('Failed to create product', error);
       throw error;
@@ -1921,7 +1951,7 @@ export class ProductApplicationService {
       const product = await this.productRepository.findByProductId(
         new ProductId(command.productId)
       );
-      
+
       if (!product) {
         throw new Error('Product not found');
       }
@@ -1942,7 +1972,12 @@ export class ProductApplicationService {
       }
 
       // Actualizar información de artesanía
-      if (command.craftingTimeHours || command.materials || command.sustainabilityScore !== undefined || command.isCustomizable !== undefined) {
+      if (
+        command.craftingTimeHours ||
+        command.materials ||
+        command.sustainabilityScore !== undefined ||
+        command.isCustomizable !== undefined
+      ) {
         product.updateCraftingInfo({
           craftingTimeHours: command.craftingTimeHours,
           materials: command.materials,
@@ -1962,7 +1997,6 @@ export class ProductApplicationService {
       product.clearEvents();
 
       this.logger.info('Product updated successfully', { productId: command.productId });
-
     } catch (error) {
       this.logger.error('Failed to update product', error);
       throw error;
@@ -1995,10 +2029,10 @@ export class ProductApplicationService {
 
       const result = await this.productRepository.searchProducts(searchCriteria);
 
-      this.logger.debug('Products search completed', { 
-        total: result.total, 
+      this.logger.debug('Products search completed', {
+        total: result.total,
         page: result.page,
-        resultsCount: result.products.length 
+        resultsCount: result.products.length,
       });
 
       return {
@@ -2022,7 +2056,6 @@ export class ProductApplicationService {
         page: result.page,
         totalPages: result.totalPages,
       };
-
     } catch (error) {
       this.logger.error('Failed to search products', error);
       throw error;
@@ -2100,13 +2133,16 @@ export interface ProductSearchQuery {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
 }
+
 ```
+
 
 ---
 
 ## 🔧 CONFIGURACIÓN Y DEPLOYMENT
 
 ### Environment Configuration
+
 
 ```typescript
 // apps/product-service/src/config/database.config.ts
@@ -2118,8 +2154,10 @@ export class DatabaseConfig {
   constructor(private configService: ConfigService) {}
 
   get databaseUrl(): string {
-    return this.configService.get<string>('DATABASE_URL') || 
-           'postgresql://postgres:password@localhost:5432/a4co_products?schema=public';
+    return (
+      this.configService.get<string>('DATABASE_URL') ||
+      'postgresql://postgres:password@localhost:5432/a4co_products?schema=public'
+    );
   }
 
   get maxConnections(): number {
@@ -2138,9 +2176,12 @@ export class DatabaseConfig {
     return this.configService.get<string>('DB_LOG_LEVEL') || 'warn';
   }
 }
+
 ```
 
+
 ### Module Configuration
+
 
 ```typescript
 // apps/product-service/src/product.module.ts
@@ -2186,9 +2227,12 @@ import { EnhancedEventBus } from '@a4co/shared-utils';
   exports: [ProductApplicationService],
 })
 export class ProductModule {}
+
 ```
 
+
 ### Docker Configuration
+
 
 ```dockerfile
 # apps/product-service/Dockerfile
@@ -2234,13 +2278,17 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Run migrations and start app
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+
+
 ```
+
 
 ---
 
 ## 📊 MÉTRICAS Y PERFORMANCE
 
 ### Database Performance Monitoring
+
 
 ```typescript
 // apps/product-service/src/infrastructure/monitoring/database-metrics.ts
@@ -2275,7 +2323,12 @@ export class DatabaseMetrics {
     register.registerMetric(this.connectionPool);
   }
 
-  recordQuery(operation: string, table: string, duration: number, status: 'success' | 'error'): void {
+  recordQuery(
+    operation: string,
+    table: string,
+    duration: number,
+    status: 'success' | 'error'
+  ): void {
     this.queryDuration.labels(operation, table, status).observe(duration);
     this.queryCount.labels(operation, table, status).inc();
   }
@@ -2285,28 +2338,34 @@ export class DatabaseMetrics {
     this.connectionPool.labels('idle').observe(idleConnections);
   }
 }
+
 ```
+
 
 ---
 
 ## 📋 CONCLUSIONES
 
 ### ✅ **Modelo de Dominio Sólido**
+
 - **Product Aggregate** como raíz de agregado con entidades ProductVariant, ProductImage, ProductTag
 - **Value Objects** robustos con validaciones de negocio (ProductId, Price, SKU)
 - **Eventos de dominio** para comunicación asíncrona y auditoría
 
 ### ✅ **Esquema de Base de Datos Consistente**
+
 - **Mapeo dominio-relacional** que preserva la integridad del modelo DDD
 - **Constraínts y índices** optimizados para performance y consistencia
 - **Transacciones atómicas** para mantener consistencia del agregado
 
 ### ✅ **Repository Pattern Robusto**
+
 - **Separación clara** entre dominio e infraestructura
 - **Queries optimizadas** con Prisma ORM y PostgreSQL
 - **Búsquedas avanzadas** con filtros complejos y paginación
 
 ### ✅ **Performance y Escalabilidad**
+
 - **Índices estratégicos** para consultas frecuentes
 - **Paginación eficiente** para grandes volúmenes de datos
 - **Métricas de monitoreo** para observabilidad de la base de datos

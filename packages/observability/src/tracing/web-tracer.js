@@ -2,53 +2,6 @@
 /**
  * OpenTelemetry tracer for web/frontend applications
  */
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeWebTracer = initializeWebTracer;
 exports.getWebTracer = getWebTracer;
@@ -59,34 +12,33 @@ exports.traceRouteNavigation = traceRouteNavigation;
 exports.traceUserInteraction = traceUserInteraction;
 exports.collectPerformanceMetrics = collectPerformanceMetrics;
 exports.addPerformanceMetricsToSpan = addPerformanceMetricsToSpan;
-var sdk_trace_web_1 = require("@opentelemetry/sdk-trace-web");
-var resources_1 = require("@opentelemetry/resources");
-var semantic_conventions_1 = require("@opentelemetry/semantic-conventions");
-var sdk_trace_base_1 = require("@opentelemetry/sdk-trace-base");
-var exporter_trace_otlp_http_1 = require("@opentelemetry/exporter-trace-otlp-http");
-var instrumentation_1 = require("@opentelemetry/instrumentation");
-var instrumentation_fetch_1 = require("@opentelemetry/instrumentation-fetch");
-var instrumentation_xml_http_request_1 = require("@opentelemetry/instrumentation-xml-http-request");
-var api_1 = require("@opentelemetry/api");
-var context_zone_1 = require("@opentelemetry/context-zone");
+const sdk_trace_web_1 = require("@opentelemetry/sdk-trace-web");
+const resources_1 = require("@opentelemetry/resources");
+const semantic_conventions_1 = require("@opentelemetry/semantic-conventions");
+const sdk_trace_base_1 = require("@opentelemetry/sdk-trace-base");
+const exporter_trace_otlp_http_1 = require("@opentelemetry/exporter-trace-otlp-http");
+const instrumentation_1 = require("@opentelemetry/instrumentation");
+const instrumentation_fetch_1 = require("@opentelemetry/instrumentation-fetch");
+const instrumentation_xml_http_request_1 = require("@opentelemetry/instrumentation-xml-http-request");
+const api_1 = require("@opentelemetry/api");
+const context_zone_1 = require("@opentelemetry/context-zone");
 /**
  * Initialize OpenTelemetry for web applications
  */
 function initializeWebTracer(config) {
-    var _a;
-    var serviceName = config.serviceName, serviceVersion = config.serviceVersion, environment = config.environment, _b = config.collectorUrl, collectorUrl = _b === void 0 ? 'http://localhost:4318/v1/traces' : _b, logger = config.logger;
+    const { serviceName, serviceVersion, environment, collectorUrl = 'http://localhost:4318/v1/traces', logger, } = config;
     // Create resource
-    var resource = new resources_1.Resource((_a = {},
-        _a[semantic_conventions_1.SemanticResourceAttributes.SERVICE_NAME] = serviceName,
-        _a[semantic_conventions_1.SemanticResourceAttributes.SERVICE_VERSION] = serviceVersion,
-        _a[semantic_conventions_1.SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT] = environment,
-        _a));
+    const resource = new resources_1.Resource({
+        [semantic_conventions_1.SemanticResourceAttributes.SERVICE_NAME]: serviceName,
+        [semantic_conventions_1.SemanticResourceAttributes.SERVICE_VERSION]: serviceVersion,
+        [semantic_conventions_1.SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: environment,
+    });
     // Create provider
-    var provider = new sdk_trace_web_1.WebTracerProvider({
-        resource: resource,
+    const provider = new sdk_trace_web_1.WebTracerProvider({
+        resource,
     });
     // Create OTLP exporter
-    var exporter = new exporter_trace_otlp_http_1.OTLPTraceExporter({
+    const exporter = new exporter_trace_otlp_http_1.OTLPTraceExporter({
         url: collectorUrl,
         headers: {},
     });
@@ -102,7 +54,7 @@ function initializeWebTracer(config) {
             new instrumentation_fetch_1.FetchInstrumentation({
                 propagateTraceHeaderCorsUrls: /.*/,
                 clearTimingResources: true,
-                applyCustomAttributesOnSpan: function (span, request, response) {
+                applyCustomAttributesOnSpan: (span, request, response) => {
                     span.setAttribute('http.request.method', request.method);
                     span.setAttribute('http.url', request.url);
                     if (response) {
@@ -116,12 +68,12 @@ function initializeWebTracer(config) {
             }),
         ],
     });
-    logger === null || logger === void 0 ? void 0 : logger.info('Web tracer initialized', {
+    logger?.info('Web tracer initialized', {
         custom: {
-            serviceName: serviceName,
-            serviceVersion: serviceVersion,
-            environment: environment,
-            collectorUrl: collectorUrl,
+            serviceName,
+            serviceVersion,
+            environment,
+            collectorUrl,
         },
     });
     return provider;
@@ -136,54 +88,42 @@ function getWebTracer(name, version) {
  * Start a span for web operations
  */
 function startWebSpan(name, options) {
-    var tracer = getWebTracer('web');
+    const tracer = getWebTracer('web');
     return tracer.startSpan(name, {
-        kind: (options === null || options === void 0 ? void 0 : options.kind) || api_1.SpanKind.CLIENT,
-        attributes: options === null || options === void 0 ? void 0 : options.attributes,
+        kind: options?.kind || api_1.SpanKind.CLIENT,
+        attributes: options?.attributes,
     });
 }
 /**
  * Trace a web operation
  */
-function traceWebOperation(name, operation, options) {
-    return __awaiter(this, void 0, void 0, function () {
-        var span, ctx, result, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    span = startWebSpan(name, options);
-                    ctx = api_1.trace.setSpan(api_1.context.active(), span);
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, 4, 5]);
-                    return [4 /*yield*/, api_1.context.with(ctx, function () { return operation(span); })];
-                case 2:
-                    result = _a.sent();
-                    span.setStatus({ code: api_1.SpanStatusCode.OK });
-                    return [2 /*return*/, result];
-                case 3:
-                    error_1 = _a.sent();
-                    span.setStatus({
-                        code: api_1.SpanStatusCode.ERROR,
-                        message: error_1 instanceof Error ? error_1.message : String(error_1),
-                    });
-                    if (error_1 instanceof Error) {
-                        span.recordException(error_1);
-                    }
-                    throw error_1;
-                case 4:
-                    span.end();
-                    return [7 /*endfinally*/];
-                case 5: return [2 /*return*/];
-            }
+async function traceWebOperation(name, operation, options) {
+    const span = startWebSpan(name, options);
+    const ctx = api_1.trace.setSpan(api_1.context.active(), span);
+    try {
+        const result = await api_1.context.with(ctx, () => operation(span));
+        span.setStatus({ code: api_1.SpanStatusCode.OK });
+        return result;
+    }
+    catch (error) {
+        span.setStatus({
+            code: api_1.SpanStatusCode.ERROR,
+            message: error instanceof Error ? error.message : String(error),
         });
-    });
+        if (error instanceof Error) {
+            span.recordException(error);
+        }
+        throw error;
+    }
+    finally {
+        span.end();
+    }
 }
 /**
  * Trace React component render
  */
 function traceComponentRender(componentName, props) {
-    var span = startWebSpan("Component: ".concat(componentName), {
+    const span = startWebSpan(`Component: ${componentName}`, {
         kind: api_1.SpanKind.INTERNAL,
         attributes: {
             'component.name': componentName,
@@ -196,7 +136,7 @@ function traceComponentRender(componentName, props) {
  * Trace route navigation
  */
 function traceRouteNavigation(fromRoute, toRoute) {
-    var span = startWebSpan('Route Navigation', {
+    const span = startWebSpan('Route Navigation', {
         kind: api_1.SpanKind.INTERNAL,
         attributes: {
             'navigation.from': fromRoute,
@@ -210,17 +150,21 @@ function traceRouteNavigation(fromRoute, toRoute) {
  * Trace user interaction
  */
 function traceUserInteraction(interactionType, target, metadata) {
-    var span = startWebSpan("User Interaction: ".concat(interactionType), {
+    const span = startWebSpan(`User Interaction: ${interactionType}`, {
         kind: api_1.SpanKind.INTERNAL,
-        attributes: __assign({ 'interaction.type': interactionType, 'interaction.target': target }, metadata),
+        attributes: {
+            'interaction.type': interactionType,
+            'interaction.target': target,
+            ...metadata,
+        },
     });
     return span;
 }
 function collectPerformanceMetrics() {
-    var metrics = {};
+    const metrics = {};
     if (typeof window !== 'undefined' && 'performance' in window) {
-        var paintEntries = performance.getEntriesByType('paint');
-        var fcpEntry = paintEntries.find(function (entry) { return entry.name === 'first-contentful-paint'; });
+        const paintEntries = performance.getEntriesByType('paint');
+        const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
         if (fcpEntry) {
             metrics.firstContentfulPaint = fcpEntry.startTime;
         }
@@ -228,27 +172,26 @@ function collectPerformanceMetrics() {
         if ('PerformanceObserver' in window) {
             try {
                 // LCP
-                var lcpObserver = new PerformanceObserver(function (list) {
-                    var entries = list.getEntries();
-                    var lastEntry = entries[entries.length - 1];
+                const lcpObserver = new PerformanceObserver(list => {
+                    const entries = list.getEntries();
+                    const lastEntry = entries[entries.length - 1];
                     metrics.largestContentfulPaint = lastEntry.startTime;
                 });
                 lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
                 // CLS
-                var clsValue_1 = 0;
-                var clsObserver = new PerformanceObserver(function (list) {
-                    for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
-                        var entry = _a[_i];
+                let clsValue = 0;
+                const clsObserver = new PerformanceObserver(list => {
+                    for (const entry of list.getEntries()) {
                         if (!entry.hadRecentInput) {
-                            clsValue_1 += entry.value;
+                            clsValue += entry.value;
                         }
                     }
-                    metrics.cumulativeLayoutShift = clsValue_1;
+                    metrics.cumulativeLayoutShift = clsValue;
                 });
                 clsObserver.observe({ entryTypes: ['layout-shift'] });
                 // FID
-                var fidObserver = new PerformanceObserver(function (list) {
-                    var firstEntry = list.getEntries()[0];
+                const fidObserver = new PerformanceObserver(list => {
+                    const firstEntry = list.getEntries()[0];
                     metrics.firstInputDelay = firstEntry.processingStart - firstEntry.startTime;
                 });
                 fidObserver.observe({ entryTypes: ['first-input'] });
@@ -264,14 +207,14 @@ function collectPerformanceMetrics() {
  * Add performance metrics to current span
  */
 function addPerformanceMetricsToSpan() {
-    var span = api_1.trace.getActiveSpan();
+    const span = api_1.trace.getActiveSpan();
     if (span) {
-        var metrics = collectPerformanceMetrics();
-        Object.entries(metrics).forEach(function (_a) {
-            var key = _a[0], value = _a[1];
+        const metrics = collectPerformanceMetrics();
+        Object.entries(metrics).forEach(([key, value]) => {
             if (value !== undefined) {
-                span.setAttribute("performance.".concat(key), value);
+                span.setAttribute(`performance.${key}`, value);
             }
         });
     }
 }
+//# sourceMappingURL=web-tracer.js.map

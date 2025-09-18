@@ -18,15 +18,15 @@ elasticsearch:
       cpu: 1000m
       memory: 2Gi
   volumeClaimTemplate:
-    accessModes: ["ReadWriteOnce"]
+    accessModes: ['ReadWriteOnce']
     resources:
       requests:
         storage: 10Gi
-  esJavaOpts: "-Xmx1g -Xms1g"
+  esJavaOpts: '-Xmx1g -Xms1g'
 
 # Jaeger components configuration
 agent:
-  enabled: false  # We'll use OpenTelemetry collector instead
+  enabled: false # We'll use OpenTelemetry collector instead
 
 collector:
   enabled: true
@@ -86,7 +86,7 @@ query:
 
 spark:
   enabled: true
-  schedule: "0 1 * * *"  # Run daily at 1 AM
+  schedule: '0 1 * * *' # Run daily at 1 AM
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
 
@@ -99,7 +99,7 @@ storage:
     index:
       prefix: jaeger
     # Retention configuration
-    maxSpanAge: 168h  # 7 days
+    maxSpanAge: 168h # 7 days
     numShards: 5
     numReplicas: 1
 

@@ -1,27 +1,27 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Users, UserPlus, Repeat, DollarSign } from "lucide-react"
-import type { CustomerAnalytics } from "@/types/analytics-types"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Users, UserPlus, Repeat, DollarSign } from 'lucide-react';
+import type { CustomerAnalytics } from '@/types/analytics-types';
 
 interface CustomerChartProps {
-  data: CustomerAnalytics
+  data: CustomerAnalytics;
 }
 
 export function CustomerChart({ data }: CustomerChartProps) {
-  const returningPercentage = (data.returningCustomers / data.totalCustomers) * 100
+  const returningPercentage = (data.returningCustomers / data.totalCustomers) * 100;
 
   return (
     <div className="space-y-6">
       {/* Customer Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Users className="w-4 h-4 text-blue-600" />
+              <div className="rounded-lg bg-blue-100 p-2">
+                <Users className="h-4 w-4 text-blue-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Clientes</p>
@@ -34,8 +34,8 @@ export function CustomerChart({ data }: CustomerChartProps) {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <UserPlus className="w-4 h-4 text-green-600" />
+              <div className="rounded-lg bg-green-100 p-2">
+                <UserPlus className="h-4 w-4 text-green-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Nuevos</p>
@@ -48,8 +48,8 @@ export function CustomerChart({ data }: CustomerChartProps) {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Repeat className="w-4 h-4 text-purple-600" />
+              <div className="rounded-lg bg-purple-100 p-2">
+                <Repeat className="h-4 w-4 text-purple-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Recurrentes</p>
@@ -62,8 +62,8 @@ export function CustomerChart({ data }: CustomerChartProps) {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <DollarSign className="w-4 h-4 text-orange-600" />
+              <div className="rounded-lg bg-orange-100 p-2">
+                <DollarSign className="h-4 w-4 text-orange-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Valor Promedio</p>
@@ -78,7 +78,7 @@ export function CustomerChart({ data }: CustomerChartProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
+            <Users className="h-5 w-5 text-blue-600" />
             Mejores Clientes
           </CardTitle>
         </CardHeader>
@@ -87,18 +87,18 @@ export function CustomerChart({ data }: CustomerChartProps) {
             {data.topCustomers.map((customer, index) => (
               <div
                 key={customer.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                className="flex items-center justify-between rounded-lg border p-4 hover:bg-gray-50"
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full font-semibold text-sm">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-600">
                     {index + 1}
                   </div>
                   <Avatar>
                     <AvatarFallback>
                       {customer.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')}
                     </AvatarFallback>
                   </Avatar>
                   <div>
@@ -107,9 +107,11 @@ export function CustomerChart({ data }: CustomerChartProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-semibold text-gray-900">€{customer.totalSpent.toLocaleString()}</div>
+                  <div className="font-semibold text-gray-900">
+                    €{customer.totalSpent.toLocaleString()}
+                  </div>
                   <div className="text-sm text-gray-600">{customer.totalOrders} pedidos</div>
-                  <Badge variant="outline" className="text-xs mt-1">
+                  <Badge variant="outline" className="mt-1 text-xs">
                     Último: {customer.lastOrderDate.toLocaleDateString()}
                   </Badge>
                 </div>
@@ -119,5 +121,5 @@ export function CustomerChart({ data }: CustomerChartProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

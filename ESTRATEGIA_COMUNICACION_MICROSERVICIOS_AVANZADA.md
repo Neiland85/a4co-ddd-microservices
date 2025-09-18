@@ -10,7 +10,8 @@
 
 ### ✅ **COMUNICACIÓN SÍNCRONA (REST APIs)**
 
-#### Criterios para usar REST APIs:
+#### Criterios para usar REST APIs
+
 1. **Validación inmediata requerida**
 2. **Datos críticos para completar operación actual**
 3. **Consultas de lectura en tiempo real**
@@ -18,20 +19,21 @@
 
 #### Matriz de Interacciones Síncronas
 
-| Servicio Origen | Servicio Destino | Endpoint | Justificación | Timeout | Retry |
-|-----------------|------------------|----------|---------------|---------|--------|
-| **order-service** | **inventory-service** | `GET /api/inventory/availability/{productId}` | Validación stock antes de reserva | 2s | 2x |
-| **order-service** | **payment-service** | `POST /api/payments/validate` | Validación método pago crítica | 3s | 1x |
-| **payment-service** | **user-service** | `GET /api/users/{userId}/payment-methods` | Datos requeridos para procesamiento | 1s | 3x |
-| **dashboard-web** | **product-service** | `GET /api/products/search` | UI requiere respuesta inmediata | 1s | 2x |
-| **dashboard-web** | **user-service** | `GET /api/users/profile` | Datos de sesión críticos | 0.5s | 3x |
-| **geo-service** | **artisan-service** | `GET /api/artisans/nearby` | Consulta geográfica tiempo real | 2s | 2x |
-| **admin-service** | **analytics-service** | `GET /api/analytics/dashboard` | Métricas dashboard admin | 5s | 1x |
-| **auth-service** | **user-service** | `POST /api/users/validate-token` | Seguridad crítica | 1s | 1x |
+| Servicio Origen     | Servicio Destino      | Endpoint                                      | Justificación                       | Timeout | Retry |
+| ------------------- | --------------------- | --------------------------------------------- | ----------------------------------- | ------- | ----- |
+| **order-service**   | **inventory-service** | `GET /api/inventory/availability/{productId}` | Validación stock antes de reserva   | 2s      | 2x    |
+| **order-service**   | **payment-service**   | `POST /api/payments/validate`                 | Validación método pago crítica      | 3s      | 1x    |
+| **payment-service** | **user-service**      | `GET /api/users/{userId}/payment-methods`     | Datos requeridos para procesamiento | 1s      | 3x    |
+| **dashboard-web**   | **product-service**   | `GET /api/products/search`                    | UI requiere respuesta inmediata     | 1s      | 2x    |
+| **dashboard-web**   | **user-service**      | `GET /api/users/profile`                      | Datos de sesión críticos            | 0.5s    | 3x    |
+| **geo-service**     | **artisan-service**   | `GET /api/artisans/nearby`                    | Consulta geográfica tiempo real     | 2s      | 2x    |
+| **admin-service**   | **analytics-service** | `GET /api/analytics/dashboard`                | Métricas dashboard admin            | 5s      | 1x    |
+| **auth-service**    | **user-service**      | `POST /api/users/validate-token`              | Seguridad crítica                   | 1s      | 1x    |
 
 ### ⚡ **COMUNICACIÓN ASÍNCRONA (Eventos de Dominio)**
 
-#### Criterios para usar Events:
+#### Criterios para usar Events
+
 1. **Operaciones que pueden fallar y reintentarse**
 2. **Notificaciones y side effects**
 3. **Eventual consistency acceptable**
@@ -42,6 +44,7 @@
 ## 📋 EVENTOS DE DOMINIO CLAVE POR SERVICIO
 
 ### 🛒 **Order Service - Eventos Publicados**
+
 
 ```typescript
 // Evento: Orden creada (inicia saga de procesamiento)
@@ -69,14 +72,18 @@ export interface OrderCancelledEvent {
   cancelledBy: 'customer' | 'system' | 'payment-failure';
   refundRequired: boolean;
 }
+
 ```
 
+
 **Suscriptores:**
+
 - `OrderCreatedEvent` → `inventory-service`, `payment-service`, `notification-service`, `analytics-service`
 - `OrderConfirmedEvent` → `notification-service`, `loyalty-service`, `artisan-service`, `analytics-service`
 - `OrderCancelledEvent` → `inventory-service`, `payment-service`, `notification-service`
 
 ### 📦 **Inventory Service - Eventos Publicados**
+
 
 ```typescript
 // Evento: Stock reservado exitosamente
@@ -113,15 +120,19 @@ export interface StockDepletedEvent {
   lastOrderId: string;
   artisanId: string;
 }
+
 ```
 
+
 **Suscriptores:**
+
 - `StockReservedEvent` → `order-service`, `analytics-service`
 - `StockReleasedEvent` → `order-service`, `product-service`, `analytics-service`
 - `LowStockWarningEvent` → `artisan-service`, `notification-service`
 - `StockDepletedEvent` → `artisan-service`, `notification-service`, `product-service`
 
 ### 💳 **Payment Service - Eventos Publicados**
+
 
 ```typescript
 // Evento: Pago iniciado
@@ -162,15 +173,19 @@ export interface RefundProcessedEvent {
   reason: string;
   processedAt: Date;
 }
+
 ```
 
+
 **Suscriptores:**
+
 - `PaymentInitiatedEvent` → `order-service`, `analytics-service`
 - `PaymentSucceededEvent` → `order-service`, `loyalty-service`, `notification-service`
 - `PaymentFailedEvent` → `order-service`, `inventory-service`, `notification-service`
 - `RefundProcessedEvent` → `order-service`, `notification-service`, `analytics-service`
 
 ### 👤 **User Service - Eventos Publicados**
+
 
 ```typescript
 // Evento: Usuario registrado
@@ -204,14 +219,18 @@ export interface UserPreferencesChangedEvent {
   };
   updatedAt: Date;
 }
+
 ```
 
+
 **Suscriptores:**
+
 - `UserRegisteredEvent` → `notification-service`, `loyalty-service`, `analytics-service`
 - `UserProfileUpdatedEvent` → `notification-service`, `geo-service`
 - `UserPreferencesChangedEvent` → `notification-service`, `product-service`
 
 ### 🎨 **Artisan Service - Eventos Publicados**
+
 
 ```typescript
 // Evento: Artesano verificado
@@ -244,9 +263,12 @@ export interface ArtisanStatusChangedEvent {
   reason: string;
   changedAt: Date;
 }
+
 ```
 
+
 **Suscriptores:**
+
 - `ArtisanVerifiedEvent` → `notification-service`, `product-service`, `geo-service`
 - `NewProductListedEvent` → `product-service`, `inventory-service`, `notification-service`
 - `ArtisanStatusChangedEvent` → `product-service`, `notification-service`
@@ -256,6 +278,7 @@ export interface ArtisanStatusChangedEvent {
 ## 🔄 PATRONES DE COMUNICACIÓN IMPLEMENTADOS
 
 ### 1. **Saga Pattern - Proceso de Orden Completa**
+
 
 ```typescript
 // Secuencia de eventos para crear una orden
@@ -273,9 +296,13 @@ export interface ArtisanStatusChangedEvent {
 
 // En caso de fallo en cualquier paso:
 PaymentFailedEvent → OrderCancelledEvent → StockReleasedEvent
+
+
 ```
 
+
 ### 2. **Event Sourcing para Auditoría**
+
 
 ```typescript
 // Ejemplo: Tracking completo de una orden
@@ -288,9 +315,12 @@ export interface EventStore {
 // Reconstruir estado de orden desde eventos
 const orderEvents = await eventStore.getEvents(orderId);
 const order = Order.fromEvents(orderEvents);
+
 ```
 
+
 ### 3. **CQRS (Command Query Responsibility Segregation)**
+
 
 ```typescript
 // Commands (modifican estado)
@@ -308,13 +338,16 @@ export interface GetOrderQuery {
 }
 
 // Separación clara entre escritura y lectura
+
 ```
+
 
 ---
 
 ## 🔧 IMPLEMENTACIÓN DEL MESSAGE BUS CON NATS
 
 ### Configuración Avanzada de NATS
+
 
 ```typescript
 // packages/shared-utils/src/events/enhanced-event-bus.ts
@@ -364,22 +397,21 @@ export class EnhancedNatsEventBus implements IEventBus {
         publishedAt: new Date().toISOString(),
         version: '1.0',
         source: this.serviceName,
-      }
+      },
     };
   }
 }
+
 ```
 
+
 ### Dead Letter Queue Pattern
+
 
 ```typescript
 // Manejo de eventos fallidos
 export class DeadLetterHandler {
-  async handleFailedEvent(
-    event: DomainEvent, 
-    error: Error, 
-    attempts: number
-  ): Promise<void> {
+  async handleFailedEvent(event: DomainEvent, error: Error, attempts: number): Promise<void> {
     if (attempts >= MAX_RETRY_ATTEMPTS) {
       await this.sendToDeadLetter(event, error);
       await this.notifyOperationsTeam(event, error);
@@ -393,17 +425,20 @@ export class DeadLetterHandler {
       originalEvent: event,
       error: error.message,
       failedAt: new Date(),
-      attempts: MAX_RETRY_ATTEMPTS
+      attempts: MAX_RETRY_ATTEMPTS,
     });
   }
 }
+
 ```
+
 
 ---
 
 ## 📊 MONITOREO Y OBSERVABILIDAD
 
 ### Métricas Clave
+
 
 ```typescript
 // Métricas de eventos por servicio
@@ -424,7 +459,9 @@ export interface SystemHealth {
   serviceLatency: Record<string, number>;
   errorRate: number;
 }
+
 ```
+
 
 ### Alertas Críticas
 
@@ -439,6 +476,7 @@ export interface SystemHealth {
 ## 🔒 SEGURIDAD Y CONFIABILIDAD
 
 ### Autenticación Inter-Servicios
+
 
 ```typescript
 // JWT para comunicación entre servicios
@@ -455,9 +493,12 @@ export class ServiceAuthMiddleware {
     // Verificar que el servicio puede publicar/suscribirse a topics específicos
   }
 }
+
 ```
 
+
 ### Idempotencia y Deduplicación
+
 
 ```typescript
 // Garantizar que eventos duplicados no causen problemas
@@ -473,7 +514,9 @@ export class EventDeduplicator {
     // Persistir en Redis con TTL
   }
 }
+
 ```
+
 
 ---
 

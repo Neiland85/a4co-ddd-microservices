@@ -1,3 +1,8 @@
+/**
+ * Cliente HTTP para comunicarse con el servicio de notificaciones
+ * Implementa el patrón Anti-Corruption Layer (ACL) para mantener
+ * los bounded contexts aislados
+ */
 export interface NotificationRequest {
     type: 'email' | 'sms' | 'push' | 'slack' | 'security_alert';
     priority: 'low' | 'medium' | 'high' | 'critical';
@@ -27,16 +32,36 @@ export declare class NotificationApiClient {
         timeout?: number;
         headers?: Record<string, string>;
     });
+    /**
+     * Envía una notificación
+     */
     sendNotification(request: NotificationRequest): Promise<NotificationResponse>;
+    /**
+     * Obtiene el estado de una notificación
+     */
     getNotificationStatus(notificationId: string): Promise<NotificationResponse>;
+    /**
+     * Obtiene estadísticas de notificaciones
+     */
     getNotificationStats(): Promise<NotificationStatus>;
+    /**
+     * Envía una alerta de seguridad (método conveniente)
+     */
     sendSecurityAlert(params: {
         title: string;
         message: string;
-        severity: 'low' | 'medium' | 'high' | 'critical';
+        priority: 'low' | 'medium' | 'high' | 'critical';
+        recipients: string[];
+        channels: string[];
         data?: Record<string, any>;
     }): Promise<NotificationResponse>;
+    /**
+     * Reintenta una notificación fallida
+     */
     retryNotification(notificationId: string): Promise<NotificationResponse>;
+    /**
+     * Cancela una notificación en cola
+     */
     cancelNotification(notificationId: string): Promise<void>;
 }
 export declare const notificationClient: NotificationApiClient;

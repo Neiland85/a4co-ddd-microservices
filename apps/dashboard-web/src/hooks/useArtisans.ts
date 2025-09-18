@@ -37,26 +37,21 @@ export function useArtisans(options: UseArtisansOptions = {}) {
   });
 
   // Memoizar las opciones para evitar recreaciones innecesarias
-  const memoizedOptions = useMemo(() => options, [
-    options.municipality,
-    options.specialty,
-    options.verified,
-    options.search,
-    options.autoFetch,
-  ]);
+  const memoizedOptions = useMemo(
+    () => options,
+    [options.municipality, options.specialty, options.verified, options.search, options.autoFetch]
+  );
 
   const fetchArtisans = useCallback(
     async (customOptions?: UseArtisansOptions) => {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
+      setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
         const finalOptions = { ...memoizedOptions, ...customOptions };
         const params = new URLSearchParams();
 
-        if (finalOptions.municipality)
-          params.append('municipality', finalOptions.municipality);
-        if (finalOptions.specialty)
-          params.append('specialty', finalOptions.specialty);
+        if (finalOptions.municipality) params.append('municipality', finalOptions.municipality);
+        if (finalOptions.specialty) params.append('specialty', finalOptions.specialty);
         if (finalOptions.verified !== undefined)
           params.append('verified', finalOptions.verified.toString());
         if (finalOptions.search) params.append('search', finalOptions.search);
@@ -70,7 +65,7 @@ export function useArtisans(options: UseArtisansOptions = {}) {
         const result = await response.json();
 
         if (result.success) {
-          setState((prev) => ({
+          setState(prev => ({
             ...prev,
             artisans: result.data.artisans,
             total: result.data.total,
@@ -81,13 +76,10 @@ export function useArtisans(options: UseArtisansOptions = {}) {
           throw new Error(result.error || 'Error desconocido');
         }
       } catch (error) {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           loading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : 'Error al cargar artesanos',
+          error: error instanceof Error ? error.message : 'Error al cargar artesanos',
         }));
       }
     },
@@ -124,7 +116,7 @@ export function useArtisans(options: UseArtisansOptions = {}) {
   }, [fetchArtisans]);
 
   const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
+    setState(prev => ({ ...prev, error: null }));
   }, []);
 
   // Auto-fetch en mount si está habilitado
@@ -149,11 +141,11 @@ export function useArtisans(options: UseArtisansOptions = {}) {
     hasData: state.artisans.length > 0,
     isEmpty: !state.loading && state.artisans.length === 0,
     isFiltered: Object.keys(state.filters).some(
-      (key) => state.filters[key as keyof typeof state.filters] !== undefined
+      key => state.filters[key as keyof typeof state.filters] !== undefined
     ),
-    verifiedArtisans: state.artisans.filter((artisan) => artisan.verified),
+    verifiedArtisans: state.artisans.filter(artisan => artisan.verified),
     topRatedArtisans: state.artisans
-      .filter((artisan) => artisan.rating >= 4.5)
+      .filter(artisan => artisan.rating >= 4.5)
       .sort((a, b) => b.rating - a.rating),
   };
 }
@@ -222,13 +214,11 @@ export function useArtisanStats() {
 
   const stats = {
     total: artisans.length,
-    verified: artisans.filter((a) => a.verified).length,
-    municipalities: new Set(artisans.map((a) => a.location.municipality)).size,
-    specialties: new Set(artisans.map((a) => a.specialty)).size,
+    verified: artisans.filter(a => a.verified).length,
+    municipalities: new Set(artisans.map(a => a.location.municipality)).size,
+    specialties: new Set(artisans.map(a => a.specialty)).size,
     averageRating:
-      artisans.length > 0
-        ? artisans.reduce((acc, a) => acc + a.rating, 0) / artisans.length
-        : 0,
+      artisans.length > 0 ? artisans.reduce((acc, a) => acc + a.rating, 0) / artisans.length : 0,
     totalExperience: artisans.reduce((acc, a) => acc + a.experience, 0),
   };
 

@@ -36,14 +36,14 @@ export interface ContactInfo {
 // ========================================
 
 export interface OrderItemReference {
-  productId: string;        // Solo referencia al ID
-  quantity: number;         // Cantidad solicitada
-  unitPrice: number;        // Precio al momento de la orden
-  totalPrice: number;       // Total calculado
+  productId: string; // Solo referencia al ID
+  quantity: number; // Cantidad solicitada
+  unitPrice: number; // Precio al momento de la orden
+  totalPrice: number; // Total calculado
 }
 
 // ========================================
-// PRODUCT BOUNDED CONTEXT INTERFACES  
+// PRODUCT BOUNDED CONTEXT INTERFACES
 // ========================================
 
 export interface ProductSummary {
@@ -65,7 +65,7 @@ export class OrderCreatedEvent extends DomainEvent {
     data: {
       customerId: string;
       customerEmail: string;
-      items: OrderItemReference[];  // Solo datos del contexto Order
+      items: OrderItemReference[]; // Solo datos del contexto Order
       totalAmount: number;
       currency: string;
       deliveryAddress: Address;
@@ -711,22 +711,22 @@ export interface EventValidationResult {
 export class DomainEventValidator {
   static validateOrderCreatedEvent(event: OrderCreatedEvent): EventValidationResult {
     const errors: string[] = [];
-    
+
     if (!event.eventData.customerId) {
       errors.push('customerId is required');
     }
-    
+
     if (!event.eventData.items || event.eventData.items.length === 0) {
       errors.push('items are required and cannot be empty');
     }
-    
+
     if (!event.eventData.totalAmount || event.eventData.totalAmount <= 0) {
       errors.push('totalAmount must be greater than 0');
     }
-    
+
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 

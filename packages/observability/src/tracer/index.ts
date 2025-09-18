@@ -3,16 +3,20 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { ConsoleSpanExporter, SimpleSpanProcessor, BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+  BatchSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { KoaInstrumentation } from '@opentelemetry/instrumentation-koa';
-import { 
-  trace, 
-  context, 
-  SpanStatusCode, 
+import {
+  trace,
+  context,
+  SpanStatusCode,
   SpanKind,
   Tracer,
   Span,
@@ -20,7 +24,7 @@ import {
   Context,
   propagation,
   TextMapGetter,
-  TextMapSetter
+  TextMapSetter,
 } from '@opentelemetry/api';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import { CompositePropagator, W3CBaggagePropagator } from '@opentelemetry/core';
@@ -40,7 +44,7 @@ class CustomMessagePropagator {
       set(carrier: any, key: string, value: string) {
         if (!carrier.headers) carrier.headers = {};
         carrier.headers[key] = value;
-      }
+      },
     };
     this.propagator.inject(context, carrier, setter);
   }
@@ -52,7 +56,7 @@ class CustomMessagePropagator {
       },
       get(carrier: any, key: string): string | string[] | undefined {
         return carrier.headers?.[key];
-      }
+      },
     };
     return this.propagator.extract(context, carrier, getter);
   }
@@ -61,14 +65,17 @@ class CustomMessagePropagator {
 const messagePropagator = new CustomMessagePropagator();
 
 // Enhanced tracer with context support
-function createEnhancedTracer(baseTracer: Tracer, defaultContext?: ObservabilityContext): ObservabilityTracer {
+function createEnhancedTracer(
+  baseTracer: Tracer,
+  defaultContext?: ObservabilityContext
+): ObservabilityTracer {
   const enhancedTracer = Object.create(baseTracer) as ObservabilityTracer;
 
-  enhancedTracer.withContext = function(ctx: ObservabilityContext): ObservabilityTracer {
+  enhancedTracer.withContext = function (ctx: ObservabilityContext): ObservabilityTracer {
     return createEnhancedTracer(baseTracer, { ...defaultContext, ...ctx });
   };
 
-  enhancedTracer.withDDD = function(metadata: DDDMetadata): ObservabilityTracer {
+  enhancedTracer.withDDD = function (metadata: DDDMetadata): ObservabilityTracer {
     const dddContext: ObservabilityContext = {
       ...defaultContext,
       metadata: {
@@ -81,7 +88,11 @@ function createEnhancedTracer(baseTracer: Tracer, defaultContext?: Observability
 
   // Override startSpan to include default context
   const originalStartSpan = baseTracer.startSpan.bind(baseTracer);
-  enhancedTracer.startSpan = function(name: string, options?: SpanOptions, context?: Context): Span {
+  enhancedTracer.startSpan = function (
+    name: string,
+    options?: SpanOptions,
+    context?: Context
+  ): Span {
     const attributes = {
       ...options?.attributes,
       ...defaultContext?.metadata,
@@ -110,9 +121,11 @@ function createEnhancedTracer(baseTracer: Tracer, defaultContext?: Observability
 }
 
 // Initialize tracing
-export function initializeTracing(config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string }): NodeSDK {
+export function initializeTracing(
+  config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+): NodeSDK {
   const logger = getLogger();
-  
+
   // Create resource
   const resource = Resource.default().merge(
     new Resource({
@@ -149,10 +162,7 @@ export function initializeTracing(config: TracingConfig & { serviceName: string;
   // Register the provider
   provider.register({
     propagator: new CompositePropagator({
-      propagators: [
-        new W3CTraceContextPropagator(),
-        new W3CBaggagePropagator(),
-      ],
+      propagators: [new W3CTraceContextPropagator(), new W3CBaggagePropagator()],
     }),
   });
 
@@ -192,16 +202,19 @@ export function initializeTracing(config: TracingConfig & { serviceName: string;
   // Create SDK
   const sdk = new NodeSDK({
     resource,
-    traceExporter: config.jaegerEndpoint ? new JaegerExporter({
-      endpoint: config.jaegerEndpoint,
-    }) : undefined,
+    traceExporter: config.jaegerEndpoint
+      ? new JaegerExporter({
+          endpoint: config.jaegerEndpoint,
+        })
+      : undefined,
     instrumentations: config.enableAutoInstrumentation ? [getNodeAutoInstrumentations()] : [],
   });
 
   // Initialize SDK
-  sdk.start()
+  sdk
+    .start()
     .then(() => logger.info({ exporters }, 'Tracing initialized'))
-    .catch((error) => logger.error({ error }, 'Error initializing tracing'));
+    .catch(error => logger.error({ error }, 'Error initializing tracing'));
 
   globalSDK = sdk;
 
@@ -226,11 +239,7 @@ export async function shutdownTracing(): Promise<void> {
 }
 
 // Span utilities
-export function startActiveSpan<T>(
-  name: string,
-  fn: (span: Span) => T,
-  options?: SpanOptions
-): T {
+export function startActiveSpan<T>(name: string, fn: (span: Span) => T, options?: SpanOptions): T {
   const tracer = getTracer();
   return tracer.startActiveSpan(name, options || {}, fn);
 }
@@ -240,22 +249,26 @@ export function withSpan<T>(
   fn: () => T | Promise<T>,
   options?: SpanOptions
 ): Promise<T> {
-  return startActiveSpan(name, async (span) => {
-    try {
-      const result = await fn();
-      span.setStatus({ code: SpanStatusCode.OK });
-      return result;
-    } catch (error) {
-      span.recordException(error as Error);
-      span.setStatus({ 
-        code: SpanStatusCode.ERROR, 
-        message: error instanceof Error ? error.message : 'Unknown error' 
-      });
-      throw error;
-    } finally {
-      span.end();
-    }
-  }, options);
+  return startActiveSpan(
+    name,
+    async span => {
+      try {
+        const result = await fn();
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.recordException(error as Error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error instanceof Error ? error.message : 'Unknown error',
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    },
+    options
+  );
 }
 
 // Context propagation utilities
@@ -269,11 +282,7 @@ export function extractContext(carrier: any): Context {
 }
 
 // DDD span helpers
-export function createDDDSpan(
-  name: string,
-  metadata: DDDMetadata,
-  options?: SpanOptions
-): Span {
+export function createDDDSpan(name: string, metadata: DDDMetadata, options?: SpanOptions): Span {
   const attributes: Record<string, any> = {
     ...options?.attributes,
   };

@@ -1,4 +1,5 @@
 "use strict";
+// Utilidades para manejo de fechas
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.formatRelativeTime = exports.getDaysDifference = exports.isExpired = exports.addHours = exports.addDays = exports.isValidDate = exports.parseDate = exports.formatDate = void 0;
 const formatDate = (date) => {

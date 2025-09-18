@@ -1,7 +1,7 @@
 import express from 'express';
 import { connect } from 'nats';
 import Redis from 'ioredis';
-import { 
+import {
   initializeObservability,
   expressObservabilityMiddleware,
   expressErrorHandler,
@@ -27,7 +27,7 @@ async function bootstrap() {
     serviceVersion: process.env.SERVICE_VERSION || '1.0.0',
     environment: process.env.NODE_ENV || 'development',
     logging: {
-      level: process.env.LOG_LEVEL as any || 'info',
+      level: (process.env.LOG_LEVEL as any) || 'info',
       prettyPrint: process.env.NODE_ENV === 'development',
       redact: ['password', 'creditCard', 'ssn', 'apiKey'],
     },
@@ -51,7 +51,7 @@ async function bootstrap() {
 
   // 3. Iniciar servidor Express
   const app = createExpressApp();
-  
+
   // 4. Configurar handlers DDD
   setupDomainHandlers(nats);
 
@@ -64,13 +64,13 @@ async function bootstrap() {
 // Conectar NATS con instrumentación
 async function connectNats() {
   const logger = getLogger();
-  
+
   try {
     const nc = await connect({
       servers: process.env.NATS_URL || 'nats://localhost:4222',
       name: 'order-service',
     });
-    
+
     logger.info('Connected to NATS');
     return instrumentNatsClient(nc);
   } catch (error) {
@@ -82,20 +82,20 @@ async function connectNats() {
 // Conectar Redis con instrumentación
 async function connectRedis() {
   const logger = getLogger();
-  
+
   const redis = new Redis({
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379'),
   });
-  
+
   redis.on('connect', () => {
     logger.info('Connected to Redis');
   });
-  
-  redis.on('error', (error) => {
+
+  redis.on('error', error => {
     logger.error({ error }, 'Redis error');
   });
-  
+
   return instrumentRedisClient(redis);
 }
 
@@ -105,14 +105,16 @@ function createExpressApp() {
   const logger = getLogger();
 
   // Middleware de observabilidad
-  app.use(expressObservabilityMiddleware({
-    ignorePaths: ['/health', '/metrics', '/favicon.ico'],
-    includeRequestBody: true,
-    customAttributes: (req) => ({
-      tenantId: req.headers['x-tenant-id'],
-      clientVersion: req.headers['x-client-version'],
-    }),
-  }));
+  app.use(
+    expressObservabilityMiddleware({
+      ignorePaths: ['/health', '/metrics', '/favicon.ico'],
+      includeRequestBody: true,
+      customAttributes: req => ({
+        tenantId: req.headers['x-tenant-id'],
+        clientVersion: req.headers['x-client-version'],
+      }),
+    })
+  );
 
   app.use(express.json());
 
@@ -125,7 +127,7 @@ function createExpressApp() {
   app.post('/api/orders', async (req: any, res) => {
     const correlationId = req.correlationId || generateCorrelationId();
     const causationId = generateCausationId(correlationId);
-    
+
     // Logger con contexto de la petición
     const logger = req.log.withContext({
       correlationId,
@@ -190,7 +192,7 @@ class CreateOrderCommandHandler {
   @CommandHandler('CreateOrder', 'Order')
   async handle(command: CreateOrderCommand) {
     const startTime = Date.now();
-    
+
     this.logger.info({ command: command.data }, 'Handling CreateOrder command');
 
     try {
@@ -206,10 +208,10 @@ class CreateOrderCommandHandler {
       try {
         // Lógica de negocio
         const order = await this.createOrder(command);
-        
+
         // Publicar evento
         await this.publishOrderCreatedEvent(order);
-        
+
         span.setStatus({ code: 0 });
         return order;
       } finally {
@@ -241,7 +243,7 @@ class CreateOrderCommandHandler {
 
   private async publishOrderCreatedEvent(order: any) {
     const logger = this.logger.withContext({ orderId: order.id });
-    
+
     try {
       const nats = await connectNats();
       const event = {
@@ -252,10 +254,10 @@ class CreateOrderCommandHandler {
       };
 
       await nats.publish('orders.created', JSON.stringify(event));
-      
+
       // Registrar evento en métricas
       recordEvent('OrderCreated', 'Order', 'published');
-      
+
       logger.info('OrderCreated event published');
     } catch (error) {
       logger.error({ error }, 'Failed to publish OrderCreated event');
@@ -308,15 +310,15 @@ class InventoryUpdatedEventHandler {
 async function validateOrder(orderData: any) {
   return withSpan('validateOrder', async () => {
     const errors = [];
-    
+
     if (!orderData.customerId) {
       errors.push('Customer ID is required');
     }
-    
+
     if (!orderData.items || orderData.items.length === 0) {
       errors.push('Order must contain at least one item');
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors,
@@ -326,14 +328,14 @@ async function validateOrder(orderData: any) {
 
 class ValidationError extends Error {
   statusCode = 400;
-  
+
   constructor(public errors: string[]) {
     super('Validation failed');
   }
 }
 
 // Iniciar aplicación
-bootstrap().catch((error) => {
+bootstrap().catch(error => {
   console.error('Failed to start application:', error);
   process.exit(1);
 });

@@ -2,11 +2,11 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { 
-  BatchSpanProcessor, 
-  ConsoleSpanExporter, 
+import {
+  BatchSpanProcessor,
+  ConsoleSpanExporter,
   SpanExporter,
-  Tracer 
+  Tracer,
 } from '@opentelemetry/sdk-trace-base';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
@@ -47,7 +47,7 @@ function createSpanExporter(config: TracingConfig): SpanExporter {
       ],
     });
   }
-  
+
   // Por defecto usar console exporter
   return new ConsoleSpanExporter();
 }
@@ -60,7 +60,8 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
       [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
       [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
-      [SemanticResourceAttributes.SERVICE_INSTANCE_ID]: process.env.HOSTNAME || `${config.serviceName}-${Date.now()}`,
+      [SemanticResourceAttributes.SERVICE_INSTANCE_ID]:
+        process.env.HOSTNAME || `${config.serviceName}-${Date.now()}`,
       [SemanticResourceAttributes.PROCESS_PID]: process.pid,
       [SemanticResourceAttributes.PROCESS_RUNTIME_NAME]: 'nodejs',
       [SemanticResourceAttributes.PROCESS_RUNTIME_VERSION]: process.version,
@@ -88,7 +89,7 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
 
   // Configurar instrumentaciones
   let instrumentations = config.instrumentations || [];
-  
+
   if (config.enableAutoInstrumentation !== false) {
     instrumentations = [
       ...instrumentations,
@@ -124,7 +125,9 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
 }
 
 // Inicializar métricas con Prometheus
-export function initializeMetrics(config: MetricsConfig & { serviceName: string }): PrometheusExporter {
+export function initializeMetrics(
+  config: MetricsConfig & { serviceName: string }
+): PrometheusExporter {
   prometheusExporter = new PrometheusExporter(
     {
       port: config.port || 9464,
@@ -166,7 +169,7 @@ export async function shutdown(): Promise<void> {
       console.error('Error shutting down OpenTelemetry SDK', error);
     }
   }
-  
+
   if (prometheusExporter) {
     prometheusExporter.shutdown();
   }

@@ -1,0 +1,71 @@
+# Markdownlint ignore patterns
+
+# Node modules
+node_modules/
+**/node_modules/
+
+# Build directories
+dist/
+build/
+.next/
+.turbo/
+coverage/
+out/
+
+# Generated files
+**/*.d.ts
+**/*.js.map
+**/*.d.ts.map
+
+# Package manager files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Documentation that might have different formatting requirements
+CHANGELOG.md
+LICENSE.md
+
+# Generated documentation
+docs/api/
+docs/generated/
+
+# Third-party documentation
+vendor/
+external/
+
+# Helm charts (might have special formatting)
+**/helm/**/*.md
+**/charts/**/*.md
+
+# Auto-generated files
+**/storybook-static/**/*.md
+**/.storybook/**/*.md
+
+# VS Code files
+.vscode/
+
+# IDE files
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/

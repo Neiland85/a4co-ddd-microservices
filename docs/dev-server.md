@@ -6,6 +6,7 @@ El servidor de desarrollo unificado de A4CO proporciona un entorno completo dond
 
 ## 🏗️ Arquitectura
 
+
 ```mermaid
 graph TB
     subgraph "Frontend Layer"
@@ -13,20 +14,20 @@ graph TB
         WEB[Web App<br/>Next.js]
         DASH[Dashboard<br/>Next.js]
     end
-    
+
     subgraph "API Layer"
         GW[API Gateway<br/>Traefik]
         MS1[Product Service]
         MS2[User Service]
         MS3[Order Service]
     end
-    
+
     subgraph "Infrastructure"
         DB[(PostgreSQL)]
         REDIS[(Redis)]
         NATS[NATS JetStream]
     end
-    
+
     DS -->|Import| WEB
     DS -->|Import| DASH
     WEB --> GW
@@ -41,7 +42,10 @@ graph TB
     MS2 --> NATS
     MS3 --> NATS
     GW --> REDIS
+
+
 ```
+
 
 ## 🚦 Inicio Rápido
 
@@ -54,6 +58,7 @@ graph TB
 
 ### Instalación
 
+
 ```bash
 # Clonar el repositorio
 git clone https://github.com/Neiland85/a4co-ddd-microservices.git
@@ -64,9 +69,13 @@ pnpm install
 
 # Configurar variables de entorno
 cp .env.example .env.local
+
+
 ```
 
+
 ### Comandos Principales
+
 
 ```bash
 # 🚀 Iniciar todo el entorno de desarrollo
@@ -83,13 +92,19 @@ pnpm test:visual
 
 # 📦 Build de producción
 pnpm build:all
+
+
 ```
+
 
 ## 🎨 Design System
 
 ### Estructura
 
+
 ```
+
+
 packages/design-system/
 ├── src/
 │   ├── components/      # Componentes React
@@ -100,23 +115,29 @@ packages/design-system/
 ├── .storybook/          # Configuración de Storybook
 ├── tests/               # Tests visuales
 └── tailwind.preset.js   # Preset de Tailwind
+
+
 ```
+
 
 ### Uso en Aplicaciones
 
+
 ```typescript
 // En tu aplicación Next.js
-import { Button, Card } from '@a4co/design-system'
-import { colors, spacing } from '@a4co/design-system/tokens'
+import { Button, Card } from '@a4co/design-system';
+import { colors, spacing } from '@a4co/design-system/tokens';
 
 // tailwind.config.ts
-import a4coPreset from '@a4co/design-system/tailwind'
+import a4coPreset from '@a4co/design-system/tailwind';
 
 export default {
   presets: [a4coPreset],
   // ... configuración adicional
-}
+};
+
 ```
+
 
 ### Hot Reload
 
@@ -130,18 +151,19 @@ Los cambios en el Design System se reflejan automáticamente en todas las aplica
 
 ### Servicios Disponibles
 
-| Servicio | URL | Descripción |
-|----------|-----|-------------|
-| Traefik Dashboard | http://localhost:8080 | Panel de control del proxy |
-| Design System | http://design.localhost | Storybook del DS |
-| Web App | http://localhost | Aplicación principal |
-| Dashboard | http://dashboard.localhost | Panel administrativo |
-| API Gateway | http://api.localhost | Gateway unificado |
-| PostgreSQL | localhost:5432 | Base de datos |
-| Redis | localhost:6379 | Cache y sesiones |
-| NATS | localhost:4222 | Message broker |
+| Servicio          | URL                        | Descripción                |
+| ----------------- | -------------------------- | -------------------------- |
+| Traefik Dashboard | http://localhost:8080      | Panel de control del proxy |
+| Design System     | http://design.localhost    | Storybook del DS           |
+| Web App           | http://localhost           | Aplicación principal       |
+| Dashboard         | http://dashboard.localhost | Panel administrativo       |
+| API Gateway       | http://api.localhost       | Gateway unificado          |
+| PostgreSQL        | localhost:5432             | Base de datos              |
+| Redis             | localhost:6379             | Cache y sesiones           |
+| NATS              | localhost:4222             | Message broker             |
 
 ### Comandos Docker
+
 
 ```bash
 # Iniciar servicios
@@ -158,7 +180,10 @@ docker-compose -f docker-compose.dev.yml down
 
 # Limpiar volúmenes
 docker-compose -f docker-compose.dev.yml down -v
+
+
 ```
+
 
 ## 🔄 CI/CD
 
@@ -172,17 +197,21 @@ Los workflows automatizados incluyen:
 
 ### Secretos Requeridos
 
+
 ```yaml
 VERCEL_TOKEN: Token de Vercel
 VERCEL_ORG_ID: ID de la organización
 VERCEL_PROJECT_ID: ID del proyecto
 CHROMATIC_PROJECT_TOKEN: Token de Chromatic
 TURBO_TOKEN: Token de Turborepo
+
 ```
+
 
 ## 🧪 Testing
 
 ### Tests Visuales con Playwright
+
 
 ```bash
 # Ejecutar todos los tests visuales
@@ -193,9 +222,13 @@ pnpm test:visual:update
 
 # Ver reporte HTML
 pnpm test:visual:report
+
+
 ```
 
+
 ### Tests de Componentes
+
 
 ```bash
 # Tests unitarios con Vitest
@@ -206,11 +239,15 @@ pnpm test:watch
 
 # Coverage
 pnpm test:coverage
+
+
 ```
+
 
 ## 📚 Recursos Adicionales
 
 ### Scripts Útiles
+
 
 ```json
 {
@@ -224,9 +261,12 @@ pnpm test:coverage
     "reinstall": "pnpm clean:all && pnpm install"
   }
 }
+
 ```
 
+
 ### Alias de TypeScript
+
 
 ```json
 // tsconfig.json
@@ -238,9 +278,12 @@ pnpm test:coverage
     }
   }
 }
+
 ```
 
+
 ### Configuración VSCode
+
 
 ```json
 // .vscode/settings.json
@@ -253,41 +296,47 @@ pnpm test:coverage
     "typescriptreact": "javascript"
   }
 }
+
 ```
+
 
 ## 🐛 Troubleshooting
 
 ### Problemas Comunes
 
 1. **Hot reload no funciona**
+
    ```bash
    # Verificar que el servicio sync esté activo
    docker-compose logs sync-service
-   
+
    # Reiniciar el servicio
    docker-compose restart sync-service
    ```
 
 2. **Errores de permisos en Docker**
+
    ```bash
    # En Linux, agregar usuario al grupo docker
    sudo usermod -aG docker $USER
    ```
 
 3. **Puerto ya en uso**
+
    ```bash
    # Encontrar proceso usando el puerto
    lsof -i :3000
-   
+
    # Matar el proceso
    kill -9 [PID]
    ```
 
 4. **Cambios no se reflejan**
+
    ```bash
    # Limpiar cache de Turbo
    pnpm turbo run clean
-   
+
    # Reconstruir
    pnpm build
    ```
@@ -318,4 +367,4 @@ pnpm test:coverage
 
 ---
 
-*Última actualización: Diciembre 2024*
+_Última actualización: Diciembre 2024_

@@ -4,15 +4,19 @@
 
 ### **Stack Tecnológico**
 
+
 ```typescript
 // Framework: Next.js 15.4.1 + React 19
 // Styling: Tailwind CSS 4
 // UI Library: Radix UI components
 // TypeScript: Strict mode habilitado
 // Hooks: Custom hooks integrados
+
 ```
 
+
 ### **🎨 Paleta de Colores Oficial de Jaén**
+
 
 ```css
 :root {
@@ -28,9 +32,12 @@
   --gradient-secondary: from-green-500 to-emerald-600;
   --gradient-background: from-amber-50 via-white to-amber-50;
 }
+
 ```
 
+
 ### **📦 Tipos TypeScript Existentes**
+
 
 ```typescript
 // Producto Local
@@ -89,41 +96,48 @@ interface SalesOpportunity {
   tags: string[];
   contact: string;
 }
+
 ```
+
 
 ### **🪝 Hooks Disponibles**
 
+
 ```typescript
 // Hook de productos
-const { products, loading, error, searchProducts, filterByCategory } =
-  useProducts();
+const { products, loading, error, searchProducts, filterByCategory } = useProducts();
 
 // Hook de artesanos
 const { artisans, loading, searchArtisans, filterBySpeciality } = useArtisans();
 
 // Hook de oportunidades
-const { opportunities, loading, createOpportunity, updateStatus } =
-  useSalesOpportunities();
+const { opportunities, loading, createOpportunity, updateStatus } = useSalesOpportunities();
 
 // Hook de geolocalización
-const { position, loading, getNearbyArtisans, calculateDistance } =
-  useGeolocation();
+const { position, loading, getNearbyArtisans, calculateDistance } = useGeolocation();
+
 ```
 
+
 ### **🎯 APIs Disponibles**
+
 
 ```typescript
 // Endpoints funcionales
 GET /api/products?category=aceites&search=oliva&limit=10
 GET /api/artisans?speciality=aceites&location=Jaén
 GET /api/sales-opportunities?status=active&category=aceites
+
+
 ```
+
 
 ---
 
 ## 🎨 **PROMPTS PARA V0.DEV**
 
 ### **1. 🏠 ProductCatalog Mejorado**
+
 
 ````prompt
 Crear un catálogo de productos premium para un mercado local de aceite de oliva de Jaén, España.
@@ -138,6 +152,8 @@ ESPECIFICACIONES:
 - Tema: Paleta dorada inspirada en aceite de oliva + iconografía española 🫒
 
 PROPS INTERFACE:
+
+
 ```typescript
 interface ProductCatalogProps {
   products: LocalProduct[];
@@ -158,6 +174,8 @@ interface LocalProduct {
   certifications: string[];
   seasonal: boolean;
 }
+
+
 ````
 
 CARACTERÍSTICAS ESPECIALES:
@@ -168,9 +186,12 @@ CARACTERÍSTICAS ESPECIALES:
 - Loading skeleton con aceitunas animadas
 - Responsive design con breakpoints de Tailwind
 
+
 ````
 
 ### **2. 🔍 ProductSearch Avanzado**
+
+
 
 ```prompt
 Crear un componente de búsqueda avanzada para productos locales de Jaén con autocompletado y filtros inteligentes.
@@ -184,6 +205,8 @@ ESPECIFICACIONES:
 - Tema: Paleta amber/yellow con iconografía de Jaén
 
 PROPS INTERFACE:
+
+
 ```typescript
 interface ProductSearchProps {
   onSearch: (query: string, filters?: SearchFilters) => void;
@@ -199,6 +222,8 @@ interface SearchFilters {
   seasonal?: boolean;
   certified?: boolean;
 }
+
+
 ````
 
 CARACTERÍSTICAS:
@@ -209,9 +234,12 @@ CARACTERÍSTICAS:
 - Keyboard navigation (arrow keys, enter, escape)
 - Mobile-first design con gestos touch
 
+
 ````
 
 ### **3. 👥 ArtisanDirectory Premium**
+
+
 
 ```prompt
 Diseñar un directorio elegante de artesanos y productores locales de Jaén con mapas integrados y perfiles detallados.
@@ -225,6 +253,8 @@ ESPECIFICACIONES:
 - Tema: Paleta earth tones + gold accents
 
 PROPS INTERFACE:
+
+
 ```typescript
 interface ArtisanDirectoryProps {
   artisans: LocalArtisan[];
@@ -245,6 +275,8 @@ interface LocalArtisan {
   verified: boolean;
   contact: { phone: string; email: string; };
 }
+
+
 ````
 
 CARACTERÍSTICAS:
@@ -255,9 +287,12 @@ CARACTERÍSTICAS:
 - Skeleton loading para cada card
 - Responsive con masonry layout en desktop
 
+
 ````
 
 ### **4. 💼 SalesOpportunityBoard**
+
+
 
 ```prompt
 Crear un tablero Kanban moderno para oportunidades de venta de productos locales de Jaén.
@@ -271,6 +306,8 @@ ESPECIFICACIONES:
 - Tema: Business colors con gold accents
 
 PROPS INTERFACE:
+
+
 ```typescript
 interface SalesOpportunityBoardProps {
   opportunities: SalesOpportunity[];
@@ -290,6 +327,8 @@ interface SalesOpportunity {
   location: string;
   producer: string;
 }
+
+
 ````
 
 CARACTERÍSTICAS:
@@ -300,9 +339,12 @@ CARACTERÍSTICAS:
 - Drag & drop con feedback visual
 - Stats header con métricas clave
 
+
 ````
 
 ### **5. 🗺️ MarketplaceDashboard Principal**
+
+
 
 ```prompt
 Diseñar un dashboard ejecutivo para el mercado local de Jaén con métricas, mapas y resumen de actividad.
@@ -316,6 +358,8 @@ ESPECIFICACIONES:
 - Tema: Executive dashboard con gold/amber palette
 
 PROPS INTERFACE:
+
+
 ```typescript
 interface MarketplaceDashboardProps {
   stats: DashboardStats;
@@ -331,6 +375,8 @@ interface DashboardStats {
   salesVolume: number;
   averageRating: number;
 }
+
+
 ````
 
 CARACTERÍSTICAS:
@@ -341,7 +387,10 @@ CARACTERÍSTICAS:
 - Interactive tooltips y modals
 - Export/share functionality
 
+
 ```
+
+
 
 ---
 
@@ -364,7 +413,10 @@ CARACTERÍSTICAS:
 
 ### **📁 Estructura de Archivos Sugerida**
 
+
+
 ```
+
 
 src/components/
 ├── market/ # Componentes actuales
@@ -382,9 +434,15 @@ src/components/
 ├── card.tsx
 └── input.tsx
 
+
 ```
+
+
 
 ### **🔗 Scripts de Integración**
 
 Voy a crear scripts para facilitar la integración:
+
+
 ```
+

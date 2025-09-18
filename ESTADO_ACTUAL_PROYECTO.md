@@ -8,6 +8,7 @@
 ## 🔍 ANÁLISIS DEL PROYECTO
 
 ### Estructura del Proyecto
+
 - **Tipo:** Monorepo con arquitectura de microservicios
 - **Gestor de paquetes:** pnpm workspaces
 - **Stack principal:**
@@ -20,6 +21,7 @@
 ### Aplicaciones Disponibles
 
 #### Frontend (apps/web/v0dev/)
+
 - **a-head**: Aplicación web principal
 - **b-business-registration**: Registro de negocios
 - **c-artisan-dashboard**: Dashboard de artesanos
@@ -29,9 +31,11 @@
 - **g-banner-cookie**: Banner de cookies
 
 #### Dashboard Principal
+
 - **apps/dashboard-web**: Mercado Local de Jaén (tema específico)
 
 #### Microservicios Backend (apps/)
+
 - admin-service
 - analytics-service
 - artisan-service
@@ -49,6 +53,7 @@
 - user-service
 
 #### Paquetes Compartidos (packages/)
+
 - **design-system**: Sistema de diseño con Storybook
 - **observability**: Telemetría y observabilidad
 - **shared-utils**: Utilidades compartidas y DDD
@@ -73,6 +78,7 @@
    - Ubicación: `/packages/design-system`
 
 ### APIs Disponibles (Dashboard)
+
 - http://localhost:3001/api/sales-opportunities
 - http://localhost:3001/api/products
 - http://localhost:3001/api/artisans
@@ -103,6 +109,8 @@
 ## 📋 COMANDOS DISPONIBLES
 
 ### Comandos Globales (desde la raíz)
+
+
 ```bash
 # Desarrollo
 pnpm run dev                  # Levantar todo en modo desarrollo
@@ -125,9 +133,14 @@ pnpm run db:migrate         # Ejecutar migraciones
 pnpm run clean              # Limpiar builds
 pnpm run clean:all          # Limpiar todo incluido node_modules
 pnpm run reinstall          # Reinstalar todo desde cero
+
+
 ```
 
+
 ### Comandos Específicos
+
+
 ```bash
 # Dashboard
 ./start-dashboard.sh         # Script específico del dashboard
@@ -140,7 +153,10 @@ pnpm run storybook:dev      # Levantar Storybook
 pnpm run docker:up          # Levantar infraestructura
 pnpm run docker:down        # Detener infraestructura
 pnpm run docker:logs        # Ver logs
+
+
 ```
+
 
 ---
 

@@ -18,11 +18,11 @@ export class PrismaProductRepository implements ProductRepository {
       include: {
         variants: true,
         images: {
-          orderBy: { sortOrder: 'asc' }
+          orderBy: { sortOrder: 'asc' },
         },
         attributes: true,
-        category: true
-      }
+        category: true,
+      },
     });
 
     if (!product) {
@@ -38,11 +38,11 @@ export class PrismaProductRepository implements ProductRepository {
       include: {
         variants: true,
         images: {
-          orderBy: { sortOrder: 'asc' }
+          orderBy: { sortOrder: 'asc' },
         },
         attributes: true,
-        category: true
-      }
+        category: true,
+      },
     });
 
     if (!product) {
@@ -52,27 +52,30 @@ export class PrismaProductRepository implements ProductRepository {
     return this.mapper.toDomain(product);
   }
 
-  async findByCategory(categoryId: string, options?: {
-    skip?: number;
-    take?: number;
-    onlyActive?: boolean;
-  }): Promise<Product[]> {
+  async findByCategory(
+    categoryId: string,
+    options?: {
+      skip?: number;
+      take?: number;
+      onlyActive?: boolean;
+    }
+  ): Promise<Product[]> {
     const products = await this.prisma.product.findMany({
       where: {
         categoryId,
-        ...(options?.onlyActive ? { isActive: true } : {})
+        ...(options?.onlyActive ? { isActive: true } : {}),
       },
       skip: options?.skip,
       take: options?.take,
       include: {
         variants: true,
         images: {
-          orderBy: { sortOrder: 'asc' }
+          orderBy: { sortOrder: 'asc' },
         },
         attributes: true,
-        category: true
+        category: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return Promise.all(products.map(p => this.mapper.toDomain(p)));
@@ -89,26 +92,36 @@ export class PrismaProductRepository implements ProductRepository {
   }): Promise<{ products: Product[]; total: number }> {
     const where: Prisma.ProductWhereInput = {
       AND: [
-        criteria.query ? {
-          OR: [
-            { name: { contains: criteria.query, mode: 'insensitive' } },
-            { description: { contains: criteria.query, mode: 'insensitive' } },
-            { sku: { contains: criteria.query, mode: 'insensitive' } }
-          ]
-        } : {},
-        criteria.categoryIds ? {
-          categoryId: { in: criteria.categoryIds }
-        } : {},
-        criteria.minPrice !== undefined ? {
-          price: { gte: criteria.minPrice }
-        } : {},
-        criteria.maxPrice !== undefined ? {
-          price: { lte: criteria.maxPrice }
-        } : {},
-        criteria.isActive !== undefined ? {
-          isActive: criteria.isActive
-        } : {}
-      ]
+        criteria.query
+          ? {
+              OR: [
+                { name: { contains: criteria.query, mode: 'insensitive' } },
+                { description: { contains: criteria.query, mode: 'insensitive' } },
+                { sku: { contains: criteria.query, mode: 'insensitive' } },
+              ],
+            }
+          : {},
+        criteria.categoryIds
+          ? {
+              categoryId: { in: criteria.categoryIds },
+            }
+          : {},
+        criteria.minPrice !== undefined
+          ? {
+              price: { gte: criteria.minPrice },
+            }
+          : {},
+        criteria.maxPrice !== undefined
+          ? {
+              price: { lte: criteria.maxPrice },
+            }
+          : {},
+        criteria.isActive !== undefined
+          ? {
+              isActive: criteria.isActive,
+            }
+          : {},
+      ],
     };
 
     const [products, total] = await this.prisma.$transaction([
@@ -119,27 +132,25 @@ export class PrismaProductRepository implements ProductRepository {
         include: {
           variants: true,
           images: {
-            orderBy: { sortOrder: 'asc' }
+            orderBy: { sortOrder: 'asc' },
           },
           attributes: true,
-          category: true
+          category: true,
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.product.count({ where })
+      this.prisma.product.count({ where }),
     ]);
 
-    const domainProducts = await Promise.all(
-      products.map(p => this.mapper.toDomain(p))
-    );
+    const domainProducts = await Promise.all(products.map(p => this.mapper.toDomain(p)));
 
     return { products: domainProducts, total };
   }
 
   async save(product: Product): Promise<void> {
     const data = this.mapper.toPersistence(product);
-    
-    await this.prisma.$transaction(async (tx) => {
+
+    await this.prisma.$transaction(async tx => {
       // Guardar o actualizar el producto
       await tx.product.upsert({
         where: { id: product.productId.toString() },
@@ -152,7 +163,7 @@ export class PrismaProductRepository implements ProductRepository {
           currency: data.currency,
           categoryId: data.categoryId,
           isActive: data.isActive,
-          version: data.version
+          version: data.version,
         },
         update: {
           name: data.name,
@@ -161,8 +172,8 @@ export class PrismaProductRepository implements ProductRepository {
           currency: data.currency,
           categoryId: data.categoryId,
           isActive: data.isActive,
-          version: { increment: 1 } // Optimistic locking
-        }
+          version: { increment: 1 }, // Optimistic locking
+        },
       });
 
       // Sincronizar variantes
@@ -184,13 +195,13 @@ export class PrismaProductRepository implements ProductRepository {
 
   async delete(id: ProductId): Promise<void> {
     await this.prisma.product.delete({
-      where: { id: id.toString() }
+      where: { id: id.toString() },
     });
   }
 
   async exists(id: ProductId): Promise<boolean> {
     const count = await this.prisma.product.count({
-      where: { id: id.toString() }
+      where: { id: id.toString() },
     });
     return count > 0;
   }
@@ -202,7 +213,7 @@ export class PrismaProductRepository implements ProductRepository {
   ): Promise<void> {
     // Obtener variantes existentes
     const existingVariants = await tx.productVariant.findMany({
-      where: { productId }
+      where: { productId },
     });
 
     const existingIds = existingVariants.map(v => v.id);
@@ -212,7 +223,7 @@ export class PrismaProductRepository implements ProductRepository {
     const toDelete = existingIds.filter(id => !newIds.includes(id));
     if (toDelete.length > 0) {
       await tx.productVariant.deleteMany({
-        where: { id: { in: toDelete } }
+        where: { id: { in: toDelete } },
       });
     }
 
@@ -229,7 +240,7 @@ export class PrismaProductRepository implements ProductRepository {
           stockQuantity: variant.stockQuantity,
           reservedQuantity: variant.reservedQuantity,
           attributes: variant.attributes,
-          isActive: variant.isActive
+          isActive: variant.isActive,
         },
         update: {
           name: variant.name,
@@ -237,8 +248,8 @@ export class PrismaProductRepository implements ProductRepository {
           stockQuantity: variant.stockQuantity,
           reservedQuantity: variant.reservedQuantity,
           attributes: variant.attributes,
-          isActive: variant.isActive
-        }
+          isActive: variant.isActive,
+        },
       });
     }
   }
@@ -250,7 +261,7 @@ export class PrismaProductRepository implements ProductRepository {
   ): Promise<void> {
     // Eliminar todas las imágenes existentes
     await tx.productImage.deleteMany({
-      where: { productId }
+      where: { productId },
     });
 
     // Crear nuevas imágenes
@@ -262,8 +273,8 @@ export class PrismaProductRepository implements ProductRepository {
           url: img.url,
           alt: img.alt,
           isPrimary: img.isPrimary,
-          sortOrder: img.sortOrder
-        }))
+          sortOrder: img.sortOrder,
+        })),
       });
     }
   }
@@ -275,7 +286,7 @@ export class PrismaProductRepository implements ProductRepository {
   ): Promise<void> {
     // Eliminar todos los atributos existentes
     await tx.productAttribute.deleteMany({
-      where: { productId }
+      where: { productId },
     });
 
     // Crear nuevos atributos
@@ -286,33 +297,30 @@ export class PrismaProductRepository implements ProductRepository {
           productId,
           name: attr.name,
           value: attr.value,
-          groupName: attr.groupName
-        }))
+          groupName: attr.groupName,
+        })),
       });
     }
   }
 
-  private async saveDomainEvents(
-    tx: Prisma.TransactionClient,
-    product: Product
-  ): Promise<void> {
+  private async saveDomainEvents(tx: Prisma.TransactionClient, product: Product): Promise<void> {
     const events = product.getUncommittedEvents();
-    
+
     if (events.length > 0) {
       await tx.domainEvent.createMany({
         data: events.map(event => ({
           aggregateId: product.productId.toString(),
           eventType: event.constructor.name,
           eventData: JSON.stringify(event),
-          occurredAt: event.occurredAt
-        }))
+          occurredAt: event.occurredAt,
+        })),
       });
     }
   }
 
   // Método para procesamiento batch
   async saveMany(products: Product[]): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async tx => {
       for (const product of products) {
         await this.save(product);
       }
@@ -326,7 +334,7 @@ export class PrismaProductRepository implements ProductRepository {
   ): Promise<{ available: boolean; quantity: number }> {
     if (variantId) {
       const variant = await this.prisma.productVariant.findUnique({
-        where: { id: variantId }
+        where: { id: variantId },
       });
 
       if (!variant) {
@@ -336,13 +344,13 @@ export class PrismaProductRepository implements ProductRepository {
       const available = variant.stockQuantity - variant.reservedQuantity;
       return {
         available: available > 0,
-        quantity: available
+        quantity: available,
       };
     }
 
     // Si no se especifica variante, devolver el total del producto
     const variants = await this.prisma.productVariant.findMany({
-      where: { productId: productId.toString() }
+      where: { productId: productId.toString() },
     });
 
     const totalAvailable = variants.reduce(
@@ -352,7 +360,7 @@ export class PrismaProductRepository implements ProductRepository {
 
     return {
       available: totalAvailable > 0,
-      quantity: totalAvailable
+      quantity: totalAvailable,
     };
   }
 }

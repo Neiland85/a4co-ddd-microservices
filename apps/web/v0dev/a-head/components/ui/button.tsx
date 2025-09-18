@@ -1,5 +1,5 @@
-import * as React from "react";
-import { cn } from "../../lib/utils";
+import * as React from 'react';
+import { cn } from '../../lib/utils';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   readonly asChild?: boolean;
@@ -11,7 +11,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         <span
           className={cn(
-            "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+            'focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
             className
           )}
           {...(props as React.HTMLAttributes<HTMLSpanElement>)}
@@ -22,7 +22,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          'focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
           className
         )}
         ref={ref}
@@ -31,7 +31,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
-Button.displayName = "Button";
+Button.displayName = 'Button';
 
 export { Button };
-

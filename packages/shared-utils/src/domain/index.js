@@ -15,7 +15,4 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./base-entity"), exports);
-__exportStar(require("./value-object"), exports);
-__exportStar(require("./domain-event"), exports);
-__exportStar(require("./aggregate-root"), exports);
 //# sourceMappingURL=index.js.map

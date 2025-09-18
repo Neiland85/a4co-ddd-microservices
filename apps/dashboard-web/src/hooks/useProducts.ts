@@ -40,9 +40,7 @@ export function useProducts(options: UseProductsOptions = {}) {
     // Solo actualizamos si hay cambios reales en las opciones
     const current = optionsRef.current;
     const hasChanged = Object.keys({ ...current, ...options }).some(
-      (key) =>
-        current[key as keyof UseProductsOptions] !==
-        options[key as keyof UseProductsOptions]
+      key => current[key as keyof UseProductsOptions] !== options[key as keyof UseProductsOptions]
     );
 
     if (hasChanged) {
@@ -69,23 +67,20 @@ export function useProducts(options: UseProductsOptions = {}) {
 
   const fetchProducts = useCallback(
     async (customOptions?: UseProductsOptions, append = false) => {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
+      setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
         const finalOptions = { ...stableOptions, ...customOptions };
         const params = new URLSearchParams();
 
-        if (finalOptions.category)
-          params.append('category', finalOptions.category);
-        if (finalOptions.location)
-          params.append('location', finalOptions.location);
+        if (finalOptions.category) params.append('category', finalOptions.category);
+        if (finalOptions.location) params.append('location', finalOptions.location);
         if (finalOptions.seasonal !== undefined)
           params.append('seasonal', finalOptions.seasonal.toString());
         if (finalOptions.available !== undefined)
           params.append('available', finalOptions.available.toString());
         if (finalOptions.search) params.append('search', finalOptions.search);
-        if (finalOptions.limit)
-          params.append('limit', finalOptions.limit.toString());
+        if (finalOptions.limit) params.append('limit', finalOptions.limit.toString());
 
         const response = await fetch(`/api/products?${params.toString()}`);
 
@@ -96,11 +91,9 @@ export function useProducts(options: UseProductsOptions = {}) {
         const result = await response.json();
 
         if (result.success) {
-          setState((prev) => ({
+          setState(prev => ({
             ...prev,
-            products: append
-              ? [...prev.products, ...result.data.products]
-              : result.data.products,
+            products: append ? [...prev.products, ...result.data.products] : result.data.products,
             pagination: result.data.pagination,
             filters: result.data.filters,
             loading: false,
@@ -109,13 +102,10 @@ export function useProducts(options: UseProductsOptions = {}) {
           throw new Error(result.error || 'Error desconocido');
         }
       } catch (error) {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           loading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : 'Error al cargar productos',
+          error: error instanceof Error ? error.message : 'Error al cargar productos',
         }));
       }
     },
@@ -169,7 +159,7 @@ export function useProducts(options: UseProductsOptions = {}) {
   }, [fetchProducts]);
 
   const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
+    setState(prev => ({ ...prev, error: null }));
   }, []);
 
   const reset = useCallback(() => {
@@ -213,7 +203,7 @@ export function useProducts(options: UseProductsOptions = {}) {
     hasData: state.products.length > 0,
     isEmpty: !state.loading && state.products.length === 0,
     isFiltered: Object.keys(state.filters).some(
-      (key) => state.filters[key as keyof typeof state.filters] !== undefined
+      key => state.filters[key as keyof typeof state.filters] !== undefined
     ),
     canLoadMore: state.pagination.hasMore && !state.loading,
   };

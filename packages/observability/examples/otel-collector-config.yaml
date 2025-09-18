@@ -8,8 +8,8 @@ receivers:
         endpoint: 0.0.0.0:4318
         cors:
           allowed_origins:
-            - "http://*"
-            - "https://*"
+            - 'http://*'
+            - 'https://*'
 
   # Scrape Prometheus metrics
   prometheus:
@@ -45,8 +45,8 @@ processors:
   # Span processing
   span:
     name:
-      from_attributes: ["http.method", "http.target"]
-      separator: " "
+      from_attributes: ['http.method', 'http.target']
+      separator: ' '
 
   # Attributes processing
   attributes:
@@ -69,7 +69,7 @@ exporters:
 
   # Export to Prometheus
   prometheus:
-    endpoint: "0.0.0.0:8889"
+    endpoint: '0.0.0.0:8889'
     namespace: otel
     const_labels:
       label1: value1
@@ -104,20 +104,20 @@ extensions:
 
 service:
   extensions: [health_check, pprof, zpages]
-  
+
   pipelines:
     # Traces pipeline
     traces:
       receivers: [otlp]
       processors: [memory_limiter, batch, span, attributes, resource]
       exporters: [jaeger, logging]
-    
+
     # Metrics pipeline
     metrics:
       receivers: [otlp, prometheus]
       processors: [memory_limiter, batch, resource]
       exporters: [prometheus, logging]
-    
+
     # Logs pipeline (if needed)
     logs:
       receivers: [otlp]

@@ -25,6 +25,7 @@ Se ha desarrollado una **arquitectura completa de integración** que conecta API
 
 **Ruta:** `/api/sales-opportunities`
 
+
 ```typescript
 // Funcionalidades implementadas:
 - GET: Búsqueda con filtros (tipo, ubicación, categoría)
@@ -45,7 +46,10 @@ interface SalesOpportunity {
   contactInfo: ContactInfo;
   priority: 'alta' | 'media' | 'baja';
 }
+
+
 ```
+
 
 **Ejemplos de datos mock:**
 
@@ -56,6 +60,7 @@ interface SalesOpportunity {
 ### API de Productos Locales
 
 **Ruta:** `/api/products`
+
 
 ```typescript
 // Funcionalidades implementadas:
@@ -72,11 +77,15 @@ interface SalesOpportunity {
 - 🥓 Jamón (Jamón Ibérico de Andújar)
 - 🫒 Aceitunas (Aceitunas Aliñadas de Mengíbar)
 - 🏺 Artesanía (Cerámica de Úbeda)
+
+
 ```
+
 
 ### API de Artesanos/Productores
 
 **Ruta:** `/api/artisans`
+
 
 ```typescript
 // Funcionalidades implementadas:
@@ -90,7 +99,10 @@ interface SalesOpportunity {
 - Cooperativa Olivarera San José (Úbeda)
 - Quesería Los Olivos (Cazorla)
 - Taller Cerámico Paco Tito (Úbeda)
+
+
 ```
+
 
 ---
 
@@ -99,6 +111,7 @@ interface SalesOpportunity {
 ### 1. `useSalesOpportunities`
 
 **Hook principal para oportunidades de venta**
+
 
 ```typescript
 // Características implementadas:
@@ -117,11 +130,15 @@ const { opportunities, loading, error, fetchOpportunities } = useSalesOpportunit
   location: 'Úbeda',
   autoFetch: true
 });
+
+
 ```
+
 
 ### 2. `useProducts`
 
 **Hook para gestión de productos locales**
+
 
 ```typescript
 // Características implementadas:
@@ -148,11 +165,15 @@ const {
   available: true,
   limit: 12
 });
+
+
 ```
+
 
 ### 3. `useArtisans`
 
 **Hook para gestión de artesanos/productores**
+
 
 ```typescript
 // Características implementadas:
@@ -170,11 +191,15 @@ const {
 // Estadísticas automáticas:
 const { stats } = useArtisanStats();
 // stats.total, stats.verified, stats.municipalities, etc.
+
+
 ```
+
 
 ### 4. `useGeolocation`
 
 **Hook para geolocalización y mapas**
+
 
 ```typescript
 // Características implementadas:
@@ -193,7 +218,10 @@ const {
   findNearbyLocations,
   calculateDistance
 } = useGeolocation({ autoStart: true });
+
+
 ```
+
 
 ---
 
@@ -202,6 +230,7 @@ const {
 ### 1. `ProductCatalog`
 
 **Catálogo principal de productos con filtros**
+
 
 ```tsx
 // Características implementadas:
@@ -218,11 +247,15 @@ const {
 - ProductCatalog (principal)
 - ProductCard (tarjeta individual)
 - ProductFilters (filtros avanzados)
+
+
 ```
+
 
 ### 2. `ProductSearch`
 
 **Búsqueda inteligente en tiempo real**
+
 
 ```tsx
 // Características implementadas:
@@ -238,11 +271,15 @@ const {
 - SearchBar (barra de búsqueda)
 - QuickFilters (filtros rápidos)
 - SearchResults (resultados)
+
+
 ```
+
 
 ### 3. `MarketplaceDashboard`
 
 **Dashboard principal completamente integrado**
+
 
 ```tsx
 // Características implementadas:
@@ -260,7 +297,10 @@ const {
 - MarketStats: Métricas en tiempo real
 - QuickActions: Navegación rápida
 - StatsCard: Tarjetas de estadísticas
+
+
 ```
+
 
 ---
 
@@ -268,7 +308,10 @@ const {
 
 ### Arquitectura de Integración
 
+
 ```
+
+
 🌐 APIs Backend (Next.js Route Handlers)
     ↓ HTTP Requests
 🎣 Custom Hooks (Estado + Lógica)
@@ -276,9 +319,12 @@ const {
 🎨 UI Components (Presentación)
     ↓ User Interactions
 🔄 Estado Global (React + TypeScript)
+
+
 ```
 
-### Ejemplo de Flujo Completo:
+
+### Ejemplo de Flujo Completo
 
 1. **Usuario abre el dashboard**
    - `MarketplaceDashboard` se monta
@@ -304,36 +350,54 @@ const {
 
 ### APIs Implementadas
 
+
 ```
+
+
 ✅ 3/3 APIs principales completamente funcionales
 ✅ 12+ endpoints diferentes
 ✅ Filtros, paginación, búsqueda implementados
 ✅ Datos mock realistas de 6 productos y 3 artesanos
 ✅ Manejo de errores robusto
 ✅ Tipos TypeScript completos
+
+
 ```
+
 
 ### Hooks Personalizados
 
+
 ```
+
+
 ✅ 4 hooks principales + 8 hooks especializados
 ✅ 100% tipado con TypeScript
 ✅ Estados optimizados (loading, error, data)
 ✅ Debounce implementado donde necesario
 ✅ Cache y optimizaciones automáticas
 ✅ Reutilización y composición avanzada
+
+
 ```
+
 
 ### Componentes UI
 
+
 ```
+
+
 ✅ 5 componentes principales + 10 subcomponentes
 ✅ Responsive design completo
 ✅ Estados de carga y error elegantes
 ✅ Accesibilidad considerada
 ✅ Integración completa con hooks
 ✅ Tailwind CSS optimizado
+
+
 ```
+
 
 ---
 

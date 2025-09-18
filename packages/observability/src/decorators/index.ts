@@ -32,30 +32,33 @@ export function Trace(options: TraceDecoratorOptions = {}) {
 
       try {
         const result = await originalMethod.apply(this, args);
-        
+
         span.setStatus({ code: SpanStatusCode.OK });
-        
+
         if (options.recordResult) {
           span.setAttribute('result', JSON.stringify(result));
         }
-        
-        logger.debug({ result: options.recordResult ? result : undefined }, `${spanName} completed`);
-        
+
+        logger.debug(
+          { result: options.recordResult ? result : undefined },
+          `${spanName} completed`
+        );
+
         return result;
       } catch (error) {
         const err = error as Error;
-        
+
         if (options.recordException !== false) {
           span.recordException(err);
         }
-        
+
         span.setStatus({
           code: SpanStatusCode.ERROR,
           message: err.message,
         });
-        
+
         logger.error({ error: err, stack: err.stack }, `${spanName} failed`);
-        
+
         throw error;
       } finally {
         span.end();
@@ -75,9 +78,9 @@ export function Log(level: 'debug' | 'info' | 'warn' | 'error' = 'info') {
     descriptor.value = async function (...args: any[]) {
       const logger = getLogger();
       const methodName = `${className}.${propertyName}`;
-      
+
       logger[level]({ method: methodName, args }, `Executing ${methodName}`);
-      
+
       try {
         const result = await originalMethod.apply(this, args);
         logger[level]({ method: methodName, result }, `${methodName} completed`);
@@ -118,14 +121,14 @@ export function CommandHandler(commandName: string, aggregateName: string) {
 
       try {
         const result = await originalMethod.apply(this, args);
-        
+
         span.setStatus({ code: SpanStatusCode.OK });
-        
+
         const duration = Date.now() - startTime;
         logger.info({ command: commandName, duration }, 'Command executed successfully');
-        
+
         recordCommandExecution(commandName, aggregateName, true, duration);
-        
+
         return result;
       } catch (error) {
         const err = error as Error;
@@ -134,12 +137,12 @@ export function CommandHandler(commandName: string, aggregateName: string) {
           code: SpanStatusCode.ERROR,
           message: err.message,
         });
-        
+
         const duration = Date.now() - startTime;
         logger.error({ command: commandName, error: err, duration }, 'Command execution failed');
-        
+
         recordCommandExecution(commandName, aggregateName, false, duration);
-        
+
         throw error;
       } finally {
         span.end();
@@ -175,13 +178,13 @@ export function EventHandler(eventName: string, aggregateName: string) {
 
       try {
         const result = await originalMethod.apply(this, args);
-        
+
         span.setStatus({ code: SpanStatusCode.OK });
-        
+
         logger.info({ event: eventName }, 'Event processed successfully');
-        
+
         recordEvent(eventName, aggregateName, 'processed');
-        
+
         return result;
       } catch (error) {
         const err = error as Error;
@@ -190,9 +193,9 @@ export function EventHandler(eventName: string, aggregateName: string) {
           code: SpanStatusCode.ERROR,
           message: err.message,
         });
-        
+
         logger.error({ event: eventName, error: err }, 'Event processing failed');
-        
+
         throw error;
       } finally {
         span.end();
@@ -211,11 +214,11 @@ export function Metrics(metricName: string) {
 
     descriptor.value = async function (...args: any[]) {
       const startTime = Date.now();
-      
+
       try {
         const result = await originalMethod.apply(this, args);
         const duration = Date.now() - startTime;
-        
+
         // Record custom metric
         const metrics = await import('../metrics');
         const histogram = metrics.createCustomHistogram(
@@ -228,11 +231,11 @@ export function Metrics(metricName: string) {
           method: propertyName,
           status: 'success',
         });
-        
+
         return result;
       } catch (error) {
         const duration = Date.now() - startTime;
-        
+
         // Record error metric
         const metrics = await import('../metrics');
         const histogram = metrics.createCustomHistogram(
@@ -245,7 +248,7 @@ export function Metrics(metricName: string) {
           method: propertyName,
           status: 'error',
         });
-        
+
         throw error;
       }
     };
@@ -265,7 +268,7 @@ export function CacheableWithObservability(ttl: number = 300) {
     descriptor.value = async function (...args: any[]) {
       const cacheKey = JSON.stringify(args);
       const cached = cache.get(cacheKey);
-      
+
       const logger = getLogger();
       const span = trace.getActiveSpan();
 
@@ -302,29 +305,29 @@ export function Repository(aggregateName: string) {
 
     const wrappedConstructor: any = function (...args: any[]) {
       const instance = new (originalConstructor as any)(...args);
-      
+
       // Wrap common repository methods
       const methodsToWrap = ['save', 'findById', 'findAll', 'delete', 'update'];
-      
+
       methodsToWrap.forEach(methodName => {
         if (typeof instance[methodName] === 'function') {
           const originalMethod = instance[methodName];
-          
+
           instance[methodName] = async function (...methodArgs: any[]) {
             const span = trace.getActiveSpan();
             if (span) {
               span.setAttribute('repository.aggregate', aggregateName);
               span.setAttribute('repository.method', methodName);
             }
-            
+
             const logger = getLogger().withContext({
               repository: constructor.name,
               aggregate: aggregateName,
               method: methodName,
             });
-            
+
             logger.debug({ args: methodArgs }, `Repository ${methodName} called`);
-            
+
             try {
               const result = await originalMethod.apply(this, methodArgs);
               logger.debug({ result }, `Repository ${methodName} completed`);
@@ -336,7 +339,7 @@ export function Repository(aggregateName: string) {
           };
         }
       });
-      
+
       return instance;
     };
 

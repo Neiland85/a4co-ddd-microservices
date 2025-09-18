@@ -1,20 +1,20 @@
-"use client"
+'use client';
 
-import { Polyline, Marker } from "react-leaflet"
-import { Icon } from "leaflet"
-import type { Route, RoutePoint } from "../types/routing-types"
+import { Polyline, Marker } from 'react-leaflet';
+import { Icon } from 'leaflet';
+import type { Route, RoutePoint } from '../types/routing-types';
 
 interface RouteDisplayProps {
-  route: Route
-  startPoint: RoutePoint
-  endPoint: RoutePoint
-  color?: string
+  route: Route;
+  startPoint: RoutePoint;
+  endPoint: RoutePoint;
+  color?: string;
 }
 
 // Custom icons for start and end points
-const createRouteIcon = (type: "start" | "end") => {
-  const color = type === "start" ? "#10b981" : "#ef4444"
-  const label = type === "start" ? "A" : "B"
+const createRouteIcon = (type: 'start' | 'end') => {
+  const color = type === 'start' ? '#10b981' : '#ef4444';
+  const label = type === 'start' ? 'A' : 'B';
 
   return new Icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(`
@@ -27,12 +27,17 @@ const createRouteIcon = (type: "start" | "end") => {
     iconSize: [30, 40],
     iconAnchor: [15, 40],
     popupAnchor: [0, -40],
-  })
-}
+  });
+};
 
-export default function RouteDisplay({ route, startPoint, endPoint, color = "#3b82f6" }: RouteDisplayProps) {
+export default function RouteDisplay({
+  route,
+  startPoint,
+  endPoint,
+  color = '#3b82f6',
+}: RouteDisplayProps) {
   // Convert geometry to LatLng format for Leaflet
-  const positions: [number, number][] = route.geometry.map(([lng, lat]) => [lat, lng])
+  const positions: [number, number][] = route.geometry.map(([lng, lat]) => [lat, lng]);
 
   return (
     <>
@@ -40,10 +45,10 @@ export default function RouteDisplay({ route, startPoint, endPoint, color = "#3b
       <Polyline positions={positions} color={color} weight={4} opacity={0.8} dashArray="0" />
 
       {/* Start point marker */}
-      <Marker position={[startPoint.lat, startPoint.lng]} icon={createRouteIcon("start")} />
+      <Marker position={[startPoint.lat, startPoint.lng]} icon={createRouteIcon('start')} />
 
       {/* End point marker */}
-      <Marker position={[endPoint.lat, endPoint.lng]} icon={createRouteIcon("end")} />
+      <Marker position={[endPoint.lat, endPoint.lng]} icon={createRouteIcon('end')} />
     </>
-  )
+  );
 }

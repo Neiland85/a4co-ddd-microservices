@@ -40,13 +40,17 @@ export const createSuccessResponse = <T>(data: T, message: string = ''): Success
   success: true,
   data,
   message,
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 
-export const createErrorResponse = (code: string, message: string, details?: any): ErrorResponse => ({
+export const createErrorResponse = (
+  code: string,
+  message: string,
+  details?: any
+): ErrorResponse => ({
   success: false,
   error: { code, message, details },
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 
 export const createPaginatedResponse = <T>(
@@ -63,7 +67,7 @@ export const createPaginatedResponse = <T>(
     total,
     totalPages: Math.ceil(total / limit),
     hasNext: page * limit < total,
-    hasPrev: page > 1
+    hasPrev: page > 1,
   },
-  timestamp: new Date()
+  timestamp: new Date(),
 });

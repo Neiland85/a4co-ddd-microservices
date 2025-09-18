@@ -8,7 +8,7 @@ const STATIC_FILES = [
   '/manifest.json',
   '/offline.html',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-512x512.png',
 ];
 
 // Estrategias de cache
@@ -16,15 +16,16 @@ const cacheStrategies = {
   static: 'CacheFirst',
   dynamic: 'NetworkFirst',
   api: 'NetworkFirst',
-  images: 'CacheFirst'
+  images: 'CacheFirst',
 };
 
 // Instalación del service worker
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   console.log('Service Worker: Instalando...');
   event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
+    caches
+      .open(STATIC_CACHE)
+      .then(cache => {
         console.log('Service Worker: Cacheando archivos estáticos');
         return cache.addAll(STATIC_FILES);
       })
@@ -36,27 +37,30 @@ self.addEventListener('install', (event) => {
 });
 
 // Activación del service worker
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   console.log('Service Worker: Activando...');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-            console.log('Service Worker: Eliminando cache antiguo:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      console.log('Service Worker: Activación completada');
-      return self.clients.claim();
-    })
+    caches
+      .keys()
+      .then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+              console.log('Service Worker: Eliminando cache antiguo:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        console.log('Service Worker: Activación completada');
+        return self.clients.claim();
+      })
   );
 });
 
 // Interceptación de fetch requests
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
@@ -89,7 +93,7 @@ async function cacheFirst(request, cacheName) {
     if (cachedResponse) {
       return cachedResponse;
     }
-    
+
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
       const cache = await caches.open(cacheName);
@@ -129,7 +133,7 @@ async function getOfflineResponse(request) {
       return offlineResponse;
     }
   }
-  
+
   return new Response('Contenido no disponible offline', {
     status: 503,
     statusText: 'Service Unavailable',
@@ -140,9 +144,9 @@ async function getOfflineResponse(request) {
 }
 
 // Manejo de notificaciones push
-self.addEventListener('push', (event) => {
+self.addEventListener('push', event => {
   console.log('Service Worker: Notificación push recibida');
-  
+
   const options = {
     body: event.data ? event.data.text() : 'Nueva notificación de A4CO',
     icon: '/icons/icon-192x192.png',
@@ -150,52 +154,46 @@ self.addEventListener('push', (event) => {
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: 1
+      primaryKey: 1,
     },
     actions: [
       {
         action: 'explore',
         title: 'Ver más',
-        icon: '/icons/icon-96x96.png'
+        icon: '/icons/icon-96x96.png',
       },
       {
         action: 'close',
         title: 'Cerrar',
-        icon: '/icons/icon-96x96.png'
-      }
-    ]
+        icon: '/icons/icon-96x96.png',
+      },
+    ],
   };
 
-  event.waitUntil(
-    self.registration.showNotification('A4CO', options)
-  );
+  event.waitUntil(self.registration.showNotification('A4CO', options));
 });
 
 // Manejo de clics en notificaciones
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', event => {
   console.log('Service Worker: Notificación clickeada');
-  
+
   event.notification.close();
 
   if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('/')
-    );
+    event.waitUntil(clients.openWindow('/'));
   } else if (event.action === 'close') {
     // Solo cerrar la notificación
     return;
   } else {
     // Acción por defecto: abrir la app
-    event.waitUntil(
-      clients.openWindow('/')
-    );
+    event.waitUntil(clients.openWindow('/'));
   }
 });
 
 // Manejo de sincronización en background
-self.addEventListener('sync', (event) => {
+self.addEventListener('sync', event => {
   console.log('Service Worker: Sincronización en background:', event.tag);
-  
+
   if (event.tag === 'background-sync') {
     event.waitUntil(doBackgroundSync());
   }
@@ -207,13 +205,12 @@ async function doBackgroundSync() {
     // Aquí puedes implementar la lógica de sincronización
     // Por ejemplo, sincronizar datos offline, enviar formularios pendientes, etc.
     console.log('Sincronizando datos en background...');
-    
+
     // Ejemplo: sincronizar productos favoritos
     const favorites = await getOfflineFavorites();
     if (favorites.length > 0) {
       await syncFavorites(favorites);
     }
-    
   } catch (error) {
     console.error('Error en sincronización background:', error);
   }
@@ -243,7 +240,7 @@ async function syncFavorites(favorites) {
       },
       body: JSON.stringify(favorites),
     });
-    
+
     if (response.ok) {
       console.log('Favoritos sincronizados exitosamente');
     }
@@ -253,13 +250,13 @@ async function syncFavorites(favorites) {
 }
 
 // Manejo de mensajes del cliente
-self.addEventListener('message', (event) => {
+self.addEventListener('message', event => {
   console.log('Service Worker: Mensaje recibido:', event.data);
-  
+
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data && event.data.type === 'GET_VERSION') {
     event.ports[0].postMessage({ version: CACHE_NAME });
   }
@@ -269,14 +266,10 @@ self.addEventListener('message', (event) => {
 async function cleanupOldCaches() {
   try {
     const cacheNames = await caches.keys();
-    const oldCaches = cacheNames.filter(
-      name => name !== STATIC_CACHE && name !== DYNAMIC_CACHE
-    );
-    
-    await Promise.all(
-      oldCaches.map(name => caches.delete(name))
-    );
-    
+    const oldCaches = cacheNames.filter(name => name !== STATIC_CACHE && name !== DYNAMIC_CACHE);
+
+    await Promise.all(oldCaches.map(name => caches.delete(name)));
+
     console.log('Caches antiguos limpiados');
   } catch (error) {
     console.error('Error limpiando caches:', error);

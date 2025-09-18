@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { 
-  logger, 
-  initializeObservability, 
+import {
+  logger,
+  initializeObservability,
   createLogger,
   initializeLogger,
   getGlobalLogger,
   getTracer,
-  shutdown
+  shutdown,
 } from './index';
 
 describe('@a4co/observability', () => {
@@ -24,9 +24,9 @@ describe('@a4co/observability', () => {
     it('should create logger with default configuration', () => {
       const testLogger = createLogger({
         serviceName: 'test-service',
-        environment: 'test'
+        environment: 'test',
       });
-      
+
       expect(testLogger).toBeDefined();
       expect(testLogger.info).toBeDefined();
       expect(testLogger.error).toBeDefined();
@@ -38,7 +38,7 @@ describe('@a4co/observability', () => {
       const testLogger = createLogger({
         serviceName: 'test-service',
         environment: 'test',
-        prettyPrint: false // JSON output for tests
+        prettyPrint: false, // JSON output for tests
       });
 
       expect(() => {
@@ -58,7 +58,7 @@ describe('@a4co/observability', () => {
     it('should initialize and get global logger', () => {
       const globalLogger = initializeLogger({
         serviceName: 'global-test-service',
-        environment: 'test'
+        environment: 'test',
       });
 
       expect(globalLogger).toBeDefined();
@@ -69,7 +69,7 @@ describe('@a4co/observability', () => {
   describe('initializeObservability', () => {
     it('should initialize with minimal configuration', () => {
       const result = initializeObservability({
-        serviceName: 'test-minimal-service'
+        serviceName: 'test-minimal-service',
       });
 
       expect(result).toBeDefined();
@@ -86,18 +86,18 @@ describe('@a4co/observability', () => {
         environment: 'test',
         logging: {
           level: 'debug',
-          prettyPrint: false
+          prettyPrint: false,
         },
         tracing: {
           enabled: true,
           enableConsoleExporter: true,
-          enableAutoInstrumentation: false
+          enableAutoInstrumentation: false,
         },
         metrics: {
           enabled: true,
           port: 9465,
-          endpoint: '/test-metrics'
-        }
+          endpoint: '/test-metrics',
+        },
       });
 
       expect(result).toBeDefined();
@@ -110,8 +110,8 @@ describe('@a4co/observability', () => {
       const result = initializeObservability({
         serviceName: 'test-no-tracing',
         tracing: {
-          enabled: false
-        }
+          enabled: false,
+        },
       });
 
       expect(result.tracingSDK).toBeNull();
@@ -121,8 +121,8 @@ describe('@a4co/observability', () => {
       const result = initializeObservability({
         serviceName: 'test-no-metrics',
         metrics: {
-          enabled: false
-        }
+          enabled: false,
+        },
       });
 
       expect(result.metricsExporter).toBeNull();
@@ -138,7 +138,7 @@ describe('@a4co/observability', () => {
 
     it('should create and end span without errors', () => {
       const tracer = getTracer('test-tracer');
-      
+
       expect(() => {
         const span = tracer.startSpan('test-operation');
         span.setAttribute('test.attribute', 'value');

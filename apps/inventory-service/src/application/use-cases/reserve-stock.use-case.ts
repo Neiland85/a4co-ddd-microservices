@@ -58,7 +58,7 @@ export class ReserveStockUseCase {
         quantity,
         availableStock: product.availableStock,
         expiresAt,
-        message: `Cannot reserve ${quantity} units. Available: ${product.availableStock}`
+        message: `Cannot reserve ${quantity} units. Available: ${product.availableStock}`,
       };
     }
 
@@ -78,7 +78,7 @@ export class ReserveStockUseCase {
       quantity,
       availableStock: product.availableStock,
       expiresAt,
-      message: `Successfully reserved ${quantity} units of ${product.name}`
+      message: `Successfully reserved ${quantity} units of ${product.name}`,
     };
   }
 }

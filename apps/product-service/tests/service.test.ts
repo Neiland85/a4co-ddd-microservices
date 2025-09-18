@@ -47,14 +47,14 @@ describe('ProductService', () => {
     it('should validate product name', () => {
       expect(() => service.getProduct('')).toThrow('Invalid name');
     });
-  })
+  });
 
   describe('error handling', () => {
     it('should handle errors gracefully', () => {
       const invalidData = null as any;
-      
+
       expect(() => {
-        service.addProduct(invalidData, invalidData)
+        service.addProduct(invalidData, invalidData);
       }).toThrow();
     });
   });
@@ -62,7 +62,7 @@ describe('ProductService', () => {
   describe('logging', () => {
     it('should log operations', () => {
       service.addProduct('Product A', 29.99);
-      
+
       expect(console.log).toHaveBeenCalled();
     });
   });

@@ -28,9 +28,9 @@ export abstract class BaseController<TService> {
     }
 
     const req = request as Record<string, unknown>;
-    
+
     for (const field of requiredFields) {
-      if (!(field as string in req)) {
+      if (!((field as string) in req)) {
         throw new Error(`Missing required field: ${String(field)}`);
       }
     }
@@ -41,7 +41,10 @@ export abstract class BaseController<TService> {
   /**
    * Envuelve las respuestas en un formato consistente
    */
-  protected formatResponse<T>(data: T, status = 'success'): {
+  protected formatResponse<T>(
+    data: T,
+    status = 'success'
+  ): {
     status: string;
     data: T;
     timestamp: string;
@@ -49,7 +52,7 @@ export abstract class BaseController<TService> {
     return {
       status,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

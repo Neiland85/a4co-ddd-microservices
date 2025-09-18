@@ -39,61 +39,61 @@ interface ProductCatalogV0RawProps {
 // Datos de ejemplo para demostración
 const sampleProducts: Product[] = [
   {
-    id: "1",
-    name: "Aceite de Oliva Virgen Extra Picual",
-    category: "aceites",
-    price: 12.50,
-    unit: "500ml",
-    producer: "Olivares del Guadalquivir",
-    location: "Úbeda",
+    id: '1',
+    name: 'Aceite de Oliva Virgen Extra Picual',
+    category: 'aceites',
+    price: 12.5,
+    unit: '500ml',
+    producer: 'Olivares del Guadalquivir',
+    location: 'Úbeda',
     stock: 25,
     available: true,
     seasonal: true,
-    certifications: ["Ecológico", "DO Jaén", "Primera Cosecha"],
-    image: "/images/aceite-picual.jpg"
+    certifications: ['Ecológico', 'DO Jaén', 'Primera Cosecha'],
+    image: '/images/aceite-picual.jpg',
   },
   {
-    id: "2",
-    name: "Aceitunas Gordales de Jaén",
-    category: "aceitunas",
-    price: 8.90,
-    unit: "1kg",
-    producer: "Aceitunas del Sur",
-    location: "Jaén",
+    id: '2',
+    name: 'Aceitunas Gordales de Jaén',
+    category: 'aceitunas',
+    price: 8.9,
+    unit: '1kg',
+    producer: 'Aceitunas del Sur',
+    location: 'Jaén',
     stock: 15,
     available: true,
     seasonal: false,
-    certifications: ["Ecológico", "DO Jaén"],
-    image: "/images/aceitunas-gordales.jpg"
+    certifications: ['Ecológico', 'DO Jaén'],
+    image: '/images/aceitunas-gordales.jpg',
   },
   {
-    id: "3",
-    name: "Miel de Romero de Sierra Mágina",
-    category: "mieles",
-    price: 15.00,
-    unit: "500g",
-    producer: "Apicultura Mágina",
-    location: "Sierra Mágina",
+    id: '3',
+    name: 'Miel de Romero de Sierra Mágina',
+    category: 'mieles',
+    price: 15.0,
+    unit: '500g',
+    producer: 'Apicultura Mágina',
+    location: 'Sierra Mágina',
     stock: 8,
     available: true,
     seasonal: true,
-    certifications: ["Ecológico", "Miel de Montaña"],
-    image: "/images/miel-romero.jpg"
+    certifications: ['Ecológico', 'Miel de Montaña'],
+    image: '/images/miel-romero.jpg',
   },
   {
-    id: "4",
-    name: "Queso de Cabra Artesanal",
-    category: "lácteos",
-    price: 18.50,
-    unit: "400g",
-    producer: "Quesería Sierra de Cazorla",
-    location: "Cazorla",
+    id: '4',
+    name: 'Queso de Cabra Artesanal',
+    category: 'lácteos',
+    price: 18.5,
+    unit: '400g',
+    producer: 'Quesería Sierra de Cazorla',
+    location: 'Cazorla',
     stock: 0,
     available: false,
     seasonal: false,
-    certifications: ["Artesanal", "DO Queso de Cabra"],
-    image: "/images/queso-cabra.jpg"
-  }
+    certifications: ['Artesanal', 'DO Queso de Cabra'],
+    image: '/images/queso-cabra.jpg',
+  },
 ];
 
 export default function ProductCatalogV0Raw({
@@ -102,7 +102,7 @@ export default function ProductCatalogV0Raw({
   showFilters = true,
   maxItems,
   loading = false,
-  title = "🫒 Productos Locales de Jaén"
+  title = '🫒 Productos Locales de Jaén',
 }: Readonly<ProductCatalogV0RawProps>) {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
@@ -129,23 +129,23 @@ export default function ProductCatalogV0Raw({
 
   if (loading) {
     return (
-      <div className="w-full max-w-6xl mx-auto p-6">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-amber-800 mb-2">{title}</h2>
+      <div className="mx-auto w-full max-w-6xl p-6">
+        <div className="mb-8 text-center">
+          <h2 className="mb-2 text-3xl font-bold text-amber-800">{title}</h2>
           <p className="text-amber-600">Cargando productos...</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {skeletonIds.map((skeletonId) => (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {skeletonIds.map(skeletonId => (
             <Card key={skeletonId} className="animate-pulse">
               <CardHeader>
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                <div className="mb-2 h-4 w-3/4 rounded bg-gray-200"></div>
+                <div className="h-3 w-1/2 rounded bg-gray-200"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-32 bg-gray-200 rounded mb-4"></div>
+                <div className="mb-4 h-32 rounded bg-gray-200"></div>
                 <div className="space-y-2">
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                  <div className="h-3 rounded bg-gray-200"></div>
+                  <div className="h-3 w-2/3 rounded bg-gray-200"></div>
                 </div>
               </CardContent>
             </Card>
@@ -156,13 +156,13 @@ export default function ProductCatalogV0Raw({
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
+    <div className="mx-auto w-full max-w-6xl p-6">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800 bg-clip-text text-transparent mb-2">
+      <div className="mb-8 text-center">
+        <h2 className="mb-2 bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800 bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
           {title}
         </h2>
-        <p className="text-amber-700 text-lg">
+        <p className="text-lg text-amber-700">
           Descubre los mejores productos artesanales de la provincia de Jaén
         </p>
       </div>
@@ -183,8 +183,8 @@ export default function ProductCatalogV0Raw({
                 <select
                   id="category-filter"
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  onChange={e => setSelectedCategory(e.target.value)}
+                  className="rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   aria-label="Filtrar por categoría de producto"
                 >
                   <option value="">Todas las categorías</option>
@@ -198,23 +198,26 @@ export default function ProductCatalogV0Raw({
 
               {/* Filtros de disponibilidad */}
               <div className="flex items-center gap-4">
-                <label htmlFor="available-filter" className="flex items-center gap-2 cursor-pointer">
+                <label
+                  htmlFor="available-filter"
+                  className="flex cursor-pointer items-center gap-2"
+                >
                   <input
                     id="available-filter"
                     type="checkbox"
                     checked={showOnlyAvailable}
-                    onChange={(e) => setShowOnlyAvailable(e.target.checked)}
+                    onChange={e => setShowOnlyAvailable(e.target.checked)}
                     className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                     aria-label="Mostrar solo productos disponibles"
                   />
                   <span className="text-sm">Solo disponibles</span>
                 </label>
-                <label htmlFor="seasonal-filter" className="flex items-center gap-2 cursor-pointer">
+                <label htmlFor="seasonal-filter" className="flex cursor-pointer items-center gap-2">
                   <input
                     id="seasonal-filter"
                     type="checkbox"
                     checked={showOnlySeasonal}
-                    onChange={(e) => setShowOnlySeasonal(e.target.checked)}
+                    onChange={e => setShowOnlySeasonal(e.target.checked)}
                     className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                     aria-label="Mostrar solo productos de temporada"
                   />
@@ -227,24 +230,27 @@ export default function ProductCatalogV0Raw({
       )}
 
       {/* Grid de productos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {filteredProducts.map(product => (
           <Card
             key={product.id}
-            className={`group cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 ${!product.available ? 'opacity-60' : ''
-              }`}
+            className={`group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+              !product.available ? 'opacity-60' : ''
+            }`}
             onClick={() => handleProductClick(product)}
           >
             <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-amber-800">
                   {product.name}
                 </CardTitle>
                 <Badge
-                  variant={product.available ? "default" : "secondary"}
-                  className={product.available ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}
+                  variant={product.available ? 'default' : 'secondary'}
+                  className={
+                    product.available ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                  }
                 >
-                  {product.available ? "Disponible" : "Agotado"}
+                  {product.available ? 'Disponible' : 'Agotado'}
                 </Badge>
               </div>
               <CardDescription className="text-sm text-gray-600">
@@ -254,12 +260,12 @@ export default function ProductCatalogV0Raw({
 
             <CardContent className="pt-0">
               {/* Imagen placeholder */}
-              <div className="w-full h-32 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-lg mb-4 flex items-center justify-center">
-                <span className="text-amber-600 text-2xl">🫒</span>
+              <div className="mb-4 flex h-32 w-full items-center justify-center rounded-lg bg-gradient-to-br from-amber-100 to-yellow-100">
+                <span className="text-2xl text-amber-600">🫒</span>
               </div>
 
               {/* Precio */}
-              <div className="flex justify-between items-center mb-3">
+              <div className="mb-3 flex items-center justify-between">
                 <span className="text-2xl font-bold text-amber-800">
                   {product.price.toFixed(2)}€
                 </span>
@@ -268,8 +274,8 @@ export default function ProductCatalogV0Raw({
 
               {/* Certificaciones */}
               {product.certifications.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {product.certifications.slice(0, 2).map((cert) => (
+                <div className="mb-3 flex flex-wrap gap-1">
+                  {product.certifications.slice(0, 2).map(cert => (
                     <Badge key={`${product.id}-cert-${cert}`} variant="outline" className="text-xs">
                       {cert}
                     </Badge>
@@ -283,14 +289,20 @@ export default function ProductCatalogV0Raw({
               )}
 
               {/* Indicadores especiales */}
-              <div className="flex items-center gap-2 mb-4">
+              <div className="mb-4 flex items-center gap-2">
                 {product.seasonal && (
-                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                  <Badge
+                    variant="outline"
+                    className="border-green-200 bg-green-50 text-xs text-green-700"
+                  >
                     🌿 Temporada
                   </Badge>
                 )}
                 {product.stock < 10 && product.stock > 0 && (
-                  <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                  <Badge
+                    variant="outline"
+                    className="border-orange-200 bg-orange-50 text-xs text-orange-700"
+                  >
                     ⚠️ Últimas unidades
                   </Badge>
                 )}
@@ -300,10 +312,10 @@ export default function ProductCatalogV0Raw({
 
               {/* Botón de acción */}
               <Button
-                className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white"
+                className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 text-white hover:from-amber-700 hover:to-yellow-700"
                 disabled={!product.available}
               >
-                {product.available ? "👁️ Ver Detalles" : "Agotado"}
+                {product.available ? '👁️ Ver Detalles' : 'Agotado'}
               </Button>
             </CardContent>
           </Card>
@@ -312,15 +324,13 @@ export default function ProductCatalogV0Raw({
 
       {/* Estado vacío */}
       {filteredProducts.length === 0 && (
-        <Card className="text-center py-12">
+        <Card className="py-12 text-center">
           <CardContent>
-            <div className="text-6xl mb-4">🫒</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <div className="mb-4 text-6xl">🫒</div>
+            <h3 className="mb-2 text-xl font-semibold text-gray-900">
               No se encontraron productos
             </h3>
-            <p className="text-gray-600 mb-4">
-              Intenta ajustar los filtros para ver más productos
-            </p>
+            <p className="mb-4 text-gray-600">Intenta ajustar los filtros para ver más productos</p>
             <Button
               onClick={() => {
                 setSelectedCategory('');
@@ -337,7 +347,7 @@ export default function ProductCatalogV0Raw({
 
       {/* Contador de productos */}
       {filteredProducts.length > 0 && (
-        <div className="text-center mt-8 text-sm text-gray-600">
+        <div className="mt-8 text-center text-sm text-gray-600">
           Mostrando {filteredProducts.length} de {products.length} productos
         </div>
       )}

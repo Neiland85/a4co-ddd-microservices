@@ -17,52 +17,61 @@ const services: ServiceConfig[] = [
     methods: [
       {
         name: 'addProduct',
-        params: [{ name: 'name', type: 'string' }, { name: 'price', type: 'number' }],
+        params: [
+          { name: 'name', type: 'string' },
+          { name: 'price', type: 'number' },
+        ],
         requestInterface: 'AddProductRequest',
-        validationFields: ['name', 'price']
+        validationFields: ['name', 'price'],
       },
       {
         name: 'getProduct',
         params: [{ name: 'name', type: 'string' }],
         requestInterface: 'GetProductRequest',
-        validationFields: ['name']
-      }
-    ]
+        validationFields: ['name'],
+      },
+    ],
   },
   {
     name: 'User',
     methods: [
       {
         name: 'createUser',
-        params: [{ name: 'username', type: 'string' }, { name: 'email', type: 'string' }],
+        params: [
+          { name: 'username', type: 'string' },
+          { name: 'email', type: 'string' },
+        ],
         requestInterface: 'CreateUserRequest',
-        validationFields: ['username', 'email']
+        validationFields: ['username', 'email'],
       },
       {
         name: 'getUser',
         params: [{ name: 'username', type: 'string' }],
         requestInterface: 'GetUserRequest',
-        validationFields: ['username']
-      }
-    ]
+        validationFields: ['username'],
+      },
+    ],
   },
   {
     name: 'Inventory',
     methods: [
       {
         name: 'updateStock',
-        params: [{ name: 'productId', type: 'string' }, { name: 'quantity', type: 'number' }],
+        params: [
+          { name: 'productId', type: 'string' },
+          { name: 'quantity', type: 'number' },
+        ],
         requestInterface: 'UpdateStockRequest',
-        validationFields: ['productId', 'quantity']
+        validationFields: ['productId', 'quantity'],
       },
       {
         name: 'getStock',
         params: [{ name: 'productId', type: 'string' }],
         requestInterface: 'GetStockRequest',
-        validationFields: ['productId']
-      }
-    ]
-  }
+        validationFields: ['productId'],
+      },
+    ],
+  },
 ];
 
 function generateController(service: ServiceConfig): string {
@@ -110,16 +119,19 @@ function generateService(service: ServiceConfig): string {
     .map(method => {
       const paramsStr = method.params.map(p => `${p.name}: ${p.type}`).join(', ');
       const entityName = service.name.toLowerCase();
-      
+
       // Generar lógica específica según el método
       let methodBody = '';
-      
+
       if (method.name.includes('create') || method.name.includes('add')) {
         methodBody = `
     try {
-      ${method.params.map(p =>
-        `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`
-      ).join('\n      ')}
+      ${method.params
+        .map(
+          p =>
+            `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`
+        )
+        .join('\n      ')}
       
       this.log('Creating ${entityName}', { ${method.params.map(p => p.name).join(', ')} });
       
@@ -134,13 +146,15 @@ function generateService(service: ServiceConfig): string {
       } else if (method.name.includes('update')) {
         methodBody = `
     try {
-      ${method.params.map(p => {
-        if (p.name.includes('Id')) {
-          return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateId(${p.name}, '${entityName}');`;
-        } else {
-          return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`;
-        }
-      }).join('\n      ')}
+      ${method.params
+        .map(p => {
+          if (p.name.includes('Id')) {
+            return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateId(${p.name}, '${entityName}');`;
+          } else {
+            return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`;
+          }
+        })
+        .join('\n      ')}
       
       this.log('Updating ${entityName}', { ${method.params.map(p => p.name).join(', ')} });
       
@@ -155,13 +169,15 @@ function generateService(service: ServiceConfig): string {
       } else {
         methodBody = `
     try {
-      ${method.params.map(p => {
-        if (p.name.includes('Id') || p.name === 'username' || p.name === 'name') {
-          return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateId(${p.name}, '${p.name}');`;
-        } else {
-          return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`;
-        }
-      }).join('\n      ')}
+      ${method.params
+        .map(p => {
+          if (p.name.includes('Id') || p.name === 'username' || p.name === 'name') {
+            return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateId(${p.name}, '${p.name}');`;
+          } else {
+            return `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`;
+          }
+        })
+        .join('\n      ')}
       
       this.log('Getting ${entityName}', { ${method.params.map(p => `${p.name}: validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)}`).join(', ')} });
       
@@ -174,7 +190,7 @@ function generateService(service: ServiceConfig): string {
       return this.handleServiceError(error, '${method.name}');
     }`;
       }
-      
+
       return `
   ${method.name}(${paramsStr}): string {${methodBody}
   }`;
@@ -195,13 +211,13 @@ ${methods}
 // Generar archivos refactorizados
 services.forEach(service => {
   const servicePath = path.join(__dirname, `../apps/${service.name.toLowerCase()}-service`);
-  
+
   // Crear controller refactorizado
   const controllerContent = generateController(service);
   const controllerPath = path.join(servicePath, 'controller.ts');
   fs.writeFileSync(controllerPath, controllerContent);
   console.log(`✅ Refactorizado: ${controllerPath}`);
-  
+
   // Crear service refactorizado
   const serviceContent = generateService(service);
   const servicePath2 = path.join(servicePath, 'service.ts');
@@ -210,4 +226,6 @@ services.forEach(service => {
 });
 
 console.log('\n🎯 Refactorización completada para reducir duplicación de código');
-console.log('📊 Esto debería reducir significativamente el porcentaje de líneas duplicadas en SonarQube');
+console.log(
+  '📊 Esto debería reducir significativamente el porcentaje de líneas duplicadas en SonarQube'
+);

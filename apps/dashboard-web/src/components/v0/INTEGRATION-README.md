@@ -2,6 +2,7 @@
 
 ## 📁 Estructura de Archivos V0
 
+
 ```bash
 apps/dashboard-web/src/components/v0/
 ├── ProductCatalogV0.tsx     # Componente de V0 → ProductCatalog
@@ -9,7 +10,10 @@ apps/dashboard-web/src/components/v0/
 ├── ArtisanDirectoryV0.tsx   # Componente de V0 → ArtisanDirectory
 ├── SalesOpportunityV0.tsx   # Componente de V0 → SalesOpportunityBoard
 └── MarketplaceDashboardV0.tsx # Componente de V0 → MarketplaceDashboard
+
+
 ```
+
 
 ## 🔗 Pasos de Integración Rápida
 
@@ -20,18 +24,23 @@ apps/dashboard-web/src/components/v0/
 
 ### 2. Integración Manual
 
+
 ```bash
 # Crear archivo del componente
 touch src/components/v0/ProductCatalogV0.tsx
 
-# Pegar código de V0 y ajustar imports:
+# Pegar código de V0 y ajustar imports
 # import { useProducts } from '../../hooks/useProducts';
 # import type { LocalProduct } from '../../app/api/sales-opportunities/route';
+
+
 ```
+
 
 ### 3. Ajustes Necesarios
 
-#### Imports típicos a cambiar:
+#### Imports típicos a cambiar
+
 
 ```typescript
 // V0 genera esto:
@@ -41,9 +50,12 @@ import { Card } from '@/components/ui/card';
 // Cambiar por:
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
+
 ```
 
-#### Conectar con nuestros hooks:
+
+#### Conectar con nuestros hooks
+
 
 ```typescript
 // Agregar al inicio del componente V0:
@@ -52,7 +64,9 @@ export default function ProductCatalogV0() {
 
   // Resto del código de V0...
 }
+
 ```
+
 
 ## 🎯 URLs de Prueba
 

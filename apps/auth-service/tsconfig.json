@@ -18,24 +18,11 @@
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@a4co/shared-utils": [
-        "../../packages/shared-utils/index.ts"
-      ],
-      "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/*"
-      ]
+      "@a4co/shared-utils": ["../../packages/shared-utils/index.ts"],
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/*"]
     },
-    "types": [
-      "jest",
-      "node"
-    ]
+    "types": ["jest", "node"]
   },
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["dist", "node_modules"]
 }

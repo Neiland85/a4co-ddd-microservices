@@ -8,4 +8,5 @@ export declare const generateId: (length?: number) => string;
 export declare const isEmail: (email: string) => boolean;
 export declare const isUrl: (url: string) => boolean;
 export declare const removeAccents: (str: string) => string;
+export declare function kebabToCamelCase(str: string): string;
 //# sourceMappingURL=string-utils.d.ts.map

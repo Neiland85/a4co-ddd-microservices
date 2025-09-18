@@ -33,6 +33,7 @@ Template base robusto para componentes generados con [v0.dev](https://v0.dev) in
 
 ## 🚀 Uso Básico
 
+
 ```tsx
 import V0ComponentTemplate from './V0ComponentTemplate';
 
@@ -50,9 +51,12 @@ function MiComponente() {
     </V0ComponentTemplate>
   );
 }
+
 ```
 
+
 ## 🎨 Variantes Disponibles
+
 
 ```tsx
 // Variantes de estilo
@@ -65,7 +69,10 @@ function MiComponente() {
 <V0ComponentTemplate size="sm" />  // Compacto
 <V0ComponentTemplate size="md" />  // Estándar
 <V0ComponentTemplate size="lg" />  // Amplio
+
+
 ```
+
 
 ## 📋 Props del Componente Principal
 
@@ -86,6 +93,7 @@ function MiComponente() {
 
 ### Con Hooks del Proyecto
 
+
 ```tsx
 import { useProducts } from '../../hooks/useProducts';
 
@@ -93,21 +101,20 @@ function ProductosList() {
   const { products, loading, error } = useProducts();
 
   return (
-    <V0ComponentTemplate
-      title="Productos Locales"
-      loading={loading}
-      variant="primary"
-    >
+    <V0ComponentTemplate title="Productos Locales" loading={loading} variant="primary">
       {error && <ErrorMessage message={error} />}
-      {products.map((product) => (
+      {products.map(product => (
         <div key={product.id}>{product.name}</div>
       ))}
     </V0ComponentTemplate>
   );
 }
+
 ```
 
+
 ### Modal con Template
+
 
 ```tsx
 function ProductModal() {
@@ -120,15 +127,16 @@ function ProductModal() {
       title="Detalles del Producto"
       size="lg"
     >
-      <V0ComponentTemplate variant="default">
-        {/* Contenido del modal */}
-      </V0ComponentTemplate>
+      <V0ComponentTemplate variant="default">{/* Contenido del modal */}</V0ComponentTemplate>
     </V0ModalTemplate>
   );
 }
+
 ```
 
+
 ### Estado Avanzado con Hook
+
 
 ```tsx
 function FormularioContacto() {
@@ -149,14 +157,13 @@ function FormularioContacto() {
         await enviarFormulario(form);
       }}
     >
-      <input
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-      />
+      <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
     </V0ComponentTemplate>
   );
 }
+
 ```
+
 
 ## 🎯 Flujo de Trabajo con V0
 
@@ -178,6 +185,7 @@ function FormularioContacto() {
 
 ### Manejo de Errores
 
+
 ```tsx
 const [state, { setError, reset }] = useLoadingState();
 
@@ -192,28 +200,26 @@ setError('Mensaje de error específico');
     ejecutarOperacion();
   }}
 />;
+
 ```
+
 
 ## 🎨 Personalización de Estilos
 
 El template usa Tailwind CSS y puede ser personalizado:
 
+
 ```tsx
 // Clases adicionales
-<V0ComponentTemplate
-  className="shadow-lg border-2 border-blue-500"
-  variant="primary"
-/>;
+<V0ComponentTemplate className="border-2 border-blue-500 shadow-lg" variant="primary" />;
 
 // Función cn() para combinar clases
 import { cn } from '../lib/utils';
 
-const customClass = cn(
-  'base-class',
-  condition && 'conditional-class',
-  'additional-class'
-);
+const customClass = cn('base-class', condition && 'conditional-class', 'additional-class');
+
 ```
+
 
 ## 📚 Recursos Adicionales
 

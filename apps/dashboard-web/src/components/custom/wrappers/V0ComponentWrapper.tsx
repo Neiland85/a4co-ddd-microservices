@@ -8,7 +8,11 @@ class V0ErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback: React.ReactNode; onError?: (error: Error) => void },
   { hasError: boolean; error?: Error }
 > {
-  constructor(props: { children: React.ReactNode; fallback: React.ReactNode; onError?: (error: Error) => void }) {
+  constructor(props: {
+    children: React.ReactNode;
+    fallback: React.ReactNode;
+    onError?: (error: Error) => void;
+  }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -81,11 +85,9 @@ function useV0DataSource(dataSource?: V0DataSource) {
   // Transformación de datos
   const transformedData = React.useMemo(() => {
     if (!rawData) return null;
-    
+
     try {
-      return dataSource?.transformer 
-        ? dataSource.transformer(rawData) 
-        : rawData;
+      return dataSource?.transformer ? dataSource.transformer(rawData) : rawData;
     } catch (err) {
       setError(err as Error);
       return null;
@@ -114,30 +116,32 @@ function useV0DataSource(dataSource?: V0DataSource) {
 }
 
 // Componente wrapper principal
-export function V0ComponentWrapper({ 
-  v0Component: V0Component, 
+export function V0ComponentWrapper({
+  v0Component: V0Component,
   customizations = {},
   dataSource,
   onError,
   onEvent,
   children,
   fallback = <div className="v0-loading">Cargando componente...</div>,
-  ...props 
+  ...props
 }: Readonly<V0WrapperProps>) {
-  
   // Datos del hook
   const { data, loading, error } = useV0DataSource(dataSource);
 
   // Analytics tracking
-  const trackEvent = React.useCallback((eventName: string, eventData: unknown) => {
-    if (customizations.analytics) {
-      // Aquí podrías integrar con tu sistema de analytics
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📊 V0 Analytics: ${eventName}`, eventData);
+  const trackEvent = React.useCallback(
+    (eventName: string, eventData: unknown) => {
+      if (customizations.analytics) {
+        // Aquí podrías integrar con tu sistema de analytics
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📊 V0 Analytics: ${eventName}`, eventData);
+        }
       }
-    }
-    onEvent?.(eventName, eventData);
-  }, [customizations.analytics, onEvent]);
+      onEvent?.(eventName, eventData);
+    },
+    [customizations.analytics, onEvent]
+  );
 
   // Props finales para el componente v0
   const v0Props = React.useMemo(() => {
@@ -160,7 +164,9 @@ export function V0ComponentWrapper({
     // Temas
     customizations.theme && `v0-theme-${customizations.theme}`,
     // Animaciones
-    customizations.animation && customizations.animation !== 'none' && `v0-animation-${customizations.animation}`,
+    customizations.animation &&
+      customizations.animation !== 'none' &&
+      `v0-animation-${customizations.animation}`,
     // Estados
     loading && 'v0-loading',
     error && 'v0-error',
@@ -169,11 +175,13 @@ export function V0ComponentWrapper({
   );
 
   // Props de accesibilidad
-  const accessibilityProps = customizations.accessibility ? {
-    'aria-label': customizations.accessibility.ariaLabel,
-    'role': customizations.accessibility.role,
-    'tabIndex': customizations.accessibility.tabIndex,
-  } : {};
+  const accessibilityProps = customizations.accessibility
+    ? {
+        'aria-label': customizations.accessibility.ariaLabel,
+        role: customizations.accessibility.role,
+        tabIndex: customizations.accessibility.tabIndex,
+      }
+    : {};
 
   // Error fallback personalizado
   const errorFallback = (
@@ -201,17 +209,16 @@ export function V0ComponentWrapper({
 
   // Renderizado con o sin error boundary
   const WrappedComponent = customizations.errorBoundary ? (
-    <V0ErrorBoundary 
-      fallback={errorFallback}
-      onError={onError}
-    >
+    <V0ErrorBoundary fallback={errorFallback} onError={onError}>
       {ComponentWithSuspense}
     </V0ErrorBoundary>
-  ) : ComponentWithSuspense;
+  ) : (
+    ComponentWithSuspense
+  );
 
   return (
-    <div 
-      className={wrapperClassName} 
+    <div
+      className={wrapperClassName}
       {...accessibilityProps}
       data-v0-component={V0Component.displayName || V0Component.name || 'Unknown'}
     >
@@ -243,21 +250,21 @@ export const v0WrapperPresets = {
     animation: 'none' as const,
     errorBoundary: true,
   },
-  
+
   elevated: {
     theme: 'elevated' as const,
     animation: 'subtle' as const,
     errorBoundary: true,
     analytics: true,
   },
-  
+
   glass: {
     theme: 'glass' as const,
     animation: 'fade' as const,
     errorBoundary: true,
     analytics: true,
   },
-  
+
   dashboard: {
     theme: 'elevated' as const,
     animation: 'subtle' as const,
@@ -268,7 +275,7 @@ export const v0WrapperPresets = {
       ariaLabel: 'Dashboard principal',
     },
   },
-  
+
   modal: {
     theme: 'elevated' as const,
     animation: 'slide' as const,
@@ -285,8 +292,5 @@ export function useV0Wrapper(
   Component: React.ComponentType<Record<string, unknown>>,
   customizations?: V0WrapperCustomizations
 ) {
-  return React.useMemo(
-    () => withV0Wrapper(Component, customizations),
-    [Component, customizations]
-  );
+  return React.useMemo(() => withV0Wrapper(Component, customizations), [Component, customizations]);
 }

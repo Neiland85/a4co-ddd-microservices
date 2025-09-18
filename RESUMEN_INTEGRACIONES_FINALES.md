@@ -10,6 +10,7 @@
 
 #### 1. `/api/sales-opportunities` - Oportunidades de Venta
 
+
 ```typescript
 ✅ GET con filtros (tipo, ubicación, categoría)
 ✅ POST para crear nuevas oportunidades
@@ -19,9 +20,13 @@
    - Cooperativa Consumo (Jaén Capital)
 ✅ Responses estructuradas con metadatos
 ✅ Manejo robusto de errores
+
+
 ```
 
+
 #### 2. `/api/products` - Productos Locales
+
 
 ```typescript
 ✅ GET con filtros avanzados
@@ -35,9 +40,13 @@
    - Aceitunas (Mengíbar)
    - Cerámica (Úbeda)
 ✅ Filtros: categoría, ubicación, temporada, disponibilidad
+
+
 ```
 
+
 #### 3. `/api/artisans` - Artesanos/Productores
+
 
 ```typescript
 ✅ Directorio de productores verificados
@@ -47,13 +56,17 @@
    - Quesería Los Olivos
    - Taller Cerámico Paco Tito
 ✅ Info completa: contacto, horarios, servicios, ratings
+
+
 ```
+
 
 ---
 
 ### 🎣 **Hooks Personalizados React**
 
 #### 1. `useSalesOpportunities`
+
 
 ```typescript
 ✅ Estado completo (loading, error, data)
@@ -63,9 +76,13 @@
 ✅ Hooks especializados:
    - useHighPriorityOpportunities()
    - useLocalOpportunities(municipality)
+
+
 ```
 
+
 #### 2. `useProducts`
+
 
 ```typescript
 ✅ Paginación con loadMore()
@@ -77,9 +94,13 @@
    - useSeasonalProducts()
    - useAvailableProducts()
    - useProductSearch() con debounce
+
+
 ```
 
+
 #### 3. `useArtisans`
+
 
 ```typescript
 ✅ Filtros por ubicación/especialidad
@@ -89,9 +110,13 @@
    - useVerifiedArtisans()
    - useArtisansByMunicipality()
    - useArtisanStats()
+
+
 ```
 
+
 #### 4. `useGeolocation`
+
 
 ```typescript
 ✅ Geolocalización nativa
@@ -99,13 +124,17 @@
 ✅ Cálculo distancias
 ✅ Detección automática provincia Jaén
 ✅ Hook especializado: useMarketLocations()
+
+
 ```
+
 
 ---
 
 ### 🎨 **Componentes UI Integrados**
 
 #### 1. `ProductCatalog`
+
 
 ```tsx
 ✅ Grid responsive (1-4 columnas)
@@ -115,9 +144,13 @@
 ✅ Estados loading/error elegantes
 ✅ Paginación "cargar más"
 ✅ Badges temporada/certificaciones
+
+
 ```
 
+
 #### 2. `ProductSearch`
+
 
 ```tsx
 ✅ Búsqueda tiempo real con debounce
@@ -125,9 +158,13 @@
 ✅ Sugerencias productos populares
 ✅ Estados vacíos elegantes
 ✅ Integración completa con hooks
+
+
 ```
 
+
 #### 3. `MarketplaceDashboard`
+
 
 ```tsx
 ✅ Navegación entre vistas
@@ -138,7 +175,10 @@
 ✅ Ubicaciones cercanas
 ✅ Header/footer cohesivos
 ✅ Responsive completo
+
+
 ```
+
 
 ---
 
@@ -146,48 +186,75 @@
 
 ### 1. **Dashboard → APIs → Hooks → UI**
 
+
 ```
+
+
 Usuario abre dashboard
 → useGeolocation obtiene ubicación
 → useSeasonalProducts llama /api/products?seasonal=true
 → ProductCatalog renderiza productos
 → Todo funciona integrado ✅
+
+
 ```
+
 
 ### 2. **Búsqueda Tiempo Real**
 
+
 ```
+
+
 Usuario escribe "aceite"
 → useProductSearch con debounce (300ms)
 → Hook llama /api/products?search=aceite
 → ProductSearch actualiza resultados
 → Sin delays, fluido ✅
+
+
 ```
+
 
 ### 3. **Filtros Combinados**
 
+
 ```
+
+
 Usuario selecciona categoría "queso" + ubicación "Cazorla"
 → Hook combina filtros
 → API: /api/products?category=queso&location=Cazorla
 → UI actualiza automáticamente ✅
+
+
 ```
+
 
 ### 4. **Geolocalización Integrada**
 
+
 ```
+
+
 Usuario permite ubicación
 → useGeolocation detecta coordenadas
 → Determina si está en Jaén
 → Calcula distancia a productores
 → Muestra ubicaciones cercanas ✅
+
+
 ```
+
 
 ---
 
 ## 📊 **MÉTRICAS DE IMPLEMENTACIÓN**
 
+
 ```
+
+
 📡 APIs: 3/3 completas (12+ endpoints)
 🎣 Hooks: 4 principales + 8 especializados
 🎨 UI: 5 componentes + 10 subcomponentes
@@ -195,7 +262,10 @@ Usuario permite ubicación
 📱 Responsive: Mobile-first completo
 ⚡ Performance: Debounce, cache, paginación
 🧪 Testing: Página test-integrations implementada
+
+
 ```
+
 
 ---
 
@@ -203,15 +273,20 @@ Usuario permite ubicación
 
 ### **1. Dashboard Principal**
 
+
 ```bash
 # Ruta: localhost:3001/
 - Ver geolocalización funcionando
 - Estadísticas en tiempo real
 - Navegación entre vistas
 - Productos estacionales
+
+
 ```
 
+
 ### **2. Página de Testing**
+
 
 ```bash
 # Ruta: localhost:3001/test-integrations
@@ -220,17 +295,24 @@ Usuario permite ubicación
 - Búsqueda tiempo real
 - Filtros combinados
 - Estado global
+
+
 ```
+
 
 ### **3. APIs Directas**
 
+
 ```bash
-# Ejemplos de URLs funcionales:
+# Ejemplos de URLs funcionales
 localhost:3001/api/sales-opportunities
 localhost:3001/api/products?category=aceite
 localhost:3001/api/artisans?verified=true
 localhost:3001/api/products?search=queso&location=Cazorla
+
+
 ```
+
 
 ---
 

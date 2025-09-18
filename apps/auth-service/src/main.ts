@@ -1,10 +1,26 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { AuthModule } from './auth.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
+
+  // Security middleware
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    })
+  );
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -17,10 +33,10 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || [
-      'http://localhost:3000',
-    ],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
   // Swagger documentation

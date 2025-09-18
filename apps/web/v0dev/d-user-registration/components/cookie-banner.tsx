@@ -1,27 +1,27 @@
-"use client"
+'use client';
 
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Cookie, Settings, Check, X } from "lucide-react"
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Cookie, Settings, Check, X } from 'lucide-react';
 
 export function CookieBanner() {
-  const [showBanner, setShowBanner] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
+  const [showBanner, setShowBanner] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState({
     necessary: true,
     analytics: false,
     marketing: false,
     personalization: false,
-  })
+  });
 
   useEffect(() => {
-    const consent = localStorage.getItem("cookie-consent")
+    const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      setShowBanner(true)
+      setShowBanner(true);
     }
-  }, [])
+  }, []);
 
   const acceptAll = () => {
     setPreferences({
@@ -29,23 +29,23 @@ export function CookieBanner() {
       analytics: true,
       marketing: true,
       personalization: true,
-    })
+    });
     localStorage.setItem(
-      "cookie-consent",
+      'cookie-consent',
       JSON.stringify({
         ...preferences,
         analytics: true,
         marketing: true,
         personalization: true,
-      }),
-    )
-    setShowBanner(false)
-  }
+      })
+    );
+    setShowBanner(false);
+  };
 
   const acceptSelected = () => {
-    localStorage.setItem("cookie-consent", JSON.stringify(preferences))
-    setShowBanner(false)
-  }
+    localStorage.setItem('cookie-consent', JSON.stringify(preferences));
+    setShowBanner(false);
+  };
 
   const rejectAll = () => {
     setPreferences({
@@ -53,18 +53,18 @@ export function CookieBanner() {
       analytics: false,
       marketing: false,
       personalization: false,
-    })
+    });
     localStorage.setItem(
-      "cookie-consent",
+      'cookie-consent',
       JSON.stringify({
         necessary: true,
         analytics: false,
         marketing: false,
         personalization: false,
-      }),
-    )
-    setShowBanner(false)
-  }
+      })
+    );
+    setShowBanner(false);
+  };
 
   return (
     <AnimatePresence>
@@ -75,8 +75,8 @@ export function CookieBanner() {
           exit={{ y: 100, opacity: 0 }}
           className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-md"
         >
-          <Card className="p-6 bg-white/95 backdrop-blur-lg border-2 border-purple-200 shadow-2xl">
-            <div className="flex items-start gap-3 mb-4">
+          <Card className="border-2 border-purple-200 bg-white/95 p-6 shadow-2xl backdrop-blur-lg">
+            <div className="mb-4 flex items-start gap-3">
               <motion.div
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
@@ -85,10 +85,10 @@ export function CookieBanner() {
                 <Cookie size={24} />
               </motion.div>
               <div>
-                <h3 className="font-bold text-gray-900 mb-2">🍪 ¡Cookies Deliciosas!</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Usamos cookies para mejorar tu experiencia. ¿Nos permites usar algunas cookies opcionales para
-                  personalizar tu experiencia?
+                <h3 className="mb-2 font-bold text-gray-900">🍪 ¡Cookies Deliciosas!</h3>
+                <p className="mb-4 text-sm text-gray-600">
+                  Usamos cookies para mejorar tu experiencia. ¿Nos permites usar algunas cookies
+                  opcionales para personalizar tu experiencia?
                 </p>
               </div>
             </div>
@@ -96,35 +96,37 @@ export function CookieBanner() {
             {showSettings && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 className="mb-4 space-y-3"
               >
                 {Object.entries({
-                  necessary: "Necesarias (Requeridas)",
-                  analytics: "Analíticas",
-                  marketing: "Marketing",
-                  personalization: "Personalización",
+                  necessary: 'Necesarias (Requeridas)',
+                  analytics: 'Analíticas',
+                  marketing: 'Marketing',
+                  personalization: 'Personalización',
                 }).map(([key, label]) => (
                   <div key={key} className="flex items-center justify-between">
                     <span className="text-sm text-gray-700">{label}</span>
                     <button
                       onClick={() =>
-                        key !== "necessary" &&
-                        setPreferences((prev) => ({
+                        key !== 'necessary' &&
+                        setPreferences(prev => ({
                           ...prev,
                           [key]: !prev[key as keyof typeof prev],
                         }))
                       }
-                      disabled={key === "necessary"}
-                      className={`w-12 h-6 rounded-full transition-colors ${
-                        preferences[key as keyof typeof preferences] ? "bg-purple-600" : "bg-gray-300"
-                      } ${key === "necessary" ? "opacity-50" : ""}`}
+                      disabled={key === 'necessary'}
+                      className={`h-6 w-12 rounded-full transition-colors ${
+                        preferences[key as keyof typeof preferences]
+                          ? 'bg-purple-600'
+                          : 'bg-gray-300'
+                      } ${key === 'necessary' ? 'opacity-50' : ''}`}
                     >
                       <motion.div
                         animate={{
                           x: preferences[key as keyof typeof preferences] ? 24 : 2,
                         }}
-                        className="w-5 h-5 bg-white rounded-full shadow-md"
+                        className="h-5 w-5 rounded-full bg-white shadow-md"
                       />
                     </button>
                   </div>
@@ -154,7 +156,7 @@ export function CookieBanner() {
                 <Button
                   onClick={acceptSelected}
                   variant="outline"
-                  className="flex-1 border-purple-200 hover:bg-purple-50 bg-transparent"
+                  className="flex-1 border-purple-200 bg-transparent hover:bg-purple-50"
                 >
                   Guardar Preferencias
                 </Button>
@@ -162,7 +164,7 @@ export function CookieBanner() {
                   onClick={rejectAll}
                   variant="outline"
                   size="icon"
-                  className="border-red-200 hover:bg-red-50 text-red-600 bg-transparent"
+                  className="border-red-200 bg-transparent text-red-600 hover:bg-red-50"
                 >
                   <X size={16} />
                 </Button>
@@ -172,5 +174,5 @@ export function CookieBanner() {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

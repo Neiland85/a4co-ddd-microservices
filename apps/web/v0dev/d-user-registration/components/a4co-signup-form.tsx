@@ -1,30 +1,47 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { a4coSignupSchema, type A4coSignupFormData } from "@/lib/validation"
-import { FormProgress } from "./form-progress"
-import { User, Mail, Building, Briefcase, Lock, Phone, Eye, EyeOff, ArrowRight, ArrowLeft } from "lucide-react"
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { a4coSignupSchema, type A4coSignupFormData } from '@/lib/validation';
+import { FormProgress } from './form-progress';
+import {
+  User,
+  Mail,
+  Building,
+  Briefcase,
+  Lock,
+  Phone,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+} from 'lucide-react';
 
 interface A4coSignupFormProps {
-  onSuccess: (data: A4coSignupFormData) => void
+  onSuccess: (data: A4coSignupFormData) => void;
 }
 
 export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const stepLabels = ["Información Personal", "Empresa", "Seguridad", "Confirmación"]
+  const stepLabels = ['Información Personal', 'Empresa', 'Seguridad', 'Confirmación'];
 
   const {
     register,
@@ -35,68 +52,72 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
     trigger,
   } = useForm<A4coSignupFormData>({
     resolver: zodResolver(a4coSignupSchema),
-    mode: "onChange",
-  })
+    mode: 'onChange',
+  });
 
-  const watchedFields = watch()
+  const watchedFields = watch();
 
   const validateCurrentStep = async () => {
-    const fieldsToValidate = getFieldsForStep(currentStep)
-    return await trigger(fieldsToValidate)
-  }
+    const fieldsToValidate = getFieldsForStep(currentStep);
+    return await trigger(fieldsToValidate);
+  };
 
   const getFieldsForStep = (step: number): (keyof A4coSignupFormData)[] => {
     switch (step) {
       case 0:
-        return ["firstName", "lastName", "email"]
+        return ['firstName', 'lastName', 'email'];
       case 1:
-        return ["company", "jobTitle"]
+        return ['company', 'jobTitle'];
       case 2:
-        return ["password", "confirmPassword"]
+        return ['password', 'confirmPassword'];
       case 3:
-        return ["acceptTerms"]
+        return ['acceptTerms'];
       default:
-        return []
+        return [];
     }
-  }
+  };
 
   const nextStep = async () => {
-    const isValid = await validateCurrentStep()
+    const isValid = await validateCurrentStep();
     if (isValid && currentStep < stepLabels.length - 1) {
-      setCurrentStep(currentStep + 1)
+      setCurrentStep(currentStep + 1);
     }
-  }
+  };
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
   const onSubmit = async (data: A4coSignupFormData) => {
-    setIsLoading(true)
+    setIsLoading(true);
     // Simular registro
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsLoading(false)
-    onSuccess(data)
-  }
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsLoading(false);
+    onSuccess(data);
+  };
 
   const jobTitles = [
-    "CEO/Fundador",
-    "CTO/Director de Tecnología",
-    "Gerente General",
-    "Director de Marketing",
-    "Director de Ventas",
-    "Gerente de Proyecto",
-    "Desarrollador",
-    "Analista",
-    "Consultor",
-    "Otro",
-  ]
+    'CEO/Fundador',
+    'CTO/Director de Tecnología',
+    'Gerente General',
+    'Director de Marketing',
+    'Director de Ventas',
+    'Gerente de Proyecto',
+    'Desarrollador',
+    'Analista',
+    'Consultor',
+    'Otro',
+  ];
 
   return (
-    <Card className="p-8 bg-white/95 backdrop-blur-lg border border-gray-200 shadow-xl">
-      <FormProgress currentStep={currentStep} totalSteps={stepLabels.length} stepLabels={stepLabels} />
+    <Card className="border border-gray-200 bg-white/95 p-8 shadow-xl backdrop-blur-lg">
+      <FormProgress
+        currentStep={currentStep}
+        totalSteps={stepLabels.length}
+        stepLabels={stepLabels}
+      />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <AnimatePresence mode="wait">
@@ -110,23 +131,25 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
               className="space-y-6"
             >
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Información Personal</h3>
-                <p className="text-gray-600 mb-6">Cuéntanos un poco sobre ti</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">Información Personal</h3>
+                <p className="mb-6 text-gray-600">Cuéntanos un poco sobre ti</p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="firstName" className="flex items-center gap-2">
                     <User size={16} className="text-blue-600" />
                     Nombre
                   </Label>
                   <Input
-                    {...register("firstName")}
+                    {...register('firstName')}
                     id="firstName"
                     placeholder="Tu nombre"
-                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                    className="border-2 border-gray-200 transition-colors focus:border-blue-500"
                   />
-                  {errors.firstName && <p className="text-sm text-red-600">{errors.firstName.message}</p>}
+                  {errors.firstName && (
+                    <p className="text-sm text-red-600">{errors.firstName.message}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -135,12 +158,14 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
                     Apellido
                   </Label>
                   <Input
-                    {...register("lastName")}
+                    {...register('lastName')}
                     id="lastName"
                     placeholder="Tu apellido"
-                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                    className="border-2 border-gray-200 transition-colors focus:border-blue-500"
                   />
-                  {errors.lastName && <p className="text-sm text-red-600">{errors.lastName.message}</p>}
+                  {errors.lastName && (
+                    <p className="text-sm text-red-600">{errors.lastName.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -150,11 +175,11 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
                   Correo Electrónico Corporativo
                 </Label>
                 <Input
-                  {...register("email")}
+                  {...register('email')}
                   id="email"
                   type="email"
                   placeholder="tu.nombre@empresa.com"
-                  className="border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                  className="border-2 border-gray-200 transition-colors focus:border-blue-500"
                 />
                 {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
               </div>
@@ -165,11 +190,11 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
                   Teléfono (Opcional)
                 </Label>
                 <Input
-                  {...register("phone")}
+                  {...register('phone')}
                   id="phone"
                   type="tel"
                   placeholder="+1 (555) 123-4567"
-                  className="border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                  className="border-2 border-gray-200 transition-colors focus:border-blue-500"
                 />
               </div>
             </motion.div>
@@ -185,8 +210,10 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
               className="space-y-6"
             >
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Información de la Empresa</h3>
-                <p className="text-gray-600 mb-6">Detalles sobre tu organización</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                  Información de la Empresa
+                </h3>
+                <p className="mb-6 text-gray-600">Detalles sobre tu organización</p>
               </div>
 
               <div className="space-y-2">
@@ -195,10 +222,10 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
                   Nombre de la Empresa
                 </Label>
                 <Input
-                  {...register("company")}
+                  {...register('company')}
                   id="company"
                   placeholder="Acme Corporation"
-                  className="border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                  className="border-2 border-gray-200 transition-colors focus:border-blue-500"
                 />
                 {errors.company && <p className="text-sm text-red-600">{errors.company.message}</p>}
               </div>
@@ -208,19 +235,21 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
                   <Briefcase size={16} className="text-blue-600" />
                   Cargo/Posición
                 </Label>
-                <Select onValueChange={(value) => setValue("jobTitle", value)}>
+                <Select onValueChange={value => setValue('jobTitle', value)}>
                   <SelectTrigger className="border-2 border-gray-200 focus:border-blue-500">
                     <SelectValue placeholder="Selecciona tu cargo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {jobTitles.map((title) => (
+                    {jobTitles.map(title => (
                       <SelectItem key={title} value={title}>
                         {title}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.jobTitle && <p className="text-sm text-red-600">{errors.jobTitle.message}</p>}
+                {errors.jobTitle && (
+                  <p className="text-sm text-red-600">{errors.jobTitle.message}</p>
+                )}
               </div>
             </motion.div>
           )}
@@ -235,8 +264,10 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
               className="space-y-6"
             >
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Configuración de Seguridad</h3>
-                <p className="text-gray-600 mb-6">Crea una contraseña segura para tu cuenta</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                  Configuración de Seguridad
+                </h3>
+                <p className="mb-6 text-gray-600">Crea una contraseña segura para tu cuenta</p>
               </div>
 
               <div className="space-y-2">
@@ -246,21 +277,23 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
                 </Label>
                 <div className="relative">
                   <Input
-                    {...register("password")}
+                    {...register('password')}
                     id="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Mínimo 8 caracteres"
-                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors pr-10"
+                    className="border-2 border-gray-200 pr-10 transition-colors focus:border-blue-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-blue-600"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-sm text-red-600">{errors.password.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -270,41 +303,59 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
                 </Label>
                 <div className="relative">
                   <Input
-                    {...register("confirmPassword")}
+                    {...register('confirmPassword')}
                     id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Repite tu contraseña"
-                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors pr-10"
+                    className="border-2 border-gray-200 pr-10 transition-colors focus:border-blue-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-blue-600"
                   >
                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>}
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
+                )}
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2">Requisitos de contraseña:</h4>
-                <ul className="text-sm text-blue-800 space-y-1">
+              <div className="rounded-lg bg-blue-50 p-4">
+                <h4 className="mb-2 font-medium text-blue-900">Requisitos de contraseña:</h4>
+                <ul className="space-y-1 text-sm text-blue-800">
                   <li className="flex items-center gap-2">
-                    <span className={watchedFields.password?.length >= 8 ? "text-green-600" : "text-gray-400"}>
-                      {watchedFields.password?.length >= 8 ? "✓" : "○"}
+                    <span
+                      className={
+                        watchedFields.password?.length >= 8 ? 'text-green-600' : 'text-gray-400'
+                      }
+                    >
+                      {watchedFields.password?.length >= 8 ? '✓' : '○'}
                     </span>
                     Mínimo 8 caracteres
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className={/[A-Z]/.test(watchedFields.password || "") ? "text-green-600" : "text-gray-400"}>
-                      {/[A-Z]/.test(watchedFields.password || "") ? "✓" : "○"}
+                    <span
+                      className={
+                        /[A-Z]/.test(watchedFields.password || '')
+                          ? 'text-green-600'
+                          : 'text-gray-400'
+                      }
+                    >
+                      {/[A-Z]/.test(watchedFields.password || '') ? '✓' : '○'}
                     </span>
                     Al menos una mayúscula
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className={/[0-9]/.test(watchedFields.password || "") ? "text-green-600" : "text-gray-400"}>
-                      {/[0-9]/.test(watchedFields.password || "") ? "✓" : "○"}
+                    <span
+                      className={
+                        /[0-9]/.test(watchedFields.password || '')
+                          ? 'text-green-600'
+                          : 'text-gray-400'
+                      }
+                    >
+                      {/[0-9]/.test(watchedFields.password || '') ? '✓' : '○'}
                     </span>
                     Al menos un número
                   </li>
@@ -323,11 +374,13 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
               className="space-y-6"
             >
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Confirmación</h3>
-                <p className="text-gray-600 mb-6">Revisa tu información y acepta nuestros términos</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">Confirmación</h3>
+                <p className="mb-6 text-gray-600">
+                  Revisa tu información y acepta nuestros términos
+                </p>
               </div>
 
-              <div className="bg-gray-50 p-6 rounded-lg space-y-3">
+              <div className="space-y-3 rounded-lg bg-gray-50 p-6">
                 <h4 className="font-medium text-gray-900">Resumen de tu cuenta:</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
@@ -353,25 +406,28 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
 
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <Checkbox {...register("acceptTerms")} id="acceptTerms" className="mt-1" />
-                  <Label htmlFor="acceptTerms" className="text-sm text-gray-700 leading-relaxed">
-                    Acepto los{" "}
-                    <a href="#" className="text-blue-600 hover:underline font-medium">
+                  <Checkbox {...register('acceptTerms')} id="acceptTerms" className="mt-1" />
+                  <Label htmlFor="acceptTerms" className="text-sm leading-relaxed text-gray-700">
+                    Acepto los{' '}
+                    <a href="#" className="font-medium text-blue-600 hover:underline">
                       Términos de Servicio
-                    </a>{" "}
-                    y la{" "}
-                    <a href="#" className="text-blue-600 hover:underline font-medium">
+                    </a>{' '}
+                    y la{' '}
+                    <a href="#" className="font-medium text-blue-600 hover:underline">
                       Política de Privacidad
-                    </a>{" "}
+                    </a>{' '}
                     de a4co
                   </Label>
                 </div>
-                {errors.acceptTerms && <p className="text-sm text-red-600">{errors.acceptTerms.message}</p>}
+                {errors.acceptTerms && (
+                  <p className="text-sm text-red-600">{errors.acceptTerms.message}</p>
+                )}
 
                 <div className="flex items-start space-x-3">
-                  <Checkbox {...register("newsletter")} id="newsletter" className="mt-1" />
-                  <Label htmlFor="newsletter" className="text-sm text-gray-700 leading-relaxed">
-                    Quiero recibir actualizaciones de productos, noticias de la industria y ofertas especiales de a4co
+                  <Checkbox {...register('newsletter')} id="newsletter" className="mt-1" />
+                  <Label htmlFor="newsletter" className="text-sm leading-relaxed text-gray-700">
+                    Quiero recibir actualizaciones de productos, noticias de la industria y ofertas
+                    especiales de a4co
                   </Label>
                 </div>
               </div>
@@ -380,7 +436,7 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
         </AnimatePresence>
 
         {/* Botones de navegación */}
-        <div className="flex justify-between mt-8">
+        <div className="mt-8 flex justify-between">
           <Button
             type="button"
             onClick={prevStep}
@@ -405,11 +461,11 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
             <Button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 min-w-[120px]"
+              className="flex min-w-[120px] items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
             >
               {isLoading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Creando...
                 </>
               ) : (
@@ -423,5 +479,5 @@ export function A4coSignupForm({ onSuccess }: A4coSignupFormProps) {
         </div>
       </form>
     </Card>
-  )
+  );
 }

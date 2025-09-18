@@ -1,18 +1,12 @@
 import { Product } from '../../domain/entities/product.entity';
-import { 
-  CheckInventoryRequest, 
+import {
+  CheckInventoryRequest,
   CheckInventoryResponse,
   BulkCheckInventoryRequest,
-  BulkCheckInventoryResponse 
+  BulkCheckInventoryResponse,
 } from '../use-cases/check-inventory.use-case';
-import { 
-  ReserveStockRequest, 
-  ReserveStockResponse 
-} from '../use-cases/reserve-stock.use-case';
-import { 
-  ReleaseStockRequest, 
-  ReleaseStockResponse 
-} from '../use-cases/release-stock.use-case';
+import { ReserveStockRequest, ReserveStockResponse } from '../use-cases/reserve-stock.use-case';
+import { ReleaseStockRequest, ReleaseStockResponse } from '../use-cases/release-stock.use-case';
 
 export interface InventoryServicePort {
   checkInventory(request: CheckInventoryRequest): Promise<CheckInventoryResponse>;

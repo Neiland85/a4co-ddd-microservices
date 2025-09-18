@@ -75,17 +75,21 @@ const ProductList = withTracing(
       try {
         setLoading(true);
         const response = await httpClient.get('/api/products');
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        
-        logResponse(startTime, {
-          method: 'GET',
-          url: '/api/products',
-        }, response);
+
+        logResponse(
+          startTime,
+          {
+            method: 'GET',
+            url: '/api/products',
+          },
+          response
+        );
 
         componentLogger.info('Products loaded successfully', {
           custom: {
@@ -98,10 +102,14 @@ const ProductList = withTracing(
         setError(null);
       } catch (err) {
         const error = err as Error;
-        logError(startTime, {
-          method: 'GET',
-          url: '/api/products',
-        }, error);
+        logError(
+          startTime,
+          {
+            method: 'GET',
+            url: '/api/products',
+          },
+          error
+        );
 
         componentLogger.error('Failed to load products', error);
         setError(error.message);
@@ -115,12 +123,8 @@ const ProductList = withTracing(
 
     return (
       <div className="product-grid">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onSelect={onProductSelect}
-          />
+        {products.map(product => (
+          <ProductCard key={product.id} product={product} onSelect={onProductSelect} />
         ))}
       </div>
     );
@@ -129,7 +133,13 @@ const ProductList = withTracing(
 );
 
 // Product Card with observable interactions
-function ProductCard({ product, onSelect }: { product: Product; onSelect: (product: Product) => void }) {
+function ProductCard({
+  product,
+  onSelect,
+}: {
+  product: Product;
+  onSelect: (product: Product) => void;
+}) {
   const logInteraction = useInteractionLogger('product.card', {
     throttle: 1000,
   });
@@ -159,7 +169,7 @@ function ProductCard({ product, onSelect }: { product: Product; onSelect: (produ
           price: product.price,
           category: product.category,
         }}
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation();
           // Add to cart logic
         }}
@@ -179,7 +189,7 @@ function CheckoutForm({ cart }: { cart: CartItem[] }) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    
+
     const orderData = {
       items: cart,
       customer: {
@@ -197,7 +207,7 @@ function CheckoutForm({ cart }: { cart: CartItem[] }) {
 
     try {
       setSubmitting(true);
-      
+
       const response = await httpClient.post('/api/orders', orderData);
       const result = await response.json();
 
@@ -236,17 +246,17 @@ function CheckoutForm({ cart }: { cart: CartItem[] }) {
         cartValue: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
       }}
       onSubmit={handleSubmit}
-      onSubmitSuccess={(data) => {
+      onSubmitSuccess={data => {
         logger.info('Checkout form submitted', { custom: data });
       }}
-      onSubmitError={(error) => {
+      onSubmitError={error => {
         logger.error('Checkout form error', error);
       }}
     >
       <input name="email" type="email" placeholder="Email" required />
       <input name="name" type="text" placeholder="Full Name" required />
       <textarea name="address" placeholder="Shipping Address" required />
-      
+
       <ObservableButton
         type="submit"
         variant="primary"
@@ -284,26 +294,18 @@ function App() {
     >
       <div className="app">
         <Routes>
-          <Route 
-            path="/" 
-            element={
-              <ProductList onProductSelect={setSelectedProduct} />
-            } 
-          />
-          <Route 
-            path="/product/:id" 
+          <Route path="/" element={<ProductList onProductSelect={setSelectedProduct} />} />
+          <Route
+            path="/product/:id"
             element={
               selectedProduct ? (
                 <ProductDetail product={selectedProduct} />
               ) : (
                 <div>Product not found</div>
               )
-            } 
+            }
           />
-          <Route 
-            path="/checkout" 
-            element={<CheckoutForm cart={cart} />} 
-          />
+          <Route path="/checkout" element={<CheckoutForm cart={cart} />} />
         </Routes>
       </div>
     </LoggingErrorBoundary>
@@ -313,7 +315,7 @@ function App() {
 // Product Detail Page
 function ProductDetail({ product }: { product: Product }) {
   const componentLogger = useComponentLogger('ProductDetail', { productId: product.id });
-  
+
   useEffect(() => {
     componentLogger.info('Product detail viewed', {
       custom: {

@@ -1,53 +1,66 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, Trophy, Star, Phone, Mail, Globe, Clock, ThumbsUp, ShoppingBag } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { featuredBusinesses } from "@/data/featured-businesses"
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Trophy,
+  Star,
+  Phone,
+  Mail,
+  Globe,
+  Clock,
+  ThumbsUp,
+  ShoppingBag,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { featuredBusinesses } from '@/data/featured-businesses';
 
-type CategoryFilter = "all" | "food" | "ai"
+type CategoryFilter = 'all' | 'food' | 'ai';
 
 export function FeaturedBusinessesSection() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [filter, setFilter] = useState<CategoryFilter>("all")
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [filter, setFilter] = useState<CategoryFilter>('all');
 
-  const filteredBusinesses = featuredBusinesses.filter((business) => filter === "all" || business.category === filter)
+  const filteredBusinesses = featuredBusinesses.filter(
+    business => filter === 'all' || business.category === filter
+  );
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % filteredBusinesses.length)
-  }
+    setCurrentIndex(prev => (prev + 1) % filteredBusinesses.length);
+  };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + filteredBusinesses.length) % filteredBusinesses.length)
-  }
+    setCurrentIndex(prev => (prev - 1 + filteredBusinesses.length) % filteredBusinesses.length);
+  };
 
   const getCategoryIcon = (category: string) => {
-    return category === "food" ? "🍽️" : "🤖"
-  }
+    return category === 'food' ? '🍽️' : '🤖';
+  };
 
   const getCategoryName = (category: string) => {
-    return category === "food" ? "Productos Alimenticios" : "Actividades con IA"
-  }
+    return category === 'food' ? 'Productos Alimenticios' : 'Actividades con IA';
+  };
 
   const getVisibleBusinesses = () => {
-    const businesses = []
+    const businesses = [];
     for (let i = 0; i < 3; i++) {
-      const index = (currentIndex + i) % filteredBusinesses.length
-      businesses.push(filteredBusinesses[index])
+      const index = (currentIndex + i) % filteredBusinesses.length;
+      businesses.push(filteredBusinesses[index]);
     }
-    return businesses
-  }
+    return businesses;
+  };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+    <section className="bg-gradient-to-br from-slate-50 to-blue-50 py-16">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="mb-12 text-center">
           <motion.h2
-            className="text-4xl font-bold text-gray-900 mb-4"
+            className="mb-4 text-4xl font-bold text-gray-900"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -55,7 +68,7 @@ export function FeaturedBusinessesSection() {
             Negocios Destacados del Mes
           </motion.h2>
           <motion.p
-            className="text-lg text-gray-600 mb-8"
+            className="mb-8 text-lg text-gray-600"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -64,23 +77,23 @@ export function FeaturedBusinessesSection() {
           </motion.p>
 
           {/* Category Filters */}
-          <div className="flex justify-center gap-4 mb-8">
+          <div className="mb-8 flex justify-center gap-4">
             {[
-              { key: "all", label: "Todos", icon: "🏆" },
-              { key: "food", label: "Productos Alimenticios", icon: "🍽️" },
-              { key: "ai", label: "Actividades con IA", icon: "🤖" },
-            ].map((category) => (
+              { key: 'all', label: 'Todos', icon: '🏆' },
+              { key: 'food', label: 'Productos Alimenticios', icon: '🍽️' },
+              { key: 'ai', label: 'Actividades con IA', icon: '🤖' },
+            ].map(category => (
               <Button
                 key={category.key}
-                variant={filter === category.key ? "default" : "outline"}
+                variant={filter === category.key ? 'default' : 'outline'}
                 onClick={() => {
-                  setFilter(category.key as CategoryFilter)
-                  setCurrentIndex(0)
+                  setFilter(category.key as CategoryFilter);
+                  setCurrentIndex(0);
                 }}
-                className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                className={`rounded-full px-6 py-3 transition-all duration-300 ${
                   filter === category.key
-                    ? "bg-blue-600 text-white shadow-lg scale-105"
-                    : "hover:bg-blue-50 hover:scale-105"
+                    ? 'scale-105 bg-blue-600 text-white shadow-lg'
+                    : 'hover:scale-105 hover:bg-blue-50'
                 }`}
               >
                 <span className="mr-2">{category.icon}</span>
@@ -90,20 +103,20 @@ export function FeaturedBusinessesSection() {
           </div>
 
           {/* Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <motion.div className="bg-white rounded-lg p-6 shadow-md" whileHover={{ scale: 1.05 }}>
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <motion.div className="rounded-lg bg-white p-6 shadow-md" whileHover={{ scale: 1.05 }}>
               <div className="text-3xl font-bold text-blue-600">
-                {featuredBusinesses.filter((b) => b.category === "food").length}
+                {featuredBusinesses.filter(b => b.category === 'food').length}
               </div>
               <div className="text-gray-600">Productos Alimenticios</div>
             </motion.div>
-            <motion.div className="bg-white rounded-lg p-6 shadow-md" whileHover={{ scale: 1.05 }}>
+            <motion.div className="rounded-lg bg-white p-6 shadow-md" whileHover={{ scale: 1.05 }}>
               <div className="text-3xl font-bold text-purple-600">
-                {featuredBusinesses.filter((b) => b.category === "ai").length}
+                {featuredBusinesses.filter(b => b.category === 'ai').length}
               </div>
               <div className="text-gray-600">Actividades con IA</div>
             </motion.div>
-            <motion.div className="bg-white rounded-lg p-6 shadow-md" whileHover={{ scale: 1.05 }}>
+            <motion.div className="rounded-lg bg-white p-6 shadow-md" whileHover={{ scale: 1.05 }}>
               <div className="text-3xl font-bold text-green-600">
                 {featuredBusinesses.reduce((sum, b) => sum + b.votes, 0)}
               </div>
@@ -118,7 +131,7 @@ export function FeaturedBusinessesSection() {
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm hover:bg-white hover:scale-110 transition-all duration-300"
+            className="absolute left-4 top-1/2 z-10 -translate-y-1/2 transform bg-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-white"
             onClick={prevSlide}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -126,14 +139,14 @@ export function FeaturedBusinessesSection() {
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm hover:bg-white hover:scale-110 transition-all duration-300"
+            className="absolute right-4 top-1/2 z-10 -translate-y-1/2 transform bg-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-white"
             onClick={nextSlide}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
 
           {/* Business Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-16">
+          <div className="grid grid-cols-1 gap-6 px-16 md:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="wait">
               {getVisibleBusinesses().map((business, index) => (
                 <motion.div
@@ -144,7 +157,7 @@ export function FeaturedBusinessesSection() {
                   transition={{
                     duration: 0.6,
                     delay: index * 0.1,
-                    type: "spring",
+                    type: 'spring',
                     stiffness: 100,
                   }}
                   whileHover={{
@@ -156,20 +169,24 @@ export function FeaturedBusinessesSection() {
                   className="perspective-1000"
                 >
                   <Card
-                    className={`overflow-hidden h-full transition-all duration-300 ${
+                    className={`h-full overflow-hidden transition-all duration-300 ${
                       business.isWinner
-                        ? "ring-4 ring-yellow-400 shadow-2xl bg-gradient-to-br from-yellow-50 to-amber-50"
-                        : "hover:shadow-xl"
+                        ? 'bg-gradient-to-br from-yellow-50 to-amber-50 shadow-2xl ring-4 ring-yellow-400'
+                        : 'hover:shadow-xl'
                     }`}
                   >
                     {business.isWinner && (
-                      <div className="absolute top-4 right-4 z-10">
+                      <div className="absolute right-4 top-4 z-10">
                         <motion.div
                           animate={{ rotate: 360 }}
-                          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                          transition={{
+                            duration: 2,
+                            repeat: Number.POSITIVE_INFINITY,
+                            ease: 'linear',
+                          }}
                         >
-                          <Badge className="bg-yellow-500 text-white px-3 py-1">
-                            <Trophy className="w-4 h-4 mr-1" />
+                          <Badge className="bg-yellow-500 px-3 py-1 text-white">
+                            <Trophy className="mr-1 h-4 w-4" />
                             Ganador del Mes
                           </Badge>
                         </motion.div>
@@ -178,11 +195,11 @@ export function FeaturedBusinessesSection() {
 
                     <div className="relative">
                       <img
-                        src={business.image || "/placeholder.svg"}
+                        src={business.image || '/placeholder.svg'}
                         alt={business.name}
-                        className="w-full h-48 object-cover"
+                        className="h-48 w-full object-cover"
                       />
-                      <div className="absolute top-4 left-4">
+                      <div className="absolute left-4 top-4">
                         <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm">
                           {getCategoryIcon(business.category)} {getCategoryName(business.category)}
                         </Badge>
@@ -190,35 +207,35 @@ export function FeaturedBusinessesSection() {
                     </div>
 
                     <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-3">
+                      <div className="mb-3 flex items-start justify-between">
                         <h3 className="text-xl font-bold text-gray-900">{business.name}</h3>
                         <div className="flex items-center">
-                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                          <Star className="h-4 w-4 fill-current text-yellow-400" />
                           <span className="ml-1 text-sm font-medium">{business.rating}</span>
                         </div>
                       </div>
 
-                      <p className="text-gray-600 mb-4 line-clamp-2">{business.description}</p>
+                      <p className="mb-4 line-clamp-2 text-gray-600">{business.description}</p>
 
                       {/* Stats */}
-                      <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+                      <div className="mb-4 grid grid-cols-3 gap-4 text-sm">
                         <div className="text-center">
-                          <div className="flex items-center justify-center mb-1">
-                            <Clock className="w-4 h-4 text-blue-500" />
+                          <div className="mb-1 flex items-center justify-center">
+                            <Clock className="h-4 w-4 text-blue-500" />
                           </div>
                           <div className="font-medium">{business.stats.responseTime}</div>
                           <div className="text-gray-500">Respuesta</div>
                         </div>
                         <div className="text-center">
-                          <div className="flex items-center justify-center mb-1">
-                            <ThumbsUp className="w-4 h-4 text-green-500" />
+                          <div className="mb-1 flex items-center justify-center">
+                            <ThumbsUp className="h-4 w-4 text-green-500" />
                           </div>
                           <div className="font-medium">{business.stats.satisfaction}%</div>
                           <div className="text-gray-500">Satisfacción</div>
                         </div>
                         <div className="text-center">
-                          <div className="flex items-center justify-center mb-1">
-                            <ShoppingBag className="w-4 h-4 text-purple-500" />
+                          <div className="mb-1 flex items-center justify-center">
+                            <ShoppingBag className="h-4 w-4 text-purple-500" />
                           </div>
                           <div className="font-medium">{business.stats.orders}</div>
                           <div className="text-gray-500">Pedidos</div>
@@ -226,23 +243,23 @@ export function FeaturedBusinessesSection() {
                       </div>
 
                       {/* Contact Info */}
-                      <div className="space-y-2 mb-4 text-sm text-gray-600">
+                      <div className="mb-4 space-y-2 text-sm text-gray-600">
                         <div className="flex items-center">
-                          <Phone className="w-4 h-4 mr-2" />
+                          <Phone className="mr-2 h-4 w-4" />
                           {business.contact.phone}
                         </div>
                         <div className="flex items-center">
-                          <Mail className="w-4 h-4 mr-2" />
+                          <Mail className="mr-2 h-4 w-4" />
                           {business.contact.email}
                         </div>
                         <div className="flex items-center">
-                          <Globe className="w-4 h-4 mr-2" />
+                          <Globe className="mr-2 h-4 w-4" />
                           {business.contact.website}
                         </div>
                       </div>
 
                       {/* Votes */}
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="mb-4 flex items-center justify-between">
                         <span className="text-sm text-gray-600">{business.votes} votos</span>
                         <Badge variant="outline" className="text-xs">
                           €{business.monthlyPayment}/mes
@@ -252,14 +269,14 @@ export function FeaturedBusinessesSection() {
                       {/* Action Buttons */}
                       <div className="flex gap-2">
                         <Button
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105"
+                          className="flex-1 bg-blue-600 transition-all duration-300 hover:scale-105 hover:bg-blue-700"
                           size="sm"
                         >
                           Explorar Mapa
                         </Button>
                         <Button
                           variant="outline"
-                          className="flex-1 hover:bg-gray-50 transition-all duration-300 hover:scale-105 bg-transparent"
+                          className="flex-1 bg-transparent transition-all duration-300 hover:scale-105 hover:bg-gray-50"
                           size="sm"
                         >
                           Ver Productos
@@ -273,12 +290,12 @@ export function FeaturedBusinessesSection() {
           </div>
 
           {/* Pagination Dots */}
-          <div className="flex justify-center mt-8 space-x-2">
+          <div className="mt-8 flex justify-center space-x-2">
             {filteredBusinesses.map((_, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? "bg-blue-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
+                className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex ? 'scale-125 bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'
                 }`}
                 onClick={() => setCurrentIndex(index)}
               />
@@ -287,5 +304,5 @@ export function FeaturedBusinessesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

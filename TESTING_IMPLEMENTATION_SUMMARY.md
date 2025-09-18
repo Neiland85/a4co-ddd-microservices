@@ -28,6 +28,7 @@ Se han implementado pruebas unitarias completas para dos microservicios principa
 
 ### Auth Service (`apps/auth-service/`)
 
+
 ```bash
 test/
 ├── auth.service.spec.ts    # Tests principales del servicio
@@ -36,9 +37,13 @@ test/
 ├── setup.ts              # Configuración global de Jest
 ├── run-tests.sh          # Script de ejecución
 └── README.md             # Documentación completa
+
+
 ```
 
+
 ### Product Service (`apps/product-service/`)
+
 
 ```bash
 tests/
@@ -46,7 +51,10 @@ tests/
 ├── setup.ts               # Configuración global de Jest
 ├── run-tests.sh           # Script de ejecución
 └── README.md              # Documentación completa
+
+
 ```
+
 
 ## 🧪 Casos de Test Implementados
 
@@ -104,15 +112,19 @@ tests/
 
 ### Jest Configuration
 
+
 ```javascript
 // Configuración base extendida
 displayName: 'service-name';
 testMatch: ['tests/**/*.spec.ts'];
 collectCoverageFrom: ['src/**/*.ts'];
 setupFilesAfterEnv: ['tests/setup.ts'];
+
 ```
 
+
 ### TypeScript Configuration
+
 
 ```json
 {
@@ -123,7 +135,9 @@ setupFilesAfterEnv: ['tests/setup.ts'];
     "noImplicitAny": false
   }
 }
+
 ```
+
 
 ### Mocks Implementados
 
@@ -137,6 +151,7 @@ setupFilesAfterEnv: ['tests/setup.ts'];
 
 ### Comandos Básicos
 
+
 ```bash
 # Ejecutar todos los tests
 pnpm test --filter=auth-service
@@ -147,9 +162,13 @@ pnpm test:coverage --filter=auth-service
 
 # Modo watch
 pnpm test:watch --filter=product-service
+
+
 ```
 
+
 ### Scripts Personalizados
+
 
 ```bash
 # Auth Service
@@ -159,7 +178,10 @@ cd apps/auth-service/test
 # Product Service
 cd apps/product-service/tests
 ./run-tests.sh -w -f "ProductService"
+
+
 ```
+
 
 ### Opciones de Scripts
 
@@ -188,6 +210,7 @@ cd apps/product-service/tests
 
 ### Tipos de Assertions
 
+
 ```typescript
 // Validaciones básicas
 expect(result).toBe(expectedValue);
@@ -200,7 +223,10 @@ expect(() => function()).toThrow();
 
 // Validaciones de tipo
 expect(typeof service.method).toBe('function');
+
+
 ```
+
 
 ### Patrón AAA (Arrange-Act-Assert)
 

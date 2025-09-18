@@ -34,7 +34,6 @@ describe('AuthService - Casos de Uso Principales', () => {
 
       expect(result).toBe(`Usuario ${username} autenticado.`);
       // Fin del test de credenciales válidas
-
     });
 
     it('debería manejar nombres de usuario con caracteres especiales', () => {

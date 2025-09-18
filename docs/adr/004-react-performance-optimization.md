@@ -16,6 +16,7 @@ Análisis preliminar de la aplicación dashboard-web muestra:
 - Componentes pesados bloqueando el main thread
 
 Métricas actuales:
+
 - **Interaction to Next Paint (INP)**: > 200ms (target: < 100ms)
 - **Total Blocking Time (TBT)**: > 300ms (target: < 50ms)
 - **Re-renders promedio**: 15 por interacción (target: < 5)
@@ -26,6 +27,7 @@ Implementaremos optimizaciones específicas de React 19 en 4 áreas:
 
 ### 1. Concurrent Features y Transitions
 
+
 ```typescript
 // hooks/useConcurrentState.ts
 import { useTransition, useDeferredValue, useState } from 'react';
@@ -34,13 +36,13 @@ export function useConcurrentState<T>(initialValue: T) {
   const [value, setValue] = useState(initialValue);
   const [isPending, startTransition] = useTransition();
   const deferredValue = useDeferredValue(value);
-  
+
   const setConcurrentValue = (newValue: T) => {
     startTransition(() => {
       setValue(newValue);
     });
   };
-  
+
   return {
     value: deferredValue,
     setValue: setConcurrentValue,
@@ -52,12 +54,12 @@ export function useConcurrentState<T>(initialValue: T) {
 // Uso en componentes
 function SearchableList({ items }) {
   const { value: searchTerm, setValue: setSearchTerm, isPending } = useConcurrentState('');
-  
+
   const filteredItems = useMemo(
     () => items.filter(item => item.includes(searchTerm)),
     [items, searchTerm]
   );
-  
+
   return (
     <>
       <SearchInput onChange={setSearchTerm} />
@@ -67,31 +69,35 @@ function SearchableList({ items }) {
     </>
   );
 }
+
+
 ```
 
+
 ### 2. Render Optimization Strategy
+
 
 ```typescript
 // components/OptimizedComponent.tsx
 import { memo, useCallback, useMemo } from 'react';
 
 // Nivel 1: Memo con comparación customizada
-export const OptimizedList = memo(({ 
-  items, 
+export const OptimizedList = memo(({
+  items,
   onItemClick,
-  filters 
+  filters
 }: ListProps) => {
   // Nivel 2: Memoización de cálculos costosos
   const processedItems = useMemo(
     () => expensiveProcessing(items, filters),
     [items, filters]
   );
-  
+
   // Nivel 3: Callbacks estables
   const handleClick = useCallback((id: string) => {
     onItemClick(id);
   }, [onItemClick]);
-  
+
   return <VirtualizedList items={processedItems} onItemClick={handleClick} />;
 }, (prevProps, nextProps) => {
   // Comparación superficial customizada
@@ -109,7 +115,7 @@ const ItemContext = createContext<ItemState>(null);
 export function OptimizedProvider({ children }) {
   const [filters, setFilters] = useState({});
   const [items, setItems] = useState([]);
-  
+
   return (
     <FilterContext.Provider value={filters}>
       <ItemContext.Provider value={items}>
@@ -118,9 +124,13 @@ export function OptimizedProvider({ children }) {
     </FilterContext.Provider>
   );
 }
+
+
 ```
 
+
 ### 3. Virtual Scrolling y Windowing
+
 
 ```typescript
 // components/VirtualList.tsx
@@ -133,7 +143,7 @@ export const VirtualList = memo(({ items, itemHeight = 50 }) => {
       <OptimizedListItem item={items[index]} />
     </div>
   ), [items]);
-  
+
   return (
     <AutoSizer>
       {({ height, width }) => (
@@ -150,9 +160,13 @@ export const VirtualList = memo(({ items, itemHeight = 50 }) => {
     </AutoSizer>
   );
 });
+
+
 ```
 
+
 ### 4. Performance Monitoring HOC
+
 
 ```typescript
 // hoc/withPerformanceMonitoring.tsx
@@ -164,19 +178,19 @@ export function withPerformanceMonitoring<P extends object>(
   return memo((props: P) => {
     const renderCount = useRef(0);
     const renderStart = useRef(performance.now());
-    
+
     useEffect(() => {
       const renderTime = performance.now() - renderStart.current;
       renderCount.current++;
-      
+
       if (renderTime > thresholds.renderTime) {
         console.warn(`⚠️ Slow render: ${componentName} took ${renderTime.toFixed(2)}ms`);
       }
-      
+
       if (renderCount.current > thresholds.renderCount) {
         console.error(`🚨 Excessive renders: ${componentName} rendered ${renderCount.current} times`);
       }
-      
+
       // Enviar a sistema de monitoreo
       trackPerformance({
         component: componentName,
@@ -185,12 +199,15 @@ export function withPerformanceMonitoring<P extends object>(
         props: Object.keys(props)
       });
     });
-    
+
     renderStart.current = performance.now();
     return <Component {...props} />;
   });
 }
+
+
 ```
+
 
 ## Drivers de la Decisión
 
@@ -202,16 +219,19 @@ export function withPerformanceMonitoring<P extends object>(
 ## Opciones Consideradas
 
 ### Opción 1: Server Components
+
 - ✅ Elimina hidratación
 - ❌ Requiere reestructuración mayor
 - ❌ Limitaciones con estado local
 
 ### Opción 2: Qwik/Solid Migration
+
 - ✅ Performance superior
 - ❌ Reescribir toda la app
 - ❌ Ecosystem limitado
 
 ### Opción 3: React 19 Optimizations (SELECCIONADA)
+
 - ✅ Incremental
 - ✅ Mantiene ecosystem
 - ✅ Nuevas APIs poderosas
@@ -220,61 +240,71 @@ export function withPerformanceMonitoring<P extends object>(
 ## Consecuencias
 
 ### Positivas
+
 - Reducción 60% en re-renders innecesarios
 - INP < 100ms en 90% de interacciones
 - Mejor UX en dispositivos low-end
 - Preparados para React Compiler (futuro)
 
 ### Negativas
+
 - Complejidad inicial en patterns
 - Overhead de monitoreo
 - Posible over-optimization
 
 ### Métricas de Monitoreo
 
+
 ```typescript
 // utils/performance-metrics.ts
 export const PERFORMANCE_BUDGETS = {
-  INP: 100,              // ms
-  TBT: 50,               // ms
-  FID: 100,              // ms
-  renderTime: 16,        // ms (60fps)
-  rerenderLimit: 5,      // per interaction
-  memoryLimit: 50        // MB heap growth
+  INP: 100, // ms
+  TBT: 50, // ms
+  FID: 100, // ms
+  renderTime: 16, // ms (60fps)
+  rerenderLimit: 5, // per interaction
+  memoryLimit: 50, // MB heap growth
 };
 
 export function measureComponentPerformance() {
   return {
     renderTime: performance.measure('render'),
     memoryUsage: performance.memory?.usedJSHeapSize,
-    interactionLatency: performance.getEntriesByType('event')
+    interactionLatency: performance.getEntriesByType('event'),
   };
 }
+
 ```
+
 
 ## Plan de Implementación
 
 ### Sprint 1: Foundations
+
 - [ ] Implementar performance monitoring
 - [ ] Identificar componentes problemáticos
 - [ ] Setup React DevTools Profiler
 
 ### Sprint 2: Quick Wins
+
 - [ ] Aplicar memo a componentes top-level
 - [ ] Implementar useMemo/useCallback donde crítico
 - [ ] Virtual scrolling para listas largas
 
 ### Sprint 3: Advanced Optimizations
+
 - [ ] Migrar a concurrent features
 - [ ] Implementar code splitting granular
 - [ ] Optimizar Context providers
 
 ### Sprint 4: Monitoring
+
 - [ ] Dashboard de métricas
 - [ ] Alertas automáticas
 - [ ] Performance regression tests
 
 ## Criterios de Éxito
+
 
 ```typescript
 // tests/performance.spec.ts
@@ -283,20 +313,23 @@ describe('Performance Benchmarks', () => {
     const start = performance.now();
     render(<OptimizedList items={generateItems(1000)} />);
     const renderTime = performance.now() - start;
-    
+
     expect(renderTime).toBeLessThan(100);
   });
-  
+
   it('should not re-render on unrelated prop changes', () => {
     const { rerender } = render(<OptimizedComponent data={data} />);
     const renderCount = getRenderCount();
-    
+
     rerender(<OptimizedComponent data={data} unrelatedProp="new" />);
-    
+
     expect(getRenderCount()).toBe(renderCount);
   });
 });
+
+
 ```
+
 
 ## Referencias
 

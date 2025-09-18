@@ -64,6 +64,8 @@ Estas instrucciones definen el estilo, las convenciones y los criterios técnico
 ## 🧩 Trazabilidad y ética IA
 
 - Las funciones o bloques sugeridos por Copilot deben incluir referencia:
+
   ```ts
   // prompt: ✦ prisma-schema
   // ADR: 0003-prisma – relación Producto-Categoría
+  ```

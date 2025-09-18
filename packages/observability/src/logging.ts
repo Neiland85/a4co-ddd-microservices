@@ -34,13 +34,13 @@ function getCurrentSpanId(): string | undefined {
 export function createLogger(config: LoggerConfig): pino.Logger {
   const isProduction = config.environment === 'production';
   const isDevelopment = config.environment === 'development' || !config.environment;
-  
+
   const pinoOptions: pino.LoggerOptions = {
     name: config.serviceName,
     level: config.level || (isProduction ? 'info' : 'debug'),
     formatters: {
-      level: (label) => ({ level: label }),
-      bindings: (bindings) => ({
+      level: label => ({ level: label }),
+      bindings: bindings => ({
         pid: bindings.pid,
         host: bindings.hostname,
         service: config.serviceName,
@@ -86,7 +86,7 @@ export function createLogger(config: LoggerConfig): pino.Logger {
 export function createHttpLogger(logger: pino.Logger) {
   return pinoHttp({
     logger,
-    genReqId: (req) => {
+    genReqId: req => {
       // Usar trace ID si está disponible
       const traceId = getCurrentTraceId();
       return traceId || req.id || req.headers['x-request-id'];
@@ -122,7 +122,7 @@ export function createHttpLogger(logger: pino.Logger) {
     }),
     // Ignorar rutas de health check y metrics
     autoLogging: {
-      ignore: (req) => {
+      ignore: req => {
         return req.url === '/health' || req.url === '/metrics' || req.url === '/ready';
       },
     },

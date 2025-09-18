@@ -1,0 +1,1 @@
+{"version":3,"file":"product-sales-chart.d.ts","sourceRoot":"","sources":["product-sales-chart.tsx"],"names":[],"mappings":"AAkBA,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,gCAAgC,CAAC;AAEvE,UAAU,sBAAsB;IAC9B,QAAQ,CAAC,IAAI,EAAE,gBAAgB,EAAE,CAAC;IAClC,QAAQ,CAAC,SAAS,CAAC,EAAE,MAAM,CAAC;CAC7B;AAoDD,MAAM,CAAC,OAAO,UAAU,iBAAiB,CAAC,EAAE,IAAI,EAAE,SAAS,EAAE,EAAE,sBAAsB,2CA+KpF"}

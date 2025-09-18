@@ -37,27 +37,21 @@ export const ProductDisplayExample: React.FC = () => {
       )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
+        {products.map(product => (
           <V0CardTemplate
             key={product.id}
             title={product.name}
             content={
               <div>
-                <p className="text-gray-600 text-sm mb-3">
-                  {product.description}
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-bold text-green-600">
-                    €{product.price}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {product.producer}
-                  </span>
+                <p className="mb-3 text-sm text-gray-600">{product.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-bold text-green-600">€{product.price}</span>
+                  <span className="text-sm text-gray-500">{product.producer}</span>
                 </div>
               </div>
             }
             footer={
-              <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+              <button className="w-full rounded bg-blue-600 py-2 text-white hover:bg-blue-700">
                 Ver Detalles
               </button>
             }
@@ -77,7 +71,7 @@ export const ProductModalExample: React.FC = () => {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
       >
         Abrir Modal de Producto
       </button>
@@ -106,9 +100,7 @@ export const ProductModalExample: React.FC = () => {
               </div>
               <div>
                 <h4 className="font-medium text-gray-900">Precio</h4>
-                <p className="text-2xl font-bold text-green-600">
-                  €{selectedProduct.price}
-                </p>
+                <p className="text-2xl font-bold text-green-600">€{selectedProduct.price}</p>
               </div>
             </div>
           ) : (
@@ -139,7 +131,7 @@ export const AdvancedV0Example: React.FC = () => {
 
   const handleSubmit = async () => {
     // Simular envío de formulario
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     console.log('Formulario enviado:', formData);
   };
 
@@ -157,56 +149,43 @@ export const AdvancedV0Example: React.FC = () => {
 
       <form className="space-y-4">
         <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
             Nombre
           </label>
           <input
             id="name"
             type="text"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={e => setFormData({ ...formData, name: e.target.value })}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
             placeholder="Tu nombre completo"
           />
         </div>
 
         <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
             Email
           </label>
           <input
             id="email"
             type="email"
             value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={e => setFormData({ ...formData, email: e.target.value })}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
             placeholder="tu@email.com"
           />
         </div>
 
         <div>
-          <label
-            htmlFor="message"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="message" className="mb-1 block text-sm font-medium text-gray-700">
             Mensaje
           </label>
           <textarea
             id="message"
             value={formData.message}
-            onChange={(e) =>
-              setFormData({ ...formData, message: e.target.value })
-            }
+            onChange={e => setFormData({ ...formData, message: e.target.value })}
             rows={4}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
             placeholder="Escribe tu mensaje aquí..."
           />
         </div>
@@ -223,7 +202,7 @@ export const LoadingStateExample: React.FC = () => {
   const loadData = async () => {
     setIsLoading(true);
     // Simular carga de datos
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     setData(['Elemento 1', 'Elemento 2', 'Elemento 3']);
     setIsLoading(false);
   };
@@ -252,8 +231,8 @@ export const LoadingStateExample: React.FC = () => {
 
       {!isLoading && data.length > 0 && (
         <ul className="space-y-2">
-          {data.map((item) => (
-            <li key={`item-${item}`} className="bg-gray-50 p-3 rounded border">
+          {data.map(item => (
+            <li key={`item-${item}`} className="rounded border bg-gray-50 p-3">
               {item}
             </li>
           ))}

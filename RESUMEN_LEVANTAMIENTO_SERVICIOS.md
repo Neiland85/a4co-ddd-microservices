@@ -5,13 +5,16 @@
 ### Servicios Identificados en el Monorepo
 
 #### ✅ Frontend (2 aplicaciones)
+
 - **Frontend Principal**: `apps/web/v0dev/a-head` (Next.js)
 - **Dashboard Web**: `apps/dashboard-web` (Next.js)
 
 #### ✅ Design System (1 paquete)
+
 - **Storybook**: `packages/design-system` con componentes UI
 
 #### ✅ Microservicios Backend (15 servicios)
+
 1. admin-service
 2. analytics-service
 3. artisan-service
@@ -29,6 +32,7 @@
 15. user-service
 
 #### ✅ Infraestructura
+
 - PostgreSQL (puerto 5432)
 - Redis (puerto 6379)
 - NATS (puerto 4222)
@@ -36,18 +40,22 @@
 
 ## 📁 Archivos Creados/Modificados
 
-### Nuevos Scripts Creados:
+### Nuevos Scripts Creados
+
 1. **`scripts/start-all-services.sh`** - Script completo para levantar todos los servicios con gestión de procesos
 2. **`scripts/start-dev-services.sh`** - Script simplificado usando turbo
 3. **`scripts/check-services.sh`** - Script para verificar servicios disponibles
 
-### Documentación Creada:
+### Documentación Creada
+
 1. **`SERVICIOS_Y_ENDPOINTS.md`** - Documentación completa de todos los servicios y sus endpoints
 2. **`RESUMEN_LEVANTAMIENTO_SERVICIOS.md`** - Este archivo con el resumen
 
 ## 🚀 Comandos de Ejecución
 
-### Para levantar todos los servicios:
+### Para levantar todos los servicios
+
+
 ```bash
 # Opción 1: Usando Turbo (recomendado)
 pnpm dev
@@ -60,23 +68,26 @@ pnpm dev:frontend
 
 # Opción 4: Solo backend
 pnpm dev:backend
+
+
 ```
+
 
 ## 🌐 URLs y Endpoints Disponibles
 
-| Servicio | URL | Estado |
-|----------|-----|--------|
-| Frontend Principal | http://localhost:3000 | Configurado |
-| Dashboard Web | http://localhost:3001 | Configurado |
-| Storybook | http://localhost:6006 | Configurado |
-| Auth Service | http://localhost:4001 | Configurado |
-| Product Service | http://localhost:4002 | Configurado |
-| User Service | http://localhost:4003 | Configurado |
-| Order Service | http://localhost:4004 | Configurado |
-| Inventory Service | http://localhost:4005 | Configurado |
-| Payment Service | http://localhost:4006 | Configurado |
-| Notification Service | http://localhost:4007 | Configurado |
-| (Otros servicios) | http://localhost:4008-4015 | Configurado |
+| Servicio             | URL                        | Estado      |
+| -------------------- | -------------------------- | ----------- |
+| Frontend Principal   | http://localhost:3000      | Configurado |
+| Dashboard Web        | http://localhost:3001      | Configurado |
+| Storybook            | http://localhost:6006      | Configurado |
+| Auth Service         | http://localhost:4001      | Configurado |
+| Product Service      | http://localhost:4002      | Configurado |
+| User Service         | http://localhost:4003      | Configurado |
+| Order Service        | http://localhost:4004      | Configurado |
+| Inventory Service    | http://localhost:4005      | Configurado |
+| Payment Service      | http://localhost:4006      | Configurado |
+| Notification Service | http://localhost:4007      | Configurado |
+| (Otros servicios)    | http://localhost:4008-4015 | Configurado |
 
 ## ⚠️ Limitaciones Encontradas
 
@@ -88,12 +99,15 @@ pnpm dev:backend
 
 ## 📝 Recomendaciones
 
-1. **Infraestructura Local**: 
+1. **Infraestructura Local**:
    - Si tienes Docker disponible localmente, ejecuta:
+
      ```bash
      docker compose -f docker-compose.messaging.yml up -d
      ```
+
    - O usa el script de infraestructura:
+
      ```bash
      ./scripts/start-messaging-infrastructure.sh
      ```

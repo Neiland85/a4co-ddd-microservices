@@ -39,6 +39,7 @@ Ve a **Settings** → **Secrets and variables** → **Actions** y añade:
 
 #### **Secrets Requeridos:**
 
+
 ```bash
 # Token de SonarCloud (opcional pero recomendado)
 SONAR_TOKEN=tu_token_de_sonarcloud
@@ -46,15 +47,22 @@ SONAR_TOKEN=tu_token_de_sonarcloud
 # Otros tokens según tu configuración
 DOCKER_USERNAME=tu_usuario_docker
 DOCKER_PASSWORD=tu_password_docker
+
+
 ```
 
+
 #### **Variables del Repositorio:**
+
 
 ```bash
 # Configuración del proyecto
 NODE_VERSION=18
 PNPM_VERSION=8
+
+
 ```
+
 
 ### **Paso 3: Configurar Branch Protection**
 
@@ -80,12 +88,15 @@ PNPM_VERSION=8
 
 Edita `.github/workflows/ci-cd.yml` y actualiza:
 
+
 ```yaml
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   SONAR_PROJECT_KEY: tu_project_key
   SONAR_ORGANIZATION: tu_organization_key
+
 ```
+
 
 ### **Paso 3: Configurar Quality Gate**
 
@@ -100,6 +111,7 @@ En SonarCloud, configura las reglas de calidad:
 
 ### **En Pull Request:**
 
+
 ```mermaid
 graph LR
     A[PR Created] --> B[Quality Check]
@@ -108,9 +120,13 @@ graph LR
     D --> E[Security Scan]
     E --> F[Notify Results]
     F --> G[Ready to Merge]
+
+
 ```
 
+
 ### **En Push a Main:**
+
 
 ```mermaid
 graph LR
@@ -119,11 +135,15 @@ graph LR
     C --> D[Build Production]
     D --> E[Deploy]
     E --> F[Notify Success]
+
+
 ```
+
 
 ## 📱 Comandos Locales para Testing
 
 ### **Verificar Workflow Localmente:**
+
 
 ```bash
 # Instalar act (GitHub Actions local)
@@ -134,9 +154,13 @@ curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
 # Ejecutar workflow localmente
 act pull_request
 act push
+
+
 ```
 
+
 ### **Simular Diferentes Eventos:**
+
 
 ```bash
 # Simular PR
@@ -147,11 +171,15 @@ act push -e .github/workflows/ci-cd.yml
 
 # Simular schedule
 act schedule -e .github/workflows/dependencies.yml
+
+
 ```
+
 
 ## 🚨 Solución de Problemas
 
 ### **Error: "Workflow not found"**
+
 
 ```bash
 # Verificar estructura de directorios
@@ -159,31 +187,46 @@ ls -la .github/workflows/
 
 # Verificar sintaxis YAML
 yamllint .github/workflows/*.yml
+
+
 ```
 
+
 ### **Error: "Permission denied"**
+
 
 ```bash
 # Verificar permisos del repositorio
 # Settings → Actions → General → Workflow permissions
 # Seleccionar: "Read and write permissions"
+
+
 ```
 
+
 ### **Error: "Secret not found"**
+
 
 ```bash
 # Verificar que el secret esté configurado
 # Settings → Secrets and variables → Actions
 # Añadir el secret requerido
+
+
 ```
 
+
 ### **Error: "Branch protection"**
+
 
 ```bash
 # Verificar configuración de branch protection
 # Settings → Branches → Add rule
 # Configurar status checks requeridos
+
+
 ```
+
 
 ## 📈 Monitoreo y Métricas
 
@@ -209,6 +252,7 @@ yamllint .github/workflows/*.yml
 
 ### **Añadir Nuevos Jobs:**
 
+
 ```yaml
 # En .github/workflows/ci-cd.yml
 new-job:
@@ -219,9 +263,12 @@ new-job:
   steps:
     - name: Custom Step
       run: echo "Custom action"
+
 ```
 
+
 ### **Configurar Cache Personalizado:**
+
 
 ```yaml
 - name: Cache custom data
@@ -231,9 +278,12 @@ new-job:
       custom-cache/
       build-artifacts/
     key: ${{ runner.os }}-custom-${{ hashFiles('**/custom-file') }}
+
 ```
 
+
 ### **Añadir Notificaciones:**
+
 
 ```yaml
 - name: Notify Slack
@@ -241,7 +291,9 @@ new-job:
   with:
     status: ${{ job.status }}
     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
 ```
+
 
 ## 📚 Recursos Adicionales
 

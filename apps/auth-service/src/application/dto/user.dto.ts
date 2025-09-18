@@ -1,10 +1,4 @@
-import {
-  IsEmail,
-  IsString,
-  MinLength,
-  MaxLength,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength, IsNotEmpty } from 'class-validator';
 import { BaseDto } from '@a4co/shared-utils';
 
 export class RegisterUserDto extends BaseDto {

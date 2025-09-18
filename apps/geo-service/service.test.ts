@@ -9,10 +9,7 @@ describe('GeoService', () => {
   });
 
   it('should calculate distance', () => {
-    const result = geoService.calculateDistance(
-      { lat: 0, lng: 0 },
-      { lat: 3, lng: 4 }
-    );
+    const result = geoService.calculateDistance({ lat: 0, lng: 0 }, { lat: 3, lng: 4 });
     expect(result).toBe(5);
   });
 });

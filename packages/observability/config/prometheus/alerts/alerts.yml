@@ -15,9 +15,9 @@ groups:
           severity: critical
           team: backend
         annotations:
-          summary: "High error rate on {{ $labels.service }} - {{ $labels.method }} {{ $labels.endpoint }}"
-          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
-          runbook_url: "https://wiki.a4co.com/runbooks/high-error-rate"
+          summary: 'High error rate on {{ $labels.service }} - {{ $labels.method }} {{ $labels.endpoint }}'
+          description: 'Error rate is {{ $value | humanizePercentage }} for the last 5 minutes'
+          runbook_url: 'https://wiki.a4co.com/runbooks/high-error-rate'
 
       # High latency alert (P95 > 300ms)
       - alert: HighLatencyP95
@@ -30,8 +30,8 @@ groups:
           severity: warning
           team: backend
         annotations:
-          summary: "High P95 latency on {{ $labels.service }} - {{ $labels.method }} {{ $labels.endpoint }}"
-          description: "P95 latency is {{ $value | humanizeDuration }} for the last 5 minutes"
+          summary: 'High P95 latency on {{ $labels.service }} - {{ $labels.method }} {{ $labels.endpoint }}'
+          description: 'P95 latency is {{ $value | humanizeDuration }} for the last 5 minutes'
 
       # Service down alert
       - alert: ServiceDown
@@ -41,8 +41,8 @@ groups:
           severity: critical
           team: devops
         annotations:
-          summary: "Service {{ $labels.instance }} is down"
-          description: "Service {{ $labels.instance }} has been down for more than 2 minutes"
+          summary: 'Service {{ $labels.instance }} is down'
+          description: 'Service {{ $labels.instance }} has been down for more than 2 minutes'
 
   - name: a4co_frontend_alerts
     interval: 30s
@@ -58,8 +58,8 @@ groups:
           severity: warning
           team: frontend
         annotations:
-          summary: "High First Contentful Paint on {{ $labels.page }}"
-          description: "75th percentile FCP is {{ $value | humanizeDuration }}"
+          summary: 'High First Contentful Paint on {{ $labels.page }}'
+          description: '75th percentile FCP is {{ $value | humanizeDuration }}'
 
       # High Time to Interactive
       - alert: HighTTI
@@ -72,8 +72,8 @@ groups:
           severity: warning
           team: frontend
         annotations:
-          summary: "High Time to Interactive on {{ $labels.page }}"
-          description: "75th percentile TTI is {{ $value | humanizeDuration }}"
+          summary: 'High Time to Interactive on {{ $labels.page }}'
+          description: '75th percentile TTI is {{ $value | humanizeDuration }}'
 
       # High JavaScript error rate
       - alert: HighJSErrorRate
@@ -84,8 +84,8 @@ groups:
           severity: warning
           team: frontend
         annotations:
-          summary: "High JavaScript error rate on {{ $labels.page }}"
-          description: "JS error rate is {{ $value }} errors/second"
+          summary: 'High JavaScript error rate on {{ $labels.page }}'
+          description: 'JS error rate is {{ $value }} errors/second'
 
   - name: a4co_business_alerts
     interval: 30s
@@ -103,8 +103,8 @@ groups:
           severity: critical
           team: business
         annotations:
-          summary: "High order creation failure rate"
-          description: "{{ $value | humanizePercentage }} of orders are failing to create"
+          summary: 'High order creation failure rate'
+          description: '{{ $value | humanizePercentage }} of orders are failing to create'
 
       # Payment processing failures
       - alert: PaymentProcessingFailure
@@ -119,8 +119,8 @@ groups:
           severity: critical
           team: payments
         annotations:
-          summary: "High payment processing failure rate"
-          description: "{{ $value | humanizePercentage }} of payments are failing"
+          summary: 'High payment processing failure rate'
+          description: '{{ $value | humanizePercentage }} of payments are failing'
 
   - name: a4co_infrastructure_alerts
     interval: 30s
@@ -136,8 +136,8 @@ groups:
           severity: warning
           team: devops
         annotations:
-          summary: "High CPU usage on {{ $labels.instance }}"
-          description: "CPU usage is {{ $value | humanize }}%"
+          summary: 'High CPU usage on {{ $labels.instance }}'
+          description: 'CPU usage is {{ $value | humanize }}%'
 
       # High memory usage
       - alert: HighMemoryUsage
@@ -150,8 +150,8 @@ groups:
           severity: warning
           team: devops
         annotations:
-          summary: "High memory usage on {{ $labels.instance }}"
-          description: "Memory usage is {{ $value | humanize }}%"
+          summary: 'High memory usage on {{ $labels.instance }}'
+          description: 'Memory usage is {{ $value | humanize }}%'
 
       # Database connection pool exhaustion
       - alert: DatabaseConnectionPoolExhaustion
@@ -164,8 +164,8 @@ groups:
           severity: warning
           team: database
         annotations:
-          summary: "Database connection pool near exhaustion"
-          description: "{{ $value | humanizePercentage }} of connections are in use"
+          summary: 'Database connection pool near exhaustion'
+          description: '{{ $value | humanizePercentage }} of connections are in use'
 
       # NATS message queue buildup
       - alert: NATSMessageQueueBuildup
@@ -176,5 +176,5 @@ groups:
           severity: warning
           team: backend
         annotations:
-          summary: "NATS message queue buildup on {{ $labels.consumer }}"
-          description: "{{ $value }} messages/second are accumulating"
+          summary: 'NATS message queue buildup on {{ $labels.consumer }}'
+          description: '{{ $value }} messages/second are accumulating'

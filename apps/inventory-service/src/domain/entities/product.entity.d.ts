@@ -1,0 +1,68 @@
+export interface ProductProps {
+    id: string;
+    name: string;
+    description?: string;
+    sku: string;
+    category: string;
+    brand?: string;
+    unitPrice: number;
+    currency: string;
+    currentStock: number;
+    reservedStock: number;
+    minimumStock: number;
+    maximumStock: number;
+    isActive: boolean;
+    artisanId: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export declare class Product {
+    private _id;
+    private _name;
+    private _description?;
+    private _sku;
+    private _category;
+    private _brand?;
+    private _unitPrice;
+    private _currency;
+    private _currentStock;
+    private _reservedStock;
+    private _minimumStock;
+    private _maximumStock;
+    private _isActive;
+    private _artisanId;
+    private _createdAt;
+    private _updatedAt;
+    constructor(props: ProductProps);
+    get id(): string;
+    get name(): string;
+    get description(): string | undefined;
+    get sku(): string;
+    get category(): string;
+    get brand(): string | undefined;
+    get unitPrice(): number;
+    get currency(): string;
+    get currentStock(): number;
+    get reservedStock(): number;
+    get minimumStock(): number;
+    get maximumStock(): number;
+    get isActive(): boolean;
+    get artisanId(): string;
+    get createdAt(): Date;
+    get updatedAt(): Date;
+    get availableStock(): number;
+    get stockStatus(): 'in_stock' | 'low_stock' | 'out_of_stock' | 'discontinued';
+    get needsRestock(): boolean;
+    canReserveStock(quantity: number): boolean;
+    reserveStock(quantity: number): void;
+    releaseStock(quantity: number): void;
+    updateStock(newStock: number, reason: string): void;
+    adjustStock(adjustment: number, reason: string): void;
+    deactivate(): void;
+    activate(): void;
+    updatePricing(newPrice: number, newCurrency?: string): void;
+    static create(props: Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'>): Product;
+    static reconstruct(props: ProductProps): Product;
+    toJSON(): ProductProps;
+}
+//# sourceMappingURL=product.entity.d.ts.map

@@ -9,9 +9,9 @@ export class ProductService extends BaseService {
     try {
       const validatedName = this.validateRequired(name, 'name');
       const validatedPrice = this.validateRequired(price, 'price');
-      
+
       this.log('Creating product', { name, price });
-      
+
       return this.createSuccessMessage(
         'Product',
         'created',
@@ -25,14 +25,10 @@ export class ProductService extends BaseService {
   getProduct(name: string): string {
     try {
       const validatedName = this.validateId(name, 'name');
-      
+
       this.log('Getting product', { name: validatedName });
-      
-      return this.createSuccessMessage(
-        'Product',
-        'retrieved',
-        validatedName
-      );
+
+      return this.createSuccessMessage('Product', 'retrieved', validatedName);
     } catch (error) {
       return this.handleServiceError(error, 'getProduct');
     }

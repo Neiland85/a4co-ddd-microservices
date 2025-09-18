@@ -9,9 +9,7 @@ describe('ArtisanService', () => {
 
   it('should create an artisan profile', () => {
     const result = artisanService.createArtisanProfile('John Doe', 'Pottery');
-    expect(result).toBe(
-      'Perfil de artesano John Doe creado con especialidad Pottery.'
-    );
+    expect(result).toBe('Perfil de artesano John Doe creado con especialidad Pottery.');
   });
 
   it('should get artisan profile information', () => {

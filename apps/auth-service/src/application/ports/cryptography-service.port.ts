@@ -16,10 +16,7 @@ export interface CryptographyServicePort {
    * @param hashedPassword Hash almacenado
    * @returns true si la contraseña es válida, false en caso contrario
    */
-  validatePassword(
-    plainPassword: string,
-    hashedPassword: string
-  ): Promise<boolean>;
+  validatePassword(plainPassword: string, hashedPassword: string): Promise<boolean>;
 
   /**
    * Genera un token seguro
