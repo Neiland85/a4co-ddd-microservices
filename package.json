@@ -67,11 +67,17 @@
   "dependencies": {
     "concurrently": "^8.2.2",
     "jsdom": "^26.1.0",
+<<<<<<< Updated upstream
     "lucide-react": "^0.525.0",
     "turbo": "^2.5.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
+=======
+    "turbo": "^2.5.5"
+  },
+  "devDependencies": {
+>>>>>>> Stashed changes
     "@types/jsdom": "^21.1.7",
     "@types/node": "^20.19.9",
     "@typescript-eslint/eslint-plugin": "^8.38.0",

@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 // Product Service - Schema de Base de Datos con Prisma ORM
 // Siguiendo principios DDD: Aggregates, Entities, Value Objects
 // Marketplace Local de Jaén - A4CO
@@ -54,19 +57,30 @@ model Product {
   variants ProductVariant[]
   images   ProductImage[]
   tags     ProductTag[]
+<<<<<<< Updated upstream
   // Se elimina la relación ambigua con ProductReview y ProductCategoryMapping
+=======
+  
+  // Índices
+  @@index([categoryId])
+>>>>>>> Stashed changes
   @@index([artisanId])
   @@index([status])
   @@index([availability])
   @@index([name])
   @@index([createdAt])
   @@map("products")
+<<<<<<< Updated upstream
   
   // Relaciones externas
   artisan Artisan @relation(fields: [artisanId], references: [id])
   inventory ProductInventory[]
   reviews ProductReview[]
   categoryMappings ProductCategoryMapping[]
+=======
+  ProductReview ProductReview[]
+  ProductCategoryMapping ProductCategoryMapping[]
+>>>>>>> Stashed changes
 }
 
 // ENTIDAD - PRODUCT VARIANTS
@@ -153,7 +167,11 @@ model ProductTag {
   // Índices
   @@index([productId])
   @@index([name])
+<<<<<<< Updated upstream
   @@unique([productId, name])
+=======
+  @@unique([productId, name]) // Un producto no puede tener el mismo tag duplicado
+>>>>>>> Stashed changes
   @@map("product_tags")
 }
 
@@ -172,10 +190,16 @@ model Category {
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
   
+<<<<<<< Updated upstream
   ProductCategoryMapping ProductCategoryMapping[]
   
   @@index([parentId])
   @@map("categories")
+=======
+  @@index([parentId])
+  @@map("categories")
+  ProductCategoryMapping ProductCategoryMapping[]
+>>>>>>> Stashed changes
 }
 
 // ========================================
@@ -192,11 +216,19 @@ model Artisan {
   phone           String?
   
   // Location (Value Object)
+<<<<<<< Updated upstream
   address         Json
   
   // Business Information
   description     String?
   specialties     String[]
+=======
+  address         Json     // Address value object
+  
+  // Business Information
+  description     String?
+  specialties     String[] // Array of specialties
+>>>>>>> Stashed changes
   
   // Verification and Status
   isVerified      Boolean  @default(false)
@@ -232,8 +264,13 @@ model ProductInventory {
   
   // Stock Information
   quantity      Int      @default(0)
+<<<<<<< Updated upstream
   reserved      Int      @default(0)
   available     Int      @default(0)
+=======
+  reserved      Int      @default(0) // Stock reservado por órdenes pendientes
+  available     Int      @default(0) // quantity - reserved
+>>>>>>> Stashed changes
   
   // Thresholds
   lowStockThreshold Int @default(5)
@@ -242,7 +279,11 @@ model ProductInventory {
   lastRestocked DateTime?
   lastSold      DateTime?
   
+<<<<<<< Updated upstream
   // Location
+=======
+  // Location (para múltiples almacenes en el futuro)
+>>>>>>> Stashed changes
   location      String   @default("main")
   
   // Timestamps
@@ -265,6 +306,7 @@ model ProductReview {
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   
   // Review Content
+<<<<<<< Updated upstream
   rating      Int
   title       String?
   comment     String?
@@ -273,6 +315,16 @@ model ProductReview {
   userId      String
   userName    String
   userEmail   String?
+=======
+  rating      Int      // 1-5 stars
+  title       String?
+  comment     String?
+  
+  // Reviewer Information (referencia a user service)
+  userId      String
+  userName    String   // Desnormalizado para performance
+  userEmail   String?  // Para notificaciones
+>>>>>>> Stashed changes
   
   // Review Status
   status      ReviewStatus @default(PENDING)

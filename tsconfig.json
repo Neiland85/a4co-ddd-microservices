@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+<<<<<<< Updated upstream
     "noEmit": true,
     "incremental": true,
     // Module resolution - optimized for monorepo with SWC
@@ -20,6 +21,11 @@
     "jsx": "preserve",
     "module": "ESNext",
     // SWC optimization settings
+=======
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+>>>>>>> Stashed changes
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useDefineForClassFields": false,
