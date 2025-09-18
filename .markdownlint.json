@@ -18,9 +18,10 @@
   },
   "MD013": {
     "line_length": 120,
-    "code_blocks": false,
-    "tables": false,
-    "headings": false
+    "heading_line_length": 120,
+    "code_block_line_length": 120,
+    "stern": true,
+    "tables": false
   },
   "MD022": {
     "lines_above": 1,
