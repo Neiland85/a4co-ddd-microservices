@@ -3,6 +3,94 @@
     {
       "path": ".",
     },
+    {
+      "name": "product-service",
+      "path": "apps/product-service",
+    },
+    {
+      "name": "order-service",
+      "path": "apps/order-service",
+    },
+    {
+      "name": "web",
+      "path": "apps/web",
+    },
+    {
+      "name": "e-gamified-dashboard",
+      "path": "apps/web/v0dev/e-gamified-dashboard",
+    },
+    {
+      "name": "d-user-registration",
+      "path": "apps/web/v0dev/d-user-registration",
+    },
+    {
+      "name": "b-business-registration",
+      "path": "apps/web/v0dev/b-business-registration",
+    },
+    {
+      "name": "types",
+      "path": "apps/web/v0dev/b-business-registration/.next/types",
+    },
+    {
+      "name": ".next",
+      "path": "apps/web/v0dev/b-business-registration/.next",
+    },
+    {
+      "name": "h-modern-dashboard",
+      "path": "apps/web/v0dev/h-modern-dashboard",
+    },
+    {
+      "name": "f-modern-backoffice",
+      "path": "apps/web/v0dev/f-modern-backoffice",
+    },
+    {
+      "name": "g-banner-cookie",
+      "path": "apps/web/v0dev/g-banner-cookie",
+    },
+    {
+      "name": "c-artisan-dashboard",
+      "path": "apps/web/v0dev/c-artisan-dashboard",
+    },
+    {
+      "name": "a-head",
+      "path": "apps/web/v0dev/a-head",
+    },
+    {
+      "name": "types",
+      "path": "apps/web/v0dev/a-head/.next/types",
+    },
+    {
+      "name": ".next",
+      "path": "apps/web/v0dev/a-head/.next",
+    },
+    {
+      "name": "auth-service",
+      "path": "apps/auth-service",
+    },
+    {
+      "name": "dashboard-web",
+      "path": "apps/dashboard-web",
+    },
+    {
+      "name": ".next",
+      "path": "apps/dashboard-web/.next",
+    },
+    {
+      "name": "inventory-service",
+      "path": "apps/inventory-service",
+    },
+    {
+      "name": "design-system",
+      "path": "packages/design-system",
+    },
+    {
+      "name": "observability",
+      "path": "packages/observability",
+    },
+    {
+      "name": "shared-utils",
+      "path": "packages/shared-utils",
+    },
   ],
   "settings": {
     "editor.formatOnSave": true,
