@@ -1,18 +1,8 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
-        feature/typescript-linting-improvements
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-        develop
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-
-         develop
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useState, useCallback, useEffect, useMemo } from 'react';
-         main
-         main
-      develop
 interface SalesOpportunity {
   id: string;
   title: string;
@@ -52,6 +42,10 @@ export function useSalesOpportunities(
   const { autoFetch = false, type, location, category } = options;
 
   // Memoizar las opciones para evitar recreación en cada render
+  const memoizedOptions = useMemo(
+    () => ({ type, location, category }),
+    [type, location, category]
+  );
 
   const [state, setState] = useState<SalesOpportunitiesState>({
     opportunities: [],
@@ -62,23 +56,12 @@ export function useSalesOpportunities(
   });
 
   const fetchOpportunities = useCallback(
-    async () => {
+    async (customFilters = {}) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
         const params = new URLSearchParams();
-        if (type) params.append('type', type);
-        if (location) params.append('location', location);
-        if (category) params.append('category', category);
-
-       feature/typescript-linting-improvements
-        const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
-        develop
-        const response = await fetch(`/api/sales-opportunities?${params.toString()}`);
-        develop
         const finalFilters = { ...memoizedOptions, ...customFilters };
-        const finalFilters = { type, location, category, ...customFilters };
-         main
 
         if (finalFilters.type) params.append('type', finalFilters.type);
         if (finalFilters.location)
@@ -89,8 +72,6 @@ export function useSalesOpportunities(
         const response = await fetch(
           `/api/sales-opportunities?${params.toString()}`
         );
-        main
-       develop
 
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -105,6 +86,7 @@ export function useSalesOpportunities(
             total: result.data.total || 0,
             loading: false,
             error: null,
+            filters: finalFilters,
           }));
         } else {
           throw new Error(result.error || 'Error al cargar oportunidades');
@@ -120,7 +102,7 @@ export function useSalesOpportunities(
         }));
       }
     },
-    [type, location, category]
+    [memoizedOptions]
   );
 
   // Use ref to store the latest fetchOpportunities function

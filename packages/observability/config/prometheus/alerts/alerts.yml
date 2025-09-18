@@ -1,0 +1,180 @@
+groups:
+  - name: a4co_api_alerts
+    interval: 30s
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) by (service, method, endpoint)
+            /
+            sum(rate(http_requests_total[5m])) by (service, method, endpoint)
+          ) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "High error rate on {{ $labels.service }} - {{ $labels.method }} {{ $labels.endpoint }}"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
+          runbook_url: "https://wiki.a4co.com/runbooks/high-error-rate"
+
+      # High latency alert (P95 > 300ms)
+      - alert: HighLatencyP95
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (service, method, endpoint, le)
+          ) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High P95 latency on {{ $labels.service }} - {{ $labels.method }} {{ $labels.endpoint }}"
+          description: "P95 latency is {{ $value | humanizeDuration }} for the last 5 minutes"
+
+      # Service down alert
+      - alert: ServiceDown
+        expr: up{job="a4co-microservices"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: devops
+        annotations:
+          summary: "Service {{ $labels.instance }} is down"
+          description: "Service {{ $labels.instance }} has been down for more than 2 minutes"
+
+  - name: a4co_frontend_alerts
+    interval: 30s
+    rules:
+      # High First Contentful Paint
+      - alert: HighFCP
+        expr: |
+          histogram_quantile(0.75,
+            sum(rate(browser_performance_fcp_seconds_bucket[5m])) by (page, le)
+          ) > 2.5
+        for: 10m
+        labels:
+          severity: warning
+          team: frontend
+        annotations:
+          summary: "High First Contentful Paint on {{ $labels.page }}"
+          description: "75th percentile FCP is {{ $value | humanizeDuration }}"
+
+      # High Time to Interactive
+      - alert: HighTTI
+        expr: |
+          histogram_quantile(0.75,
+            sum(rate(browser_performance_tti_seconds_bucket[5m])) by (page, le)
+          ) > 5.0
+        for: 10m
+        labels:
+          severity: warning
+          team: frontend
+        annotations:
+          summary: "High Time to Interactive on {{ $labels.page }}"
+          description: "75th percentile TTI is {{ $value | humanizeDuration }}"
+
+      # High JavaScript error rate
+      - alert: HighJSErrorRate
+        expr: |
+          rate(browser_js_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: frontend
+        annotations:
+          summary: "High JavaScript error rate on {{ $labels.page }}"
+          description: "JS error rate is {{ $value }} errors/second"
+
+  - name: a4co_business_alerts
+    interval: 30s
+    rules:
+      # Order creation failure rate
+      - alert: OrderCreationFailureRate
+        expr: |
+          (
+            sum(rate(orders_create_failed_total[5m]))
+            /
+            sum(rate(orders_create_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          team: business
+        annotations:
+          summary: "High order creation failure rate"
+          description: "{{ $value | humanizePercentage }} of orders are failing to create"
+
+      # Payment processing failures
+      - alert: PaymentProcessingFailure
+        expr: |
+          (
+            sum(rate(payment_process_failed_total[5m]))
+            /
+            sum(rate(payment_process_total[5m]))
+          ) > 0.02
+        for: 5m
+        labels:
+          severity: critical
+          team: payments
+        annotations:
+          summary: "High payment processing failure rate"
+          description: "{{ $value | humanizePercentage }} of payments are failing"
+
+  - name: a4co_infrastructure_alerts
+    interval: 30s
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: |
+          (
+            100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+          ) > 80
+        for: 10m
+        labels:
+          severity: warning
+          team: devops
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanize }}%"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (
+            1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)
+          ) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          team: devops
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanize }}%"
+
+      # Database connection pool exhaustion
+      - alert: DatabaseConnectionPoolExhaustion
+        expr: |
+          (
+            pg_stat_database_numbackends / pg_settings_max_connections
+          ) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: database
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "{{ $value | humanizePercentage }} of connections are in use"
+
+      # NATS message queue buildup
+      - alert: NATSMessageQueueBuildup
+        expr: |
+          rate(nats_consumer_pending_messages[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "NATS message queue buildup on {{ $labels.consumer }}"
+          description: "{{ $value }} messages/second are accumulating"

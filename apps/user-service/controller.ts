@@ -1,13 +1,39 @@
+import { BaseController } from '../../packages/shared-utils/src/base';
 import { UserService } from './service';
 
-export class UserController {
-  private userService = new UserService();
+interface CreateUserRequest {
+  username: string;
+  email: string;
+}
 
-  createUser(req: { username: string; email: string }): string {
-    return this.userService.createUser(req.username, req.email);
+interface GetUserRequest {
+  username: string;
+}
+
+export class UserController extends BaseController<UserService> {
+  constructor() {
+    super(UserService);
   }
 
-  getUser(req: { username: string }): string {
-    return this.userService.getUser(req.username);
+  createUser(req: CreateUserRequest): string {
+    try {
+      const validated = this.validateRequest<CreateUserRequest>(req, ['username', 'email']);
+      const result = this.service.createUser(validated.username, validated.email);
+      return this.formatResponse(result).data;
+    } catch (error) {
+      const errorResponse = this.handleError(error);
+      throw new Error(errorResponse.error);
+    }
+  }
+
+  getUser(req: GetUserRequest): string {
+    try {
+      const validated = this.validateRequest<GetUserRequest>(req, ['username']);
+      const result = this.service.getUser(validated.username);
+      return this.formatResponse(result).data;
+    } catch (error) {
+      const errorResponse = this.handleError(error);
+      throw new Error(errorResponse.error);
+    }
   }
 }

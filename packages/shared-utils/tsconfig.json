@@ -3,11 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "./",
-    "paths": {
-      "@shared/*": [
-        "../../packages/shared-utils/*"
-      ]
-    }
+    "lib": ["ES2022", "DOM"],
+    "jsx": "react-jsx"
   },
   "include": [
     "index.ts",
