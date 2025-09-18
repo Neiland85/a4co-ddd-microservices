@@ -1,0 +1,6 @@
+services:
+  a4codddmicroservices:
+    image: a4codddmicroservices
+    build:
+      context: .
+      dockerfile: ./Dockerfile
