@@ -6,9 +6,16 @@ This document summarizes the security vulnerabilities that were detected by Depe
 
 ## Affected Projects
 
-- `apps/web/v0dev/a-head`
-- `apps/web/v0dev/e-gamified-dashboard`
-- `apps/web/v0dev/g-banner-cookie`
+- `apps/web/v0dev/a-head` ✅ Already secure (Next.js ^15.4.5)
+- `apps/web/v0dev/e-gamified-dashboard` ✅ **FIXED** (Updated from 14.2.16 to ^15.4.5)
+- `apps/web/v0dev/g-banner-cookie` ✅ Already secure (Next.js ^15.4.5)
+- `apps/web/v0dev/b-business-registration` ✅ **FIXED** (Updated from 15.2.4 to ^15.4.5)  
+- `apps/web/v0dev/d-user-registration` ✅ **FIXED** (Updated from 15.2.4 to ^15.4.5)
+- `apps/web/v0dev/c-artisan-dashboard` ✅ Already secure (Next.js ^15.4.5)
+- `apps/web/v0dev/h-modern-dashboard` ✅ Already secure (Next.js ^15.4.5)
+- `apps/web/v0dev/f-modern-backoffice` ✅ Already secure (Next.js ^15.4.5)
+- `apps/dashboard-web` ✅ Already secure (Next.js ^15.4.5)
+- `apps/web` ✅ Already secure (Next.js ^15.4.5)
 
 ## Vulnerabilities Fixed
 
@@ -45,6 +52,48 @@ This document summarizes the security vulnerabilities that were detected by Depe
 - **Fixed Version**: 15.4.5
 - **Impact**: Low - Could lead to cache poisoning attacks
 - **Fix**: Updated to Next.js 15.4.5 which includes race condition fixes
+
+## Recent Security Fixes (September 2025)
+
+### Critical Vulnerabilities Resolved
+
+**Date:** September 10, 2025  
+**Action:** Updated Next.js versions across all vulnerable applications
+
+#### Applications Updated:
+
+1. **apps/web/v0dev/e-gamified-dashboard**
+   - **Before:** Next.js 14.2.16 (Critical vulnerability)
+   - **After:** Next.js ^15.4.5 (Secure)
+   - **Security Impact:** Resolved authorization bypass and all other critical/moderate vulnerabilities
+
+2. **apps/web/v0dev/b-business-registration**
+   - **Before:** Next.js 15.2.4 (Moderate vulnerabilities)
+   - **After:** Next.js ^15.4.5 (Secure)
+   - **Security Impact:** Resolved SSRF, cache confusion, and content injection vulnerabilities
+
+3. **apps/web/v0dev/d-user-registration**
+   - **Before:** Next.js 15.2.4 (Moderate vulnerabilities)
+   - **After:** Next.js ^15.4.5 (Secure)
+   - **Security Impact:** Resolved SSRF, cache confusion, and content injection vulnerabilities
+
+#### Additional Security Enhancements:
+
+- Added security headers configuration in `next.config.js` for all updated applications
+- Configured `X-Frame-Options: DENY` to prevent clickjacking attacks
+- Added `X-Content-Type-Options: nosniff` to prevent MIME type sniffing
+- Set `Referrer-Policy: origin-when-cross-origin` for improved privacy
+- Disabled `poweredByHeader` to reduce information disclosure
+
+#### Vulnerability Status Summary:
+
+- ✅ **Authorization Bypass in Next.js Middleware (Critical)** - RESOLVED
+- ✅ **Cache Key Confusion for Image Optimization API Routes (Moderate)** - RESOLVED  
+- ✅ **Improper Middleware Redirect Handling Leads to SSRF (Moderate)** - RESOLVED
+- ✅ **Content Injection Vulnerability for Image Optimization (Moderate)** - RESOLVED
+- ✅ **Denial of Service (DoS) with Server Actions (Moderate)** - RESOLVED
+- ✅ **Information exposure in Next.js dev server (Low)** - RESOLVED
+- ✅ **Race Condition to Cache Poisoning (Low)** - RESOLVED
 
 ### 2. NextAuth.js Security Issues
 
