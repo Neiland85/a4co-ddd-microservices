@@ -23,6 +23,7 @@
     "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
   "dependencies": {
+    "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-slot": "^1.2.3",
     "@types/node": "^24.3.1",
     "clsx": "^2.0.0",
