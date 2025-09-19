@@ -39,6 +39,13 @@ jspm_packages/
 !.yarn/sdks
 !.yarn/versions
 
+# Node.js binaries and large files
+**/node
+**/*.node
+node-v*/**
+*.tar.xz
+*.tar.gz
+
 # pnpm lock
 pnpm-lock.yaml
 
