@@ -1,7 +1,10 @@
 // Hook para gestión de oportunidades de venta
 'use client';
 
+      feat/gamification-system-and-product-service
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+      feat/new-development-branch
 
 interface SalesOpportunity {
   id: string;

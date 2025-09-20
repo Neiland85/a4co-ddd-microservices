@@ -28,6 +28,11 @@
     "db:push": "turbo run db:push",
     "db:migrate": "turbo run db:migrate",
     "start:dev": "concurrently \"pnpm run dev\"",
+      feat/gamification-system-and-product-service
+    "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
+    "docker:down": "docker-compose -f docker-compose.dev.yml down",
+    "docker:logs": "docker-compose -f docker-compose.dev.yml logs -f",
+       feat/new-development-branch
     "storybook:dev": "pnpm --filter @a4co/design-system storybook",
     "design:sync": "node scripts/sync-design-tokens.js sync",
     "design:sync:watch": "node scripts/sync-design-tokens.js watch",
@@ -49,9 +54,41 @@
   ],
   "author": "Neil Muñoz Lago <neiland85@gmail.com>",
   "license": "Apache-2.0",
-  "packageManager": "pnpm@10.9.0",
+  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748",
   "workspaces": [
     "apps/*",
     "packages/*"
+      feat/gamification-system-and-product-service
   ]
 }
+  ],
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "typescript": "^5.9.2",
+    "@types/node": "^20.19.9",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "esbuild": "^0.25.8",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-complexity": "^1.0.2",
+    "jscpd": "^4.0.5",
+    "madge": "^8.0.0",
+    "prettier": "^3.6.2",
+    "ts-prune": "^0.10.3"
+  },
+  "dependencies": {
+    "lucide-react": "^0.525.0",
+    "turbo": "^2.5.5",
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Neiland85/a4co-ddd-microservices"
+  }
+}
+     feat/new-development-branch
