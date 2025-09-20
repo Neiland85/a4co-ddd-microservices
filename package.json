@@ -1,10 +1,13 @@
 {
   "name": "a4co-ddd-microservices",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para una plataforma colaborativa de venta y logística del pequeño comercio andaluz.",
   "private": true,
   "main": "index.js",
   "scripts": {
+    "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
+    "docker:down": "docker-compose -f docker-compose.dev.yml down",
+    "docker:logs": "docker-compose -f docker-compose.dev.yml logs -f",
     "dev": "turbo run dev",
     "dev:all": "docker-compose -f docker-compose.dev.yml up",
     "dev:frontend": "turbo run dev --filter=...web --filter=@a4co/design-system",
@@ -25,9 +28,11 @@
     "db:push": "turbo run db:push",
     "db:migrate": "turbo run db:migrate",
     "start:dev": "concurrently \"pnpm run dev\"",
+      feat/gamification-system-and-product-service
     "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
     "docker:down": "docker-compose -f docker-compose.dev.yml down",
     "docker:logs": "docker-compose -f docker-compose.dev.yml logs -f",
+       feat/new-development-branch
     "storybook:dev": "pnpm --filter @a4co/design-system storybook",
     "design:sync": "node scripts/sync-design-tokens.js sync",
     "design:sync:watch": "node scripts/sync-design-tokens.js watch",
@@ -53,6 +58,9 @@
   "workspaces": [
     "apps/*",
     "packages/*"
+      feat/gamification-system-and-product-service
+  ]
+}
   ],
   "devDependencies": {
     "@playwright/test": "^1.54.2",
@@ -83,3 +91,4 @@
     "url": "https://github.com/Neiland85/a4co-ddd-microservices"
   }
 }
+     feat/new-development-branch

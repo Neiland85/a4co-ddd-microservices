@@ -9,6 +9,10 @@ const mockStats: DashboardStats = {
   totalProducts: 89,
   totalOrders: 156,
   totalRevenue: 12450,
+  pendingOrders: 7,
+  lowStockProducts: 3,
+  recentOrders: [],
+  topProducts: [],
   monthlyGrowth: {
     users: 12.5,
     products: 8.3,

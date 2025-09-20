@@ -15,13 +15,7 @@ const config: StorybookConfig = {
   addons: [
     getAbsolutePath('@storybook/addon-links'),
     getAbsolutePath('@storybook/addon-essentials'),
-    getAbsolutePath('@storybook/addon-onboarding'),
     getAbsolutePath('@storybook/addon-interactions'),
-    '@storybook/addon-a11y',
-    '@storybook/addon-docs',
-    '@storybook/addon-viewport',
-    '@storybook/addon-measure',
-    '@storybook/addon-outline',
   ],
   
   framework: {
@@ -35,50 +29,6 @@ const config: StorybookConfig = {
   
   core: {
     disableTelemetry: true,
-  },
-  
-  viteFinal: async (config) => {
-    // Habilitar hot reload optimizado
-    config.server = {
-      ...config.server,
-      hmr: {
-        overlay: true,
-      },
-      watch: {
-        usePolling: true,
-        interval: 100,
-      },
-    }
-    
-    // Optimizaciones para monorepo
-    config.optimizeDeps = {
-      ...config.optimizeDeps,
-      include: [
-        '@storybook/react',
-        '@storybook/addon-actions',
-        'react',
-        'react-dom',
-      ],
-    }
-    
-    // Alias para el Design System
-    config.resolve = {
-      ...config.resolve,
-      alias: {
-        ...config.resolve?.alias,
-        '@a4co/design-system': join(__dirname, '../src'),
-      },
-    }
-    
-    return config
-  },
-  
-  // Configuración de webpack para assets estáticos
-  staticDirs: ['../public'],
-  
-  // Features experimentales
-  features: {
-    buildStoriesJson: true,
   },
 }
 

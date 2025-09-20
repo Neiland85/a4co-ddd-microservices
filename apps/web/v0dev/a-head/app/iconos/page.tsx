@@ -4,7 +4,11 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Palette, Sparkles, Download, Code } from "lucide-react"
+// Simple icon components to replace lucide-react
+const Palette = () => <div className="w-8 h-8 text-white">🎨</div>
+const Sparkles = () => <div className="w-5 h-5 text-purple-600">✨</div>
+const Download = () => <div className="w-4 h-4 mr-2">⬇️</div>
+const Code = () => <div className="w-4 h-4 mr-2">💻</div>
 import { IconGrid } from "@/components/icon-grid"
 import { iconConfigs } from "@/data/icon-configs"
 import type { IconConfig } from "@/types/icon-grid-types"
@@ -30,7 +34,7 @@ export default function IconosPage() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
             <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full">
-              <Palette className="w-8 h-8 text-white" />
+              <Palette />
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Biblioteca de Iconos</h1>
@@ -45,7 +49,7 @@ export default function IconosPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  <Sparkles />
                   Iconos Disponibles
                 </CardTitle>
               </CardHeader>
@@ -80,7 +84,7 @@ export default function IconosPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Categoría:</span>
-                      <Badge variant="secondary" className="capitalize">
+                      <Badge className="capitalize">
                         {selectedIcon.category}
                       </Badge>
                     </div>
@@ -99,11 +103,11 @@ export default function IconosPage() {
 
                   <div className="space-y-2 pt-4 border-t">
                     <Button onClick={handleDownload} className="w-full">
-                      <Download className="w-4 h-4 mr-2" />
+                      <Download />
                       Descargar SVG
                     </Button>
-                    <Button variant="outline" className="w-full bg-transparent">
-                      <Code className="w-4 h-4 mr-2" />
+                    <Button className="w-full bg-transparent border">
+                      <Code />
                       Ver Código
                     </Button>
                   </div>
