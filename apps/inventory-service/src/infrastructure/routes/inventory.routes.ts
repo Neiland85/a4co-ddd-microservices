@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { InventoryServicePort } from '../../application/ports/inventory.ports';
 
-export function inventoryRoutes(inventoryService: InventoryServicePort) {
+export function inventoryRoutes(inventoryService: InventoryServicePort): Router {
   const router = Router();
 
   // GET /api/inventory/check/:productId
