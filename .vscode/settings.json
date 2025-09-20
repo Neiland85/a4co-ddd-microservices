@@ -17,5 +17,6 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "a4co-ddd-microservices",
     "projectKey": "Neiland85_a4co-ddd-microservices_KEY"
-  }
+  },
+  "github.copilot.nextEditSuggestions.enabled": true
 }

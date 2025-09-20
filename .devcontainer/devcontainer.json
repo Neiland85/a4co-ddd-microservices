@@ -35,7 +35,8 @@
         "ms-playwright.playwright",
         "ms-azuretools.vscode-docker",
         "redhat.vscode-yaml",
-        "TeamsDevApp.vscode-ai-foundry"
+        "TeamsDevApp.vscode-ai-foundry",
+        "docker.docker"
       ]
     }
   },

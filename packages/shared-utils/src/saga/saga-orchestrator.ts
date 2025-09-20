@@ -1,8 +1,11 @@
 import { IEventBus } from '../events';
 import { EventSubjects } from '../events/subjects';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { SagaCompletedEvent, SagaFailedEvent } from '../events/domain-events';
 =======
+=======
+>>>>>>> Stashed changes
 import { v4 as uuidv4 } from 'uuid'; // Importar uuid
 import {
   SagaCompletedEvent,
@@ -12,6 +15,9 @@ import {
   UserInformationRequestedEvent,
   PaymentInitiatedEvent,
 } from '../events/domain-events';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 /**
@@ -44,11 +50,14 @@ export abstract class SagaOrchestrator {
    */
   protected async completeSaga(sagaId: string, result: any): Promise<void> {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const event = new SagaCompletedEvent(sagaId, {
       result,
       completedAt: new Date(),
     });
 =======
+=======
+>>>>>>> Stashed changes
     const event = new SagaCompletedEvent(
       sagaId,
       {
@@ -57,6 +66,9 @@ export abstract class SagaOrchestrator {
       },
       sagaId
     ); // Pasar sagaId al constructor
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     await this.eventBus.publish(EventSubjects.SAGA_COMPLETED, event);
   }
@@ -65,6 +77,7 @@ export abstract class SagaOrchestrator {
    * Falla la saga y ejecuta compensaciones
    */
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   protected async failSaga(sagaId: string, error: any): Promise<void> {
     const event = new SagaFailedEvent(sagaId, {
       error: error.message || error.toString(),
@@ -72,6 +85,8 @@ export abstract class SagaOrchestrator {
       failedAt: new Date(),
     });
 =======
+=======
+>>>>>>> Stashed changes
   protected async failSaga(
     sagaId: string,
     error: Error,
@@ -86,6 +101,9 @@ export abstract class SagaOrchestrator {
       },
       sagaId
     ); // Pasar sagaId al constructor
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     await this.eventBus.publish(EventSubjects.SAGA_FAILED, event);
   }
@@ -95,6 +113,7 @@ export abstract class SagaOrchestrator {
  * Orquestador específico para la saga de creación de órdenes
  */
 export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
   private sagaStates: Map<string, { customerId: string; initialData: any }> = new Map(); // Almacenar estado por sagaId
 
@@ -107,6 +126,39 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       customerId: initialData.customerId,
       initialData,
     });
+=======
+  private sagaStates: Map<string, { customerId: string; initialData: any }> =
+    new Map(); // Almacenar estado por sagaId
+
+  async startSaga(
+    sagaId: string,
+    initialData: {
+      customerId: string;
+      customerEmail: string;
+      items: Array<{ productId: string; quantity: number }>;
+      deliveryAddress: any;
+    }
+  ): Promise<void> {
+    this.sagaStates.set(sagaId, {
+      customerId: initialData.customerId,
+      initialData,
+    }); // Almacenar initialData
+
+    // Paso 1: Solicitar información de productos
+    const productInfoEvent = new ProductInformationRequestedEvent(
+      sagaId,
+      {
+        orderId: sagaId,
+        productIds: initialData.items.map((item) => item.productId),
+        requestedAt: new Date(),
+      },
+      sagaId
+    ); // Pasar sagaId al constructor
+    await this.eventBus.publish(
+      EventSubjects.PRODUCT_INFORMATION_REQUESTED,
+      productInfoEvent
+    );
+>>>>>>> Stashed changes
 
     // Publicar evento de inicio de saga usando SAGA_STARTED
     await this.eventBus.publish(EventSubjects.SAGA_STARTED, {
@@ -184,6 +236,9 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       EventSubjects.USER_INFORMATION_REQUESTED,
       userInfoEvent
     );
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   }
 
@@ -211,6 +266,7 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
     }
   }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
   private async validateInventory(sagaId: string, data: any): Promise<void> {
     // Usar STOCK_VALIDATION_REQUESTED que sí existe
@@ -278,6 +334,8 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
     });
   }
 =======
+=======
+>>>>>>> Stashed changes
   private async handleProductInfoReceived(
     sagaId: string,
     data: any
@@ -353,5 +411,8 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       ]);
     }
   }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }

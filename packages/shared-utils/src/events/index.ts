@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 export { DomainEvent, IDomainEvent } from '../domain/domain-event';
 // Importar y exportar clases de eventos de dominio explícitamente
 export { Address, ContactInfo, OrderItemReference, ProductSummary } from './domain-events';
@@ -46,6 +47,8 @@ export {
   StockValidationResponseEvent,
   UserInformationProvidedEvent,
 =======
+=======
+>>>>>>> Stashed changes
 export { DomainEvent, IDomainEvent } from './domain-event';
 // Importar y exportar clases de eventos de dominio explícitamente
 export { Address, ContactInfo, OrderItemReference, ProductSummary } from './domain-events';
@@ -66,6 +69,9 @@ export {
 export { 
   ProductInformationProvidedEvent, StockValidationResponseEvent, 
   UserInformationProvidedEvent
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 } from './integration-events';
 

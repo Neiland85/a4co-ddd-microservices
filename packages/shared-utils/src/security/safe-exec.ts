@@ -22,6 +22,7 @@ export const safeExec = (command: string): Promise<string> => {
 };
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /**
  * Executes a whitelisted command with arguments and parses the output as JSON.
  * @param command The command to execute (must be in whitelist)
@@ -33,6 +34,10 @@ export const safeExecAndParseJson = async <T>(command: string, args: string[] = 
 export const safeExecAndParseJson = async <T>(command: string): Promise<T> => {
   const stdout = await safeExec(command);
 >>>>>>> Stashed changes
+=======
+export const safeExecAndParseJson = async <T>(command: string): Promise<T> => {
+  const stdout = await safeExec(command);
+>>>>>>> Stashed changes
   try {
     return JSON.parse(stdout) as T;
   } catch (error) {
@@ -40,7 +45,11 @@ export const safeExecAndParseJson = async <T>(command: string): Promise<T> => {
     throw new Error(`Failed to parse JSON from command output: ${(error as Error).message}`); // Castear a Error
   }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 };
+=======
+};
+>>>>>>> Stashed changes
 =======
 };
 >>>>>>> Stashed changes
