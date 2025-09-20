@@ -1,1 +1,49 @@
-{"image":"mcr.microsoft.com/devcontainers/universal:2"}
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/devcontainer.schema.json",
+  "name": "a4co-ddd-microservices-dev",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18",
+      "installTooling": true
+    },
+    "ghcr.io/devcontainers/features/pnpm:2": {
+      "version": "8"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "postCreateCommand": "corepack enable && pnpm install",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "eslint.enable": true,
+        "files.exclude": {
+          "**/.git": true,
+          "**/node_modules": true,
+          "**/.DS_Store": true
+        },
+        "typescript.tsdk": "node_modules/typescript/lib"
+      },
+      "extensions": [
+        "github.copilot",
+        "github.copilot-chat",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "prisma.prisma",
+        "bradlc.vscode-tailwindcss",
+        "ms-playwright.playwright",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 3001, 3333, 8080, 6006],
+  "portsAttributes": {
+    "3000": { "label": "Next.js App" },
+    "3001": { "label": "Dashboard" },
+    "3333": { "label": "API Gateway" },
+    "8080": { "label": "Traefik Dashboard" },
+    "6006": { "label": "Design System" }
+  }
+}
