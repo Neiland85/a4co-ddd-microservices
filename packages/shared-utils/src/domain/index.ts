@@ -1,7 +1,4 @@
-export * from './base-entity';
-<<<<<<< Updated upstream
-=======
 export * from './aggregate-root';
-export * from './value-object';
+export * from './base-entity';
 export * from './domain-event';
->>>>>>> Stashed changes
+export * from './value-object';

@@ -1,4 +1,4 @@
-import { BaseService } from '../../packages/shared-utils/src/base';
+import { BaseService } from '@a4co/shared-utils/base';
 
 export class ProductService extends BaseService {
   constructor() {

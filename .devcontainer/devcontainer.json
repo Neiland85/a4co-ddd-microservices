@@ -34,7 +34,8 @@
         "bradlc.vscode-tailwindcss",
         "ms-playwright.playwright",
         "ms-azuretools.vscode-docker",
-        "redhat.vscode-yaml"
+        "redhat.vscode-yaml",
+        "TeamsDevApp.vscode-ai-foundry"
       ]
     }
   },

@@ -11,8 +11,7 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-<<<<<<< Updated upstream
-    "noEmit": true,
+    "noEmit": false,
     "incremental": true,
     // Module resolution - optimized for monorepo with SWC
     "moduleResolution": "node",
@@ -21,11 +20,9 @@
     "jsx": "preserve",
     "module": "ESNext",
     // SWC optimization settings
-=======
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
->>>>>>> Stashed changes
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useDefineForClassFields": false,
@@ -76,7 +73,9 @@
     // Import/Export
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "moduleDetection": "force"
+    "moduleDetection": "force",
+    "outDir": "./dist", // Especifica un directorio de salida separado
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo" // Archivo .tsbuildinfo único para el proyecto raíz
   },
   "include": [
     "**/*.ts",
@@ -109,10 +108,14 @@
   ],
   "references": [
     {
-      "path": "./apps/dashboard-web"
+      "path": "./apps/dashboard-web",
+      "composite": true,
+      "tsBuildInfoFile": "./dist/apps/dashboard-web/tsconfig.tsbuildinfo" // Archivo único para dashboard-web
     },
     {
-      "path": "./libs"
+      "path": "./libs",
+      "composite": true,
+      "tsBuildInfoFile": "./dist/libs/tsconfig.tsbuildinfo" // Archivo único para libs
     }
   ]
 }

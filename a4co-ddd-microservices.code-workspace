@@ -1,20 +1,25 @@
 {
-    "editor.formatOnSave": true,
-    "eslint.enable": true,
-    "files.exclude": {
-        "**/.git": true,
-        "**/node_modules": true,
-        "**/.DS_Store": true
-    },
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.disableAutomaticTypeAcquisition": false,
-    "typescript.enablePromptUseWorkspaceTsdk": false,
-    "typescript.experimental.useTsgo": false,
-    "typescript.experimental.enableProjectDiagnostics": false,
-    "typescript.tsserver.log": "off",
-    "typescript.tsserver.useSyntaxServer": "auto",
-    "github.copilot.enable": {
-        "*": true,
-        "plaintext": false
+  "editor.formatOnSave": true,
+  "eslint.enable": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/.DS_Store": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.disableAutomaticTypeAcquisition": false,
+  "typescript.enablePromptUseWorkspaceTsdk": false,
+  "typescript.experimental.useTsgo": false,
+  "typescript.experimental.enableProjectDiagnostics": false,
+  "typescript.tsserver.log": "off",
+  "typescript.tsserver.useSyntaxServer": "auto",
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false
+  },
+  "folders": [
+    {
+      "path": "."
     }
+  ]
 }

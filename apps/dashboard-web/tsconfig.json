@@ -10,13 +10,13 @@
       "ES2022"
     ],
     "allowJs": true,
-    "noEmit": true,
+    "noEmit": false, // Asegúrate de que la emisión no esté deshabilitada
     "module": "esnext",
     "moduleResolution": "node",
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "strict": false,
+    "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
@@ -31,6 +31,9 @@
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": false,
     "noUncheckedIndexedAccess": false,
+    "composite": true, // Habilita la compilación incremental
+    "outDir": "../../dist/apps/dashboard-web", // Directorio de salida separado
+    "tsBuildInfoFile": "../../dist/apps/dashboard-web/tsconfig.tsbuildinfo", // Archivo .tsbuildinfo único
     "plugins": [
       {
         "name": "next"
@@ -70,8 +73,7 @@
     },
     "types": [
       "node",
-      "jest",
-      "@types/node"
+      "@types/node" // Eliminado "jest" si no es necesario
     ]
   },
   "include": [

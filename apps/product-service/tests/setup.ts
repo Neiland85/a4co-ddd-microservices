@@ -21,7 +21,7 @@ afterAll(() => {
 });
 
 // Mock para servicios externos que podrían ser usados
-jest.mock('../../packages/shared-utils/src/base', () => ({
+jest.mock('@a4co/shared-utils/base', () => ({
   BaseService: jest.fn().mockImplementation(() => ({
     validateRequired: jest.fn((value, field) => {
       if (value === undefined || value === null || value === '') {
