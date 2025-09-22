@@ -1,8 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true
+    "allowJs": true, // Allow JavaScript files to be compiled
+    "checkJs": true, // Report errors in .js files
+    "noEmit": true // Do not emit outputs, just type check
   },
   "include": ["index.js"]
 }
