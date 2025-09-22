@@ -1,0 +1,123 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":separatePatchReleases",
+    "group:monorepos",
+    "workarounds:all"
+  ],
+  "timezone": "Europe/Madrid",
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies"],
+  "assignees": ["Neiland85"],
+  "reviewers": ["Neiland85"],
+  "platformAutomerge": false,
+  "ignoreTests": false,
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**"
+  ],
+  "packageRules": [
+    {
+      "description": "Group all non-major updates into a single PR",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    },
+    {
+      "description": "Auto-merge patch updates for trusted packages",
+      "matchUpdateTypes": ["patch"],
+      "matchPackagePatterns": ["^@types/", "^eslint", "^prettier"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Group NestJS packages",
+      "matchPackagePatterns": ["^@nestjs/"],
+      "groupName": "NestJS packages"
+    },
+    {
+      "description": "Group Next.js packages",
+      "matchPackagePatterns": ["^next", "^@next/"],
+      "groupName": "Next.js packages"
+    },
+    {
+      "description": "Group React packages",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "groupName": "React packages"
+    },
+    {
+      "description": "Group TypeScript packages",
+      "matchPackagePatterns": ["^typescript", "^@typescript-eslint/", "^ts-"],
+      "groupName": "TypeScript packages"
+    },
+    {
+      "description": "Group testing packages",
+      "matchPackagePatterns": ["^jest", "^@jest/", "^@testing-library/", "^vitest"],
+      "groupName": "testing packages"
+    },
+    {
+      "description": "Group linting packages",
+      "matchPackagePatterns": ["^eslint", "^@eslint/", "^prettier", "lint"],
+      "groupName": "linting packages"
+    },
+    {
+      "description": "Pin Docker base images",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "osvVulnerabilityAlerts": true,
+  "npm": {
+    "minimumReleaseAge": "3 days"
+  },
+  "pnpm": {
+    "enabled": true
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+  "prHourlyLimit": 3,
+  "prConcurrentLimit": 5,
+  "branchConcurrentLimit": 10,
+  "stabilityDays": 3,
+  "internalChecksFilter": "strict",
+  "suppressNotifications": ["prIgnoreNotification"],
+  "commitMessageAction": "Update",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "prTitle": "{{commitMessageAction}} {{commitMessageTopic}} {{commitMessageExtra}}",
+  "description": [
+    "This PR contains the following updates:",
+    "",
+    "| Package | Change | Age | Adoption | Passing | Confidence |",
+    "|---|---|---|---|---|---|",
+    "{{#each upgrades as |upgrade|}}",
+    "| {{upgrade.depName}} | {{#if upgrade.displayFrom}}`{{upgrade.displayFrom}}` -> {{/if}}`{{upgrade.displayTo}}` | [![age](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/age-slim)](https://docs.renovatebot.com/merge-confidence/) | [![adoption](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/adoption-slim)](https://docs.renovatebot.com/merge-confidence/) | [![passing](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/compatibility-slim/{{upgrade.fromVersion}})](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/confidence-slim/{{upgrade.fromVersion}})](https://docs.renovatebot.com/merge-confidence/) |",
+    "{{/each}}",
+    "",
+    "---",
+    "",
+    "### Configuration",
+    "",
+    "📅 **Schedule**: {{schedule}} in timezone {{timezone}}.",
+    "",
+    "🚦 **Automerge**: {{automerge}}.",
+    "",
+    "♻ **Rebasing**: {{#unless rebaseWhen}}{{rebaseLabel}}{{else}}{{rebaseWhen}}{{/unless}}.",
+    "",
+    "🔕 **Ignore**: Close this PR and you won't be reminded about {{#if isSingleUpdate}}this update{{else}}these updates{{/if}} again.",
+    "",
+    "---"
+  ]
+}
