@@ -8,7 +8,7 @@ app.get('/', (req, res) => {
   res.json({
     message: 'A4CO Backend API',
     status: 'running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
