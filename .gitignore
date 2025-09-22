@@ -114,3 +114,7 @@ __pycache__/
 
 /src/generated/prisma
 .turbo/
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md
