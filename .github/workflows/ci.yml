@@ -17,7 +17,10 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
+       fix/pipeline-and-backend
       - run: pnpm test || true
+      - run: pnpm test
+       main
 
   build:
     needs: test
