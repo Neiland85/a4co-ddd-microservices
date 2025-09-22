@@ -3,9 +3,12 @@
   "compilerOptions": {
     "allowJs": true, // Allow JavaScript files to be compiled
     "checkJs": true, // Report errors in .js files
+      fix/pipeline-and-backend
     "noEmit": true, // Do not emit outputs, just type check
     "outDir": "../dist/backend",
     "rootDir": "./"
+    "noEmit": true // Do not emit outputs, just type check
+       main
   },
   "include": ["**/*.js", "**/*.ts"]
 }
