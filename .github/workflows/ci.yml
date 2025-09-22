@@ -9,6 +9,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+       develop
+        fix/pipeline-and-backend
+         main
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
         fix/pipeline-and-backend
         with:
@@ -18,13 +21,29 @@ jobs:
         with:
           version: 10.14.0
       - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        develop
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.14.0
+      - uses: actions/setup-node@v3
+       develop
+       main
         with:
           node-version: '20'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
+       develop
+       fix/pipeline-and-backend
       - name: Install global tools
         run: pnpm add -g turbo
       - run: pnpm test || true
+      - run: pnpm test
+       develop
+      - name: Install global tools
+        run: pnpm add -g turbo
+      - run: pnpm test || true
+         main
 
   build:
     needs: test
