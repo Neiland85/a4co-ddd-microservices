@@ -20,6 +20,8 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
+      - name: Install global tools
+        run: pnpm add -g turbo
       - run: pnpm test || true
 
   build:
@@ -54,6 +56,9 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Install global tools
+        run: |
+          pnpm add -g turbo concurrently eslint prettier markdownlint-cli
       - name: Lint check
         run: pnpm lint:check || echo "Linting issues found"
       - name: Format check

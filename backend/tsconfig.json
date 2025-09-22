@@ -1,14 +1,22 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "allowJs": true, // Allow JavaScript files to be compiled
-    "checkJs": true, // Report errors in .js files
-      fix/pipeline-and-backend
-    "noEmit": true, // Do not emit outputs, just type check
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
     "outDir": "../dist/backend",
-    "rootDir": "./"
-    "noEmit": true // Do not emit outputs, just type check
-       main
+    "rootDir": "./",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*.js", "**/*.ts"]
+  "include": ["**/*.js", "**/*.ts"],
+  "exclude": ["node_modules", "../dist"]
 }
