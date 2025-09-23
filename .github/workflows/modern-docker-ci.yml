@@ -1,0 +1,146 @@
+name: Modern Docker CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ vars.DOCKER_USER }}/a4co
+
+jobs:
+  # Quality Gates
+  quality-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should-build: ${{ steps.check.outputs.should-build }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if build is needed
+        id: check
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]] || [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "should-build=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-build=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Test Stage
+  test:
+    needs: quality-check
+    if: needs.quality-check.outputs.should-build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Run type checking
+        run: pnpm type-check
+
+  # Docker Build Stage
+  docker-build:
+    needs: [quality-check, test]
+    if: needs.quality-check.outputs.should-build == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [inventory-service, auth-service, order-service, product-service]
+        app: [web, dashboard-web]
+        include:
+          - service: inventory-service
+            context: ./apps/inventory-service
+            dockerfile: ./apps/inventory-service/Dockerfile
+          - service: auth-service
+            context: ./apps/auth-service
+            dockerfile: ./apps/auth-service/Dockerfile
+          - service: order-service
+            context: ./apps/order-service
+            dockerfile: ./apps/order-service/Dockerfile
+          - service: product-service
+            context: ./apps/product-service
+            dockerfile: ./apps/product-service/Dockerfile
+          - app: web
+            context: ./apps/web
+            dockerfile: ./apps/web/Dockerfile
+          - app: dashboard-web
+            context: ./apps/dashboard-web
+            dockerfile: ./apps/dashboard-web/Dockerfile
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: cloud
+          endpoint: "neiland/a4co-cloud-builder"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context || matrix.service && format('./apps/{0}', matrix.service) || format('./apps/{0}', matrix.app) }}
+          file: ${{ matrix.dockerfile || matrix.service && format('./apps/{0}/Dockerfile', matrix.service) || format('./apps/{0}/Dockerfile', matrix.app) }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+  # Deploy Stage (Optional)
+  deploy:
+    needs: docker-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deployment logic here"
+          # Add your deployment commands

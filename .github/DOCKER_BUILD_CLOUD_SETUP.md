@@ -1,15 +1,40 @@
 # Complete CI/CD Setup Guide
 
-## 📋 Lista Completa de Secretos y Variables Requeridos
+## 📋 Lista Completa de Secretos y Variables## 📁 Estructura del Pipeline
 
-Para que el pipeline funcione correctamente, necesitas configurar los siguientes
-secretos y variables en tu repositorio de GitHub.
+El proyecto incluye múltiples workflows especializados:
+
+### Workflows Disponibles
+
+#### 1. **CI Pipeline** (`ci.yml`) - Pipeline Principal
+
+- ✅ `test` - Ejecuta tests unitarios
+- ✅ `type-check` - Verificación de tipos TypeScript
+- ✅ `code-quality` - Linting, formatting, markdown linting
+- ✅ `build` - Construye paquetes e imágenes Docker (depende de anteriores)
+- ✅ `security-scan` - Escaneo de vulnerabilidades con Trivy y Snyk (solo en main)
+- ✅ `terraform` - Plan y apply de infraestructura (solo en main)
+- ✅ `tfc-agent` - Terraform Cloud Agent para despliegues avanzados (opcional)
+
+#### 2. **Docker Workflow** (`docker.yml`) - Construcción Docker Estándar
+
+- ✅ **Triggers**: Push a tags, main branch y pull requests
+- ✅ **Registry**: docker.io con autenticación
+- ✅ **Metadata**: Etiquetas automáticas (semver, sha, edge)
+- ✅ **SBOM**: Generación de Software Bill of Materials
+- ✅ **Provenance**: Atribución de procedencia
+- ✅ **Cache**: GitHub Actions cache optimizado
+- ✅ **Load vs Push**: Load en PR, push en main/tags
+
+### Características Mejoradas
 
 ### 🔐 Repository Secrets (Settings → Secrets and variables → Actions)
 
 | Secreto | Descripción | Categoría | Cómo obtenerlo |
 |---------|-------------|-----------|----------------|
 | `DOCKER_PAT` | Personal Access Token de Docker Hub | Docker | 1. Ve a https://hub.docker.com/settings/security<br>2. Genera un nuevo Access Token<br>3. Copia el token generado |
+| `REGISTRY_USER` | Usuario del registro Docker | Docker | Usuario de Docker Hub (mismo que DOCKER_USER) |
+| `REGISTRY_TOKEN` | Token del registro Docker | Docker | Token de Docker Hub (mismo que DOCKER_PAT) |
 | `TF_API_TOKEN` | Token de API de Terraform Cloud | Terraform | 1. Ve a https://app.terraform.io/app/settings/tokens<br>2. Crea un nuevo token de API<br>3. Copia el token generado |
 | `TFC_AGENT_TOKEN` | Token para Terraform Cloud Agent | Terraform | 1. En Terraform Cloud, ve a Settings → Agents<br>2. Crea un nuevo agent token<br>3. Copia el token |
 | `SNYK_TOKEN` | Token de autenticación de Snyk | Security | 1. Ve a https://app.snyk.io/account<br>2. Crea un nuevo token de API<br>3. Copia el token |
@@ -62,7 +87,20 @@ secretos y variables en tu repositorio de GitHub.
 # 3. En "Variables", añade DOCKER_USER y SNYK_ID
 ```
 
-### 5. Verificar Docker Buildx Cloud Builder
+### 5. Configurar Workflow Docker Estándar
+
+El workflow `docker.yml` es un workflow adicional especializado en construcción Docker:
+
+- **Cuándo usarlo**: Para builds Docker simples y estándar
+- **Triggers**: Se ejecuta en push a main/tags y pull requests
+- **Características**:
+  - SBOM (Software Bill of Materials)
+  - Provenance attestation
+  - Metadata automática
+  - Cache optimizado
+  - Load en PR, push en main
+
+### 6. Verificar Docker Buildx Cloud Builder
 
 ```bash
 # Asegúrate de que tu builder cloud esté configurado:
@@ -98,7 +136,30 @@ El workflow refactorizado incluye:
 - 🏗️ **IaC con Terraform** - Gestión de infraestructura como código
 - 🤖 **Terraform Cloud Agent** - Despliegues avanzados automatizados
 
-## 🎯 Beneficios de la Refactorización
+## 🔄 Workflows Docker: ¿Cuál usar?
+
+### CI Pipeline (`ci.yml`) - Recomendado para Monorepos
+
+- ✅ **Completo**: Tests, linting, builds, security, infraestructura
+- ✅ **Multi-servicio**: Matrix strategy para múltiples apps/servicios
+- ✅ **Cloud Builder**: Docker Buildx Cloud para builds distribuidos
+- ✅ **Terraform**: Gestión de infraestructura integrada
+- ✅ **Snyk + Trivy**: Escaneo de seguridad dual
+- ✅ **Cuándo usarlo**: Desarrollo completo con múltiples servicios
+
+### Docker Workflow (`docker.yml`) - Para Builds Simples
+
+- ✅ **Estándar**: Workflow Docker oficial de GitHub
+- ✅ **SBOM**: Generación de Software Bill of Materials
+- ✅ **Provenance**: Atribución de procedencia
+- ✅ **Metadata**: Etiquetas automáticas avanzadas
+- ✅ **Cache**: Optimizado para GitHub Actions
+- ✅ **Cuándo usarlo**: Builds Docker simples, proyectos individuales
+
+### Recomendación
+
+- **Usa `ci.yml`** para este monorepo con múltiples servicios
+- **Usa `docker.yml`** para proyectos más simples o como referencia
 
 1. **Mejor Rendimiento**: Jobs paralelos reducen tiempo total
 2. **Construcción Distribuida**: Docker Build Cloud acelera builds
@@ -169,3 +230,61 @@ Si encuentras problemas:
 2. Verifica la configuración de secrets/variables
 3. Confirma que Docker Buildx Cloud esté funcionando
 4. Contacta al equipo de desarrollo si persiste el problema
+
+---
+
+## 🚀 Próximos Pasos
+
+### 1. Configurar Secrets en GitHub
+
+Ve a **Settings > Secrets and variables > Actions** y configura:
+
+```bash
+# Terraform Cloud
+TF_API_TOKEN=tu_token_de_terraform_cloud
+TFC_AGENT_TOKEN=tu_token_de_agente_terraform
+
+# Snyk Security
+SNYK_TOKEN=tu_token_de_snyk
+
+# Docker Registry
+REGISTRY_USER=tu_usuario_de_registry
+REGISTRY_TOKEN=tu_token_de_registry
+
+# Tokens adicionales (si aplican)
+ORGANIZATION_TOKEN=token_de_organizacion
+TEAM_TOKEN_OWNERS=token_de_equipo_owners
+```
+
+### 2. Configurar Terraform Cloud
+
+1. Crear organización en [Terraform Cloud](https://app.terraform.io)
+2. Crear workspace para este proyecto
+3. Configurar variables de entorno en el workspace
+
+### 3. Configurar Snyk
+
+1. Crear cuenta en [Snyk](https://snyk.io)
+2. Obtener Organization ID
+3. Configurar integración con GitHub
+
+### 4. Probar los Workflows
+
+```bash
+# Crear PR para probar
+git checkout -b test-pipeline
+git commit --allow-empty -m "Test pipeline"
+git push origin test-pipeline
+
+# Crear PR desde test-pipeline hacia main
+```
+
+### 5. Monitoreo
+
+- Revisar **Actions** tab para ver ejecuciones
+- Revisar **Security** tab para vulnerabilidades
+- Revisar **Pull Requests** para checks automáticos
+
+---
+
+**🎉 ¡Configuración completa!** Tu pipeline CI/CD está listo para desarrollo profesional con Docker Build Cloud.
