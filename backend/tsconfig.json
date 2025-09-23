@@ -4,7 +4,10 @@
     fix/pipeline-and-backend
     "allowJs": true,
     "checkJs": true,
+     fix/pipeline-and-backend
     "noEmit": false,
+    "noEmit": true,
+      develop
     "outDir": "../dist/backend",
     "rootDir": "./",
     "strict": true,
@@ -16,10 +19,15 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitReturns": true,
+     fix/pipeline-and-backend
     "noFallthroughCasesInSwitch": true,
     "types": []
   },
   "include": ["."],
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["**/*.js", "**/*.ts"],
+     develop
   "exclude": ["node_modules", "../dist"]
     "allowJs": true, // Allow JavaScript files to be compiled
     "checkJs": true, // Report errors in .js files
