@@ -27,6 +27,7 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
+       fix/pipeline-and-backend
       - name: Checkout code
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
 
@@ -37,15 +38,50 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+       develop
+        fix/pipeline-and-backend
+         main
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
+        fix/pipeline-and-backend
+        with:
+          ref: ${{ github.ref }}
+        main
+      - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # v2.2.4
+        with:
+          version: 10.14.0
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        develop
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.14.0
+      - uses: actions/setup-node@v3
+       develop
+       main
+       main
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+      fix/pipeline-and-backend
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Install global tools
         run: pnpm add -g turbo
+      - run: pnpm install --frozen-lockfile
+       develop
+       fix/pipeline-and-backend
+      - name: Install global tools
+        run: pnpm add -g turbo
+      - run: pnpm test || true
+      - run: pnpm test
+       develop
+      - name: Install global tools
+        run: pnpm add -g turbo
+      - run: pnpm test || true
+         main
+       main
 
       - name: Run tests
         run: pnpm test
