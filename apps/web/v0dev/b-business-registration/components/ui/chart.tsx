@@ -76,9 +76,8 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
+  // @sonar-disable-next-line - CSS injection is safe here, only CSS variables are injected
   return (
-    {/* @sonar-disable-next-line - CSS injection is safe here, only CSS variables are injected */}
-
     <style dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(

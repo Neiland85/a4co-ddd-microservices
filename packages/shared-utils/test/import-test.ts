@@ -27,7 +27,7 @@ const valueObj = new TestValue('test-value');
 console.log('✅ ValueObject works:', valueObj.value);
 
 // Test generateId
-const uuid = generateId(16);
+const uuid = generateId();
 console.log('✅ generateId works:', uuid);
 
 console.log('🎉 All imports are working correctly!');

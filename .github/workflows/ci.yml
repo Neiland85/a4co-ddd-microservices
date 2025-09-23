@@ -9,9 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
-        with:
-          ref: ${{ github.ref }}
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # v2.2.4
         with:
           version: 10.14.0
@@ -22,30 +20,62 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Install global tools
         run: pnpm add -g turbo
-      - run: pnpm test || true
+      - run: pnpm test
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # v2.2.4
+        with:
+          version: 10.14.0
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Type check
+        run: pnpm type-check
 
   build:
-    needs: test
+    needs: [test, type-check]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # v2.2.4
         with:
-          ref: ${{ github.ref }}
+          version: 10.14.0
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Build packages
+        run: pnpm build
       - name: Build Docker images
         run: |
-          if [ -d "./backend" ]; then
-            docker build -t a4co-backend:${{ github.sha }} ./backend || echo "Backend build failed"
-          fi
-          if [ -d "./frontend" ]; then
-            docker build -t a4co-frontend:${{ github.sha }} ./frontend || echo "Frontend build failed"
-          fi
+          # Build backend services
+          for service in ./apps/*-service; do
+            if [ -f "$service/Dockerfile" ]; then
+              service_name=$(basename "$service")
+              docker build -t "a4co-${service_name}:${{ github.sha }}" "$service" || echo "${service_name} build failed"
+            fi
+          done
+          
+          # Build web applications
+          for app in ./apps/web ./apps/dashboard-web; do
+            if [ -d "$app" ]; then
+              app_name=$(basename "$app")
+              docker build -t "a4co-${app_name}:${{ github.sha }}" "$app" || echo "${app_name} build failed"
+            fi
+          done
           
   code_quality:
+    needs: [test, type-check]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
           fetch-depth: 0
       - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # v2.2.4
         with:
@@ -60,6 +90,8 @@ jobs:
         run: |
           pnpm add -g turbo concurrently eslint prettier markdownlint-cli
       - name: Lint check
-        run: pnpm lint:check || echo "Linting issues found"
+        run: pnpm lint:check
       - name: Format check
-        run: pnpm format:check || echo "Formatting issues found"
+        run: pnpm format:check
+      - name: Markdown lint check
+        run: pnpm lint:md

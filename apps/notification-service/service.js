@@ -1,57 +1,57 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationService = void 0;
 class NotificationService {
-  channels = new Map();
-  templates = new Map();
-  events = [];
-  queue = [];
-  constructor() {
-    this.setupDefaultChannels();
-    this.setupDefaultTemplates();
-    this.startQueueProcessor();
-  }
-  // Generar ID único
-  generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-  // Configurar canales por defecto
-  setupDefaultChannels() {
-    this.channels.set('email', {
-      type: 'email',
-      config: {
-        service: 'sendgrid',
-        apiKey: process.env.SENDGRID_API_KEY,
-        from: process.env.NOTIFICATION_EMAIL || 'noreply@backoffice.com',
-      },
-      enabled: true,
-    });
-    this.channels.set('slack', {
-      type: 'slack',
-      config: {
-        webhookUrl: process.env.SLACK_WEBHOOK_URL,
-        channel: '#security-alerts',
-      },
-      enabled: !!process.env.SLACK_WEBHOOK_URL,
-    });
-    this.channels.set('sms', {
-      type: 'sms',
-      config: {
-        service: 'twilio',
-        accountSid: process.env.TWILIO_ACCOUNT_SID,
-        authToken: process.env.TWILIO_AUTH_TOKEN,
-        from: process.env.TWILIO_PHONE_NUMBER,
-      },
-      enabled: !!process.env.TWILIO_ACCOUNT_SID,
-    });
-  }
-  // Configurar plantillas por defecto
-  setupDefaultTemplates() {
-    this.templates.set('security_alert', {
-      id: 'security_alert',
-      name: 'Alerta de Seguridad',
-      subject: '🚨 Alerta de Seguridad - {{title}}',
-      body: `
+    channels = new Map();
+    templates = new Map();
+    events = [];
+    queue = [];
+    constructor() {
+        this.setupDefaultChannels();
+        this.setupDefaultTemplates();
+        this.startQueueProcessor();
+    }
+    // Generar ID único
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+    // Configurar canales por defecto
+    setupDefaultChannels() {
+        this.channels.set('email', {
+            type: 'email',
+            config: {
+                service: 'sendgrid',
+                apiKey: process.env.SENDGRID_API_KEY,
+                from: process.env.NOTIFICATION_EMAIL || 'noreply@backoffice.com',
+            },
+            enabled: true,
+        });
+        this.channels.set('slack', {
+            type: 'slack',
+            config: {
+                webhookUrl: process.env.SLACK_WEBHOOK_URL,
+                channel: '#security-alerts',
+            },
+            enabled: !!process.env.SLACK_WEBHOOK_URL,
+        });
+        this.channels.set('sms', {
+            type: 'sms',
+            config: {
+                service: 'twilio',
+                accountSid: process.env.TWILIO_ACCOUNT_SID,
+                authToken: process.env.TWILIO_AUTH_TOKEN,
+                from: process.env.TWILIO_PHONE_NUMBER,
+            },
+            enabled: !!process.env.TWILIO_ACCOUNT_SID,
+        });
+    }
+    // Configurar plantillas por defecto
+    setupDefaultTemplates() {
+        this.templates.set('security_alert', {
+            id: 'security_alert',
+            name: 'Alerta de Seguridad',
+            subject: '🚨 Alerta de Seguridad - {{title}}',
+            body: `
         Se ha detectado una amenaza de seguridad:
 
         Tipo: {{type}}
@@ -61,28 +61,28 @@ class NotificationService {
 
         Por favor, revisa el panel de seguridad inmediatamente.
       `,
-      channels: ['email', 'slack'],
-      priority: 'critical',
-    });
-    this.templates.set('system_error', {
-      id: 'system_error',
-      name: 'Error del Sistema',
-      subject: '❌ Error del Sistema - {{title}}',
-      body: `
+            channels: ['email', 'slack'],
+            priority: 'critical',
+        });
+        this.templates.set('system_error', {
+            id: 'system_error',
+            name: 'Error del Sistema',
+            subject: '❌ Error del Sistema - {{title}}',
+            body: `
         Se ha producido un error en el sistema:
 
         Error: {{message}}
         Detalles: {{data.details}}
         Fecha: {{timestamp}}
       `,
-      channels: ['email'],
-      priority: 'high',
-    });
-    this.templates.set('backup_status', {
-      id: 'backup_status',
-      name: 'Estado del Backup',
-      subject: '💾 {{title}}',
-      body: `
+            channels: ['email'],
+            priority: 'high',
+        });
+        this.templates.set('backup_status', {
+            id: 'backup_status',
+            name: 'Estado del Backup',
+            subject: '💾 {{title}}',
+            body: `
         Estado del backup:
 
         Resultado: {{message}}
@@ -90,123 +90,128 @@ class NotificationService {
         Duración: {{data.duration}}
         Fecha: {{timestamp}}
       `,
-      channels: ['email'],
-      priority: 'medium',
-    });
-  }
-  // Enviar notificación
-  async sendNotification(event) {
-    const notification = {
-      ...event,
-      id: this.generateId(),
-      timestamp: new Date(),
-      sent: false,
-      attempts: 0,
-    };
-    // Agregar a la cola
-    this.queue.push(notification);
-    this.events.push(notification);
-    console.log(`Notificación agregada a la cola: ${notification.title}`);
-  }
-  // Procesar cola de notificaciones
-  startQueueProcessor() {
-    setInterval(async () => {
-      if (this.queue.length === 0) return;
-      const notification = this.queue.shift();
-      await this.processNotification(notification);
-    }, 1000); // Procesar cada segundo
-  }
-  // Procesar una notificación individual
-  async processNotification(notification) {
-    notification.attempts++;
-    try {
-      for (const channelName of notification.channels) {
-        const channel = this.channels.get(channelName);
-        if (!channel || !channel.enabled) continue;
-        await this.sendToChannel(notification, channel);
-      }
-      notification.sent = true;
-      console.log(`Notificación enviada: ${notification.title}`);
-    } catch (error) {
-      console.error(`Error enviando notificación: ${error}`);
-      // Reintentar hasta 3 veces
-      if (notification.attempts < 3) {
-        setTimeout(() => {
-          this.queue.push(notification);
-        }, 5000 * notification.attempts); // Delay exponencial
-      }
+            channels: ['email'],
+            priority: 'medium',
+        });
     }
-  }
-  // Enviar a un canal específico
-  async sendToChannel(notification, channel) {
-    switch (channel.type) {
-      case 'email':
-        await this.sendEmail(notification, channel.config);
-        break;
-      case 'slack':
-        await this.sendSlack(notification, channel.config);
-        break;
-      case 'sms':
-        await this.sendSMS(notification, channel.config);
-        break;
-      case 'webhook':
-        await this.sendWebhook(notification, channel.config);
-        break;
-      default:
-        console.log(`Canal no implementado: ${channel.type}`);
+    // Enviar notificación
+    async sendNotification(event) {
+        const notification = {
+            ...event,
+            id: this.generateId(),
+            timestamp: new Date(),
+            sent: false,
+            attempts: 0,
+        };
+        // Agregar a la cola
+        this.queue.push(notification);
+        this.events.push(notification);
+        console.log(`Notificación agregada a la cola: ${notification.title}`);
     }
-  }
-  // Enviar email (simulado)
-  async sendEmail(notification, config) {
-    console.log(`📧 Enviando email: ${notification.title}`);
-    // Aquí implementarías la integración con SendGrid, Nodemailer, etc.
-  }
-  // Enviar a Slack (simulado)
-  async sendSlack(notification, config) {
-    console.log(`💬 Enviando a Slack: ${notification.title}`);
-    // Aquí implementarías la integración con Slack Webhook
-  }
-  // Enviar SMS (simulado)
-  async sendSMS(notification, config) {
-    console.log(`📱 Enviando SMS: ${notification.title}`);
-    // Aquí implementarías la integración con Twilio
-  }
-  // Enviar Webhook (simulado)
-  async sendWebhook(notification, config) {
-    console.log(`🔗 Enviando webhook: ${notification.title}`);
-    // Aquí implementarías el envío de webhook
-  }
-  // Obtener estadísticas de notificaciones
-  getNotificationStats(timeWindow = 24 * 60 * 60 * 1000) {
-    const cutoff = new Date(Date.now() - timeWindow);
-    const recentEvents = this.events.filter(event => event.timestamp > cutoff);
-    const byPriority = {};
-    const byChannel = {};
-    let sent = 0;
-    let failed = 0;
-    for (const event of recentEvents) {
-      byPriority[event.priority] = (byPriority[event.priority] || 0) + 1;
-      for (const channel of event.channels) {
-        byChannel[channel] = (byChannel[channel] || 0) + 1;
-      }
-      if (event.sent) sent++;
-      else if (event.attempts >= 3) failed++;
+    // Procesar cola de notificaciones
+    startQueueProcessor() {
+        setInterval(async () => {
+            if (this.queue.length === 0)
+                return;
+            const notification = this.queue.shift();
+            await this.processNotification(notification);
+        }, 1000); // Procesar cada segundo
     }
-    return {
-      total: recentEvents.length,
-      sent,
-      failed,
-      byPriority,
-      byChannel,
-    };
-  }
-  // Métodos legacy para compatibilidad
-  sendNotificationLegacy(userId, message) {
-    return `Notificación enviada al usuario ${userId}: ${message}`;
-  }
-  getNotificationsLegacy(userId) {
-    return [`Notificación para el usuario ${userId}`];
-  }
+    // Procesar una notificación individual
+    async processNotification(notification) {
+        notification.attempts++;
+        try {
+            for (const channelName of notification.channels) {
+                const channel = this.channels.get(channelName);
+                if (!channel || !channel.enabled)
+                    continue;
+                await this.sendToChannel(notification, channel);
+            }
+            notification.sent = true;
+            console.log(`Notificación enviada: ${notification.title}`);
+        }
+        catch (error) {
+            console.error(`Error enviando notificación: ${error}`);
+            // Reintentar hasta 3 veces
+            if (notification.attempts < 3) {
+                setTimeout(() => {
+                    this.queue.push(notification);
+                }, 5000 * notification.attempts); // Delay exponencial
+            }
+        }
+    }
+    // Enviar a un canal específico
+    async sendToChannel(notification, channel) {
+        switch (channel.type) {
+            case 'email':
+                await this.sendEmail(notification, channel.config);
+                break;
+            case 'slack':
+                await this.sendSlack(notification, channel.config);
+                break;
+            case 'sms':
+                await this.sendSMS(notification, channel.config);
+                break;
+            case 'webhook':
+                await this.sendWebhook(notification, channel.config);
+                break;
+            default:
+                console.log(`Canal no implementado: ${channel.type}`);
+        }
+    }
+    // Enviar email (simulado)
+    async sendEmail(notification, config) {
+        console.log(`📧 Enviando email: ${notification.title}`);
+        // Aquí implementarías la integración con SendGrid, Nodemailer, etc.
+    }
+    // Enviar a Slack (simulado)
+    async sendSlack(notification, config) {
+        console.log(`💬 Enviando a Slack: ${notification.title}`);
+        // Aquí implementarías la integración con Slack Webhook
+    }
+    // Enviar SMS (simulado)
+    async sendSMS(notification, config) {
+        console.log(`📱 Enviando SMS: ${notification.title}`);
+        // Aquí implementarías la integración con Twilio
+    }
+    // Enviar Webhook (simulado)
+    async sendWebhook(notification, config) {
+        console.log(`🔗 Enviando webhook: ${notification.title}`);
+        // Aquí implementarías el envío de webhook
+    }
+    // Obtener estadísticas de notificaciones
+    getNotificationStats(timeWindow = 24 * 60 * 60 * 1000) {
+        const cutoff = new Date(Date.now() - timeWindow);
+        const recentEvents = this.events.filter(event => event.timestamp > cutoff);
+        const byPriority = {};
+        const byChannel = {};
+        let sent = 0;
+        let failed = 0;
+        for (const event of recentEvents) {
+            byPriority[event.priority] = (byPriority[event.priority] || 0) + 1;
+            for (const channel of event.channels) {
+                byChannel[channel] = (byChannel[channel] || 0) + 1;
+            }
+            if (event.sent)
+                sent++;
+            else if (event.attempts >= 3)
+                failed++;
+        }
+        return {
+            total: recentEvents.length,
+            sent,
+            failed,
+            byPriority,
+            byChannel,
+        };
+    }
+    // Métodos legacy para compatibilidad
+    sendNotificationLegacy(userId, message) {
+        return `Notificación enviada al usuario ${userId}: ${message}`;
+    }
+    getNotificationsLegacy(userId) {
+        return [`Notificación para el usuario ${userId}`];
+    }
 }
 exports.NotificationService = NotificationService;
 //# sourceMappingURL=service.js.map

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "noEmit": true,
+    "noEmit": false,
     "outDir": "../dist/backend",
     "rootDir": "./",
     "strict": true,
@@ -15,8 +15,9 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": []
   },
-  "include": ["**/*.js", "**/*.ts"],
+  "include": ["."],
   "exclude": ["node_modules", "../dist"]
 }

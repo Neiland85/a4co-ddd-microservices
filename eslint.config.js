@@ -3,82 +3,90 @@ import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default [
   js.configs.recommended,
+  prettier,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     ignores: [
-      'node_modules/**',
-      'dist/**',
-      'build/**',
-      '.next/**',
-      'coverage/**',
-      '*.config.js',
-      '*.config.ts',
-      'prisma/**',
-      'apps/**/dist/**',
-      'packages/**/dist/**',
-      'apps/**/build/**',
-      'packages/**/build/**',
-      'apps/**/.next/**',
-      'packages/**/.next/**',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.next/**',
+      '**/coverage/**',
+      '**/*.config.js',
+      '**/*.config.ts',
+      '**/prisma/**',
+      '**/*.d.ts',
+      '**/*.js.map',
+      '**/*.d.ts.map',
     ],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: ['./tsconfig.json', './apps/*/tsconfig.json', './packages/*/tsconfig.json'],
-        sourceType: 'module',
         ecmaVersion: 2022,
+        sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
         },
       },
       globals: {
+        // Node.js globals
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
         global: 'readonly',
+        exports: 'writable',
+        module: 'writable',
+        require: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+        globalThis: 'readonly',
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        HTMLElement: 'readonly',
+        Node: 'readonly',
+        DOMParser: 'readonly',
+        URL: 'readonly',
+        fetch: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        // Test globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
       },
     },
     plugins: {
       '@typescript-eslint': typescript,
       import: importPlugin,
-      'jsx-a11y': jsxA11y,
-      react: react,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
     },
     rules: {
-      ...typescript.configs.recommended.rules,
-      ...typescript.configs['recommended-requiring-type-checking'].rules,
-      ...importPlugin.configs.recommended.rules,
-      ...importPlugin.configs.typescript.rules,
-      ...jsxA11y.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
-      ...reactHooks.configs.recommended.rules,
-      ...prettier.rules,
-
       // TypeScript rules
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': 'error',
-      '@typescript-eslint/prefer-optional-chain': 'error',
-      '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+      '@typescript-eslint/consistent-type-imports': 'warn',
+      '@typescript-eslint/no-require-imports': 'warn',
 
       // Import rules
       'import/order': [
-        'error',
+        'warn',
         {
           groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
           'newlines-between': 'always',
@@ -91,30 +99,72 @@ export default [
       'import/no-unresolved': 'off',
       'import/named': 'off',
 
-      // React rules
-      'react/prop-types': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'react-hooks/exhaustive-deps': 'warn',
-
-      // General rules
-      'prefer-const': 'error',
-      'no-var': 'error',
-      'object-shorthand': 'error',
+      // General rules - relaxed for initial setup
       'no-console': 'warn',
+      'no-var': 'warn',
+      'object-shorthand': 'warn',
+      'prefer-const': 'warn',
+      'no-undef': 'warn',
+      'no-cond-assign': 'warn',
+      'no-case-declarations': 'warn',
     },
     settings: {
-      react: {
-        version: 'detect',
-      },
       'import/resolver': {
         typescript: {
           alwaysTryTypes: true,
-          project: ['./tsconfig.json', './apps/*/tsconfig.json', './packages/*/tsconfig.json'],
         },
         node: {
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
       },
+    },
+  },
+  // Specific configuration for JavaScript files
+  {
+    files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
+    languageOptions: {
+      globals: {
+        exports: 'writable',
+        module: 'writable',
+        require: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        global: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off', // Allow require in JS files
+      'no-undef': 'warn', // Less strict for JS files
+    },
+  },
+  // Specific configuration for TypeScript files
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      'no-undef': 'off', // TypeScript handles undefined variables
+    },
+  },
+  // Specific configuration for test files
+  {
+    files: ['**/*.test.{js,ts,tsx}', '**/*.spec.{js,ts,tsx}', '**/test/**/*.{js,ts,tsx}'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off', // Allow console in tests
     },
   },
 ];

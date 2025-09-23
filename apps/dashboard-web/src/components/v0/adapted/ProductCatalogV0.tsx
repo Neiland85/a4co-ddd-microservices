@@ -6,24 +6,26 @@
 import React from 'react';
 import ProductCatalogV0Raw from '../raw/ProductCatalogV0Raw';
 import { createV0Adapter, adapterPresets } from '../templates/V0AdapterUtils';
-  {
-    dataMapping: {
-      products: "products",
-      loading: "loading",
-      error: "error",
-      searchQuery: "searchQuery",
-      filters: "filters"
-    },
-    eventHandlers: {
-      onProductClick: (product) => console.log("Product clicked:", product),
-      onSearchChange: (query) => console.log("Search query:", query),
-      onFilterChange: (filters) => console.log("Filters changed:", filters)
-    },
-    validation: {
-      required: ["products"],
-      optional: ["loading", "error", "searchQuery", "filters"]
-    }
+
+// Configuración del adaptador para ProductCatalog
+const ADAPTER_CONFIG = {
+  dataMapping: {
+    products: "products",
+    loading: "loading",
+    error: "error",
+    searchQuery: "searchQuery",
+    filters: "filters"
+  },
+  eventHandlers: {
+    onProductClick: (product) => console.log("Product clicked:", product),
+    onSearchChange: (query) => console.log("Search query:", query),
+    onFilterChange: (filters) => console.log("Filters changed:", filters)
+  },
+  validation: {
+    required: ["products"],
+    optional: ["loading", "error", "searchQuery", "filters"]
   }
+};
 
 // Configuración del adaptador para ProductCatalog
 const adapterConfig = ADAPTER_CONFIG;

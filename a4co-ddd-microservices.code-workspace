@@ -93,4 +93,24 @@
   "settings": {
     "diffEditor.codeLens": true,
   },
+  "mcp": {
+    "servers": {
+      "MCP_DOCKER": {
+        "command": "docker",
+        "args": ["mcp", "gateway", "run"],
+        "type": "stdio",
+      },
+      "docker-hub": {
+        "command": "node",
+        "args": [
+          "/Users/estudio/a4co-ddd-microservices/tools/docker-hub-mcp/dist/index.js",
+          "--transport=stdio",
+          "--username=neiland",
+        ],
+        "env": {
+          "HUB_PAT_TOKEN": "dckr_pat_cf-vVhMxiEP9UUsu9NoqncAqkz4",
+        },
+      },
+    },
+  },
 }

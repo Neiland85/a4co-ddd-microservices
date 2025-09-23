@@ -18,3 +18,7 @@ export * from './types';
 
 // Exportar utilidades generales
 export * from './utils';
+
+// Exportar función helper para generar IDs
+import { UuidUtil } from './utils/uuid.util';
+export const generateId = UuidUtil.generate;

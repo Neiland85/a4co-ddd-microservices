@@ -5,16 +5,17 @@
 
 import { exec } from 'child_process';
 
-export const safeExec = (command: string): Promise<string> => {
+export const safeExec = (command: string, args: string[] = []): Promise<string> => {
+  const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command;
   return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
+    exec(fullCommand, (error, stdout, stderr) => {
       if (error) {
-        console.error(`Error executing command: ${command}`, error);
+        console.error(`Error executing command: ${fullCommand}`, error);
         reject(new Error(`Command failed: ${(error as Error).message}`)); // Castear a Error
         return;
       }
       if (stderr) {
-        console.warn(`Command stderr: ${command}`, stderr);
+        console.warn(`Command stderr: ${fullCommand}`, stderr);
       }
       resolve(stdout);
     });

@@ -30,7 +30,7 @@ async function bootstrap() {
     }));
     // CORS configuration
     app.enableCors({
-        origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+        origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -45,7 +45,7 @@ async function bootstrap() {
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api', app, document);
-    const port = process.env.PORT || 3004;
+    const port = process.env['PORT'] || 3004;
     console.log(`🚀 Order Service iniciado en puerto ${port}`);
     console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
     await app.listen(port);

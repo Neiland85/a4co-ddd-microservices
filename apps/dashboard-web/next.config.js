@@ -1,11 +1,7 @@
-/** @type {import('next').NextConfig} */
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const nextConfig = {
-  // Configuración de Next.js aquí
-  experimental: {
-    turbo: {
-      // Configuración de Turbopack si es necesario
-    },
-  },
+/* config options here */
 };
-
-export default nextConfig;
+exports.default = nextConfig;
+//# sourceMappingURL=next.config.js.map

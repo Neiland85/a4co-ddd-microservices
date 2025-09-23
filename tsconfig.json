@@ -21,8 +21,8 @@
       "@apps/*": ["apps/*"]
     },
     "jsx": "react-jsx",
-    "ignoreDeprecations": "6.0"
+    "types": []
   },
-  "include": ["apps/**/*", "packages/**/*", "src/**/*"],
+  "include": ["apps/**/*", "packages/**/*", "backend/**/*"],
   "exclude": ["node_modules", "dist", "build", "coverage", "**/*.test.ts", "**/*.spec.ts"]
 }

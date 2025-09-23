@@ -11,31 +11,25 @@ exports.default = ProductCatalogV0Typed;
 const jsx_runtime_1 = require("react/jsx-runtime");
 const ProductCatalogV0Raw_1 = __importDefault(require("../raw/ProductCatalogV0Raw"));
 const V0AdapterUtils_1 = require("../templates/V0AdapterUtils");
-{
+// Configuración del adaptador para ProductCatalog
+const ADAPTER_CONFIG = {
     dataMapping: {
         products: "products",
-            loading;
-        "loading",
-            error;
-        "error",
-            searchQuery;
-        "searchQuery",
-            filters;
-        "filters";
-    }
+        loading: "loading",
+        error: "error",
+        searchQuery: "searchQuery",
+        filters: "filters"
+    },
     eventHandlers: {
         onProductClick: (product) => console.log("Product clicked:", product),
-            onSearchChange;
-        (query) => console.log("Search query:", query),
-            onFilterChange;
-        (filters) => console.log("Filters changed:", filters);
-    }
+        onSearchChange: (query) => console.log("Search query:", query),
+        onFilterChange: (filters) => console.log("Filters changed:", filters)
+    },
     validation: {
         required: ["products"],
-            optional;
-        ["loading", "error", "searchQuery", "filters"];
+        optional: ["loading", "error", "searchQuery", "filters"]
     }
-}
+};
 // Configuración del adaptador para ProductCatalog
 const adapterConfig = ADAPTER_CONFIG;
 // Crear el componente adaptado

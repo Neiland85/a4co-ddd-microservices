@@ -118,6 +118,16 @@
         "@typescript-eslint/no-var-requires": "off",
         "import/no-default-export": "off"
       }
+    },
+    {
+      "files": ["backend/**/*.js"],
+      "parserOptions": {
+        "project": null
+      },
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-require-imports": "off"
+      }
     }
   ]
 }

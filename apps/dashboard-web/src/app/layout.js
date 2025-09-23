@@ -4,7 +4,7 @@ exports.metadata = void 0;
 exports.default = RootLayout;
 const jsx_runtime_1 = require("react/jsx-runtime");
 const google_1 = require("next/font/google");
-const theme_provider_1 = require("@/components/theme-provider");
+const theme_provider_1 = require("../components/theme-provider");
 require("./globals.css");
 const geistSans = (0, google_1.Geist)({
     variable: '--font-geist-sans',
