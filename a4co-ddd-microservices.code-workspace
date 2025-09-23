@@ -93,6 +93,7 @@
   "settings": {
     "diffEditor.codeLens": true,
   },
+     fix/pipeline-and-backend
   "mcp": {
     "servers": {
       "MCP_DOCKER": {
@@ -113,4 +114,5 @@
       },
     },
   },
+     develop
 }
