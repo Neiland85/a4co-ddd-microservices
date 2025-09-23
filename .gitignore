@@ -30,6 +30,7 @@ coverage
 
 # Node / Package managers
 node_modules/
+**/node_modules/
 jspm_packages/
 .pnpm-store/
 .yarn/*
@@ -45,6 +46,10 @@ jspm_packages/
 node-v*/**
 *.tar.xz
 *.tar.gz
+
+# Backend and tools directories (if they have node_modules)
+backend/node_modules/
+tools/*/node_modules/
 
 # pnpm lock
 pnpm-lock.yaml
@@ -66,6 +71,15 @@ dist/
 .docusaurus/
 build/
 .serverless/
+.turbo/
+
+# Compiled TypeScript/JS files (should not be committed)
+*.d.ts
+*.js.map
+*.d.ts.map
+!**/jest.config.js
+!**/eslint.config.js
+!**/lint-staged.config.js
 
 # Dotenv
 .env

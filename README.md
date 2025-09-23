@@ -7,9 +7,15 @@ Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para
 a4co-ddd-microservices/
 ├── apps/ # Microservicios y frontends (ej: auth, web)
 ├── packages/ # Librerías compartidas (DTOs, config, schemas)
-├── infra/ # Terraform, Docker, scripts de infraestructura
-├── docs/ # Documentación viva, ADRs, onboarding
+├── infrastructure/ # Terraform, Docker, scripts de infraestructura
+├── docs/ # Documentación organizada por categorías
+│ ├── architecture/ # Arquitectura DDD, integración APIs
+│ ├── deployment/ # CI/CD, Docker, configuración
+│ ├── development/ # Guías de desarrollo y testing
+│ ├── api/ # Documentación de APIs
+│ └── security/ # Seguridad y mejores prácticas
 ├── .vscode/ # Configuración de entorno y Copilot
+├── .github/ # Workflows CI/CD y configuración
 ├── .gitignore # Ignora outputs, secrets, cache, etc.
 ├── pnpm-workspace.yaml
 └── README.md
@@ -73,10 +79,15 @@ Prompts incluyen:
 
 ##### 📚 Documentación técnica
 
-📌 ADRs: docs/adr/
-📘 Onboarding Copilot: docs/copilot-onboarding.md
-🔧 Infraestructura: infra/terraform/
-🧪 Testing: integrado con Jest + Supertest + Playwright
+- **� docs/architecture/**: Arquitectura DDD, integración APIs, análisis técnico
+- **📁 docs/deployment/**: CI/CD, Docker, configuración de infraestructura
+- **� docs/development/**: Guías de desarrollo, testing, levantamiento del proyecto
+- **📁 docs/api/**: Documentación de endpoints y APIs
+- **📁 docs/security/**: Seguridad, mejores prácticas, justificaciones
+
+🔧 **Infraestructura**: `infrastructure/terraform/`
+🧪 **Testing**: integrado con Jest + Supertest + Playwright
+🤖 **Copilot**: prompts personalizados en `.vscode/copilot-chat.json`
 
 ####### 📜 Licencia
 

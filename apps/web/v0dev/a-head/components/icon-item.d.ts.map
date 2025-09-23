@@ -1,1 +1,0 @@
-{"version":3,"file":"icon-item.d.ts","sourceRoot":"","sources":["icon-item.tsx"],"names":[],"mappings":"AAKA,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,yBAAyB,CAAC;AAG1D,UAAU,aAAa;IACrB,MAAM,EAAE,UAAU,CAAC;IACnB,OAAO,CAAC,EAAE,CAAC,MAAM,EAAE,UAAU,KAAK,IAAI,CAAC;CACxC;AAED,wBAAgB,QAAQ,CAAC,EAAE,MAAM,EAAE,OAAO,EAAE,EAAE,aAAa,2CAgF1D"}
