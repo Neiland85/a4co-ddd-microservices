@@ -40,7 +40,8 @@ docker buildx build --load --cache-to type=local,dest=/tmp/cache -t your-app:lat
 1. **Monitorear Docker Hub**: https://status.docker.com/
 2. **Usar GHCR temporalmente**: El workflow fallback está listo
 3. **Cache local**: Los builds locales no se ven afectados
-4. **Reanudar normalidad**: Cuando Docker Hub vuelva, todo funcionará automáticamente
+4. **Script de monitoreo**: Ejecuta `./check-dockerhub.sh` para verificar cuando vuelva
+5. **Reanudar normalidad**: Cuando Docker Hub vuelva, todo funcionará automáticamente
 
 ---
 
@@ -180,7 +181,7 @@ El workflow refactorizado incluye:
 - 🏗️ **IaC con Terraform** - Gestión de infraestructura como código
 - 🤖 **Terraform Cloud Agent** - Despliegues avanzados automatizados
 
-## 🔄 Workflows Docker: ¿Cuál usar?
+## 🔄 Workflows Docker: ¿Cuál usar
 
 ### CI Pipeline (`ci.yml`) - Recomendado para Monorepos
 
