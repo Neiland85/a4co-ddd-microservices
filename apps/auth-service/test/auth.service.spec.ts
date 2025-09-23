@@ -161,7 +161,7 @@ describe('AuthService - Casos de Uso Principales', () => {
 
       const result = authService.login(username, password);
 
-      expect(result).toBe(`Usuario ${username} registrado.`);
+      expect(result).toBe(`Usuario ${username} autenticado.`);
     });
   });
 });
