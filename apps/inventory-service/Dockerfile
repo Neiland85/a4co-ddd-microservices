@@ -1,4 +1,4 @@
-# Development Dockerfile for auth-service
+# Development Dockerfile for inventory-service
 FROM node:18-alpine
 
 # Install pnpm
@@ -13,8 +13,8 @@ COPY ../../package.json ../../pnpm-lock.yaml ./
 COPY ../../packages/shared-utils ./packages/shared-utils
 COPY ../../packages/observability ./packages/observability
 
-# Copy auth-service
-COPY . ./apps/auth-service
+# Copy inventory-service
+COPY . ./apps/inventory-service
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
@@ -23,12 +23,12 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm --filter shared-utils build
 RUN pnpm --filter observability build
 
-# Build auth-service
-WORKDIR /app/apps/auth-service
+# Build inventory-service
+WORKDIR /app/apps/inventory-service
 RUN pnpm build
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3003
 
 # Development command with hot reload
 CMD ["pnpm", "start:dev"]

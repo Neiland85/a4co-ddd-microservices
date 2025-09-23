@@ -26,13 +26,19 @@ import { UserRepository } from './domain/repositories/user.repository';
     }),
     JwtModule.registerAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'super-secret-key'),
-        signOptions: {
-          issuer: configService.get<string>('JWT_ISSUER', 'a4co-auth-service'),
-          audience: configService.get<string>('JWT_AUDIENCE', 'a4co-platform'),
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const jwtSecret = configService.get<string>('JWT_SECRET');
+        if (!jwtSecret) {
+          throw new Error('JWT_SECRET environment variable is required');
+        }
+        return {
+          secret: jwtSecret,
+          signOptions: {
+            issuer: configService.get<string>('JWT_ISSUER', 'a4co-auth-service'),
+            audience: configService.get<string>('JWT_AUDIENCE', 'a4co-platform'),
+          },
+        };
+      },
     }),
   ],
   controllers: [AuthController],
