@@ -178,6 +178,7 @@ jobs:
         with:
           username: ${{ vars.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PAT }}
+        continue-on-error: true
 
       - name: Extract metadata
         id: meta
@@ -202,6 +203,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
 
   # Security Scan (Optional - runs after successful build)
   security-scan:

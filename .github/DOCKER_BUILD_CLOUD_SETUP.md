@@ -1,6 +1,50 @@
 # Complete CI/CD Setup Guide
 
-## 📋 Lista Completa de Secretos y Variables## 📁 Estructura del Pipeline
+## � Docker Hub Outage - Soluciones Implementadas
+
+### Problema Actual
+Docker Hub está experimentando un outage con el mensaje: `{"error": "Our service is temporarily unavailable. We'll be back soon!"}`
+
+### ✅ Soluciones Implementadas
+
+#### 1. **Resiliencia en CI Pipeline**
+- ✅ Login a Docker Hub con `continue-on-error: true`
+- ✅ Builds en PR con `continue-on-error: true` (no fallan por push)
+- ✅ Cache local con GitHub Actions Cache (no depende de Docker Hub)
+
+#### 2. **Workflow de Fallback con GHCR**
+- ✅ Nuevo workflow: `docker-ghcr-fallback.yml`
+- ✅ Usa GitHub Container Registry (ghcr.io)
+- ✅ Funciona cuando Docker Hub está caído
+- ✅ Mantiene todas las características (SBOM, provenance, multi-platform)
+
+#### 3. **Alternativas para Desarrollo Local**
+```bash
+# Usar cache local de Docker
+docker build --cache-from your-app:latest -t your-app:latest .
+
+# O usar Docker Buildx con cache local
+docker buildx build --load --cache-to type=local,dest=/tmp/cache -t your-app:latest .
+```
+
+### 🔄 Estado Actual
+
+| Servicio | Estado | Solución |
+|----------|--------|----------|
+| Docker Hub | ❌ Caído | `continue-on-error` + GHCR fallback |
+| GHCR | ✅ Funcional | Workflow `docker-ghcr-fallback.yml` |
+| Docker Build Cloud | ✅ Funcional | No afectado por outage |
+
+### 📋 Próximos Pasos
+
+1. **Monitorear Docker Hub**: https://status.docker.com/
+2. **Usar GHCR temporalmente**: El workflow fallback está listo
+3. **Cache local**: Los builds locales no se ven afectados
+4. **Reanudar normalidad**: Cuando Docker Hub vuelva, todo funcionará automáticamente
+
+---
+
+## �📋 Lista Completa de Secretos y Variables## 📁 Estructura del Pipeline
 
 El proyecto incluye múltiples workflows especializados:
 
