@@ -75,7 +75,9 @@
     "esModuleInterop": true,
     "moduleDetection": "force",
     "outDir": "./dist", // Especifica un directorio de salida separado
-    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo" // Archivo .tsbuildinfo único para el proyecto raíz
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo", // Archivo .tsbuildinfo único para el proyecto raíz
+    "composite": true,
+    "tsBuildInfoFile": "./dist/libs.tsbuildinfo"
   },
   "include": [
     "**/*.ts",

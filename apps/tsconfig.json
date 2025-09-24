@@ -9,6 +9,7 @@
     ],
     "outDir": "./dist",
     "rootDir": "./",
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -71,4 +72,4 @@
       "path": "./backend"
     }
   ]
-}
+}   

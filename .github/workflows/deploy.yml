@@ -9,6 +9,7 @@ on:
 env:
   NODE_VERSION: '18'
   PNPM_VERSION: '8'
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
 jobs:
   deploy:

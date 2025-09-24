@@ -24,6 +24,15 @@
   ],
   "settings": {
     "codacy.cli.cliVersion": "1.0.0-main.358.sha.7cb05d0",
-    "github.copilot.nextEditSuggestions.enabled": true
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "gitlens.ai.largePromptWarningThreshold": 150000,
+    "editor.defaultFormatter": "YoavBls.pretty-ts-errors",
+    "azureResourceGroups.showHiddenTypes": true,
+    "appService.enablePythonRemoteDebugging": true,
+    "telemetry.editStats.details.enabled": true,
+    "application.experimental.rendererProfiling": true,
+    "windowsaistudio.enableRemoteFine-tuningAndInference": true,
+    "scm.alwaysShowActions": true,
+    "scm.alwaysShowRepositories": true
   }
 }

@@ -26,5 +26,10 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-ossdata.vscode-pgsql"
+    ]
   }
 }

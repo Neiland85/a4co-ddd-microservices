@@ -12,6 +12,7 @@
     "ms-azuretools.vscode-docker",
     "orta.vscode-jest",
     "vitest.explorer",
-    "yoavbls.pretty-ts-errors"
+    "yoavbls.pretty-ts-errors",
+    "ms-ossdata.vscode-pgsql"
   ]
 }
