@@ -56,7 +56,7 @@ node_modules/
 *.log
 
 # Turbo
-.turbo
+.turbo/
 
 # Vercel
 .vercel
@@ -64,6 +64,9 @@ node_modules/
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Prisma generated
+/src/generated/prisma
 
 
 #Ignore vscode AI rules

@@ -1,28 +1,96 @@
 {
-  "editor.formatOnSave": true,
-  "eslint.enable": true,
-  "files.exclude": {
-    "**/.git": true,
-    "**/node_modules": true,
-    "**/.DS_Store": true
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.disableAutomaticTypeAcquisition": false,
-  "typescript.enablePromptUseWorkspaceTsdk": false,
-  "typescript.experimental.useTsgo": false,
-  "typescript.experimental.enableProjectDiagnostics": false,
-  "typescript.tsserver.log": "off",
-  "typescript.tsserver.useSyntaxServer": "auto",
-  "github.copilot.enable": {
-    "*": true,
-    "plaintext": false
-  },
   "folders": [
     {
-      "path": "."
-    }
+      "path": ".",
+    },
+    {
+      "name": "inventory-service",
+      "path": "apps/inventory-service",
+    },
+    {
+      "name": "auth-service",
+      "path": "apps/auth-service",
+    },
+    {
+      "name": "dashboard-web",
+      "path": "apps/dashboard-web",
+    },
+    {
+      "name": "web",
+      "path": "apps/web",
+    },
+    {
+      "name": "order-service",
+      "path": "apps/order-service",
+    },
+    {
+      "name": "product-service",
+      "path": "apps/product-service",
+    },
+    {
+      "name": "h-modern-dashboard",
+      "path": "apps/web/v0dev/h-modern-dashboard",
+    },
+    {
+      "name": "b-business-registration",
+      "path": "apps/web/v0dev/b-business-registration",
+    },
+    {
+      "name": "f-modern-backoffice",
+      "path": "apps/web/v0dev/f-modern-backoffice",
+    },
+    {
+      "name": "a-head",
+      "path": "apps/web/v0dev/a-head",
+    },
+    {
+      "name": "d-user-registration",
+      "path": "apps/web/v0dev/d-user-registration",
+    },
+    {
+      "name": "c-artisan-dashboard",
+      "path": "apps/web/v0dev/c-artisan-dashboard",
+    },
+    {
+      "name": "e-gamified-dashboard",
+      "path": "apps/web/v0dev/e-gamified-dashboard",
+    },
+    {
+      "name": "g-banner-cookie",
+      "path": "apps/web/v0dev/g-banner-cookie",
+    },
+    {
+      "name": "shared-utils",
+      "path": "packages/shared-utils",
+    },
+    {
+      "name": "design-system",
+      "path": "packages/design-system",
+    },
+    {
+      "name": "observability",
+      "path": "packages/observability",
+    },
   ],
   "settings": {
+    "editor.formatOnSave": true,
+    "eslint.enable": true,
+    "files.exclude": {
+      "**/.git": true,
+      "**/node_modules": true,
+      "**/.DS_Store": true,
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.disableAutomaticTypeAcquisition": false,
+    "typescript.enablePromptUseWorkspaceTsdk": false,
+    "typescript.experimental.useTsgo": false,
+    "typescript.experimental.enableProjectDiagnostics": false,
+    "typescript.tsserver.log": "off",
+    "typescript.tsserver.useSyntaxServer": "auto",
+    "github.copilot.enable": {
+      "*": true,
+      "plaintext": false,
+    },
     "codacy.cli.cliVersion": "1.0.0-main.358.sha.7cb05d0",
     "github.copilot.nextEditSuggestions.enabled": true,
     "gitlens.ai.largePromptWarningThreshold": 150000,
@@ -33,6 +101,7 @@
     "application.experimental.rendererProfiling": true,
     "windowsaistudio.enableRemoteFine-tuningAndInference": true,
     "scm.alwaysShowActions": true,
-    "scm.alwaysShowRepositories": true
-  }
+    "scm.alwaysShowRepositories": true,
+    "diffEditor.codeLens": true,
+  },
 }
