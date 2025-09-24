@@ -1,0 +1,6 @@
+[submodule "cc-chat-app"]
+	path = cc-chat-app
+	url = https://github.com/hideaki1979/cc-chat-app.git
+[submodule "scout-demo-service"]
+	path = scout-demo-service
+	url = https://github.com/docker/scout-demo-service.git
