@@ -37,19 +37,6 @@ export interface MetricsConfig {
   labels?: Record<string, string>;
 }
 
-// DDD metadata types
-export interface DDDMetadata {
-  aggregateId?: string;
-  aggregateName?: string;
-  commandName?: string;
-  eventName?: string;
-  eventVersion?: number;
-  correlationId?: string;
-  causationId?: string;
-  userId?: string;
-  tenantId?: string;
-}
-
 // Context types
 export interface ObservabilityContext {
   traceId?: string;
@@ -62,17 +49,8 @@ export interface ObservabilityContext {
 }
 
 // Logger context types
-export interface LogContext extends ObservabilityContext, DDDMetadata {
+export interface LogContext extends ObservabilityContext {
   [key: string]: any;
-}
-
-// Span attributes for DDD
-export interface DDDSpanAttributes extends DDDMetadata {
-  'ddd.aggregate.id'?: string;
-  'ddd.aggregate.name'?: string;
-  'ddd.command.name'?: string;
-  'ddd.event.name'?: string;
-  'ddd.event.version'?: number;
 }
 
 // UI Event types
@@ -97,7 +75,6 @@ export interface ComponentTrackingConfig {
 // Interfaz de envoltorio para Tracer
 export interface ObservabilityTracer /* extends Tracer */ {
   withContext(contexto: ObservabilityContext): ObservabilityTracer;
-  withDDD(metadata: DDDMetadata): ObservabilityTracer;
 }
 
 // Middleware options

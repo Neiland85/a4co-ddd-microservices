@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AggregateRoot = void 0;
 const base_entity_1 = require("./base-entity");
 class AggregateRoot extends base_entity_1.BaseEntity {
-    _domainEvents = [];
     constructor(id) {
         super(id);
+        this._domainEvents = [];
     }
     get domainEvents() {
         return this._domainEvents.slice();
@@ -23,8 +23,6 @@ class AggregateRoot extends base_entity_1.BaseEntity {
         this._domainEvents = [];
     }
     markEventsForDispatch() {
-        // This method can be used by event dispatchers
-        // to mark events as ready for dispatch
     }
 }
 exports.AggregateRoot = AggregateRoot;

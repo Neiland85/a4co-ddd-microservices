@@ -1,4 +1,4 @@
-import { BaseService } from '@a4co/shared-utils/base';
+import { BaseService } from './src/domain/base-classes';
 
 export class ProductService extends BaseService {
   constructor() {
@@ -10,27 +10,23 @@ export class ProductService extends BaseService {
       const validatedName = this.validateRequired(name, 'name');
       const validatedPrice = this.validateRequired(price, 'price');
 
-      this.log('Creating product', { name, price });
+      this.log(`Creating product: ${validatedName} with price ${validatedPrice}`);
 
-      return this.createSuccessMessage(
-        'Product',
-        'created',
-        `with ${validatedName} and ${validatedPrice}`
-      );
+      return `Product created successfully: ${validatedName}`;
     } catch (error) {
-      return this.handleServiceError(error, 'addProduct');
+      return `Error creating product: ${error.message}`;
     }
   }
 
   getProduct(name: string): string {
     try {
-      const validatedName = this.validateId(name, 'name');
+      const validatedName = this.validateRequired(name, 'name');
 
-      this.log('Getting product', { name: validatedName });
+      this.log(`Getting product: ${validatedName}`);
 
-      return this.createSuccessMessage('Product', 'retrieved', validatedName);
+      return `Product retrieved: ${validatedName}`;
     } catch (error) {
-      return this.handleServiceError(error, 'getProduct');
+      return `Error getting product: ${error.message}`;
     }
   }
 }

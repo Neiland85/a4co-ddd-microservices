@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../../domain/repositories/user.repository';
+import { UserRepositoryPort } from '../../application/ports/user-repository.port';
 import { User, UserStatus } from '../../domain/aggregates/user.aggregate';
 
 // Interface simple para el cliente Prisma
@@ -15,7 +15,7 @@ interface PrismaClientInterface {
 }
 
 @Injectable()
-export class PrismaUserRepository implements UserRepository {
+export class PrismaUserRepository implements UserRepositoryPort {
   constructor(private readonly prisma: PrismaClientInterface) {}
 
   async findById(id: string): Promise<User | null> {
@@ -94,6 +94,49 @@ export class PrismaUserRepository implements UserRepository {
     return count > 0;
   }
 
+  async existsByEmail(email: string): Promise<boolean> {
+    return this.exists(email);
+  }
+
+  async findActiveUsers(): Promise<User[]> {
+    const users = await this.prisma.user.findMany({
+      where: { status: UserStatus.ACTIVE },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return users.map((user: any) => this.mapToDomain(user));
+  }
+
+  async findPaginated(
+    page: number,
+    limit: number
+  ): Promise<{
+    users: User[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const offset = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        skip: offset,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.user.count(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      users: users.map((user: any) => this.mapToDomain(user)),
+      total,
+      page,
+      totalPages,
+    };
+  }
+
   async findAll(limit = 10, offset = 0): Promise<User[]> {
     const users = await this.prisma.user.findMany({
       skip: offset,
@@ -110,15 +153,32 @@ export class PrismaUserRepository implements UserRepository {
 
   private mapToDomain(userData: any): User {
     return User.reconstruct(
-      userData.id,
-      userData.email,
-      userData.name,
-      userData.hashedPassword,
-      userData.status as UserStatus,
-      userData.emailVerified,
-      userData.lastLoginAt,
-      userData.createdAt,
-      userData.updatedAt
+      {
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
+      },
+      {
+        hashedPassword: userData.hashedPassword,
+        status: userData.status as UserStatus,
+        emailVerified: userData.emailVerified,
+      },
+      {
+        lastLoginAt: userData.lastLoginAt,
+        createdAt: userData.createdAt,
+        updatedAt: userData.updatedAt,
+      },
+      {
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
+        hashedPassword: userData.hashedPassword,
+        status: userData.status as UserStatus,
+        emailVerified: userData.emailVerified,
+        lastLoginAt: userData.lastLoginAt,
+        createdAt: userData.createdAt,
+        updatedAt: userData.updatedAt,
+      }
     );
   }
 }

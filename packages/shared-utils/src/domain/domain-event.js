@@ -3,13 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DomainEvent = void 0;
 const uuid_1 = require("uuid");
 class DomainEvent {
-    eventId;
-    eventType;
-    aggregateId;
-    eventVersion;
-    occurredOn;
-    eventData;
-    sagaId; // Añadir sagaId como opcional
     constructor(aggregateId, eventData, eventVersion = 1, sagaId) {
         this.eventId = (0, uuid_1.v4)();
         this.eventType = this.constructor.name;
@@ -17,7 +10,7 @@ class DomainEvent {
         this.eventVersion = eventVersion;
         this.occurredOn = new Date();
         this.eventData = eventData;
-        this.sagaId = sagaId; // Asignar sagaId
+        this.sagaId = sagaId;
     }
 }
 exports.DomainEvent = DomainEvent;

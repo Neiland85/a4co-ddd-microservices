@@ -1,7 +1,7 @@
-import { UserDomainService } from '../../src/domain/services/user-domain.service';
-import { UserRepository } from '../../src/domain/repositories/user.repository';
-import { RegisterUserUseCase } from '../../src/application/use-cases/register-user.use-case';
 import { RegisterUserDto } from '../../src/application/dto/user.dto';
+import { UserRepositoryPort } from '../../src/application/ports/user-repository.port';
+import { RegisterUserUseCase } from '../../src/application/use-cases/register-user.use-case';
+import { UserDomainService } from '../../src/domain/services/user-domain.service';
 import { createRegisterUserDto, createUser } from '../factories';
 
 // Mock de bcryptjs
@@ -17,7 +17,7 @@ jest.mock('uuid', () => ({
 
 describe('RegisterUserUseCase', () => {
   let useCase: RegisterUserUseCase;
-  let userRepository: jest.Mocked<UserRepository>;
+  let userRepository: jest.Mocked<UserRepositoryPort>;
   let userDomainService: jest.Mocked<UserDomainService>;
 
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe('RegisterUserUseCase', () => {
       findPaginated: jest.fn(),
       findAll: jest.fn(),
       count: jest.fn(),
-    } as unknown as jest.Mocked<UserRepository>;
+    } as unknown as jest.Mocked<UserRepositoryPort>;
 
     userDomainService = {
       isEmailUnique: jest.fn(),

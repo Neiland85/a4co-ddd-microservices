@@ -16,12 +16,6 @@ interface PWAState {
   installPrompt: PWAInstallPrompt | null;
 }
 
-interface PWAInstallOptions {
-  title?: string;
-  description?: string;
-  icon?: string;
-}
-
 export const usePWA = () => {
   const [state, setState] = useState<PWAState>({
     isInstalled: false,
@@ -75,7 +69,9 @@ export const usePWA = () => {
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setDeferredPrompt(e as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setState(prev => ({ ...prev, isInstallable: true, installPrompt: e as any }));
     };
 
@@ -115,7 +111,7 @@ export const usePWA = () => {
 
   // Función para instalar la PWA
   const installPWA = useCallback(
-    async (options?: PWAInstallOptions) => {
+    async () => {
       if (!deferredPrompt) {
         throw new Error('No hay prompt de instalación disponible');
       }
@@ -227,6 +223,7 @@ export const usePWA = () => {
       const registration = await navigator.serviceWorker.getRegistration();
 
       if (registration && 'sync' in registration) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (registration as any).sync.register(tag);
         console.log('Sincronización en background registrada:', tag);
       }

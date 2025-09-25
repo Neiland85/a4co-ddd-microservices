@@ -1,10 +1,24 @@
-import { Injectable, NestMiddleware, HttpException, HttpStatus } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { JwtService } from '@nestjs/jwt';
+import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as rateLimit from 'express-rate-limit';
-import * as helmet from 'helmet';
-import * as cors from 'cors';
+import { JwtService } from '@nestjs/jwt';
+import cors from 'cors';
+import { NextFunction, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+
+// Extender la interfaz Request para incluir la propiedad user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        name: string;
+        role?: string;
+      };
+    }
+  }
+}
 
 @Injectable()
 export class SecurityMiddleware implements NestMiddleware {
@@ -146,9 +160,9 @@ export class SecurityMiddleware implements NestMiddleware {
 
       next();
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
+      if (error instanceof Error && error.name === 'JsonWebTokenError') {
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-      } else if (error.name === 'TokenExpiredError') {
+      } else if (error instanceof Error && error.name === 'TokenExpiredError') {
         throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
       } else if (error instanceof HttpException) {
         throw error;

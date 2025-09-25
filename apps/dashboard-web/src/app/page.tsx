@@ -1,4 +1,4 @@
-export default function Home() {
+export default function Home(): React.ReactElement {
   return (
     <div className="dashboard-working-container">
       <h1 className="dashboard-working-title">🎉 A4CO DASHBOARD - TEST INTERFACES 🎉</h1>
@@ -19,9 +19,9 @@ export default function Home() {
         </div>
 
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <a 
-            href="/test-integrations" 
-            style={{ 
+          <a
+            href="/test-integrations"
+            style={{
               display: 'inline-block',
               backgroundColor: '#059669',
               color: 'white',
@@ -30,15 +30,15 @@ export default function Home() {
               textDecoration: 'none',
               fontSize: '1.1rem',
               fontWeight: 'bold',
-              margin: '8px'
+              margin: '8px',
             }}
           >
             🧪 Probar Todas las Interfaces
           </a>
-          
-          <a 
-            href="/api/products" 
-            style={{ 
+
+          <a
+            href="/api/products"
+            style={{
               display: 'inline-block',
               backgroundColor: '#1e40af',
               color: 'white',
@@ -47,15 +47,15 @@ export default function Home() {
               textDecoration: 'none',
               fontSize: '1.1rem',
               fontWeight: 'bold',
-              margin: '8px'
+              margin: '8px',
             }}
           >
             📊 API Productos
           </a>
-          
-          <a 
-            href="/api/sales-opportunities" 
-            style={{ 
+
+          <a
+            href="/api/sales-opportunities"
+            style={{
               display: 'inline-block',
               backgroundColor: '#7c2d12',
               color: 'white',
@@ -64,15 +64,15 @@ export default function Home() {
               textDecoration: 'none',
               fontSize: '1.1rem',
               fontWeight: 'bold',
-              margin: '8px'
+              margin: '8px',
             }}
           >
             💼 API Oportunidades
           </a>
-          
-          <a 
-            href="/api/artisans" 
-            style={{ 
+
+          <a
+            href="/api/artisans"
+            style={{
               display: 'inline-block',
               backgroundColor: '#7c2d92',
               color: 'white',
@@ -81,7 +81,7 @@ export default function Home() {
               textDecoration: 'none',
               fontSize: '1.1rem',
               fontWeight: 'bold',
-              margin: '8px'
+              margin: '8px',
             }}
           >
             👨‍🌾 API Artesanos

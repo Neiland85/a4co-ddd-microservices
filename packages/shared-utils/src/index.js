@@ -14,18 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Exportar clases base de dominio (AggregateRoot, BaseEntity, ValueObject, DomainEvent)
 __exportStar(require("./domain"), exports);
-// Exportar DTOs y sus interfaces
 __exportStar(require("./dto"), exports);
-// Exportar Event Bus y eventos de dominio/integración
 __exportStar(require("./events"), exports);
-// Exportar Sagas y orquestadores
 __exportStar(require("./saga"), exports);
-// Exportar utilidades de seguridad
 __exportStar(require("./security"), exports);
-// Exportar tipos compartidos
 __exportStar(require("./types"), exports);
-// Exportar utilidades generales
 __exportStar(require("./utils"), exports);
 //# sourceMappingURL=index.js.map

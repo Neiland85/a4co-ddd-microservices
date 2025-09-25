@@ -1,1 +1,0 @@
-{"version":3,"file":"two-factor-verification.d.ts","sourceRoot":"","sources":["two-factor-verification.tsx"],"names":[],"mappings":"AAaA,UAAU,0BAA0B;IAClC,KAAK,EAAE,MAAM,CAAC;IACd,KAAK,CAAC,EAAE,MAAM,CAAC;IACf,MAAM,EAAE,MAAM,IAAI,CAAC;IACnB,SAAS,EAAE,MAAM,IAAI,CAAC;CACvB;AAED,wBAAgB,qBAAqB,CAAC,EACpC,KAAK,EACL,KAAK,EACL,MAAM,EACN,SAAS,GACV,EAAE,0BAA0B,2CA0M5B"}

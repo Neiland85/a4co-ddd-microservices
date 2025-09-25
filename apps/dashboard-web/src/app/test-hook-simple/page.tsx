@@ -1,7 +1,7 @@
 'use client';
 
-import { useProducts } from '../../hooks/useProducts';
 import { useEffect, useRef } from 'react';
+import { useProducts } from '../../hooks/useProducts';
 
 // Tipo para la ubicación del producto
 type ProductLocation = string | { municipality?: string } | null | undefined;
@@ -22,7 +22,7 @@ function formatProductLocation(location: ProductLocation): string {
   return '';
 }
 
-export default function TestHookSimple() {
+export default function TestHookSimple(): React.ReactElement {
   const renderCount = useRef(0);
   renderCount.current += 1;
 

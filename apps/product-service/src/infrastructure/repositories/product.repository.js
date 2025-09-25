@@ -246,7 +246,6 @@ class PrismaProductRepository {
     }
     async save(product) {
         await this.prisma.$transaction(async (tx) => {
-            // Crear el producto principal
             await tx.product.create({
                 data: {
                     id: product.id,
@@ -275,7 +274,6 @@ class PrismaProductRepository {
                     totalSold: product.totalSold,
                 },
             });
-            // Crear variantes
             if (product.variants.length > 0) {
                 await tx.productVariant.createMany({
                     data: product.variants.map(variant => ({
@@ -284,7 +282,7 @@ class PrismaProductRepository {
                         name: variant.name,
                         sku: variant.sku,
                         price: variant.price.amount,
-                        originalPrice: variant.price.amount, // Asumiendo que originalPrice es igual a price para variants
+                        originalPrice: variant.price.amount,
                         attributes: variant.attributes,
                         stockQuantity: variant.stockQuantity,
                         weight: variant.weight,
@@ -301,7 +299,6 @@ class PrismaProductRepository {
                     })),
                 });
             }
-            // Crear imágenes
             if (product.images.length > 0) {
                 await tx.productImage.createMany({
                     data: product.images.map((image, index) => ({
@@ -314,7 +311,6 @@ class PrismaProductRepository {
                     })),
                 });
             }
-            // Crear especificaciones
             if (product.specifications.length > 0) {
                 await tx.productSpecification.createMany({
                     data: product.specifications.map(spec => ({
@@ -331,7 +327,6 @@ class PrismaProductRepository {
     }
     async update(product) {
         await this.prisma.$transaction(async (tx) => {
-            // Actualizar producto principal
             await tx.product.update({
                 where: { id: product.id },
                 data: {
@@ -352,7 +347,6 @@ class PrismaProductRepository {
                     totalSold: product.totalSold,
                 },
             });
-            // Eliminar y recrear variantes (enfoque simple)
             await tx.productVariant.deleteMany({
                 where: { productId: product.id },
             });
@@ -380,7 +374,6 @@ class PrismaProductRepository {
                     })),
                 });
             }
-            // Eliminar y recrear imágenes
             await tx.productImage.deleteMany({
                 where: { productId: product.id },
             });
@@ -396,7 +389,6 @@ class PrismaProductRepository {
                     })),
                 });
             }
-            // Eliminar y recrear especificaciones
             await tx.productSpecification.deleteMany({
                 where: { productId: product.id },
             });
@@ -440,24 +432,17 @@ class PrismaProductRepository {
         }
         return await this.prisma.product.count({ where });
     }
-    // ========================================
-    // MAPPERS - Convertir de Prisma a Domain Entity
-    // ========================================
     mapToDomainEntity(productData) {
-        // Crear el objeto Money para el precio
         const price = new product_entity_1.Money(productData.price.toNumber(), productData.currency);
         const originalPrice = productData.originalPrice
             ? new product_entity_1.Money(productData.originalPrice.toNumber(), productData.currency)
             : undefined;
-        // Crear el producto base
         const product = new product_entity_1.Product(productData.id, productData.name, productData.description, productData.sku, price, productData.artisanId, productData.categoryId, productData.slug, originalPrice, productData.isHandmade, productData.isCustomizable, productData.isDigital, productData.requiresShipping, productData.tags, productData.keywords, productData.metaTitle, productData.metaDescription, productData.featured);
-        // Establecer estado interno usando reflexión (hack para DDD puro)
         product._status = productData.status;
         product._availability = productData.availability;
         product._averageRating = productData.averageRating;
         product._reviewCount = productData.reviewCount;
         product._totalSold = productData.totalSold;
-        // Agregar variantes
         if (productData.variants) {
             productData.variants.forEach((variantData) => {
                 const variant = new product_entity_1.ProductVariant(variantData.id, variantData.name, variantData.sku, new product_entity_1.Money(variantData.price.toNumber(), productData.currency), variantData.attributes, variantData.stockQuantity, variantData.weight, variantData.dimensions
@@ -466,14 +451,12 @@ class PrismaProductRepository {
                 product.addVariant(variant);
             });
         }
-        // Agregar imágenes
         if (productData.images) {
             productData.images.forEach((imageData) => {
                 const image = new product_entity_1.ProductImage(imageData.url, imageData.altText, imageData.type, imageData.isPrimary, imageData.sortOrder);
                 product.addImage(image);
             });
         }
-        // Agregar especificaciones
         if (productData.specifications) {
             productData.specifications.forEach((specData) => {
                 const specification = new product_entity_1.ProductSpecification(specData.name, specData.value, specData.type, specData.unit, specData.category);

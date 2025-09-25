@@ -1,7 +1,7 @@
 'use client';
 
 import { Filter, Search, ShoppingCart, Star } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface Product {
   id: string;
@@ -21,7 +21,7 @@ const mockProducts: Product[] = [
     category: 'Cerámica',
     rating: 4.8,
     image: '/api/placeholder/300/200',
-    description: 'Hermosa pieza de cerámica hecha a mano por artesanos locales'
+    description: 'Hermosa pieza de cerámica hecha a mano por artesanos locales',
   },
   {
     id: '2',
@@ -30,7 +30,7 @@ const mockProducts: Product[] = [
     category: 'Textiles',
     rating: 4.9,
     image: '/api/placeholder/300/200',
-    description: 'Auténtico textil Wayuu con patrones tradicionales'
+    description: 'Auténtico textil Wayuu con patrones tradicionales',
   },
   {
     id: '3',
@@ -39,7 +39,7 @@ const mockProducts: Product[] = [
     category: 'Joyería',
     rating: 4.7,
     image: '/api/placeholder/300/200',
-    description: 'Delicada joyería en filigrana con técnicas ancestrales'
+    description: 'Delicada joyería en filigrana con técnicas ancestrales',
   },
   {
     id: '4',
@@ -48,7 +48,7 @@ const mockProducts: Product[] = [
     category: 'Cuero',
     rating: 4.6,
     image: '/api/placeholder/300/200',
-    description: 'Productos de cuero trabajados con técnicas tradicionales'
+    description: 'Productos de cuero trabajados con técnicas tradicionales',
   },
   {
     id: '5',
@@ -57,7 +57,7 @@ const mockProducts: Product[] = [
     category: 'Madera',
     rating: 4.8,
     image: '/api/placeholder/300/200',
-    description: 'Esculturas y objetos decorativos en madera local'
+    description: 'Esculturas y objetos decorativos en madera local',
   },
   {
     id: '6',
@@ -66,19 +66,20 @@ const mockProducts: Product[] = [
     category: 'Cestería',
     rating: 4.5,
     image: '/api/placeholder/300/200',
-    description: 'Cestas tejidas con fibras naturales de la región'
-  }
+    description: 'Cestas tejidas con fibras naturales de la región',
+  },
 ];
 
 const categories = ['Todos', 'Cerámica', 'Textiles', 'Joyería', 'Cuero', 'Madera', 'Cestería'];
 
-export function ProductCatalogV0() {
+export function ProductCatalogV0(): React.ReactElement {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [sortBy, setSortBy] = useState('name');
 
   const filteredProducts = mockProducts.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -101,46 +102,50 @@ export function ProductCatalogV0() {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="mx-auto max-w-7xl p-6">
       {/* Header con búsqueda y filtros */}
       <div className="mb-8">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           {/* Barra de búsqueda */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <div className="relative max-w-md flex-1">
+            {React.createElement(Search, {
+              className: 'absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4',
+            })}
             <input
               type="text"
               placeholder="Buscar productos..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
             />
           </div>
 
           {/* Filtros */}
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={e => setSelectedCategory(e.target.value)}
               >
                 {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
                 ))}
               </select>
             </div>
 
             <select
-              className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={e => setSortBy(e.target.value)}
             >
               <option value="name">Nombre A-Z</option>
               <option value="price-low">Precio: Menor a Mayor</option>
@@ -159,35 +164,34 @@ export function ProductCatalogV0() {
       </div>
 
       {/* Grid de productos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedProducts.map((product) => (
-          <div key={product.id} className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-            <div className="aspect-w-16 aspect-h-10 bg-gray-200 rounded-t-lg">
-              <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-purple-100 rounded-t-lg flex items-center justify-center">
-                <span className="text-gray-500 text-sm">{product.category}</span>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {sortedProducts.map(product => (
+          <div
+            key={product.id}
+            className="rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+          >
+            <div className="aspect-w-16 aspect-h-10 rounded-t-lg bg-gray-200">
+              <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-gradient-to-br from-blue-100 to-purple-100">
+                <span className="text-sm text-gray-500">{product.category}</span>
               </div>
             </div>
 
             <div className="p-4">
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
-                  {product.name}
-                </h3>
-                <div className="flex items-center gap-1 ml-2">
+              <div className="mb-2 flex items-start justify-between">
+                <h3 className="line-clamp-1 text-lg font-semibold text-gray-900">{product.name}</h3>
+                <div className="ml-2 flex items-center gap-1">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm text-gray-600">{product.rating}</span>
                 </div>
               </div>
 
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                {product.description}
-              </p>
+              <p className="mb-3 line-clamp-2 text-sm text-gray-600">{product.description}</p>
 
               <div className="flex items-center justify-between">
                 <span className="text-xl font-bold text-gray-900">
                   {formatPrice(product.price)}
                 </span>
-                <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700">
                   <ShoppingCart className="h-4 w-4" />
                   <span className="text-sm">Agregar</span>
                 </button>
@@ -199,11 +203,11 @@ export function ProductCatalogV0() {
 
       {/* Mensaje si no hay resultados */}
       {sortedProducts.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-2">
-            <Search className="h-12 w-12 mx-auto" />
+        <div className="py-12 text-center">
+          <div className="mb-2 text-gray-400">
+            <Search className="mx-auto h-12 w-12" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-1">No se encontraron productos</h3>
+          <h3 className="mb-1 text-lg font-medium text-gray-900">No se encontraron productos</h3>
           <p className="text-gray-500">Intenta ajustar los filtros o términos de búsqueda</p>
         </div>
       )}

@@ -1,3 +1,3 @@
-import Dashboard from '@/components/dashboard-working';
+import DashboardWorking from '../components/dashboard-working';
 
-export default Dashboard;
+export default DashboardWorking;

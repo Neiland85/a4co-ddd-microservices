@@ -7,167 +7,167 @@ export const EventSubjects = {
   // ========================================
   // ORDER DOMAIN EVENTS
   // ========================================
-  ORDER_CREATED: 'order.created',
-  ORDER_CONFIRMED: 'order.confirmed',
-  ORDER_CANCELLED: 'order.cancelled',
-  ORDER_DELIVERED: 'order.delivered',
-  ORDER_UPDATED: 'order.updated',
-  ORDER_PAYMENT_REQUESTED: 'order.payment.requested',
+  ORDER_CREATED: 'order.created.v1',
+  ORDER_CONFIRMED: 'order.confirmed.v1',
+  ORDER_CANCELLED: 'order.cancelled.v1',
+  ORDER_DELIVERED: 'order.delivered.v1',
+  ORDER_UPDATED: 'order.updated.v1',
+  ORDER_PAYMENT_REQUESTED: 'order.payment.requested.v1',
 
   // ========================================
   // INVENTORY DOMAIN EVENTS
   // ========================================
-  STOCK_RESERVED: 'inventory.stock.reserved',
-  STOCK_RELEASED: 'inventory.stock.released',
-  STOCK_UPDATED: 'inventory.stock.updated',
-  LOW_STOCK_WARNING: 'inventory.stock.warning',
-  STOCK_DEPLETED: 'inventory.stock.depleted',
-  STOCK_REPLENISHED: 'inventory.stock.replenished',
+  STOCK_RESERVED: 'inventory.stock.reserved.v1',
+  STOCK_RELEASED: 'inventory.stock.released.v1',
+  STOCK_UPDATED: 'inventory.stock.updated.v1',
+  LOW_STOCK_WARNING: 'inventory.stock.warning.v1',
+  STOCK_DEPLETED: 'inventory.stock.depleted.v1',
+  STOCK_REPLENISHED: 'inventory.stock.replenished.v1',
 
   // ========================================
   // PAYMENT DOMAIN EVENTS
   // ========================================
-  PAYMENT_INITIATED: 'payment.initiated',
-  PAYMENT_SUCCEEDED: 'payment.succeeded',
-  PAYMENT_FAILED: 'payment.failed',
-  PAYMENT_CANCELLED: 'payment.cancelled',
-  REFUND_INITIATED: 'payment.refund.initiated',
-  REFUND_PROCESSED: 'payment.refund.processed',
-  REFUND_FAILED: 'payment.refund.failed',
+  PAYMENT_INITIATED: 'payment.initiated.v1',
+  PAYMENT_SUCCEEDED: 'payment.succeeded.v1',
+  PAYMENT_FAILED: 'payment.failed.v1',
+  PAYMENT_CANCELLED: 'payment.cancelled.v1',
+  REFUND_INITIATED: 'payment.refund.initiated.v1',
+  REFUND_PROCESSED: 'payment.refund.processed.v1',
+  REFUND_FAILED: 'payment.refund.failed.v1',
 
   // ========================================
   // USER DOMAIN EVENTS
   // ========================================
-  USER_REGISTERED: 'user.registered',
-  USER_VERIFIED: 'user.verified',
-  USER_PROFILE_UPDATED: 'user.profile.updated',
-  USER_PREFERENCES_CHANGED: 'user.preferences.changed',
-  USER_DEACTIVATED: 'user.deactivated',
-  USER_PASSWORD_CHANGED: 'user.password.changed',
-  USER_LOGIN_ATTEMPTED: 'user.login.attempted',
-  USER_LOGIN_SUCCEEDED: 'user.login.succeeded',
-  USER_LOGIN_FAILED: 'user.login.failed',
+  USER_REGISTERED: 'user.registered.v1',
+  USER_VERIFIED: 'user.verified.v1',
+  USER_PROFILE_UPDATED: 'user.profile.updated.v1',
+  USER_PREFERENCES_CHANGED: 'user.preferences.changed.v1',
+  USER_DEACTIVATED: 'user.deactivated.v1',
+  USER_PASSWORD_CHANGED: 'user.password.changed.v1',
+  USER_LOGIN_ATTEMPTED: 'user.login.attempted.v1',
+  USER_LOGIN_SUCCEEDED: 'user.login.succeeded.v1',
+  USER_LOGIN_FAILED: 'user.login.failed.v1',
 
   // ========================================
   // ARTISAN DOMAIN EVENTS
   // ========================================
-  ARTISAN_REGISTERED: 'artisan.registered',
-  ARTISAN_VERIFIED: 'artisan.verified',
-  ARTISAN_STATUS_CHANGED: 'artisan.status.changed',
-  ARTISAN_PROFILE_UPDATED: 'artisan.profile.updated',
-  PRODUCT_LISTED: 'artisan.product.listed',
-  ARTISAN_PRODUCT_UPDATED: 'artisan.product.updated',
-  PRODUCT_DELISTED: 'artisan.product.delisted',
+  ARTISAN_REGISTERED: 'artisan.registered.v1',
+  ARTISAN_VERIFIED: 'artisan.verified.v1',
+  ARTISAN_STATUS_CHANGED: 'artisan.status.changed.v1',
+  ARTISAN_PROFILE_UPDATED: 'artisan.profile.updated.v1',
+  PRODUCT_LISTED: 'artisan.product.listed.v1',
+  ARTISAN_PRODUCT_UPDATED: 'artisan.product.updated.v1',
+  PRODUCT_DELISTED: 'artisan.product.delisted.v1',
 
   // ========================================
   // PRODUCT DOMAIN EVENTS
   // ========================================
-  PRODUCT_CREATED: 'product.created',
-  PRODUCT_UPDATED: 'product.updated',
-  PRODUCT_DELETED: 'product.deleted',
-  PRODUCT_PRICE_CHANGED: 'product.price.changed',
-  PRODUCT_AVAILABILITY_CHANGED: 'product.availability.changed',
-  PRODUCT_CATEGORY_CHANGED: 'product.category.changed',
+  PRODUCT_CREATED: 'product.created.v1',
+  PRODUCT_UPDATED: 'product.updated.v1',
+  PRODUCT_DELETED: 'product.deleted.v1',
+  PRODUCT_PRICE_CHANGED: 'product.price.changed.v1',
+  PRODUCT_AVAILABILITY_CHANGED: 'product.availability.changed.v1',
+  PRODUCT_CATEGORY_CHANGED: 'product.category.changed.v1',
 
   // ========================================
   // NOTIFICATION DOMAIN EVENTS
   // ========================================
-  NOTIFICATION_TRIGGERED: 'notification.triggered',
-  EMAIL_SENT: 'notification.email.sent',
-  EMAIL_DELIVERED: 'notification.email.delivered',
-  EMAIL_FAILED: 'notification.email.failed',
-  SMS_SENT: 'notification.sms.sent',
-  SMS_DELIVERED: 'notification.sms.delivered',
-  SMS_FAILED: 'notification.sms.failed',
-  PUSH_NOTIFICATION_SENT: 'notification.push.sent',
+  NOTIFICATION_TRIGGERED: 'notification.triggered.v1',
+  EMAIL_SENT: 'notification.email.sent.v1',
+  EMAIL_DELIVERED: 'notification.email.delivered.v1',
+  EMAIL_FAILED: 'notification.email.failed.v1',
+  SMS_SENT: 'notification.sms.sent.v1',
+  SMS_DELIVERED: 'notification.sms.delivered.v1',
+  SMS_FAILED: 'notification.sms.failed.v1',
+  PUSH_NOTIFICATION_SENT: 'notification.push.sent.v1',
 
   // ========================================
   // GEO/LOCATION DOMAIN EVENTS
   // ========================================
-  LOCATION_UPDATED: 'geo.location.updated',
-  DELIVERY_ZONE_CHANGED: 'geo.delivery_zone.changed',
-  ARTISAN_LOCATION_VERIFIED: 'geo.artisan.verified',
-  NEARBY_SEARCH_PERFORMED: 'geo.search.nearby',
+  LOCATION_UPDATED: 'geo.location.updated.v1',
+  DELIVERY_ZONE_CHANGED: 'geo.delivery_zone.changed.v1',
+  ARTISAN_LOCATION_VERIFIED: 'geo.artisan.verified.v1',
+  NEARBY_SEARCH_PERFORMED: 'geo.search.nearby.v1',
 
   // ========================================
   // LOYALTY DOMAIN EVENTS
   // ========================================
-  POINTS_EARNED: 'loyalty.points.earned',
-  POINTS_REDEEMED: 'loyalty.points.redeemed',
-  TIER_UPGRADED: 'loyalty.tier.upgraded',
-  REWARD_UNLOCKED: 'loyalty.reward.unlocked',
-  CAMPAIGN_TRIGGERED: 'loyalty.campaign.triggered',
+  POINTS_EARNED: 'loyalty.points.earned.v1',
+  POINTS_REDEEMED: 'loyalty.points.redeemed.v1',
+  TIER_UPGRADED: 'loyalty.tier.upgraded.v1',
+  REWARD_UNLOCKED: 'loyalty.reward.unlocked.v1',
+  CAMPAIGN_TRIGGERED: 'loyalty.campaign.triggered.v1',
 
   // ========================================
   // INTEGRATION EVENTS - Para comunicación entre bounded contexts
   // ========================================
-  PRODUCT_INFORMATION_REQUESTED: 'integration.product.info.requested',
-  PRODUCT_INFORMATION_PROVIDED: 'integration.product.info.provided',
-  STOCK_VALIDATION_REQUESTED: 'integration.stock.validation.requested',
-  STOCK_VALIDATION_RESPONSE: 'integration.stock.validation.response',
-  USER_INFORMATION_REQUESTED: 'integration.user.info.requested',
-  USER_INFORMATION_PROVIDED: 'integration.user.info.provided',
+  PRODUCT_INFORMATION_REQUESTED: 'integration.product.info.requested.v1',
+  PRODUCT_INFORMATION_PROVIDED: 'integration.product.info.provided.v1',
+  STOCK_VALIDATION_REQUESTED: 'integration.stock.validation.requested.v1',
+  STOCK_VALIDATION_RESPONSE: 'integration.stock.validation.response.v1',
+  USER_INFORMATION_REQUESTED: 'integration.user.info.requested.v1',
+  USER_INFORMATION_PROVIDED: 'integration.user.info.provided.v1',
 
   // ========================================
   // SAGA EVENTS
   // ========================================
-  SAGA_STARTED: 'saga.started',
-  SAGA_STEP_COMPLETED: 'saga.step.completed',
-  SAGA_COMPLETED: 'saga.completed',
-  SAGA_FAILED: 'saga.failed',
-  SAGA_COMPENSATION_TRIGGERED: 'saga.compensation.triggered',
+  SAGA_STARTED: 'saga.started.v1',
+  SAGA_STEP_COMPLETED: 'saga.step.completed.v1',
+  SAGA_COMPLETED: 'saga.completed.v1',
+  SAGA_FAILED: 'saga.failed.v1',
+  SAGA_COMPENSATION_TRIGGERED: 'saga.compensation.triggered.v1',
 
   // ========================================
   // ANALYTICS DOMAIN EVENTS
   // ========================================
-  PAGE_VIEW_TRACKED: 'analytics.pageview',
-  USER_ACTION_TRACKED: 'analytics.action',
-  CONVERSION_TRACKED: 'analytics.conversion',
-  SALES_RECORDED: 'analytics.sales',
-  PERFORMANCE_METRIC_RECORDED: 'analytics.performance',
+  PAGE_VIEW_TRACKED: 'analytics.pageview.v1',
+  USER_ACTION_TRACKED: 'analytics.action.v1',
+  CONVERSION_TRACKED: 'analytics.conversion.v1',
+  SALES_RECORDED: 'analytics.sales.v1',
+  PERFORMANCE_METRIC_RECORDED: 'analytics.performance.v1',
 
   // ========================================
   // CHAT DOMAIN EVENTS
   // ========================================
-  CHAT_MESSAGE_SENT: 'chat.message.sent',
-  CHAT_MESSAGE_DELIVERED: 'chat.message.delivered',
-  CHAT_MESSAGE_READ: 'chat.message.read',
-  CHAT_CONVERSATION_STARTED: 'chat.conversation.started',
-  CHAT_CONVERSATION_ENDED: 'chat.conversation.ended',
+  CHAT_MESSAGE_SENT: 'chat.message.sent.v1',
+  CHAT_MESSAGE_DELIVERED: 'chat.message.delivered.v1',
+  CHAT_MESSAGE_READ: 'chat.message.read.v1',
+  CHAT_CONVERSATION_STARTED: 'chat.conversation.started.v1',
+  CHAT_CONVERSATION_ENDED: 'chat.conversation.ended.v1',
 
   // ========================================
   // CMS DOMAIN EVENTS
   // ========================================
-  CONTENT_PUBLISHED: 'cms.content.published',
-  CONTENT_UPDATED: 'cms.content.updated',
-  CONTENT_DELETED: 'cms.content.deleted',
-  CONTENT_APPROVED: 'cms.content.approved',
-  CONTENT_REJECTED: 'cms.content.rejected',
+  CONTENT_PUBLISHED: 'cms.content.published.v1',
+  CONTENT_UPDATED: 'cms.content.updated.v1',
+  CONTENT_DELETED: 'cms.content.deleted.v1',
+  CONTENT_APPROVED: 'cms.content.approved.v1',
+  CONTENT_REJECTED: 'cms.content.rejected.v1',
 
   // ========================================
   // ADMIN DOMAIN EVENTS
   // ========================================
-  ADMIN_ACTION_PERFORMED: 'admin.action.performed',
-  SYSTEM_MAINTENANCE_SCHEDULED: 'admin.maintenance.scheduled',
-  SYSTEM_BACKUP_COMPLETED: 'admin.backup.completed',
-  SECURITY_ALERT_TRIGGERED: 'admin.security.alert',
+  ADMIN_ACTION_PERFORMED: 'admin.action.performed.v1',
+  SYSTEM_MAINTENANCE_SCHEDULED: 'admin.maintenance.scheduled.v1',
+  SYSTEM_BACKUP_COMPLETED: 'admin.backup.completed.v1',
+  SECURITY_ALERT_TRIGGERED: 'admin.security.alert.v1',
 
   // ========================================
   // EVENT SERVICE DOMAIN EVENTS
   // ========================================
-  MARKETPLACE_EVENT_CREATED: 'event.marketplace.created',
-  MARKETPLACE_EVENT_UPDATED: 'event.marketplace.updated',
-  MARKETPLACE_EVENT_CANCELLED: 'event.marketplace.cancelled',
-  EVENT_ATTENDANCE_REGISTERED: 'event.attendance.registered',
+  MARKETPLACE_EVENT_CREATED: 'event.marketplace.created.v1',
+  MARKETPLACE_EVENT_UPDATED: 'event.marketplace.updated.v1',
+  MARKETPLACE_EVENT_CANCELLED: 'event.marketplace.cancelled.v1',
+  EVENT_ATTENDANCE_REGISTERED: 'event.attendance.registered.v1',
 
   // ========================================
   // SYSTEM EVENTS
   // ========================================
-  HEALTH_CHECK_PERFORMED: 'system.health.check',
-  SERVICE_STARTED: 'system.service.started',
-  SERVICE_STOPPED: 'system.service.stopped',
-  SERVICE_ERROR: 'system.service.error',
-  INTEGRATION_ERROR: 'system.integration.error',
+  HEALTH_CHECK_PERFORMED: 'system.health.check.v1',
+  SERVICE_STARTED: 'system.service.started.v1',
+  SERVICE_STOPPED: 'system.service.stopped.v1',
+  SERVICE_ERROR: 'system.service.error.v1',
+  INTEGRATION_ERROR: 'system.integration.error.v1',
 
   // ========================================
   // DEAD LETTER QUEUE PATTERNS
@@ -185,31 +185,31 @@ export type EventSubjectValues = (typeof EventSubjects)[EventSubjectKeys];
  */
 export const SubjectPatterns = {
   // All order events
-  ALL_ORDER_EVENTS: 'order.*',
+  ALL_ORDER_EVENTS: 'order.*.v1',
 
   // All payment events
-  ALL_PAYMENT_EVENTS: 'payment.*',
+  ALL_PAYMENT_EVENTS: 'payment.*.v1',
 
   // All inventory events
-  ALL_INVENTORY_EVENTS: 'inventory.*',
+  ALL_INVENTORY_EVENTS: 'inventory.*.v1',
 
   // All user events
-  ALL_USER_EVENTS: 'user.*',
+  ALL_USER_EVENTS: 'user.*.v1',
 
   // All notification events
-  ALL_NOTIFICATION_EVENTS: 'notification.*',
+  ALL_NOTIFICATION_EVENTS: 'notification.*.v1',
 
   // All system events
-  ALL_SYSTEM_EVENTS: 'system.*',
+  ALL_SYSTEM_EVENTS: 'system.*.v1',
 
   // All events (use with caution)
-  ALL_EVENTS: '*',
+  ALL_EVENTS: '*.v1',
 
   // Domain-specific patterns
-  ALL_STOCK_EVENTS: 'inventory.stock.*',
-  ALL_PAYMENT_REFUND_EVENTS: 'payment.refund.*',
-  ALL_EMAIL_EVENTS: 'notification.email.*',
-  ALL_SMS_EVENTS: 'notification.sms.*',
+  ALL_STOCK_EVENTS: 'inventory.stock.*.v1',
+  ALL_PAYMENT_REFUND_EVENTS: 'payment.refund.*.v1',
+  ALL_EMAIL_EVENTS: 'notification.email.*.v1',
+  ALL_SMS_EVENTS: 'notification.sms.*.v1',
 
   // Dead letter queues
   ALL_DLQ_EVENTS: '*.dlq',

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepositoryPort } from '../ports/user-repository.port';
 import { User, UserStatus } from '../../domain/aggregates/user.aggregate';
+import { UserRepositoryPort } from '../ports/user-repository.port';
 
 /**
  * Adapter in-memory para repositorio de usuarios
@@ -22,6 +22,12 @@ export class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
   }
 
   async save(user: User): Promise<User> {
+    const persistence = user.toPersistence();
+    this.users.set(persistence.id, user);
+    return user;
+  }
+
+  async update(user: User): Promise<User> {
     const persistence = user.toPersistence();
     this.users.set(persistence.id, user);
     return user;

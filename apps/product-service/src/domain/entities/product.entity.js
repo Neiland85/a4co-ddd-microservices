@@ -3,9 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = exports.ProductVariant = exports.ProductDiscontinuedEvent = exports.ProductPriceChangedEvent = exports.ProductPublishedEvent = exports.ProductCreatedEvent = exports.SpecificationType = exports.ImageType = exports.ProductAvailability = exports.ProductStatus = exports.Dimensions = exports.ProductSpecification = exports.ProductImage = exports.Money = void 0;
 const aggregate_root_1 = require("@a4co/shared-utils/domain/aggregate-root");
 const domain_event_1 = require("@a4co/shared-utils/domain/domain-event");
-// ========================================
-// VALUE OBJECTS
-// ========================================
 class Money {
     amount;
     currency;
@@ -106,9 +103,6 @@ class Dimensions {
     }
 }
 exports.Dimensions = Dimensions;
-// ========================================
-// ENUMS
-// ========================================
 var ProductStatus;
 (function (ProductStatus) {
     ProductStatus["DRAFT"] = "DRAFT";
@@ -142,9 +136,6 @@ var SpecificationType;
     SpecificationType["URL"] = "URL";
     SpecificationType["COLOR"] = "COLOR";
 })(SpecificationType || (exports.SpecificationType = SpecificationType = {}));
-// ========================================
-// DOMAIN EVENTS
-// ========================================
 class ProductCreatedEvent extends domain_event_1.DomainEvent {
     constructor(productId, data) {
         super(productId, data);
@@ -169,9 +160,6 @@ class ProductDiscontinuedEvent extends domain_event_1.DomainEvent {
     }
 }
 exports.ProductDiscontinuedEvent = ProductDiscontinuedEvent;
-// ========================================
-// PRODUCT VARIANT ENTITY
-// ========================================
 class ProductVariant {
     id;
     name;
@@ -233,9 +221,6 @@ class ProductVariant {
     }
 }
 exports.ProductVariant = ProductVariant;
-// ========================================
-// PRODUCT AGGREGATE ROOT
-// ========================================
 class Product extends aggregate_root_1.AggregateRoot {
     name;
     description;
@@ -279,7 +264,6 @@ class Product extends aggregate_root_1.AggregateRoot {
         this.metaTitle = metaTitle;
         this.metaDescription = metaDescription;
         this.featured = featured;
-        // Validaciones de dominio
         if (!name.trim()) {
             throw new Error('Product name cannot be empty');
         }
@@ -299,7 +283,6 @@ class Product extends aggregate_root_1.AggregateRoot {
         this._originalPrice = originalPrice;
         this._status = ProductStatus.DRAFT;
         this._availability = ProductAvailability.AVAILABLE;
-        // Evento de dominio
         this.addDomainEvent(new ProductCreatedEvent(id, {
             name,
             price,
@@ -308,9 +291,6 @@ class Product extends aggregate_root_1.AggregateRoot {
             createdAt: new Date(),
         }));
     }
-    // ========================================
-    // GETTERS
-    // ========================================
     get status() {
         return this._status;
     }
@@ -341,9 +321,6 @@ class Product extends aggregate_root_1.AggregateRoot {
     get totalSold() {
         return this._totalSold;
     }
-    // ========================================
-    // BUSINESS METHODS
-    // ========================================
     publish() {
         if (this._status === ProductStatus.PUBLISHED) {
             throw new Error('Product is already published');
@@ -390,11 +367,9 @@ class Product extends aggregate_root_1.AggregateRoot {
         this._availability = ProductAvailability.AVAILABLE;
     }
     addVariant(variant) {
-        // Verificar que no exista un variant con el mismo SKU
         if (this._variants.some(v => v.sku === variant.sku)) {
             throw new Error('A variant with this SKU already exists');
         }
-        // Si es el primer variant y es default, o no hay variants default
         if (variant.isDefault || !this._variants.some(v => v.isDefault)) {
             this._variants = this._variants.map(v => new ProductVariant(v.id, v.name, v.sku, v.price, v.attributes, v.stockQuantity, v.weight, v.dimensions, v.isActive, false));
         }
@@ -408,7 +383,6 @@ class Product extends aggregate_root_1.AggregateRoot {
         this._variants.splice(index, 1);
     }
     addImage(image) {
-        // Si es la primera imagen o se marca como primary, hacer que sea la única primary
         if (image.isPrimary || this._images.length === 0) {
             this._images = this._images.map(img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder));
         }
@@ -423,7 +397,6 @@ class Product extends aggregate_root_1.AggregateRoot {
         this._images.splice(index, 1);
     }
     addSpecification(specification) {
-        // Verificar que no exista una especificación con el mismo nombre
         if (this._specifications.some(spec => spec.name === specification.name)) {
             throw new Error('A specification with this name already exists');
         }

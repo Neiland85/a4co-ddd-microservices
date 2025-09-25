@@ -1,4 +1,4 @@
-export default function Dashboard() {
+export default function DashboardWorking(): React.ReactElement {
   return (
     <div className="dashboard-working-container">
       <h1 className="dashboard-working-title">🎉 A4CO DASHBOARD FUNCIONA! 🎉</h1>

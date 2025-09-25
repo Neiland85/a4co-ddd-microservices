@@ -1,7 +1,7 @@
 import { UseCase } from '@a4co/shared-utils';
-import { UserRepository } from '../../domain/repositories/user.repository';
-import { LoginUserDto } from '../dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { LoginUserDto } from '../dto/user.dto';
+import { UserRepositoryPort } from '../ports/user-repository.port';
 
 export interface LoginResponse {
   accessToken: string;
@@ -15,7 +15,7 @@ export interface LoginResponse {
 
 export class LoginUserUseCase implements UseCase<LoginUserDto, LoginResponse> {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: UserRepositoryPort,
     private readonly jwtService: JwtService
   ) {}
 

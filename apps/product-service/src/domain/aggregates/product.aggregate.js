@@ -61,7 +61,6 @@ class Product extends shared_utils_1.AggregateRoot {
         if (updatedAt)
             this.updatedAt = updatedAt;
     }
-    // Factory method para crear nuevo producto
     static create(data) {
         const productId = new product_value_objects_1.ProductId();
         const name = new product_value_objects_1.ProductName(data.name);
@@ -69,7 +68,6 @@ class Product extends shared_utils_1.AggregateRoot {
         const price = new product_value_objects_1.Price(data.price, data.currency);
         const categoryId = new product_value_objects_1.CategoryId(data.categoryId);
         const product = new Product(productId.value, productId, name, description, price, categoryId, data.artisanId, ProductStatus.DRAFT, ProductAvailability.IN_STOCK, [], [], [], data.craftingTimeHours, data.sustainabilityScore, data.isCustomizable || false, data.materials, data.dimensions);
-        // Emitir evento de dominio
         product.addDomainEvent(new product_events_1.ProductCreatedEvent(product.id, {
             productId: productId.value,
             name: name.value,
@@ -85,11 +83,9 @@ class Product extends shared_utils_1.AggregateRoot {
         }));
         return product;
     }
-    // Factory method para reconstruir desde persistencia
     static reconstruct(data) {
         return new Product(data.id, new product_value_objects_1.ProductId(data.productId), new product_value_objects_1.ProductName(data.name), new product_value_objects_1.ProductDescription(data.description), new product_value_objects_1.Price(data.price, data.currency), new product_value_objects_1.CategoryId(data.categoryId), data.artisanId, data.status, data.availability, data.variants.map(v => product_variant_entity_1.ProductVariant.reconstruct(v)), data.images.map(i => product_image_entity_1.ProductImage.reconstruct(i)), data.tags.map(t => product_tag_entity_1.ProductTag.reconstruct(t)), data.craftingTimeHours, data.sustainabilityScore, data.isCustomizable, data.materials, data.dimensions, data.createdAt, data.updatedAt);
     }
-    // Getters
     get productId() {
         return this._productId.value;
     }
@@ -141,7 +137,6 @@ class Product extends shared_utils_1.AggregateRoot {
     get dimensions() {
         return this._dimensions ? { ...this._dimensions } : undefined;
     }
-    // Métodos de negocio
     updateBasicInfo(data) {
         const oldData = {
             name: this._name.value,
@@ -194,7 +189,6 @@ class Product extends shared_utils_1.AggregateRoot {
         }));
     }
     addImage(imageData) {
-        // Si es imagen primaria, quitar primary de las demás
         if (imageData.isPrimary) {
             this._images.forEach(img => img.setPrimary(false));
         }
@@ -209,7 +203,6 @@ class Product extends shared_utils_1.AggregateRoot {
         this.touch();
     }
     addTag(tagName) {
-        // Verificar que el tag no existe ya
         const existingTag = this._tags.find(tag => tag.name === tagName);
         if (existingTag)
             return;
@@ -258,7 +251,6 @@ class Product extends shared_utils_1.AggregateRoot {
         }
         this.touch();
     }
-    // Método para persistencia
     toPersistence() {
         return {
             id: this.id,

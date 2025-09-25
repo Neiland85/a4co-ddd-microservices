@@ -4,11 +4,9 @@ exports.EventDrivenService = exports.NatsEventBus = void 0;
 exports.EventHandler = EventHandler;
 const nats_1 = require("nats");
 class NatsEventBus {
-    nc;
-    codec = (0, nats_1.StringCodec)();
-    subscriptions = new Map();
-    serviceName;
     constructor(serviceName) {
+        this.codec = (0, nats_1.StringCodec)();
+        this.subscriptions = new Map();
         this.serviceName = serviceName;
     }
     async connect(servers = ['nats://localhost:4222']) {
@@ -22,7 +20,6 @@ class NatsEventBus {
                 timeout: 5000,
             });
             console.log(`✅ ${this.serviceName} connected to NATS at ${servers.join(', ')}`);
-            // Listen for connection events
             (async () => {
                 for await (const status of this.nc.status()) {
                     console.log(`🔄 NATS ${status.type}: ${status.data}`);
@@ -36,7 +33,6 @@ class NatsEventBus {
     }
     async disconnect() {
         if (this.nc) {
-            // Close all subscriptions
             this.subscriptions.forEach(sub => sub.unsubscribe());
             this.subscriptions.clear();
             await this.nc.close();
@@ -78,7 +74,6 @@ class NatsEventBus {
         const sub = this.nc.subscribe(subject);
         this.subscriptions.set(`${subject}`, sub);
         console.log(`📥 Subscribed to ${subject}`);
-        // Process messages asynchronously
         this.processMessages(sub, handler, subject);
         return sub;
     }
@@ -89,7 +84,6 @@ class NatsEventBus {
         const sub = this.nc.subscribe(subject, { queue });
         this.subscriptions.set(`${subject}:${queue}`, sub);
         console.log(`📥 Subscribed to ${subject} with queue ${queue}`);
-        // Process messages asynchronously
         this.processMessages(sub, handler, subject, queue);
         return sub;
     }
@@ -98,7 +92,6 @@ class NatsEventBus {
             try {
                 const eventData = JSON.parse(this.codec.decode(msg.data));
                 console.log(`📨 Received event ${eventData.eventType} on ${subject}${queue ? ` (queue: ${queue})` : ''}`);
-                // Add processing timestamp
                 const startTime = Date.now();
                 await handler(eventData);
                 const duration = Date.now() - startTime;
@@ -106,7 +99,6 @@ class NatsEventBus {
             }
             catch (error) {
                 console.error(`❌ Error processing event on ${subject}:`, error);
-                // Implement retry logic or dead letter queue here
                 await this.handleEventError(msg, error, subject);
             }
         }
@@ -116,19 +108,15 @@ class NatsEventBus {
             const eventData = JSON.parse(this.codec.decode(msg.data));
             const retryCount = (eventData.metadata.retryCount || 0) + 1;
             if (retryCount <= 3) {
-                // Max 3 retries
                 console.log(`🔄 Retrying event ${eventData.eventType} (attempt ${retryCount})`);
-                // Update retry count
                 eventData.metadata.retryCount = retryCount;
-                // Republish with delay
                 setTimeout(() => {
                     if (this.nc) {
                         this.nc.publish(subject, this.codec.encode(JSON.stringify(eventData)));
                     }
-                }, Math.pow(2, retryCount) * 1000); // Exponential backoff
+                }, Math.pow(2, retryCount) * 1000);
             }
             else {
-                // Send to dead letter queue
                 console.error(`💀 Sending event ${eventData.eventType} to dead letter queue after ${retryCount} retries`);
                 if (this.nc) {
                     this.nc.publish(`${subject}.dlq`, this.codec.encode(JSON.stringify({
@@ -152,7 +140,6 @@ class NatsEventBus {
     }
 }
 exports.NatsEventBus = NatsEventBus;
-// Decorator for event handlers
 function EventHandler(subject) {
     return function (target, propertyName, descriptor) {
         target._eventHandlers = target._eventHandlers || [];
@@ -163,11 +150,9 @@ function EventHandler(subject) {
         });
     };
 }
-// Base class for services with event handling
 class EventDrivenService {
-    eventBus;
-    handlerRegistrations = [];
     constructor(serviceName) {
+        this.handlerRegistrations = [];
         this.eventBus = new NatsEventBus(serviceName);
     }
     async startEventHandling() {

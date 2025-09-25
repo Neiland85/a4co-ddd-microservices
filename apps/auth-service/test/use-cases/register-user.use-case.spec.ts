@@ -1,13 +1,13 @@
-import { RegisterUserUseCase } from '../../src/application/use-cases/register-user.use-case';
-import { UserRepository } from '../../src/domain/repositories/user.repository';
-import { UserDomainService } from '../../src/domain/services/user-domain.service';
-import { UserStatus } from '../../src/domain/aggregates/user.aggregate';
 import { RegisterUserDto } from '../../src/application/dto/user.dto';
+import { UserRepositoryPort } from '../../src/application/ports/user-repository.port';
+import { RegisterUserUseCase } from '../../src/application/use-cases/register-user.use-case';
+import { UserStatus } from '../../src/domain/aggregates/user.aggregate';
+import { UserDomainService } from '../../src/domain/services/user-domain.service';
 import { createRegisterUserDto, createUser } from '../factories';
 
 describe('RegisterUserUseCase', () => {
   let useCase: RegisterUserUseCase;
-  let userRepository: jest.Mocked<UserRepository>;
+  let userRepository: jest.Mocked<UserRepositoryPort>;
   let userDomainService: jest.Mocked<UserDomainService>;
 
   beforeEach(async () => {
@@ -17,13 +17,10 @@ describe('RegisterUserUseCase', () => {
       save: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-      exists: jest.fn(),
       existsByEmail: jest.fn(),
       findActiveUsers: jest.fn(),
       findPaginated: jest.fn(),
-      findAll: jest.fn(),
-      count: jest.fn(),
-    } as unknown as jest.Mocked<UserRepository>;
+    } as unknown as jest.Mocked<UserRepositoryPort>;
 
     userDomainService = {
       isEmailUnique: jest.fn(),

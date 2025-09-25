@@ -1,8 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext", // Asegurar que coincide con el módulo
+    "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -11,18 +11,22 @@
     "target": "ES2022",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@a4co/shared-utils": ["../../packages/shared-utils/index.ts"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/*"]
-    },
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "verbatimModuleSyntax": false,
+    "allowImportingTsExtensions": false,
+    "paths": {},
     "types": ["jest", "node"]
   },
   "include": ["src/**/*", "test/**/*"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "../../packages/**/*"]
 }

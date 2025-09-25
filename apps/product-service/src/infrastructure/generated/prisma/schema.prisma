@@ -1,0 +1,161 @@
+// Product Service - Schema de Base de Datos con Prisma ORM
+// Siguiendo principios DDD: Aggregates, Entities, Value Objects
+// Marketplace Local de Jaén - A4CO
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/infrastructure/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// AGREGADO PRINCIPAL - PRODUCTS
+model Product {
+  // Identificadores
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @unique @default(uuid()) @db.Uuid // Business ID
+
+  // Información básica
+  name        String @db.VarChar(200)
+  description String @db.Text
+
+  // Identificadores únicos
+  sku  String? @unique @db.VarChar(100)
+  slug String? @unique @db.VarChar(200)
+
+  // Precio
+  price         Decimal  @db.Decimal(10, 2)
+  originalPrice Decimal? @db.Decimal(10, 2)
+  currency      String   @default("EUR") @db.VarChar(3)
+
+  // Relaciones externas
+  categoryId String @db.Uuid
+  artisanId  String @db.Uuid
+
+  // Estados
+  status       ProductStatus       @default(DRAFT)
+  availability ProductAvailability @default(IN_STOCK)
+
+  // Información de artesanía
+  isHandmade       Boolean @default(false)
+  isCustomizable   Boolean @default(false)
+  isDigital        Boolean @default(false)
+  requiresShipping Boolean @default(true)
+
+  // SEO y metadata
+  keywords        String[] @default([])
+  metaTitle       String?  @db.VarChar(200)
+  metaDescription String?  @db.Text
+
+  // Información adicional
+  craftingTimeHours   Int  @default(0)
+  sustainabilityScore Int? @db.SmallInt // 0-100
+
+  // Arrays JSON para simplicidad
+  materials String[] @default([])
+
+  // Dimensiones (JSON para flexibilidad)
+  dimensions Json?
+
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  // Relaciones
+  variants ProductVariant[]
+  tags     ProductTag[]
+
+  // Índices
+  @@index([categoryId])
+  @@index([artisanId])
+  @@index([status])
+  @@index([availability])
+  @@index([name])
+  @@index([createdAt])
+  @@map("products")
+}
+
+// ENTIDAD - PRODUCT VARIANTS
+model ProductVariant {
+  // Identificadores
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+
+  // Información básica
+  name        String  @db.VarChar(200)
+  description String? @db.Text
+
+  // Identificadores únicos
+  sku String? @unique @db.VarChar(100)
+
+  // Precio
+  price    Decimal @db.Decimal(10, 2)
+  currency String  @default("EUR") @db.VarChar(3)
+
+  // Stock
+  stock Int @default(0)
+
+  // Atributos (JSON para flexibilidad)
+  attributes Json @default("{}")
+
+  // Estado
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  // Relación con Product (parte del agregado)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Índices
+  @@index([productId])
+  @@index([isActive])
+  @@index([sku])
+  @@map("product_variants")
+}
+
+// ENTIDAD - PRODUCT TAGS
+model ProductTag {
+  // Identificadores
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+
+  // Información del tag
+  name  String @db.VarChar(50)
+  value String @db.VarChar(100)
+
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  // Relación con Product (parte del agregado)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, name]) // Un producto no puede tener el mismo tag duplicado
+  // Índices
+  @@index([productId])
+  @@index([name])
+  @@map("product_tags")
+}
+
+// ========================================
+// ENUMERATIONS
+// ========================================
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  DISCONTINUED
+}
+
+enum ProductAvailability {
+  IN_STOCK
+  OUT_OF_STOCK
+  PRE_ORDER
+  DISCONTINUED
+}

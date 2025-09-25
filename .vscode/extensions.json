@@ -2,7 +2,6 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "ms-vscode.vscode-typescript-tslint-plugin",
     "bradlc.vscode-tailwindcss",
     "dsznajder.es7-react-js-snippets",
     "usernamehw.errorlens",

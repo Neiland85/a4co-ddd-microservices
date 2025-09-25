@@ -1,25 +1,25 @@
-    cursor/design-microservice-communication-strategy-a023
+cursor / design - microservice - communication - strategy - a023;
 
-    develop
-     develop
-import { initializeLogger, createLogger, createHttpLogger, getGlobalLogger } from './logging';
-import { initializeTracing, initializeMetrics, getTracer, shutdown } from './tracing';
+develop;
+develop;
 import type { LoggerConfig } from './logging';
-import type { TracingConfig, MetricsConfig } from './tracing';
+import { createHttpLogger, createLogger, getGlobalLogger, initializeLogger } from './logging';
+import type { MetricsConfig, TracingConfig } from './tracing';
+import { getTracer, initializeMetrics, initializeTracing, shutdown } from './tracing';
 
 // Re-exportar tipos
-export type { LoggerConfig, TracingConfig, MetricsConfig };
+export type { LoggerConfig, MetricsConfig, TracingConfig };
 
 // Re-exportar funciones individuales
 export {
-  createLogger,
   createHttpLogger,
+  createLogger,
   getGlobalLogger,
-  initializeLogger,
-  initializeTracing,
-  initializeMetrics,
   getTracer,
-  shutdown
+  initializeLogger,
+  initializeMetrics,
+  initializeTracing,
+  shutdown,
 };
 
 // Interfaz para configuración completa
@@ -91,24 +91,25 @@ export function initializeObservability(config: ObservabilityConfig) {
 // Exportar el logger global por defecto si no se ha inicializado
 let defaultLogger: any = null;
 
-export const logger = new Proxy({}, {
-  get(target, prop) {
-    if (!defaultLogger) {
-      defaultLogger = createLogger({
-        serviceName: process.env.SERVICE_NAME || 'unknown-service',
-        environment: process.env.NODE_ENV || 'development',
-      });
-    }
-    return defaultLogger[prop];
+export const logger = new Proxy(
+  {},
+  {
+    get(target, prop) {
+      if (!defaultLogger) {
+        defaultLogger = createLogger({
+          serviceName: process.env.SERVICE_NAME || 'unknown-service',
+          environment: process.env.NODE_ENV || 'development',
+        });
+      }
+      return defaultLogger[prop];
+    },
   }
-});
+);
 
 // Función helper para obtener el tracer por defecto
 export function tracer(name?: string) {
   return getTracer(name);
-   cursor/design-microservice-communication-strategy-a023
-}
-
+  cursor / design - microservice - communication - strategy - a023;
 }
 
 // Exportar módulos de frontend
@@ -121,50 +122,43 @@ export * from './ddd-tracing';
 export * from './design-system';
 
 // Main exports for @a4co/observability package
+export * from './config';
+export * from './context';
+export * from './decorators';
+export * from './instrumentation';
 export * from './logger';
-export * from './tracer';
 export * from './metrics';
 export * from './middleware';
-export * from './decorators';
-export * from './context';
+export * from './tracer';
 export * from './types';
 export * from './utils';
-export * from './instrumentation';
-export * from './config';
-    develop
+develop;
 
 /**
  * @a4co/observability - Unified observability package
- * 
+ *
  * This package provides structured logging, distributed tracing,
  * and metrics collection for the A4CO platform.
  */
 
 // Logging exports
-export * from './logging/types';
-export * from './logging/pino-logger';
 export * from './logging/frontend-logger';
-export * from './logging/react-hooks';
 export * from './logging/http-client-wrapper';
+export * from './logging/pino-logger';
+export * from './logging/react-hooks';
+export * from './logging/types';
 
 // Tracing exports
-export * from './tracing/tracer';
-export * from './tracing/web-tracer';
-export * from './tracing/react-tracing';
 export * from './tracing/middleware';
 export * from './tracing/nats-tracing';
+export * from './tracing/react-tracing';
+export * from './tracing/tracer';
+export * from './tracing/web-tracer';
 
 // Re-export commonly used OpenTelemetry types
-export { 
-  SpanKind, 
-  SpanStatusCode,
-  Span,
-  SpanContext,
-  trace,
-  context,
-} from '@opentelemetry/api';
+export { context, Span, SpanContext, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 
 // Version
 export const VERSION = '1.0.0';
-     main
-     develop
+main;
+develop;

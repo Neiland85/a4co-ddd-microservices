@@ -1,5 +1,4 @@
-import { AggregateRoot } from '@a4co/shared-utils/domain/aggregate-root';
-import { DomainEvent } from '@a4co/shared-utils/domain/domain-event';
+import { AggregateRoot, DomainEvent } from '../base-classes';
 
 // ========================================
 // VALUE OBJECTS
@@ -141,8 +140,8 @@ export enum SpecificationType {
 
 export class ProductCreatedEvent extends DomainEvent {
   constructor(
-    productId: string,
-    data: {
+    public readonly productId: string,
+    public readonly data: {
       name: string;
       price: Money;
       artisanId: string;
@@ -150,46 +149,62 @@ export class ProductCreatedEvent extends DomainEvent {
       createdAt: Date;
     }
   ) {
-    super(productId, data);
+    super();
+  }
+
+  eventType(): string {
+    return 'ProductCreated';
   }
 }
 
 export class ProductPublishedEvent extends DomainEvent {
   constructor(
-    productId: string,
-    data: {
+    public readonly productId: string,
+    public readonly data: {
       name: string;
       price: Money;
       artisanId: string;
       publishedAt: Date;
     }
   ) {
-    super(productId, data);
+    super();
+  }
+
+  eventType(): string {
+    return 'ProductPublished';
   }
 }
 
 export class ProductPriceChangedEvent extends DomainEvent {
   constructor(
-    productId: string,
-    data: {
+    public readonly productId: string,
+    public readonly data: {
       previousPrice: Money;
       newPrice: Money;
       changedAt: Date;
     }
   ) {
-    super(productId, data);
+    super();
+  }
+
+  eventType(): string {
+    return 'ProductPriceChanged';
   }
 }
 
 export class ProductDiscontinuedEvent extends DomainEvent {
   constructor(
-    productId: string,
-    data: {
+    public readonly productId: string,
+    public readonly data: {
       reason: string;
       discontinuedAt: Date;
     }
   ) {
-    super(productId, data);
+    super();
+  }
+
+  eventType(): string {
+    return 'ProductDiscontinued';
   }
 }
 
@@ -313,7 +328,9 @@ export class Product extends AggregateRoot {
     }
 
     this._price = price;
-    this._originalPrice = originalPrice;
+    if (originalPrice !== undefined) {
+      this._originalPrice = originalPrice;
+    }
     this._status = ProductStatus.DRAFT;
     this._availability = ProductAvailability.AVAILABLE;
 
@@ -410,7 +427,9 @@ export class Product extends AggregateRoot {
   updatePrice(newPrice: Money, originalPrice?: Money): void {
     const previousPrice = this._price;
     this._price = newPrice;
-    this._originalPrice = originalPrice;
+    if (originalPrice !== undefined) {
+      this._originalPrice = originalPrice;
+    }
 
     this.addDomainEvent(
       new ProductPriceChangedEvent(this.id, {

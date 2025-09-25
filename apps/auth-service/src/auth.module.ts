@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 // Controllers
 import { AuthController } from './presentation/controllers/auth.controller';
 
 // Use Cases
-import { RegisterUserUseCase } from './application/use-cases/register-user.use-case';
 import { LoginUserUseCase } from './application/use-cases/login-user.use-case';
+import { RegisterUserUseCase } from './application/use-cases/register-user.use-case';
 
 // Domain Services
 import { UserDomainService } from './domain/services/user-domain.service';
@@ -16,7 +16,7 @@ import { UserDomainService } from './domain/services/user-domain.service';
 import { PrismaUserRepository } from './infrastructure/repositories/prisma-user.repository';
 
 // Repository interfaces
-import { UserRepository } from './domain/repositories/user.repository';
+import { UserRepositoryPort } from './application/ports/user-repository.port';
 
 @Module({
   imports: [
@@ -57,7 +57,7 @@ import { UserRepository } from './domain/repositories/user.repository';
 
     // Repositories
     {
-      provide: 'UserRepository',
+      provide: 'UserRepositoryPort',
       useFactory: (prismaClient: any) => {
         return new PrismaUserRepository(prismaClient);
       },
@@ -67,26 +67,36 @@ import { UserRepository } from './domain/repositories/user.repository';
     // Domain Services
     {
       provide: UserDomainService,
-      useFactory: (userRepository: UserRepository) => {
+      useFactory: (userRepository: UserRepositoryPort) => {
         return new UserDomainService(userRepository);
       },
-      inject: ['UserRepository'],
+      inject: ['UserRepositoryPort'],
     },
 
     // Use Cases
     {
       provide: RegisterUserUseCase,
-      useFactory: (userRepository: UserRepository, userDomainService: UserDomainService) => {
-        return new RegisterUserUseCase(userRepository, userDomainService);
+      useFactory: (
+        userRepository: UserRepositoryPort,
+        cryptographyService: any,
+        eventBus: any,
+        userDomainService: UserDomainService
+      ) => {
+        return new RegisterUserUseCase(
+          userRepository,
+          cryptographyService,
+          eventBus,
+          userDomainService
+        );
       },
-      inject: ['UserRepository', UserDomainService],
+      inject: ['UserRepositoryPort', 'CryptographyServicePort', 'EventBusPort', UserDomainService],
     },
     {
       provide: LoginUserUseCase,
-      useFactory: (userRepository: UserRepository, jwtService: any) => {
+      useFactory: (userRepository: UserRepositoryPort, jwtService: any) => {
         return new LoginUserUseCase(userRepository, jwtService);
       },
-      inject: ['UserRepository', JwtModule],
+      inject: ['UserRepositoryPort', JwtModule],
     },
   ],
 })

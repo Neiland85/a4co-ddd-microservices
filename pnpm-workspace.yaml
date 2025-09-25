@@ -3,6 +3,10 @@ packages:
   - packages/*
 
 ignoredBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
   - esbuild
   - keytar
+  - prisma
   - unrs-resolver

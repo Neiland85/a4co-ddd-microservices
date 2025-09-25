@@ -53,8 +53,8 @@ describe('Auth Service - Basic Integration', () => {
     dto.password = 'TestPassword123';
 
     const json = dto.toJSON();
-    expect(json.email).toBe('serialize@test.com');
-    expect(json.name).toBe('Serialize Test');
+    expect(json['email']).toBe('serialize@test.com');
+    expect(json['name']).toBe('Serialize Test');
     expect(typeof json).toBe('object');
   });
 });

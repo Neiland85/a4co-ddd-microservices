@@ -1,7 +1,7 @@
 // Hook para gestión de productos locales
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { LocalProduct } from '../app/api/sales-opportunities/route';
 
 interface UseProductsOptions {
@@ -11,6 +11,7 @@ interface UseProductsOptions {
   available?: boolean;
   search?: string;
   limit?: number;
+  offset?: number;
   autoFetch?: boolean;
 }
 

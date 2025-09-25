@@ -13,6 +13,16 @@ module.exports = [
         sourceType: 'module',
         project: './tsconfig.json',
       },
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        console: 'readonly',
+        fetch: 'readonly',
+        caches: 'readonly',
+        Notification: 'readonly',
+        React: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': tseslint,
@@ -21,6 +31,18 @@ module.exports = [
       ...tseslint.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
+      'no-undef': 'off', // Disable no-undef since we have globals defined
     },
+  },
+  {
+    ignores: [
+      '**/*.d.ts',
+      '**/*.js',
+      '**/node_modules/**',
+      '**/.next/**',
+      '**/.turbo/**',
+      '**/dist/**',
+      '**/build/**',
+    ],
   },
 ];

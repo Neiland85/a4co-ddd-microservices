@@ -1,8 +1,7 @@
-import { Suspense } from 'react';
 import { CatalogHeader } from '@/components/CatalogHeader';
+import { Pagination } from '@/components/Pagination';
 import { ProductFilters } from '@/components/ProductFilters';
 import { ProductGrid } from '@/components/ProductGrid';
-import { Pagination } from '@/components/Pagination';
 
 export default function CatalogPage() {
   return (
@@ -14,9 +13,7 @@ export default function CatalogPage() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
             {/* Sidebar con filtros */}
             <aside className="lg:col-span-1">
-              <Suspense fallback={<div>Cargando filtros...</div>}>
-                <ProductFilters />
-              </Suspense>
+              <ProductFilters />
             </aside>
 
             {/* Contenido principal */}
@@ -28,9 +25,7 @@ export default function CatalogPage() {
                 </p>
               </div>
 
-              <Suspense fallback={<div>Cargando productos...</div>}>
-                <ProductGrid />
-              </Suspense>
+              <ProductGrid />
 
               <div className="mt-8">
                 <Pagination />

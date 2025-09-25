@@ -1,85 +1,11 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    // Basic compiler options optimized for SWC
-    "target": "ES2022",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": false,
-    "incremental": true,
-    // Module resolution - optimized for monorepo with SWC
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "module": "ESNext",
-    // SWC optimization settings
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "useDefineForClassFields": false,
-    // Monorepo path mapping
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./apps/dashboard-web/src/*"
-      ],
-      "@/lib/*": [
-        "./libs/*"
-      ],
-      "@/shared/*": [
-        "./libs/shared/*"
-      ],
-      "@/domain/*": [
-        "./libs/domain/*"
-      ],
-      "@/infrastructure/*": [
-        "./libs/infrastructure/*"
-      ],
-      "@/application/*": [
-        "./libs/application/*"
-      ],
-      "@/components/*": [
-        "./components/*"
-      ],
-      "@/hooks/*": [
-        "./hooks/*"
-      ],
-      "@/types/*": [
-        "./types/*"
-      ],
-      "@/utils/*": [
-        "./utils/*"
-      ],
-      "@/config/*": [
-        "./config/*"
-      ]
-    },
-    // Type checking - relaxed for faster compilation
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": false,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": false,
-    // Import/Export
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "moduleDetection": "force",
-    "outDir": "./dist", // Especifica un directorio de salida separado
-    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo", // Archivo .tsbuildinfo único para el proyecto raíz
-    "composite": true,
-    "tsBuildInfoFile": "./dist/libs.tsbuildinfo"
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
   "include": [
+    "src/**/*",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
@@ -97,8 +23,8 @@
   ],
   "exclude": [
     "node_modules",
-    ".next",
     "dist",
+    ".next",
     "build",
     "coverage",
     "**/*.test.ts",

@@ -1,8 +1,8 @@
+import { trace } from '@opentelemetry/api';
 import pino, { Logger, LoggerOptions } from 'pino';
 import { v4 as uuidv4 } from 'uuid';
-import { context, trace } from '@opentelemetry/api';
-import { LoggerConfig, LogContext, DDDMetadata } from '../types';
 import type { ObservabilityLogger } from '../ObservabilityLogger';
+import { LogContext, LoggerConfig } from '../types';
 
 // Global logger instance
 let globalLogger: ObservabilityLogger | null = null;
@@ -27,23 +27,6 @@ const defaultSerializers = {
   }),
   err: pino.stdSerializers.err,
   error: pino.stdSerializers.err,
-  ddd: (metadata: DDDMetadata) => ({
-    aggregate: metadata.aggregateName
-      ? {
-          id: metadata.aggregateId,
-          name: metadata.aggregateName,
-        }
-      : undefined,
-    command: metadata.commandName,
-    event: metadata.eventName
-      ? {
-          name: metadata.eventName,
-          version: metadata.eventVersion,
-        }
-      : undefined,
-    correlationId: metadata.correlationId,
-    causationId: metadata.causationId,
-  }),
 };
 
 // Create enhanced logger with context support
@@ -54,17 +37,13 @@ function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
     return createEnhancedLogger(baseLogger.child(ctx));
   };
 
-  enhancedLogger.withDDD = function (metadata: DDDMetadata): ObservabilityLogger {
-    return createEnhancedLogger(baseLogger.child({ ddd: metadata }));
-  };
-
   enhancedLogger.startSpan = function (name: string, attributes?: Record<string, any>) {
     const tracer = trace.getTracer('@a4co/observability');
     const span = tracer.startSpan(name, { attributes });
-
-    // Log span start
-    this.debug({ spanId: span.spanContext().spanId, spanName: name }, 'Span started');
-
+    // Log span start (opcional, solo si existe info)
+    if (typeof baseLogger.info === 'function') {
+      baseLogger.info({ spanId: span.spanContext().spanId, spanName: name }, 'Span started');
+    }
     return span;
   };
 
@@ -90,7 +69,7 @@ export function createLogger(
       version: config.serviceVersion,
       env: config.environment,
       pid: process.pid,
-      hostname: process.env.HOSTNAME || require('os').hostname(),
+      hostname: (process.env['HOSTNAME'] as string) || require('os').hostname(),
     },
     timestamp: pino.stdTimeFunctions.isoTime,
     formatters: {
@@ -100,8 +79,8 @@ export function createLogger(
         const span = trace.getActiveSpan();
         if (span) {
           const spanContext = span.spanContext();
-          object.traceId = spanContext.traceId;
-          object.spanId = spanContext.spanId;
+          object['traceId'] = spanContext.traceId;
+          object['spanId'] = spanContext.spanId;
         }
         return object;
       },
@@ -110,7 +89,7 @@ export function createLogger(
   };
 
   // Add pretty print for development
-  if (config.prettyPrint && process.env.NODE_ENV === 'development') {
+  if (config.prettyPrint && process.env['NODE_ENV'] === 'development') {
     options.transport = {
       target: 'pino-pretty',
       options: {

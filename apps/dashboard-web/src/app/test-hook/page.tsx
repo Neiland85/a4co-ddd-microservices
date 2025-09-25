@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProducts, useProductSearch } from '../../hooks/useProducts';
 
-export default function TestHookPage() {
+export default function TestHookPage(): React.ReactElement {
   const [renderCount, setRenderCount] = useState(0);
   const products = useProducts({ autoFetch: false });
   const productSearch = useProductSearch();

@@ -10,7 +10,6 @@ const helmet_1 = __importDefault(require("helmet"));
 const product_module_1 = require("./product.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(product_module_1.ProductModule);
-    // Security middleware
     app.use((0, helmet_1.default)({
         contentSecurityPolicy: {
             directives: {
@@ -22,20 +21,17 @@ async function bootstrap() {
         },
         crossOriginEmbedderPolicy: false,
     }));
-    // Global validation pipe
     app.useGlobalPipes(new common_1.ValidationPipe({
         transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
     }));
-    // CORS configuration
     app.enableCors({
         origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     });
-    // Swagger documentation
     const config = new swagger_1.DocumentBuilder()
         .setTitle('A4CO Product Service')
         .setDescription('Servicio de gestión de productos para la plataforma A4CO')

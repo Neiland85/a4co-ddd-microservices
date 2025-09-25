@@ -1,5 +1,5 @@
-import { ValueObject } from '@a4co/shared-utils';
 import { v4 as uuidv4 } from 'uuid';
+import { ValueObject } from '../base-classes';
 
 export class ProductId extends ValueObject<string> {
   constructor(value?: string) {
@@ -50,11 +50,11 @@ export class Price extends ValueObject<{ amount: number; currency: string }> {
   }
 
   public get amount(): number {
-    return this._value.amount;
+    return this.value.amount;
   }
 
   public get currency(): string {
-    return this._value.currency;
+    return this.value.currency;
   }
 
   public add(other: Price): Price {

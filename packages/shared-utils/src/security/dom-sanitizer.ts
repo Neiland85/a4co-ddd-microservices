@@ -1,10 +1,5 @@
 /// <reference lib="dom" />
 
-<<<<<<< Updated upstream
-=======
-import type { JSDOM } from 'jsdom'; // Usar import type para evitar bundling en browser
->>>>>>> Stashed changes
-
 export interface SanitizeOptions {
   allowedTags: string[];
   allowedAttributes: Record<string, string[]>;
@@ -31,15 +26,12 @@ export class DomSanitizer {
     };
   }
 
-  public async sanitize(html: string): Promise<string> { // Hacer el método asíncrono
+  public async sanitize(html: string): Promise<string> {
+    // Hacer el método asíncrono
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       // Si no estamos en un entorno de navegador, usar JSDOM para la sanitización
       // Importación dinámica para que no se bundle en el lado del cliente
-<<<<<<< Updated upstream
       const { JSDOM } = await import('jsdom');
-=======
-      const { JSDOM } = await import('jsdom'); 
->>>>>>> Stashed changes
       const dom = new JSDOM(html);
       const doc = dom.window.document;
       this.sanitizeNode(doc.body);
@@ -55,19 +47,11 @@ export class DomSanitizer {
 
   private sanitizeNode(node: Node): void {
     const children = Array.from(node.childNodes);
-<<<<<<< Updated upstream
 
     for (const child of children) {
       if (child.nodeType === Node.ELEMENT_NODE) {
         const element = child as HTMLElement;
 
-=======
-    
-    for (const child of children) {
-      if (child.nodeType === Node.ELEMENT_NODE) {
-        const element = child as HTMLElement;
-        
->>>>>>> Stashed changes
         // Remover tags no permitidos
         if (!this.options.allowedTags.includes(element.tagName.toLowerCase())) {
           const textNode = document.createTextNode(element.textContent || '');
@@ -91,36 +75,24 @@ export class DomSanitizer {
   }
 
   private sanitizeAttributes(element: HTMLElement): void {
-      const tagName = element.tagName.toLowerCase();
-      const allowedForTag = this.options.allowedAttributes[tagName] || [];
+    const tagName = element.tagName.toLowerCase();
+    const allowedForTag = this.options.allowedAttributes[tagName] || [];
     const allowedGlobal = this.options.allowedAttributes['*'] || []; // Atributos permitidos globalmente
-<<<<<<< Updated upstream
 
-=======
-      
->>>>>>> Stashed changes
     const attributesToRemove: string[] = [];
     for (const attr of Array.from(element.attributes)) {
       // Remover atributos no permitidos para el tag o globalmente
       if (!allowedForTag.includes(attr.name) && !allowedGlobal.includes(attr.name)) {
         attributesToRemove.push(attr.name);
       }
-<<<<<<< Updated upstream
 
-=======
-      
->>>>>>> Stashed changes
       // Sanitizar URLs en href/src
       if (attr.name === 'href' || attr.name === 'src') {
         if (!this.isValidUrl(attr.value)) {
           attributesToRemove.push(attr.name);
         }
       }
-<<<<<<< Updated upstream
 
-=======
-      
->>>>>>> Stashed changes
       // Remover event handlers (on* attributes)
       if (attr.name.startsWith('on')) {
         attributesToRemove.push(attr.name);
@@ -132,14 +104,13 @@ export class DomSanitizer {
 
   private isValidUrl(url: string): boolean {
     try {
-      const parsedUrl = new URL(url, typeof window !== 'undefined' ? window.location.href : 'http://localhost/');
+      const parsedUrl = new URL(
+        url,
+        typeof window !== 'undefined' ? window.location.href : 'http://localhost/'
+      );
       return this.options.allowedSchemes.includes(parsedUrl.protocol.replace(':', ''));
     } catch (e) {
       return false;
     }
   }
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes

@@ -1,18 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
     // Next.js specific settings optimized for SWC
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES6",
-      "ES2022"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ES6", "ES2022"],
     "allowJs": true,
     "noEmit": false, // Asegúrate de que la emisión no esté deshabilitada
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
@@ -40,49 +34,24 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/components/*": [
-        "./src/components/*"
-      ],
-      "@/lib/*": [
-        "./src/lib/*"
-      ],
-      "@/hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@/types/*": [
-        "./src/types/*"
-      ],
-      "@/utils/*": [
-        "./src/utils/*"
-      ],
-      "@/styles/*": [
-        "./src/styles/*"
-      ],
-      "@/public/*": [
-        "./public/*"
-      ],
-      "@/api/*": [
-        "./src/app/api/*"
-      ],
-      "@/app/*": [
-        "./src/app/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/public/*": ["./public/*"],
+      "@/api/*": ["./src/app/api/*"],
+      "@/app/*": ["./src/app/*"]
     },
     "types": [
       "node",
       "@types/node" // Eliminado "jest" si no es necesario
-    ]
+    ],
+    "resolveJsonModule": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/**/*"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/**/*"],
   "exclude": [
     "node_modules",
     ".next",

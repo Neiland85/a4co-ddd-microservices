@@ -27,6 +27,13 @@ export interface UserRepositoryPort {
   save(user: User): Promise<User>;
 
   /**
+   * Actualiza un usuario existente
+   * @param user Usuario a actualizar
+   * @returns Usuario actualizado
+   */
+  update(user: User): Promise<User>;
+
+  /**
    * Elimina un usuario por su ID
    * @param id ID del usuario a eliminar
    */
