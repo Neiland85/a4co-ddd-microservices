@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
@@ -25,8 +25,10 @@
     "verbatimModuleSyntax": false,
     "allowImportingTsExtensions": false,
     "paths": {},
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "composite": true,
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
   },
   "include": ["src/**/*", "test/**/*"],
-  "exclude": ["dist", "node_modules", "../../packages/**/*"]
+  "exclude": ["dist", "node_modules"]
 }

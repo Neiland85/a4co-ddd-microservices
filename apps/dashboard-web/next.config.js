@@ -14,9 +14,6 @@ const nextConfig = {
 
   // Experimental features for Next.js 15
   experimental: {
-    // Enable SWC optimizations
-    swcTraceProfiling: true,
-
     // Optimize imports for better tree shaking
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
