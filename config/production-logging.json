@@ -1,0 +1,67 @@
+{
+  "collection": {
+    "sources": [
+      "application_logs",
+      "system_logs",
+      "audit_logs",
+      "security_logs",
+      "business_events"
+    ],
+    "format": "json",
+    "compression": "gzip",
+    "retention": {
+      "application": "30d",
+      "system": "90d",
+      "audit": "1y",
+      "security": "2y"
+    }
+  },
+  "processing": {
+    "parsing": {
+      "enabled": true,
+      "patterns": [
+        "nginx",
+        "postgresql",
+        "nodejs",
+        "custom"
+      ]
+    },
+    "enrichment": {
+      "enabled": true,
+      "fields": [
+        "service_name",
+        "environment",
+        "version",
+        "user_id"
+      ]
+    },
+    "filtering": {
+      "sensitive_data": [
+        "password",
+        "credit_card",
+        "ssn"
+      ],
+      "noise_reduction": [
+        "health_checks",
+        "debug_logs"
+      ]
+    }
+  },
+  "storage": {
+    "elasticsearch": {
+      "enabled": true,
+      "cluster": "${ELASTICSEARCH_CLUSTER}",
+      "index_pattern": "logs-%{+YYYY.MM.dd}"
+    },
+    "s3_backup": {
+      "enabled": true,
+      "bucket": "${LOGS_BUCKET}",
+      "retention": "1y"
+    }
+  },
+  "analysis": {
+    "anomaly_detection": true,
+    "correlation_analysis": true,
+    "alerting": true
+  }
+}

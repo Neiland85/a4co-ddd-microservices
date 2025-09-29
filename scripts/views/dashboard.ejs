@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - A4CO Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .status-healthy { background-color: #dcfce7; color: #166534; }
+        .status-warning { background-color: #fef3c7; color: #92400e; }
+        .status-error { background-color: #fee2e2; color: #991b1b; }
+        .trend-up { color: #16a34a; }
+        .trend-down { color: #dc2626; }
+        .trend-stable { color: #4b5563; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">📊 A4CO Monitoring Dashboard</h1>
+                    <span class="ml-4 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                        <%= data.currentPhase %>
+                    </span>
+                </div>
+                <div class="text-sm text-gray-500">
+                    Última actualización: <%= data.lastUpdate %>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- System Status -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Estado del Sistema</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <% data.systemStatus.services.forEach(service => { %>
+                <div class="bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-900"><%= service.name %></h3>
+                            <p class="text-xs text-gray-500"><%= service.uptime %> uptime</p>
+                        </div>
+                        <span class="status-healthy px-2 py-1 rounded-full text-xs font-medium">
+                            <%= service.status %>
+                        </span>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Métricas Clave</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-sm font-medium text-gray-500">Adopción de Features</h3>
+                            <p class="text-2xl font-bold text-gray-900"><%= data.keyMetrics.adoption.value %></p>
+                            <p class="text-sm trend-up">↗️ <%= data.keyMetrics.adoption.change %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-sm font-medium text-gray-500">Tasa de Error</h3>
+                            <p class="text-2xl font-bold text-gray-900"><%= data.keyMetrics.errorRate.value %></p>
+                            <p class="text-sm trend-down">↘️ <%= data.keyMetrics.errorRate.change %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-sm font-medium text-gray-500">Satisfacción Usuario</h3>
+                            <p class="text-2xl font-bold text-gray-900"><%= data.keyMetrics.satisfaction.value %></p>
+                            <p class="text-sm trend-up">↗️ <%= data.keyMetrics.satisfaction.change %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-sm font-medium text-gray-500">Performance</h3>
+                            <p class="text-2xl font-bold text-gray-900"><%= data.keyMetrics.performance.value %></p>
+                            <p class="text-sm trend-stable">→ <%= data.keyMetrics.performance.change %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Navegación</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <a href="/metrics" class="bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-6 text-center transition-colors">
+                    <div class="text-2xl mb-2">📈</div>
+                    <h3 class="font-semibold">Métricas Detalladas</h3>
+                    <p class="text-sm opacity-90">Análisis completo de métricas</p>
+                </a>
+
+                <a href="/phase1" class="bg-green-500 hover:bg-green-600 text-white rounded-lg p-6 text-center transition-colors">
+                    <div class="text-2xl mb-2">🎯</div>
+                    <h3 class="font-semibold">Phase 1 - Internal Beta</h3>
+                    <p class="text-sm opacity-90">Resultados del rollout interno</p>
+                </a>
+
+                <a href="/phase2" class="bg-purple-500 hover:bg-purple-600 text-white rounded-lg p-6 text-center transition-colors">
+                    <div class="text-2xl mb-2">🚀</div>
+                    <h3 class="font-semibold">Phase 2 - External Beta</h3>
+                    <p class="text-sm opacity-90">Estado del rollout externo</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Active Alerts -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Alertas Activas</h2>
+            <div class="space-y-3">
+                <% data.alerts.forEach(alert => { %>
+                <div class="bg-white rounded-lg shadow p-4 border-l-4 <%= alert.level === 'warning' ? 'border-yellow-400' : 'border-blue-400' %>">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900"><%= alert.message %></p>
+                            <p class="text-xs text-gray-500"><%= alert.time %></p>
+                        </div>
+                        <span class="px-2 py-1 rounded-full text-xs font-medium <%= alert.level === 'warning' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800' %>">
+                            <%= alert.level %>
+                        </span>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Actividad Reciente</h2>
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="divide-y divide-gray-200">
+                    <% data.recentActivity.forEach(activity => { %>
+                    <div class="px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="<%= activity.status === 'success' ? 'text-green-500' : 'text-gray-400' %> mr-3">
+                                    <%= activity.status === 'success' ? '✅' : '⏳' %>
+                                </span>
+                                <p class="text-sm font-medium text-gray-900"><%= activity.action %></p>
+                            </div>
+                            <p class="text-sm text-gray-500"><%= activity.time %></p>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

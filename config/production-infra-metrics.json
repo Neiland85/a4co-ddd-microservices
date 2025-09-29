@@ -1,0 +1,60 @@
+{
+  "kubernetes": {
+    "nodes": [
+      "cpu_usage",
+      "memory_usage",
+      "disk_usage",
+      "network_io"
+    ],
+    "pods": [
+      "status",
+      "restarts",
+      "resource_usage"
+    ],
+    "services": [
+      "availability",
+      "response_time",
+      "error_rate"
+    ]
+  },
+  "database": {
+    "postgresql": [
+      "connections",
+      "query_performance",
+      "disk_usage",
+      "replication_lag"
+    ],
+    "redis": [
+      "memory_usage",
+      "hit_rate",
+      "connections",
+      "latency"
+    ]
+  },
+  "external": {
+    "apis": [
+      "response_time",
+      "success_rate",
+      "rate_limits"
+    ],
+    "third_party": [
+      "availability",
+      "performance",
+      "errors"
+    ]
+  },
+  "thresholds": {
+    "critical": {
+      "cpu_usage": 90,
+      "memory_usage": 85,
+      "error_rate": 5,
+      "response_time": 3000
+    },
+    "warning": {
+      "cpu_usage": 75,
+      "memory_usage": 70,
+      "error_rate": 1,
+      "response_time": 1000
+    }
+  }
+}

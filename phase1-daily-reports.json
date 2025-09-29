@@ -1,0 +1,73 @@
+{
+  "report_schedule": {
+    "time": "08:00",
+    "timezone": "Europe/Madrid",
+    "recipients": [
+      "devops@company.com",
+      "product@company.com",
+      "engineering@company.com"
+    ],
+    "channels": [
+      "slack_daily_report",
+      "email"
+    ]
+  },
+  "report_sections": {
+    "executive_summary": {
+      "key_metrics": [
+        "adoption_rate",
+        "error_rate",
+        "user_satisfaction"
+      ],
+      "status_indicator": "RED/YELLOW/GREEN",
+      "critical_issues": "Top 3 issues requiring attention"
+    },
+    "detailed_metrics": {
+      "adoption": [
+        "feature_usage",
+        "user_engagement",
+        "conversion_impact"
+      ],
+      "performance": [
+        "response_time",
+        "error_rate",
+        "throughput"
+      ],
+      "quality": [
+        "bug_reports",
+        "user_feedback",
+        "support_tickets"
+      ]
+    },
+    "incidents": {
+      "summary": "Incidents in last 24h",
+      "impact_assessment": "Business impact of each incident",
+      "resolution_status": "Open/Resolved incidents"
+    },
+    "user_feedback": {
+      "positive_feedback": "Top positive comments",
+      "concerns": "Top user concerns and issues",
+      "feature_requests": "New feature requests from beta users"
+    },
+    "recommendations": {
+      "immediate_actions": "Actions needed today",
+      "monitoring_adjustments": "Changes to monitoring thresholds",
+      "rollout_adjustments": "Recommendations for rollout progression"
+    }
+  },
+  "report_distribution": {
+    "internal": [
+      "DevOps Team",
+      "Engineering Team",
+      "Product Team"
+    ],
+    "executive": [
+      "CTO",
+      "Head of Product",
+      "VP Engineering"
+    ],
+    "external": [
+      "Beta users summary (anonymized)"
+    ]
+  }
+}

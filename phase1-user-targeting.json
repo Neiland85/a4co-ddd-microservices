@@ -1,0 +1,70 @@
+{
+  "internal_beta_users": [
+    "dev-team-lead",
+    "qa-lead",
+    "product-manager",
+    "engineering-manager",
+    "dev-user-1",
+    "dev-user-2",
+    "qa-user-1",
+    "qa-user-2",
+    "pm-user-1",
+    "pm-user-2"
+  ],
+  "targeting_rules": {
+    "percentage_based": {
+      "enabled": true,
+      "percentage": 10,
+      "method": "user_id_hash"
+    },
+    "audience_based": {
+      "enabled": true,
+      "audiences": [
+        "internal_beta"
+      ],
+      "criteria": {
+        "email_domain": [
+          "company.com",
+          "dev.company.com"
+        ],
+        "department": [
+          "engineering",
+          "product",
+          "qa"
+        ]
+      }
+    }
+  },
+  "rollout_segments": {
+    "segment_1": {
+      "name": "Internal Beta Core Team",
+      "users": [
+        "dev-team-lead",
+        "qa-lead",
+        "product-manager"
+      ],
+      "features": [
+        "ADVANCED_CHECKOUT",
+        "SMART_PRICING"
+      ],
+      "status": "active"
+    },
+    "segment_2": {
+      "name": "Internal Beta Extended Team",
+      "users": [
+        "engineering-manager",
+        "dev-user-1",
+        "dev-user-2",
+        "qa-user-1",
+        "qa-user-2",
+        "pm-user-1",
+        "pm-user-2"
+      ],
+      "features": [
+        "ADVANCED_CHECKOUT",
+        "SMART_PRICING"
+      ],
+      "status": "active"
+    }
+  }
+}

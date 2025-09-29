@@ -1,0 +1,17 @@
+
+[alias]
+    # Comandos optimizados para trunk-based
+    trunk-status = !git status --short --branch
+    trunk-log = !git log --oneline --graph --decorate -10
+    trunk-diff = !git diff main..HEAD
+    trunk-merge = !git checkout main && git pull && git merge develop --no-ff
+    trunk-release = !git tag -a $(date +%Y.%m.%d) -m "Release $(date +%Y-%m-%d)"
+
+[merge]
+    ff = only
+
+[push]
+    default = simple
+
+[core]
+    editor = code --wait

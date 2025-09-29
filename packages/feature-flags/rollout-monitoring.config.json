@@ -1,0 +1,23 @@
+{
+  "metrics": {
+    "errorRate": true,
+    "performance": true,
+    "usage": true,
+    "conversion": true
+  },
+  "alerts": {
+    "channels": [
+      "slack",
+      "email"
+    ],
+    "thresholds": {
+      "errorRate": 0.05,
+      "performance": 0.9,
+      "rolloutStuck": 86400000
+    }
+  },
+  "dashboard": {
+    "refreshInterval": 30000,
+    "metricsRetention": 2592000000
+  }
+}

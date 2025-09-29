@@ -1,0 +1,50 @@
+{
+  "phase": 1,
+  "name": "Core eCommerce Features",
+  "features": [
+    "ADVANCED_CHECKOUT",
+    "SMART_PRICING"
+  ],
+  "strategy": "safe",
+  "targetAudience": "beta_users",
+  "startDate": "2025-09-29T12:51:00.420Z",
+  "durationWeeks": 2,
+  "status": "ACTIVE_25_PERCENT",
+  "rolloutSchedule": [
+    {
+      "week": 1,
+      "percentage": 10,
+      "audience": "internal_beta",
+      "status": "active",
+      "activatedAt": "2025-09-29T12:54:53.805Z"
+    },
+    {
+      "week": 1,
+      "percentage": 25,
+      "audience": "external_beta",
+      "status": "active",
+      "activatedAt": "2025-09-29T13:01:22.064Z"
+    },
+    {
+      "week": 2,
+      "percentage": 50,
+      "audience": "premium_users",
+      "status": "pending"
+    },
+    {
+      "week": 2,
+      "percentage": 100,
+      "audience": "all_users",
+      "status": "pending"
+    }
+  ],
+  "currentRollout": {
+    "percentage": 25,
+    "audience": "external_beta",
+    "features": [
+      "ADVANCED_CHECKOUT",
+      "SMART_PRICING"
+    ],
+    "startTime": "2025-09-29T13:01:22.067Z"
+  }
+}

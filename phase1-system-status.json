@@ -1,0 +1,22 @@
+{
+  "feature-flags-service": {
+    "status": "healthy",
+    "response_time": 1334.7398065383118,
+    "last_check": "2025-09-29T12:57:12.396Z"
+  },
+  "rollout-service": {
+    "status": "healthy",
+    "response_time": 1349.9886186675737,
+    "last_check": "2025-09-29T12:57:12.399Z"
+  },
+  "monitoring-service": {
+    "status": "healthy",
+    "response_time": 676.615253614662,
+    "last_check": "2025-09-29T12:57:12.399Z"
+  },
+  "user-targeting-service": {
+    "status": "healthy",
+    "response_time": 620.6840175640126,
+    "last_check": "2025-09-29T12:57:12.399Z"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "strategies": {
+    "safe": {
+      "initialPercentage": 0.01,
+      "increment": 0.05,
+      "monitoringTime": 600000
+    },
+    "medium": {
+      "initialPercentage": 0.05,
+      "increment": 0.1,
+      "monitoringTime": 1800000
+    },
+    "risky": {
+      "initialPercentage": 0.001,
+      "increment": 0.01,
+      "monitoringTime": 3600000
+    }
+  },
+  "autoPause": {
+    "errorRateThreshold": 0.05,
+    "performanceThreshold": 0.9
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "elite": {
+    "deploymentFrequency": 15,
+    "leadTime": 5.67,
+    "failureRate": 8.55,
+    "recoveryTime": 4.5
+  },
+  "high": {
+    "deploymentFrequency": 7,
+    "leadTime": 24,
+    "failureRate": 15,
+    "recoveryTime": 60
+  },
+  "medium": {
+    "deploymentFrequency": 1,
+    "leadTime": 168,
+    "failureRate": 30,
+    "recoveryTime": 1440
+  }
+}
