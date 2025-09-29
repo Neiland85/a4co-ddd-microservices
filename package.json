@@ -150,7 +150,9 @@
   "pnpm": {
     "overrides": {
       "tar-fs": ">=2.1.4",
-      "lodash": ">=4.17.21"
+      "lodash": ">=4.17.21",
+      "esbuild": ">=0.25.0",
+      "tmp": ">=0.2.4"
     }
   },
   "repository": {
