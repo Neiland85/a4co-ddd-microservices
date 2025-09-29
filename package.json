@@ -147,6 +147,11 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
+  "pnpm": {
+    "overrides": {
+      "tar-fs": ">=2.1.4"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Neiland85/a4co-ddd-microservices"
