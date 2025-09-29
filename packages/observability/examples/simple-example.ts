@@ -28,7 +28,7 @@ app.use(httpLogger);
 app.use(express.json());
 
 // Ruta de ejemplo con tracing manual
-app.get('/hello/:name', async (req, res) => {
+app.get('/hello/:name', async(req, res) => {
   const tracer = getTracer('hello-endpoint');
   const span = tracer.startSpan('process-hello-request');
 
@@ -94,7 +94,7 @@ const server = app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', async() => {
   logger.info('SIGTERM received, shutting down gracefully');
 
   server.close(() => {
@@ -105,7 +105,7 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-process.on('SIGINT', async () => {
+process.on('SIGINT', async() => {
   logger.info('SIGINT received, shutting down gracefully');
 
   server.close(() => {

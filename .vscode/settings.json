@@ -36,5 +36,20 @@
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-containers"
   },
-  "chat.agent.maxRequests": 50
+  "chat.agent.maxRequests": 50,
+  "inlineChat.enableV2": true,
+  "inlineChat.finishOnType": true,
+  "inlineChat.hideOnRequest": true,
+  // Terminal Shell Integration Settings
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "both",
+  "terminal.integrated.shellIntegration.showCommandGuide": true,
+  "terminal.integrated.stickyScroll.enabled": true,
+  "terminal.integrated.suggest.enabled": true,
+  "terminal.integrated.shellIntegration.history": 100,
+  // Terminal Keyboard Shortcuts for Shell Integration
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.terminal.runRecentCommand",
+    "workbench.action.terminal.goToRecentDirectory"
+  ]
 }

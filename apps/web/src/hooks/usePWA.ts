@@ -111,7 +111,7 @@ export const usePWA = () => {
 
   // Función para instalar la PWA
   const installPWA = useCallback(
-    async () => {
+    async() => {
       if (!deferredPrompt) {
         throw new Error('No hay prompt de instalación disponible');
       }
@@ -135,11 +135,11 @@ export const usePWA = () => {
         throw error;
       }
     },
-    [deferredPrompt]
+    [deferredPrompt],
   );
 
   // Función para solicitar permisos de notificación push
-  const requestNotificationPermission = useCallback(async () => {
+  const requestNotificationPermission = useCallback(async() => {
     if (!('Notification' in window)) {
       throw new Error('Este navegador no soporta notificaciones');
     }
@@ -157,7 +157,7 @@ export const usePWA = () => {
   }, []);
 
   // Función para enviar notificación push
-  const sendPushNotification = useCallback(async (title: string, options?: NotificationOptions) => {
+  const sendPushNotification = useCallback(async(title: string, options?: NotificationOptions) => {
     if (!('Notification' in window)) {
       throw new Error('Este navegador no soporta notificaciones');
     }
@@ -177,7 +177,7 @@ export const usePWA = () => {
 
   // Función para obtener ubicación del usuario
   const getCurrentLocation = useCallback(
-    async (options?: PositionOptions): Promise<GeolocationPosition> => {
+    async(options?: PositionOptions): Promise<GeolocationPosition> => {
       if (!('geolocation' in navigator)) {
         throw new Error('Este navegador no soporta geolocalización');
       }
@@ -191,7 +191,7 @@ export const usePWA = () => {
         });
       });
     },
-    []
+    [],
   );
 
   // Función para calcular distancia entre dos puntos
@@ -209,11 +209,11 @@ export const usePWA = () => {
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     },
-    []
+    [],
   );
 
   // Función para sincronizar en background
-  const syncInBackground = useCallback(async (tag: string) => {
+  const syncInBackground = useCallback(async(tag: string) => {
     if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) {
       throw new Error('Service Worker no disponible');
     }
@@ -234,7 +234,7 @@ export const usePWA = () => {
   }, []);
 
   // Función para verificar actualizaciones del service worker
-  const checkForUpdates = useCallback(async () => {
+  const checkForUpdates = useCallback(async() => {
     if (!('serviceWorker' in navigator)) {
       return false;
     }
@@ -253,7 +253,7 @@ export const usePWA = () => {
   }, []);
 
   // Función para limpiar caches
-  const clearCaches = useCallback(async () => {
+  const clearCaches = useCallback(async() => {
     if (!('caches' in window)) {
       return false;
     }

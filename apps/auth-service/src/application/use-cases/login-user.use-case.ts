@@ -16,7 +16,7 @@ export interface LoginResponse {
 export class LoginUserUseCase implements UseCase<LoginUserDto, LoginResponse> {
   constructor(
     private readonly userRepository: UserRepositoryPort,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   async execute(request: LoginUserDto): Promise<LoginResponse> {

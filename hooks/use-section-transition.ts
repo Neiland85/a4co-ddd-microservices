@@ -36,7 +36,7 @@ export function useSectionTransition(activeSection: string) {
         requestAnimationFrame(animateProgress);
       }
     },
-    [previousSection]
+    [previousSection],
   );
 
   // Efecto optimizado para detectar cambios de sección
@@ -55,7 +55,7 @@ export function useSectionTransition(activeSection: string) {
       // Función helper para obtener el progreso normalizado (0-1)
       normalizedProgress: Math.min(transitionProgress, 1),
     }),
-    [isTransitioning, previousSection, transitionProgress]
+    [isTransitioning, previousSection, transitionProgress],
   );
 
   return transitionState;

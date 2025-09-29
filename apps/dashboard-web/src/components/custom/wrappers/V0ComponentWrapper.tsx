@@ -140,7 +140,7 @@ export function V0ComponentWrapper({
       }
       onEvent?.(eventName, eventData);
     },
-    [customizations.analytics, onEvent]
+    [customizations.analytics, onEvent],
   );
 
   // Props finales para el componente v0
@@ -171,7 +171,7 @@ export function V0ComponentWrapper({
     loading && 'v0-loading',
     error && 'v0-error',
     // Personalización adicional
-    customizations.className
+    customizations.className,
   );
 
   // Props de accesibilidad
@@ -230,7 +230,7 @@ export function V0ComponentWrapper({
 // HOC para crear wrappers predefinidos
 export function withV0Wrapper(
   V0Component: React.ComponentType<Record<string, unknown>>,
-  defaultCustomizations: V0WrapperCustomizations = {}
+  defaultCustomizations: V0WrapperCustomizations = {},
 ) {
   return function WrappedV0Component(props: Readonly<Record<string, unknown>>) {
     return (
@@ -290,7 +290,7 @@ export const v0WrapperPresets = {
 // Hook para usar el wrapper programáticamente
 export function useV0Wrapper(
   Component: React.ComponentType<Record<string, unknown>>,
-  customizations?: V0WrapperCustomizations
+  customizations?: V0WrapperCustomizations,
 ) {
   return React.useMemo(() => withV0Wrapper(Component, customizations), [Component, customizations]);
 }

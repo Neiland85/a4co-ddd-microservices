@@ -13,6 +13,6 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  testMatch: ['<rootDir>/test/**/*.test.ts', '<rootDir>/*.test.ts'],
+  testMatch: ['<rootDir>/test/**/*.test.ts', '<rootDir>/*.test.ts', '<rootDir>/src/**/*.test.ts'],
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
 };

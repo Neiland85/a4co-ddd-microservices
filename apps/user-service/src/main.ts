@@ -1,38 +1,39 @@
-import { initializeTracing, logger } from '@a4co/observability';
+import { initializeTracing, getGlobalLogger } from '@a4co/observability';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import { UserModule } from './user.module';
+import * as process from 'process';
 
 async function bootstrap() {
   // Initialize observability
-  initializeTracing('user-service', {
+  initializeTracing({
     serviceName: 'user-service',
     serviceVersion: '1.0.0',
     environment: process.env['NODE_ENV'] || 'development',
   });
 
-  // TODO: Create UserModule
-  const app = await NestFactory.create(undefined as any, {
-    logger: logger,
-  });
+  // Get logger instance
+  const logger = getGlobalLogger();
 
-  // Use Pino HTTP middleware for request logging
-  app.use(logger.pinoHttpMiddleware());
+  const app = await NestFactory.create(UserModule, {
+    logger: false, // Disable default NestJS logger
+  });
 
   // Security middleware
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
+          defaultSrc: ['\'self\''],
+          styleSrc: ['\'self\'', '\'unsafe-inline\''],
+          scriptSrc: ['\'self\''],
+          imgSrc: ['\'self\'', 'data:', 'https:'],
         },
       },
       crossOriginEmbedderPolicy: false,
-    })
+    }),
   );
 
   // Global validation pipe
@@ -41,8 +42,17 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
+
+  // Braces security middleware
+  const bracesMiddleware = new BracesSecurityMiddleware({
+    maxExpansionSize: 50,
+    maxRangeSize: 10,
+    monitoringEnabled: true,
+  });
+  app.use(bracesMiddleware.validateRequestBody());
+  app.use(bracesMiddleware.validateQueryParams());
 
   // CORS configuration
   app.enableCors({
@@ -64,7 +74,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const port = process.env['PORT'] || 3003;
+  const port = process.env['PORT'] || 3005;
   logger.info(`🚀 User Service iniciado en puerto ${port}`);
   logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
 
@@ -72,6 +82,7 @@ async function bootstrap() {
 }
 
 bootstrap().catch(err => {
+  const logger = getGlobalLogger();
   logger.error('Error al iniciar el servicio:', err);
   process.exit(1);
 });

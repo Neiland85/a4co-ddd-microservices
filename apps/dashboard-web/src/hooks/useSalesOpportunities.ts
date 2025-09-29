@@ -50,7 +50,7 @@ export function useSalesOpportunities(options: UseSalesOpportunitiesOptions = {}
   });
 
   const fetchOpportunities = useCallback(
-    async (customFilters = {}) => {
+    async(customFilters = {}) => {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -89,14 +89,14 @@ export function useSalesOpportunities(options: UseSalesOpportunitiesOptions = {}
         }));
       }
     },
-    [memoizedOptions]
+    [memoizedOptions],
   );
 
   // Use ref to store the latest fetchOpportunities function
   const fetchOpportunitiesRef = useRef(fetchOpportunities);
   fetchOpportunitiesRef.current = fetchOpportunities;
 
-  const createOpportunity = useCallback(async (opportunityData: Partial<SalesOpportunity>) => {
+  const createOpportunity = useCallback(async(opportunityData: Partial<SalesOpportunity>) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -156,7 +156,7 @@ export function useSalesOpportunities(options: UseSalesOpportunitiesOptions = {}
     hasData: state.opportunities.length > 0,
     isEmpty: !state.loading && state.opportunities.length === 0,
     isFiltered: Object.keys(state.filters).some(
-      key => state.filters[key as keyof typeof state.filters]
+      key => state.filters[key as keyof typeof state.filters],
     ),
   };
 }

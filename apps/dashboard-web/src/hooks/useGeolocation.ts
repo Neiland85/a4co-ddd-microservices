@@ -44,7 +44,7 @@ interface GeolocationState {
 // Función auxiliar para reverse geocoding (extraída para reducir anidación)
 async function reverseGeocode(
   lat: number,
-  lng: number
+  lng: number,
 ): Promise<{ municipality?: string; province?: string }> {
   // En una implementación real, aquí usarías un servicio como Google Maps, OpenStreetMap, etc.
   // Por ahora, simulamos algunos municipios de Jaén basados en coordenadas aproximadas
@@ -65,7 +65,7 @@ async function reverseGeocode(
   // Buscar municipio más cercano
   for (const municipality of jaenMunicipalities) {
     const distance = Math.sqrt(
-      Math.pow(lat - municipality.lat, 2) + Math.pow(lng - municipality.lng, 2)
+      Math.pow(lat - municipality.lat, 2) + Math.pow(lng - municipality.lng, 2),
     );
 
     if (distance <= municipality.bounds) {
@@ -89,7 +89,7 @@ async function reverseGeocode(
 // Función auxiliar para procesar posición exitosa
 function processSuccessfulPosition(
   position: GeolocationPosition,
-  setState: React.Dispatch<React.SetStateAction<GeolocationState>>
+  setState: React.Dispatch<React.SetStateAction<GeolocationState>>,
 ): Promise<LocationData> {
   const { latitude, longitude, accuracy } = position.coords;
 
@@ -129,7 +129,7 @@ function processSuccessfulPosition(
 // Función auxiliar para procesar errores de geolocalización
 function processGeolocationError(
   error: GeolocationPositionError,
-  setState: React.Dispatch<React.SetStateAction<GeolocationState>>
+  setState: React.Dispatch<React.SetStateAction<GeolocationState>>,
 ): string {
   let errorMessage = 'Error obteniendo ubicación';
 
@@ -172,7 +172,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
   });
 
   // Verificar permisos de geolocalización
-  const checkPermission = useCallback(async () => {
+  const checkPermission = useCallback(async() => {
     if ('permissions' in navigator) {
       try {
         const permission = await navigator.permissions.query({
@@ -189,7 +189,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
   }, []);
 
   // Obtener ubicación actual
-  const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
+  const getCurrentLocation = useCallback(async(): Promise<LocationData | null> => {
     if (!navigator.geolocation) {
       setState(prev => ({
         ...prev,
@@ -202,7 +202,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     return new Promise(resolve => {
-      const onSuccess = async (position: GeolocationPosition) => {
+      const onSuccess = async(position: GeolocationPosition) => {
         try {
           const locationData = await processSuccessfulPosition(position, setState);
           resolve(locationData);
@@ -261,7 +261,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
   const findNearbyLocations = useCallback(
     (
       locations: MarketLocation[],
-      maxDistance: number = 20 // km
+      maxDistance: number = 20, // km
     ): NearbyLocation[] => {
       if (!state.location) return [];
 
@@ -276,7 +276,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
         .filter(location => location.distance <= maxDistance)
         .sort((a, b) => a.distance - b.distance);
     },
-    [state.location, calculateDistance]
+    [state.location, calculateDistance],
   );
 
   const clearError = useCallback(() => {

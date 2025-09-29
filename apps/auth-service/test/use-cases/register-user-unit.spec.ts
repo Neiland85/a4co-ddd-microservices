@@ -45,7 +45,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
       mockUserRepository, // Mock para UserRepositoryPort
       mockCryptographyService, // Mock para CryptographyServicePort
       mockEventBus, // Mock ajustado para cumplir con EventBusPort
-      mockUserDomainService // Sustituir el mock innecesario
+      mockUserDomainService, // Sustituir el mock innecesario
     );
   });
 
@@ -58,7 +58,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     expect(useCase.execute).toBeDefined();
   });
 
-  it('should call validateUniqueEmail when executing', async () => {
+  it('should call validateUniqueEmail when executing', async() => {
     // Arrange
     const registerDto = {
       email: 'test@example.com',
@@ -97,7 +97,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
   });
 
-  it('should throw error when email validation fails', async () => {
+  it('should throw error when email validation fails', async() => {
     // Arrange
     const registerDto = {
       email: 'existing@example.com',
@@ -110,13 +110,13 @@ describe('RegisterUserUseCase - Unit Test', () => {
 
     // Act & Assert
     await expect(useCase.execute(registerDto as any)).rejects.toThrow(
-      'El email ya está registrado'
+      'El email ya está registrado',
     );
 
     expect(mockUserRepository.save).not.toHaveBeenCalled();
   });
 
-  it('should validate unique email successfully', async () => {
+  it('should validate unique email successfully', async() => {
     // Arrange
     const registerDto = {
       email: 'unique@example.com',
@@ -133,7 +133,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     expect(mockUserDomainService.validateUniqueEmail).toHaveBeenCalledWith(registerDto.email);
   });
 
-  it('should create a user successfully', async () => {
+  it('should create a user successfully', async() => {
     const registerDto = createRegisterUserDto();
     const user = createUser();
 
@@ -147,7 +147,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     expect(result.email).toBe(registerDto.email);
   });
 
-  it('should hash the password before saving the user', async () => {
+  it('should hash the password before saving the user', async() => {
     // Arrange
     const registerDto = createRegisterUserDto();
     const hashedPassword = 'hashed-password';
@@ -169,12 +169,12 @@ describe('RegisterUserUseCase - Unit Test', () => {
     // Assert
     expect(mockCryptographyService.hashPassword).toHaveBeenCalledWith(registerDto.password);
     expect(mockUserRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({ hashedPassword })
+      expect.objectContaining({ hashedPassword }),
     );
     expect(result.email).toBe(registerDto.email);
   });
 
-  it('should throw an error if hashPassword fails', async () => {
+  it('should throw an error if hashPassword fails', async() => {
     // Arrange
     const registerDto = createRegisterUserDto();
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
@@ -185,7 +185,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     expect(mockUserRepository.save).not.toHaveBeenCalled();
   });
 
-  it('should throw an error for invalid DTO fields', async () => {
+  it('should throw an error for invalid DTO fields', async() => {
     // Arrange
     const invalidDto = {
       email: 'invalid-email',
@@ -198,7 +198,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
     expect(mockUserRepository.save).not.toHaveBeenCalled();
   });
 
-  it('should handle errors in findByEmail method', async () => {
+  it('should handle errors in findByEmail method', async() => {
     // Arrange
     const registerDto = createRegisterUserDto();
     mockUserDomainService.validateUniqueEmail.mockResolvedValue(undefined);
@@ -269,11 +269,11 @@ describe('RegisterUserUseCase - Integration Test', () => {
       mockUserRepository, // Mock para UserRepositoryPort
       mockCryptographyService, // Mock para CryptographyServicePort
       mockEventBus, // Mock para EventBusPort
-      mockUserDomainService // Mock para UserDomainService
+      mockUserDomainService, // Mock para UserDomainService
     );
   });
 
-  it('should handle successful user registration flow', async () => {
+  it('should handle successful user registration flow', async() => {
     // Arrange
     const registerDto = {
       email: 'newuser@example.com',
@@ -306,7 +306,7 @@ describe('RegisterUserUseCase - Integration Test', () => {
     expect(result.name).toBe(registerDto.name);
   });
 
-  it('should handle repository save errors', async () => {
+  it('should handle repository save errors', async() => {
     // Arrange
     const registerDto = {
       email: 'test@example.com',
@@ -356,11 +356,11 @@ describe('RegisterUserUseCase - Event Publication', () => {
       mockUserRepository,
       mockUserDomainService,
       mockEventBus,
-      mockCryptographyService
+      mockCryptographyService,
     );
   });
 
-  it('should publish domain events after successful user registration', async () => {
+  it('should publish domain events after successful user registration', async() => {
     const registerDto = new RegisterUserDto();
     registerDto.email = 'newuser@example.com';
     registerDto.name = 'New User';
@@ -388,14 +388,14 @@ describe('RegisterUserUseCase - Event Publication', () => {
     expect(mockUser.clearEvents).toHaveBeenCalled();
   });
 
-  it('should not publish events if user registration fails', async () => {
+  it('should not publish events if user registration fails', async() => {
     const registerDto = new RegisterUserDto();
     registerDto.email = 'existing@example.com';
     registerDto.name = 'Existing User';
     registerDto.password = 'Password123';
 
     mockUserDomainService.validateUniqueEmail.mockRejectedValue(
-      new Error('El email ya está registrado')
+      new Error('El email ya está registrado'),
     );
 
     await expect(useCase.execute(registerDto)).rejects.toThrow('El email ya está registrado');
@@ -403,7 +403,7 @@ describe('RegisterUserUseCase - Event Publication', () => {
     expect(mockEventBus.publishAll).not.toHaveBeenCalled();
   });
 
-  it('should publish events with correct data', async () => {
+  it('should publish events with correct data', async() => {
     // Arrange
     const registerDto = createRegisterUserDto();
     const mockUser = {

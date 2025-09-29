@@ -2,82 +2,103 @@
 
 import { Filter, Search, ShoppingCart, Star } from 'lucide-react';
 import React, { useState } from 'react';
+import { Product } from '../types';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-  rating: number;
-  image: string;
-  description: string;
+interface ProductCatalogV0Props {
+  products?: Product[];
 }
 
 const mockProducts: Product[] = [
   {
     id: '1',
-    name: 'Artesanía de Cerámica',
-    price: 45000,
-    category: 'Cerámica',
-    rating: 4.8,
-    image: '/api/placeholder/300/200',
-    description: 'Hermosa pieza de cerámica hecha a mano por artesanos locales',
+    name: 'Aceite de Oliva Virgen Extra',
+    description: 'Aceite de oliva virgen extra de Jaén, premiado en concursos internacionales',
+    price: 12.5,
+    category: 'Alimentación',
+    stock: 100,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: '2',
-    name: 'Textil Wayuu',
-    price: 120000,
-    category: 'Textiles',
-    rating: 4.9,
-    image: '/api/placeholder/300/200',
-    description: 'Auténtico textil Wayuu con patrones tradicionales',
+    name: 'Cerámica de Talavera',
+    description: 'Hermosa pieza de cerámica de Talavera con diseños tradicionales andaluces',
+    price: 45.0,
+    category: 'Artesanía',
+    stock: 25,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: '3',
-    name: 'Joyería en Filigrana',
-    price: 85000,
-    category: 'Joyería',
-    rating: 4.7,
-    image: '/api/placeholder/300/200',
-    description: 'Delicada joyería en filigrana con técnicas ancestrales',
+    name: 'Jamón Ibérico de Bellota',
+    description: 'Jamón ibérico de bellota curado tradicionalmente en las sierras andaluzas',
+    price: 85.0,
+    category: 'Alimentación',
+    stock: 10,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: '4',
-    name: 'Cuero Artesanal',
-    price: 95000,
-    category: 'Cuero',
-    rating: 4.6,
-    image: '/api/placeholder/300/200',
-    description: 'Productos de cuero trabajados con técnicas tradicionales',
+    name: 'Vino de Jerez Fino',
+    description: 'Vino fino de Jerez con denominación de origen protegida',
+    price: 15.0,
+    category: 'Bebidas',
+    stock: 50,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: '5',
-    name: 'Madera Tallada',
-    price: 150000,
-    category: 'Madera',
-    rating: 4.8,
-    image: '/api/placeholder/300/200',
-    description: 'Esculturas y objetos decorativos en madera local',
+    name: 'Productos de Cuero',
+    description: 'Productos de cuero trabajados con técnicas tradicionales',
+    price: 75.0,
+    category: 'Artesanía',
+    stock: 15,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: '6',
+    name: 'Madera Tallada',
+    description: 'Esculturas y objetos decorativos en madera local',
+    price: 150.0,
+    category: 'Artesanía',
+    stock: 8,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '7',
     name: 'Cestería Tradicional',
-    price: 35000,
-    category: 'Cestería',
-    rating: 4.5,
-    image: '/api/placeholder/300/200',
     description: 'Cestas tejidas con fibras naturales de la región',
+    price: 35.0,
+    category: 'Artesanía',
+    stock: 20,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ];
 
-const categories = ['Todos', 'Cerámica', 'Textiles', 'Joyería', 'Cuero', 'Madera', 'Cestería'];
+const categories = ['Todos', 'Alimentación', 'Artesanía', 'Bebidas'];
 
-export function ProductCatalogV0(): React.ReactElement {
+export function ProductCatalogV0({ products }: ProductCatalogV0Props): React.ReactElement {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [sortBy, setSortBy] = useState('name');
 
-  const filteredProducts = mockProducts.filter(product => {
+  // Use provided products or fallback to mock data
+  const productsToDisplay = products || mockProducts;
+
+  const filteredProducts = productsToDisplay.filter(product => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -91,8 +112,7 @@ export function ProductCatalogV0(): React.ReactElement {
         return a.price - b.price;
       case 'price-high':
         return b.price - a.price;
-      case 'rating':
-        return b.rating - a.rating;
+      case 'name':
       default:
         return a.name.localeCompare(b.name);
     }
@@ -150,7 +170,6 @@ export function ProductCatalogV0(): React.ReactElement {
               <option value="name">Nombre A-Z</option>
               <option value="price-low">Precio: Menor a Mayor</option>
               <option value="price-high">Precio: Mayor a Menor</option>
-              <option value="rating">Mejor Calificado</option>
             </select>
           </div>
         </div>
@@ -159,7 +178,7 @@ export function ProductCatalogV0(): React.ReactElement {
       {/* Resultados */}
       <div className="mb-4">
         <p className="text-gray-600">
-          Mostrando {sortedProducts.length} de {mockProducts.length} productos
+          Mostrando {sortedProducts.length} de {productsToDisplay.length} productos
         </p>
       </div>
 
@@ -181,7 +200,9 @@ export function ProductCatalogV0(): React.ReactElement {
                 <h3 className="line-clamp-1 text-lg font-semibold text-gray-900">{product.name}</h3>
                 <div className="ml-2 flex items-center gap-1">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm text-gray-600">{product.rating}</span>
+                  <span className="text-sm text-gray-600">
+                    4.{Math.floor(Math.random() * 9) + 1}
+                  </span>
                 </div>
               </div>
 
@@ -211,9 +232,6 @@ export function ProductCatalogV0(): React.ReactElement {
           <p className="text-gray-500">Intenta ajustar los filtros o términos de búsqueda</p>
         </div>
       )}
-
-      <label htmlFor="mi-select">Selecciona una opción:</label>
-      <select id="mi-select">{/* Opciones aquí */}</select>
     </div>
   );
 }

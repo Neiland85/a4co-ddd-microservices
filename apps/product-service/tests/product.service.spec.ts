@@ -70,7 +70,7 @@ describe('Product Value Objects', () => {
     it('should throw error for description too long', () => {
       const longDesc = 'a'.repeat(2001);
       expect(() => new ProductDescription(longDesc)).toThrow(
-        'Product description cannot exceed 2000 characters'
+        'Product description cannot exceed 2000 characters',
       );
     });
   });

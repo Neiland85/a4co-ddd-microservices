@@ -43,7 +43,7 @@ const fixChartFile = (filePath: string) => {
     >
       {${styleLogic}.join("")}
     </style>`;
-      }
+      },
     );
   }
 
@@ -53,7 +53,7 @@ const fixChartFile = (filePath: string) => {
     updatedContent = content.replace(
       /(\s*)<style\s+dangerouslySetInnerHTML/g,
       `$1{/* @sonar-disable-next-line - CSS injection is safe here, only CSS variables are injected */}
-$1<style dangerouslySetInnerHTML`
+$1<style dangerouslySetInnerHTML`,
     );
   }
 
@@ -67,7 +67,7 @@ $1<style dangerouslySetInnerHTML`
   return false;
 };
 
-const main = async () => {
+const main = async() => {
   console.log('🔍 Buscando archivos chart.tsx con security hotspots...\n');
 
   const chartFiles = findChartFiles();

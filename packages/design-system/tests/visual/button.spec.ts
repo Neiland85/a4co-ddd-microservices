@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Button Component Visual Tests', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async({ page }) => {
     // Navegar a la historia del botón en Storybook
     await page.goto('/iframe.html?id=components-button--default');
     await page.waitForLoadState('networkidle');
   });
 
-  test('default button appearance', async ({ page }) => {
+  test('default button appearance', async({ page }) => {
     const button = page.locator('button').first();
     await expect(button).toBeVisible();
 
@@ -18,7 +18,7 @@ test.describe('Button Component Visual Tests', () => {
     });
   });
 
-  test('button hover state', async ({ page }) => {
+  test('button hover state', async({ page }) => {
     const button = page.locator('button').first();
 
     // Hover sobre el botón
@@ -31,7 +31,7 @@ test.describe('Button Component Visual Tests', () => {
     });
   });
 
-  test('button focus state', async ({ page }) => {
+  test('button focus state', async({ page }) => {
     const button = page.locator('button').first();
 
     // Focus en el botón
@@ -43,7 +43,7 @@ test.describe('Button Component Visual Tests', () => {
     });
   });
 
-  test('button active state', async ({ page }) => {
+  test('button active state', async({ page }) => {
     const button = page.locator('button').first();
 
     // Simular click mantenido
@@ -55,7 +55,7 @@ test.describe('Button Component Visual Tests', () => {
     });
   });
 
-  test('button disabled state', async ({ page }) => {
+  test('button disabled state', async({ page }) => {
     // Navegar a la variante disabled
     await page.goto('/iframe.html?id=components-button--disabled');
     await page.waitForLoadState('networkidle');
@@ -68,7 +68,7 @@ test.describe('Button Component Visual Tests', () => {
     });
   });
 
-  test('button variants', async ({ page }) => {
+  test('button variants', async({ page }) => {
     const variants = ['primary', 'secondary', 'danger', 'success'];
 
     for (const variant of variants) {
@@ -85,7 +85,7 @@ test.describe('Button Component Visual Tests', () => {
     }
   });
 
-  test('button sizes', async ({ page }) => {
+  test('button sizes', async({ page }) => {
     const sizes = ['small', 'medium', 'large'];
 
     for (const size of sizes) {
@@ -102,7 +102,7 @@ test.describe('Button Component Visual Tests', () => {
     }
   });
 
-  test('button with icon', async ({ page }) => {
+  test('button with icon', async({ page }) => {
     await page.goto('/iframe.html?id=components-button--with-icon');
     await page.waitForLoadState('networkidle');
 
@@ -114,7 +114,7 @@ test.describe('Button Component Visual Tests', () => {
     });
   });
 
-  test('button loading state', async ({ page }) => {
+  test('button loading state', async({ page }) => {
     await page.goto('/iframe.html?id=components-button--loading');
     await page.waitForLoadState('networkidle');
 

@@ -49,7 +49,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async updateProduct(
     @Param('id') id: string,
-    @Body() productData: UpdateProductDTO
+    @Body() productData: UpdateProductDTO,
   ): Promise<any> {
     return await this.productService.updateProduct({ ...productData, id });
   }
@@ -87,7 +87,7 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Información de stock obtenida' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async getProductStock(
-    @Param('id') id: string
+    @Param('id') id: string,
   ): Promise<{ stock: number; isInStock: boolean; isLowStock: boolean }> {
     return await this.productService.getProductStock(id);
   }

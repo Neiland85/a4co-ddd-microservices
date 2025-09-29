@@ -33,11 +33,11 @@ const defaultSerializers = {
 function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
   const enhancedLogger = Object.create(baseLogger) as ObservabilityLogger;
 
-  enhancedLogger.withContext = function (ctx: LogContext): ObservabilityLogger {
+  enhancedLogger.withContext = function(ctx: LogContext): ObservabilityLogger {
     return createEnhancedLogger(baseLogger.child(ctx));
   };
 
-  enhancedLogger.startSpan = function (name: string, attributes?: Record<string, any>) {
+  enhancedLogger.startSpan = function(name: string, attributes?: Record<string, any>) {
     const tracer = trace.getTracer('@a4co/observability');
     const span = tracer.startSpan(name, { attributes });
     // Log span start (opcional, solo si existe info)
@@ -55,7 +55,7 @@ function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
 
 // Create logger with configuration
 export function createLogger(
-  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string },
 ): ObservabilityLogger {
   const options: LoggerOptions = {
     name: config.serviceName,
@@ -107,7 +107,7 @@ export function createLogger(
 
 // Initialize global logger
 export function initializeLogger(
-  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string },
 ): ObservabilityLogger {
   globalLogger = createLogger(config);
   return globalLogger;
@@ -164,7 +164,7 @@ export function createHttpLogger(logger?: ObservabilityLogger) {
           duration,
           responseSize: res.get?.('content-length'),
         },
-        'Request completed'
+        'Request completed',
       );
     });
 

@@ -207,7 +207,7 @@ export class ProductService extends EventDrivenService {
     }));
 
     const allItemsAvailable = validationResults.every(
-      result => result.isAvailable && result.availableQuantity >= result.requestedQuantity
+      result => result.isAvailable && result.availableQuantity >= result.requestedQuantity,
     );
 
     // Publicar respuesta de validación
@@ -405,11 +405,11 @@ async function runRefactoredDemo(): Promise<void> {
 
   // En un entorno real, esto sería un EventBus real (NATS, RabbitMQ, etc.)
   const mockEventBus: IEventBus = {
-    publish: async (subject: string, event: any) => {
+    publish: async(subject: string, event: any) => {
       console.log(`📤 Evento publicado: ${subject}`);
       // Aquí se publicaría al bus de eventos real
     },
-    subscribe: async (subject: string, handler: (event: any) => Promise<void>) => {
+    subscribe: async(subject: string, handler: (event: any) => Promise<void>) => {
       console.log(`📥 Suscrito a: ${subject}`);
       // Aquí se suscribiría al bus de eventos real
     },

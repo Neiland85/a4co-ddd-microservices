@@ -7,7 +7,7 @@ import { AggregateRoot, DomainEvent } from '../base-classes';
 export class Money {
   constructor(
     public readonly amount: number,
-    public readonly currency: string = 'EUR'
+    public readonly currency: string = 'EUR',
   ) {
     if (amount < 0) {
       throw new Error('Money amount cannot be negative');
@@ -46,7 +46,7 @@ export class ProductImage {
     public readonly altText?: string,
     public readonly type: ImageType = ImageType.GALLERY,
     public readonly isPrimary: boolean = false,
-    public readonly sortOrder: number = 0
+    public readonly sortOrder: number = 0,
   ) {
     if (!url || !this.isValidUrl(url)) {
       throw new Error('Invalid image URL');
@@ -69,7 +69,7 @@ export class ProductSpecification {
     public readonly value: string,
     public readonly type: SpecificationType = SpecificationType.TEXT,
     public readonly unit?: string,
-    public readonly category?: string
+    public readonly category?: string,
   ) {
     if (!name.trim()) {
       throw new Error('Specification name cannot be empty');
@@ -85,7 +85,7 @@ export class Dimensions {
     public readonly length: number,
     public readonly width: number,
     public readonly height: number,
-    public readonly unit: string = 'cm'
+    public readonly unit: string = 'cm',
   ) {
     if (length <= 0 || width <= 0 || height <= 0) {
       throw new Error('Dimensions must be positive numbers');
@@ -147,7 +147,7 @@ export class ProductCreatedEvent extends DomainEvent {
       artisanId: string;
       categoryId: string;
       createdAt: Date;
-    }
+    },
   ) {
     super();
   }
@@ -165,7 +165,7 @@ export class ProductPublishedEvent extends DomainEvent {
       price: Money;
       artisanId: string;
       publishedAt: Date;
-    }
+    },
   ) {
     super();
   }
@@ -182,7 +182,7 @@ export class ProductPriceChangedEvent extends DomainEvent {
       previousPrice: Money;
       newPrice: Money;
       changedAt: Date;
-    }
+    },
   ) {
     super();
   }
@@ -198,7 +198,7 @@ export class ProductDiscontinuedEvent extends DomainEvent {
     public readonly data: {
       reason: string;
       discontinuedAt: Date;
-    }
+    },
   ) {
     super();
   }
@@ -223,7 +223,7 @@ export class ProductVariant {
     public readonly weight?: number,
     public readonly dimensions?: Dimensions,
     private _isActive: boolean = true,
-    public readonly isDefault: boolean = false
+    public readonly isDefault: boolean = false,
   ) {
     if (!name.trim()) {
       throw new Error('Variant name cannot be empty');
@@ -306,7 +306,7 @@ export class Product extends AggregateRoot {
     public readonly keywords: string[] = [],
     public readonly metaTitle?: string,
     public readonly metaDescription?: string,
-    public readonly featured: boolean = false
+    public readonly featured: boolean = false,
   ) {
     super(id);
 
@@ -342,7 +342,7 @@ export class Product extends AggregateRoot {
         artisanId,
         categoryId,
         createdAt: new Date(),
-      })
+      }),
     );
   }
 
@@ -411,7 +411,7 @@ export class Product extends AggregateRoot {
         price: this._price,
         artisanId: this.artisanId,
         publishedAt: new Date(),
-      })
+      }),
     );
   }
 
@@ -436,7 +436,7 @@ export class Product extends AggregateRoot {
         previousPrice,
         newPrice,
         changedAt: new Date(),
-      })
+      }),
     );
   }
 
@@ -447,7 +447,7 @@ export class Product extends AggregateRoot {
       new ProductDiscontinuedEvent(this.id, {
         reason,
         discontinuedAt: new Date(),
-      })
+      }),
     );
   }
 
@@ -479,8 +479,8 @@ export class Product extends AggregateRoot {
             v.weight,
             v.dimensions,
             v.isActive,
-            false
-          )
+            false,
+          ),
       );
     }
 
@@ -500,7 +500,7 @@ export class Product extends AggregateRoot {
     // Si es la primera imagen o se marca como primary, hacer que sea la única primary
     if (image.isPrimary || this._images.length === 0) {
       this._images = this._images.map(
-        img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder)
+        img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder),
       );
     }
 
@@ -565,7 +565,7 @@ export class Product extends AggregateRoot {
     }
 
     return Math.round(
-      ((this._originalPrice.amount - this._price.amount) / this._originalPrice.amount) * 100
+      ((this._originalPrice.amount - this._price.amount) / this._originalPrice.amount) * 100,
     );
   }
 

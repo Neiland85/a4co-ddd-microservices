@@ -248,17 +248,20 @@ check_services_health() {
         IFS=':' read -r host port name <<< "$service"
         
         info "Verificando $name ($host:$port)..."
-        
-        # Esperar hasta 60 segundos
-        for i in {1..60}; do
+
+        # Esperar hasta 60 segundos (versión segura sin braces expansion)
+        local max_attempts=60
+        local attempt=1
+        while [ $attempt -le $max_attempts ]; do
             if nc -z $host $port 2>/dev/null; then
                 log "✅ $name está listo"
                 break
             fi
-            if [ $i -eq 60 ]; then
+            if [ $attempt -eq $max_attempts ]; then
                 warn "⚠️ $name no responde después de 60 segundos"
             fi
             sleep 1
+            attempt=$((attempt + 1))
         done
     done
 }

@@ -41,7 +41,7 @@ export function useProducts(options: UseProductsOptions = {}) {
     // Solo actualizamos si hay cambios reales en las opciones
     const current = optionsRef.current;
     const hasChanged = Object.keys({ ...current, ...options }).some(
-      key => current[key as keyof UseProductsOptions] !== options[key as keyof UseProductsOptions]
+      key => current[key as keyof UseProductsOptions] !== options[key as keyof UseProductsOptions],
     );
 
     if (hasChanged) {
@@ -67,7 +67,7 @@ export function useProducts(options: UseProductsOptions = {}) {
   });
 
   const fetchProducts = useCallback(
-    async (customOptions?: UseProductsOptions, append = false) => {
+    async(customOptions?: UseProductsOptions, append = false) => {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -110,10 +110,10 @@ export function useProducts(options: UseProductsOptions = {}) {
         }));
       }
     },
-    [stableOptions]
+    [stableOptions],
   );
 
-  const loadMore = useCallback(async () => {
+  const loadMore = useCallback(async() => {
     if (state.pagination.hasMore && !state.loading) {
       const offset = state.products.length;
       await fetchProducts({ limit: state.pagination.limit, offset }, true);
@@ -127,31 +127,31 @@ export function useProducts(options: UseProductsOptions = {}) {
   ]);
 
   const searchProducts = useCallback(
-    async (searchTerm: string) => {
+    async(searchTerm: string) => {
       await fetchProducts({ search: searchTerm });
     },
-    [fetchProducts]
+    [fetchProducts],
   );
 
   const filterByCategory = useCallback(
-    async (category: string) => {
+    async(category: string) => {
       await fetchProducts({ category });
     },
-    [fetchProducts]
+    [fetchProducts],
   );
 
   const filterByLocation = useCallback(
-    async (location: string) => {
+    async(location: string) => {
       await fetchProducts({ location });
     },
-    [fetchProducts]
+    [fetchProducts],
   );
 
-  const getSeasonalProducts = useCallback(async () => {
+  const getSeasonalProducts = useCallback(async() => {
     await fetchProducts({ seasonal: true });
   }, [fetchProducts]);
 
-  const getAvailableProducts = useCallback(async () => {
+  const getAvailableProducts = useCallback(async() => {
     await fetchProducts({ available: true });
   }, [fetchProducts]);
 
@@ -204,7 +204,7 @@ export function useProducts(options: UseProductsOptions = {}) {
     hasData: state.products.length > 0,
     isEmpty: !state.loading && state.products.length === 0,
     isFiltered: Object.keys(state.filters).some(
-      key => state.filters[key as keyof typeof state.filters] !== undefined
+      key => state.filters[key as keyof typeof state.filters] !== undefined,
     ),
     canLoadMore: state.pagination.hasMore && !state.loading,
   };

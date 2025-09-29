@@ -1,46 +1,39 @@
-import { Button } from '@a4co/design-system';
 import Link from 'next/link';
 
 // Temporary Button component for testing
-// const Button = React.forwardRef<HTMLButtonElement, any>(
-//   ({ children, variant = 'primary', ...props }, ref) => (
-//     <button
-//       ref={ref}
-//       className={`px-4 py-2 rounded ${
-//         variant === 'outline' ? 'border border-gray-300' : 'bg-blue-500 text-white'
-//       }`}
-//       {...props}
-//     >
-//       {children}
-//     </button>
-//   )
-// );
-// Button.displayName = 'Button';
+const Button = ({ variant = 'primary', children, ...props }: any) => (
+  <button
+    className={`rounded px-4 py-2 ${
+      variant === 'outline' ? 'border border-gray-300' : 'bg-blue-500 text-white'
+    }`}
+    {...props}
+  >
+    {children}
+  </button>
+);
 
 export default function Home(): React.ReactElement {
-  console.log('Button component:', Button); // Debug
-  console.log('Button displayName:', Button?.displayName); // Debug
   return (
     <div className="space-y-16">
       {/* Hero Section */}
       <section className="space-y-8 py-12 text-center">
         <div className="space-y-4">
-          <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
-            Gestión Tributaria Inteligente
+          <h1 className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
+            Conecta el Comercio Andaluz
           </h1>
           <p className="mx-auto max-w-2xl text-xl text-gray-600">
-            Automatiza procesos fiscales, identifica subvenciones y optimiza tu compliance
-            tributario con IA avanzada.
+            Únete a la red colaborativa que impulsa el pequeño comercio de Andalucía. Comparte
+            recursos, optimiza logística y crece juntos.
           </p>
         </div>
 
         <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Link href="/dashboard">
-            <button className="bg-a4co-olive-600 hover:bg-a4co-olive-700 rounded-xl px-8 py-3 text-white shadow-lg transition-all duration-200 hover:shadow-xl">
+            <button className="rounded-xl bg-green-600 px-8 py-3 text-white shadow-lg transition-all duration-200 hover:bg-green-700 hover:shadow-xl">
               Comenzar Ahora
             </button>
           </Link>
-          <Button variant="outline">Ver Demo</Button>
+          <Button variant="outline">Ver Marketplace</Button>
         </div>
       </section>
 

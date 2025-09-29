@@ -21,7 +21,7 @@ export function initializeMetrics(config: MetricsConfig): PrometheusExporter {
     },
     () => {
       console.log(`Prometheus metrics server started on port ${config.port || 9464}`);
-    }
+    },
   );
 
   // Crear meter provider
@@ -119,7 +119,7 @@ export class CustomMetrics {
     operation: string,
     collection: string,
     duration: number,
-    success: boolean
+    success: boolean,
   ): void {
     this.incrementCounter('db_queries_total', 1, {
       operation,
@@ -151,7 +151,7 @@ export class CustomMetrics {
     queue: string,
     operation: 'enqueue' | 'dequeue' | 'process',
     success: boolean,
-    duration?: number
+    duration?: number,
   ): void {
     // Queue operation counter
     this.incrementCounter('queue_operations_total', 1, {
@@ -192,10 +192,10 @@ export function httpMetricsMiddleware(metrics: CustomMetrics) {
 
     // Interceptar el método end
     const originalEnd = res.end;
-    (res.end as unknown) = function (
+    (res.end as unknown) = function(
       chunk?: unknown,
       encoding?: unknown,
-      cb?: () => void
+      cb?: () => void,
     ): unknown {
       // Registrar métricas
       const duration = Date.now() - startTime;
@@ -217,7 +217,7 @@ export async function measureAsync<T>(
   metrics: CustomMetrics,
   metricName: string,
   operation: () => Promise<T>,
-  labels?: Record<string, string>
+  labels?: Record<string, string>,
 ): Promise<T> {
   const startTime = Date.now();
   try {

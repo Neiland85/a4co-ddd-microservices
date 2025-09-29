@@ -131,7 +131,7 @@ function setupGracefulShutdown(): void {
   const logger = getLogger();
   let shuttingDown = false;
 
-  const shutdown = async (signal: string): Promise<void> => {
+  const shutdown = async(signal: string): Promise<void> => {
     if (shuttingDown) return;
     shuttingDown = true;
 
@@ -228,7 +228,7 @@ export function validateConfig(config: ObservabilityConfig): void {
 // Quick start helper
 export async function quickStart(
   serviceName: string,
-  options: Partial<ObservabilityConfig> = {}
+  options: Partial<ObservabilityConfig> = {},
 ): Promise<void> {
   const environment = process.env['NODE_ENV'] || 'development';
   const envConfig = getEnvironmentConfig(environment);

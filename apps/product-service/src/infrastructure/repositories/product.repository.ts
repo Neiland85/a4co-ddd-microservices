@@ -1,10 +1,16 @@
-import { Product } from '../../domain/aggregates/product.aggregate';
+import {
+  Product,
+  ProductAvailability,
+  ProductStatus,
+} from '../../domain/aggregates/product.aggregate';
+import type { $Enums } from '../generated/prisma';
 import { PrismaClient } from '../generated/prisma';
 
 export interface IProductRepository {
   findById(id: string): Promise<Product | null>;
   findBySku(sku: string): Promise<Product | null>;
   findBySlug(slug: string): Promise<Product | null>;
+  findAll(): Promise<Product[]>;
   save(product: Product): Promise<void>;
   update(product: Product): Promise<void>;
   delete(id: string): Promise<void>;
@@ -34,8 +40,8 @@ export class PrismaProductRepository implements IProductRepository {
       categoryId: productData.categoryId,
       category: productData.category,
       stock: productData.stock,
-      status: productData.status as any,
-      availability: productData.availability as any,
+      status: productData.status as ProductStatus,
+      availability: productData.availability as ProductAvailability,
       isHandmade: productData.isHandmade || undefined,
       isCustomizable: productData.isCustomizable,
       isDigital: productData.isDigital || undefined,
@@ -76,8 +82,8 @@ export class PrismaProductRepository implements IProductRepository {
       categoryId: productData.categoryId,
       category: productData.category,
       stock: productData.stock,
-      status: productData.status as any,
-      availability: productData.availability as any,
+      status: productData.status as ProductStatus,
+      availability: productData.availability as ProductAvailability,
       isHandmade: productData.isHandmade || undefined,
       isCustomizable: productData.isCustomizable,
       isDigital: productData.isDigital || undefined,
@@ -118,8 +124,8 @@ export class PrismaProductRepository implements IProductRepository {
       categoryId: productData.categoryId,
       category: productData.category,
       stock: productData.stock,
-      status: productData.status as any,
-      availability: productData.availability as any,
+      status: productData.status as ProductStatus,
+      availability: productData.availability as ProductAvailability,
       isHandmade: productData.isHandmade || undefined,
       isCustomizable: productData.isCustomizable,
       isDigital: productData.isDigital || undefined,
@@ -139,6 +145,48 @@ export class PrismaProductRepository implements IProductRepository {
     });
   }
 
+  async findAll(): Promise<Product[]> {
+    const productsData = await this.prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return productsData.map(productData =>
+      Product.reconstruct({
+        id: productData.id,
+        productId: productData.id,
+        name: productData.name,
+        description: productData.description,
+        sku: productData.sku || undefined,
+        slug: productData.slug || undefined,
+        price: Number(productData.price),
+        originalPrice: productData.originalPrice ? Number(productData.originalPrice) : undefined,
+        currency: productData.currency,
+        artisanId: productData.artisanId,
+        categoryId: productData.categoryId,
+        category: productData.category,
+        stock: productData.stock,
+        status: productData.status as ProductStatus,
+        availability: productData.availability as ProductAvailability,
+        isHandmade: productData.isHandmade || undefined,
+        isCustomizable: productData.isCustomizable,
+        isDigital: productData.isDigital || undefined,
+        requiresShipping: productData.requiresShipping || undefined,
+        keywords: productData.keywords || [],
+        metaTitle: productData.metaTitle || undefined,
+        metaDescription: productData.metaDescription || undefined,
+        craftingTimeHours: 0,
+        sustainabilityScore: undefined,
+        materials: [],
+        dimensions: undefined,
+        variants: [],
+        images: [],
+        createdAt: productData.createdAt,
+        updatedAt: productData.updatedAt,
+        tags: [],
+      }),
+    );
+  }
+
   async save(product: Product): Promise<void> {
     const persistenceData = product.toPersistence();
 
@@ -156,8 +204,8 @@ export class PrismaProductRepository implements IProductRepository {
         categoryId: persistenceData.categoryId,
         category: persistenceData.category,
         stock: persistenceData.stock,
-        status: persistenceData.status as any,
-        availability: persistenceData.availability as any,
+        status: persistenceData.status as $Enums.ProductStatus,
+        availability: persistenceData.availability as $Enums.ProductAvailability,
         isHandmade: persistenceData.isHandmade,
         isCustomizable: persistenceData.isCustomizable,
         isDigital: persistenceData.isDigital,
@@ -186,8 +234,8 @@ export class PrismaProductRepository implements IProductRepository {
         categoryId: persistenceData.categoryId,
         category: persistenceData.category,
         stock: persistenceData.stock,
-        status: persistenceData.status as any,
-        availability: persistenceData.availability as any,
+        status: persistenceData.status as $Enums.ProductStatus,
+        availability: persistenceData.availability as $Enums.ProductAvailability,
         isHandmade: persistenceData.isHandmade,
         isCustomizable: persistenceData.isCustomizable,
         isDigital: persistenceData.isDigital,

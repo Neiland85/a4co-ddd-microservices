@@ -110,7 +110,7 @@ export function startWebSpan(
   options?: {
     kind?: SpanKind;
     attributes?: Attributes;
-  }
+  },
 ): Span {
   const tracer = getWebTracer('web');
   return tracer.startSpan(name, {
@@ -128,7 +128,7 @@ export async function traceWebOperation<T>(
   options?: {
     kind?: SpanKind;
     attributes?: Attributes;
-  }
+  },
 ): Promise<T> {
   const span = startWebSpan(name, options);
   const ctx = trace.setSpan(context.active(), span);
@@ -190,7 +190,7 @@ export function traceRouteNavigation(fromRoute: string, toRoute: string): Span {
 export function traceUserInteraction(
   interactionType: string,
   target: string,
-  metadata?: Attributes
+  metadata?: Attributes,
 ): Span {
   const span = startWebSpan(`User Interaction: ${interactionType}`, {
     kind: SpanKind.INTERNAL,

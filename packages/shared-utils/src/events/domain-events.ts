@@ -73,7 +73,7 @@ export class OrderCreatedEvent extends DomainEvent {
       specialInstructions?: string;
       estimatedDelivery: Date;
       createdAt: Date;
-    }
+    },
   ) {
     super(orderId, data);
   }
@@ -88,7 +88,7 @@ export class OrderConfirmedEvent extends DomainEvent {
       paymentReference: string;
       artisanNotified: boolean;
       trackingNumber?: string;
-    }
+    },
   ) {
     super(orderId, data);
   }
@@ -104,7 +104,7 @@ export class OrderCancelledEvent extends DomainEvent {
       refundRequired: boolean;
       refundAmount?: number;
       notificationSent: boolean;
-    }
+    },
   ) {
     super(orderId, data);
   }
@@ -120,7 +120,7 @@ export class OrderDeliveredEvent extends DomainEvent {
       recipientSignature?: string;
       deliveryNotes?: string;
       photoConfirmation?: string;
-    }
+    },
   ) {
     super(orderId, data);
   }
@@ -140,7 +140,7 @@ export class StockReservedEvent extends DomainEvent {
       reservationExpiry: Date;
       reservedAt: Date;
       artisanId: string;
-    }
+    },
   ) {
     super(productId, data);
   }
@@ -156,7 +156,7 @@ export class StockReleasedEvent extends DomainEvent {
       newStock: number;
       releasedAt: Date;
       artisanId: string;
-    }
+    },
   ) {
     super(productId, data);
   }
@@ -173,7 +173,7 @@ export class LowStockWarningEvent extends DomainEvent {
       category: string;
       urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
       lastRestocked?: Date;
-    }
+    },
   ) {
     super(productId, data);
   }
@@ -190,7 +190,7 @@ export class StockUpdatedEvent extends DomainEvent {
       updatedBy: string;
       updatedAt: Date;
       artisanId: string;
-    }
+    },
   ) {
     super(productId, data);
   }
@@ -211,7 +211,7 @@ export class PaymentInitiatedEvent extends DomainEvent {
       paymentMethod: 'credit_card' | 'debit_card' | 'paypal' | 'bank_transfer' | 'cash_on_delivery';
       paymentGateway: string;
       initiatedAt: Date;
-    }
+    },
   ) {
     super(paymentId, data);
   }
@@ -230,7 +230,7 @@ export class PaymentSucceededEvent extends DomainEvent {
       processedAt: Date;
       paymentGateway: string;
       authorizationCode?: string;
-    }
+    },
   ) {
     super(paymentId, data);
   }
@@ -248,7 +248,7 @@ export class PaymentFailedEvent extends DomainEvent {
       paymentGateway: string;
       failureReason: string;
       customerNotified: boolean;
-    }
+    },
   ) {
     super(paymentId, data);
   }
@@ -267,7 +267,7 @@ export class RefundProcessedEvent extends DomainEvent {
       refundMethod: string;
       expectedInAccount: Date;
       customerNotified: boolean;
-    }
+    },
   ) {
     super(refundId, data);
   }
@@ -290,7 +290,7 @@ export class UserRegisteredEvent extends DomainEvent {
       location?: Address;
       accountType: 'customer' | 'artisan' | 'admin';
       verificationRequired: boolean;
-    }
+    },
   ) {
     super(userId, data);
   }
@@ -305,7 +305,7 @@ export class UserProfileUpdatedEvent extends DomainEvent {
       newValues: Record<string, any>;
       updatedAt: Date;
       updatedBy: string; // userId or 'system'
-    }
+    },
   ) {
     super(userId, data);
   }
@@ -328,7 +328,7 @@ export class UserPreferencesChangedEvent extends DomainEvent {
         currency: string;
       };
       updatedAt: Date;
-    }
+    },
   ) {
     super(userId, data);
   }
@@ -351,7 +351,7 @@ export class ArtisanVerifiedEvent extends DomainEvent {
       verifiedBy: string;
       documentType: string;
       certificationsProvided: string[];
-    }
+    },
   ) {
     super(artisanId, data);
   }
@@ -376,7 +376,7 @@ export class NewProductListedEvent extends DomainEvent {
       availableFrom?: Date;
       availableUntil?: Date;
       listedAt: Date;
-    }
+    },
   ) {
     super(productId, data);
   }
@@ -393,7 +393,7 @@ export class ArtisanStatusChangedEvent extends DomainEvent {
       changedAt: globalThis.Date;
       effectiveDate?: globalThis.Date;
       notificationSent: boolean;
-    }
+    },
   ) {
     super(artisanId, data);
   }
@@ -415,7 +415,7 @@ export class EmailSentEvent extends DomainEvent {
       sentAt: Date;
       provider: string;
       messageId: string;
-    }
+    },
   ) {
     super(notificationId, data);
   }
@@ -431,7 +431,7 @@ export class SMSSentEvent extends DomainEvent {
       provider: string;
       messageId: string;
       cost?: number;
-    }
+    },
   ) {
     super(notificationId, data);
   }
@@ -462,7 +462,7 @@ export class SalesRecordedEvent extends DomainEvent {
         state: string;
       };
       recordedAt: Date;
-    }
+    },
   ) {
     super(recordId, data);
   }
@@ -481,7 +481,7 @@ export class UserActionTrackedEvent extends DomainEvent {
       timestamp: Date;
       userAgent?: string;
       ipAddress?: string;
-    }
+    },
   ) {
     super(trackingId, data);
   }
@@ -503,7 +503,7 @@ export class PointsEarnedEvent extends DomainEvent {
       campaignId?: string;
       earnedAt: Date;
       expiryDate?: Date;
-    }
+    },
   ) {
     super(transactionId, data);
   }
@@ -520,7 +520,7 @@ export class PointsRedeemedEvent extends DomainEvent {
       currency: string;
       redeemedAt: Date;
       remainingPoints: number;
-    }
+    },
   ) {
     super(redemptionId, data);
   }
@@ -541,7 +541,7 @@ export class LocationUpdatedEvent extends DomainEvent {
       accuracy?: number;
       updatedAt: Date;
       source: 'gps' | 'manual' | 'geocoding';
-    }
+    },
   ) {
     super(locationId, data);
   }
@@ -562,7 +562,7 @@ export class ServiceStartedEvent extends DomainEvent {
       hostname: string;
       port?: number;
       healthCheckUrl?: string;
-    }
+    },
   ) {
     super(serviceId, data);
   }
@@ -581,7 +581,7 @@ export class ServiceErrorEvent extends DomainEvent {
       occurredAt: Date;
       userId?: string;
       requestId?: string;
-    }
+    },
   ) {
     super(errorId, data);
   }
@@ -597,7 +597,7 @@ export class SagaCompletedEvent extends DomainEvent {
     data: {
       result: any;
       completedAt: Date;
-    }
+    },
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -610,7 +610,7 @@ export class SagaFailedEvent extends DomainEvent {
       error: string;
       compensations: string[];
       failedAt: Date;
-    }
+    },
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -623,7 +623,7 @@ export class ProductInformationRequestedEvent extends DomainEvent {
       orderId: string;
       productIds: string[];
       requestedAt: Date;
-    }
+    },
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -636,7 +636,7 @@ export class StockValidationRequestedEvent extends DomainEvent {
       orderId: string;
       items: Array<{ productId: string; quantity: number }>;
       requestedAt: Date;
-    }
+    },
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -649,7 +649,7 @@ export class UserInformationRequestedEvent extends DomainEvent {
       userId: string;
       requestedFields: string[];
       requestedAt: Date;
-    }
+    },
   ) {
     super(sagaId, data, 1, sagaId);
   }

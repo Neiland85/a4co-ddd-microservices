@@ -113,7 +113,7 @@ function createExpressApp() {
         tenantId: req.headers['x-tenant-id'],
         clientVersion: req.headers['x-client-version'],
       }),
-    })
+    }),
   );
 
   app.use(express.json());
@@ -124,7 +124,7 @@ function createExpressApp() {
   });
 
   // Endpoint de creación de orden con observabilidad completa
-  app.post('/api/orders', async (req: any, res) => {
+  app.post('/api/orders', async(req: any, res) => {
     const correlationId = req.correlationId || generateCorrelationId();
     const causationId = generateCausationId(correlationId);
 
@@ -138,7 +138,7 @@ function createExpressApp() {
     logger.info('Creating new order');
 
     try {
-      const order = await withSpan('createOrder', async () => {
+      const order = await withSpan('createOrder', async() => {
         // Validar orden
         const validation = await validateOrder(req.body);
         if (!validation.isValid) {
@@ -182,7 +182,7 @@ class CreateOrderCommand {
       shippingAddress: string;
       correlationId: string;
       causationId: string;
-    }
+    },
   ) {}
 }
 
@@ -271,7 +271,7 @@ function setupDomainHandlers(nats: any) {
   const logger = getLogger();
 
   // Handler para eventos de inventario
-  nats.subscribe('inventory.updated', async (msg: any) => {
+  nats.subscribe('inventory.updated', async(msg: any) => {
     const handler = new InventoryUpdatedEventHandler();
     await handler.handle(msg);
   });
@@ -308,7 +308,7 @@ class InventoryUpdatedEventHandler {
 
 // Funciones auxiliares
 async function validateOrder(orderData: any) {
-  return withSpan('validateOrder', async () => {
+  return withSpan('validateOrder', async() => {
     const errors = [];
 
     if (!orderData.customerId) {

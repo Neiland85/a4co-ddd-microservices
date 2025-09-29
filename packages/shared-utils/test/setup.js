@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 // Setup file for Jest tests
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, '__esModule', { value: true });
 // Mock environment variables
 process.env['NODE_ENV'] = 'test';
 process.env['NOTIFICATION_SERVICE_URL'] = 'http://localhost:3000';

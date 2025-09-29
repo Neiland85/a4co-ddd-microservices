@@ -58,11 +58,11 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
         });
       }
     },
-    [formId, trackFieldChanges, logger, traceFormInteraction]
+    [formId, trackFieldChanges, logger, traceFormInteraction],
   );
 
   const handleSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
+    async(event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
       submitStartTime.current = Date.now();
@@ -123,7 +123,7 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
         submitSpan.end();
       }
     },
-    [formId, fieldValues, trackingMetadata, onSubmit, onSubmitSuccess, onSubmitError, logger]
+    [formId, fieldValues, trackingMetadata, onSubmit, onSubmitSuccess, onSubmitError, logger],
   );
 
   return (
@@ -190,7 +190,7 @@ export const ObservableField: React.FC<ObservableFieldProps> = ({
 
       onChange(newValue);
     },
-    [name, onChange, trackingMetadata, logger, traceInteraction]
+    [name, onChange, trackingMetadata, logger, traceInteraction],
   );
 
   return (

@@ -26,7 +26,7 @@ describe('Service Adapters Integration', () => {
       userRepository,
       cryptographyService,
       eventBus,
-      userDomainService
+      userDomainService,
     );
   });
 
@@ -36,7 +36,7 @@ describe('Service Adapters Integration', () => {
   });
 
   describe('CryptographyService Adapter', () => {
-    it('should hash password securely', async () => {
+    it('should hash password securely', async() => {
       const plainPassword = 'SecurePassword123!';
       const hashedPassword = await cryptographyService.hashPassword(plainPassword);
 
@@ -45,7 +45,7 @@ describe('Service Adapters Integration', () => {
       expect(hashedPassword.length).toBeGreaterThan(50);
     });
 
-    it('should validate password correctly', async () => {
+    it('should validate password correctly', async() => {
       const plainPassword = 'SecurePassword123!';
       const hashedPassword = await cryptographyService.hashPassword(plainPassword);
 
@@ -66,7 +66,7 @@ describe('Service Adapters Integration', () => {
   });
 
   describe('UserRepository Adapter', () => {
-    it('should start empty', async () => {
+    it('should start empty', async() => {
       const count = userRepository.count();
       const users = await userRepository.findAll();
 
@@ -74,7 +74,7 @@ describe('Service Adapters Integration', () => {
       expect(users).toHaveLength(0);
     });
 
-    it('should check email existence', async () => {
+    it('should check email existence', async() => {
       const exists = await userRepository.existsByEmail('test@example.com');
       expect(exists).toBe(false);
     });
@@ -86,7 +86,7 @@ describe('Service Adapters Integration', () => {
       expect(events).toHaveLength(0);
     });
 
-    it('should publish events', async () => {
+    it('should publish events', async() => {
       const testEvent = { type: 'TestEvent', data: 'test data' };
 
       await eventBus.publish(testEvent);
@@ -98,7 +98,7 @@ describe('Service Adapters Integration', () => {
   });
 
   describe('Integrated Use Case with Adapters', () => {
-    it('should register user successfully using all adapters', async () => {
+    it('should register user successfully using all adapters', async() => {
       const dto = new RegisterUserDto();
       dto.email = 'test@example.com';
       dto.name = 'Test User';
@@ -122,7 +122,7 @@ describe('Service Adapters Integration', () => {
       expect(events.some((e: any) => e.type === 'UserRegisteredEvent')).toBe(true);
     });
 
-    it('should prevent duplicate email registration', async () => {
+    it('should prevent duplicate email registration', async() => {
       const dto = new RegisterUserDto();
       dto.email = 'duplicate@example.com';
       dto.name = 'Test User';

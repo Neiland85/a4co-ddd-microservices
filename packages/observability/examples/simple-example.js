@@ -1,10 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+'use strict';
+var __importDefault = (this && this.__importDefault) || function(mod) {
+    return (mod && mod.__esModule) ? mod : { 'default': mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const src_1 = require("../src");
+Object.defineProperty(exports, '__esModule', { value: true });
+const express_1 = __importDefault(require('express'));
+const src_1 = require('../src');
 // Inicializar observabilidad
 const { logger, httpLogger, getTracer, shutdown } = (0, src_1.initializeObservability)({
     serviceName: 'example-service',
@@ -29,7 +29,7 @@ const app = (0, express_1.default)();
 app.use(httpLogger);
 app.use(express_1.default.json());
 // Ruta de ejemplo con tracing manual
-app.get('/hello/:name', async (req, res) => {
+app.get('/hello/:name', async(req, res) => {
     const tracer = getTracer('hello-endpoint');
     const span = tracer.startSpan('process-hello-request');
     try {
@@ -86,7 +86,7 @@ const server = app.listen(PORT, () => {
     });
 });
 // Graceful shutdown
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', async() => {
     logger.info('SIGTERM received, shutting down gracefully');
     server.close(() => {
         logger.info('HTTP server closed');
@@ -94,7 +94,7 @@ process.on('SIGTERM', async () => {
     await shutdown();
     process.exit(0);
 });
-process.on('SIGINT', async () => {
+process.on('SIGINT', async() => {
     logger.info('SIGINT received, shutting down gracefully');
     server.close(() => {
         logger.info('HTTP server closed');

@@ -64,7 +64,7 @@ export abstract class DomainEvent {
 
     constructor(
         public readonly aggregateId: string,
-        public readonly eventName: string
+        public readonly eventName: string,
     ) {
         this.occurredOn = new Date();
     }

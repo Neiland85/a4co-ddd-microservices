@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
 
     if (location) {
       filteredProducts = filteredProducts.filter(product =>
-        product.location.municipality.toLowerCase().includes(location.toLowerCase())
+        product.location.municipality.toLowerCase().includes(location.toLowerCase()),
       );
     }
 
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
         product =>
           product.name.toLowerCase().includes(searchLower) ||
           product.producer.toLowerCase().includes(searchLower) ||
-          product.description.toLowerCase().includes(searchLower)
+          product.description.toLowerCase().includes(searchLower),
       );
     }
 
@@ -201,7 +201,7 @@ export async function GET(request: NextRequest) {
         error: 'Error al obtener productos',
         code: 'PRODUCTS_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -217,7 +217,7 @@ export async function getProductById(id: string) {
         error: 'Producto no encontrado',
         code: 'PRODUCT_NOT_FOUND',
       },
-      { status: 404 }
+      { status: 404 },
     );
   }
 

@@ -47,7 +47,7 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
   };
 
   // Verificar permisos de geolocalización
-  const checkPermission = useCallback(async (): Promise<boolean> => {
+  const checkPermission = useCallback(async(): Promise<boolean> => {
     if (!('geolocation' in navigator)) {
       setState(prev => ({ ...prev, error: 'Geolocalización no soportada' }));
       return false;
@@ -73,7 +73,7 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
   }, []);
 
   // Obtener ubicación actual
-  const getCurrentLocation = useCallback(async (): Promise<Location | null> => {
+  const getCurrentLocation = useCallback(async(): Promise<Location | null> => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -126,7 +126,7 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
 
             reject(new Error(errorMessage));
           },
-          defaultOptions
+          defaultOptions,
         );
       });
     } catch (error) {
@@ -185,12 +185,12 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
 
           setState(prev => ({ ...prev, error: errorMessage }));
         },
-        defaultOptions
+        defaultOptions,
       );
 
       return watchId;
     },
-    [defaultOptions]
+    [defaultOptions],
   );
 
   // Calcular distancia entre dos puntos (fórmula de Haversine)
@@ -208,14 +208,14 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     },
-    []
+    [],
   );
 
   // Encontrar productores cercanos
   const findNearbyProductors = useCallback(
-    async (
+    async(
       productors: Productor[],
-      maxDistance: number = 50 // km por defecto
+      maxDistance: number = 50, // km por defecto
     ): Promise<Productor[]> => {
       if (!state.location) {
         throw new Error('Ubicación no disponible');
@@ -228,7 +228,7 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
             state.location!.latitude,
             state.location!.longitude,
             productor.latitude,
-            productor.longitude
+            productor.longitude,
           ),
         }))
         .filter(productor => productor.distance <= maxDistance)
@@ -236,15 +236,15 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
 
       return nearbyProductors;
     },
-    [state.location, calculateDistance]
+    [state.location, calculateDistance],
   );
 
   // Obtener dirección a partir de coordenadas (reverse geocoding)
   const getAddressFromCoordinates = useCallback(
-    async (latitude: number, longitude: number): Promise<string> => {
+    async(latitude: number, longitude: number): Promise<string> => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
         );
 
         if (!response.ok) {
@@ -258,15 +258,15 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
         return 'Dirección no disponible';
       }
     },
-    []
+    [],
   );
 
   // Obtener coordenadas a partir de dirección (geocoding)
   const getCoordinatesFromAddress = useCallback(
-    async (address: string): Promise<Location | null> => {
+    async(address: string): Promise<Location | null> => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
         );
 
         if (!response.ok) {
@@ -291,7 +291,7 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
         return null;
       }
     },
-    []
+    [],
   );
 
   // Verificar si una ubicación está dentro de un área específica
@@ -301,11 +301,11 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
         location.latitude,
         location.longitude,
         centerLat,
-        centerLon
+        centerLon,
       );
       return distance <= radiusKm;
     },
-    [calculateDistance]
+    [calculateDistance],
   );
 
   // Inicializar geolocalización al montar el componente

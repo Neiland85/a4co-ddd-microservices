@@ -93,7 +93,7 @@ export interface UseInteractionTracingOptions {
 export function useInteractionTracing(
   interactionType: string,
   target: string,
-  options?: UseInteractionTracingOptions
+  options?: UseInteractionTracingOptions,
 ): (_metadata?: Attributes) => void {
   const lastInteractionTime = useRef(0);
 
@@ -113,7 +113,7 @@ export function useInteractionTracing(
       span.end();
       lastInteractionTime.current = now;
     },
-    [interactionType, target, options]
+    [interactionType, target, options],
   );
 
   return traceInteraction;
@@ -162,7 +162,7 @@ export interface WithTracingOptions {
 
 export function withTracing<P extends Record<string, unknown>>(
   Component: React.ComponentType<P>,
-  options?: WithTracingOptions
+  options?: WithTracingOptions,
 ): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<unknown>> {
   const displayName =
     options?.componentName || Component.displayName || Component.name || 'Component';
@@ -187,7 +187,7 @@ export function withTracing<P extends Record<string, unknown>>(
           });
         }
       },
-      options?.trackProps?.map(prop => (props as Record<string, unknown>)[prop]) || []
+      options?.trackProps?.map(prop => (props as Record<string, unknown>)[prop]) || [],
     );
 
     return <Component {...(props as P)} ref={ref} />;

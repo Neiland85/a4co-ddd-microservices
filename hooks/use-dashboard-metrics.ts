@@ -43,7 +43,7 @@ export function useDashboardMetrics() {
       if (activeUsers > 900) return 'medium';
       return 'low';
     },
-    []
+    [],
   );
 
   // Función optimizada para determinar actividad de campaña
@@ -54,7 +54,7 @@ export function useDashboardMetrics() {
       if (sentOffers > 3) return 'active';
       return 'inactive';
     },
-    []
+    [],
   );
 
   // Función optimizada para determinar sentimiento
@@ -65,7 +65,7 @@ export function useDashboardMetrics() {
       if (averageRating >= 2.5) return 'neutral';
       return 'negative';
     },
-    []
+    [],
   );
 
   // Función optimizada para determinar estabilidad del sistema
@@ -75,7 +75,7 @@ export function useDashboardMetrics() {
       if (systemHealth > 80) return 'stable';
       return 'unstable';
     },
-    []
+    [],
   );
 
   // Función optimizada para actualizar métricas
@@ -83,13 +83,13 @@ export function useDashboardMetrics() {
     (prev: DashboardMetrics): DashboardMetrics => {
       const newActiveUsers = Math.max(
         800,
-        prev.monitor.activeUsers + Math.floor(Math.random() * 20 - 10)
+        prev.monitor.activeUsers + Math.floor(Math.random() * 20 - 10),
       );
       const newTotalVisits = prev.monitor.totalVisits + Math.floor(Math.random() * 8);
       const newClickRate = Math.max(1, prev.monitor.clickRate + (Math.random() * 0.4 - 0.2));
       const newConversionRate = Math.max(
         1,
-        prev.monitor.conversionRate + (Math.random() * 0.2 - 0.1)
+        prev.monitor.conversionRate + (Math.random() * 0.2 - 0.1),
       );
 
       const activityLevel = determineActivityLevel(newActiveUsers);
@@ -111,7 +111,7 @@ export function useDashboardMetrics() {
           campaignActivity,
           conversionRate: Math.max(
             5,
-            prev.recommendations.conversionRate + (Math.random() * 1 - 0.5)
+            prev.recommendations.conversionRate + (Math.random() * 1 - 0.5),
           ),
           roi: Math.max(200, prev.recommendations.roi + Math.floor(Math.random() * 20 - 10)),
         },
@@ -119,29 +119,29 @@ export function useDashboardMetrics() {
           ...prev.comments,
           averageRating: Math.max(
             1,
-            Math.min(5, prev.comments.averageRating + (Math.random() * 0.2 - 0.1))
+            Math.min(5, prev.comments.averageRating + (Math.random() * 0.2 - 0.1)),
           ),
           sentiment,
           engagementLevel: Math.max(
             0,
-            Math.min(100, prev.comments.engagementLevel + Math.floor(Math.random() * 6 - 3))
+            Math.min(100, prev.comments.engagementLevel + Math.floor(Math.random() * 6 - 3)),
           ),
         },
         settings: {
           ...prev.settings,
           systemHealth: Math.max(
             70,
-            Math.min(100, prev.settings.systemHealth + Math.floor(Math.random() * 4 - 2))
+            Math.min(100, prev.settings.systemHealth + Math.floor(Math.random() * 4 - 2)),
           ),
           userSatisfaction: Math.max(
             60,
-            Math.min(100, prev.settings.userSatisfaction + Math.floor(Math.random() * 4 - 2))
+            Math.min(100, prev.settings.userSatisfaction + Math.floor(Math.random() * 4 - 2)),
           ),
           stabilityIndex: determineStabilityIndex(prev.settings.systemHealth),
         },
       };
     },
-    [determineActivityLevel, determineCampaignActivity, determineSentiment, determineStabilityIndex]
+    [determineActivityLevel, determineCampaignActivity, determineSentiment, determineStabilityIndex],
   );
 
   // Simulación de métricas en tiempo real optimizada

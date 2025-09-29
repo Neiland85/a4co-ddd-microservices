@@ -31,7 +31,7 @@ const ObservabilityContext = createContext<ObservabilityContextValue | null>(nul
 
 // Default browser logger that sends to backend
 const createBrowserLogger = (apiEndpoint: string, sessionId: string): BrowserLogger => {
-  const sendLog = async (level: string, message: string, data?: unknown): Promise<void> => {
+  const sendLog = async(level: string, message: string, data?: unknown): Promise<void> => {
     try {
       await fetch(`${apiEndpoint}/logs`, {
         method: 'POST',
@@ -97,7 +97,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Flush events to backend
-  const flushEvents = async (): Promise<void> => {
+  const flushEvents = async(): Promise<void> => {
     if (eventQueue.current.length === 0) return;
 
     const events = [...eventQueue.current];
@@ -150,9 +150,9 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   };
 
   // Measure performance
-  const measurePerformance = async (
+  const measurePerformance = async(
     name: string,
-    fn: () => void | Promise<void>
+    fn: () => void | Promise<void>,
   ): Promise<void> => {
     const startTime = performance.now();
 
@@ -213,7 +213,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
     const trackPerformance = (): void => {
       if ('performance' in window) {
         const perfData = performance.getEntriesByType(
-          'navigation'
+          'navigation',
         )[0] as PerformanceNavigationTiming;
 
         if (perfData) {
@@ -375,7 +375,7 @@ export const useEventTracking = (): {
   const trackInput = (
     componentName: string,
     value: unknown,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ): void => {
     logEvent({
       eventType: 'input',
@@ -393,7 +393,7 @@ export const useEventTracking = (): {
   const trackCustom = (
     componentName: string,
     event: string,
-    properties?: Record<string, unknown>
+    properties?: Record<string, unknown>,
   ): void => {
     logEvent({
       eventType: 'custom',
@@ -414,7 +414,7 @@ export const useEventTracking = (): {
 export function withObservability<P extends object>(
   Component: ComponentType<P>,
   componentName: string,
-  config?: ComponentTrackingConfig
+  config?: ComponentTrackingConfig,
 ): ComponentType<P> {
   return (props: P) => {
     useComponentTracking(componentName, config);
@@ -432,7 +432,7 @@ export const PerformanceTracker: React.FC<{
   const [content, setContent] = useState<React.ReactNode>(null);
 
   useEffect(() => {
-    measurePerformance(name, async () => {
+    measurePerformance(name, async() => {
       const result = children();
       setContent(result);
     });
@@ -443,7 +443,7 @@ export const PerformanceTracker: React.FC<{
 
 // Traced fetch wrapper
 export const createTracedFetch = (apiEndpoint: string, sessionId: string) => {
-  return async (url: string, options?: RequestInit): Promise<Response> => {
+  return async(url: string, options?: RequestInit): Promise<Response> => {
     const traceId = uuidv4();
     const startTime = performance.now();
 
@@ -463,7 +463,7 @@ export const createTracedFetch = (apiEndpoint: string, sessionId: string) => {
       // Log to console in development
       if (process.env['NODE_ENV'] === 'development') {
         console.debug(
-          `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - ${response.status} (${duration.toFixed(2)}ms)`
+          `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - ${response.status} (${duration.toFixed(2)}ms)`,
         );
       }
 
@@ -472,7 +472,7 @@ export const createTracedFetch = (apiEndpoint: string, sessionId: string) => {
       const duration = performance.now() - startTime;
       console.error(
         `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - Failed (${duration.toFixed(2)}ms)`,
-        error
+        error,
       );
       throw error;
     }

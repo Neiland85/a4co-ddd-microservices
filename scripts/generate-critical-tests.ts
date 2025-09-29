@@ -194,10 +194,10 @@ const generateServiceSpecificTests = (service: string, serviceName: string): str
 
 const generateErrorTestCase = (service: string): string => {
   const cases: Record<string, string> = {
-    order: `service.createOrder(invalidData, invalidData)`,
-    product: `service.addProduct(invalidData, invalidData)`,
-    user: `service.createUser(invalidData, invalidData)`,
-    inventory: `service.updateStock(invalidData, invalidData)`,
+    order: 'service.createOrder(invalidData, invalidData)',
+    product: 'service.addProduct(invalidData, invalidData)',
+    user: 'service.createUser(invalidData, invalidData)',
+    inventory: 'service.updateStock(invalidData, invalidData)',
   };
 
   return cases[service] || '';
@@ -205,10 +205,10 @@ const generateErrorTestCase = (service: string): string => {
 
 const generateLoggingTestCase = (service: string, serviceName: string): string => {
   const cases: Record<string, string> = {
-    order: `service.createOrder('ORD-001', ['item1']);`,
-    product: `service.addProduct('Product A', 29.99);`,
-    user: `service.createUser('john_doe', 'john@example.com');`,
-    inventory: `service.updateStock('PROD-001', 100);`,
+    order: 'service.createOrder(\'ORD-001\', [\'item1\']);',
+    product: 'service.addProduct(\'Product A\', 29.99);',
+    user: 'service.createUser(\'john_doe\', \'john@example.com\');',
+    inventory: 'service.updateStock(\'PROD-001\', 100);',
   };
 
   return cases[service] || '';
@@ -422,7 +422,7 @@ describe('BaseService', () => {
 };
 
 // Función principal
-const generateTests = async () => {
+const generateTests = async() => {
   console.log('🧪 Generando tests para áreas críticas del dominio...\n');
 
   const allTests = [...generateServiceTests(), ...generateBaseClassTests()];

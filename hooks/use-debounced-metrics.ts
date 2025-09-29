@@ -12,7 +12,7 @@ import type { DashboardMetrics } from './types';
  */
 export function useDebouncedMetrics(
   metrics: DashboardMetrics,
-  delay: number = 100
+  delay: number = 100,
 ): DashboardMetrics {
   const [debouncedMetrics, setDebouncedMetrics] = useState<DashboardMetrics>(metrics);
 
@@ -37,7 +37,7 @@ export function useDebouncedMetrics(
  */
 export function useThrottledMetrics(
   metrics: DashboardMetrics,
-  interval: number = 50
+  interval: number = 50,
 ): DashboardMetrics {
   const [throttledMetrics, setThrottledMetrics] = useState<DashboardMetrics>(metrics);
   const [lastUpdate, setLastUpdate] = useState<number>(0);
@@ -62,7 +62,7 @@ export function useThrottledMetrics(
  */
 export function useSmoothMetrics(
   metrics: DashboardMetrics,
-  smoothing: number = 0.1
+  smoothing: number = 0.1,
 ): DashboardMetrics {
   const [smoothMetrics, setSmoothMetrics] = useState<DashboardMetrics>(metrics);
 

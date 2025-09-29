@@ -165,14 +165,14 @@ export async function GET(request: NextRequest) {
     // Filtrar por ubicación si se especifica
     if (location) {
       filteredOpportunities = filteredOpportunities.filter(opp =>
-        opp.location.toLowerCase().includes(location.toLowerCase())
+        opp.location.toLowerCase().includes(location.toLowerCase()),
       );
     }
 
     // Filtrar por categoría de producto si se especifica
     if (category) {
       filteredOpportunities = filteredOpportunities.filter(opp =>
-        opp.products.some(product => product.category === category)
+        opp.products.some(product => product.category === category),
       );
     }
 
@@ -201,7 +201,7 @@ export async function GET(request: NextRequest) {
         error: 'Error al obtener oportunidades de venta',
         code: 'SALES_OPPORTUNITIES_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
             error: `Campo requerido: ${field}`,
             code: 'VALIDATION_ERROR',
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
         data: newOpportunity,
         message: 'Oportunidad de venta creada exitosamente',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error('Error al crear oportunidad de venta:', error);
@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
         error: 'Error al crear oportunidad de venta',
         code: 'CREATE_OPPORTUNITY_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

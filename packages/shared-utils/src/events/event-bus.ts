@@ -52,13 +52,13 @@ export class NatsEventBus implements IEventBus {
       console.log(`✅ ${this.serviceName} connected to NATS at ${servers.join(', ')}`);
 
       // Listen for connection events
-      (async () => {
+      (async() => {
         for await (const status of this.nc!.status()) {
           console.log(`🔄 NATS ${status.type}: ${status.data}`);
         }
       })();
     } catch (error) {
-      console.error(`❌ Failed to connect to NATS:`, error);
+      console.error('❌ Failed to connect to NATS:', error);
       throw error;
     }
   }
@@ -108,7 +108,7 @@ export class NatsEventBus implements IEventBus {
 
   async subscribe(
     subject: string,
-    handler: (event: DomainEvent) => Promise<void>
+    handler: (event: DomainEvent) => Promise<void>,
   ): Promise<Subscription> {
     if (!this.nc) {
       throw new Error('NATS connection not established. Call connect() first.');
@@ -128,7 +128,7 @@ export class NatsEventBus implements IEventBus {
   async subscribeQueue(
     subject: string,
     queue: string,
-    handler: (event: DomainEvent) => Promise<void>
+    handler: (event: DomainEvent) => Promise<void>,
   ): Promise<Subscription> {
     if (!this.nc) {
       throw new Error('NATS connection not established. Call connect() first.');
@@ -149,14 +149,14 @@ export class NatsEventBus implements IEventBus {
     sub: Subscription,
     handler: (event: DomainEvent) => Promise<void>,
     subject: string,
-    queue?: string
+    queue?: string,
   ): Promise<void> {
     for await (const msg of sub) {
       try {
         const eventData = JSON.parse(this.codec.decode(msg.data)) as EnhancedDomainEvent;
 
         console.log(
-          `📨 Received event ${eventData.eventType} on ${subject}${queue ? ` (queue: ${queue})` : ''}`
+          `📨 Received event ${eventData.eventType} on ${subject}${queue ? ` (queue: ${queue})` : ''}`,
         );
 
         // Add processing timestamp
@@ -194,12 +194,12 @@ export class NatsEventBus implements IEventBus {
               this.nc.publish(subject, this.codec.encode(JSON.stringify(eventData)));
             }
           },
-          Math.pow(2, retryCount) * 1000
+          Math.pow(2, retryCount) * 1000,
         ); // Exponential backoff
       } else {
         // Send to dead letter queue
         console.error(
-          `💀 Sending event ${eventData.eventType} to dead letter queue after ${retryCount} retries`
+          `💀 Sending event ${eventData.eventType} to dead letter queue after ${retryCount} retries`,
         );
 
         if (this.nc) {
@@ -214,13 +214,13 @@ export class NatsEventBus implements IEventBus {
                   stack: error.stack,
                 },
                 failedAt: new Date().toISOString(),
-              })
-            )
+              }),
+            ),
           );
         }
       }
     } catch (parseError) {
-      console.error(`❌ Failed to parse event data for error handling:`, parseError);
+      console.error('❌ Failed to parse event data for error handling:', parseError);
     }
   }
 
@@ -231,7 +231,7 @@ export class NatsEventBus implements IEventBus {
 
 // Decorator for event handlers
 export function EventHandler(subject: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     target._eventHandlers = target._eventHandlers || [];
     target._eventHandlers.push({
       subject,

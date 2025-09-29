@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const index_1 = require('../index');
 // Test básico para verificar que las importaciones funcionan
 console.log('Testing shared-utils imports...');
 // Test BaseEntity

@@ -52,7 +52,7 @@ export class OrderService extends EventDrivenService {
     // Calcular totales
     const totalAmount = orderData.items.reduce(
       (sum, item) => sum + item.quantity * item.unitPrice,
-      0
+      0,
     );
 
     // Crear evento de orden creada
@@ -244,7 +244,7 @@ export class PaymentService extends EventDrivenService {
     // Simular procesamiento de pago
     const paymentSuccess = Math.random() > 0.2; // 80% de éxito
 
-    setTimeout(async () => {
+    setTimeout(async() => {
       if (paymentSuccess) {
         const paymentSucceededEvent = new PaymentSucceededEvent(`payment_${Date.now()}`, {
           orderId,

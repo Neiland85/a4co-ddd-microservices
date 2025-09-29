@@ -17,7 +17,7 @@ export function setupPaymentRoutes(): Router {
    * POST /payments/validate
    * Validar método de pago antes de procesar la orden
    */
-  router.post('/validate', async (req, res) => {
+  router.post('/validate', async(req, res) => {
     try {
       const { paymentMethodType, paymentMethodId, customerId, amount, currency, orderId } =
         req.body;
@@ -59,7 +59,7 @@ export function setupPaymentRoutes(): Router {
    * POST /payments/process
    * Procesar el pago de una orden
    */
-  router.post('/process', async (req, res) => {
+  router.post('/process', async(req, res) => {
     try {
       const {
         orderId,
@@ -123,7 +123,7 @@ export function setupPaymentRoutes(): Router {
    * GET /payments/methods/:customerId
    * Obtener métodos de pago de un cliente
    */
-  router.get('/methods/:customerId', async (req, res) => {
+  router.get('/methods/:customerId', async(req, res) => {
     try {
       const { customerId } = req.params;
       const { activeOnly } = req.query;
@@ -153,7 +153,7 @@ export function setupPaymentRoutes(): Router {
    * POST /payments/refund
    * Procesar reembolso de un pago
    */
-  router.post('/refund', async (req, res) => {
+  router.post('/refund', async(req, res) => {
     try {
       const { paymentId, orderId, refundAmount, reason, customerId } = req.body;
 
@@ -196,7 +196,7 @@ export function setupPaymentRoutes(): Router {
    * GET /payments/:paymentId
    * Obtener detalles de un pago específico
    */
-  router.get('/:paymentId', async (req, res) => {
+  router.get('/:paymentId', async(req, res) => {
     try {
       const { paymentId } = req.params;
 
@@ -222,7 +222,7 @@ export function setupPaymentRoutes(): Router {
    * GET /payments/order/:orderId
    * Obtener pagos asociados a una orden
    */
-  router.get('/order/:orderId', async (req, res) => {
+  router.get('/order/:orderId', async(req, res) => {
     try {
       const { orderId } = req.params;
 
@@ -248,7 +248,7 @@ export function setupPaymentRoutes(): Router {
    * GET /payments/customer/:customerId
    * Obtener historial de pagos de un cliente
    */
-  router.get('/customer/:customerId', async (req, res) => {
+  router.get('/customer/:customerId', async(req, res) => {
     try {
       const { customerId } = req.params;
       const { limit, offset } = req.query;
@@ -263,7 +263,7 @@ export function setupPaymentRoutes(): Router {
       const result = await paymentController.getCustomerPaymentHistory(
         customerId,
         limit ? parseInt(limit as string) : undefined,
-        offset ? parseInt(offset as string) : undefined
+        offset ? parseInt(offset as string) : undefined,
       );
       res.json(result);
     } catch (error) {
@@ -279,7 +279,7 @@ export function setupPaymentRoutes(): Router {
    * POST /payments/methods
    * Agregar nuevo método de pago para un cliente
    */
-  router.post('/methods', async (req, res) => {
+  router.post('/methods', async(req, res) => {
     try {
       const { customerId, ...paymentMethodData } = req.body;
 
@@ -305,7 +305,7 @@ export function setupPaymentRoutes(): Router {
    * PUT /payments/methods/:methodId
    * Actualizar método de pago existente
    */
-  router.put('/methods/:methodId', async (req, res) => {
+  router.put('/methods/:methodId', async(req, res) => {
     try {
       const { methodId } = req.params;
       const updateData = req.body;
@@ -332,7 +332,7 @@ export function setupPaymentRoutes(): Router {
    * DELETE /payments/methods/:methodId
    * Eliminar método de pago
    */
-  router.delete('/methods/:methodId', async (req, res) => {
+  router.delete('/methods/:methodId', async(req, res) => {
     try {
       const { methodId } = req.params;
 
@@ -362,7 +362,7 @@ export function setupPaymentRoutes(): Router {
    * GET /payments/health
    * Verificar salud del servicio de pagos
    */
-  router.get('/health', async (req, res) => {
+  router.get('/health', async(req, res) => {
     try {
       const result = await paymentController.getHealth();
       res.json(result);
@@ -379,7 +379,7 @@ export function setupPaymentRoutes(): Router {
    * GET /payments/metrics
    * Obtener métricas del servicio
    */
-  router.get('/metrics', async (req, res) => {
+  router.get('/metrics', async(req, res) => {
     try {
       const result = await paymentController.getMetrics();
       res.json(result);
@@ -396,7 +396,7 @@ export function setupPaymentRoutes(): Router {
    * GET /payments/status/:paymentId
    * Obtener estado actual de un pago
    */
-  router.get('/status/:paymentId', async (req, res) => {
+  router.get('/status/:paymentId', async(req, res) => {
     try {
       const { paymentId } = req.params;
 

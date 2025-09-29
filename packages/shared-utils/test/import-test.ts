@@ -7,7 +7,7 @@ console.log('Testing shared-utils imports...');
 class TestEntity extends BaseEntity {
   constructor(
     public name: string,
-    id?: string
+    id?: string,
   ) {
     super(id);
   }

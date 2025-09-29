@@ -24,7 +24,7 @@ export class User extends AggregateRoot {
     private _emailVerified: boolean = false,
     private _lastLoginAt?: Date,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
   ) {
     super(id);
     if (createdAt) {
@@ -40,7 +40,7 @@ export class User extends AggregateRoot {
     email: string,
     name: string,
     password: string,
-    id?: string
+    id?: string,
   ): Promise<User> {
     const emailVO = new Email(email);
     const nameVO = new UserName(name);
@@ -56,7 +56,7 @@ export class User extends AggregateRoot {
         email: emailVO.value,
         name: nameVO.value,
         registeredAt: user.createdAt,
-      })
+      }),
     );
 
     return user;
@@ -67,7 +67,7 @@ export class User extends AggregateRoot {
     email: string,
     name: string,
     hashedPassword: string,
-    id?: string
+    id?: string,
   ): Promise<User> {
     const emailVO = new Email(email);
     const nameVO = new UserName(name);
@@ -80,7 +80,7 @@ export class User extends AggregateRoot {
         email: emailVO.value,
         name: nameVO.value,
         registeredAt: user.createdAt,
-      })
+      }),
     );
 
     return user;
@@ -105,7 +105,7 @@ export class User extends AggregateRoot {
       lastLoginAt?: Date;
       createdAt?: Date;
       updatedAt?: Date;
-    }
+    },
   ): User {
     return new User(
       data.id,
@@ -116,7 +116,7 @@ export class User extends AggregateRoot {
       data.emailVerified,
       data.lastLoginAt,
       data.createdAt,
-      data.updatedAt
+      data.updatedAt,
     );
   }
 
@@ -160,14 +160,14 @@ export class User extends AggregateRoot {
         loginAt: this._lastLoginAt,
         ip,
         userAgent,
-      })
+      }),
     );
   }
 
   public async changePassword(
     currentPassword: string,
     newPassword: string,
-    changedBy: string
+    changedBy: string,
   ): Promise<void> {
     try {
       const isCurrentPasswordValid = await this.validatePassword(currentPassword);
@@ -183,7 +183,7 @@ export class User extends AggregateRoot {
         new UserPasswordChangedEvent(this.id, {
           changedAt: new Date(),
           changedBy,
-        })
+        }),
       );
     } catch (error) {
       const err = error as Error;
@@ -214,7 +214,7 @@ export class User extends AggregateRoot {
         deactivatedAt: new Date(),
         reason,
         deactivatedBy: deactivatedBy || 'system',
-      })
+      }),
     );
   }
 

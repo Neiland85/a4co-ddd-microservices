@@ -25,13 +25,6 @@ export default [
     },
   },
   {
-    ignores: [
-      'node_modules/',
-      'dist/',
-      'build/',
-      'jest.config.js',
-      '**/*.js',
-      '**/*.d.ts',
-    ],
+    ignores: ['node_modules/', 'dist/', 'build/', 'jest.config.js', '**/*.js', '**/*.d.ts'],
   },
 ];

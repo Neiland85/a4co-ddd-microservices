@@ -111,7 +111,7 @@ export class InMemoryProductRepository implements ProductRepository {
 
   async findOutOfStock(): Promise<Product[]> {
     return Array.from(this.products.values()).filter(
-      product => product.stockStatus === 'out_of_stock'
+      product => product.stockStatus === 'out_of_stock',
     );
   }
 }

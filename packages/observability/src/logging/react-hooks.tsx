@@ -53,7 +53,7 @@ export function useComponentLogger(componentName: string, props?: Record<string,
 
   useEffect(() => {
     renderCount.current++;
-    componentLogger.current?.trace(`Component rendered`, {
+    componentLogger.current?.trace('Component rendered', {
       custom: {
         renderCount: renderCount.current,
       },
@@ -61,10 +61,10 @@ export function useComponentLogger(componentName: string, props?: Record<string,
   });
 
   useEffect(() => {
-    componentLogger.current?.debug(`Component mounted`);
+    componentLogger.current?.debug('Component mounted');
 
     return (): void => {
-      componentLogger.current?.debug(`Component unmounted`, {
+      componentLogger.current?.debug('Component unmounted', {
         custom: {
           totalRenders: renderCount.current,
         },
@@ -85,7 +85,7 @@ export interface UseInteractionLoggerOptions {
 
 export function useInteractionLogger(
   interactionType: string,
-  options?: UseInteractionLoggerOptions
+  options?: UseInteractionLoggerOptions,
 ): (_eventData?: unknown) => void {
   const logger = useLogger();
   const lastLogTime = useRef(0);
@@ -154,7 +154,7 @@ export function useApiLogger(): ApiLogger {
     logRequest: (options: ApiCallOptions, traceId?: string): number => {
       const startTime = Date.now();
 
-      logger.info(`API request started`, {
+      logger.info('API request started', {
         traceId,
         http: {
           method: options.method,
@@ -173,12 +173,12 @@ export function useApiLogger(): ApiLogger {
       startTime: number,
       options: ApiCallOptions,
       response: unknown,
-      traceId?: string
+      traceId?: string,
     ): void => {
       const duration = Date.now() - startTime;
 
       const responseObj = response as { status?: number };
-      logger.info(`API request completed`, {
+      logger.info('API request completed', {
         traceId,
         http: {
           method: options.method,
@@ -193,11 +193,11 @@ export function useApiLogger(): ApiLogger {
       startTime: number,
       options: ApiCallOptions,
       error: Error,
-      traceId?: string
+      traceId?: string,
     ): void => {
       const duration = Date.now() - startTime;
 
-      logger.error(`API request failed`, error, {
+      logger.error('API request failed', error, {
         traceId,
         http: {
           method: options.method,
@@ -279,7 +279,7 @@ export class LoggingErrorBoundary extends React.Component<
  */
 export function withLogging<P extends Record<string, unknown>>(
   Component: React.ComponentType<P>,
-  componentName?: string
+  componentName?: string,
 ): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<unknown>> {
   const displayName = componentName || Component.displayName || Component.name || 'Component';
 
@@ -287,7 +287,7 @@ export function withLogging<P extends Record<string, unknown>>(
     const logger = useComponentLogger(displayName, props);
 
     useEffect(() => {
-      logger.trace(`Props updated`, {
+      logger.trace('Props updated', {
         custom: {
           props: Object.keys(props),
         },

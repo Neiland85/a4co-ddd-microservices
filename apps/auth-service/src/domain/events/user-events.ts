@@ -8,7 +8,7 @@ export class UserRegisteredEvent extends DomainEvent {
       name: string;
       registeredAt: Date;
     },
-    eventVersion?: number
+    eventVersion?: number,
   ) {
     super(aggregateId, userData, eventVersion);
   }
@@ -23,7 +23,7 @@ export class UserLoginEvent extends DomainEvent {
       ip?: string;
       userAgent?: string;
     },
-    eventVersion?: number
+    eventVersion?: number,
   ) {
     super(aggregateId, loginData, eventVersion);
   }
@@ -36,7 +36,7 @@ export class UserPasswordChangedEvent extends DomainEvent {
       changedAt: Date;
       changedBy: string;
     },
-    eventVersion?: number
+    eventVersion?: number,
   ) {
     super(aggregateId, passwordData, eventVersion);
   }
@@ -50,7 +50,7 @@ export class UserDeactivatedEvent extends DomainEvent {
       reason?: string;
       deactivatedBy?: string;
     },
-    eventVersion?: number
+    eventVersion?: number,
   ) {
     super(aggregateId, deactivationData, eventVersion);
   }

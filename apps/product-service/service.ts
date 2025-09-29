@@ -14,7 +14,8 @@ export class ProductService extends BaseService {
 
       return `Product created successfully: ${validatedName}`;
     } catch (error) {
-      return `Error creating product: ${error.message}`;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return `Error creating product: ${errorMessage}`;
     }
   }
 
@@ -26,7 +27,8 @@ export class ProductService extends BaseService {
 
       return `Product retrieved: ${validatedName}`;
     } catch (error) {
-      return `Error getting product: ${error.message}`;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return `Error getting product: ${errorMessage}`;
     }
   }
 }

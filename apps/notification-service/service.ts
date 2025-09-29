@@ -131,7 +131,7 @@ export class NotificationService {
 
   // Enviar notificación
   async sendNotification(
-    event: Omit<NotificationEvent, 'id' | 'timestamp' | 'sent' | 'attempts'>
+    event: Omit<NotificationEvent, 'id' | 'timestamp' | 'sent' | 'attempts'>,
   ): Promise<void> {
     const notification: NotificationEvent = {
       ...event,
@@ -150,7 +150,7 @@ export class NotificationService {
 
   // Procesar cola de notificaciones
   private startQueueProcessor(): void {
-    setInterval(async () => {
+    setInterval(async() => {
       if (this.queue.length === 0) return;
 
       const notification = this.queue.shift()!;
@@ -187,7 +187,7 @@ export class NotificationService {
   // Enviar a un canal específico
   private async sendToChannel(
     notification: NotificationEvent,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): Promise<void> {
     switch (channel.type) {
       case 'email':

@@ -179,7 +179,7 @@ export class InterceptorManager<T = unknown> {
 
   use(
     onFulfilled?: (_value: T) => T | Promise<T>,
-    onRejected?: (_error: unknown) => unknown
+    onRejected?: (_error: unknown) => unknown,
   ): number {
     this.handlers.push({
       onFulfilled,

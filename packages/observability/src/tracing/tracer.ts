@@ -64,7 +64,7 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
     },
     () => {
       logger?.info(`Prometheus metrics server started on port ${prometheusPort}`);
-    }
+    },
   );
 
   // Register instrumentations
@@ -76,7 +76,7 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
             'http.request.body.size',
             (request as { headers?: Record<string, string | string[] | undefined> }).headers?.[
               'content-length'
-            ] || 0
+            ] || 0,
           );
         },
         responseHook: (span, response): void => {
@@ -84,7 +84,7 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
             'http.response.body.size',
             (response as { headers?: Record<string, string | string[] | undefined> }).headers?.[
               'content-length'
-            ] || 0
+            ] || 0,
           );
         },
       }),
@@ -138,7 +138,7 @@ export function startSpan(
     kind?: SpanKind;
     attributes?: Attributes;
     parent?: Span;
-  }
+  },
 ): Span {
   const tracer = getTracer('default');
 
@@ -150,7 +150,7 @@ export function startSpan(
         kind: options.kind,
         attributes: options.attributes,
       },
-      ctx
+      ctx,
     );
   }
 
@@ -160,7 +160,7 @@ export function startSpan(
       kind: options?.kind,
       attributes: options?.attributes,
     },
-    span => span
+    span => span,
   );
 }
 
@@ -176,14 +176,14 @@ export function Trace(options?: {
   _propertyKey: string,
   _descriptor: PropertyDescriptor
 ) => PropertyDescriptor {
-  return function (
+  return function(
     target: unknown,
     propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
+    descriptor.value = async function(...args: unknown[]): Promise<unknown> {
       const constructorName =
         target &&
         typeof target === 'object' &&
@@ -234,7 +234,7 @@ export async function withSpan<T>(
   options?: {
     kind?: SpanKind;
     attributes?: Attributes;
-  }
+  },
 ): Promise<T> {
   const span = startSpan(name, options);
 

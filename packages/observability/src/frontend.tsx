@@ -133,7 +133,7 @@ class FrontendLogger {
             }
           : undefined,
         ...(data as Record<string, unknown>),
-      })
+      }),
     );
   }
 
@@ -173,8 +173,8 @@ class FrontendTracer {
         new BatchSpanProcessor(
           new OTLPTraceExporter({
             url: this.config.endpoint,
-          })
-        )
+          }),
+        ),
       );
     }
 
@@ -225,7 +225,7 @@ let frontendTracer: FrontendTracer | null = null;
 // Función de inicialización
 export function initializeFrontendObservability(
   loggerConfig: FrontendLoggerConfig,
-  tracingConfig: FrontendTracingConfig
+  tracingConfig: FrontendTracingConfig,
 ): { logger: FrontendLogger; tracer: FrontendTracer } {
   frontendLogger = new FrontendLogger(loggerConfig);
   frontendTracer = new FrontendTracer(tracingConfig);
@@ -289,7 +289,7 @@ export function useComponentTracing(componentName: string): {
       }
       return null;
     },
-    [componentName]
+    [componentName],
   );
 
   return { createChildSpan };
@@ -298,7 +298,7 @@ export function useComponentTracing(componentName: string): {
 // HOC para instrumentar componentes
 export function withObservability<P extends object>(
   WrappedComponent: ComponentType<P>,
-  componentName: string
+  componentName: string,
 ): ComponentType<P> {
   return function ObservabilityWrapper(props: P): ReactNode {
     const { logUIEvent } = useUILogger();
@@ -318,7 +318,7 @@ export function withObservability<P extends object>(
           props: data as Record<string, unknown>,
         });
       },
-      [componentName, createChildSpan, logUIEvent]
+      [componentName, createChildSpan, logUIEvent],
     );
 
     return <WrappedComponent {...props} onInteraction={handleInteraction} />;
@@ -328,9 +328,9 @@ export function withObservability<P extends object>(
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Wrapper para fetch con observabilidad
 export function createObservableFetch(
-  baseURL?: string
+  baseURL?: string,
 ): (_url: string, _options?: any) => Promise<any> {
-  return async (url: string, options?: any): Promise<any> => {
+  return async(url: string, options?: any): Promise<any> => {
     const fullUrl = baseURL ? `${baseURL}${url}` : url;
     const span = frontendTracer?.createSpan('http.request', SpanKind.CLIENT);
 
@@ -361,7 +361,7 @@ export function createObservableFetch(
           {
             url: fullUrl,
             status: response.status,
-          }
+          },
         );
       }
 
@@ -376,11 +376,11 @@ export function createObservableFetch(
       }
 
       frontendLogger?.error(
-        `Network Error`,
+        'Network Error',
         error instanceof Error ? error : new Error(String(error)),
         {
           url: fullUrl,
-        }
+        },
       );
 
       throw error;

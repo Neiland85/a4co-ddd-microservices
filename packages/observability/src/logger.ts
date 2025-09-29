@@ -134,7 +134,7 @@ export class StructuredLogger {
   logWithContext(
     level: string,
     messageOrContext: string | Record<string, unknown>,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ): void {
     let message: string;
     let finalContext: Record<string, unknown>;

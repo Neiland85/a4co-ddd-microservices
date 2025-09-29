@@ -66,7 +66,7 @@ const ProductList = withTracing(
       fetchProducts();
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchProducts = async() => {
       const startTime = logRequest({
         method: 'GET',
         url: '/api/products',
@@ -88,7 +88,7 @@ const ProductList = withTracing(
             method: 'GET',
             url: '/api/products',
           },
-          response
+          response,
         );
 
         componentLogger.info('Products loaded successfully', {
@@ -108,7 +108,7 @@ const ProductList = withTracing(
             method: 'GET',
             url: '/api/products',
           },
-          error
+          error,
         );
 
         componentLogger.error('Failed to load products', error);
@@ -129,7 +129,7 @@ const ProductList = withTracing(
       </div>
     );
   }),
-  { componentName: 'ProductList' }
+  { componentName: 'ProductList' },
 );
 
 // Product Card with observable interactions
@@ -186,7 +186,7 @@ function CheckoutForm({ cart }: { cart: CartItem[] }) {
   const { startApiTrace, endApiTrace } = useApiTracing();
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 

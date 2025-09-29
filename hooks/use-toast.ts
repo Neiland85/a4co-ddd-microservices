@@ -107,7 +107,7 @@ export const reducer = (state: State, action: Action): State => {
                 ...t,
                 open: false,
               }
-            : t
+            : t,
         ),
       };
     }
@@ -147,7 +147,7 @@ function toast({ ...props }: Toast) {
         type: 'UPDATE_TOAST',
         toast: { ...props, id },
       }),
-    [id]
+    [id],
   );
 
   const dismiss = React.useCallback(() => dispatch({ type: 'DISMISS_TOAST', toastId: id }), [id]);
@@ -191,10 +191,10 @@ function useToast() {
       toast,
       dismiss: React.useCallback(
         (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
-        []
+        [],
       ),
     }),
-    [state]
+    [state],
   );
 
   return toastState;

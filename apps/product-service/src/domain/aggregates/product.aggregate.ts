@@ -63,7 +63,7 @@ export class Product extends AggregateRoot {
       weight: number;
     },
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
   ) {
     super(id, createdAt, updatedAt);
   }
@@ -129,7 +129,7 @@ export class Product extends AggregateRoot {
       data.sustainabilityScore,
       data.isCustomizable || false,
       data.materials || [],
-      data.dimensions
+      data.dimensions,
     );
 
     // Add additional properties that aren't in constructor but needed for persistence
@@ -157,7 +157,7 @@ export class Product extends AggregateRoot {
         materials: data.materials || [],
         isCustomizable: data.isCustomizable || false,
         createdAt: product.createdAt,
-      })
+      }),
     );
 
     return product;
@@ -225,7 +225,7 @@ export class Product extends AggregateRoot {
       data.materials,
       data.dimensions,
       data.createdAt,
-      data.updatedAt
+      data.updatedAt,
     );
 
     // Add additional properties
@@ -447,7 +447,7 @@ export class Product extends AggregateRoot {
           currency: this._price.currency,
         },
         updatedAt: this.updatedAt,
-      })
+      }),
     );
   }
 
@@ -490,7 +490,7 @@ export class Product extends AggregateRoot {
         variantPrice: variant.price,
         attributes: variant.attributes,
         addedAt: new Date(),
-      })
+      }),
     );
   }
 
@@ -553,7 +553,7 @@ export class Product extends AggregateRoot {
         productId: this._productId.value,
         reason: reason || 'Manual deactivation',
         deactivatedAt: new Date(),
-      })
+      }),
     );
   }
 

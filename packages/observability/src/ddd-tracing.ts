@@ -48,10 +48,10 @@ export interface DomainEvent {
 
 // Decorador para métodos de agregados
 export function TraceAggregateMethod(aggregateName: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function(...args: any[]) {
       const tracer = getTracer('ddd-aggregate');
       const span = tracer.startSpan(`${aggregateName}.${propertyName}`, {
         kind: SpanKind.INTERNAL,
@@ -96,10 +96,10 @@ export function TraceAggregateMethod(aggregateName: string) {
 
 // Decorador para comandos
 export function TraceCommand(commandName: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function(...args: any[]) {
       const tracer = getTracer('ddd-command');
       const span = tracer.startSpan(`command.${commandName}`, {
         kind: SpanKind.INTERNAL,
@@ -149,10 +149,10 @@ export function TraceCommand(commandName: string) {
 
 // Decorador para event handlers
 export function TraceEventHandler(eventName: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function(...args: any[]) {
       const tracer = getTracer('ddd-event');
       const span = tracer.startSpan(`event.${eventName}`, {
         kind: SpanKind.INTERNAL,
@@ -255,7 +255,7 @@ export class DDDContext {
 export function createDomainSpan(
   operation: string,
   metadata: AggregateMetadata | CommandMetadata | EventMetadata,
-  kind: SpanKind = SpanKind.INTERNAL
+  kind: SpanKind = SpanKind.INTERNAL,
 ) {
   const tracer = getTracer('ddd-domain');
   const span = tracer.startSpan(operation, { kind });
@@ -391,7 +391,7 @@ export function dddContextMiddleware() {
 export function traceDomainTransaction<T>(
   operation: string,
   metadata: AggregateMetadata | CommandMetadata | EventMetadata,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
   const span = createDomainSpan(operation, metadata);
 
@@ -401,7 +401,7 @@ export function traceDomainTransaction<T>(
       userId: metadata.userId,
       causationId: metadata.causationId,
     }),
-    async () => {
+    async() => {
       try {
         const result = await fn();
         span.setStatus({ code: SpanStatusCode.OK });
@@ -416,6 +416,6 @@ export function traceDomainTransaction<T>(
       } finally {
         span.end();
       }
-    }
+    },
   );
 }

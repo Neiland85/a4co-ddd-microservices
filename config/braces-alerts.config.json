@@ -1,0 +1,191 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "alertChannels": {
+    "console": {
+      "enabled": true,
+      "level": "INFO"
+    },
+    "slack": {
+      "enabled": false,
+      "webhookUrl": "",
+      "channel": "#security-alerts",
+      "username": "Braces Security Monitor"
+    },
+    "pagerduty": {
+      "enabled": false,
+      "integrationKey": "",
+      "serviceName": "braces-security-monitor"
+    },
+    "email": {
+      "enabled": false,
+      "smtp": {
+        "host": "",
+        "port": 587,
+        "secure": false,
+        "auth": {
+          "user": "",
+          "pass": ""
+        }
+      },
+      "recipients": [
+        "security@company.com",
+        "devops@company.com"
+      ]
+    }
+  },
+  "alertRules": {
+    "critical": {
+      "enabled": true,
+      "conditions": [
+        {
+          "type": "severity",
+          "value": "CRITICAL"
+        },
+        {
+          "type": "attack_type",
+          "value": "EXPANSION_ATTACK"
+        }
+      ],
+      "channels": [
+        "console",
+        "slack",
+        "pagerduty",
+        "email"
+      ],
+      "throttle": {
+        "maxAlertsPerHour": 10,
+        "cooldownMinutes": 5
+      }
+    },
+    "high": {
+      "enabled": true,
+      "conditions": [
+        {
+          "type": "severity",
+          "value": "HIGH"
+        }
+      ],
+      "channels": [
+        "console",
+        "slack"
+      ],
+      "throttle": {
+        "maxAlertsPerHour": 50,
+        "cooldownMinutes": 15
+      }
+    },
+    "medium": {
+      "enabled": true,
+      "conditions": [
+        {
+          "type": "severity",
+          "value": "MEDIUM"
+        }
+      ],
+      "channels": [
+        "console"
+      ],
+      "throttle": {
+        "maxAlertsPerHour": 100,
+        "cooldownMinutes": 30
+      }
+    },
+    "performance": {
+      "enabled": true,
+      "conditions": [
+        {
+          "type": "processing_time",
+          "operator": ">",
+          "value": 5000
+        },
+        {
+          "type": "memory_usage",
+          "operator": ">",
+          "value": 104857600
+        }
+      ],
+      "channels": [
+        "console"
+      ],
+      "throttle": {
+        "maxAlertsPerHour": 20,
+        "cooldownMinutes": 60
+      }
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "collectionInterval": 60000,
+      "retentionDays": 30,
+      "exportTo": [
+        "console",
+        "json-file"
+      ]
+    },
+    "healthChecks": {
+      "enabled": true,
+      "interval": 300000,
+      "timeout": 30000,
+      "failureThreshold": 3
+    }
+  },
+  "services": {
+    "auth-service": {
+      "alertRules": [
+        "critical",
+        "high",
+        "medium"
+      ],
+      "customThresholds": {
+        "maxRequestsPerMinute": 1000,
+        "maxBlockedRequestsPerMinute": 50
+      }
+    },
+    "user-service": {
+      "alertRules": [
+        "critical",
+        "high",
+        "medium"
+      ],
+      "customThresholds": {
+        "maxRequestsPerMinute": 2000,
+        "maxBlockedRequestsPerMinute": 100
+      }
+    },
+    "product-service": {
+      "alertRules": [
+        "critical",
+        "high",
+        "medium"
+      ],
+      "customThresholds": {
+        "maxRequestsPerMinute": 5000,
+        "maxBlockedRequestsPerMinute": 200
+      }
+    },
+    "order-service": {
+      "alertRules": [
+        "critical",
+        "high",
+        "medium",
+        "performance"
+      ],
+      "customThresholds": {
+        "maxRequestsPerMinute": 1000,
+        "maxBlockedRequestsPerMinute": 50
+      }
+    },
+    "payment-service": {
+      "alertRules": [
+        "critical",
+        "high",
+        "medium"
+      ],
+      "customThresholds": {
+        "maxRequestsPerMinute": 500,
+        "maxBlockedRequestsPerMinute": 10
+      }
+    }
+  }
+}

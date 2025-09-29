@@ -38,7 +38,7 @@ export class UserCreatedEvent extends DomainEvent {
     constructor(
         public readonly userId: string,
         public readonly username: string,
-        public readonly email: string
+        public readonly email: string,
     ) {
         super(userId, 'user.created.v1');
     }
@@ -47,7 +47,7 @@ export class UserCreatedEvent extends DomainEvent {
 export class UserUpdatedEvent extends DomainEvent {
     constructor(
         public readonly userId: string,
-        public readonly changes: { field: string; oldValue: unknown; newValue: unknown }
+        public readonly changes: { field: string; oldValue: unknown; newValue: unknown },
     ) {
         super(userId, 'user.updated.v1');
     }
@@ -68,7 +68,7 @@ export class User extends AggregateRoot {
         email: Email,
         isActive: boolean = true,
         createdAt?: Date,
-        updatedAt?: Date
+        updatedAt?: Date,
     ) {
         super(id, createdAt, updatedAt);
         this._username = username;
@@ -102,7 +102,7 @@ export class User extends AggregateRoot {
             this.addDomainEvent(new UserUpdatedEvent(this.id, {
                 field: 'username',
                 oldValue: oldUsername.value,
-                newValue: newUsername.value
+                newValue: newUsername.value,
             }));
         }
     }
@@ -116,7 +116,7 @@ export class User extends AggregateRoot {
             this.addDomainEvent(new UserUpdatedEvent(this.id, {
                 field: 'email',
                 oldValue: oldEmail.value,
-                newValue: newEmail.value
+                newValue: newEmail.value,
             }));
         }
     }
@@ -129,7 +129,7 @@ export class User extends AggregateRoot {
             this.addDomainEvent(new UserUpdatedEvent(this.id, {
                 field: 'isActive',
                 oldValue: true,
-                newValue: false
+                newValue: false,
             }));
         }
     }
@@ -142,7 +142,7 @@ export class User extends AggregateRoot {
             this.addDomainEvent(new UserUpdatedEvent(this.id, {
                 field: 'isActive',
                 oldValue: false,
-                newValue: true
+                newValue: true,
             }));
         }
     }

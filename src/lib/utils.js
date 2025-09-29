@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.generateId = exports.truncateText = exports.formatDate = exports.formatCurrency = void 0;
 exports.cn = cn;
 function handleObjectInput(input, classes) {

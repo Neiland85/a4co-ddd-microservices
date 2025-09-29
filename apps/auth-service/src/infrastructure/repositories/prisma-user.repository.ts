@@ -109,7 +109,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
 
   async findPaginated(
     page: number,
-    limit: number
+    limit: number,
   ): Promise<{
     users: User[];
     total: number;
@@ -178,7 +178,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
         lastLoginAt: userData.lastLoginAt,
         createdAt: userData.createdAt,
         updatedAt: userData.updatedAt,
-      }
+      },
     );
   }
 }

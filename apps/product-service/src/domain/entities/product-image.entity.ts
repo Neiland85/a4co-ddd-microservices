@@ -7,7 +7,7 @@ export class ProductImage {
     public altText?: string,
     public type: string = 'PRODUCT',
     public isPrimary: boolean = false,
-    public sortOrder: number = 0
+    public sortOrder: number = 0,
   ) {}
 
   static create(data: any): ProductImage {
@@ -18,7 +18,7 @@ export class ProductImage {
       data.altText,
       data.type,
       data.isPrimary,
-      data.sortOrder
+      data.sortOrder,
     );
   }
 
@@ -30,7 +30,7 @@ export class ProductImage {
       data.altText,
       data.type,
       data.isPrimary,
-      data.sortOrder
+      data.sortOrder,
     );
   }
 
