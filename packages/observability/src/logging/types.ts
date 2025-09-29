@@ -5,10 +5,12 @@
 export interface DDDMetadata {
   aggregateId?: string;
   aggregateType?: string;
+  aggregateName?: string; // Alias for aggregateType for backward compatibility
   commandName?: string;
   eventName?: string;
   eventVersion?: number;
   userId?: string;
+  tenantId?: string;
   correlationId?: string;
   causationId?: string;
   timestamp?: string;

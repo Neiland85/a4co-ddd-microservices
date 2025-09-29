@@ -2,12 +2,11 @@
  * Middleware for adding tracing to HTTP requests
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import { NextFunction, Request, Response } from 'express';
 import { Context, Next } from 'koa';
-import { trace, context, SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '../logging/types';
-import { getTracingContext } from './tracer';
 
 export interface TracingMiddlewareOptions {
   serviceName?: string;
@@ -202,8 +201,8 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
     const tracingContext = trace.setSpan(context.active(), span);
 
     // Add request body if enabled
-    if (captureRequestBody && ctx.request.body) {
-      span.setAttribute('http.request.body', JSON.stringify(ctx.request.body));
+    if (captureRequestBody && (ctx.request as any).body) {
+      span.setAttribute('http.request.body', JSON.stringify((ctx.request as any).body));
     }
 
     // Inject trace headers
@@ -214,8 +213,8 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
     }
 
     // Attach span to context for access in route handlers
-    ctx.state.span = span;
-    ctx.state.traceId = traceId;
+    ctx.state['span'] = span;
+    ctx.state['traceId'] = traceId;
 
     // Log request
     logger?.info('HTTP request received', {

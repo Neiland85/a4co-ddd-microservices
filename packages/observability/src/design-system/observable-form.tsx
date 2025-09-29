@@ -27,7 +27,7 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
 }) => {
   const logger = useLogger();
   const [fieldValues, setFieldValues] = useState<Record<string, any>>({});
-  const submitStartTime = useRef<number>();
+  const submitStartTime = useRef<number | undefined>(undefined);
 
   const traceFormInteraction = useInteractionTracing('form-interaction', formId, {
     attributes: {
@@ -130,16 +130,17 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
     <form {...props} data-form-id={formId} onSubmit={handleSubmit}>
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && trackFieldChanges) {
+          const childProps = child.props as any;
           // Inject onChange handler to track field changes
           if (
-            child.props.name &&
+            childProps.name &&
             (child.type === 'input' || child.type === 'textarea' || child.type === 'select')
           ) {
             return React.cloneElement(child as any, {
               onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                handleFieldChange(child.props.name, e.target.value);
-                if (child.props.onChange) {
-                  child.props.onChange(e);
+                handleFieldChange(childProps.name, e.target.value);
+                if (childProps.onChange) {
+                  childProps.onChange(e);
                 }
               },
             });

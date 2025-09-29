@@ -1,5 +1,5 @@
+import { context, trace } from '@opentelemetry/api';
 import pino from 'pino';
-import { trace, context } from '@opentelemetry/api';
 
 export interface LoggerConfig {
   serviceName: string;
@@ -39,9 +39,9 @@ export function createLogger(config: LoggerConfig): pino.Logger {
     formatters: {
       level: label => ({ level: label }),
       bindings: bindings => ({
-        service: bindings.name || config.serviceName,
-        pid: bindings.pid,
-        hostname: bindings.hostname,
+        service: bindings['name'] || config.serviceName,
+        pid: bindings['pid'],
+        hostname: bindings['hostname'],
         environment: config.environment,
       }),
     },
@@ -162,45 +162,53 @@ export class StructuredLogger {
     this.logger = logger;
   }
 
-  // Log con contexto adicional
-  logWithContext(level: string, message: string, context: Record<string, any>) {
+  // Log con contexto adicional - sobrecarga para compatibilidad
+  logWithContext(level: string, message: string, context: Record<string, any>): void;
+  logWithContext(level: string, context: Record<string, any>): void;
+  logWithContext(
+    level: string,
+    messageOrContext: string | Record<string, any>,
+    context?: Record<string, any>
+  ): void {
+    let message: string;
+    let finalContext: Record<string, any>;
+
+    if (typeof messageOrContext === 'string') {
+      message = messageOrContext;
+      finalContext = context || {};
+    } else {
+      message = '';
+      finalContext = messageOrContext;
+    }
+
     const span = trace.getActiveSpan();
     if (span) {
       // Agregar atributos al span actual
-      Object.entries(context).forEach(([key, value]) => {
+      Object.entries(finalContext).forEach(([key, value]) => {
         span.setAttribute(key, value as any);
       });
     }
 
     (this.logger as any)[level]({
-      ...context,
+      ...finalContext,
       msg: message,
     });
   }
 
-  // Métodos convenientes
-  info(message: string, context?: Record<string, any>) {
+  // Métodos convenientes - API simplificada
+  info(message: string, context?: Record<string, any>): void {
     this.logWithContext('info', message, context || {});
   }
 
-  error(message: string, error?: Error, context?: Record<string, any>) {
-    this.logWithContext('error', message, {
-      ...(context || {}),
-      error: error
-        ? {
-            message: error.message,
-            stack: error.stack,
-            name: error.name,
-          }
-        : undefined,
-    });
+  error(message: string, context?: Record<string, any>): void {
+    this.logWithContext('error', message, context || {});
   }
 
-  warn(message: string, context?: Record<string, any>) {
+  warn(message: string, context?: Record<string, any>): void {
     this.logWithContext('warn', message, context || {});
   }
 
-  debug(message: string, context?: Record<string, any>) {
+  debug(message: string, context?: Record<string, any>): void {
     this.logWithContext('debug', message, context || {});
   }
 
@@ -230,4 +238,53 @@ export class StructuredLogger {
       },
     });
   }
+
+  // Métodos adicionales para compatibilidad
+  fatal(message: string, context?: Record<string, any>) {
+    this.logWithContext('fatal', message, context || {});
+  }
+
+  withContext(context: Record<string, any>): StructuredLogger {
+    // Crear un logger con contexto adicional
+    const enhancedLogger = Object.create(this);
+    enhancedLogger.defaultContext = { ...this.defaultContext, ...context };
+    return enhancedLogger;
+  }
+
+  withDDD(metadata: any): StructuredLogger {
+    // Crear un logger con contexto DDD
+    return this.withContext({
+      aggregate: metadata.aggregateName,
+      aggregateId: metadata.aggregateId,
+      command: metadata.commandName,
+      event: metadata.eventName,
+    });
+  }
+
+  // Propiedad para contexto por defecto
+  private defaultContext: Record<string, any> = {};
+}
+
+// Global logger instance
+let globalLogger: StructuredLogger | null = null;
+
+// Initialize logger
+export function initializeLogger(config: LoggerConfig): StructuredLogger {
+  const pinoLogger = createLogger(config);
+  globalLogger = new StructuredLogger(pinoLogger);
+  return globalLogger;
+}
+
+// Get logger instance
+export function getLogger(): StructuredLogger {
+  if (!globalLogger) {
+    // Create default logger if not initialized
+    const defaultConfig: LoggerConfig = {
+      serviceName: 'default-service',
+      environment: process.env['NODE_ENV'] || 'development',
+    };
+    const pinoLogger = createLogger(defaultConfig);
+    globalLogger = new StructuredLogger(pinoLogger);
+  }
+  return globalLogger;
 }

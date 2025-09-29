@@ -1,6 +1,6 @@
+import { trace } from '@opentelemetry/api';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
-import { trace, context } from '@opentelemetry/api';
 
 export interface LoggerConfig {
   serviceName: string;
@@ -41,8 +41,8 @@ export function createLogger(config: LoggerConfig): pino.Logger {
     formatters: {
       level: label => ({ level: label }),
       bindings: bindings => ({
-        pid: bindings.pid,
-        host: bindings.hostname,
+        pid: bindings['pid'],
+        host: bindings['hostname'],
         service: config.serviceName,
         version: config.serviceVersion || '1.0.0',
         environment: config.environment || 'development',
@@ -85,11 +85,10 @@ export function createLogger(config: LoggerConfig): pino.Logger {
 // Crear HTTP logger middleware
 export function createHttpLogger(logger: pino.Logger) {
   return pinoHttp({
-    logger,
     genReqId: req => {
       // Usar trace ID si está disponible
       const traceId = getCurrentTraceId();
-      return traceId || req.id || req.headers['x-request-id'];
+      return traceId || req.id || req.headers['x-request-id'] || 'unknown';
     },
     customLogLevel: (req, res, err) => {
       if (res.statusCode >= 400 && res.statusCode < 500) {
@@ -142,4 +141,9 @@ export function getGlobalLogger(): pino.Logger {
 export function initializeLogger(config: LoggerConfig): pino.Logger {
   globalLogger = createLogger(config);
   return globalLogger;
+}
+
+// Reset function for testing purposes
+export function resetLoggerState(): void {
+  globalLogger = null;
 }

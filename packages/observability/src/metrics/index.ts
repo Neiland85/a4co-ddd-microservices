@@ -1,10 +1,10 @@
+import { Counter, Histogram, metrics, ObservableGauge, UpDownCounter } from '@opentelemetry/api';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
+import { MeterProvider } from '@opentelemetry/sdk-metrics';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { metrics, Counter, Histogram, UpDownCounter, ObservableGauge } from '@opentelemetry/api';
-import { MetricsConfig } from '../types';
 import { getLogger } from '../logger';
+import { MetricsConfig } from '../types';
 
 // Global metrics provider
 let globalMeterProvider: MeterProvider | null = null;
@@ -51,17 +51,16 @@ export function initializeMetrics(
       preventServerStart: false,
     },
     () => {
-      logger.info(
-        { port: config.port || 9090, endpoint: config.endpoint || '/metrics' },
-        'Prometheus metrics server started'
-      );
+      logger.info('Prometheus metrics server started', {
+        port: config.port || 9090,
+        endpoint: config.endpoint || '/metrics',
+      });
     }
   );
 
   // Create meter provider
   globalMeterProvider = new MeterProvider({
     resource,
-    readers: [prometheusExporter],
   });
 
   // Register as global provider
@@ -193,7 +192,8 @@ export function recordCommandExecution(
   }
 
   if (duration !== undefined) {
-    const meter = metrics.getMeter('@a4co/observability');
+    const meter = globalMeterProvider?.getMeter('@a4co/observability');
+    if (!meter) return;
     const commandDuration = meter.createHistogram('ddd_command_duration_ms', {
       description: 'Duration of command executions in milliseconds',
       unit: 'ms',

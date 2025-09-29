@@ -1,35 +1,38 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import {
-  ConsoleSpanExporter,
-  SimpleSpanProcessor,
-  BatchSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
-import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+  context,
+  Context,
+  propagation,
+  Span,
+  SpanKind,
+  SpanOptions,
+  SpanStatusCode,
+  TextMapGetter,
+  TextMapSetter,
+  trace,
+  Tracer,
+} from '@opentelemetry/api';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import {
+  CompositePropagator,
+  W3CBaggagePropagator,
+  W3CTraceContextPropagator,
+} from '@opentelemetry/core';
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { KoaInstrumentation } from '@opentelemetry/instrumentation-koa';
+import { Resource } from '@opentelemetry/resources';
+import { NodeSDK } from '@opentelemetry/sdk-node';
 import {
-  trace,
-  context,
-  SpanStatusCode,
-  SpanKind,
-  Tracer,
-  Span,
-  SpanOptions,
-  Context,
-  propagation,
-  TextMapGetter,
-  TextMapSetter,
-} from '@opentelemetry/api';
-import { W3CTraceContextPropagator } from '@opentelemetry/core';
-import { CompositePropagator, W3CBaggagePropagator } from '@opentelemetry/core';
-import { TracingConfig, ObservabilityContext, DDDMetadata, ObservabilityTracer } from '../types';
+  BatchSpanProcessor,
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { getLogger } from '../logger';
+import { DDDMetadata, ObservabilityContext, ObservabilityTracer, TracingConfig } from '../types';
 
 // Global tracer provider
 let globalTracerProvider: NodeTracerProvider | null = null;
@@ -114,6 +117,36 @@ function createEnhancedTracer(
     return originalStartSpan(name, { ...options, attributes }, context);
   };
 
+  // Override startActiveSpan to include default context
+  const originalStartActiveSpan = (baseTracer as any).startActiveSpan?.bind(baseTracer);
+  if (originalStartActiveSpan) {
+    enhancedTracer.startActiveSpan = function (
+      name: string,
+      options?: SpanOptions,
+      fn?: (span: Span) => any
+    ): any {
+      const attributes = {
+        ...options?.attributes,
+        ...defaultContext?.metadata,
+      };
+
+      if (defaultContext?.correlationId) {
+        attributes['correlation.id'] = defaultContext.correlationId;
+      }
+      if (defaultContext?.causationId) {
+        attributes['causation.id'] = defaultContext.causationId;
+      }
+      if (defaultContext?.userId) {
+        attributes['user.id'] = defaultContext.userId;
+      }
+      if (defaultContext?.tenantId) {
+        attributes['tenant.id'] = defaultContext.tenantId;
+      }
+
+      return originalStartActiveSpan(name, { ...options, attributes }, fn);
+    };
+  }
+
   // Ensure all original methods are available
   Object.setPrototypeOf(enhancedTracer, baseTracer);
 
@@ -141,7 +174,7 @@ export function initializeTracing(
   });
 
   // Add exporters
-  const exporters = [];
+  const exporters: string[] = [];
 
   // Jaeger exporter
   if (config.jaegerEndpoint) {
@@ -175,13 +208,13 @@ export function initializeTracing(
         new HttpInstrumentation({
           requestHook: (span, request) => {
             span.setAttributes({
-              'http.request.body.size': request.headers?.['content-length'],
-              'http.user_agent': request.headers?.['user-agent'],
+              'http.request.body.size': (request as any).headers?.['content-length'],
+              'http.user_agent': (request as any).headers?.['user-agent'],
             });
           },
           responseHook: (span, response) => {
             span.setAttributes({
-              'http.response.body.size': response.headers?.['content-length'],
+              'http.response.body.size': (response as any).headers?.['content-length'],
             });
           },
         }),
@@ -211,10 +244,12 @@ export function initializeTracing(
   });
 
   // Initialize SDK
-  sdk
-    .start()
-    .then(() => logger.info({ exporters }, 'Tracing initialized'))
-    .catch(error => logger.error({ error }, 'Error initializing tracing'));
+  try {
+    sdk.start();
+    logger.info('Tracing initialized', { exporters });
+  } catch (error: any) {
+    logger.error('Error initializing tracing', { error });
+  }
 
   globalSDK = sdk;
 
@@ -303,12 +338,12 @@ export function createDDDSpan(name: string, metadata: DDDMetadata, options?: Spa
 
 // Export OpenTelemetry APIs
 export {
-  trace,
   context,
   propagation,
-  SpanStatusCode,
   SpanKind,
+  SpanStatusCode,
+  trace,
+  type Context,
   type Span,
   type SpanOptions,
-  type Context,
 };

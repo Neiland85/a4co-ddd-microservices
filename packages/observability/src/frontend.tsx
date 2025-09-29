@@ -1,16 +1,16 @@
-import { useEffect, useRef, useCallback, ReactNode } from 'react';
-import { trace, context, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { DocumentLoadInstrumentation } from '@opentelemetry/instrumentation-document-load';
+import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
 import { UserInteractionInstrumentation } from '@opentelemetry/instrumentation-user-interaction';
 import { XMLHttpRequestInstrumentation } from '@opentelemetry/instrumentation-xml-http-request';
-import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
+import { Resource } from '@opentelemetry/resources';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { useCallback, useEffect, useRef } from 'react';
 
 // Configuración del logger para frontend
 interface FrontendLoggerConfig {
@@ -66,7 +66,7 @@ class FrontendLogger {
       environment: this.config.environment,
       sessionId: this.sessionId,
       userId: this.getUserId(),
-      ...data
+      ...data,
     };
   }
 
@@ -89,7 +89,7 @@ class FrontendLogger {
         console.error('Error sending log:', error);
       }
     }
-    
+
     // También loggear en consola en desarrollo
     if (this.config.environment === 'development') {
       console.log(`[${logEntry.level.toUpperCase()}] ${logEntry.message}`, logEntry);
@@ -115,14 +115,18 @@ class FrontendLogger {
   }
 
   error(message: string, error?: Error, data?: any): void {
-    this.sendLog(this.createLogEntry('error', message, {
-      error: error ? {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-      } : undefined,
-      ...data
-    }));
+    this.sendLog(
+      this.createLogEntry('error', message, {
+        error: error
+          ? {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+            }
+          : undefined,
+        ...data,
+      })
+    );
   }
 
   logUIEvent(event: Omit<UIEvent, 'timestamp' | 'sessionId'>): void {
@@ -131,14 +135,14 @@ class FrontendLogger {
       timestamp: Date.now(),
       sessionId: this.sessionId,
     };
-    
+
     this.info(`UI Event: ${event.component}.${event.action}`, uiEvent);
   }
 }
 
 // Clase para tracing en frontend
 class FrontendTracer {
-  private provider: WebTracerProvider;
+  private provider!: WebTracerProvider;
   private config: FrontendTracingConfig;
 
   constructor(config: FrontendTracingConfig) {
@@ -217,7 +221,7 @@ export function initializeFrontendObservability(
 ) {
   frontendLogger = new FrontendLogger(loggerConfig);
   frontendTracer = new FrontendTracer(tracingConfig);
-  
+
   return {
     logger: frontendLogger,
     tracer: frontendTracer,
@@ -266,12 +270,15 @@ export function useComponentTracing(componentName: string) {
     };
   }, [componentName]);
 
-  const createChildSpan = useCallback((action: string) => {
-    if (frontendTracer && spanRef.current) {
-      return frontendTracer.createChildSpan(spanRef.current, `${componentName}.${action}`);
-    }
-    return null;
-  }, [componentName]);
+  const createChildSpan = useCallback(
+    (action: string) => {
+      if (frontendTracer && spanRef.current) {
+        return frontendTracer.createChildSpan(spanRef.current, `${componentName}.${action}`);
+      }
+      return null;
+    },
+    [componentName]
+  );
 
   return { createChildSpan };
 }
@@ -285,26 +292,24 @@ export function withObservability<P extends object>(
     const { logUIEvent } = useUILogger();
     const { createChildSpan } = useComponentTracing(componentName);
 
-    const handleInteraction = useCallback((action: string, data?: any) => {
-      const span = createChildSpan(action);
-      if (span && frontendTracer) {
-        frontendTracer.setAttributes(span, data || {});
-        frontendTracer.endSpan(span);
-      }
+    const handleInteraction = useCallback(
+      (action: string, data?: any) => {
+        const span = createChildSpan(action);
+        if (span && frontendTracer) {
+          frontendTracer.setAttributes(span, data || {});
+          frontendTracer.endSpan(span);
+        }
 
-      logUIEvent({
-        component: componentName,
-        action,
-        props: data,
-      });
-    }, [componentName, createChildSpan, logUIEvent]);
-
-    return (
-      <WrappedComponent
-        {...props}
-        onInteraction={handleInteraction}
-      />
+        logUIEvent({
+          component: componentName,
+          action,
+          props: data,
+        });
+      },
+      [componentName, createChildSpan, logUIEvent]
     );
+
+    return <WrappedComponent {...props} onInteraction={handleInteraction} />;
   };
 }
 
@@ -313,7 +318,7 @@ export function createObservableFetch(baseURL?: string) {
   return async (url: string, options?: RequestInit) => {
     const fullUrl = baseURL ? `${baseURL}${url}` : url;
     const span = frontendTracer?.createSpan('http.request', SpanKind.CLIENT);
-    
+
     if (span) {
       frontendTracer?.setAttributes(span, {
         'http.url': fullUrl,
@@ -335,25 +340,33 @@ export function createObservableFetch(baseURL?: string) {
       }
 
       if (!response.ok) {
-        frontendLogger?.error(`HTTP Error: ${response.status}`, new Error(`HTTP ${response.status}`), {
-          url: fullUrl,
-          status: response.status,
-        });
+        frontendLogger?.error(
+          `HTTP Error: ${response.status}`,
+          new Error(`HTTP ${response.status}`),
+          {
+            url: fullUrl,
+            status: response.status,
+          }
+        );
       }
 
       return response;
     } catch (error) {
       if (span) {
         frontendTracer?.setAttributes(span, {
-          'error': true,
+          error: true,
           'error.message': error instanceof Error ? error.message : String(error),
         });
         frontendTracer?.endSpan(span, SpanStatusCode.ERROR);
       }
 
-      frontendLogger?.error(`Network Error`, error instanceof Error ? error : new Error(String(error)), {
-        url: fullUrl,
-      });
+      frontendLogger?.error(
+        `Network Error`,
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          url: fullUrl,
+        }
+      );
 
       throw error;
     }

@@ -2,8 +2,8 @@
  * HTTP client wrapper with automatic logging and tracing
  */
 
-import { Logger } from './types';
 import { v4 as uuidv4 } from 'uuid';
+import { Logger } from './types';
 
 export interface RequestConfig extends RequestInit {
   traceId?: string;
@@ -206,7 +206,7 @@ export class FetchWrapperWithInterceptors extends FetchWrapper {
     response: new InterceptorManager<Response>(),
   };
 
-  async request(url: string, config?: RequestConfig): Promise<Response> {
+  override async request(url: string, config?: RequestConfig): Promise<Response> {
     let finalConfig = config || {};
 
     // Apply request interceptors

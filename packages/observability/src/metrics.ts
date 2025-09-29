@@ -1,7 +1,7 @@
-import { MeterProvider } from '@opentelemetry/sdk-metrics';
+import { metrics } from '@opentelemetry/api';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { Resource } from '@opentelemetry/resources';
-import { metrics } from '@opentelemetry/api';
+import { MeterProvider } from '@opentelemetry/sdk-metrics';
 
 export interface MetricsConfig {
   serviceName: string;
@@ -33,7 +33,7 @@ export function initializeMetrics(config: MetricsConfig) {
   metrics.setGlobalMeterProvider(meterProvider);
 
   // Agregar el exportador
-  meterProvider.addMetricReader(prometheusExporter);
+  meterProvider.addMetricReader(prometheusExporter as any);
 
   return prometheusExporter;
 }

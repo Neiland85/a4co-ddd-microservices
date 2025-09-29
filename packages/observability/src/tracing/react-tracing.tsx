@@ -2,13 +2,13 @@
  * React hooks and HOCs for distributed tracing
  */
 
-import React, { useEffect, useRef, useCallback } from 'react';
 import { Span } from '@opentelemetry/api';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
+  addPerformanceMetricsToSpan,
   traceComponentRender,
   traceRouteNavigation,
   traceUserInteraction,
-  addPerformanceMetricsToSpan,
 } from './web-tracer';
 
 /**
@@ -157,14 +157,14 @@ export interface WithTracingOptions {
   trackProps?: string[];
 }
 
-export function withTracing<P extends object>(
+export function withTracing<P extends Record<string, any>>(
   Component: React.ComponentType<P>,
   options?: WithTracingOptions
-): React.ComponentType<P> {
+): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<any>> {
   const displayName =
     options?.componentName || Component.displayName || Component.name || 'Component';
 
-  return React.forwardRef<any, P>((props, ref) => {
+  const WrappedComponent = React.forwardRef<any, P>((props, ref) => {
     const span = useComponentTracing(displayName, props);
 
     // Track specific prop changes
@@ -179,7 +179,7 @@ export function withTracing<P extends object>(
           });
 
           span.addEvent('props.updated', {
-            props: trackedProps,
+            props: JSON.stringify(trackedProps),
             timestamp: new Date().toISOString(),
           });
         }
@@ -187,8 +187,11 @@ export function withTracing<P extends object>(
       options?.trackProps?.map(prop => (props as any)[prop]) || []
     );
 
-    return <Component {...props} ref={ref} />;
+    return <Component {...(props as P)} ref={ref} />;
   });
+
+  WrappedComponent.displayName = `withTracing(${displayName})`;
+  return WrappedComponent;
 }
 
 /**
@@ -206,7 +209,7 @@ export function TracingProvider({
   serviceName,
   serviceVersion,
   environment,
-}: TracingProviderProps): JSX.Element {
+}: TracingProviderProps): React.ReactElement {
   useEffect(() => {
     // Initialize web tracer on mount
     import('./web-tracer').then(({ initializeWebTracer }) => {
@@ -250,7 +253,7 @@ export class TracingErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     const componentName = this.props.componentName || 'ErrorBoundary';
     this.span = traceComponentRender(componentName, {
       error: true,
@@ -263,7 +266,7 @@ export class TracingErrorBoundary extends React.Component<
     this.span.end();
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       const Fallback = this.props.fallback;
 

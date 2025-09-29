@@ -1,7 +1,6 @@
-import { context, propagation, trace } from '@opentelemetry/api';
-import { Request, Response, NextFunction } from 'express';
+import { context, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 import axios, { AxiosRequestConfig } from 'axios';
-import { IncomingMessage } from 'http';
+import { NextFunction, Request, Response } from 'express';
 
 // Tipos para mejorar type safety
 export interface TracedRequest extends Request {
@@ -49,7 +48,7 @@ export function observabilityMiddleware() {
 
         // Agregar atributos adicionales al span
         span.setAttributes({
-          'http.request_id': req.headers['x-request-id'] || req.id,
+          'http.request_id': String(req.headers['x-request-id'] || req.id),
           'http.user_agent': req.headers['user-agent'],
           'http.referer': req.headers['referer'],
           'http.forwarded_for': req.headers['x-forwarded-for'],
@@ -86,7 +85,7 @@ export function observabilityMiddleware() {
         }
 
         // Llamar al método original
-        return originalEnd.apply(res, args);
+        return originalEnd(...args);
       };
 
       next();
@@ -256,7 +255,7 @@ export function errorHandlingMiddleware(logger: any) {
     if (span) {
       span.recordException(err);
       span.setStatus({
-        code: trace.SpanStatusCode.ERROR,
+        code: SpanStatusCode.ERROR,
         message: err.message,
       });
     }

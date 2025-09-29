@@ -1,15 +1,15 @@
 import React, {
+  ComponentType,
   createContext,
+  ErrorInfo,
+  PropsWithChildren,
   useContext,
   useEffect,
   useRef,
   useState,
-  ComponentType,
-  PropsWithChildren,
-  ErrorInfo,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { UIEvent, ComponentTrackingConfig } from '../types';
+import { ComponentTrackingConfig, UIEvent } from '../types';
 
 // Browser-side logger interface
 interface BrowserLogger {
@@ -95,7 +95,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   const [sessionId] = useState(() => uuidv4());
   const logger = useRef(createBrowserLogger(apiEndpoint, sessionId));
   const eventQueue = useRef<UIEvent[]>([]);
-  const flushTimer = useRef<NodeJS.Timeout>();
+  const flushTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Flush events to backend
   const flushEvents = async () => {
@@ -205,7 +205,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
 
   // Track performance metrics
   useEffect(() => {
-    if (!enablePerformanceTracking) return;
+    if (!enablePerformanceTracking) return undefined;
 
     // Wait for page load
     const trackPerformance = () => {
@@ -233,6 +233,8 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
       window.addEventListener('load', trackPerformance);
       return () => window.removeEventListener('load', trackPerformance);
     }
+
+    return undefined;
   }, [enablePerformanceTracking]);
 
   const value: ObservabilityContextValue = {
@@ -279,7 +281,7 @@ class ErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.props.logger.error('React error boundary caught error', {
       error: error.toString(),
       stack: error.stack,
@@ -291,13 +293,13 @@ class ErrorBoundary extends React.Component<
     }
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
           <h2>Something went wrong</h2>
           <p>We're sorry for the inconvenience. Please refresh the page.</p>
-          {process.env.NODE_ENV === 'development' && (
+          {process.env['NODE_ENV'] === 'development' && (
             <details style={{ marginTop: '20px', textAlign: 'left' }}>
               <summary>Error details</summary>
               <pre>{this.state.error?.stack}</pre>
@@ -439,7 +441,7 @@ export const createTracedFetch = (apiEndpoint: string, sessionId: string) => {
       const duration = performance.now() - startTime;
 
       // Log to console in development
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         console.debug(
           `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - ${response.status} (${duration.toFixed(2)}ms)`
         );

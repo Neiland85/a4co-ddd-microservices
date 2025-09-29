@@ -2,18 +2,18 @@
  * OpenTelemetry tracer initialization and configuration
  */
 
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { context, Span, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { GrpcInstrumentation } from '@opentelemetry/instrumentation-grpc';
-import { trace, context, SpanKind, SpanStatusCode, Span } from '@opentelemetry/api';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { Resource } from '@opentelemetry/resources';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { Logger } from '../logging/types';
 
 export interface TracerConfig {
@@ -71,10 +71,16 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
     instrumentations: [
       new HttpInstrumentation({
         requestHook: (span, request) => {
-          span.setAttribute('http.request.body.size', request.headers['content-length'] || 0);
+          span.setAttribute(
+            'http.request.body.size',
+            (request as any).headers?.['content-length'] || 0
+          );
         },
         responseHook: (span, response) => {
-          span.setAttribute('http.response.body.size', response.headers['content-length'] || 0);
+          span.setAttribute(
+            'http.response.body.size',
+            (response as any).headers?.['content-length'] || 0
+          );
         },
       }),
       new ExpressInstrumentation(),
@@ -85,11 +91,11 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
   // Create SDK
   const sdk = new NodeSDK({
     resource,
-    spanProcessor: new BatchSpanProcessor(jaegerExporter),
+    spanProcessor: new BatchSpanProcessor(jaegerExporter) as any,
     metricReader: new PeriodicExportingMetricReader({
-      exporter: prometheusExporter,
+      exporter: prometheusExporter as any,
       exportIntervalMillis: 10000,
-    }),
+    }) as any,
   });
 
   // Initialize SDK

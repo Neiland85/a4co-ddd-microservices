@@ -1,6 +1,10 @@
 // Se comentan las importaciones porque los módulos pueden no estar disponibles en todos los entornos.
 // import { Logger } from 'pino';
 // import { Span, Tracer } from '@opentelemetry/api';
+import { DDDMetadata } from './logging/types';
+
+// Re-export DDDMetadata for convenience
+export { DDDMetadata };
 
 // Tipos de configuración
 export interface ObservabilityConfig {
@@ -35,6 +39,9 @@ export interface MetricsConfig {
   endpoint?: string;
   interval?: number;
   labels?: Record<string, string>;
+  serviceName?: string;
+  serviceVersion?: string;
+  environment?: string;
 }
 
 // Context types
@@ -75,6 +82,9 @@ export interface ComponentTrackingConfig {
 // Interfaz de envoltorio para Tracer
 export interface ObservabilityTracer /* extends Tracer */ {
   withContext(contexto: ObservabilityContext): ObservabilityTracer;
+  startSpan(name: string, options?: any): any;
+  startActiveSpan(name: string, options?: any, fn?: (span: any) => any): any;
+  withDDD?(metadata: DDDMetadata): ObservabilityTracer;
 }
 
 // Middleware options

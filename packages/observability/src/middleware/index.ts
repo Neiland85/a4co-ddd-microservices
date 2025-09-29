@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import { NextFunction, Request, Response } from 'express';
 import { Context as KoaContext, Next as KoaNext } from 'koa';
-import { trace, context, SpanStatusCode, SpanKind } from '@opentelemetry/api';
 import { v4 as uuidv4 } from 'uuid';
-import { MiddlewareOptions } from '../types';
 import { getLogger } from '../logger';
-import { recordHttpRequest } from '../metrics';
+import { recordHttpRequest } from '../metrics/index';
 import { extractContext } from '../tracer';
+import { MiddlewareOptions } from '../types';
 
 // Express middleware
 export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) {
@@ -191,8 +191,8 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
 
     // Add to context
     ctx.id = requestId;
-    ctx.state.traceId = traceId;
-    ctx.state.spanId = spanId;
+    ctx.state['traceId'] = traceId;
+    ctx.state['spanId'] = spanId;
 
     // Create logger with context
     ctx.log = logger.withContext({
@@ -215,8 +215,8 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
       headers: filterHeaders(ctx.headers, redactHeaders),
     };
 
-    if (includeRequestBody && ctx.request.body) {
-      requestLog.body = ctx.request.body;
+    if (includeRequestBody && (ctx.request as any).body) {
+      requestLog.body = (ctx.request as any).body;
     }
 
     ctx.log.info(requestLog, 'Request received');
@@ -313,7 +313,7 @@ export function expressErrorHandler() {
 
     res.status(500).json({
       error: 'Internal Server Error',
-      message: process.env.NODE_ENV === 'development' ? err.message : undefined,
+      message: process.env['NODE_ENV'] === 'development' ? err.message : undefined,
       requestId: req.id,
     });
   };
@@ -348,8 +348,8 @@ export function koaErrorHandler() {
       ctx.status = 500;
       ctx.body = {
         error: 'Internal Server Error',
-        message: process.env.NODE_ENV === 'development' ? error.message : undefined,
-        requestId: ctx.id,
+        message: process.env['NODE_ENV'] === 'development' ? error.message : undefined,
+        requestId: ctx['id'],
       };
     }
   };

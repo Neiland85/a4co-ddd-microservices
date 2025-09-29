@@ -36,15 +36,19 @@ export class DesignSystemLogger {
         timestamp: Date.now(),
         sessionId: this.getSessionId(),
       };
-      
+
       this.logger.info(`DS Event: ${event.component}.${event.action}`, dsEvent);
     }
   }
 
-  createComponentSpan(componentName: string, action: string, attributes?: Record<string, any>): any {
+  createComponentSpan(
+    componentName: string,
+    action: string,
+    attributes?: Record<string, any>
+  ): any {
     if (this.tracer) {
       const span = this.tracer.createSpan(`ds.${componentName}.${action}`);
-      
+
       if (attributes) {
         this.tracer.setAttributes(span, {
           'ds.component': componentName,
@@ -52,10 +56,16 @@ export class DesignSystemLogger {
           ...attributes,
         });
       }
-      
+
       return span;
     }
     return null;
+  }
+
+  endSpan(span: any): void {
+    if (this.tracer && span) {
+      this.tracer.endSpan(span);
+    }
   }
 
   private getSessionId(): string {
@@ -98,63 +108,56 @@ export function withDSObservability<P extends object>(
       });
 
       return () => {
-        if (spanRef.current && dsLogger.tracer) {
-          dsLogger.tracer.endSpan(spanRef.current);
+        if (spanRef.current) {
+          dsLogger.endSpan(spanRef.current);
         }
       };
     }, [finalComponentName, variant, size, disabled, loading]);
 
     // Handler para interacciones
-    const handleInteraction = useCallback((action: string, data?: Record<string, any>) => {
-      // Crear span para la interacción
-      const interactionSpan = dsLogger.createComponentSpan(finalComponentName, action, {
-        'ds.variant': variant,
-        'ds.size': size,
-        'ds.action': action,
-        ...data,
-      });
-
-      // Loggear el evento
-      dsLogger.logComponentEvent({
-        component: finalComponentName,
-        action,
-        variant,
-        size,
-        props: {
-          disabled,
-          loading,
+    const handleInteraction = useCallback(
+      (action: string, data?: Record<string, any>) => {
+        // Crear span para la interacción
+        const interactionSpan = dsLogger.createComponentSpan(finalComponentName, action, {
+          'ds.variant': variant,
+          'ds.size': size,
+          'ds.action': action,
           ...data,
-        },
-        designToken: `${finalComponentName}.${variant}.${size}`,
-      });
+        });
 
-      // Llamar al callback original si existe
-      if (onInteraction) {
-        onInteraction(action, data);
-      }
+        // Loggear el evento
+        dsLogger.logComponentEvent({
+          component: finalComponentName,
+          action,
+          variant,
+          size,
+          props: {
+            disabled,
+            loading,
+            ...data,
+          },
+          designToken: `${finalComponentName}.${variant}.${size}`,
+        });
 
-      // Finalizar el span
-      if (interactionSpan && dsLogger.tracer) {
-        dsLogger.tracer.endSpan(interactionSpan);
-      }
-    }, [finalComponentName, variant, size, disabled, loading, onInteraction]);
+        // Llamar al callback original si existe
+        if (onInteraction) {
+          onInteraction(action, data);
+        }
 
-    return (
-      <WrappedComponent
-        {...(restProps as P)}
-        ref={ref}
-        onInteraction={handleInteraction}
-      />
+        // Finalizar el span
+        if (interactionSpan) {
+          dsLogger.endSpan(interactionSpan);
+        }
+      },
+      [finalComponentName, variant, size, disabled, loading, onInteraction]
     );
+
+    return <WrappedComponent {...(restProps as P)} ref={ref} onInteraction={handleInteraction} />;
   });
 }
 
 // Hook para componentes del DS
-export function useDSObservability(
-  componentName: string,
-  variant?: string,
-  size?: string
-) {
+export function useDSObservability(componentName: string, variant?: string, size?: string) {
   const spanRef = useRef<any>(null);
 
   useEffect(() => {
@@ -164,43 +167,50 @@ export function useDSObservability(
     });
 
     return () => {
-      if (spanRef.current && dsLogger.tracer) {
-        dsLogger.tracer.endSpan(spanRef.current);
+      if (spanRef.current) {
+        dsLogger.endSpan(spanRef.current);
       }
     };
   }, [componentName, variant, size]);
 
-  const logInteraction = useCallback((action: string, data?: Record<string, any>) => {
-    const interactionSpan = dsLogger.createComponentSpan(componentName, action, {
-      'ds.variant': variant,
-      'ds.size': size,
-      'ds.action': action,
-      ...data,
-    });
+  const logInteraction = useCallback(
+    (action: string, data?: Record<string, any>) => {
+      const interactionSpan = dsLogger.createComponentSpan(componentName, action, {
+        'ds.variant': variant,
+        'ds.size': size,
+        'ds.action': action,
+        ...data,
+      });
 
-    dsLogger.logComponentEvent({
-      component: componentName,
-      action,
-      variant,
-      size,
-      props: data,
-      designToken: `${componentName}.${variant}.${size}`,
-    });
+      dsLogger.logComponentEvent({
+        component: componentName,
+        action,
+        variant,
+        size,
+        props: data,
+        designToken: `${componentName}.${variant}.${size}`,
+      });
 
-    if (interactionSpan && dsLogger.tracer) {
-      dsLogger.tracer.endSpan(interactionSpan);
-    }
-  }, [componentName, variant, size]);
+      if (interactionSpan) {
+        dsLogger.endSpan(interactionSpan);
+      }
+    },
+    [componentName, variant, size]
+  );
 
   return { logInteraction };
 }
 
 // Componente Button con observabilidad integrada
 export const ObservableButton = withDSObservability(
-  forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement> & DSObservabilityProps & {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-    size?: 'sm' | 'md' | 'lg';
-  }>(({ onInteraction, variant = 'primary', size = 'md', children, onClick, ...props }, ref) => {
+  forwardRef<
+    HTMLButtonElement,
+    React.ButtonHTMLAttributes<HTMLButtonElement> &
+      DSObservabilityProps & {
+        variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+        size?: 'sm' | 'md' | 'lg';
+      }
+  >(({ onInteraction, variant = 'primary', size = 'md', children, onClick, ...props }, ref) => {
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       // Loggear el click
       onInteraction?.('click', {
@@ -231,50 +241,59 @@ export const ObservableButton = withDSObservability(
 
 // Componente Input con observabilidad integrada
 export const ObservableInput = withDSObservability(
-  forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & DSObservabilityProps & {
-    variant?: 'default' | 'error' | 'success';
-    size?: 'sm' | 'md' | 'lg';
-  }>(({ onInteraction, variant = 'default', size = 'md', onChange, onFocus, onBlur, ...props }, ref) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onInteraction?.('change', {
-        variant,
-        size,
-        value: e.target.value,
-        eventType: 'change',
-      });
-      onChange?.(e);
-    };
+  forwardRef<
+    HTMLInputElement,
+    React.InputHTMLAttributes<HTMLInputElement> &
+      DSObservabilityProps & {
+        variant?: 'default' | 'error' | 'success';
+        size?: 'sm' | 'md' | 'lg';
+      }
+  >(
+    (
+      { onInteraction, variant = 'default', size = 'md', onChange, onFocus, onBlur, ...props },
+      ref
+    ) => {
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onInteraction?.('change', {
+          variant,
+          size,
+          value: e.target.value,
+          eventType: 'change',
+        });
+        onChange?.(e);
+      };
 
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      onInteraction?.('focus', {
-        variant,
-        size,
-        eventType: 'focus',
-      });
-      onFocus?.(e);
-    };
+      const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        onInteraction?.('focus', {
+          variant,
+          size,
+          eventType: 'focus',
+        });
+        onFocus?.(e);
+      };
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      onInteraction?.('blur', {
-        variant,
-        size,
-        value: e.target.value,
-        eventType: 'blur',
-      });
-      onBlur?.(e);
-    };
+      const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        onInteraction?.('blur', {
+          variant,
+          size,
+          value: e.target.value,
+          eventType: 'blur',
+        });
+        onBlur?.(e);
+      };
 
-    return (
-      <input
-        ref={ref}
-        onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        className={`ds-input ds-input--${variant} ds-input--${size}`}
-        {...props}
-      />
-    );
-  }),
+      return (
+        <input
+          ref={ref}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          className={`ds-input ds-input--${variant} ds-input--${size}`}
+          {...props}
+        />
+      );
+    }
+  ),
   'Input',
   'default',
   'md'
@@ -282,16 +301,16 @@ export const ObservableInput = withDSObservability(
 
 // Componente Card con observabilidad integrada
 export const ObservableCard = withDSObservability(
-  forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & DSObservabilityProps & {
-    variant?: 'default' | 'elevated' | 'outlined';
-    size?: 'sm' | 'md' | 'lg';
-  }>(({ onInteraction, variant = 'default', size = 'md', children, ...props }, ref) => {
+  forwardRef<
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement> &
+      DSObservabilityProps & {
+        variant?: 'default' | 'elevated' | 'outlined';
+        size?: 'sm' | 'md' | 'lg';
+      }
+  >(({ onInteraction, variant = 'default', size = 'md', children, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={`ds-card ds-card--${variant} ds-card--${size}`}
-        {...props}
-      >
+      <div ref={ref} className={`ds-card ds-card--${variant} ds-card--${size}`} {...props}>
         {children}
       </div>
     );
@@ -317,7 +336,7 @@ export function parseDesignToken(token: string): {
 } {
   const parts = token.split('.');
   return {
-    component: parts[0],
+    component: parts[0] || 'unknown',
     variant: parts[1],
     size: parts[2],
   };
@@ -349,7 +368,7 @@ export function useDSPerformanceTracking(componentName: string) {
 
   useEffect(() => {
     renderCountRef.current += 1;
-    
+
     dsLogger.logComponentEvent({
       component: componentName,
       action: 'render',
@@ -405,5 +424,4 @@ export function logDSMetric(
   });
 }
 
-// Exportar tipos
-export type { DSObservabilityProps, DSEvent };
+// Tipos ya exportados arriba

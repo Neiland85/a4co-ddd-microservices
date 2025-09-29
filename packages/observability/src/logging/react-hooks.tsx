@@ -3,8 +3,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useRef } from 'react';
-import { Logger, LogContext } from './types';
-import { FrontendLogger } from './frontend-logger';
+import { Logger } from './types';
 
 interface LoggerContextValue {
   logger: Logger;
@@ -20,7 +19,7 @@ export interface LoggerProviderProps {
   children: React.ReactNode;
 }
 
-export function LoggerProvider({ logger, children }: LoggerProviderProps): JSX.Element {
+export function LoggerProvider({ logger, children }: LoggerProviderProps): React.ReactElement {
   return <LoggerContext.Provider value={{ logger }}>{children}</LoggerContext.Provider>;
 }
 
@@ -40,7 +39,7 @@ export function useLogger(): Logger {
  */
 export function useComponentLogger(componentName: string, props?: Record<string, any>): Logger {
   const logger = useLogger();
-  const componentLogger = useRef<Logger>();
+  const componentLogger = useRef<Logger | null>(null);
   const renderCount = useRef(0);
 
   if (!componentLogger.current) {
@@ -90,7 +89,7 @@ export function useInteractionLogger(
 ): (eventData?: any) => void {
   const logger = useLogger();
   const lastLogTime = useRef(0);
-  const debounceTimer = useRef<NodeJS.Timeout>();
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   return (eventData?: any) => {
     const now = Date.now();
@@ -100,7 +99,9 @@ export function useInteractionLogger(
     }
 
     if (options?.debounce) {
-      clearTimeout(debounceTimer.current);
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
       debounceTimer.current = setTimeout(() => {
         logger.info(`User interaction: ${interactionType}`, {
           custom: {
@@ -206,8 +207,8 @@ export class LoggingErrorBoundary extends React.Component<
   LoggingErrorBoundaryProps,
   ErrorBoundaryState
 > {
-  static contextType = LoggerContext;
-  context!: LoggerContextValue;
+  static override contextType = LoggerContext;
+  declare context: LoggerContextValue;
 
   constructor(props: LoggingErrorBoundaryProps) {
     super(props);
@@ -218,7 +219,7 @@ export class LoggingErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     const logger = this.context?.logger;
 
     if (logger) {
@@ -232,7 +233,7 @@ export class LoggingErrorBoundary extends React.Component<
     this.props.onError?.(error, errorInfo);
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       const Fallback = this.props.fallback;
 
@@ -255,23 +256,26 @@ export class LoggingErrorBoundary extends React.Component<
 /**
  * HOC to add logging to any component
  */
-export function withLogging<P extends object>(
+export function withLogging<P extends Record<string, any>>(
   Component: React.ComponentType<P>,
   componentName?: string
-): React.ComponentType<P> {
+): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<any>> {
   const displayName = componentName || Component.displayName || Component.name || 'Component';
 
-  return React.forwardRef<any, P>((props, ref) => {
+  const WrappedComponent = React.forwardRef<any, P>((props, ref) => {
     const logger = useComponentLogger(displayName, props);
 
     useEffect(() => {
       logger.trace(`Props updated`, {
         custom: {
-          props: Object.keys(props as any),
+          props: Object.keys(props),
         },
       });
     }, [props, logger]);
 
-    return <Component {...props} ref={ref} />;
+    return <Component {...(props as P)} ref={ref} />;
   });
+
+  WrappedComponent.displayName = `withLogging(${displayName})`;
+  return WrappedComponent;
 }

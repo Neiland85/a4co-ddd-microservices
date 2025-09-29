@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes } from 'react';
-import { useEventTracking, useComponentTracking } from './index';
+import { useComponentTracking, useEventTracking } from './index';
 
 // Button with integrated observability
 export interface TrackedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -72,7 +72,7 @@ export const TrackedInput: React.FC<TrackedInputProps> = ({
 }) => {
   const { trackInput, trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-input';
-  const debounceTimer = React.useRef<NodeJS.Timeout>();
+  const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
   useComponentTracking(componentName, {
     trackProps: ['type', 'required', 'disabled'],
@@ -283,7 +283,7 @@ export const TrackedModal: React.FC<TrackedModalProps> = ({
 }) => {
   const { trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-modal';
-  const openTime = React.useRef<number>();
+  const openTime = React.useRef<number>(0);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -292,14 +292,14 @@ export const TrackedModal: React.FC<TrackedModalProps> = ({
         title,
         ...trackingMetadata,
       });
-    } else if (openTime.current) {
+    } else if (openTime.current > 0) {
       const duration = Date.now() - openTime.current;
       trackCustom(componentName, 'close', {
         title,
         duration,
         ...trackingMetadata,
       });
-      openTime.current = undefined;
+      openTime.current = 0;
     }
   }, [isOpen]);
 

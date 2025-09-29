@@ -1,7 +1,7 @@
-import { trace, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import { TraceDecoratorOptions, DDDMetadata } from '../types';
+import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { getLogger } from '../logger';
-import { recordCommandExecution, recordEvent } from '../metrics';
+import { recordCommandExecution, recordEvent } from '../metrics/index';
+import { TraceDecoratorOptions } from '../types';
 
 // Trace decorator for methods
 export function Trace(options: TraceDecoratorOptions = {}) {
@@ -28,7 +28,7 @@ export function Trace(options: TraceDecoratorOptions = {}) {
         class: className,
       });
 
-      logger.debug({ args: options.recordResult ? args : undefined }, `${spanName} started`);
+      logger.debug(`${spanName} started`, { args: options.recordResult ? args : undefined });
 
       try {
         const result = await originalMethod.apply(this, args);
@@ -39,10 +39,9 @@ export function Trace(options: TraceDecoratorOptions = {}) {
           span.setAttribute('result', JSON.stringify(result));
         }
 
-        logger.debug(
-          { result: options.recordResult ? result : undefined },
-          `${spanName} completed`
-        );
+        logger.debug(`${spanName} completed`, {
+          result: options.recordResult ? result : undefined,
+        });
 
         return result;
       } catch (error) {
@@ -57,7 +56,7 @@ export function Trace(options: TraceDecoratorOptions = {}) {
           message: err.message,
         });
 
-        logger.error({ error: err, stack: err.stack }, `${spanName} failed`);
+        logger.error(`${spanName} failed`, { error: err, stack: err.stack });
 
         throw error;
       } finally {
@@ -79,14 +78,14 @@ export function Log(level: 'debug' | 'info' | 'warn' | 'error' = 'info') {
       const logger = getLogger();
       const methodName = `${className}.${propertyName}`;
 
-      logger[level]({ method: methodName, args }, `Executing ${methodName}`);
+      logger[level](`Executing ${methodName}`, { method: methodName, args });
 
       try {
         const result = await originalMethod.apply(this, args);
-        logger[level]({ method: methodName, result }, `${methodName} completed`);
+        logger[level](`${methodName} completed`, { method: methodName, result });
         return result;
       } catch (error) {
-        logger.error({ method: methodName, error }, `${methodName} failed`);
+        logger.error(`${methodName} failed`, { method: methodName, error });
         throw error;
       }
     };
@@ -117,7 +116,7 @@ export function CommandHandler(commandName: string, aggregateName: string) {
       });
 
       const startTime = Date.now();
-      logger.info({ command: commandName, aggregate: aggregateName }, 'Command execution started');
+      logger.info('Command execution started', { command: commandName, aggregate: aggregateName });
 
       try {
         const result = await originalMethod.apply(this, args);
@@ -125,7 +124,7 @@ export function CommandHandler(commandName: string, aggregateName: string) {
         span.setStatus({ code: SpanStatusCode.OK });
 
         const duration = Date.now() - startTime;
-        logger.info({ command: commandName, duration }, 'Command executed successfully');
+        logger.info('Command executed successfully', { command: commandName, duration });
 
         recordCommandExecution(commandName, aggregateName, true, duration);
 
@@ -139,7 +138,7 @@ export function CommandHandler(commandName: string, aggregateName: string) {
         });
 
         const duration = Date.now() - startTime;
-        logger.error({ command: commandName, error: err, duration }, 'Command execution failed');
+        logger.error('Command execution failed', { command: commandName, error: err, duration });
 
         recordCommandExecution(commandName, aggregateName, false, duration);
 
@@ -174,14 +173,14 @@ export function EventHandler(eventName: string, aggregateName: string) {
         aggregateName,
       });
 
-      logger.info({ event: eventName, aggregate: aggregateName }, 'Event processing started');
+      logger.info('Event processing started', { event: eventName, aggregate: aggregateName });
 
       try {
         const result = await originalMethod.apply(this, args);
 
         span.setStatus({ code: SpanStatusCode.OK });
 
-        logger.info({ event: eventName }, 'Event processed successfully');
+        logger.info('Event processed successfully', { event: eventName });
 
         recordEvent(eventName, aggregateName, 'processed');
 
@@ -194,7 +193,7 @@ export function EventHandler(eventName: string, aggregateName: string) {
           message: err.message,
         });
 
-        logger.error({ event: eventName, error: err }, 'Event processing failed');
+        logger.error('Event processing failed', { event: eventName, error: err });
 
         throw error;
       } finally {
@@ -220,8 +219,8 @@ export function Metrics(metricName: string) {
         const duration = Date.now() - startTime;
 
         // Record custom metric
-        const metrics = await import('../metrics');
-        const histogram = metrics.createCustomHistogram(
+        const { createCustomHistogram } = await import('../metrics/index');
+        const histogram = createCustomHistogram(
           metricName,
           `Duration of ${className}.${propertyName}`,
           'ms'
@@ -237,8 +236,8 @@ export function Metrics(metricName: string) {
         const duration = Date.now() - startTime;
 
         // Record error metric
-        const metrics = await import('../metrics');
-        const histogram = metrics.createCustomHistogram(
+        const { createCustomHistogram } = await import('../metrics/index');
+        const histogram = createCustomHistogram(
           metricName,
           `Duration of ${className}.${propertyName}`,
           'ms'
@@ -273,14 +272,14 @@ export function CacheableWithObservability(ttl: number = 300) {
       const span = trace.getActiveSpan();
 
       if (cached && cached.expiry > Date.now()) {
-        logger.debug({ method: `${className}.${propertyName}`, cacheKey }, 'Cache hit');
+        logger.debug('Cache hit', { method: `${className}.${propertyName}`, cacheKey });
         if (span) {
           span.setAttribute('cache.hit', true);
         }
         return cached.value;
       }
 
-      logger.debug({ method: `${className}.${propertyName}`, cacheKey }, 'Cache miss');
+      logger.debug('Cache miss', { method: `${className}.${propertyName}`, cacheKey });
       if (span) {
         span.setAttribute('cache.hit', false);
       }
@@ -326,14 +325,14 @@ export function Repository(aggregateName: string) {
               method: methodName,
             });
 
-            logger.debug({ args: methodArgs }, `Repository ${methodName} called`);
+            logger.debug(`Repository ${methodName} called`, { args: methodArgs });
 
             try {
               const result = await originalMethod.apply(this, methodArgs);
-              logger.debug({ result }, `Repository ${methodName} completed`);
+              logger.debug(`Repository ${methodName} completed`, { result });
               return result;
             } catch (error) {
-              logger.error({ error }, `Repository ${methodName} failed`);
+              logger.error(`Repository ${methodName} failed`, { error });
               throw error;
             }
           };

@@ -3,7 +3,6 @@
  */
 
 import { Logger } from '../logging/types';
-import { Span } from '@opentelemetry/api';
 
 export interface ObservabilityPlugin {
   name: string;
@@ -139,8 +138,8 @@ export class ComponentPerformanceTracker {
 
   private calculatePercentile(values: number[], percentile: number): number {
     const sorted = [...values].sort((a, b) => a - b);
-    const index = Math.floor(sorted.length * percentile);
-    return sorted[index];
+    const index = Math.min(Math.floor(sorted.length * percentile), sorted.length - 1);
+    return sorted[index]!;
   }
 
   getPerformanceReport(): Record<string, any> {

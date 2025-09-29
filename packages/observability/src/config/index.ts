@@ -1,28 +1,33 @@
-import { ObservabilityConfig } from '../types';
-import { initializeLogger, getLogger } from '../logger';
+import { getLogger, initializeLogger } from '../logger';
+import { initializeMetrics, shutdownMetrics } from '../metrics/index';
 import { initializeTracing, shutdownTracing } from '../tracer';
-import { initializeMetrics, shutdownMetrics } from '../metrics';
+import type { ObservabilityConfig } from '../types';
 
 // Global observability instance
 let observabilityInitialized = false;
 
+// Reset function for testing purposes
+export function resetObservabilityState(): void {
+  observabilityInitialized = false;
+}
+
 // Default configuration
 const defaultConfig: Partial<ObservabilityConfig> = {
-  environment: process.env.NODE_ENV || 'development',
+  environment: process.env['NODE_ENV'] || 'development',
   logging: {
     level: 'info',
-    prettyPrint: process.env.NODE_ENV === 'development',
+    prettyPrint: process.env['NODE_ENV'] === 'development',
   },
   tracing: {
     enabled: true,
-    jaegerEndpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces',
-    enableConsoleExporter: process.env.NODE_ENV === 'development',
+    jaegerEndpoint: process.env['JAEGER_ENDPOINT'] || 'http://localhost:14268/api/traces',
+    enableConsoleExporter: process.env['NODE_ENV'] === 'development',
     enableAutoInstrumentation: true,
     samplingRate: 1.0,
   },
   metrics: {
     enabled: true,
-    port: parseInt(process.env.METRICS_PORT || '9090'),
+    port: parseInt(process.env['METRICS_PORT'] || '9090'),
     endpoint: '/metrics',
   },
 };
@@ -59,11 +64,10 @@ export async function initializeObservability(config: ObservabilityConfig): Prom
   const logger = initializeLogger({
     ...finalConfig.logging,
     serviceName: finalConfig.serviceName,
-    serviceVersion: finalConfig.serviceVersion,
-    environment: finalConfig.environment,
+    environment: finalConfig.environment || 'development',
   });
 
-  logger.info({ config: finalConfig }, 'Initializing observability');
+  logger.info('Initializing observability', { config: finalConfig });
 
   // Initialize tracing
   if (finalConfig.tracing?.enabled) {
@@ -76,7 +80,7 @@ export async function initializeObservability(config: ObservabilityConfig): Prom
       });
       logger.info('Tracing initialized successfully');
     } catch (error) {
-      logger.error({ error }, 'Failed to initialize tracing');
+      logger.error('Failed to initialize tracing', { error });
       throw error;
     }
   }
@@ -88,11 +92,11 @@ export async function initializeObservability(config: ObservabilityConfig): Prom
         ...finalConfig.metrics,
         serviceName: finalConfig.serviceName,
         serviceVersion: finalConfig.serviceVersion,
-        environment: finalConfig.environment,
+        environment: finalConfig.environment || 'development',
       });
       logger.info('Metrics initialized successfully');
     } catch (error) {
-      logger.error({ error }, 'Failed to initialize metrics');
+      logger.error('Failed to initialize metrics', { error });
       throw error;
     }
   }
@@ -112,27 +116,32 @@ export async function shutdownObservability(): Promise<void> {
     await Promise.all([shutdownTracing(), shutdownMetrics()]);
     logger.info('Observability shutdown complete');
   } catch (error) {
-    logger.error({ error }, 'Error during observability shutdown');
+    logger.error('Error during observability shutdown', { error });
     throw error;
   }
 }
 
 // Setup graceful shutdown handlers
 function setupGracefulShutdown(): void {
+  // Skip graceful shutdown setup in test environment
+  if (process.env['NODE_ENV'] === 'test' || process.env['VITEST'] === 'true') {
+    return;
+  }
+
   const logger = getLogger();
   let shuttingDown = false;
 
-  const shutdown = async (signal: string) => {
+  const shutdown = async (signal: string): Promise<void> => {
     if (shuttingDown) return;
     shuttingDown = true;
 
-    logger.info({ signal }, 'Received shutdown signal');
+    logger.info('Received shutdown signal', { signal });
 
     try {
       await shutdownObservability();
       process.exit(0);
     } catch (error) {
-      logger.error({ error }, 'Error during shutdown');
+      logger.error('Error during shutdown', { error });
       process.exit(1);
     }
   };
@@ -144,13 +153,13 @@ function setupGracefulShutdown(): void {
 
   // Handle uncaught exceptions
   process.on('uncaughtException', error => {
-    logger.fatal({ error }, 'Uncaught exception');
+    logger.fatal('Uncaught exception', { error });
     shutdown('uncaughtException');
   });
 
   // Handle unhandled promise rejections
   process.on('unhandledRejection', (reason, promise) => {
-    logger.fatal({ reason, promise }, 'Unhandled promise rejection');
+    logger.fatal('Unhandled promise rejection', { reason, promise });
     shutdown('unhandledRejection');
   });
 }
@@ -221,7 +230,7 @@ export async function quickStart(
   serviceName: string,
   options: Partial<ObservabilityConfig> = {}
 ): Promise<void> {
-  const environment = process.env.NODE_ENV || 'development';
+  const environment = process.env['NODE_ENV'] || 'development';
   const envConfig = getEnvironmentConfig(environment);
 
   const config: ObservabilityConfig = {

@@ -2,7 +2,7 @@
  * Frontend logger implementation for React applications
  */
 
-import { Logger, LoggerConfig, LogContext, LogLevel } from './types';
+import { LogContext, Logger, LoggerConfig, LogLevel } from './types';
 
 export interface FrontendLoggerConfig extends Omit<LoggerConfig, 'destination'> {
   endpoint?: string;
@@ -187,7 +187,13 @@ export class FrontendLogger implements Logger {
             },
           }
         : error
-          ? { error: String(error) }
+          ? {
+              error: {
+                message: String(error),
+                stackTrace: undefined,
+                name: 'UnknownError',
+              },
+            }
           : {};
 
     this.log('error', message, {
@@ -207,7 +213,13 @@ export class FrontendLogger implements Logger {
             },
           }
         : error
-          ? { error: String(error) }
+          ? {
+              error: {
+                message: String(error),
+                stackTrace: undefined,
+                name: 'UnknownError',
+              },
+            }
           : {};
 
     this.log('fatal', message, {

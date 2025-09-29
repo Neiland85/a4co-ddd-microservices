@@ -2,16 +2,16 @@
  * OpenTelemetry tracer for web/frontend applications
  */
 
-import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { context, Span, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
 import { XMLHttpRequestInstrumentation } from '@opentelemetry/instrumentation-xml-http-request';
-import { trace, context, SpanKind, SpanStatusCode, Span } from '@opentelemetry/api';
-import { ZoneContextManager } from '@opentelemetry/context-zone';
+import { Resource } from '@opentelemetry/resources';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { Logger } from '../logging/types';
 
 export interface WebTracerConfig {
@@ -67,9 +67,9 @@ export function initializeWebTracer(config: WebTracerConfig): WebTracerProvider 
         propagateTraceHeaderCorsUrls: /.*/,
         clearTimingResources: true,
         applyCustomAttributesOnSpan: (span, request, response) => {
-          span.setAttribute('http.request.method', request.method);
-          span.setAttribute('http.url', request.url);
-          if (response) {
+          if (request.method) span.setAttribute('http.request.method', request.method);
+          if ('url' in request && request.url) span.setAttribute('http.url', request.url);
+          if (response && response.status) {
             span.setAttribute('http.status_code', response.status);
           }
         },
@@ -231,7 +231,9 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
         const lcpObserver = new PerformanceObserver(list => {
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1];
-          metrics.largestContentfulPaint = lastEntry.startTime;
+          if (lastEntry) {
+            metrics.largestContentfulPaint = lastEntry.startTime;
+          }
         });
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
 
@@ -250,7 +252,9 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
         // FID
         const fidObserver = new PerformanceObserver(list => {
           const firstEntry = list.getEntries()[0];
-          metrics.firstInputDelay = (firstEntry as any).processingStart - firstEntry.startTime;
+          if (firstEntry) {
+            metrics.firstInputDelay = (firstEntry as any).processingStart - firstEntry.startTime;
+          }
         });
         fidObserver.observe({ entryTypes: ['first-input'] });
       } catch (e) {

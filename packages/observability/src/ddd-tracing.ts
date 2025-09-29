@@ -1,4 +1,4 @@
-import { trace, context, SpanStatusCode, SpanKind } from '@opentelemetry/api';
+import { context, SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import { getTracer } from './tracer';
 
 // Interfaces para DDD
@@ -6,6 +6,9 @@ export interface AggregateMetadata {
   aggregateName: string;
   aggregateId: string;
   version?: number;
+  correlationId?: string;
+  userId?: string;
+  causationId?: string;
 }
 
 export interface CommandMetadata {
@@ -14,6 +17,7 @@ export interface CommandMetadata {
   aggregateId?: string;
   userId?: string;
   correlationId?: string;
+  causationId?: string;
 }
 
 export interface EventMetadata {
@@ -22,6 +26,7 @@ export interface EventMetadata {
   aggregateId?: string;
   correlationId?: string;
   causationId?: string;
+  userId?: string;
 }
 
 export interface DomainEvent {
@@ -58,8 +63,8 @@ export function TraceAggregateMethod(aggregateName: string) {
       try {
         // Extraer metadata del contexto si está disponible
         const activeContext = context.active();
-        const correlationId = activeContext.getValue('correlationId');
-        const userId = activeContext.getValue('userId');
+        const correlationId = activeContext.getValue(Symbol.for('correlationId')) as string;
+        const userId = activeContext.getValue(Symbol.for('userId')) as string;
 
         if (correlationId) {
           span.setAttribute('ddd.correlation_id', correlationId as string);

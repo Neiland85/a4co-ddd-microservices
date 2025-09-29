@@ -1,20 +1,19 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
+import { metrics, trace } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { CompositePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
 import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { MeterProvider } from '@opentelemetry/sdk-metrics';
+import { NodeSDK } from '@opentelemetry/sdk-node';
 import {
   BatchSpanProcessor,
   ConsoleSpanExporter,
   SpanExporter,
   Tracer,
 } from '@opentelemetry/sdk-trace-base';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { trace, metrics } from '@opentelemetry/api';
-import { W3CTraceContextPropagator } from '@opentelemetry/core';
-import { B3Propagator, B3InjectEncoding } from '@opentelemetry/propagator-b3';
-import { CompositePropagator } from '@opentelemetry/core';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 
 export interface TracingConfig {
   serviceName: string;
@@ -27,6 +26,9 @@ export interface TracingConfig {
 }
 
 export interface MetricsConfig {
+  serviceName: string;
+  serviceVersion?: string;
+  environment?: string;
   port?: number;
   endpoint?: string;
 }
@@ -61,7 +63,7 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
       [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
       [SemanticResourceAttributes.SERVICE_INSTANCE_ID]:
-        process.env.HOSTNAME || `${config.serviceName}-${Date.now()}`,
+        process.env['HOSTNAME'] || `${config.serviceName}-${Date.now()}`,
       [SemanticResourceAttributes.PROCESS_PID]: process.pid,
       [SemanticResourceAttributes.PROCESS_RUNTIME_NAME]: 'nodejs',
       [SemanticResourceAttributes.PROCESS_RUNTIME_VERSION]: process.version,
@@ -85,7 +87,7 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
     maxExportBatchSize: 512,
     scheduledDelayMillis: 5000,
     exportTimeoutMillis: 30000,
-  });
+  }) as any;
 
   // Configurar instrumentaciones
   let instrumentations = config.instrumentations || [];
@@ -149,14 +151,14 @@ export function initializeMetrics(
   metrics.setGlobalMeterProvider(meterProvider);
 
   // Agregar el reader de Prometheus
-  meterProvider.addMetricReader(prometheusExporter);
+  meterProvider.addMetricReader(prometheusExporter as any);
 
   return prometheusExporter;
 }
 
 // Obtener tracer para un componente
 export function getTracer(name?: string): Tracer {
-  return trace.getTracer(name || 'default-tracer');
+  return trace.getTracer(name || 'default-tracer') as any;
 }
 
 // Shutdown graceful

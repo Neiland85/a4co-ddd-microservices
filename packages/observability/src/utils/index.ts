@@ -1,6 +1,6 @@
+import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { trace, SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import { getContext, injectContextToHeaders } from '../context';
 import { getLogger } from '../logger';
 
@@ -68,7 +68,7 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         config.headers = {
           ...config.headers,
           ...injectContextToHeaders(ctx),
-        };
+        } as any;
       }
 
       // Start span
@@ -87,19 +87,16 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
       (config as any).__span = span;
       (config as any).__startTime = Date.now();
 
-      logger.debug(
-        {
-          method: config.method,
-          url: config.url,
-          headers: sanitize(config.headers),
-        },
-        'HTTP request started'
-      );
+      logger.debug('HTTP request started', {
+        method: config.method,
+        url: config.url,
+        headers: sanitize(config.headers),
+      });
 
       return config;
     },
     error => {
-      logger.error({ error }, 'HTTP request failed to start');
+      logger.error('HTTP request failed to start', { error });
       return Promise.reject(error);
     }
   );
@@ -120,15 +117,12 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         span.end();
       }
 
-      logger.debug(
-        {
-          method: response.config.method,
-          url: response.config.url,
-          status: response.status,
-          duration,
-        },
-        'HTTP request completed'
-      );
+      logger.debug('HTTP request completed', {
+        method: response.config.method,
+        url: response.config.url,
+        status: response.status,
+        duration,
+      });
 
       return response;
     },
@@ -150,16 +144,13 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         span.end();
       }
 
-      logger.error(
-        {
-          method: error.config?.method,
-          url: error.config?.url,
-          status: error.response?.status,
-          duration,
-          error: error.message,
-        },
-        'HTTP request failed'
-      );
+      logger.error('HTTP request failed', {
+        method: error.config?.method,
+        url: error.config?.url,
+        status: error.response?.status,
+        duration,
+        error: error.message,
+      });
 
       return Promise.reject(error);
     }
@@ -191,20 +182,17 @@ export async function retryWithBackoff<T>(
       lastError = error as Error;
 
       if (attempt === maxRetries) {
-        logger.error({ error: lastError, attempts: attempt + 1 }, 'All retry attempts failed');
+        logger.error('All retry attempts failed', { error: lastError, attempts: attempt + 1 });
         throw lastError;
       }
 
       const delay = Math.min(initialDelay * Math.pow(factor, attempt), maxDelay);
 
-      logger.warn(
-        {
-          error: lastError.message,
-          attempt: attempt + 1,
-          nextRetryIn: delay,
-        },
-        'Operation failed, retrying'
-      );
+      logger.warn('Operation failed, retrying', {
+        error: lastError.message,
+        attempt: attempt + 1,
+        nextRetryIn: delay,
+      });
 
       if (onRetry) {
         onRetry(lastError, attempt + 1);
@@ -263,14 +251,11 @@ export class CircuitBreaker<T> {
         this.setState('open');
       }
 
-      logger.error(
-        {
-          error,
-          failures: this.failures,
-          state: this.state,
-        },
-        'Circuit breaker execution failed'
-      );
+      logger.error('Circuit breaker execution failed', {
+        error,
+        failures: this.failures,
+        state: this.state,
+      });
 
       throw error;
     }
@@ -284,13 +269,10 @@ export class CircuitBreaker<T> {
         this.options.onStateChange(state);
       }
 
-      getLogger().info(
-        {
-          previousState: this.state,
-          newState: state,
-        },
-        'Circuit breaker state changed'
-      );
+      getLogger().info('Circuit breaker state changed', {
+        previousState: this.state,
+        newState: state,
+      });
     }
   }
 }
@@ -314,15 +296,12 @@ export class PerformanceTimer {
 
     const duration = end - start;
 
-    getLogger().debug(
-      {
-        measurement: name,
-        duration,
-        startMark,
-        endMark,
-      },
-      'Performance measurement'
-    );
+    getLogger().debug('Performance measurement', {
+      measurement: name,
+      duration,
+      startMark,
+      endMark,
+    });
 
     return duration;
   }
@@ -375,7 +354,7 @@ export class BatchProcessor<T, R> {
     try {
       await this.processor(items);
     } catch (error) {
-      getLogger().error({ error, batchSize: items.length }, 'Batch processing failed');
+      getLogger().error('Batch processing failed', { error, batchSize: items.length });
 
       if (this.options.onError) {
         this.options.onError(error as Error, items);
