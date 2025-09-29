@@ -12,7 +12,7 @@ export class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
 
   async findByEmail(email: string): Promise<User | null> {
     const user = Array.from(this.users.values()).find(
-      u => u.email.toLowerCase() === email.toLowerCase()
+      u => u.email.toLowerCase() === email.toLowerCase(),
     );
     return user || null;
   }
@@ -48,7 +48,7 @@ export class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
 
   async findPaginated(
     page: number,
-    limit: number
+    limit: number,
   ): Promise<{
     users: User[];
     total: number;

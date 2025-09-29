@@ -27,7 +27,7 @@ export interface GetUserDTO {
 
 export class UserService {
   constructor(
-    private readonly userRepository: IUserRepository
+    private readonly userRepository: IUserRepository,
   ) { }
 
   async createUser(dto: CreateUserDTO): Promise<User> {

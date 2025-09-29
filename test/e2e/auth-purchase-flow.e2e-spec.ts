@@ -5,7 +5,7 @@ describe('E2E: Basic API Connectivity Test', () => {
   const orderServiceUrl = process.env['ORDER_SERVICE_URL'] || 'http://localhost:3003';
 
   describe('Service Health Checks', () => {
-    it('should check auth service health', async () => {
+    it('should check auth service health', async() => {
       try {
         const response = await request(authServiceUrl).get('/health').timeout(5000);
 
@@ -19,7 +19,7 @@ describe('E2E: Basic API Connectivity Test', () => {
       }
     });
 
-    it('should check order service health', async () => {
+    it('should check order service health', async() => {
       try {
         const response = await request(orderServiceUrl).get('/health').timeout(5000);
 
@@ -35,7 +35,7 @@ describe('E2E: Basic API Connectivity Test', () => {
   });
 
   describe('API Contract Validation', () => {
-    it('should validate auth service API structure', async () => {
+    it('should validate auth service API structure', async() => {
       try {
         // Test auth endpoints that should exist
         const endpoints = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/me'];
@@ -57,7 +57,7 @@ describe('E2E: Basic API Connectivity Test', () => {
       }
     });
 
-    it('should validate order service API structure', async () => {
+    it('should validate order service API structure', async() => {
       try {
         // Test order endpoints that should exist
         const endpoints = ['/api/v1/orders', '/api/v1/orders/123'];
@@ -81,7 +81,7 @@ describe('E2E: Basic API Connectivity Test', () => {
   });
 
   describe('Error Handling Validation', () => {
-    it('should handle malformed requests gracefully', async () => {
+    it('should handle malformed requests gracefully', async() => {
       try {
         const response = await request(authServiceUrl)
           .post('/api/v1/auth/login')
@@ -96,7 +96,7 @@ describe('E2E: Basic API Connectivity Test', () => {
       }
     });
 
-    it('should handle invalid endpoints', async () => {
+    it('should handle invalid endpoints', async() => {
       try {
         const response = await request(orderServiceUrl)
           .get('/api/v1/nonexistent-endpoint')

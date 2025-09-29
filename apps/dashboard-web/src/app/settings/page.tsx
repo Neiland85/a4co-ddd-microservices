@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/Button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Switch } from "../../components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Badge } from "../../components/ui/badge";
-import { User, Bell, Shield, CreditCard, Database, Save } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/Button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Switch } from '../../components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { Badge } from '../../components/ui/badge';
+import { User, Bell, Shield, CreditCard, Database, Save } from 'lucide-react';
 
 export default function Settings(): React.ReactElement {
   return (
@@ -327,9 +327,9 @@ export default function Settings(): React.ReactElement {
             <CardContent>
               <div className="space-y-3">
                 {[
-                  { date: "2024-01-01", amount: "€49.00", status: "Pagada" },
-                  { date: "2023-12-01", amount: "€49.00", status: "Pagada" },
-                  { date: "2023-11-01", amount: "€49.00", status: "Pagada" }
+                  { date: '2024-01-01', amount: '€49.00', status: 'Pagada' },
+                  { date: '2023-12-01', amount: '€49.00', status: 'Pagada' },
+                  { date: '2023-11-01', amount: '€49.00', status: 'Pagada' },
                 ].map((invoice, index) => (
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>

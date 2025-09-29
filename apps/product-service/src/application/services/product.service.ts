@@ -46,7 +46,7 @@ export interface UpdateProductDTO {
 export class ProductService {
   constructor(
     private readonly productRepository: IProductRepository,
-    private readonly eventBus: IEventBus
+    private readonly eventBus: IEventBus,
   ) {}
 
   async createProduct(dto: CreateProductDTO): Promise<Product> {
@@ -177,7 +177,7 @@ export class ProductService {
   }
 
   async getProductStock(
-    productId: string
+    productId: string,
   ): Promise<{ stock: number; isInStock: boolean; isLowStock: boolean }> {
     const product = await this.productRepository.findById(productId);
     if (!product) {

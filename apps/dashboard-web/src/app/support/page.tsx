@@ -26,7 +26,7 @@ export default function Support(): React.ReactElement {
     {
       question: '¿Cómo subir una nueva factura?',
       answer:
-        "Puedes subir facturas desde el dashboard principal haciendo clic en 'Nueva Factura' o desde la sección de Facturas. Aceptamos formatos PDF, JPG y PNG. El sistema procesará automáticamente el texto con OCR.",
+        'Puedes subir facturas desde el dashboard principal haciendo clic en \'Nueva Factura\' o desde la sección de Facturas. Aceptamos formatos PDF, JPG y PNG. El sistema procesará automáticamente el texto con OCR.',
     },
     {
       question: '¿Cómo funciona la identificación automática de subvenciones?',

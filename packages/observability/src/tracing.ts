@@ -67,7 +67,7 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
       [SemanticResourceAttributes.PROCESS_PID]: process.pid,
       [SemanticResourceAttributes.PROCESS_RUNTIME_NAME]: 'nodejs',
       [SemanticResourceAttributes.PROCESS_RUNTIME_VERSION]: process.version,
-    })
+    }),
   );
 
   // Configurar propagadores para context propagation
@@ -128,7 +128,7 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
 
 // Inicializar métricas con Prometheus
 export function initializeMetrics(
-  config: MetricsConfig & { serviceName: string }
+  config: MetricsConfig & { serviceName: string },
 ): PrometheusExporter {
   prometheusExporter = new PrometheusExporter(
     {
@@ -137,7 +137,7 @@ export function initializeMetrics(
     },
     () => {
       console.log(`Prometheus metrics server started on port ${config.port || 9464}`);
-    }
+    },
   );
 
   // Crear meter provider
@@ -178,10 +178,10 @@ export async function shutdown(): Promise<void> {
 }
 
 // Registrar handlers para shutdown graceful
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', async() => {
   await shutdown();
 });
 
-process.on('SIGINT', async () => {
+process.on('SIGINT', async() => {
   await shutdown();
 });

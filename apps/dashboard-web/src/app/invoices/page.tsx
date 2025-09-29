@@ -1,51 +1,51 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/Button";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { Search, Filter, Download, Upload, Eye, Edit, Trash2, Plus } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/Button';
+import { Input } from '../../components/ui/input';
+import { Badge } from '../../components/ui/badge';
+import { Search, Filter, Download, Upload, Eye, Edit, Trash2, Plus } from 'lucide-react';
 
 export default function Invoices(): React.ReactElement {
   const invoices = [
     {
-      id: "INV-2024-001",
-      supplier: "Tech Solutions S.L.",
-      amount: "€2,450.00",
-      date: "2024-01-15",
-      status: "Procesada",
-      tax: "€441.00"
+      id: 'INV-2024-001',
+      supplier: 'Tech Solutions S.L.',
+      amount: '€2,450.00',
+      date: '2024-01-15',
+      status: 'Procesada',
+      tax: '€441.00',
     },
     {
-      id: "INV-2024-002",
-      supplier: "Office Supplies Ltd",
-      amount: "€890.50",
-      date: "2024-01-14",
-      status: "Pendiente",
-      tax: "€160.29"
+      id: 'INV-2024-002',
+      supplier: 'Office Supplies Ltd',
+      amount: '€890.50',
+      date: '2024-01-14',
+      status: 'Pendiente',
+      tax: '€160.29',
     },
     {
-      id: "INV-2024-003",
-      supplier: "Cloud Services Inc",
-      amount: "€1,250.00",
-      date: "2024-01-13",
-      status: "En Revisión",
-      tax: "€225.00"
+      id: 'INV-2024-003',
+      supplier: 'Cloud Services Inc',
+      amount: '€1,250.00',
+      date: '2024-01-13',
+      status: 'En Revisión',
+      tax: '€225.00',
     },
     {
-      id: "INV-2024-004",
-      supplier: "Marketing Agency",
-      amount: "€3,200.00",
-      date: "2024-01-12",
-      status: "Procesada",
-      tax: "€576.00"
+      id: 'INV-2024-004',
+      supplier: 'Marketing Agency',
+      amount: '€3,200.00',
+      date: '2024-01-12',
+      status: 'Procesada',
+      tax: '€576.00',
     },
     {
-      id: "INV-2024-005",
-      supplier: "Consulting Partners",
-      amount: "€1,800.00",
-      date: "2024-01-11",
-      status: "Rechazada",
-      tax: "€324.00"
-    }
+      id: 'INV-2024-005',
+      supplier: 'Consulting Partners',
+      amount: '€1,800.00',
+      date: '2024-01-11',
+      status: 'Rechazada',
+      tax: '€324.00',
+    },
   ];
 
   const getStatusColor = (status: string) => {

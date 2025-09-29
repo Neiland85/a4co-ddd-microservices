@@ -8,7 +8,7 @@ export class ProductVariant {
     public currency: string,
     public stock: number,
     public attributes: Record<string, any>,
-    public name?: string
+    public name?: string,
   ) {}
 
   static create(data: any): ProductVariant {
@@ -20,7 +20,7 @@ export class ProductVariant {
       data.currency,
       data.stock,
       data.attributes,
-      data.name
+      data.name,
     );
   }
 
@@ -33,7 +33,7 @@ export class ProductVariant {
       data.currency,
       data.stock,
       data.attributes,
-      data.name
+      data.name,
     );
   }
 }

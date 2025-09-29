@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
       {
         enableScripts: true,
         localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))],
-      }
+      },
     );
 
     const mediaPath = path.join(context.extensionPath, 'media', 'webview.html');

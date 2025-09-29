@@ -114,7 +114,7 @@ export class ProductCategory extends ValueObject<string> {
     const normalized = value.toLowerCase().trim();
     if (!ProductCategory.VALID_CATEGORIES.includes(normalized)) {
       throw new Error(
-        `Invalid category: ${value}. Valid categories: ${ProductCategory.VALID_CATEGORIES.join(', ')}`
+        `Invalid category: ${value}. Valid categories: ${ProductCategory.VALID_CATEGORIES.join(', ')}`,
       );
     }
     super(normalized);

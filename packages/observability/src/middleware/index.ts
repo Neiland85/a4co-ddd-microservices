@@ -44,7 +44,7 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
           ...customAttributes(req),
         },
       },
-      parentContext
+      parentContext,
     );
 
     // Set trace context
@@ -86,7 +86,7 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
     const originalSend = res.send;
     let responseBody: any;
 
-    res.send = function (data: any) {
+    res.send = function(data: any) {
       responseBody = data;
       return originalSend.call(this, data);
     };
@@ -152,7 +152,7 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
     customAttributes = () => ({}),
   } = options;
 
-  return async (ctx: KoaContext & { id?: string; log?: any }, next: KoaNext) => {
+  return async(ctx: KoaContext & { id?: string; log?: any }, next: KoaNext) => {
     // Skip ignored paths
     if (ignorePaths.some(path => ctx.path.startsWith(path))) {
       return next();
@@ -178,7 +178,7 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
           ...customAttributes(ctx),
         },
       },
-      parentContext
+      parentContext,
     );
 
     // Set trace context
@@ -225,7 +225,7 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
 
     try {
       // Continue with context
-      await context.with(traceCtx, async () => {
+      await context.with(traceCtx, async() => {
         await next();
       });
 
@@ -301,7 +301,7 @@ export function expressErrorHandler() {
         url: req.url,
         method: req.method,
       },
-      'Unhandled error'
+      'Unhandled error',
     );
 
     // Get current span if available
@@ -321,7 +321,7 @@ export function expressErrorHandler() {
 
 // Error handler middleware for Koa
 export function koaErrorHandler() {
-  return async (ctx: KoaContext & { log?: any }, next: KoaNext) => {
+  return async(ctx: KoaContext & { log?: any }, next: KoaNext) => {
     try {
       await next();
     } catch (err) {
@@ -335,7 +335,7 @@ export function koaErrorHandler() {
           url: ctx.url,
           method: ctx.method,
         },
-        'Unhandled error'
+        'Unhandled error',
       );
 
       // Get current span if available

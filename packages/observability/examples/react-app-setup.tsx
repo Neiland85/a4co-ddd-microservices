@@ -107,8 +107,8 @@ function FeaturedProducts() {
     loadFeaturedProducts();
   }, []);
 
-  const loadFeaturedProducts = async () => {
-    await measurePerformance('FeaturedProducts.load', async () => {
+  const loadFeaturedProducts = async() => {
+    await measurePerformance('FeaturedProducts.load', async() => {
       try {
         // Usar fetch con tracing
         const tracedFetch = createTracedFetch(OBSERVABILITY_ENDPOINT, 'session-123');
@@ -165,7 +165,7 @@ function NewsletterSignup() {
   const { logger } = useObservability();
   const { trackCustom } = useEventTracking();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
     trackCustom('NewsletterForm', 'submit', { email: email.includes('@') });
@@ -269,10 +269,10 @@ function ProductGrid({ filters }: { filters: any }) {
     loadProducts();
   }, [filters, page]);
 
-  const loadProducts = async () => {
+  const loadProducts = async() => {
     setLoading(true);
 
-    await measurePerformance('ProductGrid.loadProducts', async () => {
+    await measurePerformance('ProductGrid.loadProducts', async() => {
       try {
         // Simular carga de productos
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -498,5 +498,5 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

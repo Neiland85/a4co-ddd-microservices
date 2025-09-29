@@ -9,7 +9,7 @@ export class GeoController {
 
   calculateDistance(
     coord1: { lat: number; lng: number },
-    coord2: { lat: number; lng: number }
+    coord2: { lat: number; lng: number },
   ): number {
     return this.geoService.calculateDistance(coord1, coord2);
   }

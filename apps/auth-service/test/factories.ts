@@ -2,7 +2,7 @@ import { RegisterUserDto } from '../src/application/dto/user.dto';
 import { User, UserStatus } from '../src/domain/aggregates/user.aggregate';
 
 export const createRegisterUserDto = (
-  overrides: Partial<RegisterUserDto> = {}
+  overrides: Partial<RegisterUserDto> = {},
 ): RegisterUserDto => {
   const dto = new RegisterUserDto();
   dto.email = overrides.email ?? 'test@example.com';
@@ -26,6 +26,6 @@ export const createUser = (overrides: Partial<User> = {}): User => {
     { id, email, name },
     { hashedPassword, status, emailVerified },
     { lastLoginAt, createdAt, updatedAt },
-    { id, email, name, hashedPassword, status, emailVerified, lastLoginAt, createdAt, updatedAt }
+    { id, email, name, hashedPassword, status, emailVerified, lastLoginAt, createdAt, updatedAt },
   );
 };

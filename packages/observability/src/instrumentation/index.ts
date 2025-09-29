@@ -12,7 +12,7 @@ export function instrumentNatsClient(client: any): any {
   // Wrap publish method
   const originalPublish = client.publish.bind(client);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  client.publish = function (subject: string, data: any, options?: any): Promise<void> {
+  client.publish = function(subject: string, data: any, options?: any): Promise<void> {
     const span = tracer.startSpan(`nats.publish ${subject}`, {
       kind: SpanKind.PRODUCER,
       attributes: {
@@ -66,13 +66,13 @@ export function instrumentNatsClient(client: any): any {
   // Wrap subscribe method
   const originalSubscribe = client.subscribe.bind(client);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  client.subscribe = function (subject: string, options?: any, callback?: any): unknown {
+  client.subscribe = function(subject: string, options?: any, callback?: any): unknown {
     // Handle different parameter combinations
     const cb = typeof options === 'function' ? options : callback;
     const opts = typeof options === 'function' ? {} : options || {};
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wrappedCallback = function (msg: any): Promise<unknown> {
+    const wrappedCallback = function(msg: any): Promise<unknown> {
       const parentContext = extractContext(msg.headers || {});
       const span = tracer.startSpan(
         `nats.process ${subject}`,
@@ -85,10 +85,10 @@ export function instrumentNatsClient(client: any): any {
             'messaging.operation': 'process',
           },
         },
-        parentContext
+        parentContext,
       );
 
-      return context.with(trace.setSpan(context.active(), span), async () => {
+      return context.with(trace.setSpan(context.active(), span), async() => {
         try {
           // Create context from message
           const natsContext = createNatsContext(msg);
@@ -155,7 +155,7 @@ export function instrumentRedisClient(client: any): any {
     if (typeof client[command] === 'function') {
       const original = client[command].bind(client);
 
-      client[command] = function (...args: any[]): Promise<unknown> {
+      client[command] = function(...args: any[]): Promise<unknown> {
         const span = tracer.startSpan(`redis.${command}`, {
           kind: SpanKind.CLIENT,
           attributes: {
@@ -236,7 +236,7 @@ export function instrumentMongoCollection(collection: any): any {
     if (typeof collection[method] === 'function') {
       const original = collection[method].bind(collection);
 
-      collection[method] = function (...args: any[]): Promise<unknown> {
+      collection[method] = function(...args: any[]): Promise<unknown> {
         const span = tracer.startSpan(`mongodb.${method}`, {
           kind: SpanKind.CLIENT,
           attributes: {
@@ -260,7 +260,7 @@ export function instrumentMongoCollection(collection: any): any {
           // Handle cursor operations
           if (result && typeof result.toArray === 'function') {
             const originalToArray = result.toArray.bind(result);
-            result.toArray = async function (): Promise<unknown[]> {
+            result.toArray = async function(): Promise<unknown[]> {
               try {
                 const docs = await originalToArray();
                 const duration = Date.now() - startTime;
@@ -354,7 +354,7 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instrumentResolver = (resolver: any, typeName: string, fieldName: string) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return async function (parent: any, args: any, context: any, info: any): Promise<unknown> {
+    return async function(parent: any, args: any, context: any, info: any): Promise<unknown> {
       const span = tracer.startSpan(`graphql.${typeName}.${fieldName}`, {
         kind: SpanKind.INTERNAL,
         attributes: {
@@ -416,7 +416,7 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
         instrumentedResolvers[typeName][fieldName] = instrumentResolver(
           resolver,
           typeName,
-          fieldName
+          fieldName,
         );
       } else if (typeof resolver === 'object' && resolver.resolve) {
         instrumentedResolvers[typeName][fieldName] = {
@@ -441,7 +441,7 @@ export function instrumentKafkaProducer(producer: any): any {
   const originalSend = producer.send.bind(producer);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  producer.send = async function (record: any): Promise<unknown> {
+  producer.send = async function(record: any): Promise<unknown> {
     const span = tracer.startSpan(`kafka.send ${record.topic}`, {
       kind: SpanKind.PRODUCER,
       attributes: {
@@ -501,11 +501,11 @@ export function instrumentKafkaConsumer(consumer: any): any {
   const originalRun = consumer.run.bind(consumer);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  consumer.run = async function (config: any): Promise<void> {
+  consumer.run = async function(config: any): Promise<void> {
     const originalEachMessage = config.eachMessage;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    config.eachMessage = async function (payload: any): Promise<void> {
+    config.eachMessage = async function(payload: any): Promise<void> {
       const { topic, partition, message } = payload;
 
       // Extract trace context from headers
@@ -523,10 +523,10 @@ export function instrumentKafkaConsumer(consumer: any): any {
             'messaging.kafka.offset': message.offset,
           },
         },
-        parentContext
+        parentContext,
       );
 
-      return context.with(trace.setSpan(context.active(), span), async () => {
+      return context.with(trace.setSpan(context.active(), span), async() => {
         try {
           logger.debug('Processing Kafka message', {
             topic,

@@ -90,7 +90,7 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
     const originalJson = res.json;
     const startTime = Date.now();
 
-    res.send = function (data: string | Buffer | object): Response {
+    res.send = function(data: string | Buffer | object): Response {
       const dataString = typeof data === 'string' ? data : JSON.stringify(data);
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_content_length', Buffer.byteLength(dataString));
@@ -123,7 +123,7 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
       return originalSend.call(this, data);
     };
 
-    res.json = function (data: unknown): Response {
+    res.json = function(data: unknown): Response {
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_content_type', 'application/json');
       span.setAttribute('http.duration', Date.now() - startTime);
@@ -176,7 +176,7 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
     sensitiveHeaders: _sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'],
   } = options;
 
-  return async (ctx: Context, next: Next): Promise<void> => {
+  return async(ctx: Context, next: Next): Promise<void> => {
     // Extract trace headers
     const traceId = (ctx.headers['x-trace-id'] as string) || uuidv4();
     const parentSpanId = ctx.headers['x-span-id'] as string;
@@ -205,7 +205,7 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
     if (captureRequestBody && (ctx.request as unknown as { body?: unknown }).body) {
       span.setAttribute(
         'http.request.body',
-        JSON.stringify((ctx.request as unknown as { body?: unknown }).body)
+        JSON.stringify((ctx.request as unknown as { body?: unknown }).body),
       );
     }
 
@@ -236,7 +236,7 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
 
     try {
       // Continue with context
-      await context.with(tracingContext, async () => {
+      await context.with(tracingContext, async() => {
         await next();
       });
 
@@ -248,7 +248,7 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
       if (captureResponseBody && ctx.body) {
         span.setAttribute(
           'http.response.body',
-          typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body)
+          typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body),
         );
       }
 
@@ -302,14 +302,14 @@ export function TraceController(options?: {
   captureArgs?: boolean;
   captureResult?: boolean;
 }) {
-  return function (
+  return function(
     target: object,
     propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
+    descriptor.value = async function(...args: unknown[]): Promise<unknown> {
       // Get request object (Express or Koa)
       const req = args[0] as { __span?: unknown; state?: { span?: unknown } };
       const parentSpan = req.__span || req.state?.span;

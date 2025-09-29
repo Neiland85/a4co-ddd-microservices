@@ -137,7 +137,7 @@ export const logger = new Proxy(
       }
       return defaultLogger[prop];
     },
-  }
+  },
 );
 
 // Función helper para obtener el tracer por defecto

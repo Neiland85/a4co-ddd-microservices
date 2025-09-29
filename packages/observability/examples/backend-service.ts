@@ -137,7 +137,7 @@ app.use(
     serviceName: 'order-service',
     logger,
     captureRequestBody: true,
-  })
+  }),
 );
 
 // Health check endpoint
@@ -150,7 +150,7 @@ app.get('/health', (req, res) => {
 });
 
 // Metrics endpoint
-app.get('/metrics', async (req, res) => {
+app.get('/metrics', async(req, res) => {
   // Prometheus metrics will be exposed here
   res.set('Content-Type', 'text/plain');
   res.send('# Prometheus metrics');
@@ -159,7 +159,7 @@ app.get('/metrics', async (req, res) => {
 // Order creation endpoint
 const orderService = new OrderService();
 
-app.post('/orders', async (req, res) => {
+app.post('/orders', async(req, res) => {
   const tracingContext = getTracingContext();
 
   try {
@@ -190,7 +190,7 @@ app.post('/orders', async (req, res) => {
 });
 
 // Event subscriptions
-natsClient.subscribeToEvents('inventory.reserved', async (event, span) => {
+natsClient.subscribeToEvents('inventory.reserved', async(event, span) => {
   logger.info('Received inventory reserved event', {
     ddd: {
       eventName: 'InventoryReserved',
@@ -204,7 +204,7 @@ natsClient.subscribeToEvents('inventory.reserved', async (event, span) => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', async() => {
   logger.info('Shutting down service...');
 
   // Close connections

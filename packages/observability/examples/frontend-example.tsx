@@ -32,7 +32,7 @@ initializeFrontendObservability(
     environment: process.env.NODE_ENV || 'development',
     endpoint: process.env.REACT_APP_TRACE_ENDPOINT || 'http://localhost:4318/v1/traces',
     enableConsoleExporter: process.env.NODE_ENV === 'development',
-  }
+  },
 );
 
 // Cliente HTTP con observabilidad
@@ -108,7 +108,7 @@ const ProductList: React.FC = withObservability(
       </div>
     );
   },
-  'ProductList'
+  'ProductList',
 );
 
 // Componente de formulario de producto con observabilidad
@@ -215,7 +215,7 @@ const ProductForm: React.FC = withObservability(
       </form>
     );
   },
-  'ProductForm'
+  'ProductForm',
 );
 
 // Componente principal de la aplicación
@@ -233,7 +233,7 @@ const App: React.FC = () => {
 
   // Cargar productos al montar el componente
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadProducts = async() => {
       const span = createChildSpan('load_products');
 
       try {
@@ -278,7 +278,7 @@ const App: React.FC = () => {
   }, [createChildSpan, logUIEvent, logError]);
 
   // Manejar creación/actualización de producto
-  const handleProductSubmit = async (productData: Partial<Product>) => {
+  const handleProductSubmit = async(productData: Partial<Product>) => {
     const span = createChildSpan('product_submit');
 
     try {

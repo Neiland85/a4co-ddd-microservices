@@ -10,7 +10,7 @@ describe('RegisterUserUseCase', () => {
   let userRepository: jest.Mocked<UserRepositoryPort>;
   let userDomainService: jest.Mocked<UserDomainService>;
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     userRepository = {
       findById: jest.fn(),
       findByEmail: jest.fn(),
@@ -45,7 +45,7 @@ describe('RegisterUserUseCase', () => {
       userRepository,
       mockCryptographyService,
       mockEventBus,
-      userDomainService
+      userDomainService,
     );
   });
 
@@ -53,7 +53,7 @@ describe('RegisterUserUseCase', () => {
     expect(useCase).toBeDefined();
   });
 
-  it('should register a user successfully', async () => {
+  it('should register a user successfully', async() => {
     // Arrange
     const registerDto = createRegisterUserDto();
     const user = createUser();
@@ -74,7 +74,7 @@ describe('RegisterUserUseCase', () => {
     expect(result.emailVerified).toBe(false);
   });
 
-  it('should throw error if email already exists', async () => {
+  it('should throw error if email already exists', async() => {
     // Arrange
     const registerDto = new RegisterUserDto();
     registerDto.email = 'existing@example.com';
@@ -82,7 +82,7 @@ describe('RegisterUserUseCase', () => {
     registerDto.password = 'Password123';
 
     userDomainService.validateUniqueEmail.mockRejectedValue(
-      new Error('El email ya está registrado')
+      new Error('El email ya está registrado'),
     );
 
     // Act & Assert

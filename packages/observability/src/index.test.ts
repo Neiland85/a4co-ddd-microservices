@@ -166,7 +166,7 @@ describe('@a4co/observability', () => {
   });
 
   describe('shutdown', () => {
-    it('should shutdown without errors', async () => {
+    it('should shutdown without errors', async() => {
       await expect(shutdown()).resolves.not.toThrow();
     });
   });

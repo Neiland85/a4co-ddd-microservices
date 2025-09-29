@@ -68,7 +68,7 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       customerEmail: string;
       items: Array<{ productId: string; quantity: number }>;
       deliveryAddress: any;
-    }
+    },
   ): Promise<void> {
     this.sagaStates.set(sagaId, {
       customerId: initialData.customerId,

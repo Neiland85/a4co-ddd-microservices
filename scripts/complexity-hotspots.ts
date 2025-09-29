@@ -218,7 +218,7 @@ function getThresholdForLayer(layer: string): { max: number; warning: number } {
 
 function getSeverity(
   complexity: number,
-  threshold: { max: number; warning: number }
+  threshold: { max: number; warning: number },
 ): 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' {
   if (complexity > threshold.max * 2) return 'CRITICAL';
   if (complexity > threshold.max) return 'HIGH';
@@ -330,7 +330,7 @@ function displayResults(report: ComplexityReport): void {
       hotspot.severity === 'CRITICAL' ? '🚨' : hotspot.severity === 'HIGH' ? '⚠️' : '📌';
 
     console.log(
-      `\n${index + 1}. ${severity} ${hotspot.function} (Complejidad: ${hotspot.complexity})`
+      `\n${index + 1}. ${severity} ${hotspot.function} (Complejidad: ${hotspot.complexity})`,
     );
     console.log(`   📁 ${hotspot.file}`);
     console.log(`   📏 Líneas de código: ${hotspot.loc}`);

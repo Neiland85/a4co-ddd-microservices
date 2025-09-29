@@ -46,7 +46,7 @@ export class DesignSystemLogger {
   createComponentSpan(
     componentName: string,
     action: string,
-    attributes?: Attributes
+    attributes?: Attributes,
   ): Span | undefined {
     if (this.tracer) {
       const span = this.tracer.createSpan(`ds.${componentName}.${action}`);
@@ -85,7 +85,7 @@ export function withDSObservability<P extends object>(
   WrappedComponent: ComponentType<P>,
   componentName: string,
   defaultVariant?: string,
-  defaultSize?: string
+  defaultSize?: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,7 +154,7 @@ export function withDSObservability<P extends object>(
           dsLogger.endSpan(interactionSpan);
         }
       },
-      [finalComponentName, variant, size, disabled, loading, onInteraction]
+      [finalComponentName, variant, size, disabled, loading, onInteraction],
     );
 
     return <WrappedComponent {...(restProps as P)} ref={ref} onInteraction={handleInteraction} />;
@@ -165,7 +165,7 @@ export function withDSObservability<P extends object>(
 export function useDSObservability(
   componentName: string,
   variant?: string,
-  size?: string
+  size?: string,
 ): {
   logInteraction: (_action: string, _data?: Record<string, unknown>) => void;
 } {
@@ -206,7 +206,7 @@ export function useDSObservability(
         dsLogger.endSpan(interactionSpan);
       }
     },
-    [componentName, variant, size]
+    [componentName, variant, size],
   );
 
   return { logInteraction };
@@ -231,7 +231,7 @@ export const ObservableButton = withDSObservability(
         onClick,
         ...props
       },
-      ref
+      ref,
     ) => {
       const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
         // Loggear el click
@@ -255,11 +255,11 @@ export const ObservableButton = withDSObservability(
           {children}
         </button>
       );
-    }
+    },
   ),
   'Button',
   'primary',
-  'md'
+  'md',
 );
 
 // Componente Input con observabilidad integrada
@@ -282,7 +282,7 @@ export const ObservableInput = withDSObservability(
         onBlur,
         ...props
       },
-      ref
+      ref,
     ) => {
       const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         _onInteraction?.('change', {
@@ -323,11 +323,11 @@ export const ObservableInput = withDSObservability(
           {...props}
         />
       );
-    }
+    },
   ),
   'Input',
   'default',
-  'md'
+  'md',
 );
 
 // Componente Card con observabilidad integrada
@@ -342,18 +342,18 @@ export const ObservableCard = withDSObservability(
   >(
     (
       { onInteraction: _onInteraction, variant = 'default', size = 'md', children, ...props },
-      ref
+      ref,
     ) => {
       return (
         <div ref={ref} className={`ds-card ds-card--${variant} ds-card--${size}`} {...props}>
           {children}
         </div>
       );
-    }
+    },
   ),
   'Card',
   'default',
-  'md'
+  'md',
 );
 
 // Función para crear tokens de diseño consistentes
@@ -427,7 +427,7 @@ export function useDSPerformanceTracking(componentName: string): {
 export function logDSError(
   componentName: string,
   error: Error,
-  context?: Record<string, unknown>
+  context?: Record<string, unknown>,
 ): void {
   dsLogger.logComponentEvent({
     component: componentName,
@@ -448,7 +448,7 @@ export function logDSMetric(
   componentName: string,
   metricName: string,
   value: number,
-  tags?: Record<string, string>
+  tags?: Record<string, string>,
 ): void {
   dsLogger.logComponentEvent({
     component: componentName,

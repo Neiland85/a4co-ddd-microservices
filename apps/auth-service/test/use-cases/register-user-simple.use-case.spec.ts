@@ -58,11 +58,11 @@ describe('RegisterUserUseCase', () => {
       userRepository,
       mockCryptographyService,
       mockEventBus,
-      userDomainService
+      userDomainService,
     );
   });
 
-  it('should register a user successfully', async () => {
+  it('should register a user successfully', async() => {
     const registerDto: RegisterUserDto = createRegisterUserDto();
     // Ajustar el objeto user para cumplir con el tipo User
     const user = createUser({
@@ -83,7 +83,7 @@ describe('RegisterUserUseCase', () => {
     expect(result.email).toBe(registerDto.email);
   });
 
-  it('should throw error if email already exists', async () => {
+  it('should throw error if email already exists', async() => {
     // Arrange
     const registerDto = new RegisterUserDto();
     registerDto.email = 'existing@example.com';
@@ -91,7 +91,7 @@ describe('RegisterUserUseCase', () => {
     registerDto.password = 'Password123';
 
     userDomainService.validateUniqueEmail.mockRejectedValue(
-      new Error('El email ya está registrado')
+      new Error('El email ya está registrado'),
     );
 
     // Act & Assert
@@ -99,7 +99,7 @@ describe('RegisterUserUseCase', () => {
     expect(userRepository.save).not.toHaveBeenCalled();
   });
 
-  it('should handle repository save errors', async () => {
+  it('should handle repository save errors', async() => {
     // Arrange
     const registerDto = new RegisterUserDto();
     registerDto.email = 'test@example.com';

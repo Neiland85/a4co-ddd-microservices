@@ -72,15 +72,15 @@ const messagePropagator = new CustomMessagePropagator();
 // Enhanced tracer with context support
 function createEnhancedTracer(
   baseTracer: Tracer,
-  defaultContext?: ObservabilityContext
+  defaultContext?: ObservabilityContext,
 ): ObservabilityTracer {
   const enhancedTracer = Object.create(baseTracer) as ObservabilityTracer;
 
-  enhancedTracer.withContext = function (ctx: ObservabilityContext): ObservabilityTracer {
+  enhancedTracer.withContext = function(ctx: ObservabilityContext): ObservabilityTracer {
     return createEnhancedTracer(baseTracer, { ...defaultContext, ...ctx });
   };
 
-  enhancedTracer.withDDD = function (metadata: DDDMetadata): ObservabilityTracer {
+  enhancedTracer.withDDD = function(metadata: DDDMetadata): ObservabilityTracer {
     const dddContext: ObservabilityContext = {
       ...defaultContext,
       metadata: {
@@ -93,10 +93,10 @@ function createEnhancedTracer(
 
   // Override startSpan to include default context
   const originalStartSpan = baseTracer.startSpan.bind(baseTracer);
-  enhancedTracer.startSpan = function (
+  enhancedTracer.startSpan = function(
     name: string,
     options?: SpanOptions,
-    context?: Context
+    context?: Context,
   ): Span {
     const attributes = {
       ...options?.attributes,
@@ -122,10 +122,10 @@ function createEnhancedTracer(
   // Override startActiveSpan to include default context
   const originalStartActiveSpan = (baseTracer as any).startActiveSpan?.bind(baseTracer);
   if (originalStartActiveSpan) {
-    enhancedTracer.startActiveSpan = function (
+    enhancedTracer.startActiveSpan = function(
       name: string,
       options?: SpanOptions,
-      fn?: (span: Span) => any
+      fn?: (span: Span) => any,
     ): any {
       const attributes = {
         ...options?.attributes,
@@ -157,7 +157,7 @@ function createEnhancedTracer(
 
 // Initialize tracing
 export function initializeTracing(
-  config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+  config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string },
 ): NodeSDK {
   const logger = getLogger();
 
@@ -167,7 +167,7 @@ export function initializeTracing(
       [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
       [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
-    })
+    }),
   );
 
   // Create tracer provider
@@ -284,7 +284,7 @@ export function startActiveSpan<T>(name: string, fn: (span: Span) => T, options?
 export function withSpan<T>(
   name: string,
   fn: () => T | Promise<T>,
-  options?: SpanOptions
+  options?: SpanOptions,
 ): Promise<T> {
   return startActiveSpan(
     name,
@@ -304,7 +304,7 @@ export function withSpan<T>(
         span.end();
       }
     },
-    options
+    options,
   );
 }
 

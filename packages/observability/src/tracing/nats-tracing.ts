@@ -35,7 +35,7 @@ export function createTracedPublisher(config: NatsTracingConfig) {
     options?: {
       replyTo?: string;
       headers?: Record<string, string>;
-    }
+    },
   ): Promise<void> {
     const span = tracer.startSpan(`NATS Publish: ${subject}`, {
       kind: SpanKind.PRODUCER,
@@ -99,9 +99,9 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
 
   return function subscribeWithTracing(
     subject: string,
-    handler: (_msg: unknown, _span: Span) => Promise<void>
+    handler: (_msg: unknown, _span: Span) => Promise<void>,
   ) {
-    return async (msg: unknown): Promise<void> => {
+    return async(msg: unknown): Promise<void> => {
       const natsMsg = msg as { data: unknown; sid?: string };
       let tracedMessage: TracedMessage;
 
@@ -147,7 +147,7 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
       });
 
       try {
-        await context.with(ctx, async () => {
+        await context.with(ctx, async() => {
           await handler(tracedMessage.data, span);
         });
 
@@ -198,7 +198,7 @@ export function createTracedRequest(config: NatsTracingConfig) {
     options?: {
       timeout?: number;
       headers?: Record<string, string>;
-    }
+    },
   ): Promise<unknown> {
     const span = tracer.startSpan(`NATS Request: ${subject}`, {
       kind: SpanKind.CLIENT,
@@ -289,7 +289,7 @@ export class TracedNatsClient {
       aggregateId: string;
       data: unknown;
       metadata?: Record<string, unknown>;
-    }
+    },
   ): Promise<void> {
     const span = trace.getActiveSpan();
     const parentContext = span?.spanContext();
@@ -311,9 +311,9 @@ export class TracedNatsClient {
 
   subscribeToEvents(
     subject: string,
-    handler: (_event: unknown, _span: Span) => Promise<void>
+    handler: (_event: unknown, _span: Span) => Promise<void>,
   ): void {
-    this.subscribe(subject, async (event: unknown, span: Span) => {
+    this.subscribe(subject, async(event: unknown, span: Span) => {
       // Add event-specific attributes to span
       if (event && typeof event === 'object' && 'type' in event) {
         span.setAttribute('event.type', String(event.type));
@@ -334,7 +334,7 @@ export class TracedNatsClient {
       data: unknown;
       metadata?: Record<string, unknown>;
     },
-    timeout?: number
+    timeout?: number,
   ): Promise<unknown> {
     const span = trace.getActiveSpan();
     const parentContext = span?.spanContext();

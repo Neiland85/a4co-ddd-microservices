@@ -31,7 +31,7 @@ export interface GetOrderDTO {
 
 export class OrderService {
   constructor(
-    private readonly orderRepository: IOrderRepository
+    private readonly orderRepository: IOrderRepository,
   ) { }
 
   async createOrder(dto: CreateOrderDTO): Promise<Order> {
@@ -49,8 +49,8 @@ export class OrderService {
         item.productId,
         item.quantity,
         item.unitPrice,
-        item.currency || 'EUR'
-      )
+        item.currency || 'EUR',
+      ),
     );
 
     // Create order aggregate

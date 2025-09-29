@@ -5,7 +5,7 @@ describe('CmsService', () => {
 
   it('should create a page', () => {
     const result = cmsService.createPage('Inicio', 'Contenido de la página');
-    expect(result).toBe("Página 'Inicio' creada con contenido.");
+    expect(result).toBe('Página \'Inicio\' creada con contenido.');
   });
 
   it('should update a page', () => {

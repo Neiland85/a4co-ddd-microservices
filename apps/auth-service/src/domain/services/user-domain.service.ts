@@ -5,7 +5,7 @@ import { UserRepositoryPort } from '../../application/ports/user-repository.port
 export class UserDomainService {
   constructor(
     @Inject('UserRepositoryPort')
-    private readonly userRepository: UserRepositoryPort
+    private readonly userRepository: UserRepositoryPort,
   ) {}
 
   async isEmailUnique(email: string): Promise<boolean> {

@@ -39,11 +39,11 @@ export function useArtisans(options: UseArtisansOptions = {}) {
   // Memoizar las opciones para evitar recreaciones innecesarias
   const memoizedOptions = useMemo(
     () => options,
-    [options.municipality, options.specialty, options.verified, options.search, options.autoFetch]
+    [options.municipality, options.specialty, options.verified, options.search, options.autoFetch],
   );
 
   const fetchArtisans = useCallback(
-    async (customOptions?: UseArtisansOptions) => {
+    async(customOptions?: UseArtisansOptions) => {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -83,31 +83,31 @@ export function useArtisans(options: UseArtisansOptions = {}) {
         }));
       }
     },
-    [memoizedOptions]
+    [memoizedOptions],
   );
 
   const searchArtisans = useCallback(
-    async (searchTerm: string) => {
+    async(searchTerm: string) => {
       await fetchArtisans({ search: searchTerm });
     },
-    [fetchArtisans]
+    [fetchArtisans],
   );
 
   const filterByMunicipality = useCallback(
-    async (municipality: string) => {
+    async(municipality: string) => {
       await fetchArtisans({ municipality });
     },
-    [fetchArtisans]
+    [fetchArtisans],
   );
 
   const filterBySpecialty = useCallback(
-    async (specialty: string) => {
+    async(specialty: string) => {
       await fetchArtisans({ specialty });
     },
-    [fetchArtisans]
+    [fetchArtisans],
   );
 
-  const getVerifiedArtisans = useCallback(async () => {
+  const getVerifiedArtisans = useCallback(async() => {
     await fetchArtisans({ verified: true });
   }, [fetchArtisans]);
 
@@ -141,7 +141,7 @@ export function useArtisans(options: UseArtisansOptions = {}) {
     hasData: state.artisans.length > 0,
     isEmpty: !state.loading && state.artisans.length === 0,
     isFiltered: Object.keys(state.filters).some(
-      key => state.filters[key as keyof typeof state.filters] !== undefined
+      key => state.filters[key as keyof typeof state.filters] !== undefined,
     ),
     verifiedArtisans: state.artisans.filter(artisan => artisan.verified),
     topRatedArtisans: state.artisans

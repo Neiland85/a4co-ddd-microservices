@@ -106,7 +106,7 @@ export class DomSanitizer {
     try {
       const parsedUrl = new URL(
         url,
-        typeof window !== 'undefined' ? window.location.href : 'http://localhost/'
+        typeof window !== 'undefined' ? window.location.href : 'http://localhost/',
       );
       return this.options.allowedSchemes.includes(parsedUrl.protocol.replace(':', ''));
     } catch (e) {

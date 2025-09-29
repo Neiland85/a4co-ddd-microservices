@@ -1,38 +1,41 @@
-import { initializeTracing, logger } from '@a4co/observability';
+/// <reference types="node" />
+
+import { getGlobalLogger, initializeTracing } from '@a4co/observability';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import * as process from 'process';
+import { PaymentModule } from './payment.module';
 
 async function bootstrap() {
   // Initialize observability
-  initializeTracing('payment-service', {
+  initializeTracing({
     serviceName: 'payment-service',
     serviceVersion: '1.0.0',
     environment: process.env['NODE_ENV'] || 'development',
   });
 
-  // TODO: Create PaymentModule
-  const app = await NestFactory.create(undefined as any, {
-    logger: logger,
-  });
+  // Get logger instance
+  const logger = getGlobalLogger();
 
-  // Use Pino HTTP middleware for request logging
-  app.use(logger.pinoHttpMiddleware());
+  const app = await NestFactory.create(PaymentModule, {
+    logger: false, // Disable default NestJS logger
+  });
 
   // Security middleware
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
+          defaultSrc: ['\'self\''],
+          styleSrc: ['\'self\'', '\'unsafe-inline\''],
+          scriptSrc: ['\'self\''],
+          imgSrc: ['\'self\'', 'data:', 'https:'],
         },
       },
       crossOriginEmbedderPolicy: false,
-    })
+    }),
   );
 
   // Global validation pipe
@@ -41,8 +44,17 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
+
+  // Braces security middleware
+  const bracesMiddleware = new BracesSecurityMiddleware({
+    maxExpansionSize: 50,
+    maxRangeSize: 10,
+    monitoringEnabled: true,
+  });
+  app.use(bracesMiddleware.validateRequestBody());
+  app.use(bracesMiddleware.validateQueryParams());
 
   // CORS configuration
   app.enableCors({
@@ -72,6 +84,7 @@ async function bootstrap() {
 }
 
 bootstrap().catch(err => {
+  const logger = getGlobalLogger();
   logger.error('Error al iniciar el servicio:', err);
   process.exit(1);
 });

@@ -26,7 +26,7 @@ export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableBu
       onClick,
       ...props
     },
-    ref
+    ref,
   ) => {
     // Logging hook
     const logInteraction = useInteractionLogger('button.click', {
@@ -77,7 +77,7 @@ export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableBu
         trackingMetadata,
         logInteraction,
         traceInteraction,
-      ]
+      ],
     );
 
     const classNames = [
@@ -103,7 +103,7 @@ export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableBu
         {children}
       </button>
     );
-  }
+  },
 );
 
 ObservableButton.displayName = 'ObservableButton';

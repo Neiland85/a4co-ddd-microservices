@@ -26,12 +26,12 @@ describe('BaseService', () => {
     expect(service).toBeInstanceOf(MockService);
   });
 
-  test('should execute test method', async () => {
+  test('should execute test method', async() => {
     const result = await service.testMethod('value');
     expect(result).toBe('test-value');
   });
 
-  test('should handle async operations', async () => {
+  test('should handle async operations', async() => {
     const startTime = Date.now();
     await service.testAsyncMethod();
     const endTime = Date.now();

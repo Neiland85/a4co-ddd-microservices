@@ -30,7 +30,7 @@ interface LoadingState {
 
 // Hook personalizado para manejo de estado de loading
 const useLoadingState = (
-  initialData?: unknown // Cambiado de 'any' a 'unknown'
+  initialData?: unknown, // Cambiado de 'any' a 'unknown'
 ): [
   LoadingState,
   {
@@ -82,7 +82,7 @@ const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }
     <div
       className={cn(
         'animate-spin rounded-full border-2 border-gray-300 border-t-blue-600',
-        sizeClasses[size]
+        sizeClasses[size],
       )}
     />
   );
@@ -145,7 +145,7 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
       secondary: 'bg-gray-50 border-gray-200 text-gray-900',
       accent: 'bg-green-50 border-green-200 text-green-900',
     }),
-    []
+    [],
   );
 
   const sizeClasses = useMemo(
@@ -154,11 +154,11 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
       md: 'p-6 text-base',
       lg: 'p-8 text-lg',
     }),
-    []
+    [],
   );
 
   // Manejadores de eventos
-  const handleAction = useCallback(async () => {
+  const handleAction = useCallback(async() => {
     if (disabled || loading) return;
 
     try {
@@ -228,7 +228,7 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
         variantClasses[variant],
         sizeClasses[size],
         disabled && 'cursor-not-allowed opacity-50',
-        className
+        className,
       )}
     >
       {/* Header */}
@@ -290,7 +290,7 @@ export const V0CardTemplate: React.FC<
   <div
     className={cn(
       'overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm',
-      className
+      className,
     )}
   >
     <div className="border-b border-gray-200 px-6 py-4">
@@ -333,7 +333,7 @@ export const V0ModalTemplate: React.FC<
           className={cn(
             'relative w-full rounded-lg bg-white shadow-xl',
             sizeClasses[size],
-            className
+            className,
           )}
         >
           <div className="flex items-center justify-between border-b border-gray-200 p-6">
@@ -355,7 +355,7 @@ export const useV0State = <T,>(initialValue: T) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateValue = useCallback(async (newValue: T | ((prev: T) => T)) => {
+  const updateValue = useCallback(async(newValue: T | ((prev: T) => T)) => {
     try {
       setIsLoading(true);
       setError(null);

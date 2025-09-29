@@ -18,7 +18,7 @@ export class OrderItem {
         public readonly productId: string,
         public readonly quantity: number,
         public readonly unitPrice: number,
-        public readonly currency: string = 'EUR'
+        public readonly currency: string = 'EUR',
     ) {
         if (quantity <= 0) {
             throw new Error('Quantity must be positive');
@@ -50,7 +50,7 @@ export class OrderCreatedEvent extends DomainEvent {
     constructor(
         public readonly orderId: string,
         public readonly customerId: string,
-        public readonly items: OrderItem[]
+        public readonly items: OrderItem[],
     ) {
         super(orderId, 'order.created.v1');
     }
@@ -60,7 +60,7 @@ export class OrderStatusChangedEvent extends DomainEvent {
     constructor(
         public readonly orderId: string,
         public readonly oldStatus: OrderStatus,
-        public readonly newStatus: OrderStatus
+        public readonly newStatus: OrderStatus,
     ) {
         super(orderId, 'order.status.changed.v1');
     }
@@ -82,7 +82,7 @@ export class Order extends AggregateRoot {
         items: OrderItem[],
         status: OrderStatus = OrderStatus.PENDING,
         createdAt?: Date,
-        updatedAt?: Date
+        updatedAt?: Date,
     ) {
         super(id, createdAt, updatedAt);
         this._customerId = customerId;

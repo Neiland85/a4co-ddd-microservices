@@ -15,7 +15,7 @@ export class ProductCreatedEvent extends DomainEvent {
       materials: string[];
       isCustomizable: boolean;
       createdAt: Date;
-    }
+    },
   ) {
     super();
   }
@@ -34,7 +34,7 @@ export class ProductUpdatedEvent extends DomainEvent {
       oldValues: Record<string, any>;
       newValues: Record<string, any>;
       updatedAt: Date;
-    }
+    },
   ) {
     super();
   }
@@ -54,7 +54,7 @@ export class ProductVariantAddedEvent extends DomainEvent {
       variantPrice: number;
       attributes: Record<string, string>;
       addedAt: Date;
-    }
+    },
   ) {
     super();
   }
@@ -71,7 +71,7 @@ export class ProductDeactivatedEvent extends DomainEvent {
       productId: string;
       reason: string;
       deactivatedAt: Date;
-    }
+    },
   ) {
     super();
   }

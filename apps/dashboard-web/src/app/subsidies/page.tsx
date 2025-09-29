@@ -1,62 +1,62 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/Button";
-import { Badge } from "../../components/ui/badge";
-import { Progress } from "../../components/ui/progress";
-import { Target, Euro, Calendar, CheckCircle, Clock, AlertTriangle, Search, Filter } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/Button';
+import { Badge } from '../../components/ui/badge';
+import { Progress } from '../../components/ui/progress';
+import { Target, Euro, Calendar, CheckCircle, Clock, AlertTriangle, Search, Filter } from 'lucide-react';
 
 export default function Subsidies(): React.ReactElement {
   const availableSubsidies = [
     {
-      id: "SUB-2024-001",
-      name: "Digitalización PYMEs 2024",
-      description: "Subvención para transformación digital de pequeñas y medianas empresas",
-      amount: "€12,000 - €50,000",
-      deadline: "2024-03-15",
+      id: 'SUB-2024-001',
+      name: 'Digitalización PYMEs 2024',
+      description: 'Subvención para transformación digital de pequeñas y medianas empresas',
+      amount: '€12,000 - €50,000',
+      deadline: '2024-03-15',
       matchScore: 95,
-      status: "Disponible"
+      status: 'Disponible',
     },
     {
-      id: "SUB-2024-002",
-      name: "Formación Profesional",
-      description: "Bonificaciones para formación continua del personal",
-      amount: "€2,000 - €8,000",
-      deadline: "2024-04-30",
+      id: 'SUB-2024-002',
+      name: 'Formación Profesional',
+      description: 'Bonificaciones para formación continua del personal',
+      amount: '€2,000 - €8,000',
+      deadline: '2024-04-30',
       matchScore: 87,
-      status: "Disponible"
+      status: 'Disponible',
     },
     {
-      id: "SUB-2024-003",
-      name: "I+D+i Industrial",
-      description: "Subvención para proyectos de investigación y desarrollo",
-      amount: "€25,000 - €200,000",
-      deadline: "2024-02-28",
+      id: 'SUB-2024-003',
+      name: 'I+D+i Industrial',
+      description: 'Subvención para proyectos de investigación y desarrollo',
+      amount: '€25,000 - €200,000',
+      deadline: '2024-02-28',
       matchScore: 78,
-      status: "Disponible"
-    }
+      status: 'Disponible',
+    },
   ];
 
   const activeApplications = [
     {
-      id: "APP-2024-001",
-      subsidyName: "Digitalización PYMEs 2024",
-      status: "En Revisión",
-      submittedDate: "2024-01-10",
-      progress: 75
+      id: 'APP-2024-001',
+      subsidyName: 'Digitalización PYMEs 2024',
+      status: 'En Revisión',
+      submittedDate: '2024-01-10',
+      progress: 75,
     },
     {
-      id: "APP-2024-002",
-      subsidyName: "Formación Profesional",
-      status: "Aprobada",
-      submittedDate: "2024-01-05",
-      progress: 100
-    }
+      id: 'APP-2024-002',
+      subsidyName: 'Formación Profesional',
+      status: 'Aprobada',
+      submittedDate: '2024-01-05',
+      progress: 100,
+    },
   ];
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 90) return "text-green-600 bg-green-100";
-    if (score >= 80) return "text-blue-600 bg-blue-100";
-    if (score >= 70) return "text-yellow-600 bg-yellow-100";
-    return "text-gray-600 bg-gray-100";
+    if (score >= 90) return 'text-green-600 bg-green-100';
+    if (score >= 80) return 'text-blue-600 bg-blue-100';
+    if (score >= 70) return 'text-yellow-600 bg-yellow-100';
+    return 'text-gray-600 bg-gray-100';
   };
 
   const getStatusColor = (status: string) => {

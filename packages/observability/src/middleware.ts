@@ -79,7 +79,7 @@ export function observabilityMiddleware(): (
       // Interceptar el método end de response para logging
       const originalEnd = res.end;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      res.end = function (...args: any[]): Response {
+      res.end = function(...args: any[]): Response {
         // Log del fin del request
         const tracedReq = req as TracedRequest & {
           log?: { info: (_data: unknown) => void };
@@ -132,7 +132,7 @@ export class TracedHttpClient {
         return config;
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (error: any) => Promise.reject(error)
+      (error: any) => Promise.reject(error),
     );
 
     // Interceptor para logging de respuestas
@@ -158,7 +158,7 @@ export class TracedHttpClient {
           });
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -205,7 +205,7 @@ function extractTraceIdFromTraceparent(traceparent?: string): string | undefined
 
 // Middleware para correlación de logs
 export function logCorrelationMiddleware(
-  logger: any
+  logger: any,
 ): (_req: TracedRequest, _res: Response, _next: NextFunction) => void {
   return (req: TracedRequest, res: Response, next: NextFunction): void => {
     // Crear un logger child con contexto de tracing
@@ -229,11 +229,11 @@ export function logCorrelationMiddleware(
 // Función para propagar contexto en operaciones asíncronas
 export async function withPropagatedContext<T>(
   fn: () => Promise<T>,
-  parentContext?: any
+  parentContext?: any,
 ): Promise<T> {
   const contextToUse = parentContext || context.active();
 
-  return context.with(contextToUse, async () => {
+  return context.with(contextToUse, async() => {
     try {
       return await fn();
     } catch (error) {

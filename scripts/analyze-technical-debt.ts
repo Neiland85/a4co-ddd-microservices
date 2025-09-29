@@ -99,7 +99,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
         encoding: 'utf8',
         maxBuffer: 1024 * 1024 * 10,
         cwd: path.join(process.cwd(), 'apps/auth-service'),
-      }
+      },
     );
 
     if (authComplexity && authComplexity.trim() !== '') {
@@ -263,7 +263,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   console.log(`Líneas de código: ${report.metrics.totalLOC}`);
   console.log(`Complejidad promedio: ${report.metrics.avgComplexity.toFixed(2)}`);
   console.log(
-    `Líneas duplicadas: ${report.metrics.duplicatedLines} (${report.metrics.duplicatedPercentage.toFixed(2)}%)`
+    `Líneas duplicadas: ${report.metrics.duplicatedLines} (${report.metrics.duplicatedPercentage.toFixed(2)}%)`,
   );
   console.log(`Dependencias circulares: ${report.circularDependencies.length}`);
   console.log(`Código muerto: ${report.deadCode.length} exports`);
@@ -275,7 +275,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
       const score = hotspot.complexity * 2 + hotspot.duplications + hotspot.dependencies;
       console.log(`${index + 1}. ${hotspot.file}`);
       console.log(
-        `   Complejidad: ${hotspot.complexity} | Duplicaciones: ${hotspot.duplications} líneas | Score: ${score}`
+        `   Complejidad: ${hotspot.complexity} | Duplicaciones: ${hotspot.duplications} líneas | Score: ${score}`,
       );
     });
   }

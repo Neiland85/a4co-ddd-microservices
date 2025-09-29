@@ -16,7 +16,7 @@ export class RegisterUserUseCase implements UseCase<RegisterUserDto, UserRespons
     private readonly cryptographyService: CryptographyServicePort,
     @Inject('EventBusPort')
     private readonly eventBus: EventBusPort,
-    private readonly userDomainService: UserDomainService
+    private readonly userDomainService: UserDomainService,
   ) {}
 
   async execute(request: RegisterUserDto): Promise<UserResponseDto> {

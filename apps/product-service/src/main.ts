@@ -34,14 +34,14 @@ async function bootstrap() {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
+          defaultSrc: ['\'self\''],
+          styleSrc: ['\'self\'', '\'unsafe-inline\''],
+          scriptSrc: ['\'self\''],
+          imgSrc: ['\'self\'', 'data:', 'https:'],
         },
       },
       crossOriginEmbedderPolicy: false,
-    })
+    }),
   );
 
   // Global validation pipe
@@ -50,8 +50,17 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
+
+  // Braces security middleware
+  const bracesMiddleware = new BracesSecurityMiddleware({
+    maxExpansionSize: 50,
+    maxRangeSize: 10,
+    monitoringEnabled: true,
+  });
+  app.use(bracesMiddleware.validateRequestBody());
+  app.use(bracesMiddleware.validateQueryParams());
 
   // CORS configuration
   app.enableCors({

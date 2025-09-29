@@ -75,7 +75,7 @@ function watchTokens() {
     {
       persistent: true,
       ignoreInitial: true,
-    }
+    },
   );
 
   let syncTimeout;

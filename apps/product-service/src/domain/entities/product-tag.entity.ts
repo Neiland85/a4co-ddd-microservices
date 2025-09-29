@@ -4,7 +4,7 @@ export class ProductTag {
     public id: string,
     public productId: string,
     public name: string,
-    public value?: string
+    public value?: string,
   ) {}
 
   static create(data: any): ProductTag {

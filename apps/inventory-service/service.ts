@@ -15,7 +15,7 @@ export class InventoryService extends BaseService {
       return this.createSuccessMessage(
         'Inventory',
         'updated',
-        `${validatedProductId} to ${validatedQuantity}`
+        `${validatedProductId} to ${validatedQuantity}`,
       );
     } catch (error) {
       return this.handleServiceError(error, 'updateStock');

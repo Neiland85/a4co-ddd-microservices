@@ -29,7 +29,7 @@ let appMetrics: AppMetrics | null = null;
 
 // Initialize metrics
 export function initializeMetrics(
-  config: MetricsConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+  config: MetricsConfig & { serviceName: string; serviceVersion?: string; environment?: string },
 ): PrometheusExporter {
   const logger = getLogger();
 
@@ -40,7 +40,7 @@ export function initializeMetrics(
       [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
       ...config.labels,
-    })
+    }),
   );
 
   // Create Prometheus exporter
@@ -55,7 +55,7 @@ export function initializeMetrics(
         port: config.port || 9090,
         endpoint: config.endpoint || '/metrics',
       });
-    }
+    },
   );
 
   // Create meter provider
@@ -159,7 +159,7 @@ export function recordHttpRequest(
   method: string,
   route: string,
   statusCode: number,
-  duration: number
+  duration: number,
 ): void {
   const metrics = getMetrics();
   const labels = { method, route, status_code: statusCode.toString() };
@@ -177,7 +177,7 @@ export function recordCommandExecution(
   commandName: string,
   aggregateName: string,
   success: boolean,
-  duration?: number
+  duration?: number,
 ): void {
   const metrics = getMetrics();
   const labels = {
@@ -206,7 +206,7 @@ export function recordCommandExecution(
 export function recordEvent(
   eventName: string,
   aggregateName: string,
-  action: 'published' | 'processed'
+  action: 'published' | 'processed',
 ): void {
   const metrics = getMetrics();
   const labels = { event: eventName, aggregate: aggregateName };
@@ -232,7 +232,7 @@ export function createCustomHistogram(name: string, description: string, unit?: 
 export function createCustomGauge(
   name: string,
   description: string,
-  unit?: string
+  unit?: string,
 ): ObservableGauge {
   const meter = metrics.getMeter('@a4co/observability');
   return meter.createObservableGauge(name, { description, unit });

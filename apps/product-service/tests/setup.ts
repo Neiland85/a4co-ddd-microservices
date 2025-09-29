@@ -37,7 +37,7 @@ jest.mock('@a4co/shared-utils/base', () => ({
     }),
     log: jest.fn(),
     createSuccessMessage: jest.fn(
-      (entity, action, details) => `${entity} ${action} successfully ${details}`
+      (entity, action, details) => `${entity} ${action} successfully ${details}`,
     ),
     handleServiceError: jest.fn((error, method) => `Error in ${method}: ${error.message}`),
   })),

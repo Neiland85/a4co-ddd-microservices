@@ -57,12 +57,12 @@ export class NatsEventBus extends EventEmitter {
 
       this.emit('connected');
       console.log(
-        `✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`
+        `✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`,
       );
     } catch (error) {
       this.emit('error', error);
       throw new Error(
-        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -93,7 +93,7 @@ export class NatsEventBus extends EventEmitter {
     });
 
     // NATS status es un AsyncIterable, no un Observable
-    (async () => {
+    (async() => {
       try {
         for await (const status of this.connection!.status()) {
           this.emit('status', status);
@@ -136,7 +136,7 @@ export class NatsEventBus extends EventEmitter {
     } catch (error) {
       this.emit('error', error);
       throw new Error(
-        `❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -160,7 +160,7 @@ export class NatsEventBus extends EventEmitter {
     } catch (error) {
       this.emit('error', error);
       throw new Error(
-        `❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -168,9 +168,9 @@ export class NatsEventBus extends EventEmitter {
   private setupMessageHandler(
     subscription: Subscription,
     handler: INatsEventHandler,
-    subject: string
+    subject: string,
   ): void {
-    (async () => {
+    (async() => {
       for await (const message of subscription) {
         try {
           const decodedMessage = this.codec.decode(message.data);

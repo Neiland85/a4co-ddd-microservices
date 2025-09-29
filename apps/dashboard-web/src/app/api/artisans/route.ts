@@ -154,13 +154,13 @@ export async function GET(request: NextRequest) {
 
     if (municipality) {
       filteredArtisans = filteredArtisans.filter(artisan =>
-        artisan.location.municipality.toLowerCase().includes(municipality.toLowerCase())
+        artisan.location.municipality.toLowerCase().includes(municipality.toLowerCase()),
       );
     }
 
     if (specialty) {
       filteredArtisans = filteredArtisans.filter(artisan =>
-        artisan.specialty.toLowerCase().includes(specialty.toLowerCase())
+        artisan.specialty.toLowerCase().includes(specialty.toLowerCase()),
       );
     }
 
@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
         artisan =>
           artisan.name.toLowerCase().includes(searchLower) ||
           artisan.specialty.toLowerCase().includes(searchLower) ||
-          artisan.description.toLowerCase().includes(searchLower)
+          artisan.description.toLowerCase().includes(searchLower),
       );
     }
 
@@ -210,7 +210,7 @@ export async function GET(request: NextRequest) {
         error: 'Error al obtener artesanos',
         code: 'ARTISANS_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

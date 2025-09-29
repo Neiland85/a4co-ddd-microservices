@@ -1,7 +1,7 @@
 import { PaymentService } from './service';
 
 describe('PaymentService', () => {
-  let paymentService: PaymentService;;
+  let paymentService: PaymentService;
 
   beforeEach(() => {
     paymentService = new PaymentService();

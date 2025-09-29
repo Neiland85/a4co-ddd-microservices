@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/Button";
-import { Badge } from "../../components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
-import { TrendingUp, TrendingDown, BarChart3, PieChart, Calendar, Download, Filter } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/Button';
+import { Badge } from '../../components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { TrendingUp, TrendingDown, BarChart3, PieChart, Calendar, Download, Filter } from 'lucide-react';
 
 export default function Analytics(): React.ReactElement {
   const monthlyData = [
@@ -11,7 +11,7 @@ export default function Analytics(): React.ReactElement {
     { month: 'Mar', facturas: 48, subvenciones: 18000, iva: 8640 },
     { month: 'Abr', facturas: 61, subvenciones: 22000, iva: 10980 },
     { month: 'May', facturas: 55, subvenciones: 19000, iva: 9900 },
-    { month: 'Jun', facturas: 67, subvenciones: 25000, iva: 12060 }
+    { month: 'Jun', facturas: 67, subvenciones: 25000, iva: 12060 },
   ];
 
   const categoryData = [
@@ -19,38 +19,38 @@ export default function Analytics(): React.ReactElement {
     { category: 'Formación', amount: 32000, percentage: 25 },
     { category: 'Marketing', amount: 28000, percentage: 22 },
     { category: 'Infraestructura', amount: 18000, percentage: 14 },
-    { category: 'Otros', amount: 5000, percentage: 4 }
+    { category: 'Otros', amount: 5000, percentage: 4 },
   ];
 
   const kpis = [
     {
-      title: "Facturas Procesadas",
-      value: "328",
-      change: "+12.5%",
-      trend: "up",
-      period: "vs mes anterior"
+      title: 'Facturas Procesadas',
+      value: '328',
+      change: '+12.5%',
+      trend: 'up',
+      period: 'vs mes anterior',
     },
     {
-      title: "Subvenciones Obtenidas",
-      value: "€111K",
-      change: "+8.2%",
-      trend: "up",
-      period: "vs mes anterior"
+      title: 'Subvenciones Obtenidas',
+      value: '€111K',
+      change: '+8.2%',
+      trend: 'up',
+      period: 'vs mes anterior',
     },
     {
-      title: "IVA Recuperado",
-      value: "€58K",
-      change: "+15.3%",
-      trend: "up",
-      period: "vs mes anterior"
+      title: 'IVA Recuperado',
+      value: '€58K',
+      change: '+15.3%',
+      trend: 'up',
+      period: 'vs mes anterior',
     },
     {
-      title: "Tiempo Promedio",
-      value: "2.3 días",
-      change: "-0.4 días",
-      trend: "down",
-      period: "vs mes anterior"
-    }
+      title: 'Tiempo Promedio',
+      value: '2.3 días',
+      change: '-0.4 días',
+      trend: 'down',
+      period: 'vs mes anterior',
+    },
   ];
 
   return (

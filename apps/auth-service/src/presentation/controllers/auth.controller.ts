@@ -18,7 +18,7 @@ import { RegisterUserDto, LoginUserDto, UserResponseDto } from '../../applicatio
 export class AuthController {
   constructor(
     private readonly registerUserUseCase: RegisterUserUseCase,
-    private readonly loginUserUseCase: LoginUserUseCase
+    private readonly loginUserUseCase: LoginUserUseCase,
   ) {}
 
   @Post('register')

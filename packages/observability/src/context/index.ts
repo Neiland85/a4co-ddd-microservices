@@ -50,14 +50,14 @@ export function mergeContext(
         ...ctx.metadata,
       },
     }),
-    base
+    base,
   );
 }
 
 // Context middleware for async operations
-export function withObservabilityContext<T extends (..._args: unknown[]) => unknown>(
+export function withObservabilityContext<T extends(..._args: unknown[]) => unknown>(
   fn: T,
-  ctx?: ObservabilityContext
+  ctx?: ObservabilityContext,
 ): T {
   return ((...args: unknown[]) => {
     const currentContext = getContext();
@@ -73,7 +73,7 @@ export function withObservabilityContext<T extends (..._args: unknown[]) => unkn
 
 // Extract context from HTTP headers
 export function extractContextFromHeaders(
-  headers: Record<string, string | string[] | undefined>
+  headers: Record<string, string | string[] | undefined>,
 ): ObservabilityContext {
   const ctx: ObservabilityContext = {};
 
@@ -114,7 +114,7 @@ export function extractContextFromHeaders(
 // Inject context into HTTP headers
 export function injectContextToHeaders(
   ctx: ObservabilityContext,
-  headers: Record<string, string> = {}
+  headers: Record<string, string> = {},
 ): Record<string, string> {
   const updatedHeaders = { ...headers };
 
@@ -149,7 +149,7 @@ export function createNatsContext(message: Record<string, unknown>): Observabili
 
 export function injectNatsContext(
   ctx: ObservabilityContext,
-  message: Record<string, unknown>
+  message: Record<string, unknown>,
 ): void {
   if (!message['headers']) {
     message['headers'] = {};
