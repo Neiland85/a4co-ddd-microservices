@@ -1,8 +1,8 @@
+@import '@a4co/design-system/styles';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import '@a4co/design-system/styles';
 
 @layer base {
   :root {
@@ -59,214 +59,20 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
 
-@layer base {
   * {
-    border-color: hsl(var(--border)); /* Define explícitamente el color del borde */
+    border-color: hsl(var(--border));
   }
+
   body {
-    background-color: hsl(var(--background)); /* Define explícitamente el fondo */
-    color: hsl(var(--foreground)); /* Define explícitamente el color del texto */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
-/* Clases para páginas de prueba y demos */
 @layer components {
-  .demo-container {
-    padding: 40px;
-    font-family: 'system-ui', sans-serif;
-    background-color: #f8fafc;
-    min-height: 100vh;
-  }
-
-  .demo-card {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .demo-title {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #1e40af;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-
-  .demo-subtitle {
-    font-size: 1.5rem;
-    color: #64748b;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .demo-section {
-    background-color: #dbeafe;
-    padding: 24px;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-  }
-
-  .demo-section-title {
-    font-size: 1.5rem;
-    color: #1e40af;
-    margin-bottom: 1rem;
-  }
-
-  .demo-list {
-    color: #374151;
-    font-size: 1.1rem;
-    line-height: 1.8;
-  }
-
-  .demo-success-section {
-    background-color: #dcfce7;
-    padding: 24px;
-    border-radius: 8px;
-    text-align: center;
-  }
-
-  .demo-success-title {
-    font-size: 1.25rem;
-    color: #166534;
-    margin: 0;
-  }
-
-  /* Para test-page específicamente */
-  .test-main {
-    padding: 40px;
-    font-family: 'system-ui', '-apple-system', sans-serif;
-    background-color: #f8fafc;
-    min-height: 100vh;
-  }
-
-  .test-card {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: white;
-    border-radius: 12px;
-    padding: 32px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-
-  .test-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #1e293b;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-
-  .test-subtitle {
-    font-size: 1.25rem;
-    color: #64748b;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .test-status-section {
-    background-color: #f1f5f9;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 2rem;
-  }
-
-  .test-status-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #334155;
-    margin-bottom: 1rem;
-  }
-
-  .test-status-grid {
-    display: grid;
-    gap: 8px;
-  }
-
-  .test-status-item {
-    color: #059669;
-    font-weight: 500;
-  }
-
-  .test-next-section {
-    background-color: #eff6ff;
-    border-radius: 8px;
-    padding: 24px;
-    border: 1px solid #dbeafe;
-  }
-
-  .test-next-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e40af;
-    margin-bottom: 1rem;
-  }
-
-  .test-next-list {
-    color: #3730a3;
-    padding-left: 1.5rem;
-    line-height: 1.6;
-  }
-
-  .test-final-section {
-    text-align: center;
-    margin-top: 2rem;
-    padding: 1rem;
-    background-color: #ecfdf5;
-    border-radius: 8px;
-    border: 1px solid #d1fae5;
-  }
-
-  .test-final-text {
-    color: #065f46;
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
-
-  /* Para dashboard-working específicamente */
-  .dashboard-working-container {
-    padding: 50px;
-    text-align: center;
-    font-family: Arial, sans-serif;
-    background-color: #f1f5f9;
-    min-height: 100vh;
-  }
-
-  .dashboard-working-title {
-    font-size: 4rem;
-    color: #1e3a8a;
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .dashboard-working-card {
-    background-color: white;
-    padding: 3rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    max-width: 700px;
-    margin: 0 auto;
-  }
-
-  .dashboard-working-subtitle {
-    color: #059669;
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .dashboard-working-description {
-    color: #374151;
-    font-size: 1.3rem;
-    line-height: 1.6;
-    margin-bottom: 2rem;
-  }
-
   .dashboard-working-success {
-    background-color: #f0fdf4;
+    background: linear-gradient(135deg, #10b981, #059669);
     padding: 1.5rem;
     border-radius: 1rem;
     border: 2px solid #22c55e;
