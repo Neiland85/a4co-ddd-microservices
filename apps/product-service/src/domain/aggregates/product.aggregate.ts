@@ -11,9 +11,13 @@ import {
 import {
   CategoryId,
   Price,
+  ProductCategory,
   ProductDescription,
   ProductId,
   ProductName,
+  SKU,
+  Slug,
+  Stock,
 } from '../value-objects/product-value-objects';
 
 export enum ProductStatus {
@@ -39,6 +43,10 @@ export class Product extends AggregateRoot {
     private _price: Price,
     private readonly _categoryId: CategoryId,
     private readonly _artisanId: string,
+    private _stock: Stock,
+    private _category: ProductCategory,
+    private _sku?: SKU,
+    private _slug?: Slug,
     private _status: ProductStatus = ProductStatus.DRAFT,
     private _availability: ProductAvailability = ProductAvailability.IN_STOCK,
     private _variants: ProductVariant[] = [],
@@ -69,6 +77,8 @@ export class Product extends AggregateRoot {
     originalPrice?: number;
     currency: string;
     categoryId: string;
+    category?: string;
+    stock?: number;
     artisanId: string;
     slug?: string;
     isHandmade?: boolean;
@@ -93,6 +103,10 @@ export class Product extends AggregateRoot {
     const description = new ProductDescription(data.description);
     const price = new Price(data.price, data.currency);
     const categoryId = new CategoryId(data.categoryId);
+    const stock = new Stock(data.stock ?? 0);
+    const category = new ProductCategory(data.category ?? 'other');
+    const sku = data.sku ? new SKU(data.sku) : undefined;
+    const slug = data.slug ? new Slug(data.slug) : Slug.generateFromName(data.name);
 
     const product = new Product(
       productId.value,
@@ -102,6 +116,10 @@ export class Product extends AggregateRoot {
       price,
       categoryId,
       data.artisanId,
+      stock,
+      category,
+      sku,
+      slug,
       ProductStatus.DRAFT,
       ProductAvailability.IN_STOCK,
       [],
@@ -157,6 +175,8 @@ export class Product extends AggregateRoot {
     originalPrice?: number;
     currency: string;
     categoryId: string;
+    category?: string;
+    stock?: number;
     artisanId: string;
     status: ProductStatus;
     availability: ProductAvailability;
@@ -190,6 +210,10 @@ export class Product extends AggregateRoot {
       new Price(data.price, data.currency),
       new CategoryId(data.categoryId),
       data.artisanId,
+      new Stock(data.stock ?? 0),
+      new ProductCategory(data.category ?? 'other'),
+      data.sku ? new SKU(data.sku) : undefined,
+      data.slug ? new Slug(data.slug) : undefined,
       data.status,
       data.availability,
       data.variants.map(v => ProductVariant.reconstruct(v)),
@@ -242,6 +266,14 @@ export class Product extends AggregateRoot {
     return this._categoryId.value;
   }
 
+  public get category(): string {
+    return this._category.value;
+  }
+
+  public get stock(): number {
+    return this._stock.value;
+  }
+
   public get artisanId(): string {
     return this._artisanId;
   }
@@ -288,7 +320,7 @@ export class Product extends AggregateRoot {
 
   // Getters adicionales para compatibilidad con repository
   public get sku(): string {
-    return `${this._productId.value}-default`;
+    return this._sku?.value || `${this._productId.value}-default`;
   }
 
   public get originalPrice(): Price | undefined {
@@ -296,7 +328,7 @@ export class Product extends AggregateRoot {
   }
 
   public get slug(): string {
-    return this._productId.value.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return this._slug?.value || this._productId.value.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   }
 
   public get isHandmade(): boolean {
@@ -305,6 +337,37 @@ export class Product extends AggregateRoot {
 
   public get isDigital(): boolean {
     return false; // No implementado aún
+  }
+
+  // Domain methods for stock management
+  public addStock(quantity: number): void {
+    this._stock = this._stock.add(quantity);
+    this.updateAvailability();
+    this.touch();
+  }
+
+  public removeStock(quantity: number): void {
+    this._stock = this._stock.subtract(quantity);
+    this.updateAvailability();
+    this.touch();
+  }
+
+  public isInStock(): boolean {
+    return this._stock.isAvailable();
+  }
+
+  public isLowStock(): boolean {
+    return this._stock.isLow();
+  }
+
+  private updateAvailability(): void {
+    if (this._stock.value === 0) {
+      this._availability = ProductAvailability.OUT_OF_STOCK;
+    } else if (this._stock.isLow()) {
+      this._availability = ProductAvailability.SEASONAL; // Usando SEASONAL para low stock
+    } else {
+      this._availability = ProductAvailability.IN_STOCK;
+    }
   }
 
   public get requiresShipping(): boolean {
@@ -355,6 +418,13 @@ export class Product extends AggregateRoot {
 
     if (data.name) {
       this._name = new ProductName(data.name);
+      // Regenerar slug si no se especificó uno custom
+      if (
+        !this._slug ||
+        this._slug.value === oldData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+      ) {
+        this._slug = Slug.generateFromName(data.name);
+      }
     }
     if (data.description) {
       this._description = new ProductDescription(data.description);
@@ -379,6 +449,16 @@ export class Product extends AggregateRoot {
         updatedAt: this.updatedAt,
       })
     );
+  }
+
+  public updateSku(sku: SKU): void {
+    this._sku = sku;
+    this.touch();
+  }
+
+  public updateSlug(slug: Slug): void {
+    this._slug = slug;
+    this.touch();
   }
 
   public addVariant(variantData: {
@@ -516,6 +596,8 @@ export class Product extends AggregateRoot {
     originalPrice?: number;
     currency: string;
     categoryId: string;
+    category: string;
+    stock: number;
     artisanId: string;
     status: ProductStatus;
     availability: ProductAvailability;
@@ -554,6 +636,8 @@ export class Product extends AggregateRoot {
       originalPrice: (this as any)._originalPrice,
       currency: this._price.currency,
       categoryId: this._categoryId.value,
+      category: this._category.value,
+      stock: this._stock.value,
       artisanId: this._artisanId,
       status: this._status,
       availability: this._availability,

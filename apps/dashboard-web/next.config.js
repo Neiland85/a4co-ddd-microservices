@@ -18,6 +18,16 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
+  // Transpile packages for monorepo
+  transpilePackages: [
+    '@/lib',
+    '@/shared',
+    '@/components',
+    '@/hooks',
+    '@/utils',
+    '@a4co/design-system',
+  ],
+
   // Turbopack configuration (Next.js 15 stable feature)
   turbopack: {
     rules: {
@@ -27,9 +37,6 @@ const nextConfig = {
       },
     },
   },
-
-  // Transpile packages for monorepo
-  transpilePackages: ['@/lib', '@/shared', '@/components', '@/hooks', '@/utils'],
 
   // TypeScript configuration
   typescript: {

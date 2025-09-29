@@ -2,9 +2,10 @@
  * NATS integration for distributed tracing
  */
 
-import { trace, context, SpanKind, SpanStatusCode, Span } from '@opentelemetry/api';
-import { Logger } from '../logging/types';
+import type { Span } from '@opentelemetry/api';
+import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { v4 as uuidv4 } from 'uuid';
+import type { Logger } from '../logging/types';
 
 export interface NatsTracingConfig {
   serviceName: string;
@@ -12,13 +13,12 @@ export interface NatsTracingConfig {
 }
 
 export interface TracedMessage {
-  data: any;
+  data: unknown;
   headers: {
     traceId: string;
     spanId: string;
-    parentSpanId?: string;
     timestamp: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -31,7 +31,7 @@ export function createTracedPublisher(config: NatsTracingConfig) {
 
   return async function publishWithTracing(
     subject: string,
-    data: any,
+    data: unknown,
     options?: {
       replyTo?: string;
       headers?: Record<string, string>;
@@ -48,15 +48,6 @@ export function createTracedPublisher(config: NatsTracingConfig) {
     });
 
     const spanContext = span.spanContext();
-    const tracedMessage: TracedMessage = {
-      data,
-      headers: {
-        traceId: spanContext.traceId,
-        spanId: spanContext.spanId,
-        timestamp: new Date().toISOString(),
-        ...options?.headers,
-      },
-    };
 
     if (options?.replyTo) {
       span.setAttribute('messaging.nats.reply_to', options.replyTo);
@@ -108,18 +99,19 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
 
   return function subscribeWithTracing(
     subject: string,
-    handler: (msg: any, span: Span) => Promise<void>
+    handler: (_msg: unknown, _span: Span) => Promise<void>
   ) {
-    return async (msg: any) => {
+    return async (msg: unknown): Promise<void> => {
+      const natsMsg = msg as { data: unknown; sid?: string };
       let tracedMessage: TracedMessage;
 
       try {
         // Parse the message if it's a string
-        tracedMessage = typeof msg.data === 'string' ? JSON.parse(msg.data) : msg.data;
-      } catch (e) {
+        tracedMessage = typeof natsMsg.data === 'string' ? JSON.parse(natsMsg.data) : natsMsg.data;
+      } catch {
         // If parsing fails, treat as plain message
         tracedMessage = {
-          data: msg.data,
+          data: natsMsg.data,
           headers: {
             traceId: uuidv4(),
             spanId: uuidv4(),
@@ -134,7 +126,7 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
           'messaging.system': 'nats',
           'messaging.destination': subject,
           'messaging.operation': 'consume',
-          'messaging.message.id': msg.sid || uuidv4(),
+          'messaging.message.id': natsMsg.sid || uuidv4(),
           'messaging.message.payload_size_bytes': JSON.stringify(tracedMessage.data).length,
           'trace.parent.id': tracedMessage.headers.traceId,
           'span.parent.id': tracedMessage.headers.spanId,
@@ -149,7 +141,7 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
         parentSpanId: tracedMessage.headers.spanId,
         custom: {
           subject,
-          messageId: msg.sid,
+          messageId: natsMsg.sid,
           payloadSize: JSON.stringify(tracedMessage.data).length,
         },
       });
@@ -166,7 +158,7 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
           spanId: span.spanContext().spanId,
           custom: {
             subject,
-            messageId: msg.sid,
+            messageId: natsMsg.sid,
           },
         });
       } catch (error) {
@@ -181,7 +173,7 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
           spanId: span.spanContext().spanId,
           custom: {
             subject,
-            messageId: msg.sid,
+            messageId: natsMsg.sid,
           },
         });
 
@@ -202,12 +194,12 @@ export function createTracedRequest(config: NatsTracingConfig) {
 
   return async function requestWithTracing(
     subject: string,
-    data: any,
+    data: unknown,
     options?: {
       timeout?: number;
       headers?: Record<string, string>;
     }
-  ): Promise<any> {
+  ): Promise<unknown> {
     const span = tracer.startSpan(`NATS Request: ${subject}`, {
       kind: SpanKind.CLIENT,
       attributes: {
@@ -219,15 +211,6 @@ export function createTracedRequest(config: NatsTracingConfig) {
     });
 
     const spanContext = span.spanContext();
-    const tracedMessage: TracedMessage = {
-      data,
-      headers: {
-        traceId: spanContext.traceId,
-        spanId: spanContext.spanId,
-        timestamp: new Date().toISOString(),
-        ...options?.headers,
-      },
-    };
 
     if (options?.timeout) {
       span.setAttribute('messaging.nats.timeout_ms', options.timeout);
@@ -256,6 +239,7 @@ export function createTracedRequest(config: NatsTracingConfig) {
 
       // Return the response data
       // return response.data;
+      return undefined;
     } catch (error) {
       const duration = Date.now() - startTime;
       span.setAttribute('messaging.duration_ms', duration);
@@ -303,8 +287,8 @@ export class TracedNatsClient {
     event: {
       type: string;
       aggregateId: string;
-      data: any;
-      metadata?: Record<string, any>;
+      data: unknown;
+      metadata?: Record<string, unknown>;
     }
   ): Promise<void> {
     const span = trace.getActiveSpan();
@@ -325,14 +309,17 @@ export class TracedNatsClient {
     });
   }
 
-  subscribeToEvents(subject: string, handler: (event: any, span: Span) => Promise<void>): void {
-    this.subscribe(subject, async (event: any, span: Span) => {
+  subscribeToEvents(
+    subject: string,
+    handler: (_event: unknown, _span: Span) => Promise<void>
+  ): void {
+    this.subscribe(subject, async (event: unknown, span: Span) => {
       // Add event-specific attributes to span
-      if (event.type) {
-        span.setAttribute('event.type', event.type);
+      if (event && typeof event === 'object' && 'type' in event) {
+        span.setAttribute('event.type', String(event.type));
       }
-      if (event.aggregateId) {
-        span.setAttribute('event.aggregate_id', event.aggregateId);
+      if (event && typeof event === 'object' && 'aggregateId' in event) {
+        span.setAttribute('event.aggregate_id', String(event.aggregateId));
       }
 
       await handler(event, span);
@@ -344,11 +331,11 @@ export class TracedNatsClient {
     command: {
       type: string;
       aggregateId: string;
-      data: any;
-      metadata?: Record<string, any>;
+      data: unknown;
+      metadata?: Record<string, unknown>;
     },
     timeout?: number
-  ): Promise<any> {
+  ): Promise<unknown> {
     const span = trace.getActiveSpan();
     const parentContext = span?.spanContext();
 

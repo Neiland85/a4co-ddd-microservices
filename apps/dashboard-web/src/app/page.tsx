@@ -1,58 +1,76 @@
-import Link from "next/link";
+import { Button } from '@a4co/design-system';
+import Link from 'next/link';
+
+// Temporary Button component for testing
+// const Button = React.forwardRef<HTMLButtonElement, any>(
+//   ({ children, variant = 'primary', ...props }, ref) => (
+//     <button
+//       ref={ref}
+//       className={`px-4 py-2 rounded ${
+//         variant === 'outline' ? 'border border-gray-300' : 'bg-blue-500 text-white'
+//       }`}
+//       {...props}
+//     >
+//       {children}
+//     </button>
+//   )
+// );
+// Button.displayName = 'Button';
 
 export default function Home(): React.ReactElement {
+  console.log('Button component:', Button); // Debug
+  console.log('Button displayName:', Button?.displayName); // Debug
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="text-center space-y-8 py-12">
+      <section className="space-y-8 py-12 text-center">
         <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
             Gestión Tributaria Inteligente
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Automatiza procesos fiscales, identifica subvenciones y optimiza tu compliance tributario con IA avanzada.
+          <p className="mx-auto max-w-2xl text-xl text-gray-600">
+            Automatiza procesos fiscales, identifica subvenciones y optimiza tu compliance
+            tributario con IA avanzada.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Link href="/dashboard">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
+            <button className="bg-a4co-olive-600 hover:bg-a4co-olive-700 rounded-xl px-8 py-3 text-white shadow-lg transition-all duration-200 hover:shadow-xl">
               Comenzar Ahora
             </button>
           </Link>
-          <button className="px-8 py-3 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200">
-            Ver Demo
-          </button>
+          <Button variant="outline">Ver Demo</Button>
         </div>
       </section>
 
       {/* Features Grid */}
-      <section className="grid md:grid-cols-3 gap-8">
-        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-200">
-          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-            <span className="text-blue-600 text-2xl">📄</span>
+      <section className="grid gap-8 md:grid-cols-3">
+        <div className="rounded-2xl bg-white p-8 shadow-lg transition-shadow duration-200 hover:shadow-xl">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+            <span className="text-2xl text-blue-600">📄</span>
           </div>
-          <h3 className="text-xl font-semibold mb-3">Automatización de Facturas</h3>
+          <h3 className="mb-3 text-xl font-semibold">Automatización de Facturas</h3>
           <p className="text-gray-600">
             Procesa facturas automáticamente con OCR inteligente y validación en tiempo real.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-200">
-          <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-            <span className="text-green-600 text-2xl">🎯</span>
+        <div className="rounded-2xl bg-white p-8 shadow-lg transition-shadow duration-200 hover:shadow-xl">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
+            <span className="text-2xl text-green-600">🎯</span>
           </div>
-          <h3 className="text-xl font-semibold mb-3">Subvenciones Automáticas</h3>
+          <h3 className="mb-3 text-xl font-semibold">Subvenciones Automáticas</h3>
           <p className="text-gray-600">
             Identifica y solicita subvenciones europeas elegibles sin esfuerzo manual.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-200">
-          <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-            <span className="text-purple-600 text-2xl">📊</span>
+        <div className="rounded-2xl bg-white p-8 shadow-lg transition-shadow duration-200 hover:shadow-xl">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100">
+            <span className="text-2xl text-purple-600">📊</span>
           </div>
-          <h3 className="text-xl font-semibold mb-3">Analytics Avanzado</h3>
+          <h3 className="mb-3 text-xl font-semibold">Analytics Avanzado</h3>
           <p className="text-gray-600">
             Métricas en tiempo real y reportes inteligentes para optimizar tu negocio.
           </p>
@@ -60,35 +78,35 @@ export default function Home(): React.ReactElement {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-white rounded-2xl p-8 shadow-lg">
-        <div className="grid md:grid-cols-4 gap-8 text-center">
+      <section className="rounded-2xl bg-white p-8 shadow-lg">
+        <div className="grid gap-8 text-center md:grid-cols-4">
           <div>
-            <div className="text-3xl font-bold text-blue-600 mb-2">€2.1M</div>
+            <div className="mb-2 text-3xl font-bold text-blue-600">€2.1M</div>
             <div className="text-gray-600">Subvenciones Gestionadas</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-green-600 mb-2">15K+</div>
+            <div className="mb-2 text-3xl font-bold text-green-600">15K+</div>
             <div className="text-gray-600">Facturas Procesadas</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-purple-600 mb-2">98%</div>
+            <div className="mb-2 text-3xl font-bold text-purple-600">98%</div>
             <div className="text-gray-600">Precisión OCR</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-orange-600 mb-2">24/7</div>
+            <div className="mb-2 text-3xl font-bold text-orange-600">24/7</div>
             <div className="text-gray-600">Soporte Automático</div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="text-center space-y-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white">
+      <section className="space-y-6 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-12 text-center text-white">
         <h2 className="text-3xl font-bold">¿Listo para revolucionar tu gestión tributaria?</h2>
-        <p className="text-xl opacity-90 max-w-2xl mx-auto">
+        <p className="mx-auto max-w-2xl text-xl opacity-90">
           Únete a cientos de empresas que ya confían en TributariApp para su compliance fiscal.
         </p>
         <Link href="/dashboard">
-          <button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
+          <button className="rounded-xl bg-white px-8 py-3 text-blue-600 shadow-lg transition-all duration-200 hover:bg-gray-100 hover:shadow-xl">
             Acceder al Dashboard
           </button>
         </Link>

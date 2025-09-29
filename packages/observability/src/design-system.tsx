@@ -1,9 +1,11 @@
-import React, { ComponentType, forwardRef, useCallback, useEffect, useRef } from 'react';
+import type { Attributes, Span } from '@opentelemetry/api';
+import type { ComponentType } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 import { getFrontendLogger, getFrontendTracer } from './frontend';
 
 // Interfaz para props de observabilidad del DS
 export interface DSObservabilityProps {
-  onInteraction?: (action: string, data?: Record<string, any>) => void;
+  onInteraction?: (_action: string, _data?: Record<string, unknown>) => void;
   componentName?: string;
   variant?: string;
   size?: string;
@@ -17,7 +19,7 @@ export interface DSEvent {
   action: string;
   variant?: string;
   size?: string;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
   timestamp: number;
   sessionId: string;
   userId?: string;
@@ -44,8 +46,8 @@ export class DesignSystemLogger {
   createComponentSpan(
     componentName: string,
     action: string,
-    attributes?: Record<string, any>
-  ): any {
+    attributes?: Attributes
+  ): Span | undefined {
     if (this.tracer) {
       const span = this.tracer.createSpan(`ds.${componentName}.${action}`);
 
@@ -59,10 +61,11 @@ export class DesignSystemLogger {
 
       return span;
     }
-    return null;
+
+    return undefined;
   }
 
-  endSpan(span: any): void {
+  endSpan(span: Span | undefined): void {
     if (this.tracer && span) {
       this.tracer.endSpan(span);
     }
@@ -70,7 +73,7 @@ export class DesignSystemLogger {
 
   private getSessionId(): string {
     // Obtener sessionId del logger si está disponible
-    return 'session_' + Math.random().toString(36).substr(2, 9);
+    return `session_${Math.random().toString(36).substr(2, 9)}`;
   }
 }
 
@@ -83,7 +86,9 @@ export function withDSObservability<P extends object>(
   componentName: string,
   defaultVariant?: string,
   defaultSize?: string
-) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return forwardRef<any, P & DSObservabilityProps>((props, ref) => {
     const {
       onInteraction,
@@ -96,7 +101,7 @@ export function withDSObservability<P extends object>(
     } = props;
 
     const finalComponentName = propComponentName || componentName;
-    const spanRef = useRef<any>(null);
+    const spanRef = useRef<Span | undefined>(undefined);
 
     // Crear span al montar el componente
     useEffect(() => {
@@ -107,7 +112,7 @@ export function withDSObservability<P extends object>(
         'ds.loading': loading,
       });
 
-      return () => {
+      return (): void => {
         if (spanRef.current) {
           dsLogger.endSpan(spanRef.current);
         }
@@ -116,32 +121,32 @@ export function withDSObservability<P extends object>(
 
     // Handler para interacciones
     const handleInteraction = useCallback(
-      (action: string, data?: Record<string, any>) => {
+      (_action: string, _data?: Record<string, unknown>) => {
         // Crear span para la interacción
-        const interactionSpan = dsLogger.createComponentSpan(finalComponentName, action, {
+        const interactionSpan = dsLogger.createComponentSpan(finalComponentName, _action, {
           'ds.variant': variant,
           'ds.size': size,
-          'ds.action': action,
-          ...data,
+          'ds.action': _action,
+          ..._data,
         });
 
         // Loggear el evento
         dsLogger.logComponentEvent({
           component: finalComponentName,
-          action,
+          action: _action,
           variant,
           size,
           props: {
             disabled,
             loading,
-            ...data,
+            ..._data,
           },
           designToken: `${finalComponentName}.${variant}.${size}`,
         });
 
         // Llamar al callback original si existe
         if (onInteraction) {
-          onInteraction(action, data);
+          onInteraction(_action, _data);
         }
 
         // Finalizar el span
@@ -157,8 +162,14 @@ export function withDSObservability<P extends object>(
 }
 
 // Hook para componentes del DS
-export function useDSObservability(componentName: string, variant?: string, size?: string) {
-  const spanRef = useRef<any>(null);
+export function useDSObservability(
+  componentName: string,
+  variant?: string,
+  size?: string
+): {
+  logInteraction: (_action: string, _data?: Record<string, unknown>) => void;
+} {
+  const spanRef = useRef<Span | undefined>(undefined);
 
   useEffect(() => {
     spanRef.current = dsLogger.createComponentSpan(componentName, 'mount', {
@@ -166,7 +177,7 @@ export function useDSObservability(componentName: string, variant?: string, size
       'ds.size': size,
     });
 
-    return () => {
+    return (): void => {
       if (spanRef.current) {
         dsLogger.endSpan(spanRef.current);
       }
@@ -174,7 +185,7 @@ export function useDSObservability(componentName: string, variant?: string, size
   }, [componentName, variant, size]);
 
   const logInteraction = useCallback(
-    (action: string, data?: Record<string, any>) => {
+    (action: string, data?: Record<string, unknown>) => {
       const interactionSpan = dsLogger.createComponentSpan(componentName, action, {
         'ds.variant': variant,
         'ds.size': size,
@@ -210,30 +221,42 @@ export const ObservableButton = withDSObservability(
         variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
         size?: 'sm' | 'md' | 'lg';
       }
-  >(({ onInteraction, variant = 'primary', size = 'md', children, onClick, ...props }, ref) => {
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      // Loggear el click
-      onInteraction?.('click', {
-        variant,
-        size,
-        eventType: 'click',
-      });
+  >(
+    (
+      {
+        onInteraction: _onInteraction,
+        variant = 'primary',
+        size = 'md',
+        children,
+        onClick,
+        ...props
+      },
+      ref
+    ) => {
+      const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+        // Loggear el click
+        _onInteraction?.('click', {
+          variant,
+          size,
+          eventType: 'click',
+        });
 
-      // Llamar al onClick original
-      onClick?.(e);
-    };
+        // Llamar al onClick original
+        onClick?.(e);
+      };
 
-    return (
-      <button
-        ref={ref}
-        onClick={handleClick}
-        className={`ds-button ds-button--${variant} ds-button--${size}`}
-        {...props}
-      >
-        {children}
-      </button>
-    );
-  }),
+      return (
+        <button
+          ref={ref}
+          onClick={handleClick}
+          className={`ds-button ds-button--${variant} ds-button--${size}`}
+          {...props}
+        >
+          {children}
+        </button>
+      );
+    }
+  ),
   'Button',
   'primary',
   'md'
@@ -250,11 +273,19 @@ export const ObservableInput = withDSObservability(
       }
   >(
     (
-      { onInteraction, variant = 'default', size = 'md', onChange, onFocus, onBlur, ...props },
+      {
+        onInteraction: _onInteraction,
+        variant = 'default',
+        size = 'md',
+        onChange,
+        onFocus,
+        onBlur,
+        ...props
+      },
       ref
     ) => {
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onInteraction?.('change', {
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        _onInteraction?.('change', {
           variant,
           size,
           value: e.target.value,
@@ -263,8 +294,8 @@ export const ObservableInput = withDSObservability(
         onChange?.(e);
       };
 
-      const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        onInteraction?.('focus', {
+      const handleFocus = (e: React.FocusEvent<HTMLInputElement>): void => {
+        _onInteraction?.('focus', {
           variant,
           size,
           eventType: 'focus',
@@ -272,8 +303,8 @@ export const ObservableInput = withDSObservability(
         onFocus?.(e);
       };
 
-      const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-        onInteraction?.('blur', {
+      const handleBlur = (e: React.FocusEvent<HTMLInputElement>): void => {
+        _onInteraction?.('blur', {
           variant,
           size,
           value: e.target.value,
@@ -308,13 +339,18 @@ export const ObservableCard = withDSObservability(
         variant?: 'default' | 'elevated' | 'outlined';
         size?: 'sm' | 'md' | 'lg';
       }
-  >(({ onInteraction, variant = 'default', size = 'md', children, ...props }, ref) => {
-    return (
-      <div ref={ref} className={`ds-card ds-card--${variant} ds-card--${size}`} {...props}>
-        {children}
-      </div>
-    );
-  }),
+  >(
+    (
+      { onInteraction: _onInteraction, variant = 'default', size = 'md', children, ...props },
+      ref
+    ) => {
+      return (
+        <div ref={ref} className={`ds-card ds-card--${variant} ds-card--${size}`} {...props}>
+          {children}
+        </div>
+      );
+    }
+  ),
   'Card',
   'default',
   'md'
@@ -343,7 +379,10 @@ export function parseDesignToken(token: string): {
 }
 
 // Hook para tracking de performance de componentes del DS
-export function useDSPerformanceTracking(componentName: string) {
+export function useDSPerformanceTracking(componentName: string): {
+  renderCount: number;
+  mountTime: number;
+} {
   const mountTimeRef = useRef<number>(0);
   const renderCountRef = useRef<number>(0);
 
@@ -351,7 +390,7 @@ export function useDSPerformanceTracking(componentName: string) {
     mountTimeRef.current = performance.now();
     renderCountRef.current = 0;
 
-    return () => {
+    return (): void => {
       const unmountTime = performance.now();
       const totalTime = unmountTime - mountTimeRef.current;
 
@@ -388,7 +427,7 @@ export function useDSPerformanceTracking(componentName: string) {
 export function logDSError(
   componentName: string,
   error: Error,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ): void {
   dsLogger.logComponentEvent({
     component: componentName,

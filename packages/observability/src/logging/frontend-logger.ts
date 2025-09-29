@@ -2,7 +2,7 @@
  * Frontend logger implementation for React applications
  */
 
-import { LogContext, Logger, LoggerConfig, LogLevel } from './types';
+import type { LogContext, Logger, LoggerConfig, LogLevel } from './types';
 
 export interface FrontendLoggerConfig extends Omit<LoggerConfig, 'destination'> {
   endpoint?: string;
@@ -23,7 +23,7 @@ export class FrontendLogger implements Logger {
   private buffer: LogEntry[] = [];
   private config: FrontendLoggerConfig;
   private baseContext: Partial<LogContext>;
-  private flushTimer?: NodeJS.Timeout;
+  private flushTimer?: number;
 
   constructor(config: FrontendLoggerConfig) {
     this.config = {
@@ -53,23 +53,30 @@ export class FrontendLogger implements Logger {
   }
 
   private startFlushTimer(): void {
-    this.flushTimer = setInterval(() => {
+    this.flushTimer = globalThis.setInterval(() => {
       this.flush();
     }, this.config.flushInterval);
   }
 
-  private handleWindowError(event: ErrorEvent): void {
-    this.error('Unhandled error', event.error, {
+  private handleWindowError(event: unknown): void {
+    const errorEvent = event as {
+      error?: Error;
+      filename?: string;
+      lineno?: number;
+      colno?: number;
+    };
+    this.error('Unhandled error', errorEvent.error, {
       custom: {
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno,
+        filename: errorEvent.filename,
+        lineno: errorEvent.lineno,
+        colno: errorEvent.colno,
       },
     });
   }
 
-  private handleUnhandledRejection(event: PromiseRejectionEvent): void {
-    this.error('Unhandled promise rejection', event.reason);
+  private handleUnhandledRejection(event: unknown): void {
+    const rejectionEvent = event as { reason?: unknown };
+    this.error('Unhandled promise rejection', rejectionEvent.reason);
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -236,7 +243,7 @@ export class FrontendLogger implements Logger {
 
   destroy(): void {
     if (this.flushTimer) {
-      clearInterval(this.flushTimer);
+      globalThis.clearInterval(this.flushTimer);
     }
     this.flush();
   }

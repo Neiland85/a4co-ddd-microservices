@@ -1,29 +1,29 @@
 // Se comentan las importaciones porque los módulos pueden no estar disponibles en todos los entornos.
 // import { Logger } from 'pino';
 // import { Span, Tracer } from '@opentelemetry/api';
-import { DDDMetadata } from './logging/types';
+import type { DDDMetadata } from './logging/types';
 
 // Re-export DDDMetadata for convenience
-export { DDDMetadata };
+export type { DDDMetadata };
 
 // Tipos de configuración
-export interface ObservabilityConfig {
+export type ObservabilityConfig = {
   serviceName: string;
   serviceVersion?: string;
   environment?: string;
   logging?: LoggerConfig;
   tracing?: TracingConfig;
   metrics?: MetricsConfig;
-}
+};
 
-export interface LoggerConfig {
+export type LoggerConfig = {
   level?: 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
   prettyPrint?: boolean;
   redact?: string[];
-  serializers?: Record<string, (value: any) => any>;
-}
+  serializers?: Record<string, (_value: unknown) => unknown>;
+};
 
-export interface TracingConfig {
+export type TracingConfig = {
   enabled?: boolean;
   jaegerEndpoint?: string;
   otlpEndpoint?: string;
@@ -31,9 +31,9 @@ export interface TracingConfig {
   enableAutoInstrumentation?: boolean;
   propagators?: string[];
   samplingRate?: number;
-}
+};
 
-export interface MetricsConfig {
+export type MetricsConfig = {
   enabled?: boolean;
   port?: number;
   endpoint?: string;
@@ -42,67 +42,71 @@ export interface MetricsConfig {
   serviceName?: string;
   serviceVersion?: string;
   environment?: string;
-}
+};
 
 // Context types
-export interface ObservabilityContext {
+export type ObservabilityContext = {
   traceId?: string;
   spanId?: string;
   correlationId?: string;
   causationId?: string;
   userId?: string;
   tenantId?: string;
-  metadata?: Record<string, any>;
-}
+  metadata?: Record<string, unknown>;
+};
 
 // Logger context types
-export interface LogContext extends ObservabilityContext {
-  [key: string]: any;
-}
+export type LogContext = ObservabilityContext & {
+  [key: string]: unknown;
+};
 
 // UI Event types
-export interface UIEvent {
+export type UIEvent = {
   eventType: 'click' | 'input' | 'navigation' | 'error' | 'custom';
   componentName: string;
-  componentProps?: Record<string, any>;
+  componentProps?: Record<string, unknown>;
   timestamp: number;
   sessionId: string;
   userId?: string;
-  metadata?: Record<string, any>;
-}
+  metadata?: Record<string, unknown>;
+};
 
 // Component tracking
-export interface ComponentTrackingConfig {
+export type ComponentTrackingConfig = {
   trackProps?: string[];
   trackEvents?: string[];
   trackPerformance?: boolean;
   samplingRate?: number;
-}
+};
 
 // Interfaz de envoltorio para Tracer
-export interface ObservabilityTracer /* extends Tracer */ {
-  withContext(contexto: ObservabilityContext): ObservabilityTracer;
-  startSpan(name: string, options?: any): any;
-  startActiveSpan(name: string, options?: any, fn?: (span: any) => any): any;
-  withDDD?(metadata: DDDMetadata): ObservabilityTracer;
-}
+export type ObservabilityTracer = {
+  withContext(_contexto: ObservabilityContext): ObservabilityTracer;
+  startSpan(_name: string, _options?: Record<string, unknown>): unknown;
+  startActiveSpan(
+    _name: string,
+    _options?: Record<string, unknown>,
+    _fn?: (_span: unknown) => unknown
+  ): unknown;
+  withDDD?(_metadata: DDDMetadata): ObservabilityTracer;
+};
 
 // Middleware options
-export interface MiddlewareOptions {
+export type MiddlewareOptions = {
   ignorePaths?: string[];
   includeRequestBody?: boolean;
   includeResponseBody?: boolean;
   redactHeaders?: string[];
-  customAttributes?: (req: any) => Record<string, any>;
-}
+  customAttributes?: (_req: unknown) => Record<string, unknown>;
+};
 
 // Decorator options
-export interface TraceDecoratorOptions {
+export type TraceDecoratorOptions = {
   name?: string;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
   recordException?: boolean;
   recordResult?: boolean;
-}
+};
 
 // Export utility types
 export type ExtractContext<T> = T extends { context: infer C } ? C : never;

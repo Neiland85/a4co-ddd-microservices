@@ -28,5 +28,13 @@
   "gitlens.launchpad.allowMultiple": true,
   "gitlens.launchpad.experimental.queryLimit": 100,
   "gitlens.views.launchpad.files.compact": true,
-  "gitlens.views.launchpad.files.threshold": 5
+  "gitlens.views.launchpad.files.threshold": 5,
+  "[sql]": {
+    "editor.defaultFormatter": "ms-ossdata.vscode-pgsql"
+  },
+  "editor.codeActions.triggerOnFocusChange": true,
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+  },
+  "chat.agent.maxRequests": 50
 }

@@ -22,8 +22,41 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
+# Ensure all workspace dependencies are installed
+RUN pnpm install --frozen-lockfile
+
 # Build only essential packages (skip heavy ones like design-system if not needed)
-RUN pnpm run build --filter="!@a4co/design-system" --filter="!dashboard-web"
+RUN pnpm run build
+
+# Development stage - with hot reload support
+FROM node:20-alpine AS development
+
+# Install pnpm globally
+RUN npm install -g pnpm@10.14.0 turbo
+
+WORKDIR /app
+
+# Copy workspace config
+COPY pnpm-workspace.yaml turbo.json ./
+
+# Copy root package.json
+COPY package.json pnpm-lock.yaml ./
+
+# Copy package.json files
+COPY apps/*/package.json ./apps/
+COPY packages/*/package.json ./packages/
+
+# Install ALL dependencies (including dev dependencies)
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Default command for development
+CMD ["pnpm", "run", "dev"]
 
 # Production stage - minimal runtime
 FROM node:20-alpine AS production

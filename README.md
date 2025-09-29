@@ -2,7 +2,64 @@
 
 Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para una plataforma colaborativa de venta y logística del pequeño comercio andaluz. Soporte completo para CI/CD, infraestructura como código, trazabilidad técnica y GitHub Copilot Pro+.
 
-## 🗂️ Estructura del repositorio
+## � Inicio Rápido - Infraestructura Simplificada
+
+### Levantar todo el entorno de desarrollo
+
+```bash
+# 1. Clonar el repositorio
+git clone <repository-url>
+cd a4co-ddd-microservices
+
+# 2. Instalar dependencias
+pnpm install
+
+# 3. Levantar infraestructura completa (DB + mensajería + servicios)
+docker-compose up -d
+
+# 4. Verificar que todo esté corriendo
+docker-compose ps
+
+# 5. Ver documentación de APIs
+# Auth Service: http://localhost:3001/api/docs
+# Product Service: http://localhost:3002/api/docs
+# User Service: http://localhost:3003/api/docs
+# Order Service: http://localhost:3004/api/docs
+# Payment Service: http://localhost:3006/api/docs
+```
+
+### Servicios disponibles
+
+| Servicio        | Puerto | Estado        | Documentación                  |
+| --------------- | ------ | ------------- | ------------------------------ |
+| PostgreSQL      | 5432   | ✅ DB         | -                              |
+| NATS            | 4222   | ✅ Mensajería | http://localhost:8222          |
+| Redis           | 6379   | ✅ Cache      | -                              |
+| Auth Service    | 3001   | ✅ Core       | http://localhost:3001/api/docs |
+| Product Service | 3002   | ✅ Core       | http://localhost:3002/api/docs |
+| User Service    | 3003   | ✅ Core       | http://localhost:3003/api/docs |
+| Order Service   | 3004   | ✅ Core       | http://localhost:3004/api/docs |
+| Payment Service | 3006   | ✅ Core       | http://localhost:3006/api/docs |
+
+### Comandos útiles
+
+```bash
+# Ver logs de todos los servicios
+docker-compose logs -f
+
+# Reiniciar un servicio específico
+docker-compose restart auth-service
+
+# Acceder a la base de datos
+docker-compose exec postgres psql -U postgres -d a4co_platform
+
+# Detener todo
+docker-compose down
+```
+
+📖 **Documentación completa**: Ver [`INFRAESTRUCTURA_SIMPLIFICADA.md`](INFRAESTRUCTURA_SIMPLIFICADA.md)
+
+## �🗂️ Estructura del repositorio
 
 a4co-ddd-microservices/
 ├── apps/ # Microservicios y frontends (ej: auth, web)

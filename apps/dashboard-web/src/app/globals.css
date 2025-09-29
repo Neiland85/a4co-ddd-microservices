@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import '@a4co/design-system/styles';
+
 @layer base {
   :root {
     --background: 0 0% 100%;

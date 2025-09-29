@@ -1,6 +1,6 @@
-import { context, Context, trace } from '@opentelemetry/api';
+import { trace, type Span } from '@opentelemetry/api';
 import { AsyncLocalStorage } from 'async_hooks';
-import { ObservabilityContext } from '../types';
+import type { ObservabilityContext } from '../types';
 
 // AsyncLocalStorage for context propagation
 const asyncLocalStorage = new AsyncLocalStorage<ObservabilityContext>();
@@ -21,7 +21,7 @@ export function runWithContext<T>(ctx: ObservabilityContext, fn: () => T): T {
 }
 
 // Create context from OpenTelemetry span
-export function createContextFromSpan(span?: any): ObservabilityContext {
+export function createContextFromSpan(span?: Span): ObservabilityContext {
   const activeSpan = span || trace.getActiveSpan();
 
   if (!activeSpan) {
@@ -55,11 +55,11 @@ export function mergeContext(
 }
 
 // Context middleware for async operations
-export function withObservabilityContext<T extends (...args: any[]) => any>(
+export function withObservabilityContext<T extends (..._args: unknown[]) => unknown>(
   fn: T,
   ctx?: ObservabilityContext
 ): T {
-  return ((...args: any[]) => {
+  return ((...args: unknown[]) => {
     const currentContext = getContext();
     const mergedContext = ctx ? mergeContext(currentContext || {}, ctx) : currentContext;
 
@@ -142,15 +142,18 @@ export function injectContextToHeaders(
 }
 
 // Context for NATS messages
-export function createNatsContext(message: any): ObservabilityContext {
-  const headers = message.headers || {};
+export function createNatsContext(message: Record<string, unknown>): ObservabilityContext {
+  const headers = (message['headers'] as Record<string, string | string[] | undefined>) || {};
   return extractContextFromHeaders(headers);
 }
 
-export function injectNatsContext(ctx: ObservabilityContext, message: any): void {
-  if (!message.headers) {
-    message.headers = {};
+export function injectNatsContext(
+  ctx: ObservabilityContext,
+  message: Record<string, unknown>
+): void {
+  if (!message['headers']) {
+    message['headers'] = {};
   }
 
-  Object.assign(message.headers, injectContextToHeaders(ctx));
+  Object.assign(message['headers'] as Record<string, unknown>, injectContextToHeaders(ctx));
 }

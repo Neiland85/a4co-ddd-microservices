@@ -2,20 +2,23 @@
  * Plugin system for adding observability to Design System components
  */
 
-import { Logger } from '../logging/types';
+import type { Logger } from '../logging/types';
 
 export interface ObservabilityPlugin {
   name: string;
   version: string;
-  init(logger: Logger): void;
+
+  init(_logger: Logger): void;
 }
 
 export interface ComponentObservabilityConfig {
   componentName: string;
   trackProps?: string[];
   trackEvents?: string[];
-  customMetadata?: Record<string, any>;
-  spanNaming?: (props: any) => string;
+  customMetadata?: Record<string, unknown>;
+
+  spanNaming?: (_props: unknown) => string;
+
   logLevel?: 'trace' | 'debug' | 'info';
 }
 
@@ -26,7 +29,7 @@ export function createComponentPlugin(config: ComponentObservabilityConfig): Obs
   return {
     name: `${config.componentName}-observability`,
     version: '1.0.0',
-    init(logger: Logger) {
+    init(logger: Logger): void {
       // Plugin initialization logic
       logger.debug(`Observability plugin initialized for ${config.componentName}`);
     },
@@ -38,7 +41,7 @@ export function createComponentPlugin(config: ComponentObservabilityConfig): Obs
  */
 export interface DesignTokenEvent {
   token: string;
-  value: any;
+  value: unknown;
   component: string;
   variant?: string;
   timestamp: string;
@@ -142,8 +145,8 @@ export class ComponentPerformanceTracker {
     return sorted[index]!;
   }
 
-  getPerformanceReport(): Record<string, any> {
-    const report: Record<string, any> = {};
+  getPerformanceReport(): Record<string, unknown> {
+    const report: Record<string, unknown> = {};
 
     this.renderTimes.forEach((times, component) => {
       report[component] = {
@@ -165,36 +168,40 @@ export class ComponentPerformanceTracker {
 export const ObservabilityStyleGuide = {
   // Span naming patterns
   spans: {
-    interaction: (component: string, action: string) =>
+    interaction: (component: string, action: string): string =>
       `ds.${component.toLowerCase()}.${action.toLowerCase()}`,
-    render: (component: string) => `ds.${component.toLowerCase()}.render`,
-    api: (component: string, operation: string) =>
+    render: (component: string): string => `ds.${component.toLowerCase()}.render`,
+    api: (component: string, operation: string): string =>
       `ds.${component.toLowerCase()}.api.${operation.toLowerCase()}`,
   },
 
   // Log message patterns
   logs: {
-    interaction: (component: string, action: string) =>
+    interaction: (component: string, action: string): string =>
       `User interaction: ${action} on ${component}`,
-    state: (component: string, state: string) => `Component state: ${component} - ${state}`,
-    error: (component: string, error: string) => `Component error: ${component} - ${error}`,
+    state: (component: string, state: string): string => `Component state: ${component} - ${state}`,
+    error: (component: string, error: string): string => `Component error: ${component} - ${error}`,
   },
 
   // Attribute naming conventions
   attributes: {
-    component: (name: string) => `ds.component.name`,
-    variant: (variant: string) => `ds.component.variant`,
-    size: (size: string) => `ds.component.size`,
-    state: (state: string) => `ds.component.state`,
-    theme: (theme: string) => `ds.theme`,
-    token: (token: string) => `ds.token.${token}`,
+    component: (_name: string): string => `ds.component.name`,
+
+    variant: (_variant: string): string => `ds.component.variant`,
+
+    size: (_size: string): string => `ds.component.size`,
+
+    state: (_state: string): string => `ds.component.state`,
+
+    theme: (_theme: string): string => `ds.theme`,
+    token: (token: string): string => `ds.token.${token}`,
   },
 
   // Metric naming conventions
   metrics: {
-    renderTime: (component: string) => `ds_${component.toLowerCase()}_render_duration_ms`,
-    interactionCount: (component: string, interaction: string) =>
+    renderTime: (component: string): string => `ds_${component.toLowerCase()}_render_duration_ms`,
+    interactionCount: (component: string, interaction: string): string =>
       `ds_${component.toLowerCase()}_${interaction.toLowerCase()}_total`,
-    errorCount: (component: string) => `ds_${component.toLowerCase()}_errors_total`,
+    errorCount: (component: string): string => `ds_${component.toLowerCase()}_errors_total`,
   },
 };

@@ -2,7 +2,8 @@
  * OpenTelemetry tracer initialization and configuration
  */
 
-import { context, Span, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import type { Attributes, Span } from '@opentelemetry/api';
+import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
@@ -14,16 +15,16 @@ import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { Logger } from '../logging/types';
+import type { Logger } from '../logging/types';
 
-export interface TracerConfig {
+export type TracerConfig = {
   serviceName: string;
   serviceVersion: string;
   environment: string;
   jaegerEndpoint?: string;
   prometheusPort?: number;
   logger?: Logger;
-}
+};
 
 export interface TracingContext {
   traceId: string;
@@ -70,16 +71,20 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
   registerInstrumentations({
     instrumentations: [
       new HttpInstrumentation({
-        requestHook: (span, request) => {
+        requestHook: (span, request): void => {
           span.setAttribute(
             'http.request.body.size',
-            (request as any).headers?.['content-length'] || 0
+            (request as { headers?: Record<string, string | string[] | undefined> }).headers?.[
+              'content-length'
+            ] || 0
           );
         },
-        responseHook: (span, response) => {
+        responseHook: (span, response): void => {
           span.setAttribute(
             'http.response.body.size',
-            (response as any).headers?.['content-length'] || 0
+            (response as { headers?: Record<string, string | string[] | undefined> }).headers?.[
+              'content-length'
+            ] || 0
           );
         },
       }),
@@ -91,10 +96,13 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
   // Create SDK
   const sdk = new NodeSDK({
     resource,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     spanProcessor: new BatchSpanProcessor(jaegerExporter) as any,
     metricReader: new PeriodicExportingMetricReader({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       exporter: prometheusExporter as any,
       exportIntervalMillis: 10000,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }) as any,
   });
 
@@ -117,7 +125,7 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
 /**
  * Get or create a tracer instance
  */
-export function getTracer(name: string, version?: string) {
+export function getTracer(name: string, version?: string): ReturnType<typeof trace.getTracer> {
   return trace.getTracer(name, version);
 }
 
@@ -128,7 +136,7 @@ export function startSpan(
   name: string,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, any>;
+    attributes?: Attributes;
     parent?: Span;
   }
 ): Span {
@@ -162,18 +170,33 @@ export function startSpan(
 export function Trace(options?: {
   name?: string;
   kind?: SpanKind;
-  attributes?: Record<string, any>;
-}) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  attributes?: Attributes;
+}): (
+  _target: unknown,
+  _propertyKey: string,
+  _descriptor: PropertyDescriptor
+) => PropertyDescriptor {
+  return function (
+    target: unknown,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
-      const spanName = options?.name || `${target.constructor.name}.${propertyKey}`;
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
+      const constructorName =
+        target &&
+        typeof target === 'object' &&
+        target.constructor &&
+        typeof target.constructor.name === 'string'
+          ? target.constructor.name
+          : 'Unknown';
+      const spanName = options?.name || `${constructorName}.${propertyKey}`;
       const span = startSpan(spanName, {
         kind: options?.kind || SpanKind.INTERNAL,
         attributes: {
           'code.function': propertyKey,
-          'code.namespace': target.constructor.name,
+          'code.namespace': constructorName,
           ...options?.attributes,
         },
       });
@@ -207,10 +230,10 @@ export function Trace(options?: {
  */
 export async function withSpan<T>(
   name: string,
-  fn: (span: Span) => Promise<T>,
+  fn: (_span: Span) => Promise<T>,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, any>;
+    attributes?: Attributes;
   }
 ): Promise<T> {
   const span = startSpan(name, options);
@@ -256,7 +279,7 @@ export function getTracingContext(): TracingContext | null {
 /**
  * Add event to current span
  */
-export function addSpanEvent(name: string, attributes?: Record<string, any>): void {
+export function addSpanEvent(name: string, attributes?: Attributes): void {
   const span = trace.getActiveSpan();
 
   if (span) {
@@ -267,7 +290,7 @@ export function addSpanEvent(name: string, attributes?: Record<string, any>): vo
 /**
  * Add attributes to current span
  */
-export function setSpanAttributes(attributes: Record<string, any>): void {
+export function setSpanAttributes(attributes: Attributes): void {
   const span = trace.getActiveSpan();
 
   if (span) {

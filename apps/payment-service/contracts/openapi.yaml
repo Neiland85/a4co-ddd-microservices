@@ -1,0 +1,635 @@
+openapi: 3.0.3
+info:
+  title: A4CO Payment Service API
+  description: Payment Processing and Financial Management Service for A4CO Platform
+  version: 1.0.0
+  contact:
+    name: A4CO Development Team
+    email: dev@a4co.com
+
+servers:
+  - url: http://localhost:3005/api/v1/payments
+    description: Development server
+  - url: https://api.a4co.com/payments
+    description: Production server
+
+paths:
+  /methods:
+    get:
+      summary: List payment methods
+      description: Get available payment methods for the authenticated user
+      tags:
+        - Payment Methods
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Payment methods retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentMethod'
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Add payment method
+      description: Add a new payment method for the authenticated user
+      tags:
+        - Payment Methods
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPaymentMethodRequest'
+      responses:
+        '201':
+          description: Payment method added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+
+  /methods/{methodId}:
+    delete:
+      summary: Remove payment method
+      description: Remove a payment method for the authenticated user
+      tags:
+        - Payment Methods
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: methodId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Payment method ID
+      responses:
+        '204':
+          description: Payment method removed successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Payment method not found
+
+    put:
+      summary: Update payment method
+      description: Update payment method details (set as default)
+      tags:
+        - Payment Methods
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: methodId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Payment method ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentMethodRequest'
+      responses:
+        '200':
+          description: Payment method updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethod'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '404':
+          description: Payment method not found
+
+  /intent:
+    post:
+      summary: Create payment intent
+      description: Create a payment intent for an order
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentIntentRequest'
+      responses:
+        '201':
+          description: Payment intent created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntent'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+
+  /confirm:
+    post:
+      summary: Confirm payment
+      description: Confirm a payment with payment method details
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmPaymentRequest'
+      responses:
+        '200':
+          description: Payment confirmed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: Payment failed
+        '401':
+          description: Unauthorized
+
+  /{paymentId}:
+    get:
+      summary: Get payment by ID
+      description: Get detailed information about a specific payment
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Payment ID
+      responses:
+        '200':
+          description: Payment retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Payment not found
+
+  /{paymentId}/refund:
+    post:
+      summary: Refund payment
+      description: Process a refund for a payment
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Payment ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundPaymentRequest'
+      responses:
+        '200':
+          description: Refund processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '400':
+          description: Refund failed
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Payment not found
+
+  /webhooks/stripe:
+    post:
+      summary: Stripe webhook
+      description: Handle Stripe webhook events
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Webhook processed successfully
+        '400':
+          description: Invalid webhook signature
+
+  /admin/transactions:
+    get:
+      summary: List transactions (admin)
+      description: Get a paginated list of all transactions (admin only)
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of items per page
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, succeeded, failed, cancelled, refunded]
+          description: Filter by payment status
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [payment, refund]
+          description: Filter by transaction type
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter transactions from date
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter transactions to date
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+components:
+  schemas:
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'pm_123456789'
+        type:
+          type: string
+          enum: [card, paypal, bank_transfer]
+          example: 'card'
+        last4:
+          type: string
+          example: '4242'
+        brand:
+          type: string
+          example: 'visa'
+        expiryMonth:
+          type: integer
+          example: 12
+        expiryYear:
+          type: integer
+          example: 2025
+        isDefault:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+
+    PaymentIntent:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'pi_123456789'
+        clientSecret:
+          type: string
+          example: 'pi_123456789_secret_...'
+        amount:
+          type: integer
+          minimum: 0
+          example: 17998
+        currency:
+          type: string
+          example: 'eur'
+        status:
+          type: string
+          enum: [requires_payment_method, requires_confirmation, processing, succeeded, canceled]
+          example: 'requires_payment_method'
+        orderId:
+          type: string
+          example: 'order-123'
+        expiresAt:
+          type: string
+          format: date-time
+          example: '2023-01-01T01:00:00Z'
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'pay_123456789'
+        orderId:
+          type: string
+          example: 'order-123'
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          example: 179.98
+        currency:
+          type: string
+          example: 'EUR'
+        status:
+          type: string
+          enum: [pending, succeeded, failed, cancelled, refunded]
+          example: 'succeeded'
+        paymentMethod:
+          $ref: '#/components/schemas/PaymentMethod'
+        transactionId:
+          type: string
+          example: 'txn_123456789'
+        fee:
+          type: number
+          format: float
+          minimum: 0
+          example: 5.40
+        netAmount:
+          type: number
+          format: float
+          example: 174.58
+        createdAt:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        processedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2023-01-01T00:00:05Z'
+
+    Refund:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'ref_123456789'
+        paymentId:
+          type: string
+          example: 'pay_123456789'
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          example: 89.99
+        currency:
+          type: string
+          example: 'EUR'
+        reason:
+          type: string
+          enum: [duplicate, fraudulent, requested_by_customer]
+          example: 'requested_by_customer'
+        status:
+          type: string
+          enum: [pending, succeeded, failed, cancelled]
+          example: 'succeeded'
+        transactionId:
+          type: string
+          example: 'txn_ref_123456789'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        processedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2023-01-01T00:00:05Z'
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'txn_123456789'
+        type:
+          type: string
+          enum: [payment, refund]
+          example: 'payment'
+        amount:
+          type: number
+          format: float
+          example: 179.98
+        currency:
+          type: string
+          example: 'EUR'
+        status:
+          type: string
+          enum: [pending, succeeded, failed, cancelled, refunded]
+          example: 'succeeded'
+        paymentId:
+          type: string
+          example: 'pay_123456789'
+        orderId:
+          type: string
+          example: 'order-123'
+        customerId:
+          type: string
+          example: 'user-456'
+        artisanId:
+          type: string
+          example: 'user-789'
+        fee:
+          type: number
+          format: float
+          example: 5.40
+        netAmount:
+          type: number
+          format: float
+          example: 174.58
+        createdAt:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+
+    AddPaymentMethodRequest:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [card, paypal]
+          example: 'card'
+        token:
+          type: string
+          description: Payment method token from frontend SDK
+          example: 'tok_123456789'
+        setAsDefault:
+          type: boolean
+          default: false
+          example: true
+
+    UpdatePaymentMethodRequest:
+      type: object
+      properties:
+        isDefault:
+          type: boolean
+          example: true
+
+    CreatePaymentIntentRequest:
+      type: object
+      required:
+        - orderId
+        - amount
+        - currency
+      properties:
+        orderId:
+          type: string
+          example: 'order-123'
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          example: 179.98
+        currency:
+          type: string
+          example: 'EUR'
+        paymentMethodId:
+          type: string
+          example: 'pm_123456789'
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            customerId: 'user-456'
+            artisanId: 'user-789'
+
+    ConfirmPaymentRequest:
+      type: object
+      required:
+        - paymentIntentId
+      properties:
+        paymentIntentId:
+          type: string
+          example: 'pi_123456789'
+        paymentMethodId:
+          type: string
+          example: 'pm_123456789'
+
+    RefundPaymentRequest:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          example: 89.99
+        reason:
+          type: string
+          enum: [duplicate, fraudulent, requested_by_customer]
+          example: 'requested_by_customer'
+        notes:
+          type: string
+          maxLength: 500
+          example: 'Customer requested refund due to damaged item'
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 100
+        totalPages:
+          type: integer
+          example: 5
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

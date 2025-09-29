@@ -1,6 +1,8 @@
 import { context, SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import { getTracer } from './tracer';
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
+
 // Interfaces para DDD
 export interface AggregateMetadata {
   aggregateName: string;
@@ -36,7 +38,7 @@ export interface DomainEvent {
   aggregateName: string;
   version: number;
   timestamp: Date;
-  data: any;
+  data: Record<string, unknown>;
   metadata: {
     correlationId?: string;
     causationId?: string;
@@ -297,7 +299,6 @@ export function createDomainSpan(
 
 // Función para propagar contexto en mensajes NATS
 export function injectNATSTraceContext(headers: Record<string, string>): Record<string, string> {
-  const activeContext = context.active();
   const correlationId = DDDContext.getCorrelationId();
   const userId = DDDContext.getUserId();
   const causationId = DDDContext.getCausationId();

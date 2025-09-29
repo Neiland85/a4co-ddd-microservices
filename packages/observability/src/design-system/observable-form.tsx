@@ -10,9 +10,9 @@ import { traceUserInteraction } from '../tracing/web-tracer';
 export interface ObservableFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   formId: string;
   trackFieldChanges?: boolean;
-  trackingMetadata?: Record<string, any>;
-  onSubmitSuccess?: (data: any) => void;
-  onSubmitError?: (error: Error) => void;
+  trackingMetadata?: Record<string, unknown>;
+  onSubmitSuccess?: (_data: unknown) => void;
+  onSubmitError?: (_error: Error) => void;
 }
 
 export const ObservableForm: React.FC<ObservableFormProps> = ({
@@ -26,7 +26,7 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
   ...props
 }) => {
   const logger = useLogger();
-  const [fieldValues, setFieldValues] = useState<Record<string, any>>({});
+  const [fieldValues, setFieldValues] = useState<Record<string, unknown>>({});
   const submitStartTime = useRef<number | undefined>(undefined);
 
   const traceFormInteraction = useInteractionTracing('form-interaction', formId, {
@@ -38,7 +38,7 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
   });
 
   const handleFieldChange = useCallback(
-    (fieldName: string, value: any) => {
+    (fieldName: string, value: unknown) => {
       if (trackFieldChanges) {
         setFieldValues(prev => ({ ...prev, [fieldName]: value }));
 
@@ -130,20 +130,20 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
     <form {...props} data-form-id={formId} onSubmit={handleSubmit}>
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && trackFieldChanges) {
-          const childProps = child.props as any;
+          const childProps = child.props as Record<string, unknown>;
           // Inject onChange handler to track field changes
           if (
-            childProps.name &&
+            childProps['name'] &&
             (child.type === 'input' || child.type === 'textarea' || child.type === 'select')
           ) {
-            return React.cloneElement(child as any, {
+            return React.cloneElement(child, {
               onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                handleFieldChange(childProps.name, e.target.value);
-                if (childProps.onChange) {
-                  childProps.onChange(e);
+                handleFieldChange(childProps['name'] as string, e.target.value);
+                if (childProps['onChange'] && typeof childProps['onChange'] === 'function') {
+                  (childProps['onChange'] as (e: React.ChangeEvent<HTMLInputElement>) => void)(e);
                 }
               },
-            });
+            } as Record<string, unknown>);
           }
         }
         return child;
@@ -155,12 +155,12 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
 /**
  * Observable form field wrapper for custom field components
  */
-export interface ObservableFieldProps {
+interface ObservableFieldProps {
   name: string;
-  value: any;
-  onChange: (value: any) => void;
+  value: unknown;
+  onChange: (_value: unknown) => void;
   children: React.ReactNode;
-  trackingMetadata?: Record<string, any>;
+  trackingMetadata?: Record<string, unknown>;
 }
 
 export const ObservableField: React.FC<ObservableFieldProps> = ({
@@ -174,7 +174,7 @@ export const ObservableField: React.FC<ObservableFieldProps> = ({
   const traceInteraction = useInteractionTracing('field-interaction', name);
 
   const handleChange = useCallback(
-    (newValue: any) => {
+    (newValue: unknown) => {
       logger.trace('Field value changed', {
         custom: {
           fieldName: name,
@@ -197,10 +197,10 @@ export const ObservableField: React.FC<ObservableFieldProps> = ({
     <div className="ds-field" data-field-name={name}>
       {React.Children.map(children, child => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as any, {
+          return React.cloneElement(child, {
             value,
             onChange: handleChange,
-          });
+          } as Record<string, unknown>);
         }
         return child;
       })}

@@ -1,21 +1,31 @@
 import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { getLogger } from '../logger';
 import { recordCommandExecution, recordEvent } from '../metrics/index';
-import { TraceDecoratorOptions } from '../types';
+import type { TraceDecoratorOptions } from '../types';
 
 // Trace decorator for methods
-export function Trace(options: TraceDecoratorOptions = {}) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function Trace(
+  options: TraceDecoratorOptions = {}
+): (
+  _target: unknown,
+  _propertyName: string,
+  _descriptor: PropertyDescriptor
+) => PropertyDescriptor {
+  return function (
+    _target: unknown,
+    _propertyName: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
-    const className = target.constructor.name;
-    const spanName = options.name || `${className}.${propertyName}`;
+    const className = (_target as { constructor: { name: string } }).constructor.name;
+    const spanName = options.name || `${className}.${_propertyName}`;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       const tracer = trace.getTracer('@a4co/observability');
       const span = tracer.startSpan(spanName, {
         kind: SpanKind.INTERNAL,
         attributes: {
-          'code.function': propertyName,
+          'code.function': _propertyName,
           'code.namespace': className,
           ...options.attributes,
         },
@@ -24,7 +34,7 @@ export function Trace(options: TraceDecoratorOptions = {}) {
       const logger = getLogger().withContext({
         spanId: span.spanContext().spanId,
         traceId: span.spanContext().traceId,
-        method: propertyName,
+        method: _propertyName,
         class: className,
       });
 
@@ -69,14 +79,24 @@ export function Trace(options: TraceDecoratorOptions = {}) {
 }
 
 // Log decorator for methods
-export function Log(level: 'debug' | 'info' | 'warn' | 'error' = 'info') {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function Log(
+  level: 'debug' | 'info' | 'warn' | 'error' = 'info'
+): (
+  _target: unknown,
+  _propertyName: string,
+  _descriptor: PropertyDescriptor
+) => PropertyDescriptor {
+  return function (
+    _target: unknown,
+    _propertyName: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
-    const className = target.constructor.name;
+    const className = (_target as { constructor: { name: string } }).constructor.name;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       const logger = getLogger();
-      const methodName = `${className}.${propertyName}`;
+      const methodName = `${className}.${_propertyName}`;
 
       logger[level](`Executing ${methodName}`, { method: methodName, args });
 
@@ -95,18 +115,29 @@ export function Log(level: 'debug' | 'info' | 'warn' | 'error' = 'info') {
 }
 
 // Command handler decorator for DDD
-export function CommandHandler(commandName: string, aggregateName: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function CommandHandler(
+  commandName: string,
+  aggregateName: string
+): (
+  _target: unknown,
+  _propertyName: string,
+  _descriptor: PropertyDescriptor
+) => PropertyDescriptor {
+  return function (
+    _target: unknown,
+    _propertyName: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       const tracer = trace.getTracer('@a4co/observability');
       const span = tracer.startSpan(`command.${commandName}`, {
         kind: SpanKind.INTERNAL,
         attributes: {
           'ddd.command.name': commandName,
           'ddd.aggregate.name': aggregateName,
-          'ddd.handler': `${target.constructor.name}.${propertyName}`,
+          'ddd.handler': `${(_target as { constructor: { name: string } }).constructor.name}.${_propertyName}`,
         },
       });
 
@@ -153,18 +184,29 @@ export function CommandHandler(commandName: string, aggregateName: string) {
 }
 
 // Event handler decorator for DDD
-export function EventHandler(eventName: string, aggregateName: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function EventHandler(
+  eventName: string,
+  aggregateName: string
+): (
+  _target: unknown,
+  _propertyName: string,
+  _descriptor: PropertyDescriptor
+) => PropertyDescriptor {
+  return function (
+    _target: unknown,
+    _propertyName: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       const tracer = trace.getTracer('@a4co/observability');
       const span = tracer.startSpan(`event.${eventName}`, {
         kind: SpanKind.INTERNAL,
         attributes: {
           'ddd.event.name': eventName,
           'ddd.aggregate.name': aggregateName,
-          'ddd.handler': `${target.constructor.name}.${propertyName}`,
+          'ddd.handler': `${(_target as { constructor: { name: string } }).constructor.name}.${_propertyName}`,
         },
       });
 
@@ -206,12 +248,22 @@ export function EventHandler(eventName: string, aggregateName: string) {
 }
 
 // Metrics decorator
-export function Metrics(metricName: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function Metrics(
+  metricName: string
+): (
+  _target: unknown,
+  _propertyName: string,
+  _descriptor: PropertyDescriptor
+) => PropertyDescriptor {
+  return function (
+    _target: unknown,
+    _propertyName: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
-    const className = target.constructor.name;
+    const className = (_target as { constructor: { name: string } }).constructor.name;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       const startTime = Date.now();
 
       try {
@@ -222,12 +274,12 @@ export function Metrics(metricName: string) {
         const { createCustomHistogram } = await import('../metrics/index');
         const histogram = createCustomHistogram(
           metricName,
-          `Duration of ${className}.${propertyName}`,
+          `Duration of ${className}.${_propertyName}`,
           'ms'
         );
         histogram.record(duration, {
           class: className,
-          method: propertyName,
+          method: _propertyName,
           status: 'success',
         });
 
@@ -239,12 +291,12 @@ export function Metrics(metricName: string) {
         const { createCustomHistogram } = await import('../metrics/index');
         const histogram = createCustomHistogram(
           metricName,
-          `Duration of ${className}.${propertyName}`,
+          `Duration of ${className}.${_propertyName}`,
           'ms'
         );
         histogram.record(duration, {
           class: className,
-          method: propertyName,
+          method: _propertyName,
           status: 'error',
         });
 
@@ -257,14 +309,24 @@ export function Metrics(metricName: string) {
 }
 
 // Cache decorator with observability
-export function CacheableWithObservability(ttl: number = 300) {
-  const cache = new Map<string, { value: any; expiry: number }>();
+export function CacheableWithObservability(
+  ttl: number = 300
+): (
+  _target: unknown,
+  _propertyName: string,
+  _descriptor: PropertyDescriptor
+) => PropertyDescriptor {
+  const cache = new Map<string, { value: unknown; expiry: number }>();
 
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    _target: unknown,
+    _propertyName: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
-    const className = target.constructor.name;
+    const className = (_target as { constructor: { name: string } }).constructor.name;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       const cacheKey = JSON.stringify(args);
       const cached = cache.get(cacheKey);
 
@@ -272,14 +334,14 @@ export function CacheableWithObservability(ttl: number = 300) {
       const span = trace.getActiveSpan();
 
       if (cached && cached.expiry > Date.now()) {
-        logger.debug('Cache hit', { method: `${className}.${propertyName}`, cacheKey });
+        logger.debug('Cache hit', { method: `${className}.${_propertyName}`, cacheKey });
         if (span) {
           span.setAttribute('cache.hit', true);
         }
         return cached.value;
       }
 
-      logger.debug('Cache miss', { method: `${className}.${propertyName}`, cacheKey });
+      logger.debug('Cache miss', { method: `${className}.${_propertyName}`, cacheKey });
       if (span) {
         span.setAttribute('cache.hit', false);
       }
@@ -298,21 +360,24 @@ export function CacheableWithObservability(ttl: number = 300) {
 }
 
 // Repository decorator for DDD
-export function Repository(aggregateName: string) {
-  return function (constructor: Function) {
-    const originalConstructor = constructor;
+export function Repository(aggregateName: string): (_constructor: unknown) => unknown {
+  return function (_constructor: unknown): unknown {
+    const originalConstructor = _constructor as new (..._args: unknown[]) => unknown;
 
-    const wrappedConstructor: any = function (...args: any[]) {
-      const instance = new (originalConstructor as any)(...args);
+    const wrappedConstructor = function (...args: unknown[]): unknown {
+      const instance = new originalConstructor(...args);
 
       // Wrap common repository methods
       const methodsToWrap = ['save', 'findById', 'findAll', 'delete', 'update'];
 
       methodsToWrap.forEach(methodName => {
-        if (typeof instance[methodName] === 'function') {
-          const originalMethod = instance[methodName];
+        const instanceAny = instance as Record<string, unknown>;
+        if (typeof instanceAny[methodName] === 'function') {
+          const originalMethod = instanceAny[methodName] as (
+            ..._args: unknown[]
+          ) => Promise<unknown>;
 
-          instance[methodName] = async function (...methodArgs: any[]) {
+          instanceAny[methodName] = async function (...methodArgs: unknown[]): Promise<unknown> {
             const span = trace.getActiveSpan();
             if (span) {
               span.setAttribute('repository.aggregate', aggregateName);
@@ -320,19 +385,19 @@ export function Repository(aggregateName: string) {
             }
 
             const logger = getLogger().withContext({
-              repository: constructor.name,
+              repository: (_constructor as { name: string }).name,
               aggregate: aggregateName,
               method: methodName,
             });
 
-            logger.debug(`Repository ${methodName} called`, { args: methodArgs });
+            logger.debug(`Repository method ${methodName} called`, { args: methodArgs });
 
             try {
               const result = await originalMethod.apply(this, methodArgs);
-              logger.debug(`Repository ${methodName} completed`, { result });
+              logger.debug(`Repository method ${methodName} completed`);
               return result;
             } catch (error) {
-              logger.error(`Repository ${methodName} failed`, { error });
+              logger.error(`Repository method ${methodName} failed`, { error: error as Error });
               throw error;
             }
           };

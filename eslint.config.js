@@ -46,7 +46,7 @@ export default [
         confirm: 'readonly',
         prompt: 'readonly',
         fetch: 'readonly',
-        
+
         // Timing functions
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
@@ -54,11 +54,78 @@ export default [
         clearInterval: 'readonly',
         setImmediate: 'readonly',
         clearImmediate: 'readonly',
-        
+
         // React/Next.js globals
         React: 'readonly',
         JSX: 'readonly',
-        
+
+        // Test globals
+        jest: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unsafe-function-type': 'warn',
+      'no-undef': 'off', // TypeScript handles this
+      'no-unused-vars': 'off', // Use TypeScript version instead
+      'no-redeclare': 'off', // TypeScript handles this
+    },
+  },
+  {
+    files: ['packages/observability/**/*.ts', 'packages/observability/**/*.tsx'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: ['./packages/observability/tsconfig.json'],
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      ecmaVersion: 2022,
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        console: 'readonly',
+        alert: 'readonly',
+        confirm: 'readonly',
+        prompt: 'readonly',
+        fetch: 'readonly',
+
+        // Node.js globals
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+
+        // Timing functions
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        setImmediate: 'readonly',
+        clearImmediate: 'readonly',
+
+        // React/Next.js globals
+        React: 'readonly',
+        JSX: 'readonly',
+
         // Test globals
         jest: 'readonly',
         describe: 'readonly',
@@ -112,7 +179,7 @@ export default [
         __dirname: 'readonly',
         __filename: 'readonly',
         global: 'readonly',
-        
+
         // Browser globals
         window: 'readonly',
         document: 'readonly',

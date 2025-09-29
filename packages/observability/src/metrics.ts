@@ -1,7 +1,9 @@
+import type { Counter, Histogram, Meter, UpDownCounter } from '@opentelemetry/api';
 import { metrics } from '@opentelemetry/api';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { Resource } from '@opentelemetry/resources';
 import { MeterProvider } from '@opentelemetry/sdk-metrics';
+import type { NextFunction, Request, Response } from 'express';
 
 export interface MetricsConfig {
   serviceName: string;
@@ -10,7 +12,7 @@ export interface MetricsConfig {
 }
 
 // Inicializar exportador de Prometheus
-export function initializeMetrics(config: MetricsConfig) {
+export function initializeMetrics(config: MetricsConfig): PrometheusExporter {
   // Crear exportador de Prometheus
   const prometheusExporter = new PrometheusExporter(
     {
@@ -33,214 +35,156 @@ export function initializeMetrics(config: MetricsConfig) {
   metrics.setGlobalMeterProvider(meterProvider);
 
   // Agregar el exportador
-  meterProvider.addMetricReader(prometheusExporter as any);
+  meterProvider.addMetricReader(prometheusExporter);
 
   return prometheusExporter;
 }
 
 // Clase para gestionar métricas personalizadas
 export class CustomMetrics {
-  private meter: any;
-  private counters: Map<string, any> = new Map();
-  private histograms: Map<string, any> = new Map();
-  private gauges: Map<string, any> = new Map();
+  private meter: Meter;
+  private counters: Map<string, Counter> = new Map();
+  private histograms: Map<string, Histogram> = new Map();
+  private gauges: Map<string, UpDownCounter> = new Map();
 
-  constructor(meterName: string) {
-    this.meter = metrics.getMeter(meterName);
+  constructor(serviceName: string) {
+    this.meter = metrics.getMeter(serviceName);
   }
 
-  // Crear o obtener un contador
-  getCounter(name: string, description?: string) {
+  getCounter(name: string, description?: string): Counter {
     if (!this.counters.has(name)) {
       const counter = this.meter.createCounter(name, {
         description: description || `Counter for ${name}`,
       });
       this.counters.set(name, counter);
     }
-    return this.counters.get(name);
+    return this.counters.get(name)!;
   }
 
-  // Crear o obtener un histograma
-  getHistogram(name: string, description?: string, boundaries?: number[]) {
+  getHistogram(name: string, description?: string): Histogram {
     if (!this.histograms.has(name)) {
       const histogram = this.meter.createHistogram(name, {
         description: description || `Histogram for ${name}`,
-        boundaries: boundaries || [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
       });
       this.histograms.set(name, histogram);
     }
-    return this.histograms.get(name);
+    return this.histograms.get(name)!;
   }
 
-  // Crear o obtener un gauge
-  getGauge(name: string, description?: string) {
+  getGauge(name: string, description?: string): UpDownCounter {
     if (!this.gauges.has(name)) {
       const gauge = this.meter.createUpDownCounter(name, {
         description: description || `Gauge for ${name}`,
       });
       this.gauges.set(name, gauge);
     }
-    return this.gauges.get(name);
+    return this.gauges.get(name)!;
   }
 
-  // Incrementar contador
-  incrementCounter(name: string, value: number = 1, labels?: Record<string, string>) {
-    const counter = this.getCounter(name);
-    counter.add(value, labels);
-  }
-
-  // Registrar duración
-  recordDuration(name: string, duration: number, labels?: Record<string, string>) {
-    const histogram = this.getHistogram(name);
-    histogram.record(duration, labels);
-  }
-
-  // Actualizar gauge
-  updateGauge(name: string, value: number, labels?: Record<string, string>) {
-    const gauge = this.getGauge(name);
-    gauge.add(value, labels);
-  }
-}
-
-// Métricas predefinidas comunes
-export class CommonMetrics {
-  private metrics: CustomMetrics;
-
-  constructor(serviceName: string) {
-    this.metrics = new CustomMetrics(serviceName);
-  }
-
-  // HTTP Request metrics
-  recordHttpRequest(method: string, path: string, statusCode: number, duration: number) {
-    // Request counter
-    this.metrics.incrementCounter('http_requests_total', 1, {
-      method,
-      path,
-      status: statusCode.toString(),
-    });
-
-    // Request duration
-    this.metrics.recordDuration('http_request_duration_seconds', duration / 1000, {
-      method,
-      path,
-      status: statusCode.toString(),
-    });
-
-    // Error counter
-    if (statusCode >= 400) {
-      this.metrics.incrementCounter('http_errors_total', 1, {
-        method,
-        path,
-        status: statusCode.toString(),
-      });
+  incrementCounter(name: string, value: number = 1, labels?: Record<string, string>): void {
+    const counter = this.counters.get(name);
+    if (counter) {
+      counter.add(value, labels);
     }
   }
 
-  // Database metrics
-  recordDatabaseQuery(operation: string, collection: string, duration: number, success: boolean) {
-    // Query counter
-    this.metrics.incrementCounter('db_queries_total', 1, {
+  recordDuration(name: string, duration: number, labels?: Record<string, string>): void {
+    const histogram = this.histograms.get(name);
+    if (histogram) {
+      histogram.record(duration, labels);
+    }
+  }
+
+  updateGauge(name: string, value: number, labels?: Record<string, string>): void {
+    const gauge = this.gauges.get(name);
+    if (gauge) {
+      gauge.add(value, labels);
+    }
+  }
+
+  recordHttpRequest(method: string, path: string, statusCode: number, duration: number): void {
+    this.incrementCounter('http_requests_total', 1, {
+      method,
+      path,
+      status: statusCode.toString(),
+    });
+    this.recordDuration('http_request_duration', duration, {
+      method,
+      path,
+      status: statusCode.toString(),
+    });
+  }
+
+  recordDatabaseQuery(
+    operation: string,
+    collection: string,
+    duration: number,
+    success: boolean
+  ): void {
+    this.incrementCounter('db_queries_total', 1, {
       operation,
       collection,
       success: success.toString(),
     });
-
-    // Query duration
-    this.metrics.recordDuration('db_query_duration_seconds', duration / 1000, {
+    this.recordDuration('db_query_duration', duration, {
       operation,
       collection,
     });
-
-    // Error counter
-    if (!success) {
-      this.metrics.incrementCounter('db_errors_total', 1, {
-        operation,
-        collection,
-      });
-    }
   }
 
-  // Business metrics
-  recordBusinessMetric(name: string, value: number, labels?: Record<string, string>) {
-    this.metrics.incrementCounter(`business_${name}_total`, value, labels);
+  recordBusinessMetric(name: string, value: number, labels?: Record<string, string>): void {
+    this.incrementCounter(`business_${name}`, value, labels);
   }
 
-  // Cache metrics
-  recordCacheOperation(operation: 'hit' | 'miss' | 'set' | 'delete', duration?: number) {
-    // Cache counter
-    this.metrics.incrementCounter('cache_operations_total', 1, {
+  recordCacheOperation(operation: 'hit' | 'miss' | 'set' | 'delete', duration?: number): void {
+    this.incrementCounter('cache_operations_total', 1, {
       operation,
     });
-
-    // Cache duration if provided
     if (duration !== undefined) {
-      this.metrics.recordDuration('cache_operation_duration_seconds', duration / 1000, {
+      this.recordDuration('cache_operation_duration', duration, {
         operation,
-      });
-    }
-
-    // Hit rate tracking
-    if (operation === 'hit' || operation === 'miss') {
-      this.metrics.incrementCounter('cache_requests_total', 1, {
-        result: operation,
       });
     }
   }
 
-  // Queue metrics
   recordQueueOperation(
     queue: string,
     operation: 'enqueue' | 'dequeue' | 'process',
     success: boolean,
     duration?: number
-  ) {
+  ): void {
     // Queue operation counter
-    this.metrics.incrementCounter('queue_operations_total', 1, {
+    this.incrementCounter('queue_operations_total', 1, {
       queue,
       operation,
       success: success.toString(),
     });
 
-    // Processing duration
-    if (duration !== undefined && operation === 'process') {
-      this.metrics.recordDuration('queue_processing_duration_seconds', duration / 1000, {
+    // Queue operation duration
+    if (duration !== undefined) {
+      this.recordDuration('queue_operation_duration', duration, {
         queue,
+        operation,
       });
     }
   }
 
-  // Active connections gauge
-  updateActiveConnections(delta: number, type: 'http' | 'websocket' | 'database') {
-    this.metrics.updateGauge('active_connections', delta, {
-      type,
-    });
+  updateActiveConnections(delta: number, type: 'http' | 'websocket' | 'database'): void {
+    this.updateGauge('active_connections', delta, { type });
   }
 
-  // Memory usage
-  recordMemoryUsage() {
-    const memoryUsage = process.memoryUsage();
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.heapUsed, {
-      type: 'heap_used',
-    });
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.heapTotal, {
-      type: 'heap_total',
-    });
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.rss, {
-      type: 'rss',
-    });
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.external, {
-      type: 'external',
-    });
+  recordMemoryUsage(): void {
+    const memUsage = process.memoryUsage();
+    this.updateGauge('memory_heap_used', memUsage.heapUsed);
+    this.updateGauge('memory_heap_total', memUsage.heapTotal);
+    this.updateGauge('memory_external', memUsage.external);
+    this.updateGauge('memory_rss', memUsage.rss);
   }
 }
 
-// Middleware para Express que registra métricas automáticamente
-export function metricsMiddleware(metrics: CommonMetrics) {
-  return (req: any, res: any, next: any) => {
+// Middleware para métricas HTTP
+export function httpMetricsMiddleware(metrics: CustomMetrics) {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const startTime = Date.now();
 
     // Incrementar conexiones activas
@@ -248,7 +192,11 @@ export function metricsMiddleware(metrics: CommonMetrics) {
 
     // Interceptar el método end
     const originalEnd = res.end;
-    res.end = function (...args: any[]) {
+    (res.end as unknown) = function (
+      chunk?: unknown,
+      encoding?: unknown,
+      cb?: () => void
+    ): unknown {
       // Registrar métricas
       const duration = Date.now() - startTime;
       metrics.recordHttpRequest(req.method, req.route?.path || req.path, res.statusCode, duration);
@@ -257,7 +205,7 @@ export function metricsMiddleware(metrics: CommonMetrics) {
       metrics.updateActiveConnections(-1, 'http');
 
       // Llamar al método original
-      return originalEnd.apply(res, args);
+      return (originalEnd as Function).call(res, chunk, encoding, cb);
     };
 
     next();
@@ -268,29 +216,18 @@ export function metricsMiddleware(metrics: CommonMetrics) {
 export async function measureAsync<T>(
   metrics: CustomMetrics,
   metricName: string,
-  labels: Record<string, string>,
-  fn: () => Promise<T>
+  operation: () => Promise<T>,
+  labels?: Record<string, string>
 ): Promise<T> {
   const startTime = Date.now();
-
   try {
-    const result = await fn();
+    const result = await operation();
     const duration = Date.now() - startTime;
-
-    metrics.recordDuration(metricName, duration / 1000, {
-      ...labels,
-      success: 'true',
-    });
-
+    metrics.recordDuration(metricName, duration, { ...labels, success: 'true' });
     return result;
   } catch (error) {
     const duration = Date.now() - startTime;
-
-    metrics.recordDuration(metricName, duration / 1000, {
-      ...labels,
-      success: 'false',
-    });
-
+    metrics.recordDuration(metricName, duration, { ...labels, success: 'false' });
     throw error;
   }
 }

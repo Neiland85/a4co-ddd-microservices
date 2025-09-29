@@ -1,17 +1,18 @@
-import { trace, SpanKind, SpanStatusCode, context } from '@opentelemetry/api';
+import { SpanKind, SpanStatusCode, context, trace } from '@opentelemetry/api';
+import { createNatsContext } from '../context';
 import { getLogger } from '../logger';
-import { injectContext, extractContext } from '../tracer';
-import { createNatsContext, injectNatsContext } from '../context';
 import { recordEvent } from '../metrics';
+import { extractContext, injectContext } from '../tracer';
 
-// NATS instrumentation wrapper
-export function instrumentNatsClient(natsClient: any): any {
+// NATS client instrumentation wrapper
+export function instrumentNatsClient(client: any): any {
   const logger = getLogger();
   const tracer = trace.getTracer('@a4co/observability');
 
   // Wrap publish method
   const originalPublish = natsClient.publish.bind(natsClient);
-  natsClient.publish = function (subject: string, data: any, options?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  natsClient.publish = function (subject: string, data: any, options?: any): Promise<void> {
     const span = tracer.startSpan(`nats.publish ${subject}`, {
       kind: SpanKind.PRODUCER,
       attributes: {
@@ -67,12 +68,14 @@ export function instrumentNatsClient(natsClient: any): any {
 
   // Wrap subscribe method
   const originalSubscribe = natsClient.subscribe.bind(natsClient);
-  natsClient.subscribe = function (subject: string, options?: any, callback?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  natsClient.subscribe = function (subject: string, options?: any, callback?: any): unknown {
     // Handle different parameter combinations
     const cb = typeof options === 'function' ? options : callback;
     const opts = typeof options === 'function' ? {} : options || {};
 
-    const wrappedCallback = function (msg: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const wrappedCallback = function (msg: any): Promise<unknown> {
       const parentContext = extractContext(msg.headers || {});
       const span = tracer.startSpan(
         `nats.process ${subject}`,
@@ -88,7 +91,7 @@ export function instrumentNatsClient(natsClient: any): any {
         parentContext
       );
 
-      context.with(trace.setSpan(context.active(), span), async () => {
+      return context.with(trace.setSpan(context.active(), span), async () => {
         try {
           // Create context from message
           const natsContext = createNatsContext(msg);
@@ -132,8 +135,9 @@ export function instrumentNatsClient(natsClient: any): any {
   return natsClient;
 }
 
-// Redis instrumentation wrapper
-export function instrumentRedisClient(redisClient: any): any {
+// Redis client instrumentation wrapper
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+export function instrumentRedisClient(client: any): any {
   const logger = getLogger();
   const tracer = trace.getTracer('@a4co/observability');
 
@@ -157,7 +161,7 @@ export function instrumentRedisClient(redisClient: any): any {
     if (typeof redisClient[command] === 'function') {
       const original = redisClient[command].bind(redisClient);
 
-      redisClient[command] = function (...args: any[]) {
+      redisClient[command] = function (...args: any[]): Promise<unknown> {
         const span = tracer.startSpan(`redis.${command}`, {
           kind: SpanKind.CLIENT,
           attributes: {
@@ -170,7 +174,8 @@ export function instrumentRedisClient(redisClient: any): any {
         const startTime = Date.now();
 
         return new Promise((resolve, reject) => {
-          const callback = (err: any, result: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const callback = (err: any, result: any): void => {
             const duration = Date.now() - startTime;
 
             if (err) {
@@ -220,7 +225,8 @@ export function instrumentRedisClient(redisClient: any): any {
   return redisClient;
 }
 
-// MongoDB instrumentation wrapper
+// MongoDB collection instrumentation wrapper
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function instrumentMongoCollection(collection: any): any {
   const logger = getLogger();
   const tracer = trace.getTracer('@a4co/observability');
@@ -242,7 +248,7 @@ export function instrumentMongoCollection(collection: any): any {
     if (typeof collection[method] === 'function') {
       const original = collection[method].bind(collection);
 
-      collection[method] = function (...args: any[]) {
+      collection[method] = function (...args: any[]): Promise<unknown> {
         const span = tracer.startSpan(`mongodb.${method}`, {
           kind: SpanKind.CLIENT,
           attributes: {
@@ -269,7 +275,7 @@ export function instrumentMongoCollection(collection: any): any {
           // Handle cursor operations
           if (result && typeof result.toArray === 'function') {
             const originalToArray = result.toArray.bind(result);
-            result.toArray = async function () {
+            result.toArray = async function (): Promise<unknown[]> {
               try {
                 const docs = await originalToArray();
                 const duration = Date.now() - startTime;
@@ -308,36 +314,39 @@ export function instrumentMongoCollection(collection: any): any {
 
           // Handle promise results
           if (result && typeof result.then === 'function') {
-            return result
-              .then((data: any) => {
-                const duration = Date.now() - startTime;
+            return (
+              result
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .then((data: any) => {
+                  const duration = Date.now() - startTime;
 
-                span.setAttributes({
-                  'db.duration': duration,
-                });
-                span.setStatus({ code: SpanStatusCode.OK });
+                  span.setAttributes({
+                    'db.duration': duration,
+                  });
+                  span.setStatus({ code: SpanStatusCode.OK });
 
-                logger.debug(
-                  {
-                    method,
-                    collection: collection.collectionName,
-                    duration,
-                  },
-                  'MongoDB operation completed'
-                );
+                  logger.debug(
+                    {
+                      method,
+                      collection: collection.collectionName,
+                      duration,
+                    },
+                    'MongoDB operation completed'
+                  );
 
-                span.end();
-                return data;
-              })
-              .catch((error: Error) => {
-                span.recordException(error);
-                span.setStatus({
-                  code: SpanStatusCode.ERROR,
-                  message: error.message,
-                });
-                span.end();
-                throw error;
-              });
+                  span.end();
+                  return data;
+                })
+                .catch((error: Error) => {
+                  span.recordException(error);
+                  span.setStatus({
+                    code: SpanStatusCode.ERROR,
+                    message: error.message,
+                  });
+                  span.end();
+                  throw error;
+                })
+            );
           }
 
           return result;
@@ -358,12 +367,15 @@ export function instrumentMongoCollection(collection: any): any {
 }
 
 // GraphQL instrumentation
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function instrumentGraphQLResolvers(resolvers: any): any {
   const logger = getLogger();
   const tracer = trace.getTracer('@a4co/observability');
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instrumentResolver = (resolver: any, typeName: string, fieldName: string) => {
-    return async function (parent: any, args: any, context: any, info: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return async function (parent: any, args: any, context: any, info: any): Promise<unknown> {
       const span = tracer.startSpan(`graphql.${typeName}.${fieldName}`, {
         kind: SpanKind.INTERNAL,
         attributes: {
@@ -421,6 +433,7 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
   };
 
   // Recursively instrument all resolvers
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instrumentedResolvers: any = {};
 
   Object.keys(resolvers).forEach(typeName => {
@@ -449,14 +462,16 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
   return instrumentedResolvers;
 }
 
-// Kafka instrumentation
+// Kafka producer instrumentation wrapper
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function instrumentKafkaProducer(producer: any): any {
   const logger = getLogger();
   const tracer = trace.getTracer('@a4co/observability');
 
   const originalSend = producer.send.bind(producer);
 
-  producer.send = async function (record: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  producer.send = async function (record: any): Promise<unknown> {
     const span = tracer.startSpan(`kafka.send ${record.topic}`, {
       kind: SpanKind.PRODUCER,
       attributes: {
@@ -473,6 +488,7 @@ export function instrumentKafkaProducer(producer: any): any {
         record.messages = [];
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       record.messages = record.messages.map((message: any) => {
         const headers = message.headers || {};
         injectContext(headers);
@@ -509,16 +525,20 @@ export function instrumentKafkaProducer(producer: any): any {
   return producer;
 }
 
+// Kafka consumer instrumentation wrapper
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function instrumentKafkaConsumer(consumer: any): any {
   const logger = getLogger();
   const tracer = trace.getTracer('@a4co/observability');
 
   const originalRun = consumer.run.bind(consumer);
 
-  consumer.run = async function (config: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  consumer.run = async function (config: any): Promise<void> {
     const originalEachMessage = config.eachMessage;
 
-    config.eachMessage = async function (payload: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    config.eachMessage = async function (payload: any): Promise<void> {
       const { topic, partition, message } = payload;
 
       // Extract trace context from headers

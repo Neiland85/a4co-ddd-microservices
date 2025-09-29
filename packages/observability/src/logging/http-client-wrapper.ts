@@ -3,9 +3,12 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { Logger } from './types';
+import type { Logger } from './types';
 
-export interface RequestConfig extends RequestInit {
+export interface RequestConfig {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string | null;
   traceId?: string;
   spanId?: string;
   logger?: Logger;
@@ -48,7 +51,7 @@ export class FetchWrapper {
     return this.config.baseURL ? `${this.config.baseURL}${url}` : url;
   }
 
-  async request(url: string, config?: RequestConfig): Promise<Response> {
+  async request(url: string, config?: RequestConfig): Promise<unknown> {
     const fullUrl = this.getFullUrl(url);
     const traceId = config?.traceId || uuidv4();
     const spanId = config?.spanId || uuidv4();
@@ -111,11 +114,11 @@ export class FetchWrapper {
     }
   }
 
-  async get(url: string, config?: RequestConfig): Promise<Response> {
+  async get(url: string, config?: RequestConfig): Promise<unknown> {
     return this.request(url, { ...config, method: 'GET' });
   }
 
-  async post(url: string, body?: any, config?: RequestConfig): Promise<Response> {
+  async post(url: string, body?: unknown, config?: RequestConfig): Promise<unknown> {
     return this.request(url, {
       ...config,
       method: 'POST',
@@ -127,7 +130,7 @@ export class FetchWrapper {
     });
   }
 
-  async put(url: string, body?: any, config?: RequestConfig): Promise<Response> {
+  async put(url: string, body?: unknown, config?: RequestConfig): Promise<unknown> {
     return this.request(url, {
       ...config,
       method: 'PUT',
@@ -139,7 +142,7 @@ export class FetchWrapper {
     });
   }
 
-  async patch(url: string, body?: any, config?: RequestConfig): Promise<Response> {
+  async patch(url: string, body?: unknown, config?: RequestConfig): Promise<unknown> {
     return this.request(url, {
       ...config,
       method: 'PATCH',
@@ -151,7 +154,7 @@ export class FetchWrapper {
     });
   }
 
-  async delete(url: string, config?: RequestConfig): Promise<Response> {
+  async delete(url: string, config?: RequestConfig): Promise<unknown> {
     return this.request(url, { ...config, method: 'DELETE' });
   }
 }
@@ -166,15 +169,18 @@ export function createFetchWrapper(config: FetchWrapperConfig): FetchWrapper {
 /**
  * Axios-like interceptor for the fetch wrapper
  */
-export interface Interceptor<T = any> {
-  onFulfilled?: (value: T) => T | Promise<T>;
-  onRejected?: (error: any) => any;
+export interface Interceptor<T = unknown> {
+  onFulfilled?: (_value: T) => T | Promise<T>;
+  onRejected?: (_error: unknown) => unknown;
 }
 
-export class InterceptorManager<T = any> {
+export class InterceptorManager<T = unknown> {
   private handlers: Array<Interceptor<T> | null> = [];
 
-  use(onFulfilled?: (value: T) => T | Promise<T>, onRejected?: (error: any) => any): number {
+  use(
+    onFulfilled?: (_value: T) => T | Promise<T>,
+    onRejected?: (_error: unknown) => unknown
+  ): number {
     this.handlers.push({
       onFulfilled,
       onRejected,
@@ -188,7 +194,7 @@ export class InterceptorManager<T = any> {
     }
   }
 
-  forEach(fn: (handler: Interceptor<T>) => void): void {
+  forEach(fn: (_handler: Interceptor<T>) => void): void {
     this.handlers.forEach(handler => {
       if (handler !== null) {
         fn(handler);
@@ -203,15 +209,15 @@ export class InterceptorManager<T = any> {
 export class FetchWrapperWithInterceptors extends FetchWrapper {
   interceptors = {
     request: new InterceptorManager<RequestConfig>(),
-    response: new InterceptorManager<Response>(),
+    response: new InterceptorManager<unknown>(),
   };
 
-  override async request(url: string, config?: RequestConfig): Promise<Response> {
+  override async request(url: string, config?: RequestConfig): Promise<unknown> {
     let finalConfig = config || {};
 
     // Apply request interceptors
     const requestInterceptorChain: Array<
-      (config: RequestConfig) => RequestConfig | Promise<RequestConfig>
+      (_config: RequestConfig) => RequestConfig | Promise<RequestConfig>
     > = [];
     this.interceptors.request.forEach(interceptor => {
       if (interceptor.onFulfilled) {
@@ -220,18 +226,14 @@ export class FetchWrapperWithInterceptors extends FetchWrapper {
     });
 
     for (const interceptor of requestInterceptorChain) {
-      try {
-        finalConfig = await interceptor(finalConfig);
-      } catch (error) {
-        throw error;
-      }
+      finalConfig = await interceptor(finalConfig);
     }
 
     try {
       let response = await super.request(url, finalConfig);
 
       // Apply response interceptors
-      const responseInterceptorChain: Array<(response: Response) => Response | Promise<Response>> =
+      const responseInterceptorChain: Array<(_response: unknown) => unknown | Promise<unknown>> =
         [];
       this.interceptors.response.forEach(interceptor => {
         if (interceptor.onFulfilled) {

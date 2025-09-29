@@ -3,7 +3,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useRef } from 'react';
-import { Logger } from './types';
+import type { Logger } from './types';
 
 interface LoggerContextValue {
   logger: Logger;
@@ -37,7 +37,7 @@ export function useLogger(): Logger {
 /**
  * Hook to log component lifecycle events
  */
-export function useComponentLogger(componentName: string, props?: Record<string, any>): Logger {
+export function useComponentLogger(componentName: string, props?: Record<string, unknown>): Logger {
   const logger = useLogger();
   const componentLogger = useRef<Logger | null>(null);
   const renderCount = useRef(0);
@@ -63,7 +63,7 @@ export function useComponentLogger(componentName: string, props?: Record<string,
   useEffect(() => {
     componentLogger.current?.debug(`Component mounted`);
 
-    return () => {
+    return (): void => {
       componentLogger.current?.debug(`Component unmounted`, {
         custom: {
           totalRenders: renderCount.current,
@@ -86,12 +86,12 @@ export interface UseInteractionLoggerOptions {
 export function useInteractionLogger(
   interactionType: string,
   options?: UseInteractionLoggerOptions
-): (eventData?: any) => void {
+): (_eventData?: unknown) => void {
   const logger = useLogger();
   const lastLogTime = useRef(0);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
 
-  return (eventData?: any) => {
+  return (eventData?: unknown) => {
     const now = Date.now();
 
     if (options?.throttle && now - lastLogTime.current < options.throttle) {
@@ -100,9 +100,9 @@ export function useInteractionLogger(
 
     if (options?.debounce) {
       if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
+        globalThis.clearTimeout(debounceTimer.current);
       }
-      debounceTimer.current = setTimeout(() => {
+      debounceTimer.current = globalThis.setTimeout(() => {
         logger.info(`User interaction: ${interactionType}`, {
           custom: {
             interaction: interactionType,
@@ -129,15 +129,29 @@ export function useInteractionLogger(
 export interface ApiCallOptions {
   method: string;
   url: string;
-  body?: any;
+  body?: unknown;
   headers?: Record<string, string>;
 }
 
-export function useApiLogger() {
+interface ApiLogger {
+  // eslint-disable-next-line no-unused-vars
+  logRequest: (options: ApiCallOptions, traceId?: string) => number;
+
+  logResponse: (
+    startTime: number,
+    options: ApiCallOptions,
+    response: unknown,
+    traceId?: string
+  ) => void;
+  // eslint-disable-next-line no-unused-vars
+  logError: (startTime: number, options: ApiCallOptions, error: Error, traceId?: string) => void;
+}
+
+export function useApiLogger(): ApiLogger {
   const logger = useLogger();
 
   return {
-    logRequest: (options: ApiCallOptions, traceId?: string) => {
+    logRequest: (options: ApiCallOptions, traceId?: string): number => {
       const startTime = Date.now();
 
       logger.info(`API request started`, {
@@ -158,23 +172,29 @@ export function useApiLogger() {
     logResponse: (
       startTime: number,
       options: ApiCallOptions,
-      response: Response,
+      response: unknown,
       traceId?: string
-    ) => {
+    ): void => {
       const duration = Date.now() - startTime;
 
+      const responseObj = response as { status?: number };
       logger.info(`API request completed`, {
         traceId,
         http: {
           method: options.method,
           url: options.url,
-          statusCode: response.status,
+          statusCode: responseObj.status,
           duration,
         },
       });
     },
 
-    logError: (startTime: number, options: ApiCallOptions, error: Error, traceId?: string) => {
+    logError: (
+      startTime: number,
+      options: ApiCallOptions,
+      error: Error,
+      traceId?: string
+    ): void => {
       const duration = Date.now() - startTime;
 
       logger.error(`API request failed`, error, {
@@ -200,7 +220,8 @@ interface ErrorBoundaryState {
 export interface LoggingErrorBoundaryProps {
   children: React.ReactNode;
   fallback?: React.ComponentType<{ error?: Error }>;
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+
+  onError?: (_error: Error, _errorInfo: React.ErrorInfo) => void;
 }
 
 export class LoggingErrorBoundary extends React.Component<
@@ -233,7 +254,7 @@ export class LoggingErrorBoundary extends React.Component<
     this.props.onError?.(error, errorInfo);
   }
 
-  override render() {
+  override render(): React.ReactNode {
     if (this.state.hasError) {
       const Fallback = this.props.fallback;
 
@@ -256,13 +277,13 @@ export class LoggingErrorBoundary extends React.Component<
 /**
  * HOC to add logging to any component
  */
-export function withLogging<P extends Record<string, any>>(
+export function withLogging<P extends Record<string, unknown>>(
   Component: React.ComponentType<P>,
   componentName?: string
-): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<any>> {
+): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<unknown>> {
   const displayName = componentName || Component.displayName || Component.name || 'Component';
 
-  const WrappedComponent = React.forwardRef<any, P>((props, ref) => {
+  const WrappedComponent = React.forwardRef<unknown, P>((props, ref) => {
     const logger = useComponentLogger(displayName, props);
 
     useEffect(() => {

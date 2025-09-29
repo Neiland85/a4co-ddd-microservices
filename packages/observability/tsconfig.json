@@ -4,10 +4,17 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "rootDir": "./src",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable",
+      "WebWorker"
+    ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/global.d.ts"
   ],
   "exclude": [
     "node_modules",

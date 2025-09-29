@@ -2,7 +2,7 @@
  * React hooks and HOCs for distributed tracing
  */
 
-import { Span } from '@opentelemetry/api';
+import type { Attributes, Span } from '@opentelemetry/api';
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
   addPerformanceMetricsToSpan,
@@ -11,10 +11,13 @@ import {
   traceUserInteraction,
 } from './web-tracer';
 
+// Global type declarations for browser APIs
+declare const setTimeout: (_callback: () => void, _delay: number) => void;
+
 /**
  * Hook to trace component lifecycle
  */
-export function useComponentTracing(componentName: string, props?: Record<string, any>) {
+export function useComponentTracing(componentName: string, props?: Attributes): Span | null {
   const spanRef = useRef<Span | null>(null);
   const renderCountRef = useRef(0);
 
@@ -24,7 +27,7 @@ export function useComponentTracing(componentName: string, props?: Record<string
     spanRef.current.setAttribute('component.mounted', true);
     spanRef.current.setAttribute('component.renderCount', 1);
 
-    return () => {
+    return (): void => {
       // End span on unmount
       if (spanRef.current) {
         spanRef.current.setAttribute('component.unmounted', true);
@@ -51,7 +54,7 @@ export function useComponentTracing(componentName: string, props?: Record<string
 /**
  * Hook to trace route changes
  */
-export function useRouteTracing(currentRoute: string) {
+export function useRouteTracing(currentRoute: string): Span | null {
   const previousRouteRef = useRef<string>(currentRoute);
   const spanRef = useRef<Span | null>(null);
 
@@ -84,18 +87,18 @@ export function useRouteTracing(currentRoute: string) {
  */
 export interface UseInteractionTracingOptions {
   throttle?: number;
-  attributes?: Record<string, any>;
+  attributes?: Attributes;
 }
 
 export function useInteractionTracing(
   interactionType: string,
   target: string,
   options?: UseInteractionTracingOptions
-) {
+): (_metadata?: Attributes) => void {
   const lastInteractionTime = useRef(0);
 
   const traceInteraction = useCallback(
-    (metadata?: Record<string, any>) => {
+    (_metadata?: Attributes) => {
       const now = Date.now();
 
       if (options?.throttle && now - lastInteractionTime.current < options.throttle) {
@@ -104,7 +107,7 @@ export function useInteractionTracing(
 
       const span = traceUserInteraction(interactionType, target, {
         ...options?.attributes,
-        ...metadata,
+        ..._metadata,
       });
 
       span.end();
@@ -119,32 +122,32 @@ export function useInteractionTracing(
 /**
  * Hook to trace API calls with spans
  */
-export function useApiTracing() {
+export function useApiTracing(): {
+  startApiTrace: (_operationName: string, _metadata?: Attributes) => string;
+  endApiTrace: (_traceId: string, _success: boolean, _metadata?: Attributes) => void;
+} {
   const activeSpans = useRef<Map<string, Span>>(new Map());
 
-  const startApiTrace = useCallback((operationName: string, metadata?: Record<string, any>) => {
-    const span = traceUserInteraction('api-call', operationName, metadata);
+  const startApiTrace = useCallback((_operationName: string, _metadata?: Attributes) => {
+    const span = traceUserInteraction('api-call', _operationName, _metadata);
     const traceId = span.spanContext().traceId;
     activeSpans.current.set(traceId, span);
     return traceId;
   }, []);
 
-  const endApiTrace = useCallback(
-    (traceId: string, success: boolean, metadata?: Record<string, any>) => {
-      const span = activeSpans.current.get(traceId);
-      if (span) {
-        span.setAttribute('api.success', success);
-        if (metadata) {
-          Object.entries(metadata).forEach(([key, value]) => {
-            span.setAttribute(`api.${key}`, value);
-          });
-        }
-        span.end();
-        activeSpans.current.delete(traceId);
+  const endApiTrace = useCallback((_traceId: string, _success: boolean, _metadata?: Attributes) => {
+    const span = activeSpans.current.get(_traceId);
+    if (span) {
+      span.setAttribute('api.success', _success);
+      if (_metadata) {
+        Object.entries(_metadata).forEach(([key, value]) => {
+          span.setAttribute(`api.${key}`, String(value));
+        });
       }
-    },
-    []
-  );
+      span.end();
+      activeSpans.current.delete(_traceId);
+    }
+  }, []);
 
   return { startApiTrace, endApiTrace };
 }
@@ -157,24 +160,24 @@ export interface WithTracingOptions {
   trackProps?: string[];
 }
 
-export function withTracing<P extends Record<string, any>>(
+export function withTracing<P extends Record<string, unknown>>(
   Component: React.ComponentType<P>,
   options?: WithTracingOptions
-): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<any>> {
+): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<unknown>> {
   const displayName =
     options?.componentName || Component.displayName || Component.name || 'Component';
 
-  const WrappedComponent = React.forwardRef<any, P>((props, ref) => {
-    const span = useComponentTracing(displayName, props);
+  const WrappedComponent = React.forwardRef<unknown, P>((props, ref) => {
+    const span = useComponentTracing(displayName, props as Attributes);
 
     // Track specific prop changes
     useEffect(
       () => {
         if (span && options?.trackProps) {
-          const trackedProps: Record<string, any> = {};
+          const trackedProps: Record<string, unknown> = {};
           options.trackProps.forEach(propName => {
             if (propName in props) {
-              trackedProps[propName] = (props as any)[propName];
+              trackedProps[propName] = (props as Record<string, unknown>)[propName];
             }
           });
 
@@ -184,7 +187,7 @@ export function withTracing<P extends Record<string, any>>(
           });
         }
       },
-      options?.trackProps?.map(prop => (props as any)[prop]) || []
+      options?.trackProps?.map(prop => (props as Record<string, unknown>)[prop]) || []
     );
 
     return <Component {...(props as P)} ref={ref} />;
@@ -258,15 +261,15 @@ export class TracingErrorBoundary extends React.Component<
     this.span = traceComponentRender(componentName, {
       error: true,
       errorMessage: error.message,
-      errorStack: error.stack,
-      componentStack: errorInfo.componentStack,
+      errorStack: error.stack || '',
+      componentStack: errorInfo.componentStack || '',
     });
 
     this.span.recordException(error);
     this.span.end();
   }
 
-  override render() {
+  override render(): React.ReactNode {
     if (this.state.hasError) {
       const Fallback = this.props.fallback;
 

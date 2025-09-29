@@ -31,8 +31,43 @@ jobs:
       - name: Run tests
         run: pnpm run test
 
+  validate-api-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install OpenAPI CLI
+        run: npm install -g @apidevtools/swagger-cli
+
+      - name: Validate OpenAPI specifications
+        run: |
+          # Find all OpenAPI spec files
+          find apps -name "openapi.yaml" -type f | while read -r spec_file; do
+            echo "Validating $spec_file..."
+            swagger-cli validate "$spec_file" || exit 1
+          done
+
+      - name: Check OpenAPI spec consistency
+        run: |
+          # Ensure all core services have OpenAPI specs
+          expected_services=("auth-service" "user-service" "product-service" "order-service" "payment-service")
+          for service in "${expected_services[@]}"; do
+            spec_file="apps/$service/contracts/openapi.yaml"
+            if [ ! -f "$spec_file" ]; then
+              echo "Missing OpenAPI spec for $service"
+              exit 1
+            fi
+          done
+          echo "All expected services have OpenAPI specifications"
+
   build:
-    needs: test
+    needs: [test, validate-api-contracts]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

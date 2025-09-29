@@ -1,11 +1,33 @@
+import { initializeTracing } from '@a4co/observability';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { ProductModule } from './product.module';
 
+// Simple logger for now until observability package is fixed
+const logger = {
+  log: (message: string) => console.log(`[LOG] ${message}`),
+  info: (message: string) => console.log(`[INFO] ${message}`),
+  warn: (message: string) => console.warn(`[WARN] ${message}`),
+  error: (message: string, err?: any) => console.error(`[ERROR] ${message}`, err),
+  debug: (message: string) => console.debug(`[DEBUG] ${message}`),
+  verbose: (message: string) => console.log(`[VERBOSE] ${message}`),
+  pinoHttpMiddleware: () => (req: any, res: any, next: any) => next(),
+};
+
 async function bootstrap() {
-  const app = await NestFactory.create(ProductModule);
+  // Initialize observability
+  initializeTracing({
+    serviceName: 'product-service',
+    serviceVersion: '1.0.0',
+    environment: process.env['NODE_ENV'] || 'development',
+  });
+
+  const app = await NestFactory.create(ProductModule, { logger });
+
+  // Use Pino HTTP middleware for request logging
+  app.use(logger.pinoHttpMiddleware());
 
   // Security middleware
   app.use(
@@ -52,13 +74,13 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env['PORT'] || 3003;
-  console.log(`🚀 Product Service iniciado en puerto ${port}`);
-  console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
+  logger.info(`🚀 Product Service iniciado en puerto ${port}`);
+  logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
 
   await app.listen(port);
 }
 
 bootstrap().catch(err => {
-  console.error('Error al iniciar el servicio:', err);
+  logger.error('Error al iniciar el servicio:', err);
   process.exit(1);
 });

@@ -31,6 +31,7 @@ export default [
         navigator: 'readonly',
         localStorage: 'readonly',
         sessionStorage: 'readonly',
+        performance: 'readonly',
         fetch: 'readonly',
         alert: 'readonly',
         confirm: 'readonly',
@@ -59,6 +60,8 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-exports': 'error',
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 
       // Calidad de código para observabilidad
       'prefer-const': 'error',

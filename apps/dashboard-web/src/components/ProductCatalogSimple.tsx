@@ -211,6 +211,9 @@ export function ProductCatalogV0(): React.ReactElement {
           <p className="text-gray-500">Intenta ajustar los filtros o términos de búsqueda</p>
         </div>
       )}
+
+      <label htmlFor="mi-select">Selecciona una opción:</label>
+      <select id="mi-select">{/* Opciones aquí */}</select>
     </div>
   );
 }

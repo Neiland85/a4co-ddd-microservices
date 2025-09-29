@@ -7,5 +7,5 @@ import type { LogContext } from './types';
 
 export interface ObservabilityLogger {
   withContext(context: LogContext): ObservabilityLogger;
-  startSpan(name: string, attributes?: Record<string, any>): any;
+  startSpan(name: string, attributes?: Record<string, unknown>): unknown;
 }

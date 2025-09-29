@@ -5,14 +5,13 @@
 import React, { useCallback } from 'react';
 import { useInteractionLogger } from '../logging/react-hooks';
 import { useInteractionTracing } from '../tracing/react-tracing';
-import { SpanKind } from '@opentelemetry/api';
 
 export interface ObservableButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   size?: 'small' | 'medium' | 'large';
   loading?: boolean;
   trackingId?: string;
-  trackingMetadata?: Record<string, any>;
+  trackingMetadata?: Record<string, unknown>;
 }
 
 export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableButtonProps>(

@@ -99,7 +99,14 @@ export default function Invoices(): React.ReactElement {
               <Filter className="w-4 h-4" />
               Filtros
             </Button>
-            <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <label htmlFor="invoice-status-filter" className="sr-only">
+              Filtrar por estado de factura
+            </label>
+            <select
+              id="invoice-status-filter"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              title="Filtrar por estado de factura"
+            >
               <option value="">Todos los estados</option>
               <option value="procesada">Procesada</option>
               <option value="pendiente">Pendiente</option>

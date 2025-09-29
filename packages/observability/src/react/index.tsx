@@ -1,22 +1,17 @@
-import React, {
-  ComponentType,
-  createContext,
-  ErrorInfo,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import type { ComponentType, ErrorInfo, PropsWithChildren } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { ComponentTrackingConfig, UIEvent } from '../types';
+import type { ComponentTrackingConfig, UIEvent } from '../types';
 
 // Browser-side logger interface
 interface BrowserLogger {
-  debug: (message: string, data?: any) => void;
-  info: (message: string, data?: any) => void;
-  warn: (message: string, data?: any) => void;
-  error: (message: string, data?: any) => void;
+  debug: (_message: string, _data?: unknown) => void;
+
+  info: (_message: string, _data?: unknown) => void;
+
+  warn: (_message: string, _data?: unknown) => void;
+
+  error: (_message: string, _data?: unknown) => void;
 }
 
 // Observability context
@@ -24,16 +19,19 @@ interface ObservabilityContextValue {
   sessionId: string;
   userId?: string;
   logger: BrowserLogger;
-  logEvent: (event: UIEvent) => void;
-  trackComponent: (componentName: string, config?: ComponentTrackingConfig) => void;
-  measurePerformance: (name: string, fn: () => void | Promise<void>) => Promise<void>;
+
+  logEvent: (_event: UIEvent) => void;
+
+  trackComponent: (_componentName: string, _config?: ComponentTrackingConfig) => void;
+
+  measurePerformance: (_name: string, _fn: () => void | Promise<void>) => Promise<void>;
 }
 
 const ObservabilityContext = createContext<ObservabilityContextValue | null>(null);
 
 // Default browser logger that sends to backend
 const createBrowserLogger = (apiEndpoint: string, sessionId: string): BrowserLogger => {
-  const sendLog = async (level: string, message: string, data?: any) => {
+  const sendLog = async (level: string, message: string, data?: unknown): Promise<void> => {
     try {
       await fetch(`${apiEndpoint}/logs`, {
         method: 'POST',
@@ -56,19 +54,19 @@ const createBrowserLogger = (apiEndpoint: string, sessionId: string): BrowserLog
   };
 
   return {
-    debug: (message, data) => {
+    debug: (message, data): void => {
       console.debug(message, data);
       sendLog('debug', message, data);
     },
-    info: (message, data) => {
+    info: (message, data): void => {
       console.info(message, data);
       sendLog('info', message, data);
     },
-    warn: (message, data) => {
+    warn: (message, data): void => {
       console.warn(message, data);
       sendLog('warn', message, data);
     },
-    error: (message, data) => {
+    error: (message, data): void => {
       console.error(message, data);
       sendLog('error', message, data);
     },
@@ -81,7 +79,8 @@ export interface ObservabilityProviderProps {
   userId?: string;
   enablePerformanceTracking?: boolean;
   enableErrorBoundary?: boolean;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void;
 }
 
 export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProviderProps>> = ({
@@ -95,10 +94,10 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   const [sessionId] = useState(() => uuidv4());
   const logger = useRef(createBrowserLogger(apiEndpoint, sessionId));
   const eventQueue = useRef<UIEvent[]>([]);
-  const flushTimer = useRef<NodeJS.Timeout | null>(null);
+  const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Flush events to backend
-  const flushEvents = async () => {
+  const flushEvents = async (): Promise<void> => {
     if (eventQueue.current.length === 0) return;
 
     const events = [...eventQueue.current];
@@ -121,7 +120,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   };
 
   // Log UI event
-  const logEvent = (event: UIEvent) => {
+  const logEvent = (event: UIEvent): void => {
     eventQueue.current.push({
       ...event,
       sessionId,
@@ -137,7 +136,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   };
 
   // Track component usage
-  const trackComponent = (componentName: string, config?: ComponentTrackingConfig) => {
+  const trackComponent = (componentName: string, config?: ComponentTrackingConfig): void => {
     logEvent({
       eventType: 'custom',
       componentName,
@@ -151,7 +150,10 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
   };
 
   // Measure performance
-  const measurePerformance = async (name: string, fn: () => void | Promise<void>) => {
+  const measurePerformance = async (
+    name: string,
+    fn: () => void | Promise<void>
+  ): Promise<void> => {
     const startTime = performance.now();
 
     try {
@@ -179,7 +181,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
 
   // Track page views
   useEffect(() => {
-    const trackPageView = () => {
+    const trackPageView = (): void => {
       logEvent({
         eventType: 'navigation',
         componentName: 'page',
@@ -208,7 +210,7 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
     if (!enablePerformanceTracking) return undefined;
 
     // Wait for page load
-    const trackPerformance = () => {
+    const trackPerformance = (): void => {
       if ('performance' in window) {
         const perfData = performance.getEntriesByType(
           'navigation'
@@ -314,7 +316,7 @@ class ErrorBoundary extends React.Component<
 }
 
 // Hooks
-export const useObservability = () => {
+export const useObservability = (): ObservabilityContextValue => {
   const context = useContext(ObservabilityContext);
   if (!context) {
     throw new Error('useObservability must be used within ObservabilityProvider');
@@ -347,10 +349,16 @@ export const useComponentTracking = (componentName: string, config?: ComponentTr
 };
 
 // Hook for tracking user interactions
-export const useEventTracking = () => {
+export const useEventTracking = (): {
+  trackClick: (_element: string, _metadata?: Record<string, unknown>) => void;
+
+  trackInput: (_field: string, _value: string, _metadata?: Record<string, unknown>) => void;
+
+  trackCustom: (_event: string, _properties?: Record<string, unknown>) => void;
+} => {
   const { logEvent, sessionId } = useObservability();
 
-  const trackClick = (componentName: string, metadata?: Record<string, any>) => {
+  const trackClick = (componentName: string, metadata?: Record<string, unknown>): void => {
     logEvent({
       eventType: 'click',
       componentName,
@@ -360,7 +368,11 @@ export const useEventTracking = () => {
     });
   };
 
-  const trackInput = (componentName: string, value: any, metadata?: Record<string, any>) => {
+  const trackInput = (
+    componentName: string,
+    value: unknown,
+    metadata?: Record<string, unknown>
+  ): void => {
     logEvent({
       eventType: 'input',
       componentName,
@@ -368,22 +380,19 @@ export const useEventTracking = () => {
       sessionId: '',
       metadata: {
         value:
-          typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value,
+          typeof value === 'string' && value.length > 100 ? `${value.substring(0, 100)}...` : value,
         ...metadata,
       },
     });
   };
 
-  const trackCustom = (componentName: string, action: string, metadata?: Record<string, any>) => {
+  const trackCustom = (event: string, properties?: Record<string, unknown>): void => {
     logEvent({
       eventType: 'custom',
-      componentName,
+      componentName: event,
       timestamp: Date.now(),
       sessionId: '',
-      metadata: {
-        action,
-        ...metadata,
-      },
+      metadata: properties,
     });
   };
 

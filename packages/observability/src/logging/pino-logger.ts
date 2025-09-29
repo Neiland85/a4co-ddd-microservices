@@ -2,8 +2,8 @@
  * Pino logger implementation for A4CO observability
  */
 
-import pino, { Logger as PinoLogger } from 'pino';
-import { Logger, LoggerConfig, LogContext, LogLevel } from './types';
+import pino, { type Logger as PinoLogger } from 'pino';
+import type { LogContext, Logger, LoggerConfig } from './types';
 
 export class PinoLoggerAdapter implements Logger {
   private logger: PinoLogger;
@@ -60,7 +60,7 @@ export class PinoLoggerAdapter implements Logger {
     );
   }
 
-  private mergeContext(context?: Partial<LogContext>): any {
+  private mergeContext(context?: Partial<LogContext>): Record<string, unknown> {
     return {
       ...this.baseContext,
       ...context,

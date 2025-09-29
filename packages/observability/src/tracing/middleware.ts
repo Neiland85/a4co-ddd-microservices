@@ -3,10 +3,10 @@
  */
 
 import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
-import { NextFunction, Request, Response } from 'express';
-import { Context, Next } from 'koa';
+import type { NextFunction, Request, Response } from 'express';
+import type { Context, Next } from 'koa';
 import { v4 as uuidv4 } from 'uuid';
-import { Logger } from '../logging/types';
+import type { Logger } from '../logging/types';
 
 export interface TracingMiddlewareOptions {
   serviceName?: string;
@@ -25,17 +25,17 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
   const {
     serviceName = 'express-app',
     logger,
-    extractTraceHeaders = true,
+    extractTraceHeaders: _extractTraceHeaders = true,
     injectTraceHeaders = true,
     captureRequestBody = false,
     captureResponseBody = false,
-    sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'],
+    sensitiveHeaders: _sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'],
   } = options;
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     // Extract trace headers
-    let traceId = (req.headers['x-trace-id'] as string) || uuidv4();
-    let parentSpanId = req.headers['x-span-id'] as string;
+    const traceId = (req.headers['x-trace-id'] as string) || uuidv4();
+    const parentSpanId = req.headers['x-span-id'] as string;
 
     const tracer = trace.getTracer(serviceName);
     const span = tracer.startSpan(`${req.method} ${req.path}`, {
@@ -70,8 +70,8 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
     }
 
     // Attach span to request for access in route handlers
-    (req as any).__span = span;
-    (req as any).__traceId = traceId;
+    (req as unknown as { __span: typeof span; __traceId: string }).__span = span;
+    (req as unknown as { __span: typeof span; __traceId: string }).__traceId = traceId;
 
     // Log request
     logger?.info('HTTP request received', {
@@ -90,9 +90,10 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
     const originalJson = res.json;
     const startTime = Date.now();
 
-    res.send = function (data: any) {
+    res.send = function (data: string | Buffer | object): Response {
+      const dataString = typeof data === 'string' ? data : JSON.stringify(data);
       span.setAttribute('http.status_code', res.statusCode);
-      span.setAttribute('http.response_content_length', Buffer.byteLength(data));
+      span.setAttribute('http.response_content_length', Buffer.byteLength(dataString));
       span.setAttribute('http.duration', Date.now() - startTime);
 
       if (captureResponseBody) {
@@ -122,7 +123,7 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
       return originalSend.call(this, data);
     };
 
-    res.json = function (data: any) {
+    res.json = function (data: unknown): Response {
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_content_type', 'application/json');
       span.setAttribute('http.duration', Date.now() - startTime);
@@ -168,17 +169,17 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
   const {
     serviceName = 'koa-app',
     logger,
-    extractTraceHeaders = true,
+    extractTraceHeaders: _extractTraceHeaders = true,
     injectTraceHeaders = true,
     captureRequestBody = false,
     captureResponseBody = false,
-    sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'],
+    sensitiveHeaders: _sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'],
   } = options;
 
-  return async (ctx: Context, next: Next) => {
+  return async (ctx: Context, next: Next): Promise<void> => {
     // Extract trace headers
-    let traceId = (ctx.headers['x-trace-id'] as string) || uuidv4();
-    let parentSpanId = ctx.headers['x-span-id'] as string;
+    const traceId = (ctx.headers['x-trace-id'] as string) || uuidv4();
+    const parentSpanId = ctx.headers['x-span-id'] as string;
 
     const tracer = trace.getTracer(serviceName);
     const span = tracer.startSpan(`${ctx.method} ${ctx.path}`, {
@@ -201,8 +202,11 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
     const tracingContext = trace.setSpan(context.active(), span);
 
     // Add request body if enabled
-    if (captureRequestBody && (ctx.request as any).body) {
-      span.setAttribute('http.request.body', JSON.stringify((ctx.request as any).body));
+    if (captureRequestBody && (ctx.request as unknown as { body?: unknown }).body) {
+      span.setAttribute(
+        'http.request.body',
+        JSON.stringify((ctx.request as unknown as { body?: unknown }).body)
+      );
     }
 
     // Inject trace headers
@@ -298,10 +302,14 @@ export function TraceController(options?: {
   captureArgs?: boolean;
   captureResult?: boolean;
 }) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: object,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       // Get request object (Express or Koa)
       const req = args[0];
       const parentSpan = req.__span || req.state?.span;

@@ -1,4 +1,11 @@
-import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import {
+  context,
+  SpanKind,
+  SpanStatusCode,
+  trace,
+  type Attributes,
+  type Span,
+} from '@opentelemetry/api';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
@@ -10,6 +17,7 @@ import { Resource } from '@opentelemetry/resources';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import type { ComponentType, ReactNode } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
 // Configuración del logger para frontend
@@ -36,7 +44,7 @@ interface UIEvent {
   action: string;
   variant?: string;
   size?: string;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
   timestamp: number;
   sessionId: string;
   userId?: string;
@@ -53,10 +61,10 @@ class FrontendLogger {
   }
 
   private generateSessionId(): string {
-    return 'session_' + Math.random().toString(36).substr(2, 9);
+    return `session_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private createLogEntry(level: string, message: string, data?: any): any {
+  private createLogEntry(level: string, message: string, data?: unknown): Record<string, unknown> {
     return {
       level,
       message,
@@ -66,7 +74,7 @@ class FrontendLogger {
       environment: this.config.environment,
       sessionId: this.sessionId,
       userId: this.getUserId(),
-      ...data,
+      ...(data as Record<string, unknown>),
     };
   }
 
@@ -75,7 +83,7 @@ class FrontendLogger {
     return localStorage.getItem('userId') || undefined;
   }
 
-  private async sendLog(logEntry: any): Promise<void> {
+  private async sendLog(logEntry: Record<string, unknown>): Promise<void> {
     if (this.config.endpoint) {
       try {
         await fetch(this.config.endpoint, {
@@ -92,29 +100,29 @@ class FrontendLogger {
 
     // También loggear en consola en desarrollo
     if (this.config.environment === 'development') {
-      console.log(`[${logEntry.level.toUpperCase()}] ${logEntry.message}`, logEntry);
+      console.log(`[${logEntry['level'] as string}] ${logEntry['message'] as string}`, logEntry);
     }
   }
 
-  debug(message: string, data?: any): void {
+  debug(message: string, data?: unknown): void {
     if (this.config.level === 'debug') {
-      this.sendLog(this.createLogEntry('debug', message, data));
+      this.sendLog(this.createLogEntry('debug', message, data as Record<string, unknown>));
     }
   }
 
-  info(message: string, data?: any): void {
+  info(message: string, data?: unknown): void {
     if (['debug', 'info'].includes(this.config.level || 'info')) {
-      this.sendLog(this.createLogEntry('info', message, data));
+      this.sendLog(this.createLogEntry('info', message, data as Record<string, unknown>));
     }
   }
 
-  warn(message: string, data?: any): void {
+  warn(message: string, data?: unknown): void {
     if (['debug', 'info', 'warn'].includes(this.config.level || 'info')) {
-      this.sendLog(this.createLogEntry('warn', message, data));
+      this.sendLog(this.createLogEntry('warn', message, data as Record<string, unknown>));
     }
   }
 
-  error(message: string, error?: Error, data?: any): void {
+  error(message: string, error?: Error, data?: unknown): void {
     this.sendLog(
       this.createLogEntry('error', message, {
         error: error
@@ -124,7 +132,7 @@ class FrontendLogger {
               stack: error.stack,
             }
           : undefined,
-        ...data,
+        ...(data as Record<string, unknown>),
       })
     );
   }
@@ -186,26 +194,26 @@ class FrontendTracer {
     });
   }
 
-  createSpan(name: string, kind: SpanKind = SpanKind.INTERNAL): any {
+  createSpan(name: string, kind: SpanKind = SpanKind.INTERNAL): Span {
     const tracer = trace.getTracer(this.config.serviceName);
     return tracer.startSpan(name, { kind });
   }
 
-  createChildSpan(parentSpan: any, name: string, kind: SpanKind = SpanKind.INTERNAL): any {
+  createChildSpan(parentSpan: Span, name: string, kind: SpanKind = SpanKind.INTERNAL): Span {
     const tracer = trace.getTracer(this.config.serviceName);
     return tracer.startSpan(name, { kind }, context.active());
   }
 
-  addEvent(span: any, name: string, attributes?: Record<string, any>): void {
+  addEvent(span: Span, name: string, attributes?: Attributes): void {
     span.addEvent(name, attributes);
   }
 
-  setAttributes(span: any, attributes: Record<string, any>): void {
+  setAttributes(span: Span, attributes: Attributes): void {
     span.setAttributes(attributes);
   }
 
-  endSpan(span: any, status: SpanStatusCode = SpanStatusCode.OK): void {
-    span.setStatus(status);
+  endSpan(span: Span, status: SpanStatusCode = SpanStatusCode.OK): void {
+    span.setStatus({ code: status });
     span.end();
   }
 }
@@ -218,7 +226,7 @@ let frontendTracer: FrontendTracer | null = null;
 export function initializeFrontendObservability(
   loggerConfig: FrontendLoggerConfig,
   tracingConfig: FrontendTracingConfig
-) {
+): { logger: FrontendLogger; tracer: FrontendTracer } {
   frontendLogger = new FrontendLogger(loggerConfig);
   frontendTracer = new FrontendTracer(tracingConfig);
 
@@ -229,7 +237,7 @@ export function initializeFrontendObservability(
 }
 
 // Hook para logging de errores
-export function useErrorLogger() {
+export function useErrorLogger(): { logError: (_error: Error, _context?: string) => void } {
   const logError = useCallback((error: Error, context?: string) => {
     if (frontendLogger) {
       frontendLogger.error(`Error in ${context || 'component'}`, error);
@@ -240,7 +248,9 @@ export function useErrorLogger() {
 }
 
 // Hook para logging de eventos de UI
-export function useUILogger() {
+export function useUILogger(): {
+  logUIEvent: (_event: Omit<UIEvent, 'timestamp' | 'sessionId'>) => void;
+} {
   const logUIEvent = useCallback((event: Omit<UIEvent, 'timestamp' | 'sessionId'>) => {
     if (frontendLogger) {
       frontendLogger.logUIEvent(event);
@@ -251,8 +261,10 @@ export function useUILogger() {
 }
 
 // Hook para tracing de componentes
-export function useComponentTracing(componentName: string) {
-  const spanRef = useRef<any>(null);
+export function useComponentTracing(componentName: string): {
+  createChildSpan: (_name: string) => Span | null;
+} {
+  const spanRef = useRef<Span | null>(null);
 
   useEffect(() => {
     if (frontendTracer) {
@@ -263,7 +275,7 @@ export function useComponentTracing(componentName: string) {
       });
     }
 
-    return () => {
+    return (): void => {
       if (spanRef.current && frontendTracer) {
         frontendTracer.endSpan(spanRef.current);
       }
@@ -285,25 +297,25 @@ export function useComponentTracing(componentName: string) {
 
 // HOC para instrumentar componentes
 export function withObservability<P extends object>(
-  WrappedComponent: React.ComponentType<P>,
+  WrappedComponent: ComponentType<P>,
   componentName: string
-) {
-  return function ObservabilityWrapper(props: P) {
+): ComponentType<P> {
+  return function ObservabilityWrapper(props: P): ReactNode {
     const { logUIEvent } = useUILogger();
     const { createChildSpan } = useComponentTracing(componentName);
 
     const handleInteraction = useCallback(
-      (action: string, data?: any) => {
+      (action: string, data?: unknown) => {
         const span = createChildSpan(action);
         if (span && frontendTracer) {
-          frontendTracer.setAttributes(span, data || {});
+          frontendTracer.setAttributes(span, (data as Attributes) || {});
           frontendTracer.endSpan(span);
         }
 
         logUIEvent({
           component: componentName,
           action,
-          props: data,
+          props: data as Record<string, unknown>,
         });
       },
       [componentName, createChildSpan, logUIEvent]
@@ -313,9 +325,12 @@ export function withObservability<P extends object>(
   };
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Wrapper para fetch con observabilidad
-export function createObservableFetch(baseURL?: string) {
-  return async (url: string, options?: RequestInit) => {
+export function createObservableFetch(
+  baseURL?: string
+): (_url: string, _options?: any) => Promise<any> {
+  return async (url: string, options?: any): Promise<any> => {
     const fullUrl = baseURL ? `${baseURL}${url}` : url;
     const span = frontendTracer?.createSpan('http.request', SpanKind.CLIENT);
 
@@ -327,9 +342,9 @@ export function createObservableFetch(baseURL?: string) {
     }
 
     try {
-      const startTime = performance.now();
+      const startTime = globalThis.performance?.now() || Date.now();
       const response = await fetch(fullUrl, options);
-      const duration = performance.now() - startTime;
+      const duration = (globalThis.performance?.now() || Date.now()) - startTime;
 
       if (span) {
         frontendTracer?.setAttributes(span, {

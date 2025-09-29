@@ -1,6 +1,7 @@
 import { context, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
-import axios, { AxiosRequestConfig } from 'axios';
-import { NextFunction, Request, Response } from 'express';
+import type { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
+import type { NextFunction, Request, Response } from 'express';
 
 // Tipos para mejorar type safety
 export interface TracedRequest extends Request {
@@ -26,8 +27,13 @@ export const TRACE_HEADERS = {
 };
 
 // Middleware principal para Express
-export function observabilityMiddleware() {
-  return (req: TracedRequest, res: Response, next: NextFunction) => {
+
+export function observabilityMiddleware(): (
+  _req: TracedRequest,
+  _res: Response,
+  _next: NextFunction
+) => void {
+  return (req: TracedRequest, res: Response, next: NextFunction): void => {
     // Extraer contexto de los headers entrantes
     const extractedContext = propagation.extract(context.active(), req.headers);
 
@@ -53,13 +59,13 @@ export function observabilityMiddleware() {
           'http.referer': req.headers['referer'],
           'http.forwarded_for': req.headers['x-forwarded-for'],
           'http.real_ip': req.headers['x-real-ip'],
-          'user.id': (req as any).user?.id,
-          'user.role': (req as any).user?.role,
+          'user.id': (req as unknown as { user?: { id?: string } }).user?.id,
+          'user.role': (req as unknown as { user?: { role?: string } }).user?.role,
         });
 
         // Log del inicio del request
-        if ((req as any).log) {
-          (req as any).log.info({
+        if ((req as unknown as { log?: { info: (_data: unknown) => void } }).log) {
+          (req as unknown as { log: { info: (_data: unknown) => void } }).log.info({
             msg: 'Request started',
             traceId: spanContext.traceId,
             spanId: spanContext.spanId,
@@ -72,20 +78,25 @@ export function observabilityMiddleware() {
 
       // Interceptar el método end de response para logging
       const originalEnd = res.end;
-      res.end = function (...args: any[]) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      res.end = function (...args: any[]): Response {
         // Log del fin del request
-        if ((req as any).log) {
-          (req as any).log.info({
+        const tracedReq = req as TracedRequest & {
+          log?: { info: (_data: unknown) => void };
+          startTime?: number;
+        };
+        if (tracedReq.log) {
+          tracedReq.log.info({
             msg: 'Request completed',
             traceId: req.traceId,
             spanId: req.spanId,
             statusCode: res.statusCode,
-            duration: Date.now() - (req as any).startTime,
+            duration: Date.now() - (tracedReq.startTime || Date.now()),
           });
         }
 
         // Llamar al método original
-        return originalEnd(...args);
+        return originalEnd.apply(this, args);
       };
 
       next();
@@ -95,6 +106,7 @@ export function observabilityMiddleware() {
 
 // Cliente HTTP con propagación automática de contexto
 export class TracedHttpClient {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private axiosInstance: any;
 
   constructor(baseConfig?: AxiosRequestConfig) {
@@ -118,11 +130,13 @@ export class TracedHttpClient {
         config.headers = headers;
         return config;
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (error: any) => Promise.reject(error)
     );
 
     // Interceptor para logging de respuestas
     this.axiosInstance.interceptors.response.use(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (response: any) => {
         const span = trace.getActiveSpan();
         if (span) {
@@ -133,6 +147,7 @@ export class TracedHttpClient {
         }
         return response;
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (error: any) => {
         const span = trace.getActiveSpan();
         if (span && error.response) {
@@ -146,34 +161,35 @@ export class TracedHttpClient {
     );
   }
 
-  get(url: string, config?: AxiosRequestConfig) {
+  get(url: string, config?: AxiosRequestConfig): Promise<unknown> {
     return this.axiosInstance.get(url, config);
   }
 
-  post(url: string, data?: any, config?: AxiosRequestConfig) {
+  post(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<unknown> {
     return this.axiosInstance.post(url, data, config);
   }
 
-  put(url: string, data?: any, config?: AxiosRequestConfig) {
+  put(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<unknown> {
     return this.axiosInstance.put(url, data, config);
   }
 
-  delete(url: string, config?: AxiosRequestConfig) {
+  delete(url: string, config?: AxiosRequestConfig): Promise<unknown> {
     return this.axiosInstance.delete(url, config);
   }
 
-  patch(url: string, data?: any, config?: AxiosRequestConfig) {
+  patch(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<unknown> {
     return this.axiosInstance.patch(url, data, config);
   }
 }
 
 // Función helper para extraer trace ID de diferentes formatos de headers
-export function extractTraceId(headers: any): string | undefined {
+export function extractTraceId(headers: Record<string, unknown>): string | undefined {
   // Intentar diferentes formatos de trace ID
+  const stringHeaders = headers as Record<string, string | undefined>;
   return (
-    headers[TRACE_HEADERS.TRACE_ID] ||
-    headers[TRACE_HEADERS.B3_TRACE_ID] ||
-    extractTraceIdFromTraceparent(headers[TRACE_HEADERS.TRACE_PARENT])
+    stringHeaders[TRACE_HEADERS.TRACE_ID] ||
+    stringHeaders[TRACE_HEADERS.B3_TRACE_ID] ||
+    extractTraceIdFromTraceparent(stringHeaders[TRACE_HEADERS.TRACE_PARENT])
   );
 }
 
@@ -187,8 +203,10 @@ function extractTraceIdFromTraceparent(traceparent?: string): string | undefined
 }
 
 // Middleware para correlación de logs
-export function logCorrelationMiddleware(logger: any) {
-  return (req: TracedRequest, res: Response, next: NextFunction) => {
+export function logCorrelationMiddleware(
+  logger: any
+): (_req: TracedRequest, _res: Response, _next: NextFunction) => void {
+  return (req: TracedRequest, res: Response, next: NextFunction): void => {
     // Crear un logger child con contexto de tracing
     const childLogger = logger.child({
       traceId: req.traceId || extractTraceId(req.headers),
@@ -248,7 +266,7 @@ export function createTracingHeaders(): Record<string, string> {
 
 // Middleware para manejar errores con contexto de tracing
 export function errorHandlingMiddleware(logger: any) {
-  return (err: Error, req: TracedRequest, res: Response, next: NextFunction) => {
+  return (err: Error, req: TracedRequest, res: Response, _next: NextFunction) => {
     const span = trace.getActiveSpan();
 
     // Registrar el error en el span

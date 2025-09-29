@@ -15,6 +15,8 @@ export interface CreateProductDTO {
   currency?: string;
   artisanId: string;
   categoryId: string;
+  category?: string;
+  stock?: number;
   slug?: string;
   isHandmade?: boolean;
   isCustomizable?: boolean;
@@ -31,6 +33,7 @@ export interface UpdateProductDTO {
   description?: string;
   price?: number;
   originalPrice?: number;
+  category?: string;
   keywords?: string[];
   metaTitle?: string;
   metaDescription?: string;
@@ -73,6 +76,8 @@ export class ProductService {
       currency: dto.currency || 'EUR',
       artisanId: dto.artisanId,
       categoryId: dto.categoryId,
+      category: dto.category,
+      stock: dto.stock,
       slug: dto.slug || undefined,
       isHandmade: dto.isHandmade,
       isCustomizable: dto.isCustomizable,
@@ -139,6 +144,85 @@ export class ProductService {
     }
 
     await this.productRepository.delete(id);
+  }
+
+  // ========================================
+  // STOCK MANAGEMENT METHODS
+  // ========================================
+
+  async addStockToProduct(productId: string, quantity: number): Promise<Product> {
+    const product = await this.productRepository.findById(productId);
+    if (!product) {
+      throw new Error(`Product with id ${productId} not found`);
+    }
+
+    product.addStock(quantity);
+    await this.productRepository.update(product);
+    await this.publishDomainEvents(product);
+
+    return product;
+  }
+
+  async removeStockFromProduct(productId: string, quantity: number): Promise<Product> {
+    const product = await this.productRepository.findById(productId);
+    if (!product) {
+      throw new Error(`Product with id ${productId} not found`);
+    }
+
+    product.removeStock(quantity);
+    await this.productRepository.update(product);
+    await this.publishDomainEvents(product);
+
+    return product;
+  }
+
+  async getProductStock(
+    productId: string
+  ): Promise<{ stock: number; isInStock: boolean; isLowStock: boolean }> {
+    const product = await this.productRepository.findById(productId);
+    if (!product) {
+      throw new Error(`Product with id ${productId} not found`);
+    }
+
+    return {
+      stock: product.stock,
+      isInStock: product.isInStock(),
+      isLowStock: product.isLowStock(),
+    };
+  }
+
+  // ========================================
+  // PRODUCT STATUS MANAGEMENT
+  // ========================================
+
+  async publishProduct(id: string): Promise<Product> {
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new Error(`Product with id ${id} not found`);
+    }
+
+    // TODO: Add domain method to change status to ACTIVE
+    // For now, we'll handle it through reconstruction or direct update
+
+    await this.productRepository.update(product);
+    await this.publishDomainEvents(product);
+
+    return product;
+  }
+
+  async archiveProduct(id: string): Promise<Product> {
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new Error(`Product with id ${id} not found`);
+    }
+
+    // TODO: Add domain method to change status to INACTIVE
+    // For now, we'll handle it through reconstruction or direct update
+
+    await this.productRepository.update(product);
+    await this.publishDomainEvents(product);
+
+    return product;
   }
 
   private async publishDomainEvents(product: Product): Promise<void> {

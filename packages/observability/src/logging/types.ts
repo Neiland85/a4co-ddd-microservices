@@ -29,7 +29,7 @@ export interface HttpMetadata {
 export interface ErrorMetadata {
   code?: string;
   stackTrace?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface LogContext {
@@ -42,7 +42,7 @@ export interface LogContext {
   ddd?: DDDMetadata;
   http?: HttpMetadata;
   error?: ErrorMetadata;
-  custom?: Record<string, any>;
+  custom?: Record<string, unknown>;
 }
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
@@ -53,17 +53,17 @@ export interface LoggerConfig {
   service: string;
   environment: string;
   version: string;
-  customSerializers?: Record<string, (value: any) => any>;
+  customSerializers?: Record<string, (_value: unknown) => unknown>;
   destination?: string;
   redact?: string[];
 }
 
 export interface Logger {
-  trace(message: string, context?: Partial<LogContext>): void;
-  debug(message: string, context?: Partial<LogContext>): void;
-  info(message: string, context?: Partial<LogContext>): void;
-  warn(message: string, context?: Partial<LogContext>): void;
-  error(message: string, error?: Error | unknown, context?: Partial<LogContext>): void;
-  fatal(message: string, error?: Error | unknown, context?: Partial<LogContext>): void;
-  child(context: Partial<LogContext>): Logger;
+  trace(_message: string, _context?: Partial<LogContext>): void;
+  debug(_message: string, _context?: Partial<LogContext>): void;
+  info(_message: string, _context?: Partial<LogContext>): void;
+  warn(_message: string, _context?: Partial<LogContext>): void;
+  error(_message: string, _error?: Error | unknown, _context?: Partial<LogContext>): void;
+  fatal(_message: string, _error?: Error | unknown, _context?: Partial<LogContext>): void;
+  child(_context: Partial<LogContext>): Logger;
 }

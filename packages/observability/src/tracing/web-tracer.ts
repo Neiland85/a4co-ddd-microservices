@@ -2,7 +2,8 @@
  * OpenTelemetry tracer for web/frontend applications
  */
 
-import { context, Span, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import type { Attributes, Span } from '@opentelemetry/api';
+import { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
@@ -12,7 +13,7 @@ import { Resource } from '@opentelemetry/resources';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { Logger } from '../logging/types';
+import type { Logger } from '../logging/types';
 
 export interface WebTracerConfig {
   serviceName: string;
@@ -66,7 +67,8 @@ export function initializeWebTracer(config: WebTracerConfig): WebTracerProvider 
       new FetchInstrumentation({
         propagateTraceHeaderCorsUrls: /.*/,
         clearTimingResources: true,
-        applyCustomAttributesOnSpan: (span, request, response) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        applyCustomAttributesOnSpan: (span: Span, request: any, response: any): void => {
           if (request.method) span.setAttribute('http.request.method', request.method);
           if ('url' in request && request.url) span.setAttribute('http.url', request.url);
           if (response && response.status) {
@@ -96,7 +98,7 @@ export function initializeWebTracer(config: WebTracerConfig): WebTracerProvider 
 /**
  * Get web tracer instance
  */
-export function getWebTracer(name: string, version?: string) {
+export function getWebTracer(name: string, version?: string): ReturnType<typeof trace.getTracer> {
   return trace.getTracer(name, version);
 }
 
@@ -107,7 +109,7 @@ export function startWebSpan(
   name: string,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, any>;
+    attributes?: Attributes;
   }
 ): Span {
   const tracer = getWebTracer('web');
@@ -122,10 +124,10 @@ export function startWebSpan(
  */
 export async function traceWebOperation<T>(
   name: string,
-  operation: (span: Span) => Promise<T>,
+  operation: (_span: Span) => Promise<T>,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, any>;
+    attributes?: Attributes;
   }
 ): Promise<T> {
   const span = startWebSpan(name, options);
@@ -154,7 +156,7 @@ export async function traceWebOperation<T>(
 /**
  * Trace React component render
  */
-export function traceComponentRender(componentName: string, props?: Record<string, any>): Span {
+export function traceComponentRender(componentName: string, props?: Attributes): Span {
   const span = startWebSpan(`Component: ${componentName}`, {
     kind: SpanKind.INTERNAL,
     attributes: {
@@ -188,7 +190,7 @@ export function traceRouteNavigation(fromRoute: string, toRoute: string): Span {
 export function traceUserInteraction(
   interactionType: string,
   target: string,
-  metadata?: Record<string, any>
+  metadata?: Attributes
 ): Span {
   const span = startWebSpan(`User Interaction: ${interactionType}`, {
     kind: SpanKind.INTERNAL,
@@ -216,19 +218,22 @@ export interface PerformanceMetrics {
 export function collectPerformanceMetrics(): PerformanceMetrics {
   const metrics: PerformanceMetrics = {};
 
-  if (typeof window !== 'undefined' && 'performance' in window) {
-    const paintEntries = performance.getEntriesByType('paint');
-    const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
+  if (typeof globalThis !== 'undefined' && 'performance' in globalThis) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const paintEntries = (globalThis as any).performance.getEntriesByType('paint');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fcpEntry = paintEntries.find((entry: any) => entry.name === 'first-contentful-paint');
 
     if (fcpEntry) {
       metrics.firstContentfulPaint = fcpEntry.startTime;
     }
 
     // Collect Web Vitals if available
-    if ('PerformanceObserver' in window) {
+    if ('PerformanceObserver' in globalThis) {
       try {
         // LCP
-        const lcpObserver = new PerformanceObserver(list => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lcpObserver = new (globalThis as any).PerformanceObserver((list: any) => {
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1];
           if (lastEntry) {
@@ -239,10 +244,11 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
 
         // CLS
         let clsValue = 0;
-        const clsObserver = new PerformanceObserver(list => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const clsObserver = new (globalThis as any).PerformanceObserver((list: any) => {
           for (const entry of list.getEntries()) {
-            if (!(entry as any).hadRecentInput) {
-              clsValue += (entry as any).value;
+            if (!(entry as { hadRecentInput?: boolean }).hadRecentInput) {
+              clsValue += (entry as { value?: number }).value || 0;
             }
           }
           metrics.cumulativeLayoutShift = clsValue;
@@ -250,14 +256,16 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
         clsObserver.observe({ entryTypes: ['layout-shift'] });
 
         // FID
-        const fidObserver = new PerformanceObserver(list => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const fidObserver = new (globalThis as any).PerformanceObserver((list: any) => {
           const firstEntry = list.getEntries()[0];
           if (firstEntry) {
-            metrics.firstInputDelay = (firstEntry as any).processingStart - firstEntry.startTime;
+            metrics.firstInputDelay =
+              (firstEntry as { processingStart?: number }).processingStart! - firstEntry.startTime;
           }
         });
         fidObserver.observe({ entryTypes: ['first-input'] });
-      } catch (e) {
+      } catch {
         // Some browsers might not support all observers
       }
     }

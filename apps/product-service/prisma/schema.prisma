@@ -31,6 +31,12 @@ model Product {
   originalPrice Decimal? @db.Decimal(10, 2)
   currency String  @db.VarChar(3) @default("EUR")
 
+  // Stock e inventario
+  stock Int @default(0)
+
+  // Categoría del producto
+  category String @db.VarChar(50)
+
   // Relaciones externas
   categoryId String @db.Uuid
   artisanId  String @db.Uuid
