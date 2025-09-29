@@ -1,16 +1,13 @@
-import {
-  context,
+import type {
+  Attributes,
   Context,
-  propagation,
   Span,
-  SpanKind,
   SpanOptions,
-  SpanStatusCode,
   TextMapGetter,
   TextMapSetter,
-  trace,
   Tracer,
 } from '@opentelemetry/api';
+import { context, propagation, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import {
   CompositePropagator,
@@ -32,7 +29,12 @@ import {
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { getLogger } from '../logger';
-import { DDDMetadata, ObservabilityContext, ObservabilityTracer, TracingConfig } from '../types';
+import type {
+  DDDMetadata,
+  ObservabilityContext,
+  ObservabilityTracer,
+  TracingConfig,
+} from '../types';
 
 // Global tracer provider
 let globalTracerProvider: NodeTracerProvider | null = null;
@@ -114,7 +116,7 @@ function createEnhancedTracer(
       attributes['tenant.id'] = defaultContext.tenantId;
     }
 
-    return originalStartSpan(name, { ...options, attributes }, context);
+    return originalStartSpan(name, { ...options, attributes: attributes as Attributes }, context);
   };
 
   // Override startActiveSpan to include default context
@@ -276,7 +278,7 @@ export async function shutdownTracing(): Promise<void> {
 // Span utilities
 export function startActiveSpan<T>(name: string, fn: (span: Span) => T, options?: SpanOptions): T {
   const tracer = getTracer();
-  return tracer.startActiveSpan(name, options || {}, fn);
+  return tracer.startActiveSpan(name, (options || {}) as Record<string, unknown>, fn);
 }
 
 export function withSpan<T>(

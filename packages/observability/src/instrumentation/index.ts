@@ -1,7 +1,7 @@
 import { SpanKind, SpanStatusCode, context, trace } from '@opentelemetry/api';
 import { createNatsContext } from '../context';
 import { getLogger } from '../logger';
-import { recordEvent } from '../metrics';
+// import { recordEvent } from '../metrics';
 import { extractContext, injectContext } from '../tracer';
 
 // NATS client instrumentation wrapper
@@ -10,9 +10,9 @@ export function instrumentNatsClient(client: any): any {
   const tracer = trace.getTracer('@a4co/observability');
 
   // Wrap publish method
-  const originalPublish = natsClient.publish.bind(natsClient);
+  const originalPublish = client.publish.bind(client);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  natsClient.publish = function (subject: string, data: any, options?: any): Promise<void> {
+  client.publish = function (subject: string, data: any, options?: any): Promise<void> {
     const span = tracer.startSpan(`nats.publish ${subject}`, {
       kind: SpanKind.PRODUCER,
       attributes: {
@@ -35,21 +35,18 @@ export function instrumentNatsClient(client: any): any {
       }
 
       // Log publish
-      logger.debug(
-        {
-          subject,
-          messageSize: JSON.stringify(data).length,
-          traceId: span.spanContext().traceId,
-        },
-        'Publishing NATS message'
-      );
+      logger.debug('Publishing NATS message', {
+        subject,
+        messageSize: JSON.stringify(data).length,
+        traceId: span.spanContext().traceId,
+      });
 
       const result = originalPublish(subject, data, options);
 
       span.setStatus({ code: SpanStatusCode.OK });
 
       // Record metric
-      recordEvent(`nats.${subject}`, 'messaging', 'published');
+      // recordEvent(`nats.${subject}`, 'messaging', 'published');
 
       return result;
     } catch (error) {
@@ -59,7 +56,7 @@ export function instrumentNatsClient(client: any): any {
         message: (error as Error).message,
       });
 
-      logger.error({ error, subject }, 'Failed to publish NATS message');
+      logger.error('Failed to publish NATS message', { error, subject });
       throw error;
     } finally {
       span.end();
@@ -67,9 +64,9 @@ export function instrumentNatsClient(client: any): any {
   };
 
   // Wrap subscribe method
-  const originalSubscribe = natsClient.subscribe.bind(natsClient);
+  const originalSubscribe = client.subscribe.bind(client);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  natsClient.subscribe = function (subject: string, options?: any, callback?: any): unknown {
+  client.subscribe = function (subject: string, options?: any, callback?: any): unknown {
     // Handle different parameter combinations
     const cb = typeof options === 'function' ? options : callback;
     const opts = typeof options === 'function' ? {} : options || {};
@@ -96,14 +93,11 @@ export function instrumentNatsClient(client: any): any {
           // Create context from message
           const natsContext = createNatsContext(msg);
 
-          logger.debug(
-            {
-              subject,
-              traceId: span.spanContext().traceId,
-              correlationId: natsContext.correlationId,
-            },
-            'Processing NATS message'
-          );
+          logger.debug('Processing NATS message', {
+            subject,
+            traceId: span.spanContext().traceId,
+            correlationId: natsContext.correlationId,
+          });
 
           // Call original callback
           const result = await cb(msg);
@@ -111,7 +105,7 @@ export function instrumentNatsClient(client: any): any {
           span.setStatus({ code: SpanStatusCode.OK });
 
           // Record metric
-          recordEvent(`nats.${subject}`, 'messaging', 'processed');
+          // recordEvent(`nats.${subject}`, 'messaging', 'processed');
 
           return result;
         } catch (error) {
@@ -121,7 +115,7 @@ export function instrumentNatsClient(client: any): any {
             message: (error as Error).message,
           });
 
-          logger.error({ error, subject }, 'Failed to process NATS message');
+          logger.error('Failed to process NATS message', { error, subject });
           throw error;
         } finally {
           span.end();
@@ -132,7 +126,7 @@ export function instrumentNatsClient(client: any): any {
     return originalSubscribe(subject, opts, wrappedCallback);
   };
 
-  return natsClient;
+  return client;
 }
 
 // Redis client instrumentation wrapper
@@ -158,10 +152,10 @@ export function instrumentRedisClient(client: any): any {
   ];
 
   commands.forEach(command => {
-    if (typeof redisClient[command] === 'function') {
-      const original = redisClient[command].bind(redisClient);
+    if (typeof client[command] === 'function') {
+      const original = client[command].bind(client);
 
-      redisClient[command] = function (...args: any[]): Promise<unknown> {
+      client[command] = function (...args: any[]): Promise<unknown> {
         const span = tracer.startSpan(`redis.${command}`, {
           kind: SpanKind.CLIENT,
           attributes: {
@@ -185,28 +179,22 @@ export function instrumentRedisClient(client: any): any {
                 message: err.message,
               });
 
-              logger.error(
-                {
-                  error: err,
-                  command,
-                  key: args[0],
-                  duration,
-                },
-                'Redis command failed'
-              );
+              logger.error('Redis command failed', {
+                error: err,
+                command,
+                key: args[0],
+                duration,
+              });
 
               reject(err);
             } else {
               span.setStatus({ code: SpanStatusCode.OK });
 
-              logger.debug(
-                {
-                  command,
-                  key: args[0],
-                  duration,
-                },
-                'Redis command completed'
-              );
+              logger.debug('Redis command completed', {
+                command,
+                key: args[0],
+                duration,
+              });
 
               resolve(result);
             }
@@ -222,7 +210,7 @@ export function instrumentRedisClient(client: any): any {
     }
   });
 
-  return redisClient;
+  return client;
 }
 
 // MongoDB collection instrumentation wrapper
@@ -258,14 +246,11 @@ export function instrumentMongoCollection(collection: any): any {
           },
         });
 
-        logger.debug(
-          {
-            method,
-            collection: collection.collectionName,
-            query: args[0],
-          },
-          'MongoDB operation started'
-        );
+        logger.debug('MongoDB operation started', {
+          method,
+          collection: collection.collectionName,
+          query: args[0],
+        });
 
         const startTime = Date.now();
 
@@ -286,15 +271,12 @@ export function instrumentMongoCollection(collection: any): any {
                 });
                 span.setStatus({ code: SpanStatusCode.OK });
 
-                logger.debug(
-                  {
-                    method,
-                    collection: collection.collectionName,
-                    count: docs.length,
-                    duration,
-                  },
-                  'MongoDB operation completed'
-                );
+                logger.debug('MongoDB operation completed', {
+                  method,
+                  collection: collection.collectionName,
+                  count: docs.length,
+                  duration,
+                });
 
                 return docs;
               } catch (error) {
@@ -325,14 +307,11 @@ export function instrumentMongoCollection(collection: any): any {
                   });
                   span.setStatus({ code: SpanStatusCode.OK });
 
-                  logger.debug(
-                    {
-                      method,
-                      collection: collection.collectionName,
-                      duration,
-                    },
-                    'MongoDB operation completed'
-                  );
+                  logger.debug('MongoDB operation completed', {
+                    method,
+                    collection: collection.collectionName,
+                    duration,
+                  });
 
                   span.end();
                   return data;
@@ -386,27 +365,21 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
         },
       });
 
-      logger.debug(
-        {
-          type: typeName,
-          field: fieldName,
-          args,
-        },
-        'GraphQL resolver started'
-      );
+      logger.debug('GraphQL resolver started', {
+        type: typeName,
+        field: fieldName,
+        args,
+      });
 
       try {
         const result = await resolver(parent, args, context, info);
 
         span.setStatus({ code: SpanStatusCode.OK });
 
-        logger.debug(
-          {
-            type: typeName,
-            field: fieldName,
-          },
-          'GraphQL resolver completed'
-        );
+        logger.debug('GraphQL resolver completed', {
+          type: typeName,
+          field: fieldName,
+        });
 
         return result;
       } catch (error) {
@@ -416,14 +389,11 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
           message: (error as Error).message,
         });
 
-        logger.error(
-          {
-            error,
-            type: typeName,
-            field: fieldName,
-          },
-          'GraphQL resolver failed'
-        );
+        logger.error('GraphQL resolver failed', {
+          error,
+          type: typeName,
+          field: fieldName,
+        });
 
         throw error;
       } finally {
@@ -495,13 +465,10 @@ export function instrumentKafkaProducer(producer: any): any {
         return { ...message, headers };
       });
 
-      logger.debug(
-        {
-          topic: record.topic,
-          messageCount: record.messages.length,
-        },
-        'Sending Kafka messages'
-      );
+      logger.debug('Sending Kafka messages', {
+        topic: record.topic,
+        messageCount: record.messages.length,
+      });
 
       const result = await originalSend(record);
 
@@ -515,7 +482,7 @@ export function instrumentKafkaProducer(producer: any): any {
         message: (error as Error).message,
       });
 
-      logger.error({ error, topic: record.topic }, 'Failed to send Kafka messages');
+      logger.error('Failed to send Kafka messages', { error, topic: record.topic });
       throw error;
     } finally {
       span.end();
@@ -561,14 +528,11 @@ export function instrumentKafkaConsumer(consumer: any): any {
 
       return context.with(trace.setSpan(context.active(), span), async () => {
         try {
-          logger.debug(
-            {
-              topic,
-              partition,
-              offset: message.offset,
-            },
-            'Processing Kafka message'
-          );
+          logger.debug('Processing Kafka message', {
+            topic,
+            partition,
+            offset: message.offset,
+          });
 
           const result = await originalEachMessage(payload);
 
@@ -582,7 +546,7 @@ export function instrumentKafkaConsumer(consumer: any): any {
             message: (error as Error).message,
           });
 
-          logger.error({ error, topic, partition }, 'Failed to process Kafka message');
+          logger.error('Failed to process Kafka message', { error, topic, partition });
           throw error;
         } finally {
           span.end();

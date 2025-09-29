@@ -59,10 +59,8 @@ export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableBu
         traceInteraction({
           timestamp: new Date().toISOString(),
           eventType: event.type,
-          position: {
-            x: event.clientX,
-            y: event.clientY,
-          },
+          positionX: event.clientX,
+          positionY: event.clientY,
         });
 
         // Call original onClick handler

@@ -53,7 +53,7 @@ export class FrontendLogger implements Logger {
   }
 
   private startFlushTimer(): void {
-    this.flushTimer = globalThis.setInterval(() => {
+    this.flushTimer = window.setInterval(() => {
       this.flush();
     }, this.config.flushInterval);
   }
@@ -243,7 +243,7 @@ export class FrontendLogger implements Logger {
 
   destroy(): void {
     if (this.flushTimer) {
-      globalThis.clearInterval(this.flushTimer);
+      window.clearInterval(this.flushTimer);
     }
     this.flush();
   }

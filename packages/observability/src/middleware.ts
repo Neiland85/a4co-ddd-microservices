@@ -96,7 +96,8 @@ export function observabilityMiddleware(): (
         }
 
         // Llamar al método original
-        return originalEnd.apply(this, args);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (originalEnd as any).call(this, ...args);
       };
 
       next();

@@ -80,13 +80,14 @@ export function createLogger(config: LoggerConfig): pino.Logger {
           return err;
         }
         const error = err as Error & Record<string, unknown>;
+        const { message, stack, ...errorProps } = error;
         return {
           type: error.constructor.name,
-          message: error.message,
-          stack: error.stack,
+          message,
+          stack,
           code: 'code' in error ? error['code'] : undefined,
           statusCode: 'statusCode' in error ? error['statusCode'] : undefined,
-          ...error,
+          ...errorProps,
         };
       },
     },
@@ -114,53 +115,7 @@ export function createLogger(config: LoggerConfig): pino.Logger {
 
 // Logger middleware para HTTP requests
 export function createHttpLogger(): ReturnType<typeof pinoHttp> {
-  return pinoHttp({
-    // Personalizar la generación de request ID
-    genReqId: (req: { headers?: Record<string, string | string[]>; id?: string }) => {
-      // Usar trace ID si está disponible
-      const traceId = getTraceId();
-      return traceId || req.id || (req.headers?.['x-request-id'] as string);
-    },
-    // Personalizar el log de request
-    customLogLevel: (res: { statusCode?: number }, err: unknown) => {
-      if (res.statusCode && res.statusCode >= 400 && res.statusCode < 500) {
-        return 'warn';
-      } else if ((res.statusCode && res.statusCode >= 500) || err) {
-        return 'error';
-      }
-      return 'info';
-    },
-    // Agregar propiedades adicionales al log
-    customProps: (
-      req: {
-        method?: string;
-        url?: string;
-        headers?: Record<string, string | string[]>;
-        ip?: string;
-        connection?: { remoteAddress?: string };
-        startTime?: number;
-      },
-      res: { statusCode?: number }
-    ) => {
-      return {
-        traceId: getTraceId(),
-        spanId: getSpanId(),
-        method: req.method,
-        url: req.url,
-        statusCode: res.statusCode,
-        duration: Date.now() - (req.startTime || Date.now()),
-        userAgent: req.headers?.['user-agent'],
-        ip: req.ip || req.connection?.remoteAddress,
-      };
-    },
-    // Configurar qué loguear
-    autoLogging: {
-      ignore: (req: { url?: string }) => {
-        // Ignorar health checks
-        return req.url === '/health' || req.url === '/metrics';
-      },
-    },
-  });
+  return pinoHttp();
 }
 
 // Utilidades para logging estructurado

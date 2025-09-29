@@ -311,7 +311,7 @@ export function TraceController(options?: {
 
     descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       // Get request object (Express or Koa)
-      const req = args[0];
+      const req = args[0] as { __span?: unknown; state?: { span?: unknown } };
       const parentSpan = req.__span || req.state?.span;
 
       if (!parentSpan) {
