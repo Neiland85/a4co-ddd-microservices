@@ -54,7 +54,7 @@
     "security:extract-tar": "node scripts/extract-tar-secure.js",
     "security:check": "echo 'Security checks: tar-fs mitigation active'",
     "security:lodash": "node scripts/lodash-security-mitigation.js",
-    "test:security": "jest --config packages/shared-utils/jest.config.js --testPathPatterns=security",
+    "test:security": "jest --config packages/shared-utils/jest.config.js --testPathPattern=security",
     "security:ssrf": "node scripts/nextjs-ssrf-mitigation.js",
     "test:ssrf": "jest --config packages/shared-utils/jest.config.js --testPathPatterns=ssrf",
     "security:dev-server": "node scripts/dev-server-security-mitigation.js",
@@ -149,7 +149,8 @@
   },
   "pnpm": {
     "overrides": {
-      "tar-fs": ">=2.1.4"
+      "tar-fs": ">=2.1.4",
+      "lodash": ">=4.17.21"
     }
   },
   "repository": {

@@ -61,6 +61,12 @@ describe('@a4co/observability', () => {
     });
 
     it('should use global logger proxy', () => {
+      // Inicializar el logger global para que tenga los métodos tipados
+      initializeLogger({
+        serviceName: 'test-service',
+        environment: 'test',
+      });
+
       expect(() => {
         logger.info('ping');
       }).not.toThrow();
@@ -166,7 +172,7 @@ describe('@a4co/observability', () => {
   });
 
   describe('shutdown', () => {
-    it('should shutdown without errors', async() => {
+    it('should shutdown without errors', async () => {
       await expect(shutdown()).resolves.not.toThrow();
     });
   });

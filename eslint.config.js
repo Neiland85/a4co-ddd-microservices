@@ -22,7 +22,7 @@ export default [
       'dist/**',
       'coverage/**',
       'next-env.d.ts',
-      '**/*.d.ts'
+      '**/*.d.ts',
     ],
   },
   js.configs.recommended,
@@ -124,9 +124,9 @@ export default [
       'no-debugger': 'off', // Allow debugger statements in development
 
       // Reglas que ESLint puede corregir automáticamente
-      'semi': ['error', 'always'], // Add semicolons
-      'quotes': ['error', 'single'], // Use single quotes
-      'indent': ['error', 2], // 2 spaces indentation
+      semi: ['error', 'always'], // Add semicolons
+      quotes: ['error', 'single'], // Use single quotes
+      indent: ['error', 2], // 2 spaces indentation
       'comma-dangle': ['error', 'always-multiline'], // Trailing commas
       'object-curly-spacing': ['error', 'always'], // Space after curly braces
       'array-bracket-spacing': ['error', 'never'], // No space in array brackets
@@ -196,8 +196,7 @@ export default [
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-console': 'off',
-      'no-undef': 'off'
-    }
+      'no-undef': 'off',
     },
   },
   {

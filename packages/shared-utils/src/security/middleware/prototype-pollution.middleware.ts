@@ -1,19 +1,4 @@
-// Types para Express (en producción, importa de 'express')
-interface Request {
-  body: any;
-  query: any;
-  params: any;
-}
-
-interface Response {
-  status(code: number): Response;
-  json(data: any): Response;
-}
-
-interface NextFunction {
-  (): void;
-}
-
+import { Request, Response, NextFunction } from 'express';
 import { PrototypePollutionValidator } from '../validators/prototype-pollution.validator';
 
 export class PrototypePollutionMiddleware {
@@ -22,12 +7,11 @@ export class PrototypePollutionMiddleware {
       if (req.body) {
         const validation = PrototypePollutionValidator.validateObject(req.body);
         if (!validation.isValid) {
-          res.status(400).json({
+          return res.status(400).json({
             error: 'Bad Request',
             message: 'Request contains dangerous keys',
-            violations: validation.violations,
+            violations: validation.violations
           });
-          return;
         }
       }
       next();

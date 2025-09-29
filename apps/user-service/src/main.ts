@@ -1,10 +1,11 @@
-import { initializeTracing, getGlobalLogger } from '@a4co/observability';
+import { getGlobalLogger, initializeTracing } from '@a4co/observability';
+import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
-import { UserModule } from './user.module';
 import * as process from 'process';
+import { UserModule } from './user.module';
 
 async function bootstrap() {
   // Initialize observability
@@ -26,14 +27,14 @@ async function bootstrap() {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ['\'self\''],
-          styleSrc: ['\'self\'', '\'unsafe-inline\''],
-          scriptSrc: ['\'self\''],
-          imgSrc: ['\'self\'', 'data:', 'https:'],
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
       crossOriginEmbedderPolicy: false,
-    }),
+    })
   );
 
   // Global validation pipe
@@ -42,7 +43,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    }),
+    })
   );
 
   // Braces security middleware
