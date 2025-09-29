@@ -10,6 +10,10 @@ interface BaseComponentProps {
   children?: React.ReactNode;
 }
 
+interface ApiResponse {
+  success?: boolean;
+}
+
 interface V0ComponentTemplateProps extends BaseComponentProps {
   title?: string;
   description?: string;
@@ -25,18 +29,18 @@ interface V0ComponentTemplateProps extends BaseComponentProps {
 interface LoadingState {
   isLoading: boolean;
   error: string | null;
-  data: { success?: boolean } | null; // Cambiado para incluir la propiedad 'success'
+  data: ApiResponse | null;
 }
 
 // Hook personalizado para manejo de estado de loading
 const useLoadingState = (
-  initialData?: unknown // Cambiado de 'any' a 'unknown'
+  initialData?: ApiResponse
 ): [
   LoadingState,
   {
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
-    setData: (data: unknown) => void; // Cambiado de 'any' a 'unknown'
+    setData: (data: ApiResponse) => void;
     reset: () => void;
   },
 ] => {
@@ -54,10 +58,10 @@ const useLoadingState = (
     setState(prev => ({ ...prev, error, isLoading: false }));
   }, []);
 
-  const setData = useCallback((data: unknown) => {
+  const setData = useCallback((data: ApiResponse) => {
     setState(prev => ({
       ...prev,
-      data: data as { success?: boolean } | null, // Type assertion para cumplir con el tipo esperado
+      data,
       isLoading: false,
       error: null,
     }));
