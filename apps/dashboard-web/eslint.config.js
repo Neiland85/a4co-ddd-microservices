@@ -1,11 +1,12 @@
 const js = require('@eslint/js');
 const tseslint = require('@typescript-eslint/eslint-plugin');
 const tsparser = require('@typescript-eslint/parser');
+const reactHooks = require('eslint-plugin-react-hooks');
 
 module.exports = [
   js.configs.recommended,
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     ignores: [
       'node_modules/**',
       '.next/**',
@@ -41,7 +42,7 @@ module.exports = [
         confirm: 'readonly',
         prompt: 'readonly',
         fetch: 'readonly',
-        
+
         // Timing functions
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
@@ -49,18 +50,18 @@ module.exports = [
         clearInterval: 'readonly',
         setImmediate: 'readonly',
         clearImmediate: 'readonly',
-        
+
         // React/Next.js globals
         React: 'readonly',
         JSX: 'readonly',
-        
+
         // Node.js globals
         process: 'readonly',
         Buffer: 'readonly',
         global: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
-        
+
         // Test globals
         jest: 'readonly',
         describe: 'readonly',
@@ -74,71 +75,33 @@ module.exports = [
       },
     },
     plugins: {
-      '@typescript-eslint': tseslint
+      '@typescript-eslint': tseslint,
+      'react-hooks': reactHooks
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-      
+
+      // React Hooks rules
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
       // Relaxed rules for faster development
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { 
+      '@typescript-eslint/no-unused-vars': ['warn', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }],
       '@typescript-eslint/no-unsafe-function-type': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      
+
       // Disable problematic rules
       'no-undef': 'off', // TypeScript handles this
       'no-unused-vars': 'off', // Use TypeScript version instead
       'no-redeclare': 'off', // TypeScript handles this
-      'react-hooks/exhaustive-deps': 'warn',
-      
+
       // Custom rules for this project
       'prefer-const': 'warn',
       'no-var': 'error',
     }
-  },
-  {
-    files: ['**/*.js', '**/*.jsx'],
-    ignores: [
-      'node_modules/**',
-      '.next/**',
-      'dist/**',
-      'build/**',
-      'coverage/**',
-    ],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-      },
-      globals: {
-        // Node.js globals for config files
-        module: 'readonly',
-        exports: 'readonly',
-        require: 'readonly',
-        process: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        global: 'readonly',
-        
-        // Browser globals
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        localStorage: 'readonly',
-        console: 'readonly',
-        fetch: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-      },
-    },
-    rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    },
   },
 ];
