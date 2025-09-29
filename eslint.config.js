@@ -211,7 +211,14 @@ export default [
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx', '**/*.e2e-spec.js', '**/*.e2e-spec.ts'],
+    files: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.e2e-spec.js',
+      '**/*.e2e-spec.ts',
+    ],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',

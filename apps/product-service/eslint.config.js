@@ -15,6 +15,7 @@ module.exports = [
       '**/*.test.ts',
       '**/*.spec.ts',
       '**/*.bak',
+      'jest.config.js',
     ],
     languageOptions: {
       parser: tsparser,

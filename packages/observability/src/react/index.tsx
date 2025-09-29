@@ -354,7 +354,11 @@ export const useEventTracking = (): {
 
   trackInput: (_field: string, _value: string, _metadata?: Record<string, unknown>) => void;
 
-  trackCustom: (_event: string, _properties?: Record<string, unknown>) => void;
+  trackCustom: (
+    _componentName: string,
+    _event: string,
+    _properties?: Record<string, unknown>
+  ) => void;
 } => {
   const { logEvent, sessionId } = useObservability();
 
@@ -386,13 +390,20 @@ export const useEventTracking = (): {
     });
   };
 
-  const trackCustom = (event: string, properties?: Record<string, unknown>): void => {
+  const trackCustom = (
+    componentName: string,
+    event: string,
+    properties?: Record<string, unknown>
+  ): void => {
     logEvent({
       eventType: 'custom',
-      componentName: event,
+      componentName,
       timestamp: Date.now(),
       sessionId: '',
-      metadata: properties,
+      metadata: {
+        event,
+        ...properties,
+      },
     });
   };
 
