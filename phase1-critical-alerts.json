@@ -1,0 +1,94 @@
+{
+  "alert_levels": {
+    "critical": {
+      "enabled": true,
+      "channels": [
+        "slack_critical",
+        "email_devops",
+        "pagerduty"
+      ],
+      "triggers": [
+        "error_rate > 5%",
+        "response_time > 5000ms",
+        "service_unavailable > 5min",
+        "data_corruption_detected",
+        "security_breach_detected"
+      ],
+      "response_time": "15 minutes",
+      "stakeholders": [
+        "DevOps Lead",
+        "Engineering Manager",
+        "Product Manager"
+      ]
+    },
+    "warning": {
+      "enabled": true,
+      "channels": [
+        "slack_warning",
+        "email_devops"
+      ],
+      "triggers": [
+        "error_rate > 2%",
+        "response_time > 3000ms",
+        "feature_usage < 50%",
+        "user_complaints > 3",
+        "performance_degradation > 20%"
+      ],
+      "response_time": "1 hour",
+      "stakeholders": [
+        "DevOps Team",
+        "QA Lead"
+      ]
+    },
+    "info": {
+      "enabled": true,
+      "channels": [
+        "slack_info"
+      ],
+      "triggers": [
+        "new_user_adoption",
+        "feature_usage_milestone",
+        "positive_feedback_received",
+        "performance_improvement"
+      ],
+      "response_time": "4 hours",
+      "stakeholders": [
+        "Product Team",
+        "DevOps Team"
+      ]
+    }
+  },
+  "monitoring_windows": {
+    "business_hours": {
+      "start": "09:00",
+      "end": "18:00",
+      "timezone": "Europe/Madrid",
+      "alert_verbosity": "high"
+    },
+    "after_hours": {
+      "start": "18:00",
+      "end": "09:00",
+      "timezone": "Europe/Madrid",
+      "alert_verbosity": "critical_only"
+    },
+    "weekend": {
+      "days": [
+        "saturday",
+        "sunday"
+      ],
+      "alert_verbosity": "critical_only",
+      "on_call_rotation": true
+    }
+  },
+  "alert_fatigue_prevention": {
+    "max_alerts_per_hour": 5,
+    "cooldown_period_minutes": 30,
+    "auto_suppression": {
+      "enabled": true,
+      "rules": [
+        "Same alert type within 10 minutes",
+        "Non-critical alerts during maintenance windows"
+      ]
+    }
+  }
+}

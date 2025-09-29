@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Flags Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; }
+        .flag-item { margin: 10px 0; padding: 10px; border-left: 4px solid #ccc; }
+        .flag-enabled { border-left-color: #4CAF50; background-color: #f8fff8; }
+        .flag-disabled { border-left-color: #f44336; background-color: #fff8f8; }
+        .flag-rollout { border-left-color: #FF9800; background-color: #fffbf8; }
+        .controls { margin: 20px 0; }
+        button { margin: 5px; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-primary { background-color: #2196F3; color: white; }
+        .btn-danger { background-color: #f44336; color: white; }
+        .btn-warning { background-color: #FF9800; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🚩 Feature Flags Dashboard</h1>
+
+    <div class="controls">
+        <button class="btn-primary" onclick="refreshData()">🔄 Refresh</button>
+        <button class="btn-warning" onclick="showRolloutModal()">📈 New Rollout</button>
+        <button class="btn-danger" onclick="showRollbackModal()">🔄 Rollback</button>
+    </div>
+
+    <div class="dashboard">
+        <div class="card">
+            <h2>📊 Flag Status</h2>
+            <canvas id="statusChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h2>📈 Rollout Progress</h2>
+            <canvas id="rolloutChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h2>🏥 Health Status</h2>
+            <canvas id="healthChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h2>🚩 Feature Flags</h2>
+            <div id="flagsList"></div>
+        </div>
+    </div>
+
+    <!-- Rollout Modal -->
+    <div id="rolloutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px;">
+            <h3>Start New Rollout</h3>
+            <form id="rolloutForm">
+                <label>Flag Name: <input type="text" id="rolloutFlag" required></label><br>
+                <label>Strategy:
+                    <select id="rolloutStrategy">
+                        <option value="percentage">Percentage</option>
+                        <option value="gradual">Gradual</option>
+                        <option value="user_list">User List</option>
+                    </select>
+                </label><br>
+                <label>Value: <input type="text" id="rolloutValue" placeholder="0.1 for 10%, 4 for 4 hours" required></label><br>
+                <button type="submit">Start Rollout</button>
+                <button type="button" onclick="hideRolloutModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let statusChart, rolloutChart, healthChart;
+
+        async function loadData() {
+            try {
+                const response = await fetch('/api/feature-flags');
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function updateDashboard(data) {
+            updateStatusChart(data);
+            updateRolloutChart(data);
+            updateHealthChart(data);
+            updateFlagsList(data);
+        }
+
+        function updateStatusChart(data) {
+            const enabled = data.filter(f => f.enabled).length;
+            const disabled = data.length - enabled;
+
+            if (statusChart) statusChart.destroy();
+
+            statusChart = new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Enabled', 'Disabled'],
+                    datasets: [{
+                        data: [enabled, disabled],
+                        backgroundColor: ['#4CAF50', '#f44336']
+                    }]
+                }
+            });
+        }
+
+        function updateRolloutChart(data) {
+            const rolloutData = data.filter(f => f.rollout && f.rollout.status === 'active');
+
+            if (rolloutChart) rolloutChart.destroy();
+
+            rolloutChart = new Chart(document.getElementById('rolloutChart'), {
+                type: 'bar',
+                data: {
+                    labels: rolloutData.map(f => f.name),
+                    datasets: [{
+                        label: 'Progress',
+                        data: rolloutData.map(f => f.rollout.progress * 100),
+                        backgroundColor: '#2196F3'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+
+        function updateHealthChart(data) {
+            const healthy = data.filter(f => f.health >= 80).length;
+            const warning = data.filter(f => f.health >= 60 && f.health < 80).length;
+            const critical = data.filter(f => f.health < 60).length;
+
+            if (healthChart) healthChart.destroy();
+
+            healthChart = new Chart(document.getElementById('healthChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Healthy', 'Warning', 'Critical'],
+                    datasets: [{
+                        data: [healthy, warning, critical],
+                        backgroundColor: ['#4CAF50', '#FF9800', '#f44336']
+                    }]
+                }
+            });
+        }
+
+        function updateFlagsList(data) {
+            const list = document.getElementById('flagsList');
+            list.innerHTML = data.map(flag => `
+                <div class="flag-item ${getFlagClass(flag)}">
+                    <strong>${flag.name}</strong>
+                    <div>Status: ${flag.enabled ? '✅ Enabled' : '❌ Disabled'}</div>
+                    <div>Health: ${flag.health}/100</div>
+                    ${flag.rollout ? `<div>Rollout: ${(flag.rollout.progress * 100).toFixed(1)}%</div>` : ''}
+                    <div>Description: ${flag.config.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function getFlagClass(flag) {
+            if (flag.rollout && flag.rollout.status === 'active') return 'flag-rollout';
+            return flag.enabled ? 'flag-enabled' : 'flag-disabled';
+        }
+
+        function refreshData() {
+            loadData();
+        }
+
+        function showRolloutModal() {
+            document.getElementById('rolloutModal').style.display = 'block';
+        }
+
+        function hideRolloutModal() {
+            document.getElementById('rolloutModal').style.display = 'none';
+        }
+
+        document.getElementById('rolloutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const rolloutData = {
+                flagName: formData.get('rolloutFlag'),
+                strategy: formData.get('rolloutStrategy'),
+                value: formData.get('rolloutValue')
+            };
+
+            try {
+                await fetch('/api/feature-flags/rollout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rolloutData)
+                });
+                hideRolloutModal();
+                refreshData();
+            } catch (error) {
+                alert('Error starting rollout: ' + error.message);
+            }
+        });
+
+        function showRollbackModal() {
+            // Implement rollback modal
+            alert('Rollback functionality would be implemented here');
+        }
+
+        // Load data on page load
+        loadData();
+
+        // Refresh every 30 seconds
+        setInterval(refreshData, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "eCommerce": {
+    "strategy": "percentage",
+    "initialPercentage": 0.05,
+    "increment": 0.1,
+    "monitoringTime": 1800000
+  },
+  "logistics": {
+    "strategy": "gradual",
+    "duration": 14400000
+  },
+  "analytics": {
+    "strategy": "user_list",
+    "betaUsers": [
+      "user-beta-001",
+      "user-beta-002",
+      "user-beta-003"
+    ]
+  },
+  "security": {
+    "strategy": "percentage",
+    "initialPercentage": 0.01,
+    "increment": 0.02,
+    "monitoringTime": 3600000
+  }
+}

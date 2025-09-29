@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - A4CO Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="/" class="text-blue-600 hover:text-blue-800 mr-4">← Dashboard</a>
+                    <h1 class="text-2xl font-bold text-gray-900">🚀 Phase 2 - External Beta</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <% if (data['phase2-deployment-report']) { %>
+        <!-- Deployment Status -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Estado del Deployment</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center">
+                    <h3 class="font-medium text-gray-500">Fase</h3>
+                    <p class="text-2xl font-bold text-gray-900"><%= data['phase2-deployment-report'].phase %></p>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-medium text-gray-500">Estado</h3>
+                    <span class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <%= data['phase2-deployment-report'].status %>
+                    </span>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-medium text-gray-500">Rollout %</h3>
+                    <p class="text-2xl font-bold text-purple-600"><%= data['phase2-deployment-report'].summary.rollout_percentage %></p>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-medium text-gray-500">Audiencia</h3>
+                    <p class="text-2xl font-bold text-blue-600"><%= data['phase2-deployment-report'].summary.audience %></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment Details -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Detalles del Deployment</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">✅ Completado</h3>
+                    <ul class="space-y-2">
+                        <% data['phase2-deployment-report'].immediate_actions_completed.forEach(action => { %>
+                        <li class="flex items-center text-green-700">
+                            <span class="mr-2">✓</span>
+                            <span class="text-sm"><%= action %></span>
+                        </li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">🎯 Próximos Milestones</h3>
+                    <ul class="space-y-2">
+                        <% data['phase2-deployment-report'].next_milestones.forEach(milestone => { %>
+                        <li class="flex items-start">
+                            <span class="<%= milestone.status === 'scheduled' ? 'text-blue-500' : 'text-gray-400' %> mr-2">●</span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900"><%= milestone.milestone %></p>
+                                <p class="text-xs text-gray-500"><%= milestone.timeline %></p>
+                            </div>
+                        </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <% if (data['phase2-features-plan']) { %>
+        <!-- Phase 2 Features -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">🚚 Phase 2 Features - Logistics & Operations</h2>
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-500">Timeline Estimado</span>
+                    <span class="text-lg font-bold text-blue-600"><%= data['phase2-features-plan'].estimated_timeline %></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Progreso: 0% (Kickoff pendiente)</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <% data['phase2-features-plan'].features.forEach(feature => { %>
+                <div class="border rounded-lg p-4">
+                    <div class="flex items-start justify-between mb-2">
+                        <h3 class="font-medium text-gray-900"><%= feature.name %></h3>
+                        <span class="px-2 py-1 rounded-full text-xs font-medium <%= feature.complexity === 'high' ? 'bg-red-100 text-red-800' : feature.complexity === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' %>">
+                            <%= feature.complexity %>
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-3"><%= feature.description %></p>
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span>Timeline: <%= feature.estimated_completion %></span>
+                        <span>Rollout: <%= feature.rollout_percentage %>%</span>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Infrastructure Requirements -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">🏗️ Requisitos de Infraestructura</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">Microservicios</h3>
+                    <ul class="space-y-1">
+                        <% data['phase2-features-plan'].infrastructure_requirements.forEach(req => { %>
+                        <li class="text-sm text-gray-600">• <%= req %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">Testing</h3>
+                    <ul class="space-y-1">
+                        <% data['phase2-features-plan'].testing_requirements.forEach(req => { %>
+                        <li class="text-sm text-gray-600">• <%= req %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <% if (data['phase2-communications-plan']) { %>
+        <!-- Communications Plan -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">📢 Plan de Comunicaciones</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">Canales</h3>
+                    <div class="space-y-2">
+                        <% data['phase2-communications-plan'].channels.forEach(channel => { %>
+                        <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                            <%= channel.replace(/_/g, ' ') %>
+                        </span>
+                        <% }); %>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">Segmentos de Usuario</h3>
+                    <div class="space-y-2">
+                        <% Object.entries(data['phase2-communications-plan'].user_segments).forEach(([segment, config]) => { %>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium capitalize"><%= segment.replace(/_/g, ' ') %></span>
+                            <span class="text-xs bg-gray-100 px-2 py-1 rounded"><%= config.percentage %>%</span>
+                        </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Success Criteria -->
+        <% if (data['phase2-deployment-report'] && data['phase2-deployment-report'].success_criteria) { %>
+        <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">🎯 Criterios de Éxito</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">Técnicos</h3>
+                    <ul class="space-y-1">
+                        <% data['phase2-deployment-report'].success_criteria.technical.forEach(criterion => { %>
+                        <li class="text-sm text-gray-600">• <%= criterion %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">Business</h3>
+                    <ul class="space-y-1">
+                        <% data['phase2-deployment-report'].success_criteria.business.forEach(criterion => { %>
+                        <li class="text-sm text-gray-600">• <%= criterion %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-3">Operacionales</h3>
+                    <ul class="space-y-1">
+                        <% data['phase2-deployment-report'].success_criteria.operational.forEach(criterion => { %>
+                        <li class="text-sm text-gray-600">• <%= criterion %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Raw Data -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Datos Completos de Phase 2</h3>
+            <pre class="bg-gray-50 p-4 rounded text-sm overflow-x-auto max-h-96"><code><%= JSON.stringify(data, null, 2) %></code></pre>
+        </div>
+    </div>
+</body>
+</html>

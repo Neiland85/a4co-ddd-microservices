@@ -1,0 +1,22 @@
+[
+  {
+    "check": "ADVANCED_CHECKOUT percentage is 25%",
+    "result": true,
+    "status": "PASS"
+  },
+  {
+    "check": "SMART_PRICING percentage is 25%",
+    "result": true,
+    "status": "PASS"
+  },
+  {
+    "check": "Audience is external_beta",
+    "result": true,
+    "status": "PASS"
+  },
+  {
+    "check": "Description updated for EXTERNAL BETA",
+    "result": true,
+    "status": "PASS"
+  }
+]

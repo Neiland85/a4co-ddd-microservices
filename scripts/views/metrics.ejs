@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - A4CO Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="/" class="text-blue-600 hover:text-blue-800 mr-4">← Dashboard</a>
+                    <h1 class="text-2xl font-bold text-gray-900">📈 Métricas Detalladas</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Adoption Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Adopción de Features</h3>
+                <canvas id="adoptionChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Error Rate Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tasa de Error</h3>
+                <canvas id="errorChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Performance Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance (Response Time)</h3>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Satisfaction Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Satisfacción Usuario</h3>
+                <canvas id="satisfactionChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Trends Analysis -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Análisis de Tendencias</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <% if (data.trends) { %>
+                    <% Object.entries(data.trends).forEach(([metric, trend]) => { %>
+                    <div class="text-center">
+                        <h4 class="font-medium text-gray-900 capitalize"><%= metric.replace(/([A-Z])/g, ' $1') %></h4>
+                        <p class="text-2xl font-bold <%= trend.trend === 'improving' ? 'text-green-600' : trend.trend === 'worsening' ? 'text-red-600' : 'text-gray-600' %>">
+                            <%= trend.current %>%<% if (metric === 'errorRate') { %> <% } else { %> <% } %>
+                        </p>
+                        <p class="text-sm text-gray-500">vs <%= trend.previous %></p>
+                        <span class="inline-block px-2 py-1 rounded-full text-xs font-medium <%= trend.trend === 'improving' ? 'bg-green-100 text-green-800' : trend.trend === 'worsening' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800' %>">
+                            <%= trend.trend %>
+                        </span>
+                    </div>
+                    <% }); %>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Predictions -->
+        <% if (data.predictions) { %>
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Predicciones</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">Próximas 24 horas</h4>
+                    <div class="space-y-2">
+                        <p class="text-sm">Adopción: <span class="font-medium"><%= data.predictions.next24h.adoption %></span></p>
+                        <p class="text-sm">Error Rate: <span class="font-medium"><%= data.predictions.next24h.errorRate %></span></p>
+                        <p class="text-sm">Confianza: <span class="font-medium <%= data.predictions.next24h.confidence === 'High' ? 'text-green-600' : 'text-yellow-600' %>"><%= data.predictions.next24h.confidence %></span></p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">Próxima semana</h4>
+                    <div class="space-y-2">
+                        <p class="text-sm">Adopción: <span class="font-medium"><%= data.predictions.nextWeek.adoption %></span></p>
+                        <p class="text-sm">Error Rate: <span class="font-medium"><%= data.predictions.nextWeek.errorRate %></span></p>
+                        <p class="text-sm">Confianza: <span class="font-medium <%= data.predictions.nextWeek.confidence === 'Medium' ? 'text-yellow-600' : 'text-gray-600' %>"><%= data.predictions.nextWeek.confidence %></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Raw Data -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Datos Crudos</h3>
+            <pre class="bg-gray-50 p-4 rounded text-sm overflow-x-auto"><code><%= JSON.stringify(data, null, 2) %></code></pre>
+        </div>
+    </div>
+
+    <script>
+        // Charts data
+        const chartData = <%= JSON.stringify(data) %>;
+
+        // Adoption Chart
+        const adoptionCtx = document.getElementById('adoptionChart').getContext('2d');
+        new Chart(adoptionCtx, {
+            type: 'line',
+            data: {
+                labels: ['Día 1', 'Día 2', 'Día 3'],
+                datasets: [{
+                    label: 'Adopción (%)',
+                    data: [69.2, 75.0, 78.5],
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Error Rate Chart
+        const errorCtx = document.getElementById('errorChart').getContext('2d');
+        new Chart(errorCtx, {
+            type: 'line',
+            data: {
+                labels: ['Día 1', 'Día 2', 'Día 3'],
+                datasets: [{
+                    label: 'Error Rate (%)',
+                    data: [1.4, 1.1, 0.8],
+                    borderColor: 'rgb(239, 68, 68)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Día 1', 'Día 2', 'Día 3'],
+                datasets: [{
+                    label: 'Response Time (ms)',
+                    data: [1450, 1430, 1420],
+                    borderColor: 'rgb(245, 158, 11)',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        // Satisfaction Chart
+        const satisfactionCtx = document.getElementById('satisfactionChart').getContext('2d');
+        new Chart(satisfactionCtx, {
+            type: 'line',
+            data: {
+                labels: ['Día 1', 'Día 2', 'Día 3'],
+                datasets: [{
+                    label: 'Satisfacción (/5.0)',
+                    data: [4.2, 4.4, 4.6],
+                    borderColor: 'rgb(34, 197, 94)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 3.5,
+                        max: 5.0
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "morning_check": {
+    "Analizar tendencias de 24h": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    },
+    "Identificar patrones de uso": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": "Minor observation noted"
+    },
+    "Evaluar estabilidad del sistema": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    },
+    "Revisar alertas generadas": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": "Minor observation noted"
+    }
+  },
+  "midday_check": {
+    "Profundizar en user feedback": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    },
+    "Analizar métricas de performance": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    },
+    "Evaluar impacto en conversiones": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    },
+    "Preparar recomendaciones para escalado": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    }
+  },
+  "evening_check": {
+    "Evaluar readiness para 25% rollout": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": "Minor observation noted"
+    },
+    "Documentar lecciones aprendidas": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    },
+    "Actualizar métricas baseline": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    },
+    "Planificar día 3 y decisión final": {
+      "status": "PASS",
+      "timestamp": "2025-09-29T12:57:12.234Z",
+      "notes": null
+    }
+  }
+}

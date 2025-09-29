@@ -1,14 +1,46 @@
 module.exports = {
-  projects: [
-    '<rootDir>/apps/auth-service/jest.config.js',
-    '<rootDir>/apps/product-service/jest.config.js',
-    '<rootDir>/apps/order-service/jest.config.js',
-    '<rootDir>/apps/user-service/jest.config.js',
-    '<rootDir>/apps/payment-service/jest.config.js',
-    '<rootDir>/packages/shared-utils/jest.config.js',
-    '<rootDir>/test/jest-e2e.config.js',
-    // Add other packages here
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/apps', '<rootDir>/packages'],
+  testMatch: [
+    '**/__tests__/**/*.spec.ts',
+    '**/__tests__/**/*.test.ts',
+    '**/*.spec.ts',
+    '**/*.test.ts'
+  ],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
+  collectCoverageFrom: [
+    'apps/**/*.ts',
+    'packages/**/*.ts',
+    '!**/*.d.ts',
+    '!**/*.config.ts',
+    '!**/*.module.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
   ],
   coverageDirectory: 'coverage',
-  collectCoverage: true,
+  coverageReporters: [
+    'text',
+    'lcov',
+    'json',
+    'html',
+    'json-summary'
+  ],
+  coverageThreshold: {
+      global: {
+        lines: 85,
+        functions: 82,
+        branches: 78,
+        statements: 84,
+      },
+    },
+    }
+  },
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testTimeout: 5000,
+  maxWorkers: "75%",
+  detectOpenHandles: true,
+  forceExit: true,
 };

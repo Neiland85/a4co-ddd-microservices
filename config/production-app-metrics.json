@@ -1,0 +1,44 @@
+{
+  "services": [
+    "user-service",
+    "product-service",
+    "order-service",
+    "payment-service",
+    "inventory-service",
+    "auth-service",
+    "dashboard-web"
+  ],
+  "metrics": {
+    "performance": [
+      "response_time",
+      "throughput",
+      "error_rate",
+      "cpu_usage",
+      "memory_usage",
+      "database_connections"
+    ],
+    "business": [
+      "orders_per_minute",
+      "conversion_rate",
+      "user_sessions",
+      "revenue_per_minute",
+      "cart_abandonment_rate"
+    ],
+    "quality": [
+      "test_coverage",
+      "code_quality_score",
+      "security_vulnerabilities",
+      "performance_benchmarks"
+    ]
+  },
+  "collection": {
+    "interval": "30s",
+    "retention": "90d",
+    "aggregation": [
+      "1m",
+      "5m",
+      "1h",
+      "1d"
+    ]
+  }
+}

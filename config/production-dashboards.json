@@ -1,0 +1,61 @@
+{
+  "main": {
+    "name": "Production Overview",
+    "panels": [
+      "system_health",
+      "application_performance",
+      "business_metrics",
+      "error_rates",
+      "infrastructure_status"
+    ],
+    "refresh_interval": "30s",
+    "time_range": "1h"
+  },
+  "detailed": {
+    "application": {
+      "name": "Application Deep Dive",
+      "panels": [
+        "response_times",
+        "error_details",
+        "user_journey",
+        "api_performance"
+      ],
+      "filters": [
+        "service",
+        "endpoint",
+        "user_segment"
+      ]
+    },
+    "infrastructure": {
+      "name": "Infrastructure Monitoring",
+      "panels": [
+        "kubernetes_status",
+        "database_performance",
+        "external_services"
+      ],
+      "filters": [
+        "cluster",
+        "namespace",
+        "resource_type"
+      ]
+    },
+    "business": {
+      "name": "Business Intelligence",
+      "panels": [
+        "revenue_metrics",
+        "user_engagement",
+        "conversion_funnel"
+      ],
+      "filters": [
+        "time_period",
+        "user_segment",
+        "product_category"
+      ]
+    }
+  },
+  "custom": [
+    "phase1_rollout_dashboard",
+    "feature_flag_monitoring",
+    "devops_excellence_metrics"
+  ]
+}

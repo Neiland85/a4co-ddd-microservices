@@ -1,0 +1,58 @@
+{
+  "channels": {
+    "slack": {
+      "enabled": true,
+      "webhook_url": "${SLACK_WEBHOOK_URL}",
+      "channels": {
+        "critical": "#alerts-critical",
+        "warning": "#alerts-warning",
+        "info": "#alerts-info"
+      }
+    },
+    "email": {
+      "enabled": true,
+      "smtp_config": "${SMTP_CONFIG}",
+      "recipients": {
+        "critical": [
+          "devops@company.com",
+          "cto@company.com"
+        ],
+        "warning": [
+          "devops@company.com"
+        ],
+        "info": [
+          "product@company.com"
+        ]
+      }
+    },
+    "pagerduty": {
+      "enabled": true,
+      "integration_key": "${PAGERDUTY_KEY}",
+      "escalation_policy": "devops-escalation"
+    }
+  },
+  "rules": {
+    "critical": [
+      "error_rate > 5% for 5m",
+      "response_time > 5000ms for 3m",
+      "service_down for 2m",
+      "database_connections > 90% for 5m"
+    ],
+    "warning": [
+      "cpu_usage > 80% for 10m",
+      "memory_usage > 75% for 10m",
+      "error_rate > 1% for 10m",
+      "response_time > 2000ms for 5m"
+    ],
+    "info": [
+      "deployment_completed",
+      "new_feature_activated",
+      "performance_threshold_reached"
+    ]
+  },
+  "escalation": {
+    "critical": "immediate",
+    "warning": "15m delay",
+    "info": "no escalation"
+  }
+}

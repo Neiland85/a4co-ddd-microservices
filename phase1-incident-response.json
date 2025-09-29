@@ -1,0 +1,100 @@
+{
+  "incident_levels": {
+    "sev1_critical": {
+      "description": "System down, data loss, security breach",
+      "response_time": "15 minutes",
+      "communication": "All stakeholders immediately",
+      "rollback_time": "1 hour",
+      "post_mortem": "Required within 24h"
+    },
+    "sev2_high": {
+      "description": "Major feature broken, significant user impact",
+      "response_time": "1 hour",
+      "communication": "DevOps + Product teams",
+      "rollback_time": "4 hours",
+      "post_mortem": "Required within 48h"
+    },
+    "sev3_medium": {
+      "description": "Minor issues, partial functionality affected",
+      "response_time": "4 hours",
+      "communication": "Engineering team",
+      "rollback_time": "24 hours",
+      "post_mortem": "Optional, lessons learned"
+    },
+    "sev4_low": {
+      "description": "Cosmetic issues, monitoring alerts",
+      "response_time": "Next business day",
+      "communication": "Internal team only",
+      "rollback_time": "As needed",
+      "post_mortem": "Not required"
+    }
+  },
+  "response_playbook": {
+    "immediate_actions": [
+      "Acknowledge incident and start communication",
+      "Assess impact and severity",
+      "Gather initial data and logs",
+      "Notify appropriate stakeholders"
+    ],
+    "investigation": [
+      "Review monitoring dashboards",
+      "Check application and infrastructure logs",
+      "Analyze user impact and reports",
+      "Identify root cause hypotheses"
+    ],
+    "resolution": [
+      "Implement fix or workaround",
+      "Test fix in staging environment",
+      "Deploy fix to production",
+      "Verify resolution and monitor"
+    ],
+    "communication": [
+      "Regular updates every 30 minutes for Sev1",
+      "Hourly updates for Sev2",
+      "Daily updates for Sev3+",
+      "Final resolution notification"
+    ]
+  },
+  "rollback_procedures": {
+    "automatic_rollback": {
+      "enabled": true,
+      "triggers": [
+        "error_rate > 10%",
+        "response_time > 10000ms"
+      ],
+      "execution_time": "< 30 minutes"
+    },
+    "manual_rollback": {
+      "process": [
+        "Stop feature rollout immediately",
+        "Revert feature flags to previous state",
+        "Clear user targeting rules",
+        "Verify system stability",
+        "Communicate rollback to users"
+      ],
+      "communication_template": "Feature temporarily disabled due to technical issues. Will be restored shortly."
+    }
+  },
+  "post_incident": {
+    "review": {
+      "timeline": "Within 24h for Sev1, 48h for Sev2",
+      "attendees": [
+        "DevOps",
+        "Engineering",
+        "Product",
+        "QA"
+      ],
+      "focus_areas": [
+        "What happened",
+        "Why it happened",
+        "How to prevent",
+        "Action items"
+      ]
+    },
+    "follow_up": {
+      "action_items_tracking": "Jira tickets with owners and deadlines",
+      "monitoring_improvements": "Implement additional monitoring based on incident",
+      "documentation_updates": "Update runbooks and procedures"
+    }
+  }
+}
