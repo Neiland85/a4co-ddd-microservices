@@ -25,14 +25,14 @@ interface V0ComponentTemplateProps extends BaseComponentProps {
   onCancel?: () => void;
 }
 
-// Estados de loading común
+// Common loading states
 interface LoadingState {
   isLoading: boolean;
   error: string | null;
   data: ApiResponse | null;
 }
 
-// Hook personalizado para manejo de estado de loading
+// Custom hook for loading state management
 const useLoadingState = (
   initialData?: ApiResponse
 ): [
