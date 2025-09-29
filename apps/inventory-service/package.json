@@ -10,7 +10,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext ts,js",
+    "lint:fix": "eslint src --ext ts,js --fix"
   },
   "dependencies": {
     "@a4co/shared-utils": "workspace:*",
