@@ -28,6 +28,7 @@
     "@storybook/addon-actions": "^9.0.8",
     "@types/node": "^24.3.1",
     "clsx": "^2.0.0",
+    "lucide-react": "^0.460.0",
     "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {
