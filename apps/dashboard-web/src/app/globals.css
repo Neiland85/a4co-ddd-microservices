@@ -1,9 +1,9 @@
-@import '@a4co/design-system/styles';
+/* Importar Tailwind primero */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* Variables CSS del design system sin imports de fuentes */
 @layer base {
   :root {
     --background: 0 0% 100%;

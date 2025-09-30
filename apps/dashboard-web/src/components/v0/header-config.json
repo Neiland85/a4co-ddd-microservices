@@ -1,0 +1,149 @@
+{
+  "name": "A4CO Monitoring Header",
+  "description": "Header profesional para dashboard de monitoreo de microservicios andaluces",
+  "framework": "nextjs",
+  "styling": "tailwind-shadcn",
+  "theme": {
+    "colors": {
+      "primary": "#94a366",
+      "secondary": "#e9c7a1",
+      "accent": "#fefdfb",
+      "background": "#ffffff",
+      "foreground": "#2a2f1c"
+    },
+    "fonts": {
+      "primary": "Inter",
+      "mono": "Fira Code"
+    }
+  },
+  "components": [
+    {
+      "name": "Header",
+      "type": "layout",
+      "props": {
+        "height": "64px",
+        "sticky": true,
+        "border": true,
+        "shadow": "sm"
+      },
+      "children": [
+        "Logo",
+        "NavigationMenu",
+        "ServiceStatus",
+        "Spacer",
+        "NotificationBadge",
+        "ThemeToggle",
+        "TimeDisplay",
+        "UserMenu"
+      ]
+    },
+    {
+      "name": "Logo",
+      "type": "brand",
+      "content": "A4CO Monitoring",
+      "icon": "Activity"
+    },
+    {
+      "name": "NavigationMenu",
+      "type": "navigation",
+      "items": [
+        { "label": "Dashboard", "href": "/dashboard", "icon": "BarChart3" },
+        { "label": "Servicios", "href": "/services", "icon": "Server" },
+        { "label": "Usuarios", "href": "/users", "icon": "Users" },
+        { "label": "Analytics", "href": "/analytics", "icon": "TrendingUp" }
+      ]
+    },
+    {
+      "name": "ServiceStatus",
+      "type": "status-indicators",
+      "services": [
+        "auth-service",
+        "product-service",
+        "user-service",
+        "order-service",
+        "payment-service"
+      ]
+    },
+    {
+      "name": "UserMenu",
+      "type": "dropdown",
+      "trigger": "avatar",
+      "items": [
+        { "label": "Perfil", "href": "/profile" },
+        { "label": "Configuración", "href": "/settings" },
+        { "type": "separator" },
+        { "label": "Cerrar sesión", "action": "logout" }
+      ]
+    },
+    {
+      "name": "NotificationBadge",
+      "type": "badge",
+      "variant": "destructive",
+      "position": "top-right"
+    },
+    {
+      "name": "ThemeToggle",
+      "type": "toggle",
+      "icons": ["Sun", "Moon"]
+    },
+    {
+      "name": "TimeDisplay",
+      "type": "text",
+      "format": "DD/MM/YYYY HH:mm:ss",
+      "updateInterval": 1000
+    }
+  ],
+  "hooks": [
+    {
+      "name": "useAuth",
+      "returns": {
+        "user": "{ id: string, name: string, email: string, role: string, avatar?: string }",
+        "isAuthenticated": "boolean",
+        "isLoading": "boolean"
+      }
+    },
+    {
+      "name": "useServiceHealth",
+      "returns": {
+        "services": "Array<{ name: string, status: 'healthy' | 'warning' | 'error', uptime: string }>",
+        "isLoading": "boolean"
+      }
+    },
+    {
+      "name": "useNotifications",
+      "returns": {
+        "count": "number",
+        "notifications": "Array<{ id: string, title: string, message: string, read: boolean }>"
+      }
+    },
+    {
+      "name": "useCurrentTime",
+      "returns": {
+        "time": "string",
+        "date": "string",
+        "formatted": "string"
+      }
+    }
+  ],
+  "integrations": {
+    "apis": [
+      {
+        "service": "auth-service",
+        "endpoint": "/api/v1/auth/me",
+        "method": "GET"
+      },
+      {
+        "service": "monitoring",
+        "endpoint": "/api/v1/health/services",
+        "method": "GET"
+      },
+      {
+        "service": "notification-service",
+        "endpoint": "/api/v1/notifications/unread",
+        "method": "GET"
+      }
+    ],
+    "theme": "next-themes",
+    "icons": "lucide-react"
+  }
+}
