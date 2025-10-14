@@ -47,7 +47,11 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
   };
 
   // Verificar permisos de geolocalización
+<<<<<<< HEAD
   const checkPermission = useCallback(async(): Promise<boolean> => {
+=======
+  const checkPermission = useCallback(async (): Promise<boolean> => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!('geolocation' in navigator)) {
       setState(prev => ({ ...prev, error: 'Geolocalización no soportada' }));
       return false;
@@ -73,7 +77,11 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
   }, []);
 
   // Obtener ubicación actual
+<<<<<<< HEAD
   const getCurrentLocation = useCallback(async(): Promise<Location | null> => {
+=======
+  const getCurrentLocation = useCallback(async (): Promise<Location | null> => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -126,7 +134,11 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
 
             reject(new Error(errorMessage));
           },
+<<<<<<< HEAD
           defaultOptions,
+=======
+          defaultOptions
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
       });
     } catch (error) {
@@ -185,12 +197,20 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
 
           setState(prev => ({ ...prev, error: errorMessage }));
         },
+<<<<<<< HEAD
         defaultOptions,
+=======
+        defaultOptions
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
 
       return watchId;
     },
+<<<<<<< HEAD
     [defaultOptions],
+=======
+    [defaultOptions]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Calcular distancia entre dos puntos (fórmula de Haversine)
@@ -208,14 +228,24 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     },
+<<<<<<< HEAD
     [],
+=======
+    []
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Encontrar productores cercanos
   const findNearbyProductors = useCallback(
+<<<<<<< HEAD
     async(
       productors: Productor[],
       maxDistance: number = 50, // km por defecto
+=======
+    async (
+      productors: Productor[],
+      maxDistance: number = 50 // km por defecto
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     ): Promise<Productor[]> => {
       if (!state.location) {
         throw new Error('Ubicación no disponible');
@@ -228,7 +258,11 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
             state.location!.latitude,
             state.location!.longitude,
             productor.latitude,
+<<<<<<< HEAD
             productor.longitude,
+=======
+            productor.longitude
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           ),
         }))
         .filter(productor => productor.distance <= maxDistance)
@@ -236,15 +270,26 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
 
       return nearbyProductors;
     },
+<<<<<<< HEAD
     [state.location, calculateDistance],
+=======
+    [state.location, calculateDistance]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Obtener dirección a partir de coordenadas (reverse geocoding)
   const getAddressFromCoordinates = useCallback(
+<<<<<<< HEAD
     async(latitude: number, longitude: number): Promise<string> => {
       try {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+=======
+    async (latitude: number, longitude: number): Promise<string> => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
 
         if (!response.ok) {
@@ -258,15 +303,26 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
         return 'Dirección no disponible';
       }
     },
+<<<<<<< HEAD
     [],
+=======
+    []
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Obtener coordenadas a partir de dirección (geocoding)
   const getCoordinatesFromAddress = useCallback(
+<<<<<<< HEAD
     async(address: string): Promise<Location | null> => {
       try {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
+=======
+    async (address: string): Promise<Location | null> => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
 
         if (!response.ok) {
@@ -291,7 +347,11 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
         return null;
       }
     },
+<<<<<<< HEAD
     [],
+=======
+    []
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Verificar si una ubicación está dentro de un área específica
@@ -301,11 +361,19 @@ export const useGeolocation = (options: GeolocationOptions = {}) => {
         location.latitude,
         location.longitude,
         centerLat,
+<<<<<<< HEAD
         centerLon,
       );
       return distance <= radiusKm;
     },
     [calculateDistance],
+=======
+        centerLon
+      );
+      return distance <= radiusKm;
+    },
+    [calculateDistance]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Inicializar geolocalización al montar el componente

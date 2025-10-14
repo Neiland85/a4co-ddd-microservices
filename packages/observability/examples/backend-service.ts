@@ -137,7 +137,11 @@ app.use(
     serviceName: 'order-service',
     logger,
     captureRequestBody: true,
+<<<<<<< HEAD
   }),
+=======
+  })
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 );
 
 // Health check endpoint

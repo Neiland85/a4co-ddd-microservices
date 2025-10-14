@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use strict';
 var __decorate = (this && this.__decorate) || function(decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -16,6 +17,26 @@ const express_1 = __importDefault(require('express'));
 const nats_1 = require('nats');
 const ioredis_1 = __importDefault(require('ioredis'));
 const observability_1 = require('@a4co/observability');
+=======
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const nats_1 = require("nats");
+const ioredis_1 = __importDefault(require("ioredis"));
+const observability_1 = require("@a4co/observability");
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // 1. Inicializar observabilidad al inicio de la aplicación
 async function bootstrap() {
     await (0, observability_1.initializeObservability)({
@@ -101,7 +122,11 @@ function createExpressApp() {
         res.json({ status: 'healthy', service: 'order-service' });
     });
     // Endpoint de creación de orden con observabilidad completa
+<<<<<<< HEAD
     app.post('/api/orders', async(req, res) => {
+=======
+    app.post('/api/orders', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         const correlationId = req.correlationId || (0, observability_1.generateCorrelationId)();
         const causationId = (0, observability_1.generateCausationId)(correlationId);
         // Logger con contexto de la petición
@@ -112,7 +137,11 @@ function createExpressApp() {
         });
         logger.info('Creating new order');
         try {
+<<<<<<< HEAD
             const order = await (0, observability_1.withSpan)('createOrder', async() => {
+=======
+            const order = await (0, observability_1.withSpan)('createOrder', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
                 // Validar orden
                 const validation = await validateOrder(req.body);
                 if (!validation.isValid) {
@@ -217,6 +246,7 @@ class CreateOrderCommandHandler {
 }
 __decorate([
     (0, observability_1.CommandHandler)('CreateOrder', 'Order'),
+<<<<<<< HEAD
     __metadata('design:type', Function),
     __metadata('design:paramtypes', [CreateOrderCommand]),
     __metadata('design:returntype', Promise),
@@ -227,11 +257,27 @@ __decorate([
     __metadata('design:paramtypes', [CreateOrderCommand]),
     __metadata('design:returntype', Promise),
 ], CreateOrderCommandHandler.prototype, 'createOrder', null);
+=======
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [CreateOrderCommand]),
+    __metadata("design:returntype", Promise)
+], CreateOrderCommandHandler.prototype, "handle", null);
+__decorate([
+    (0, observability_1.Trace)({ recordResult: true }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [CreateOrderCommand]),
+    __metadata("design:returntype", Promise)
+], CreateOrderCommandHandler.prototype, "createOrder", null);
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Configurar handlers de eventos
 function setupDomainHandlers(nats) {
     const logger = (0, observability_1.getLogger)();
     // Handler para eventos de inventario
+<<<<<<< HEAD
     nats.subscribe('inventory.updated', async(msg) => {
+=======
+    nats.subscribe('inventory.updated', async (msg) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         const handler = new InventoryUpdatedEventHandler();
         await handler.handle(msg);
     });
@@ -260,6 +306,7 @@ class InventoryUpdatedEventHandler {
 }
 __decorate([
     (0, observability_1.EventHandler)('InventoryUpdated', 'Inventory'),
+<<<<<<< HEAD
     __metadata('design:type', Function),
     __metadata('design:paramtypes', [Object]),
     __metadata('design:returntype', Promise),
@@ -273,6 +320,21 @@ __decorate([
 // Funciones auxiliares
 async function validateOrder(orderData) {
     return (0, observability_1.withSpan)('validateOrder', async() => {
+=======
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], InventoryUpdatedEventHandler.prototype, "handle", null);
+__decorate([
+    (0, observability_1.Trace)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], InventoryUpdatedEventHandler.prototype, "updateOrderStatus", null);
+// Funciones auxiliares
+async function validateOrder(orderData) {
+    return (0, observability_1.withSpan)('validateOrder', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         const errors = [];
         if (!orderData.customerId) {
             errors.push('Customer ID is required');
@@ -299,4 +361,8 @@ bootstrap().catch(error => {
     console.error('Failed to start application:', error);
     process.exit(1);
 });
+<<<<<<< HEAD
 //# sourceMappingURL=microservice-setup.js.map
+=======
+//# sourceMappingURL=microservice-setup.js.map
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

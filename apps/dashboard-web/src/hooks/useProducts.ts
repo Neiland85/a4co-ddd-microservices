@@ -41,7 +41,11 @@ export function useProducts(options: UseProductsOptions = {}) {
     // Solo actualizamos si hay cambios reales en las opciones
     const current = optionsRef.current;
     const hasChanged = Object.keys({ ...current, ...options }).some(
+<<<<<<< HEAD
       key => current[key as keyof UseProductsOptions] !== options[key as keyof UseProductsOptions],
+=======
+      key => current[key as keyof UseProductsOptions] !== options[key as keyof UseProductsOptions]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
 
     if (hasChanged) {
@@ -67,7 +71,11 @@ export function useProducts(options: UseProductsOptions = {}) {
   });
 
   const fetchProducts = useCallback(
+<<<<<<< HEAD
     async(customOptions?: UseProductsOptions, append = false) => {
+=======
+    async (customOptions?: UseProductsOptions, append = false) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -204,7 +212,11 @@ export function useProducts(options: UseProductsOptions = {}) {
     hasData: state.products.length > 0,
     isEmpty: !state.loading && state.products.length === 0,
     isFiltered: Object.keys(state.filters).some(
+<<<<<<< HEAD
       key => state.filters[key as keyof typeof state.filters] !== undefined,
+=======
+      key => state.filters[key as keyof typeof state.filters] !== undefined
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     ),
     canLoadMore: state.pagination.hasMore && !state.loading,
   };

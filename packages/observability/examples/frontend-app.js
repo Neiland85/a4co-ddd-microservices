@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.default = Root;
@@ -8,6 +9,18 @@ const jsx_runtime_1 = require('react/jsx-runtime');
 const react_1 = require('react');
 const react_router_dom_1 = require('react-router-dom');
 const observability_1 = require('@a4co/observability');
+=======
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Root;
+const jsx_runtime_1 = require("react/jsx-runtime");
+/**
+ * Example: React frontend application with full observability
+ */
+const react_1 = require("react");
+const react_router_dom_1 = require("react-router-dom");
+const observability_1 = require("@a4co/observability");
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Initialize observability
 const logger = (0, observability_1.createFrontendLogger)({
     service: 'web-app',
@@ -45,7 +58,11 @@ const ProductList = (0, observability_1.withTracing)((0, observability_1.withLog
     (0, react_1.useEffect)(() => {
         fetchProducts();
     }, []);
+<<<<<<< HEAD
     const fetchProducts = async() => {
+=======
+    const fetchProducts = async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         const startTime = logRequest({
             method: 'GET',
             url: '/api/products',
@@ -84,6 +101,7 @@ const ProductList = (0, observability_1.withTracing)((0, observability_1.withLog
         }
     };
     if (loading)
+<<<<<<< HEAD
         return (0, jsx_runtime_1.jsx)('div', { children: 'Loading products...' });
     if (error)
         return (0, jsx_runtime_1.jsxs)('div', { children: ['Error: ', error] });
@@ -91,6 +109,15 @@ const ProductList = (0, observability_1.withTracing)((0, observability_1.withLog
 }), { componentName: 'ProductList' });
 // Product Card with observable interactions
 function ProductCard({ product, onSelect }) {
+=======
+        return (0, jsx_runtime_1.jsx)("div", { children: "Loading products..." });
+    if (error)
+        return (0, jsx_runtime_1.jsxs)("div", { children: ["Error: ", error] });
+    return ((0, jsx_runtime_1.jsx)("div", { className: "product-grid", children: products.map(product => ((0, jsx_runtime_1.jsx)(ProductCard, { product: product, onSelect: onProductSelect }, product.id))) }));
+}), { componentName: 'ProductList' });
+// Product Card with observable interactions
+function ProductCard({ product, onSelect, }) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const logInteraction = (0, observability_1.useInteractionLogger)('product.card', {
         throttle: 1000,
     });
@@ -103,7 +130,11 @@ function ProductCard({ product, onSelect }) {
         });
         onSelect(product);
     };
+<<<<<<< HEAD
     return ((0, jsx_runtime_1.jsxs)('div', { className: 'product-card', onClick: handleClick, children: [(0, jsx_runtime_1.jsx)('img', { src: product.image, alt: product.name }), (0, jsx_runtime_1.jsx)('h3', { children: product.name }), (0, jsx_runtime_1.jsxs)('p', { children: ['$', product.price] }), (0, jsx_runtime_1.jsx)(observability_1.ObservableButton, { variant: 'primary', size: 'medium', trackingId: `add-to-cart-${product.id}`, trackingMetadata: {
+=======
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "product-card", onClick: handleClick, children: [(0, jsx_runtime_1.jsx)("img", { src: product.image, alt: product.name }), (0, jsx_runtime_1.jsx)("h3", { children: product.name }), (0, jsx_runtime_1.jsxs)("p", { children: ["$", product.price] }), (0, jsx_runtime_1.jsx)(observability_1.ObservableButton, { variant: "primary", size: "medium", trackingId: `add-to-cart-${product.id}`, trackingMetadata: {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
                     productId: product.id,
                     productName: product.name,
                     price: product.price,
@@ -111,14 +142,22 @@ function ProductCard({ product, onSelect }) {
                 }, onClick: e => {
                     e.stopPropagation();
                     // Add to cart logic
+<<<<<<< HEAD
                 }, children: 'Add to Cart' })] }));
+=======
+                }, children: "Add to Cart" })] }));
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }
 // Checkout Form with observability
 function CheckoutForm({ cart }) {
     const logger = (0, observability_1.useLogger)();
     const { startApiTrace, endApiTrace } = (0, observability_1.useApiTracing)();
     const [submitting, setSubmitting] = (0, react_1.useState)(false);
+<<<<<<< HEAD
     const handleSubmit = async(event) => {
+=======
+    const handleSubmit = async (event) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const orderData = {
@@ -162,17 +201,28 @@ function CheckoutForm({ cart }) {
             setSubmitting(false);
         }
     };
+<<<<<<< HEAD
     return ((0, jsx_runtime_1.jsxs)(observability_1.ObservableForm, { formId: 'checkout-form', trackFieldChanges: true, trackingMetadata: {
+=======
+    return ((0, jsx_runtime_1.jsxs)(observability_1.ObservableForm, { formId: "checkout-form", trackFieldChanges: true, trackingMetadata: {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
             cartSize: cart.length,
             cartValue: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
         }, onSubmit: handleSubmit, onSubmitSuccess: data => {
             logger.info('Checkout form submitted', { custom: data });
         }, onSubmitError: error => {
             logger.error('Checkout form error', error);
+<<<<<<< HEAD
         }, children: [(0, jsx_runtime_1.jsx)('input', { name: 'email', type: 'email', placeholder: 'Email', required: true }), (0, jsx_runtime_1.jsx)('input', { name: 'name', type: 'text', placeholder: 'Full Name', required: true }), (0, jsx_runtime_1.jsx)('textarea', { name: 'address', placeholder: 'Shipping Address', required: true }), (0, jsx_runtime_1.jsx)(observability_1.ObservableButton, { type: 'submit', variant: 'primary', size: 'large', loading: submitting, trackingId: 'submit-order', trackingMetadata: {
                     formId: 'checkout-form',
                     cartSize: cart.length,
                 }, children: 'Place Order' })] }));
+=======
+        }, children: [(0, jsx_runtime_1.jsx)("input", { name: "email", type: "email", placeholder: "Email", required: true }), (0, jsx_runtime_1.jsx)("input", { name: "name", type: "text", placeholder: "Full Name", required: true }), (0, jsx_runtime_1.jsx)("textarea", { name: "address", placeholder: "Shipping Address", required: true }), (0, jsx_runtime_1.jsx)(observability_1.ObservableButton, { type: "submit", variant: "primary", size: "large", loading: submitting, trackingId: "submit-order", trackingMetadata: {
+                    formId: 'checkout-form',
+                    cartSize: cart.length,
+                }, children: "Place Order" })] }));
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }
 // Main App with route tracking
 function App() {
@@ -181,7 +231,11 @@ function App() {
     const [cart, setCart] = (0, react_1.useState)([]);
     // Track route changes
     (0, observability_1.useRouteTracing)(location.pathname);
+<<<<<<< HEAD
     return ((0, jsx_runtime_1.jsx)(observability_1.LoggingErrorBoundary, { fallback: ({ error }) => ((0, jsx_runtime_1.jsxs)('div', { className: 'error-page', children: [(0, jsx_runtime_1.jsx)('h1', { children: 'Something went wrong' }), (0, jsx_runtime_1.jsx)('p', { children: error?.message })] })), children: (0, jsx_runtime_1.jsx)('div', { className: 'app', children: (0, jsx_runtime_1.jsxs)(react_router_dom_1.Routes, { children: [(0, jsx_runtime_1.jsx)(react_router_dom_1.Route, { path: '/', element: (0, jsx_runtime_1.jsx)(ProductList, { onProductSelect: setSelectedProduct }) }), (0, jsx_runtime_1.jsx)(react_router_dom_1.Route, { path: '/product/:id', element: selectedProduct ? ((0, jsx_runtime_1.jsx)(ProductDetail, { product: selectedProduct })) : ((0, jsx_runtime_1.jsx)('div', { children: 'Product not found' })) }), (0, jsx_runtime_1.jsx)(react_router_dom_1.Route, { path: '/checkout', element: (0, jsx_runtime_1.jsx)(CheckoutForm, { cart: cart }) })] }) }) }));
+=======
+    return ((0, jsx_runtime_1.jsx)(observability_1.LoggingErrorBoundary, { fallback: ({ error }) => ((0, jsx_runtime_1.jsxs)("div", { className: "error-page", children: [(0, jsx_runtime_1.jsx)("h1", { children: "Something went wrong" }), (0, jsx_runtime_1.jsx)("p", { children: error?.message })] })), children: (0, jsx_runtime_1.jsx)("div", { className: "app", children: (0, jsx_runtime_1.jsxs)(react_router_dom_1.Routes, { children: [(0, jsx_runtime_1.jsx)(react_router_dom_1.Route, { path: "/", element: (0, jsx_runtime_1.jsx)(ProductList, { onProductSelect: setSelectedProduct }) }), (0, jsx_runtime_1.jsx)(react_router_dom_1.Route, { path: "/product/:id", element: selectedProduct ? ((0, jsx_runtime_1.jsx)(ProductDetail, { product: selectedProduct })) : ((0, jsx_runtime_1.jsx)("div", { children: "Product not found" })) }), (0, jsx_runtime_1.jsx)(react_router_dom_1.Route, { path: "/checkout", element: (0, jsx_runtime_1.jsx)(CheckoutForm, { cart: cart }) })] }) }) }));
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }
 // Product Detail Page
 function ProductDetail({ product }) {
@@ -195,11 +249,16 @@ function ProductDetail({ product }) {
             },
         });
     }, [product]);
+<<<<<<< HEAD
     return ((0, jsx_runtime_1.jsxs)('div', { className: 'product-detail', children: [(0, jsx_runtime_1.jsx)('img', { src: product.image, alt: product.name }), (0, jsx_runtime_1.jsx)('h1', { children: product.name }), (0, jsx_runtime_1.jsx)('p', { children: product.description }), (0, jsx_runtime_1.jsxs)('p', { className: 'price', children: ['$', product.price] }), (0, jsx_runtime_1.jsx)(observability_1.ObservableButton, { variant: 'primary', size: 'large', trackingId: `buy-now-${product.id}`, trackingMetadata: {
+=======
+    return ((0, jsx_runtime_1.jsxs)("div", { className: "product-detail", children: [(0, jsx_runtime_1.jsx)("img", { src: product.image, alt: product.name }), (0, jsx_runtime_1.jsx)("h1", { children: product.name }), (0, jsx_runtime_1.jsx)("p", { children: product.description }), (0, jsx_runtime_1.jsxs)("p", { className: "price", children: ["$", product.price] }), (0, jsx_runtime_1.jsx)(observability_1.ObservableButton, { variant: "primary", size: "large", trackingId: `buy-now-${product.id}`, trackingMetadata: {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
                     productId: product.id,
                     productName: product.name,
                     price: product.price,
                     action: 'buy-now',
+<<<<<<< HEAD
                 }, children: 'Buy Now' })] }));
 }
 // Root component with providers
@@ -207,3 +266,12 @@ function Root() {
     return ((0, jsx_runtime_1.jsx)(observability_1.TracingProvider, { serviceName: 'web-app', serviceVersion: process.env.REACT_APP_VERSION || '1.0.0', environment: process.env.REACT_APP_ENV || 'development', children: (0, jsx_runtime_1.jsx)(observability_1.LoggerProvider, { logger: logger, children: (0, jsx_runtime_1.jsx)(react_router_dom_1.BrowserRouter, { children: (0, jsx_runtime_1.jsx)(App, {}) }) }) }));
 }
 //# sourceMappingURL=frontend-app.js.map
+=======
+                }, children: "Buy Now" })] }));
+}
+// Root component with providers
+function Root() {
+    return ((0, jsx_runtime_1.jsx)(observability_1.TracingProvider, { serviceName: "web-app", serviceVersion: process.env.REACT_APP_VERSION || '1.0.0', environment: process.env.REACT_APP_ENV || 'development', children: (0, jsx_runtime_1.jsx)(observability_1.LoggerProvider, { logger: logger, children: (0, jsx_runtime_1.jsx)(react_router_dom_1.BrowserRouter, { children: (0, jsx_runtime_1.jsx)(App, {}) }) }) }));
+}
+//# sourceMappingURL=frontend-app.js.map
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

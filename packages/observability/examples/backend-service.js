@@ -2,6 +2,7 @@
 /**
  * Example: Backend microservice with full observability
  */
+<<<<<<< HEAD
 var __decorate = (this && this.__decorate) || function(decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function') r = Reflect.decorate(decorators, target, key, desc);
@@ -17,6 +18,23 @@ var __importDefault = (this && this.__importDefault) || function(mod) {
 Object.defineProperty(exports, '__esModule', { value: true });
 const express_1 = __importDefault(require('express'));
 const observability_1 = require('@a4co/observability');
+=======
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const observability_1 = require("@a4co/observability");
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Initialize observability
 const logger = (0, observability_1.createLogger)({
     service: 'order-service',
@@ -57,7 +75,11 @@ class OrderService {
         });
         try {
             // Validate order
+<<<<<<< HEAD
             await (0, observability_1.withSpan)('validate-order', async(span) => {
+=======
+            await (0, observability_1.withSpan)('validate-order', async (span) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
                 span.setAttribute('order.items', command.items.length);
                 span.setAttribute('order.total', command.total);
                 if (command.total <= 0) {
@@ -65,7 +87,11 @@ class OrderService {
                 }
             });
             // Create order aggregate
+<<<<<<< HEAD
             const order = await (0, observability_1.withSpan)('create-order-aggregate', async(span) => {
+=======
+            const order = await (0, observability_1.withSpan)('create-order-aggregate', async (span) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
                 const order = new Order({
                     id: command.orderId,
                     userId: command.userId,
@@ -77,7 +103,11 @@ class OrderService {
                 return order;
             });
             // Save to database
+<<<<<<< HEAD
             await (0, observability_1.withSpan)('save-order-to-db', async(span) => {
+=======
+            await (0, observability_1.withSpan)('save-order-to-db', async (span) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
                 span.setAttribute('db.operation', 'insert');
                 span.setAttribute('db.table', 'orders');
                 // Simulated DB operation
@@ -122,10 +152,17 @@ class OrderService {
 }
 __decorate([
     (0, observability_1.Trace)({ name: 'OrderService.createOrder' }),
+<<<<<<< HEAD
     __metadata('design:type', Function),
     __metadata('design:paramtypes', [Object]),
     __metadata('design:returntype', Promise),
 ], OrderService.prototype, 'createOrder', null);
+=======
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrderService.prototype, "createOrder", null);
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Express application
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -144,14 +181,22 @@ app.get('/health', (req, res) => {
     });
 });
 // Metrics endpoint
+<<<<<<< HEAD
 app.get('/metrics', async(req, res) => {
+=======
+app.get('/metrics', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     // Prometheus metrics will be exposed here
     res.set('Content-Type', 'text/plain');
     res.send('# Prometheus metrics');
 });
 // Order creation endpoint
 const orderService = new OrderService();
+<<<<<<< HEAD
 app.post('/orders', async(req, res) => {
+=======
+app.post('/orders', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const tracingContext = (0, observability_1.getTracingContext)();
     try {
         const command = {
@@ -179,7 +224,11 @@ app.post('/orders', async(req, res) => {
     }
 });
 // Event subscriptions
+<<<<<<< HEAD
 natsClient.subscribeToEvents('inventory.reserved', async(event, span) => {
+=======
+natsClient.subscribeToEvents('inventory.reserved', async (event, span) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     logger.info('Received inventory reserved event', {
         ddd: {
             eventName: 'InventoryReserved',
@@ -190,7 +239,11 @@ natsClient.subscribeToEvents('inventory.reserved', async(event, span) => {
     // Process the event...
 });
 // Graceful shutdown
+<<<<<<< HEAD
 process.on('SIGTERM', async() => {
+=======
+process.on('SIGTERM', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     logger.info('Shutting down service...');
     // Close connections
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -218,4 +271,8 @@ class Order {
 function generateId() {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
+<<<<<<< HEAD
 //# sourceMappingURL=backend-service.js.map
+=======
+//# sourceMappingURL=backend-service.js.map
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

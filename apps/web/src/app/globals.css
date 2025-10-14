@@ -51,7 +51,11 @@
 
 @layer base {
   * {
+<<<<<<< HEAD
     border-color: hsl(var(--border));
+=======
+    @apply border-border;
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   }
   body {
     @apply bg-background text-foreground;
@@ -75,9 +79,12 @@
     @apply bg-card text-card-foreground rounded-lg border shadow-sm;
   }
 }
+<<<<<<< HEAD
 
 @layer utilities {
   .border-border {
     border-color: hsl(var(--border));
   }
 }
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

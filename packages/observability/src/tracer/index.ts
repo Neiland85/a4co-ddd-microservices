@@ -15,10 +15,20 @@ import {
   W3CTraceContextPropagator,
 } from '@opentelemetry/core';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+<<<<<<< HEAD
+=======
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+  BatchSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { KoaInstrumentation } from '@opentelemetry/instrumentation-koa';
+<<<<<<< HEAD
 import { Resource } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import {
@@ -28,6 +38,24 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+=======
+import {
+  trace,
+  context,
+  SpanStatusCode,
+  SpanKind,
+  Tracer,
+  Span,
+  SpanOptions,
+  Context,
+  propagation,
+  TextMapGetter,
+  TextMapSetter,
+} from '@opentelemetry/api';
+import { W3CTraceContextPropagator } from '@opentelemetry/core';
+import { CompositePropagator, W3CBaggagePropagator } from '@opentelemetry/core';
+import { TracingConfig, ObservabilityContext, DDDMetadata, ObservabilityTracer } from '../types';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { getLogger } from '../logger';
 import type {
   DDDMetadata,
@@ -72,15 +100,19 @@ const messagePropagator = new CustomMessagePropagator();
 // Enhanced tracer with context support
 function createEnhancedTracer(
   baseTracer: Tracer,
+<<<<<<< HEAD
   defaultContext?: ObservabilityContext,
+=======
+  defaultContext?: ObservabilityContext
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ObservabilityTracer {
   const enhancedTracer = Object.create(baseTracer) as ObservabilityTracer;
 
-  enhancedTracer.withContext = function(ctx: ObservabilityContext): ObservabilityTracer {
+  enhancedTracer.withContext = function (ctx: ObservabilityContext): ObservabilityTracer {
     return createEnhancedTracer(baseTracer, { ...defaultContext, ...ctx });
   };
 
-  enhancedTracer.withDDD = function(metadata: DDDMetadata): ObservabilityTracer {
+  enhancedTracer.withDDD = function (metadata: DDDMetadata): ObservabilityTracer {
     const dddContext: ObservabilityContext = {
       ...defaultContext,
       metadata: {
@@ -93,10 +125,17 @@ function createEnhancedTracer(
 
   // Override startSpan to include default context
   const originalStartSpan = baseTracer.startSpan.bind(baseTracer);
+<<<<<<< HEAD
   enhancedTracer.startSpan = function(
     name: string,
     options?: SpanOptions,
     context?: Context,
+=======
+  enhancedTracer.startSpan = function (
+    name: string,
+    options?: SpanOptions,
+    context?: Context
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ): Span {
     const attributes = {
       ...options?.attributes,
@@ -157,7 +196,11 @@ function createEnhancedTracer(
 
 // Initialize tracing
 export function initializeTracing(
+<<<<<<< HEAD
   config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string },
+=======
+  config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): NodeSDK {
   const logger = getLogger();
 
@@ -246,12 +289,19 @@ export function initializeTracing(
   });
 
   // Initialize SDK
+<<<<<<< HEAD
   try {
     sdk.start();
     logger.info('Tracing initialized', { exporters });
   } catch (error: any) {
     logger.error('Error initializing tracing', { error });
   }
+=======
+  sdk
+    .start()
+    .then(() => logger.info({ exporters }, 'Tracing initialized'))
+    .catch(error => logger.error({ error }, 'Error initializing tracing'));
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   globalSDK = sdk;
 
@@ -304,7 +354,11 @@ export function withSpan<T>(
         span.end();
       }
     },
+<<<<<<< HEAD
     options,
+=======
+    options
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 }
 
@@ -348,4 +402,8 @@ export {
   type Context,
   type Span,
   type SpanOptions,
+<<<<<<< HEAD
+=======
+  type Context,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 };

@@ -1,0 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsx_runtime_1 = require("react/jsx-runtime");
+function HomePage() {
+    return ((0, jsx_runtime_1.jsx)("div", { className: "demo-container", children: (0, jsx_runtime_1.jsxs)("div", { className: "demo-card", children: [(0, jsx_runtime_1.jsx)("h1", { className: "demo-title", children: "\uD83C\uDF89 A4CO Dashboard FUNCIONA! \uD83C\uDF89" }), (0, jsx_runtime_1.jsx)("p", { className: "demo-subtitle", children: "El servidor Next.js est\u00E1 corriendo correctamente" }), (0, jsx_runtime_1.jsxs)("div", { className: "demo-section", children: [(0, jsx_runtime_1.jsx)("h2", { className: "demo-section-title", children: "\u2705 Sistema Operativo" }), (0, jsx_runtime_1.jsxs)("ul", { className: "demo-list", children: [(0, jsx_runtime_1.jsx)("li", { children: "\u2713 Next.js 15 funcionando" }), (0, jsx_runtime_1.jsx)("li", { children: "\u2713 React 18 activo" }), (0, jsx_runtime_1.jsx)("li", { children: "\u2713 TypeScript compilando" }), (0, jsx_runtime_1.jsx)("li", { children: "\u2713 Puerto 3000 disponible" }), (0, jsx_runtime_1.jsx)("li", { children: "\u2713 Hot reload activado" })] })] }), (0, jsx_runtime_1.jsx)("div", { className: "demo-success-section", children: (0, jsx_runtime_1.jsx)("h3", { className: "demo-success-title", children: "\uD83D\uDE80 Listo para desarrollar el dashboard completo!" }) })] }) }));
+}
+exports.default = HomePage;
+//# sourceMappingURL=home-simple.js.map

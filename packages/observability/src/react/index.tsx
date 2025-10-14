@@ -1,5 +1,18 @@
+<<<<<<< HEAD
 import type { ComponentType, ErrorInfo, PropsWithChildren } from 'react';
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+=======
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ComponentType,
+  PropsWithChildren,
+  ErrorInfo,
+} from 'react';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { v4 as uuidv4 } from 'uuid';
 import type { ComponentTrackingConfig, UIEvent } from '../types';
 
@@ -213,7 +226,11 @@ export const ObservabilityProvider: React.FC<PropsWithChildren<ObservabilityProv
     const trackPerformance = (): void => {
       if ('performance' in window) {
         const perfData = performance.getEntriesByType(
+<<<<<<< HEAD
           'navigation',
+=======
+          'navigation'
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         )[0] as PerformanceNavigationTiming;
 
         if (perfData) {
@@ -384,7 +401,11 @@ export const useEventTracking = (): {
       sessionId: '',
       metadata: {
         value:
+<<<<<<< HEAD
           typeof value === 'string' && value.length > 100 ? `${value.substring(0, 100)}...` : value,
+=======
+          typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         ...metadata,
       },
     });
@@ -461,9 +482,15 @@ export const createTracedFetch = (apiEndpoint: string, sessionId: string) => {
       const duration = performance.now() - startTime;
 
       // Log to console in development
+<<<<<<< HEAD
       if (process.env['NODE_ENV'] === 'development') {
         console.debug(
           `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - ${response.status} (${duration.toFixed(2)}ms)`,
+=======
+      if (process.env.NODE_ENV === 'development') {
+        console.debug(
+          `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - ${response.status} (${duration.toFixed(2)}ms)`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
       }
 
@@ -472,7 +499,11 @@ export const createTracedFetch = (apiEndpoint: string, sessionId: string) => {
       const duration = performance.now() - startTime;
       console.error(
         `[Trace ${traceId}] ${options?.method || 'GET'} ${url} - Failed (${duration.toFixed(2)}ms)`,
+<<<<<<< HEAD
         error,
+=======
+        error
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
       throw error;
     }

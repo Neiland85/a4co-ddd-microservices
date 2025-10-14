@@ -64,7 +64,11 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
     },
     () => {
       logger?.info(`Prometheus metrics server started on port ${prometheusPort}`);
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Register instrumentations
@@ -150,7 +154,11 @@ export function startSpan(
         kind: options.kind,
         attributes: options.attributes,
       },
+<<<<<<< HEAD
       ctx,
+=======
+      ctx
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
   }
 
@@ -160,7 +168,11 @@ export function startSpan(
       kind: options?.kind,
       attributes: options?.attributes,
     },
+<<<<<<< HEAD
     span => span,
+=======
+    span => span
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 }
 
@@ -170,6 +182,7 @@ export function startSpan(
 export function Trace(options?: {
   name?: string;
   kind?: SpanKind;
+<<<<<<< HEAD
   attributes?: Attributes;
 }): (
   _target: unknown,
@@ -181,6 +194,11 @@ export function Trace(options?: {
     propertyKey: string,
     descriptor: PropertyDescriptor,
   ): PropertyDescriptor {
+=======
+  attributes?: Record<string, any>;
+}) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const originalMethod = descriptor.value;
 
     descriptor.value = async function(...args: unknown[]): Promise<unknown> {
@@ -279,7 +297,11 @@ export function getTracingContext(): TracingContext | null {
 /**
  * Add event to current span
  */
+<<<<<<< HEAD
 export function addSpanEvent(name: string, attributes?: Attributes): void {
+=======
+export function addSpanEvent(name: string, attributes?: Record<string, any>): void {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   const span = trace.getActiveSpan();
 
   if (span) {

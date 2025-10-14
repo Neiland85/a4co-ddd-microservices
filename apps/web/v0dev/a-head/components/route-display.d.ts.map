@@ -1,0 +1,1 @@
+{"version":3,"file":"route-display.d.ts","sourceRoot":"","sources":["route-display.tsx"],"names":[],"mappings":"AAMA,OAAO,KAAK,EAAE,KAAK,EAAE,MAAM,uBAAuB,CAAC;AAEnD,UAAU,iBAAiB;IACzB,KAAK,EAAE,KAAK,CAAC;IACb,iBAAiB,CAAC,EAAE,MAAM,IAAI,CAAC;CAChC;AAED,wBAAgB,YAAY,CAAC,EAAE,KAAK,EAAE,iBAAiB,EAAE,EAAE,iBAAiB,2CAiH3E"}

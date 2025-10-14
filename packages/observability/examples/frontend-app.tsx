@@ -88,7 +88,11 @@ const ProductList = withTracing(
             method: 'GET',
             url: '/api/products',
           },
+<<<<<<< HEAD
           response,
+=======
+          response
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
 
         componentLogger.info('Products loaded successfully', {
@@ -108,7 +112,11 @@ const ProductList = withTracing(
             method: 'GET',
             url: '/api/products',
           },
+<<<<<<< HEAD
           error,
+=======
+          error
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
 
         componentLogger.error('Failed to load products', error);

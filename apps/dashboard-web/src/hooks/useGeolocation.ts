@@ -189,7 +189,11 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
   }, []);
 
   // Obtener ubicación actual
+<<<<<<< HEAD
   const getCurrentLocation = useCallback(async(): Promise<LocationData | null> => {
+=======
+  const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!navigator.geolocation) {
       setState(prev => ({
         ...prev,
@@ -202,7 +206,11 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     return new Promise(resolve => {
+<<<<<<< HEAD
       const onSuccess = async(position: GeolocationPosition) => {
+=======
+      const onSuccess = async (position: GeolocationPosition) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         try {
           const locationData = await processSuccessfulPosition(position, setState);
           resolve(locationData);

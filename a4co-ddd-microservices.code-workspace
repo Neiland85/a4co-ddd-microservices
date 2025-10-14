@@ -1,4 +1,22 @@
 {
+  "editor.formatOnSave": true,
+  "eslint.enable": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/.DS_Store": true,
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.disableAutomaticTypeAcquisition": false,
+  "typescript.enablePromptUseWorkspaceTsdk": false,
+  "typescript.experimental.useTsgo": false,
+  "typescript.experimental.enableProjectDiagnostics": false,
+  "typescript.tsserver.log": "off",
+  "typescript.tsserver.useSyntaxServer": "auto",
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+  },
   "folders": [
     {
       "path": ".",
@@ -73,6 +91,7 @@
     },
   ],
   "settings": {
+<<<<<<< HEAD
     "editor.formatOnSave": true,
     "eslint.enable": true,
     "files.exclude": {
@@ -102,6 +121,8 @@
     "windowsaistudio.enableRemoteFine-tuningAndInference": true,
     "scm.alwaysShowActions": true,
     "scm.alwaysShowRepositories": true,
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "diffEditor.codeLens": true,
   },
 }

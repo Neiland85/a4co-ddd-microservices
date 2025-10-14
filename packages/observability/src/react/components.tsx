@@ -72,7 +72,11 @@ export const TrackedInput: React.FC<TrackedInputProps> = ({
 }) => {
   const { trackInput, trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-input';
+<<<<<<< HEAD
   const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
+=======
+  const debounceTimer = React.useRef<NodeJS.Timeout>();
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   useComponentTracking(componentName, {
     trackProps: ['type', 'required', 'disabled'],

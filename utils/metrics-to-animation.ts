@@ -92,7 +92,11 @@ function interpolateColors(fromColors: string[], toColors: string[], progress: n
 export function getMonitorAnimationParams(metrics: DashboardMetrics['monitor']): AnimationParams {
   const baseIntensity = Math.min(
     2.5,
+<<<<<<< HEAD
     (metrics.activeUsers / 1000) * ACTIVITY_MULTIPLIERS[metrics.activityLevel],
+=======
+    (metrics.activeUsers / 1000) * ACTIVITY_MULTIPLIERS[metrics.activityLevel]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
   const speed = Math.max(4, 12 - metrics.clickRate * 2);
   const opacity = Math.min(0.25, 0.1 + metrics.conversionRate / 20);
@@ -109,7 +113,11 @@ export function getMonitorAnimationParams(metrics: DashboardMetrics['monitor']):
 }
 
 export function getRecommendationsAnimationParams(
+<<<<<<< HEAD
   metrics: DashboardMetrics['recommendations'],
+=======
+  metrics: DashboardMetrics['recommendations']
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): AnimationParams {
   const campaignMultiplier = {
     inactive: 0.4,
@@ -183,7 +191,11 @@ export function getTransitionAnimationParams(
   fromSection: string,
   toSection: string,
   progress: number,
+<<<<<<< HEAD
   metrics: DashboardMetrics,
+=======
+  metrics: DashboardMetrics
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): AnimationParams {
   let fromParams: AnimationParams;
   let toParams: AnimationParams;
@@ -238,7 +250,11 @@ export function getTransitionAnimationParams(
 // Función auxiliar para obtener parámetros de cualquier sección
 export function getSectionAnimationParams(
   section: string,
+<<<<<<< HEAD
   metrics: DashboardMetrics,
+=======
+  metrics: DashboardMetrics
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): AnimationParams {
   switch (section) {
     case 'monitor':

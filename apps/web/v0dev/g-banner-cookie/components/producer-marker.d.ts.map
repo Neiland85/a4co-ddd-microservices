@@ -1,0 +1,1 @@
+{"version":3,"file":"producer-marker.d.ts","sourceRoot":"","sources":["producer-marker.tsx"],"names":[],"mappings":"AAKA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,yBAAyB,CAAC;AAExD,UAAU,mBAAmB;IAC3B,QAAQ,EAAE,QAAQ,CAAC;IACnB,OAAO,CAAC,EAAE,CAAC,QAAQ,EAAE,QAAQ,KAAK,IAAI,CAAC;CACxC;AAmED,MAAM,CAAC,OAAO,UAAU,cAAc,CAAC,EAAE,QAAQ,EAAE,OAAO,EAAE,EAAE,mBAAmB,2CA+IhF"}

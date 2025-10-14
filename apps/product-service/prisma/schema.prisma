@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Product Service - Schema de Base de Datos con Prisma ORM
 // Siguiendo principios DDD: Aggregates, Entities, Value Objects
 // Marketplace Local de Jaén - A4CO
@@ -73,15 +77,25 @@ model Product {
   // Relaciones
   variants ProductVariant[]
   tags     ProductTag[]
+<<<<<<< HEAD
 
   // Índices
   @@index([categoryId])
+=======
+  // Se elimina la relación ambigua con ProductReview y ProductCategoryMapping
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   @@index([artisanId])
   @@index([status])
   @@index([availability])
   @@index([name])
   @@index([createdAt])
   @@map("products")
+  
+  // Relaciones externas
+  artisan Artisan @relation(fields: [artisanId], references: [id])
+  inventory ProductInventory[]
+  reviews ProductReview[]
+  categoryMappings ProductCategoryMapping[]
 }
 
 // ENTIDAD - PRODUCT VARIANTS
@@ -144,14 +158,176 @@ model ProductTag {
   // Índices
   @@index([productId])
   @@index([name])
-  @@unique([productId, name]) // Un producto no puede tener el mismo tag duplicado
+  @@unique([productId, name])
   @@map("product_tags")
 }
 
+<<<<<<< HEAD
 // ========================================
 // ENUMERATIONS
 // ========================================
 
+=======
+// TABLA DE REFERENCIA - CATEGORIES (externa al agregado)
+model Category {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String  @db.VarChar(100)
+  description String? @db.Text
+  parentId    String? @db.Uuid
+  
+  // Jerarquía
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+  
+  // Timestamps
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+  
+  ProductCategoryMapping ProductCategoryMapping[]
+  
+  @@index([parentId])
+  @@map("categories")
+}
+
+// ========================================
+// ARTISAN ENTITY (Reference from other bounded context)
+// ========================================
+
+model Artisan {
+  id              String   @id @default(cuid())
+  
+  // Basic Information
+  businessName    String
+  contactName     String
+  email           String   @unique
+  phone           String?
+  
+  // Location (Value Object)
+  address         Json
+  
+  // Business Information
+  description     String?
+  specialties     String[]
+  
+  // Verification and Status
+  isVerified      Boolean  @default(false)
+  verificationDate DateTime?
+  status          ArtisanStatus @default(PENDING)
+  
+  // Business Metrics
+  rating          Float?   @default(0)
+  totalProducts   Int      @default(0)
+  totalSales      Int      @default(0)
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  products        Product[]
+  
+  @@map("artisans")
+  @@index([email])
+  @@index([isVerified])
+  @@index([status])
+}
+
+// ========================================
+// INVENTORY TRACKING (Separate bounded context integration)
+// ========================================
+
+model ProductInventory {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Stock Information
+  quantity      Int      @default(0)
+  reserved      Int      @default(0)
+  available     Int      @default(0)
+  
+  // Thresholds
+  lowStockThreshold Int @default(5)
+  
+  // Tracking
+  lastRestocked DateTime?
+  lastSold      DateTime?
+  
+  // Location
+  location      String   @default("main")
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("product_inventory")
+  @@unique([productId, location])
+  @@index([productId])
+  @@index([quantity])
+}
+
+// ========================================
+// PRODUCT REVIEWS (Read model for analytics)
+// ========================================
+
+model ProductReview {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Review Content
+  rating      Int
+  title       String?
+  comment     String?
+  
+  // Reviewer Information
+  userId      String
+  userName    String
+  userEmail   String?
+  
+  // Review Status
+  status      ReviewStatus @default(PENDING)
+  isVerified  Boolean  @default(false)
+  
+  // Moderation
+  moderatedBy String?
+  moderatedAt DateTime?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("product_reviews")
+  @@index([productId])
+  @@index([rating])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ========================================
+// MANY-TO-MANY RELATIONSHIPS
+// ========================================
+
+model ProductCategoryMapping {
+  id         String   @id @default(cuid())
+  productId  String
+  categoryId String
+
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  @@unique([productId, categoryId])
+  @@map("product_category_mappings")
+}
+
+// ========================================
+// ENUMS
+// ========================================
+
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 enum ProductStatus {
   DRAFT
   PUBLISHED
@@ -162,6 +338,43 @@ enum ProductStatus {
 enum ProductAvailability {
   IN_STOCK
   OUT_OF_STOCK
+<<<<<<< HEAD
   PRE_ORDER
   DISCONTINUED
 }
+=======
+  MADE_TO_ORDER
+  SEASONAL
+}
+
+enum ImageType {
+  GALLERY
+  THUMBNAIL
+  HERO
+  DETAIL
+  LIFESTYLE
+}
+
+enum SpecificationType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  DATE
+  URL
+  COLOR
+}
+
+enum ArtisanStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+  INACTIVE
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+}
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

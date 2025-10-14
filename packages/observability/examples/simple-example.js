@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use strict';
 var __importDefault = (this && this.__importDefault) || function(mod) {
     return (mod && mod.__esModule) ? mod : { 'default': mod };
@@ -5,6 +6,15 @@ var __importDefault = (this && this.__importDefault) || function(mod) {
 Object.defineProperty(exports, '__esModule', { value: true });
 const express_1 = __importDefault(require('express'));
 const src_1 = require('../src');
+=======
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const src_1 = require("../src");
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Inicializar observabilidad
 const { logger, httpLogger, getTracer, shutdown } = (0, src_1.initializeObservability)({
     serviceName: 'example-service',
@@ -29,7 +39,11 @@ const app = (0, express_1.default)();
 app.use(httpLogger);
 app.use(express_1.default.json());
 // Ruta de ejemplo con tracing manual
+<<<<<<< HEAD
 app.get('/hello/:name', async(req, res) => {
+=======
+app.get('/hello/:name', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const tracer = getTracer('hello-endpoint');
     const span = tracer.startSpan('process-hello-request');
     try {
@@ -86,7 +100,11 @@ const server = app.listen(PORT, () => {
     });
 });
 // Graceful shutdown
+<<<<<<< HEAD
 process.on('SIGTERM', async() => {
+=======
+process.on('SIGTERM', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     logger.info('SIGTERM received, shutting down gracefully');
     server.close(() => {
         logger.info('HTTP server closed');
@@ -94,7 +112,11 @@ process.on('SIGTERM', async() => {
     await shutdown();
     process.exit(0);
 });
+<<<<<<< HEAD
 process.on('SIGINT', async() => {
+=======
+process.on('SIGINT', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     logger.info('SIGINT received, shutting down gracefully');
     server.close(() => {
         logger.info('HTTP server closed');
@@ -102,4 +124,8 @@ process.on('SIGINT', async() => {
     await shutdown();
     process.exit(0);
 });
+<<<<<<< HEAD
 //# sourceMappingURL=simple-example.js.map
+=======
+//# sourceMappingURL=simple-example.js.map
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

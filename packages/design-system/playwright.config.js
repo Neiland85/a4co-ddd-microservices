@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 const test_1 = require('@playwright/test');
+=======
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const test_1 = require("@playwright/test");
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 exports.default = (0, test_1.defineConfig)({
     testDir: './tests/visual',
     outputDir: './test-results',
@@ -66,4 +72,8 @@ exports.default = (0, test_1.defineConfig)({
         timeout: 120 * 1000,
     },
 });
+<<<<<<< HEAD
 //# sourceMappingURL=playwright.config.js.map
+=======
+//# sourceMappingURL=playwright.config.js.map
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

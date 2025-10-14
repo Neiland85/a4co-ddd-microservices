@@ -2,6 +2,7 @@
  * React hooks and HOCs for distributed tracing
  */
 
+<<<<<<< HEAD
 import type { Attributes, Span } from '@opentelemetry/api';
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -9,6 +10,15 @@ import {
   traceComponentRender,
   traceRouteNavigation,
   traceUserInteraction,
+=======
+import React, { useEffect, useRef, useCallback } from 'react';
+import { Span } from '@opentelemetry/api';
+import {
+  traceComponentRender,
+  traceRouteNavigation,
+  traceUserInteraction,
+  addPerformanceMetricsToSpan,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 } from './web-tracer';
 
 // Global type declarations for browser APIs
@@ -98,7 +108,11 @@ export function useInteractionTracing(
   const lastInteractionTime = useRef(0);
 
   const traceInteraction = useCallback(
+<<<<<<< HEAD
     (_metadata?: Attributes) => {
+=======
+    (metadata?: Record<string, any>) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       const now = Date.now();
 
       if (options?.throttle && now - lastInteractionTime.current < options.throttle) {
@@ -107,13 +121,21 @@ export function useInteractionTracing(
 
       const span = traceUserInteraction(interactionType, target, {
         ...options?.attributes,
+<<<<<<< HEAD
         ..._metadata,
+=======
+        ...metadata,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       });
 
       span.end();
       lastInteractionTime.current = now;
     },
+<<<<<<< HEAD
     [interactionType, target, options],
+=======
+    [interactionType, target, options]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   return traceInteraction;
@@ -135,6 +157,7 @@ export function useApiTracing(): {
     return traceId;
   }, []);
 
+<<<<<<< HEAD
   const endApiTrace = useCallback((_traceId: string, _success: boolean, _metadata?: Attributes) => {
     const span = activeSpans.current.get(_traceId);
     if (span) {
@@ -148,6 +171,24 @@ export function useApiTracing(): {
       activeSpans.current.delete(_traceId);
     }
   }, []);
+=======
+  const endApiTrace = useCallback(
+    (traceId: string, success: boolean, metadata?: Record<string, any>) => {
+      const span = activeSpans.current.get(traceId);
+      if (span) {
+        span.setAttribute('api.success', success);
+        if (metadata) {
+          Object.entries(metadata).forEach(([key, value]) => {
+            span.setAttribute(`api.${key}`, value);
+          });
+        }
+        span.end();
+        activeSpans.current.delete(traceId);
+      }
+    },
+    []
+  );
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   return { startApiTrace, endApiTrace };
 }
@@ -162,8 +203,13 @@ export interface WithTracingOptions {
 
 export function withTracing<P extends Record<string, unknown>>(
   Component: React.ComponentType<P>,
+<<<<<<< HEAD
   options?: WithTracingOptions,
 ): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<unknown>> {
+=======
+  options?: WithTracingOptions
+): React.ComponentType<P> {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   const displayName =
     options?.componentName || Component.displayName || Component.name || 'Component';
 
@@ -174,12 +220,30 @@ export function withTracing<P extends Record<string, unknown>>(
     useEffect(
       () => {
         if (span && options?.trackProps) {
+<<<<<<< HEAD
           const trackedProps: Record<string, unknown> = {};
           options.trackProps.forEach(propName => {
             if (propName in props) {
               trackedProps[propName] = (props as Record<string, unknown>)[propName];
             }
           });
+=======
+          const trackedProps: Record<string, any> = {};
+          options.trackProps.forEach(propName => {
+            if (propName in props) {
+              trackedProps[propName] = (props as any)[propName];
+            }
+          });
+
+          span.addEvent('props.updated', {
+            props: trackedProps,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      },
+      options?.trackProps?.map(prop => (props as any)[prop]) || []
+    );
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
           span.addEvent('props.updated', {
             props: JSON.stringify(trackedProps),
@@ -212,7 +276,11 @@ export function TracingProvider({
   serviceName,
   serviceVersion,
   environment,
+<<<<<<< HEAD
 }: TracingProviderProps): React.ReactElement {
+=======
+}: TracingProviderProps): JSX.Element {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   useEffect(() => {
     // Initialize web tracer on mount
     import('./web-tracer').then(({ initializeWebTracer }) => {

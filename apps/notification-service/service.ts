@@ -131,7 +131,11 @@ export class NotificationService {
 
   // Enviar notificación
   async sendNotification(
+<<<<<<< HEAD
     event: Omit<NotificationEvent, 'id' | 'timestamp' | 'sent' | 'attempts'>,
+=======
+    event: Omit<NotificationEvent, 'id' | 'timestamp' | 'sent' | 'attempts'>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ): Promise<void> {
     const notification: NotificationEvent = {
       ...event,
@@ -150,7 +154,11 @@ export class NotificationService {
 
   // Procesar cola de notificaciones
   private startQueueProcessor(): void {
+<<<<<<< HEAD
     setInterval(async() => {
+=======
+    setInterval(async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       if (this.queue.length === 0) return;
 
       const notification = this.queue.shift()!;
@@ -187,7 +195,11 @@ export class NotificationService {
   // Enviar a un canal específico
   private async sendToChannel(
     notification: NotificationEvent,
+<<<<<<< HEAD
     channel: NotificationChannel,
+=======
+    channel: NotificationChannel
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ): Promise<void> {
     switch (channel.type) {
       case 'email':

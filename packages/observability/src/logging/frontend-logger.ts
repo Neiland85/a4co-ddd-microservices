@@ -194,6 +194,7 @@ export class FrontendLogger implements Logger {
             },
           }
         : error
+<<<<<<< HEAD
           ? {
               error: {
                 message: String(error),
@@ -201,6 +202,9 @@ export class FrontendLogger implements Logger {
                 name: 'UnknownError',
               },
             }
+=======
+          ? { error: String(error) }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           : {};
 
     this.log('error', message, {
@@ -220,6 +224,7 @@ export class FrontendLogger implements Logger {
             },
           }
         : error
+<<<<<<< HEAD
           ? {
               error: {
                 message: String(error),
@@ -227,6 +232,9 @@ export class FrontendLogger implements Logger {
                 name: 'UnknownError',
               },
             }
+=======
+          ? { error: String(error) }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           : {};
 
     this.log('fatal', message, {

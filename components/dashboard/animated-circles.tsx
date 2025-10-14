@@ -50,7 +50,11 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
         color: animationParams.colors[i % animationParams.colors.length],
         delay: i * 0.3,
       })),
+<<<<<<< HEAD
     [animationParams.particleCount, animationParams.scale, animationParams.colors],
+=======
+    [animationParams.particleCount, animationParams.scale, animationParams.colors]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función de animación optimizada
@@ -71,7 +75,11 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
       scale: [0, animationParams.scale, animationParams.scale * 0.8, animationParams.scale],
       rotate: [0, 180 * animationParams.intensity, 360 * animationParams.intensity],
     }),
+<<<<<<< HEAD
     [animationParams.intensity, animationParams.scale],
+=======
+    [animationParams.intensity, animationParams.scale]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función de transición optimizada
@@ -82,7 +90,11 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
       ease: 'easeInOut',
       delay: circle.delay,
     }),
+<<<<<<< HEAD
     [animationParams.speed],
+=======
+    [animationParams.speed]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función para renderizar círculo individual
@@ -95,7 +107,11 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
           width: circle.size,
           height: circle.size,
           background: `radial-gradient(circle, ${circle.color}${Math.floor(
+<<<<<<< HEAD
             animationParams.opacity * 255,
+=======
+            animationParams.opacity * 255
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           )
             .toString(16)
             .padStart(2, '0')}, transparent)`,
@@ -115,7 +131,11 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
       animationParams.opacity,
       getCircleAnimation,
       getCircleTransition,
+<<<<<<< HEAD
     ],
+=======
+    ]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función para renderizar indicadores de estado
@@ -152,7 +172,11 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
           )}
       </>
     ),
+<<<<<<< HEAD
     [activeSection, metrics.monitor.activityLevel, metrics.recommendations.campaignActivity],
+=======
+    [activeSection, metrics.monitor.activityLevel, metrics.recommendations.campaignActivity]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   if (!mounted) return null;
@@ -169,7 +193,11 @@ export function AnimatedCircles({ activeSection, metrics }: AnimatedCirclesProps
           width: 200 * animationParams.scale,
           height: 200 * animationParams.scale,
           background: `radial-gradient(circle, ${animationParams.colors[0]}${Math.floor(
+<<<<<<< HEAD
             animationParams.opacity * 0.5 * 255,
+=======
+            animationParams.opacity * 0.5 * 255
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           )
             .toString(16)
             .padStart(2, '0')}, transparent)`,

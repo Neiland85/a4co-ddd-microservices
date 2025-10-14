@@ -29,7 +29,11 @@
     "clsx": "^2.1.1",
     "critters": "^0.0.25",
     "lucide-react": "^0.542.0",
+<<<<<<< HEAD
     "next": "^15.4.7",
+=======
+    "next": "^15.4.5",
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "next-pwa": "^5.6.0",
     "next-themes": "^0.4.4",
     "react": "^19.1.0",
@@ -45,8 +49,11 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
+<<<<<<< HEAD
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-security": "^3.0.1",
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "postcss": "^8.5",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.9.2"

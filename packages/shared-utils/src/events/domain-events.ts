@@ -597,7 +597,11 @@ export class SagaCompletedEvent extends DomainEvent {
     data: {
       result: any;
       completedAt: Date;
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -610,7 +614,11 @@ export class SagaFailedEvent extends DomainEvent {
       error: string;
       compensations: string[];
       failedAt: Date;
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -623,7 +631,11 @@ export class ProductInformationRequestedEvent extends DomainEvent {
       orderId: string;
       productIds: string[];
       requestedAt: Date;
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -636,7 +648,11 @@ export class StockValidationRequestedEvent extends DomainEvent {
       orderId: string;
       items: Array<{ productId: string; quantity: number }>;
       requestedAt: Date;
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ) {
     super(sagaId, data, 1, sagaId);
   }
@@ -649,7 +665,11 @@ export class UserInformationRequestedEvent extends DomainEvent {
       userId: string;
       requestedFields: string[];
       requestedAt: Date;
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ) {
     super(sagaId, data, 1, sagaId);
   }

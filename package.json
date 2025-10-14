@@ -6,12 +6,16 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev",
+<<<<<<< HEAD
     "dev:all": "docker-compose -f docker-compose.yml up",
     "dev:auth": "turbo run dev --filter=auth-service",
     "dev:user": "turbo run dev --filter=user-service",
     "dev:product": "turbo run dev --filter=product-service",
     "dev:order": "turbo run dev --filter=order-service",
     "dev:payment": "turbo run dev --filter=payment-service",
+=======
+    "dev:all": "docker-compose -f docker-compose.dev.yml up",
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "dev:frontend": "turbo run dev --filter=dashboard-web --filter=@a4co/design-system",
     "dev:backend": "turbo run dev --filter=...*-service",
     "build": "turbo run build --filter=!@a4co/observability --filter=!dashboard-web",
@@ -23,10 +27,13 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings=0",
+<<<<<<< HEAD
     "lint:permissive": "ESLINT_USE_FLAT_CONFIG=false eslint --no-eslintrc . --config .eslintrc.permissive.json --ext .ts,.tsx,.js,.jsx",
     "lint:permissive:fix": "ESLINT_USE_FLAT_CONFIG=false eslint --no-eslintrc . --config .eslintrc.permissive.json --ext .ts,.tsx,.js,.jsx --fix",
     "lint:switch:permissive": "cp .eslintrc.permissive.json .eslintrc.json && echo 'ESLint configurado en modo PERMISIVO'",
     "lint:switch:strict": "cp eslint.config.js .eslintrc.json && echo 'ESLint configurado en modo ESTRICTO'",
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules --ignore .next --ignore dist --ignore build",
     "lint:md:fix": "markdownlint \"**/*.md\" --ignore node_modules --ignore .next --ignore dist --ignore build --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml,css,scss}\"",
@@ -46,6 +53,7 @@
     "storybook:dev": "pnpm --filter @a4co/design-system storybook",
     "design:sync": "node scripts/sync-design-tokens.js sync",
     "design:sync:watch": "node scripts/sync-design-tokens.js watch",
+<<<<<<< HEAD
     "test:e2e": "jest --config test/jest-e2e.config.js",
     "coverage:merge": "echo 'Coverage merge temporarily disabled' || lcov-result-merger 'apps/**/coverage/lcov.info' 'packages/**/coverage/lcov.info' > coverage/lcov.info",
     "sonar-scanner": "echo 'SonarScanner temporarily disabled'",
@@ -69,6 +77,13 @@
     "excellence:validate": "node scripts/validate-excellence.js",
     "test:improve-coverage": "node scripts/test-coverage-improver.js",
     "test:coverage-report": "pnpm run test:improve-coverage && pnpm run dora:report"
+=======
+    "test:coverage": "turbo run test:coverage",
+    "test:coverage:report": "turbo run test:coverage && pnpm run coverage:merge",
+    "coverage:merge": "echo 'Coverage merge temporarily disabled' || lcov-result-merger 'apps/**/coverage/lcov.info' 'packages/**/coverage/lcov.info' > coverage/lcov.info",
+    "sonar-scanner": "echo 'SonarScanner temporarily disabled'",
+    "quality:check": "echo 'Quality check temporarily disabled'"
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
   "keywords": [
     "microservices",
@@ -88,6 +103,7 @@
     "packages/*"
   ],
   "dependencies": {
+<<<<<<< HEAD
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.64.1",
     "@opentelemetry/context-zone": "^2.1.0",
@@ -153,6 +169,37 @@
     "ts-prune": "^0.10.3",
     "turbo": "^2.5.8",
     "typescript": "^5.9.2"
+=======
+    "concurrently": "^8.2.2",
+    "jsdom": "^26.1.0",
+    "lucide-react": "^0.525.0",
+    "turbo": "^2.5.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^20.19.9",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "esbuild": "^0.25.8",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-complexity": "^1.0.2",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "jscpd": "^4.0.5",
+    "lcov-result-merger": "^1.0.0",
+    "lint-staged": "^15.2.0",
+    "madge": "^8.0.0",
+    "markdownlint": "^0.34.0",
+    "markdownlint-cli": "^0.39.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.5.11",
+    "ts-prune": "^0.10.3"
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
   "engines": {
     "node": ">=18.0.0",

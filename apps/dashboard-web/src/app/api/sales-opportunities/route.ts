@@ -165,14 +165,22 @@ export async function GET(request: NextRequest) {
     // Filtrar por ubicación si se especifica
     if (location) {
       filteredOpportunities = filteredOpportunities.filter(opp =>
+<<<<<<< HEAD
         opp.location.toLowerCase().includes(location.toLowerCase()),
+=======
+        opp.location.toLowerCase().includes(location.toLowerCase())
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 
     // Filtrar por categoría de producto si se especifica
     if (category) {
       filteredOpportunities = filteredOpportunities.filter(opp =>
+<<<<<<< HEAD
         opp.products.some(product => product.category === category),
+=======
+        opp.products.some(product => product.category === category)
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 

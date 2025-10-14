@@ -3,9 +3,12 @@
 import type { Span } from '@opentelemetry/api';
 import type { DDDMetadata } from './logging/types';
 
+<<<<<<< HEAD
 // Re-export DDDMetadata for convenience
 export type { DDDMetadata };
 
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Tipos de configuración
 export type ObservabilityConfig = {
   serviceName: string;

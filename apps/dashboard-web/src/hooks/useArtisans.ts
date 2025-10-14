@@ -39,11 +39,19 @@ export function useArtisans(options: UseArtisansOptions = {}) {
   // Memoizar las opciones para evitar recreaciones innecesarias
   const memoizedOptions = useMemo(
     () => options,
+<<<<<<< HEAD
     [options.municipality, options.specialty, options.verified, options.search, options.autoFetch],
   );
 
   const fetchArtisans = useCallback(
     async(customOptions?: UseArtisansOptions) => {
+=======
+    [options.municipality, options.specialty, options.verified, options.search, options.autoFetch]
+  );
+
+  const fetchArtisans = useCallback(
+    async (customOptions?: UseArtisansOptions) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -141,7 +149,11 @@ export function useArtisans(options: UseArtisansOptions = {}) {
     hasData: state.artisans.length > 0,
     isEmpty: !state.loading && state.artisans.length === 0,
     isFiltered: Object.keys(state.filters).some(
+<<<<<<< HEAD
       key => state.filters[key as keyof typeof state.filters] !== undefined,
+=======
+      key => state.filters[key as keyof typeof state.filters] !== undefined
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     ),
     verifiedArtisans: state.artisans.filter(artisan => artisan.verified),
     topRatedArtisans: state.artisans

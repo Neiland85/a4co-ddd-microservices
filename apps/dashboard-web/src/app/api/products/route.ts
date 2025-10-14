@@ -143,7 +143,11 @@ export async function GET(request: NextRequest) {
 
     if (location) {
       filteredProducts = filteredProducts.filter(product =>
+<<<<<<< HEAD
         product.location.municipality.toLowerCase().includes(location.toLowerCase()),
+=======
+        product.location.municipality.toLowerCase().includes(location.toLowerCase())
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 

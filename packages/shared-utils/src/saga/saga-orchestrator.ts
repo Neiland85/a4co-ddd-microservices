@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { v4 as uuidv4 } from 'uuid'; // Importar uuid
 import { IEventBus } from '../events';
 import {
@@ -8,7 +9,11 @@ import {
   StockValidationRequestedEvent,
   UserInformationRequestedEvent,
 } from '../events/domain-events';
+=======
+import { IEventBus } from '../events';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { EventSubjects } from '../events/subjects';
+import { SagaCompletedEvent, SagaFailedEvent } from '../events/domain-events';
 
 /**
  * Orquestador de Sagas - Elimina dependencias directas entre servicios
@@ -45,10 +50,17 @@ export abstract class SagaOrchestrator {
   /**
    * Falla la saga y ejecuta compensaciones
    */
+<<<<<<< HEAD
   protected async failSaga(sagaId: string, error: Error, compensations: string[]): Promise<void> {
     const event = new SagaFailedEvent(sagaId, {
       error: error.message,
       compensations,
+=======
+  protected async failSaga(sagaId: string, error: any): Promise<void> {
+    const event = new SagaFailedEvent(sagaId, {
+      error: error.message || error.toString(),
+      compensations: [],
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       failedAt: new Date(),
     });
     await this.eventBus.publish(EventSubjects.SAGA_FAILED, event);
@@ -63,6 +75,7 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
 
   async startSaga(
     sagaId: string,
+<<<<<<< HEAD
     initialData: {
       customerId: string;
       customerEmail: string;
@@ -80,9 +93,18 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       orderId: sagaId,
       productIds: initialData.items.map(item => item.productId),
       requestedAt: new Date(),
+=======
+    initialData: { customerId: string; items: any[] }
+  ): Promise<void> {
+    // Almacenar estado inicial
+    this.sagaStates.set(sagaId, {
+      customerId: initialData.customerId,
+      initialData,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
     await this.eventBus.publish(EventSubjects.PRODUCT_INFORMATION_REQUESTED, productInfoEvent);
 
+<<<<<<< HEAD
     // Paso 2: Solicitar validación de stock
     const stockValidationEvent = new StockValidationRequestedEvent(sagaId, {
       orderId: sagaId,
@@ -99,6 +121,8 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
     });
     await this.eventBus.publish(EventSubjects.USER_INFORMATION_REQUESTED, userInfoEvent);
 
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     // Publicar evento de inicio de saga usando SAGA_STARTED
     await this.eventBus.publish(EventSubjects.SAGA_STARTED, {
       eventId: sagaId,
@@ -111,6 +135,10 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
         customerId: initialData.customerId,
         items: initialData.items,
       },
+<<<<<<< HEAD
+=======
+      sagaId,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   }
 
@@ -121,17 +149,17 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
     }
 
     switch (step) {
-      case 'PRODUCT_INFO_RECEIVED':
-        await this.handleProductInfoReceived(sagaId, data);
+      case 'VALIDATE_INVENTORY':
+        await this.validateInventory(sagaId, data);
         break;
-      case 'STOCK_VALIDATED':
-        await this.handleStockValidated(sagaId, data);
+      case 'CREATE_ORDER':
+        await this.createOrder(sagaId, data);
         break;
-      case 'USER_INFO_RECEIVED':
-        await this.handleUserInfoReceived(sagaId, data);
+      case 'PROCESS_PAYMENT':
+        await this.processPayment(sagaId, data);
         break;
-      case 'PAYMENT_PROCESSED':
-        await this.handlePaymentProcessed(sagaId, data);
+      case 'CONFIRM_ORDER':
+        await this.confirmOrder(sagaId, data);
         break;
       case 'VALIDATE_INVENTORY':
         await this.validateInventory(sagaId, data);
@@ -150,6 +178,7 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
     }
   }
 
+<<<<<<< HEAD
   private async handleProductInfoReceived(sagaId: string, data: any): Promise<void> {
     // Lógica para manejar información de productos recibida
     console.log(`Product info received for saga ${sagaId}`);
@@ -177,13 +206,42 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
       // Fallar la saga
       await this.failSaga(sagaId, new Error('Stock not available'), ['release_stock']);
     }
+=======
+  private async validateInventory(sagaId: string, data: any): Promise<void> {
+    // Usar STOCK_VALIDATION_REQUESTED que sí existe
+    await this.eventBus.publish(EventSubjects.STOCK_VALIDATION_REQUESTED, {
+      eventId: `inventory-${sagaId}`,
+      eventType: 'InventoryValidationRequested',
+      aggregateId: sagaId,
+      eventVersion: 1,
+      occurredOn: new Date(),
+      eventData: {
+        sagaId,
+        items: data.items,
+      },
+      sagaId,
+    });
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   }
 
-  private async handleUserInfoReceived(sagaId: string, data: any): Promise<void> {
-    // Lógica para manejar información de usuario recibida
-    console.log(`User info received for saga ${sagaId}`);
+  private async createOrder(sagaId: string, data: any): Promise<void> {
+    // Usar ORDER_CREATED que sí existe
+    await this.eventBus.publish(EventSubjects.ORDER_CREATED, {
+      eventId: `order-${sagaId}`,
+      eventType: 'OrderCreationRequested',
+      aggregateId: sagaId,
+      eventVersion: 1,
+      occurredOn: new Date(),
+      eventData: {
+        sagaId,
+        customerId: data.customerId,
+        items: data.items,
+      },
+      sagaId,
+    });
   }
 
+<<<<<<< HEAD
   private async handlePaymentProcessed(sagaId: string, data: any): Promise<void> {
     if (data.success) {
       // Completar la saga exitosamente
@@ -249,6 +307,25 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
     });
   }
 
+=======
+  private async processPayment(sagaId: string, data: any): Promise<void> {
+    // Usar PAYMENT_INITIATED que sí existe
+    await this.eventBus.publish(EventSubjects.PAYMENT_INITIATED, {
+      eventId: `payment-${sagaId}`,
+      eventType: 'PaymentProcessingRequested',
+      aggregateId: sagaId,
+      eventVersion: 1,
+      occurredOn: new Date(),
+      eventData: {
+        sagaId,
+        orderId: data.orderId,
+        amount: data.amount,
+      },
+      sagaId,
+    });
+  }
+
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   private async confirmOrder(sagaId: string, data: any): Promise<void> {
     // Usar ORDER_CONFIRMED que sí existe
     await this.eventBus.publish(EventSubjects.ORDER_CONFIRMED, {
@@ -261,6 +338,10 @@ export class OrderCreationSagaOrchestrator extends SagaOrchestrator {
         sagaId,
         orderId: data.orderId,
       },
+<<<<<<< HEAD
+=======
+      sagaId,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   }
 }

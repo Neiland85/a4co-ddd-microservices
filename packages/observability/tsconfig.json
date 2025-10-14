@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "./",
+<<<<<<< HEAD
     "rootDir": "./src",
     "lib": [
       "ES2022",
@@ -28,3 +29,10 @@
     "**/*.js"
   ]
 }
+=======
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+}
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
