@@ -18,7 +18,11 @@ export function setupInventoryRoutes(): Router {
    * Verificar disponibilidad de stock para un producto específico
    * Query params: quantity (número)
    */
+<<<<<<< HEAD
   router.get('/check/:productId', async(req, res) => {
+=======
+  router.get('/check/:productId', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { productId } = req.params;
       const quantity = parseInt(req.query.quantity as string) || 1;
@@ -52,7 +56,11 @@ export function setupInventoryRoutes(): Router {
    * POST /inventory/check/bulk
    * Verificar disponibilidad de stock para múltiples productos
    */
+<<<<<<< HEAD
   router.post('/check/bulk', async(req, res) => {
+=======
+  router.post('/check/bulk', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { items } = req.body;
 
@@ -78,7 +86,11 @@ export function setupInventoryRoutes(): Router {
    * POST /inventory/reserve
    * Reservar stock para una orden
    */
+<<<<<<< HEAD
   router.post('/reserve', async(req, res) => {
+=======
+  router.post('/reserve', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { orderId, productId, quantity, customerId } = req.body;
 
@@ -116,7 +128,11 @@ export function setupInventoryRoutes(): Router {
    * POST /inventory/release
    * Liberar stock reservado
    */
+<<<<<<< HEAD
   router.post('/release', async(req, res) => {
+=======
+  router.post('/release', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { orderId, productId, quantity } = req.body;
 
@@ -157,7 +173,11 @@ export function setupInventoryRoutes(): Router {
    * GET /inventory/product/:productId
    * Obtener información completa de inventario de un producto
    */
+<<<<<<< HEAD
   router.get('/product/:productId', async(req, res) => {
+=======
+  router.get('/product/:productId', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { productId } = req.params;
 
@@ -183,7 +203,11 @@ export function setupInventoryRoutes(): Router {
    * GET /inventory/status
    * Obtener estado general del inventario
    */
+<<<<<<< HEAD
   router.get('/status', async(req, res) => {
+=======
+  router.get('/status', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const result = await inventoryController.getInventoryStatus();
       res.json(result);
@@ -200,7 +224,11 @@ export function setupInventoryRoutes(): Router {
    * POST /inventory/update
    * Actualizar stock de un producto
    */
+<<<<<<< HEAD
   router.post('/update', async(req, res) => {
+=======
+  router.post('/update', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { productId, quantity, reason } = req.body;
 
@@ -230,7 +258,11 @@ export function setupInventoryRoutes(): Router {
    * GET /inventory/health
    * Verificar salud del servicio de inventario
    */
+<<<<<<< HEAD
   router.get('/health', async(req, res) => {
+=======
+  router.get('/health', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const result = await inventoryController.getHealth();
       res.json(result);
@@ -247,7 +279,11 @@ export function setupInventoryRoutes(): Router {
    * GET /inventory/metrics
    * Obtener métricas del servicio
    */
+<<<<<<< HEAD
   router.get('/metrics', async(req, res) => {
+=======
+  router.get('/metrics', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const result = await inventoryController.getMetrics();
       res.json(result);

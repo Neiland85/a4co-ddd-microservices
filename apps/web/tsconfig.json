@@ -7,9 +7,15 @@
     "strict": false,
     "noEmit": true,
     "incremental": true,
+<<<<<<< HEAD
     "module": "Node16",
     "esModuleInterop": true,
     "moduleResolution": "node16",
+=======
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -17,11 +23,15 @@
       {
         "name": "next"
       }
+<<<<<<< HEAD
     ],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
+=======
+    ]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
   "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

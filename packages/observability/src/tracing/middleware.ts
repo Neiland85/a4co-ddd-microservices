@@ -34,8 +34,13 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
 
   return (req: Request, res: Response, next: NextFunction): void => {
     // Extract trace headers
+<<<<<<< HEAD
     const traceId = (req.headers['x-trace-id'] as string) || uuidv4();
     const parentSpanId = req.headers['x-span-id'] as string;
+=======
+    let traceId = (req.headers['x-trace-id'] as string) || uuidv4();
+    let parentSpanId = req.headers['x-span-id'] as string;
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     const tracer = trace.getTracer(serviceName);
     const span = tracer.startSpan(`${req.method} ${req.path}`, {
@@ -90,8 +95,12 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
     const originalJson = res.json;
     const startTime = Date.now();
 
+<<<<<<< HEAD
     res.send = function(data: string | Buffer | object): Response {
       const dataString = typeof data === 'string' ? data : JSON.stringify(data);
+=======
+    res.send = function (data: any) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_content_length', Buffer.byteLength(dataString));
       span.setAttribute('http.duration', Date.now() - startTime);
@@ -123,7 +132,11 @@ export function expressTracingMiddleware(options: TracingMiddlewareOptions = {})
       return originalSend.call(this, data);
     };
 
+<<<<<<< HEAD
     res.json = function(data: unknown): Response {
+=======
+    res.json = function (data: any) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       span.setAttribute('http.status_code', res.statusCode);
       span.setAttribute('http.response_content_type', 'application/json');
       span.setAttribute('http.duration', Date.now() - startTime);
@@ -178,8 +191,13 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
 
   return async(ctx: Context, next: Next): Promise<void> => {
     // Extract trace headers
+<<<<<<< HEAD
     const traceId = (ctx.headers['x-trace-id'] as string) || uuidv4();
     const parentSpanId = ctx.headers['x-span-id'] as string;
+=======
+    let traceId = (ctx.headers['x-trace-id'] as string) || uuidv4();
+    let parentSpanId = ctx.headers['x-span-id'] as string;
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     const tracer = trace.getTracer(serviceName);
     const span = tracer.startSpan(`${ctx.method} ${ctx.path}`, {
@@ -248,7 +266,11 @@ export function koaTracingMiddleware(options: TracingMiddlewareOptions = {}) {
       if (captureResponseBody && ctx.body) {
         span.setAttribute(
           'http.response.body',
+<<<<<<< HEAD
           typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body),
+=======
+          typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body)
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
       }
 
@@ -302,11 +324,15 @@ export function TraceController(options?: {
   captureArgs?: boolean;
   captureResult?: boolean;
 }) {
+<<<<<<< HEAD
   return function(
     target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor,
   ): PropertyDescriptor {
+=======
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const originalMethod = descriptor.value;
 
     descriptor.value = async function(...args: unknown[]): Promise<unknown> {

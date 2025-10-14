@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use strict';
 var __decorate = (this && this.__decorate) || function(decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -15,6 +16,25 @@ Object.defineProperty(exports, '__esModule', { value: true });
 cursor / design - microservice - communication - strategy - a023;
 const express_1 = __importDefault(require('express'));
 const observability_1 = require('@a4co/observability');
+=======
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+cursor / design - microservice - communication - strategy - a023;
+const express_1 = __importDefault(require("express"));
+const observability_1 = require("@a4co/observability");
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Configurar observabilidad
 const observability = (0, observability_1.initializeObservability)({
     serviceName: 'user-service',
@@ -68,7 +88,11 @@ class UserService {
         }
         observability_1.TracingUtils.addEvent('user.validation.complete');
         // Simular operación de base de datos con span manual
+<<<<<<< HEAD
         const user = await observability_1.TracingUtils.withSpan('db.user.insert', async(span) => {
+=======
+        const user = await observability_1.TracingUtils.withSpan('db.user.insert', async (span) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
             span.setAttributes({
                 'db.operation': 'insert',
                 'db.collection': 'users',
@@ -97,7 +121,11 @@ class UserService {
     }
     async getUserById(id) {
         logger.debug('Fetching user by ID', { userId: id });
+<<<<<<< HEAD
         const user = await observability_1.TracingUtils.withSpan('db.user.findById', async(span) => {
+=======
+        const user = await observability_1.TracingUtils.withSpan('db.user.findById', async (span) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
             span.setAttributes({
                 'db.operation': 'findOne',
                 'db.collection': 'users',
@@ -139,6 +167,7 @@ class UserService {
 }
 __decorate([
     (0, observability_1.Trace)('UserService.createUser'),
+<<<<<<< HEAD
     __metadata('design:type', Function),
     __metadata('design:paramtypes', [Object]),
     __metadata('design:returntype', Promise),
@@ -159,6 +188,28 @@ __decorate([
 const userService = new UserService();
 // Rutas con instrumentación
 app.post('/users', async(req, res, next) => {
+=======
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserService.prototype, "createUser", null);
+__decorate([
+    (0, observability_1.Trace)('UserService.getUserById'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserService.prototype, "getUserById", null);
+__decorate([
+    (0, observability_1.Trace)('UserService.notifyUserCreated'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserService.prototype, "notifyUserCreated", null);
+// Instanciar servicio
+const userService = new UserService();
+// Rutas con instrumentación
+app.post('/users', async (req, res, next) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
         // El contexto de tracing ya está establecido por el middleware
         const user = await userService.createUser(req.body);
@@ -175,7 +226,11 @@ app.post('/users', async(req, res, next) => {
         next(error);
     }
 });
+<<<<<<< HEAD
 app.get('/users/:id', async(req, res, next) => {
+=======
+app.get('/users/:id', async (req, res, next) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
         const user = await userService.getUserById(req.params.id);
         res.json({
@@ -192,7 +247,11 @@ app.get('/health', (req, res) => {
     res.json({ status: 'healthy' });
 });
 // Endpoint de métricas
+<<<<<<< HEAD
 app.get('/metrics', async(req, res) => {
+=======
+app.get('/metrics', async (req, res) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     // En producción, usar Prometheus registry
     res.json({
         uptime: process.uptime(),
@@ -200,11 +259,16 @@ app.get('/metrics', async(req, res) => {
     });
 });
 // Ejemplo de llamada entre servicios
+<<<<<<< HEAD
 app.get('/users/:id/orders', async(req, res, next) => {
+=======
+app.get('/users/:id/orders', async (req, res, next) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
         // Verificar que el usuario existe
         const user = await userService.getUserById(req.params.id);
         // Llamar al servicio de órdenes con propagación de contexto
+<<<<<<< HEAD
         const orders = await observability_1.TracingUtils.withSpan('http.order-service.getOrders', async(span) => {
             span.setAttributes({
                 'http.url': 'http://order-service:3000/orders',
@@ -212,6 +276,15 @@ app.get('/users/:id/orders', async(req, res, next) => {
                 'user.id': user.id,
             });
             const response = await httpClient.get('http://order-service:3000/orders', {
+=======
+        const orders = await observability_1.TracingUtils.withSpan('http.order-service.getOrders', async (span) => {
+            span.setAttributes({
+                'http.url': `http://order-service:3000/orders`,
+                'http.method': 'GET',
+                'user.id': user.id,
+            });
+            const response = await httpClient.get(`http://order-service:3000/orders`, {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
                 params: { userId: user.id },
             });
             return response.data;
@@ -240,7 +313,11 @@ const server = app.listen(PORT, () => {
     });
 });
 // Graceful shutdown
+<<<<<<< HEAD
 process.on('SIGTERM', async() => {
+=======
+process.on('SIGTERM', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     logger.info('SIGTERM received, shutting down gracefully');
     server.close(() => {
         logger.info('HTTP server closed');
@@ -261,4 +338,8 @@ process.on('unhandledRejection', (reason, promise) => {
     });
 });
 exports.default = app;
+<<<<<<< HEAD
 //# sourceMappingURL=microservice-example.js.map
+=======
+//# sourceMappingURL=microservice-example.js.map
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

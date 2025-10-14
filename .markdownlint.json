@@ -1,5 +1,6 @@
 {
   "default": true,
+<<<<<<< HEAD
   "MD013": {
     "line_length": 120,
     "code_blocks": false,
@@ -22,3 +23,101 @@
   "MD036": false,
   "MD041": false
 }
+=======
+  "MD001": false,
+  "MD003": {
+    "style": "atx"
+  },
+  "MD004": {
+    "style": "dash"
+  },
+  "MD007": {
+    "indent": 2
+  },
+  "MD010": {
+    "spaces_per_tab": 2
+  },
+  "MD012": {
+    "maximum": 2
+  },
+  "MD013": {
+    "line_length": 127,
+    "heading_line_length": 120,
+    "code_block_line_length": 120,
+    "stern": true,
+    "tables": false
+  },
+  "MD022": {
+    "lines_above": 1,
+    "lines_below": 1
+  },
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD025": {
+    "front_matter_title": ""
+  },
+  "MD026": {
+    "punctuation": ".,;:!?"
+  },
+  "MD029": {
+    "style": "ordered"
+  },
+  "MD030": {
+    "ul_single": 1,
+    "ol_single": 1,
+    "ul_multi": 1,
+    "ol_multi": 1
+  },
+  "MD033": {
+    "allowed_elements": [
+      "details",
+      "summary",
+      "br",
+      "img",
+      "a",
+      "div",
+      "span",
+      "p",
+      "strong",
+      "em",
+      "code",
+      "pre",
+      "blockquote",
+      "ul",
+      "ol",
+      "li",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6"
+    ]
+  },
+  "MD034": false,
+  "MD036": {
+    "punctuation": ".,;:!?"
+  },
+  "MD040": false,
+  "MD041": false,
+  "MD046": {
+    "style": "fenced"
+  },
+  "MD048": {
+    "style": "backtick"
+  },
+  "MD049": {
+    "style": "underscore"
+  },
+  "MD050": {
+    "style": "asterisk"
+  }
+}
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

@@ -153,7 +153,11 @@ function setupGracefulShutdown(): void {
 
   // Handle uncaught exceptions
   process.on('uncaughtException', error => {
+<<<<<<< HEAD
     logger.fatal('Uncaught exception', { error });
+=======
+    logger.fatal({ error }, 'Uncaught exception');
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     shutdown('uncaughtException');
   });
 
@@ -228,9 +232,15 @@ export function validateConfig(config: ObservabilityConfig): void {
 // Quick start helper
 export async function quickStart(
   serviceName: string,
+<<<<<<< HEAD
   options: Partial<ObservabilityConfig> = {},
 ): Promise<void> {
   const environment = process.env['NODE_ENV'] || 'development';
+=======
+  options: Partial<ObservabilityConfig> = {}
+): Promise<void> {
+  const environment = process.env.NODE_ENV || 'development';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   const envConfig = getEnvironmentConfig(environment);
 
   const config: ObservabilityConfig = {

@@ -171,10 +171,13 @@ export class SKU extends ValueObject<string> {
     }
     super(value.toUpperCase());
   }
+<<<<<<< HEAD
 
   public static generate(productId: string, variant?: string): SKU {
     const base = productId.substring(0, 8).toUpperCase();
     const suffix = variant ? `-${variant.toUpperCase()}` : '';
     return new SKU(`${base}${suffix}`);
   }
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }

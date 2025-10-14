@@ -16,6 +16,15 @@ interface PWAState {
   installPrompt: PWAInstallPrompt | null;
 }
 
+<<<<<<< HEAD
+=======
+interface PWAInstallOptions {
+  title?: string;
+  description?: string;
+  icon?: string;
+}
+
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 export const usePWA = () => {
   const [state, setState] = useState<PWAState>({
     isInstalled: false,
@@ -69,9 +78,13 @@ export const usePWA = () => {
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+<<<<<<< HEAD
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setDeferredPrompt(e as any);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+=======
+      setDeferredPrompt(e as any);
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       setState(prev => ({ ...prev, isInstallable: true, installPrompt: e as any }));
     };
 
@@ -111,7 +124,11 @@ export const usePWA = () => {
 
   // Función para instalar la PWA
   const installPWA = useCallback(
+<<<<<<< HEAD
     async() => {
+=======
+    async (options?: PWAInstallOptions) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       if (!deferredPrompt) {
         throw new Error('No hay prompt de instalación disponible');
       }
@@ -135,11 +152,19 @@ export const usePWA = () => {
         throw error;
       }
     },
+<<<<<<< HEAD
     [deferredPrompt],
   );
 
   // Función para solicitar permisos de notificación push
   const requestNotificationPermission = useCallback(async() => {
+=======
+    [deferredPrompt]
+  );
+
+  // Función para solicitar permisos de notificación push
+  const requestNotificationPermission = useCallback(async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!('Notification' in window)) {
       throw new Error('Este navegador no soporta notificaciones');
     }
@@ -157,7 +182,11 @@ export const usePWA = () => {
   }, []);
 
   // Función para enviar notificación push
+<<<<<<< HEAD
   const sendPushNotification = useCallback(async(title: string, options?: NotificationOptions) => {
+=======
+  const sendPushNotification = useCallback(async (title: string, options?: NotificationOptions) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!('Notification' in window)) {
       throw new Error('Este navegador no soporta notificaciones');
     }
@@ -177,7 +206,11 @@ export const usePWA = () => {
 
   // Función para obtener ubicación del usuario
   const getCurrentLocation = useCallback(
+<<<<<<< HEAD
     async(options?: PositionOptions): Promise<GeolocationPosition> => {
+=======
+    async (options?: PositionOptions): Promise<GeolocationPosition> => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       if (!('geolocation' in navigator)) {
         throw new Error('Este navegador no soporta geolocalización');
       }
@@ -191,7 +224,11 @@ export const usePWA = () => {
         });
       });
     },
+<<<<<<< HEAD
     [],
+=======
+    []
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función para calcular distancia entre dos puntos
@@ -209,11 +246,19 @@ export const usePWA = () => {
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     },
+<<<<<<< HEAD
     [],
   );
 
   // Función para sincronizar en background
   const syncInBackground = useCallback(async(tag: string) => {
+=======
+    []
+  );
+
+  // Función para sincronizar en background
+  const syncInBackground = useCallback(async (tag: string) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) {
       throw new Error('Service Worker no disponible');
     }
@@ -223,7 +268,10 @@ export const usePWA = () => {
       const registration = await navigator.serviceWorker.getRegistration();
 
       if (registration && 'sync' in registration) {
+<<<<<<< HEAD
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         await (registration as any).sync.register(tag);
         console.log('Sincronización en background registrada:', tag);
       }
@@ -234,7 +282,11 @@ export const usePWA = () => {
   }, []);
 
   // Función para verificar actualizaciones del service worker
+<<<<<<< HEAD
   const checkForUpdates = useCallback(async() => {
+=======
+  const checkForUpdates = useCallback(async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!('serviceWorker' in navigator)) {
       return false;
     }
@@ -253,7 +305,11 @@ export const usePWA = () => {
   }, []);
 
   // Función para limpiar caches
+<<<<<<< HEAD
   const clearCaches = useCallback(async() => {
+=======
+  const clearCaches = useCallback(async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!('caches' in window)) {
       return false;
     }

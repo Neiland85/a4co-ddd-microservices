@@ -78,8 +78,12 @@ export function observabilityMiddleware(): (
 
       // Interceptar el método end de response para logging
       const originalEnd = res.end;
+<<<<<<< HEAD
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       res.end = function(...args: any[]): Response {
+=======
+      res.end = function (...args: any[]) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         // Log del fin del request
         const tracedReq = req as TracedRequest & {
           log?: { info: (_data: unknown) => void };
@@ -162,6 +166,7 @@ export class TracedHttpClient {
     );
   }
 
+<<<<<<< HEAD
   get(url: string, config?: AxiosRequestConfig): Promise<unknown> {
     return this.axiosInstance.get(url, config);
   }
@@ -179,6 +184,25 @@ export class TracedHttpClient {
   }
 
   patch(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<unknown> {
+=======
+  get(url: string, config?: AxiosRequestConfig) {
+    return this.axiosInstance.get(url, config);
+  }
+
+  post(url: string, data?: any, config?: AxiosRequestConfig) {
+    return this.axiosInstance.post(url, data, config);
+  }
+
+  put(url: string, data?: any, config?: AxiosRequestConfig) {
+    return this.axiosInstance.put(url, data, config);
+  }
+
+  delete(url: string, config?: AxiosRequestConfig) {
+    return this.axiosInstance.delete(url, config);
+  }
+
+  patch(url: string, data?: any, config?: AxiosRequestConfig) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     return this.axiosInstance.patch(url, data, config);
   }
 }
@@ -186,11 +210,18 @@ export class TracedHttpClient {
 // Función helper para extraer trace ID de diferentes formatos de headers
 export function extractTraceId(headers: Record<string, unknown>): string | undefined {
   // Intentar diferentes formatos de trace ID
+<<<<<<< HEAD
   const stringHeaders = headers as Record<string, string | undefined>;
   return (
     stringHeaders[TRACE_HEADERS.TRACE_ID] ||
     stringHeaders[TRACE_HEADERS.B3_TRACE_ID] ||
     extractTraceIdFromTraceparent(stringHeaders[TRACE_HEADERS.TRACE_PARENT])
+=======
+  return (
+    headers[TRACE_HEADERS.TRACE_ID] ||
+    headers[TRACE_HEADERS.B3_TRACE_ID] ||
+    extractTraceIdFromTraceparent(headers[TRACE_HEADERS.TRACE_PARENT])
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 }
 
@@ -233,7 +264,11 @@ export async function withPropagatedContext<T>(
 ): Promise<T> {
   const contextToUse = parentContext || context.active();
 
+<<<<<<< HEAD
   return context.with(contextToUse, async() => {
+=======
+  return context.with(contextToUse, async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       return await fn();
     } catch (error) {

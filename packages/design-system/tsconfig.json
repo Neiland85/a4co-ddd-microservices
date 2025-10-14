@@ -1,12 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+<<<<<<< HEAD
     "lib": [
       "ES2022",
       "DOM"
     ],
     "module": "ES2022",
     "moduleResolution": "node10",
+=======
+    "lib": ["ES2022", "DOM"],
+    "module": "ES2022",
+    "moduleResolution": "node",
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -20,6 +26,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+<<<<<<< HEAD
       "@/*": [
         "./src/*"
       ]
@@ -33,3 +40,11 @@
     "node_modules"
   ]
 }
+=======
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
+}
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

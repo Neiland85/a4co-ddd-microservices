@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { BackButton } from '@/components/BackButton';
 import { ProductDetail } from '@/components/ProductDetail';
 import { ProductReviews } from '@/components/ProductReviews';
@@ -49,21 +50,54 @@ export default async function ProductPage({ params }: ProductPageProps) {
     },
   ];
 
+=======
+import { Suspense } from 'react';
+import { ProductDetail } from '@/components/ProductDetail';
+import { RelatedProducts } from '@/components/RelatedProducts';
+import { ProductReviews } from '@/components/ProductReviews';
+import { BackButton } from '@/components/BackButton';
+
+interface ProductPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function ProductPage({ params }: ProductPageProps) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   return (
     <div className="bg-background min-h-screen">
       <div className="container py-8">
         <BackButton />
 
+<<<<<<< HEAD
         <ProductDetail product={mockProduct} />
 
         <section className="mt-16">
           <h2 className="mb-8 text-2xl font-bold">Productos Relacionados</h2>
           <RelatedProducts products={mockRelatedProducts} />
+=======
+        <Suspense fallback={<div className="py-12 text-center">Cargando producto...</div>}>
+          <ProductDetail productId={params.id} />
+        </Suspense>
+
+        <section className="mt-16">
+          <h2 className="mb-8 text-2xl font-bold">Productos Relacionados</h2>
+          <Suspense fallback={<div>Cargando productos relacionados...</div>}>
+            <RelatedProducts productId={params.id} />
+          </Suspense>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         </section>
 
         <section className="mt-16">
           <h2 className="mb-8 text-2xl font-bold">Reseñas y Comentarios</h2>
+<<<<<<< HEAD
           <ProductReviews reviews={mockReviews} averageRating={4.5} totalReviews={10} />
+=======
+          <Suspense fallback={<div>Cargando reseñas...</div>}>
+            <ProductReviews productId={params.id} />
+          </Suspense>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         </section>
       </div>
     </div>

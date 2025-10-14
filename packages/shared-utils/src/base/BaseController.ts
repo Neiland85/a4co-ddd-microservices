@@ -43,7 +43,11 @@ export abstract class BaseController<TService> {
    */
   protected formatResponse<T>(
     data: T,
+<<<<<<< HEAD
     status = 'success',
+=======
+    status = 'success'
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ): {
     status: string;
     data: T;

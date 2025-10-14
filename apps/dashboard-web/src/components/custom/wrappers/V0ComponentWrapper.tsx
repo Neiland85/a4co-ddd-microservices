@@ -140,7 +140,11 @@ export function V0ComponentWrapper({
       }
       onEvent?.(eventName, eventData);
     },
+<<<<<<< HEAD
     [customizations.analytics, onEvent],
+=======
+    [customizations.analytics, onEvent]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Props finales para el componente v0

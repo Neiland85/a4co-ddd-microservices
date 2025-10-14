@@ -1,4 +1,16 @@
+<<<<<<< HEAD
 import { AggregateRoot } from '../base-classes';
+=======
+import { AggregateRoot } from '@a4co/shared-utils';
+import {
+  ProductId,
+  ProductName,
+  ProductDescription,
+  Price,
+  CategoryId,
+} from '../value-objects/product-value-objects';
+import { ProductVariant } from '../entities/product-variant.entity';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { ProductImage } from '../entities/product-image.entity';
 import { ProductTag } from '../entities/product-tag.entity';
 import { ProductVariant } from '../entities/product-variant.entity';

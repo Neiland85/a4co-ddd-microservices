@@ -1,12 +1,22 @@
+<<<<<<< HEAD
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+=======
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import {
+  logger,
+  initializeObservability,
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   createLogger,
   getTracer,
+<<<<<<< HEAD
   initializeLogger,
   initializeObservability,
   logger,
   resetLoggerState,
   resetObservabilityState,
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   shutdown,
 } from './index';
 
@@ -87,6 +97,7 @@ describe('@a4co/observability', () => {
 
   describe('initializeObservability', () => {
     it('should initialize with minimal configuration', () => {
+<<<<<<< HEAD
       // Just verify the function doesn't throw and returns something
       expect(() => {
         const result = initializeObservability({
@@ -118,6 +129,44 @@ describe('@a4co/observability', () => {
         });
         expect(result).toBeDefined();
       }).not.toThrow();
+=======
+      const result = initializeObservability({
+        serviceName: 'test-minimal-service',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.logger).toBeDefined();
+      expect(result.httpLogger).toBeDefined();
+      expect(result.getTracer).toBeDefined();
+      expect(result.shutdown).toBeDefined();
+    });
+
+    it('should initialize with full configuration', () => {
+      const result = initializeObservability({
+        serviceName: 'test-full-service',
+        serviceVersion: '1.0.0',
+        environment: 'test',
+        logging: {
+          level: 'debug',
+          prettyPrint: false,
+        },
+        tracing: {
+          enabled: true,
+          enableConsoleExporter: true,
+          enableAutoInstrumentation: false,
+        },
+        metrics: {
+          enabled: true,
+          port: 9465,
+          endpoint: '/test-metrics',
+        },
+      });
+
+      expect(result).toBeDefined();
+      expect(result.logger).toBeDefined();
+      expect(result.tracingSDK).toBeDefined();
+      expect(result.metricsExporter).toBeDefined();
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
 
     it('should disable tracing when specified', () => {

@@ -18,6 +18,7 @@
     "strict": true,
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": false,
+<<<<<<< HEAD
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
@@ -28,6 +29,13 @@
     "types": ["jest", "node"],
     "composite": true,
     "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+=======
+    "paths": {
+      "@a4co/shared-utils": ["../../packages/shared-utils/index.ts"],
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/*"]
+    },
+    "types": ["jest", "node"]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["dist", "node_modules"]

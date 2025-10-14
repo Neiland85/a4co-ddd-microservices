@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 import { CatalogHeader } from '@/components/CatalogHeader';
 import { Pagination } from '@/components/Pagination';
 import { ProductFilters } from '@/components/ProductFilters';
 import { ProductGrid } from '@/components/ProductGrid';
+=======
+import { Suspense } from 'react';
+import { CatalogHeader } from '@/components/CatalogHeader';
+import { ProductFilters } from '@/components/ProductFilters';
+import { ProductGrid } from '@/components/ProductGrid';
+import { Pagination } from '@/components/Pagination';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
 export default function CatalogPage() {
   return (
@@ -13,7 +21,13 @@ export default function CatalogPage() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
             {/* Sidebar con filtros */}
             <aside className="lg:col-span-1">
+<<<<<<< HEAD
               <ProductFilters />
+=======
+              <Suspense fallback={<div>Cargando filtros...</div>}>
+                <ProductFilters />
+              </Suspense>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
             </aside>
 
             {/* Contenido principal */}
@@ -25,7 +39,13 @@ export default function CatalogPage() {
                 </p>
               </div>
 
+<<<<<<< HEAD
               <ProductGrid />
+=======
+              <Suspense fallback={<div>Cargando productos...</div>}>
+                <ProductGrid />
+              </Suspense>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
               <div className="mt-8">
                 <Pagination />

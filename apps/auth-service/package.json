@@ -10,8 +10,13 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+<<<<<<< HEAD
     "lint": "eslint src --ext ts,js",
     "lint:fix": "eslint src --ext ts,js --fix",
+=======
+    "lint": "echo 'Linting temporarily disabled'",
+    "lint:fix": "echo 'Linting temporarily disabled'",
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -40,7 +45,10 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
+<<<<<<< HEAD
     "express-rate-limit": "^7.1.5",
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "helmet": "^7.2.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

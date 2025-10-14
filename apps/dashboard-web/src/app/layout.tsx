@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+<<<<<<< HEAD
 import { Navbar } from '../components/navbar';
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { ThemeProvider } from '../components/theme-provider';
 import './globals.css';
 
@@ -19,6 +22,7 @@ export const metadata: Metadata = {
   description: 'Conecta, colabora y crece con el pequeño comercio de Andalucía',
 };
 
+<<<<<<< HEAD
 export default function RootLayout({
   children,
 }: {
@@ -53,6 +57,13 @@ export default function RootLayout({
             </div>
           </footer>
         </ThemeProvider>
+=======
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider>{children}</ThemeProvider>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       </body>
     </html>
   );

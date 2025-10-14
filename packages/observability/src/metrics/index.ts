@@ -206,7 +206,11 @@ export function recordCommandExecution(
 export function recordEvent(
   eventName: string,
   aggregateName: string,
+<<<<<<< HEAD
   action: 'published' | 'processed',
+=======
+  action: 'published' | 'processed'
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): void {
   const metrics = getMetrics();
   const labels = { event: eventName, aggregate: aggregateName };
@@ -232,7 +236,11 @@ export function createCustomHistogram(name: string, description: string, unit?: 
 export function createCustomGauge(
   name: string,
   description: string,
+<<<<<<< HEAD
   unit?: string,
+=======
+  unit?: string
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ObservableGauge {
   const meter = metrics.getMeter('@a4co/observability');
   return meter.createObservableGauge(name, { description, unit });

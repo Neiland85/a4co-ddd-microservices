@@ -154,13 +154,21 @@ export async function GET(request: NextRequest) {
 
     if (municipality) {
       filteredArtisans = filteredArtisans.filter(artisan =>
+<<<<<<< HEAD
         artisan.location.municipality.toLowerCase().includes(municipality.toLowerCase()),
+=======
+        artisan.location.municipality.toLowerCase().includes(municipality.toLowerCase())
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 
     if (specialty) {
       filteredArtisans = filteredArtisans.filter(artisan =>
+<<<<<<< HEAD
         artisan.specialty.toLowerCase().includes(specialty.toLowerCase()),
+=======
+        artisan.specialty.toLowerCase().includes(specialty.toLowerCase())
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 

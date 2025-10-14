@@ -25,7 +25,10 @@
   "dependencies": {
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-slot": "^1.2.3",
+<<<<<<< HEAD
     "@storybook/addon-actions": "^9.0.8",
+=======
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "@types/node": "^24.3.1",
     "clsx": "^2.0.0",
     "lucide-react": "^0.460.0",
@@ -41,7 +44,11 @@
     "@storybook/react": "^7.6.0",
     "@storybook/react-vite": "^7.6.0",
     "@storybook/testing-library": "^0.2.0",
+<<<<<<< HEAD
     "@types/react": "^19.1.15",
+=======
+    "@types/react": "^18.2.0",
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^5.0.2",
     "autoprefixer": "^10.4.0",
@@ -51,7 +58,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.6.0",
+<<<<<<< HEAD
     "tailwindcss": "^3.4.0",
+=======
+    "tailwindcss": "^4.1.13",
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "tsup": "^8.0.0",
     "typescript": "^5.3.0",
     "vite": "^5.0.0",

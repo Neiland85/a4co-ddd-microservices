@@ -57,8 +57,15 @@ describe('ProductService', () => {
   describe('error handling', () => {
     it('should handle errors gracefully', () => {
       const invalidData = null as any;
+<<<<<<< HEAD
       const result = service.addProduct(invalidData, invalidData);
       expect(result).toContain('Error creating product');
+=======
+
+      expect(() => {
+        service.addProduct(invalidData, invalidData);
+      }).toThrow();
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   });
 

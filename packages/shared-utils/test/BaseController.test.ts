@@ -31,13 +31,21 @@ describe('BaseController', () => {
     controller = new MockController();
   });
 
+<<<<<<< HEAD
   test('should validate request correctly', async() => {
+=======
+  test('should validate request correctly', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const req = { param: 'test-value' };
     const result = await controller.handleRequest(req);
     expect(result).toBe('test-test-value');
   });
 
+<<<<<<< HEAD
   test('should throw error for invalid request', async() => {
+=======
+  test('should throw error for invalid request', async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const req = { wrongParam: 'test-value' };
     await expect(controller.handleRequest(req)).rejects.toThrow();
   });

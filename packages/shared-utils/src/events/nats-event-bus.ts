@@ -57,12 +57,20 @@ export class NatsEventBus extends EventEmitter {
 
       this.emit('connected');
       console.log(
+<<<<<<< HEAD
         `✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`,
+=======
+        `✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     } catch (error) {
       this.emit('error', error);
       throw new Error(
+<<<<<<< HEAD
         `❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`,
+=======
+        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
   }
@@ -93,7 +101,11 @@ export class NatsEventBus extends EventEmitter {
     });
 
     // NATS status es un AsyncIterable, no un Observable
+<<<<<<< HEAD
     (async() => {
+=======
+    (async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       try {
         for await (const status of this.connection!.status()) {
           this.emit('status', status);
@@ -136,7 +148,11 @@ export class NatsEventBus extends EventEmitter {
     } catch (error) {
       this.emit('error', error);
       throw new Error(
+<<<<<<< HEAD
         `❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+=======
+        `❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
   }
@@ -160,7 +176,11 @@ export class NatsEventBus extends EventEmitter {
     } catch (error) {
       this.emit('error', error);
       throw new Error(
+<<<<<<< HEAD
         `❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+=======
+        `❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
   }
@@ -168,9 +188,15 @@ export class NatsEventBus extends EventEmitter {
   private setupMessageHandler(
     subscription: Subscription,
     handler: INatsEventHandler,
+<<<<<<< HEAD
     subject: string,
   ): void {
     (async() => {
+=======
+    subject: string
+  ): void {
+    (async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       for await (const message of subscription) {
         try {
           const decodedMessage = this.codec.decode(message.data);

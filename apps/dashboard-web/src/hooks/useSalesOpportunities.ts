@@ -50,7 +50,11 @@ export function useSalesOpportunities(options: UseSalesOpportunitiesOptions = {}
   });
 
   const fetchOpportunities = useCallback(
+<<<<<<< HEAD
     async(customFilters = {}) => {
+=======
+    async (customFilters = {}) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       setState(prev => ({ ...prev, loading: true, error: null }));
 
       try {
@@ -96,7 +100,11 @@ export function useSalesOpportunities(options: UseSalesOpportunitiesOptions = {}
   const fetchOpportunitiesRef = useRef(fetchOpportunities);
   fetchOpportunitiesRef.current = fetchOpportunities;
 
+<<<<<<< HEAD
   const createOpportunity = useCallback(async(opportunityData: Partial<SalesOpportunity>) => {
+=======
+  const createOpportunity = useCallback(async (opportunityData: Partial<SalesOpportunity>) => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -156,7 +164,11 @@ export function useSalesOpportunities(options: UseSalesOpportunitiesOptions = {}
     hasData: state.opportunities.length > 0,
     isEmpty: !state.loading && state.opportunities.length === 0,
     isFiltered: Object.keys(state.filters).some(
+<<<<<<< HEAD
       key => state.filters[key as keyof typeof state.filters],
+=======
+      key => state.filters[key as keyof typeof state.filters]
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     ),
   };
 }

@@ -113,7 +113,11 @@ function createExpressApp() {
         tenantId: req.headers['x-tenant-id'],
         clientVersion: req.headers['x-client-version'],
       }),
+<<<<<<< HEAD
     }),
+=======
+    })
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   app.use(express.json());

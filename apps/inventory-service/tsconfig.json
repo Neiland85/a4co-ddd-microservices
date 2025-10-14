@@ -18,8 +18,12 @@
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": false,
     "noUncheckedIndexedAccess": false,
+<<<<<<< HEAD
     "exactOptionalPropertyTypes": false,
     "ignoreDeprecations": "5.0"
+=======
+    "exactOptionalPropertyTypes": false
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests", "**/*.test.ts", "**/*.spec.ts"]

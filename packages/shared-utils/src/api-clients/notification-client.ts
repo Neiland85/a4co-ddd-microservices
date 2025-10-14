@@ -55,7 +55,11 @@ export class NotificationApiClient {
         if (error.response) {
           // El servidor respondió con un código de estado fuera del rango 2xx
           throw new Error(
+<<<<<<< HEAD
             `Notification service error: ${error.response.status} - ${error.response.data?.message || error.message}`,
+=======
+            `Notification service error: ${error.response.status} - ${error.response.data?.message || error.message}`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           );
         } else if (error.request) {
           // La solicitud se hizo pero no se recibió respuesta
@@ -75,7 +79,11 @@ export class NotificationApiClient {
     try {
       const response = await this.client.post<NotificationResponse>(
         '/api/v1/notifications',
+<<<<<<< HEAD
         request,
+=======
+        request
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
       return response.data;
     } catch (error) {
@@ -90,7 +98,11 @@ export class NotificationApiClient {
   async getNotificationStatus(notificationId: string): Promise<NotificationResponse> {
     try {
       const response = await this.client.get<NotificationResponse>(
+<<<<<<< HEAD
         `/api/v1/notifications/${notificationId}`,
+=======
+        `/api/v1/notifications/${notificationId}`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
       return response.data;
     } catch (error) {
@@ -140,7 +152,11 @@ export class NotificationApiClient {
   async retryNotification(notificationId: string): Promise<NotificationResponse> {
     try {
       const response = await this.client.post<NotificationResponse>(
+<<<<<<< HEAD
         `/api/v1/notifications/${notificationId}/retry`,
+=======
+        `/api/v1/notifications/${notificationId}/retry`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
       return response.data;
     } catch (error) {

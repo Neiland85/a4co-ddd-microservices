@@ -86,7 +86,7 @@ export function expressObservabilityMiddleware(options: MiddlewareOptions = {}) 
     const originalSend = res.send;
     let responseBody: any;
 
-    res.send = function(data: any) {
+    res.send = function (data: any) {
       responseBody = data;
       return originalSend.call(this, data);
     };
@@ -191,8 +191,13 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
 
     // Add to context
     ctx.id = requestId;
+<<<<<<< HEAD
     ctx.state['traceId'] = traceId;
     ctx.state['spanId'] = spanId;
+=======
+    ctx.state.traceId = traceId;
+    ctx.state.spanId = spanId;
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     // Create logger with context
     ctx.log = logger.withContext({
@@ -215,8 +220,13 @@ export function koaObservabilityMiddleware(options: MiddlewareOptions = {}) {
       headers: filterHeaders(ctx.headers, redactHeaders),
     };
 
+<<<<<<< HEAD
     if (includeRequestBody && (ctx.request as any).body) {
       requestLog.body = (ctx.request as any).body;
+=======
+    if (includeRequestBody && ctx.request.body) {
+      requestLog.body = ctx.request.body;
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     }
 
     ctx.log.info(requestLog, 'Request received');
@@ -301,7 +311,11 @@ export function expressErrorHandler() {
         url: req.url,
         method: req.method,
       },
+<<<<<<< HEAD
       'Unhandled error',
+=======
+      'Unhandled error'
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
 
     // Get current span if available
@@ -335,7 +349,11 @@ export function koaErrorHandler() {
           url: ctx.url,
           method: ctx.method,
         },
+<<<<<<< HEAD
         'Unhandled error',
+=======
+        'Unhandled error'
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
 
       // Get current span if available

@@ -194,7 +194,11 @@ export class InterceptorManager<T = unknown> {
     }
   }
 
+<<<<<<< HEAD
   forEach(fn: (_handler: Interceptor<T>) => void): void {
+=======
+  forEach(fn: (handler: Interceptor<T>) => void): void {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     this.handlers.forEach(handler => {
       if (handler !== null) {
         fn(handler);
@@ -217,7 +221,11 @@ export class FetchWrapperWithInterceptors extends FetchWrapper {
 
     // Apply request interceptors
     const requestInterceptorChain: Array<
+<<<<<<< HEAD
       (_config: RequestConfig) => RequestConfig | Promise<RequestConfig>
+=======
+      (config: RequestConfig) => RequestConfig | Promise<RequestConfig>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     > = [];
     this.interceptors.request.forEach(interceptor => {
       if (interceptor.onFulfilled) {
@@ -233,7 +241,11 @@ export class FetchWrapperWithInterceptors extends FetchWrapper {
       let response = await super.request(url, finalConfig);
 
       // Apply response interceptors
+<<<<<<< HEAD
       const responseInterceptorChain: Array<(_response: unknown) => unknown | Promise<unknown>> =
+=======
+      const responseInterceptorChain: Array<(response: Response) => Response | Promise<Response>> =
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         [];
       this.interceptors.response.forEach(interceptor => {
         if (interceptor.onFulfilled) {

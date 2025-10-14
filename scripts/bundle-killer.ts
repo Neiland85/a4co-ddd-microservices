@@ -39,7 +39,11 @@ export const analyzeBundle = async(): Promise<BundleAnalysis> => {
     const statsPath = path.join('apps/dashboard-web/.next/analyze/client.json');
     if (!existsSync(statsPath)) {
       throw new Error(
+<<<<<<< HEAD
         'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.',
+=======
+        'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.'
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 

@@ -1,5 +1,9 @@
 // Exportar todos los componentes del Design System
 export { Button } from './Button/Button';
+<<<<<<< HEAD
+=======
+export type { ButtonProps } from './Button/Button';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
 // Aquí se agregarán más componentes conforme se desarrollen
 // export { Card } from './Card/Card'
@@ -14,5 +18,9 @@ export { Button } from './Button/Button';
 // export { Table } from './Table/Table'
 // export { Pagination } from './Pagination/Pagination'
 // export { Tabs } from './Tabs/Tabs'
+<<<<<<< HEAD
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+=======
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // export { Tooltip } from './Tooltip/Tooltip'

@@ -1,0 +1,1 @@
+{"version":3,"file":"event-bus.port.d.ts","sourceRoot":"","sources":["event-bus.port.ts"],"names":[],"mappings":"AAAA;;;GAGG;AACH,MAAM,WAAW,YAAY;IAC3B;;;OAGG;IACH,OAAO,CAAC,KAAK,EAAE,GAAG,GAAG,OAAO,CAAC,IAAI,CAAC,CAAC;IAEnC;;;OAGG;IACH,UAAU,CAAC,MAAM,EAAE,GAAG,EAAE,GAAG,OAAO,CAAC,IAAI,CAAC,CAAC;CAC1C"}

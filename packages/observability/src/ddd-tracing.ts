@@ -51,7 +51,11 @@ export function TraceAggregateMethod(aggregateName: string) {
   return function(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
+<<<<<<< HEAD
     descriptor.value = async function(...args: any[]) {
+=======
+    descriptor.value = async function (...args: any[]) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       const tracer = getTracer('ddd-aggregate');
       const span = tracer.startSpan(`${aggregateName}.${propertyName}`, {
         kind: SpanKind.INTERNAL,
@@ -65,8 +69,13 @@ export function TraceAggregateMethod(aggregateName: string) {
       try {
         // Extraer metadata del contexto si está disponible
         const activeContext = context.active();
+<<<<<<< HEAD
         const correlationId = activeContext.getValue(Symbol.for('correlationId')) as string;
         const userId = activeContext.getValue(Symbol.for('userId')) as string;
+=======
+        const correlationId = activeContext.getValue('correlationId');
+        const userId = activeContext.getValue('userId');
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         if (correlationId) {
           span.setAttribute('ddd.correlation_id', correlationId as string);
@@ -99,7 +108,11 @@ export function TraceCommand(commandName: string) {
   return function(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
+<<<<<<< HEAD
     descriptor.value = async function(...args: any[]) {
+=======
+    descriptor.value = async function (...args: any[]) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       const tracer = getTracer('ddd-command');
       const span = tracer.startSpan(`command.${commandName}`, {
         kind: SpanKind.INTERNAL,
@@ -152,7 +165,11 @@ export function TraceEventHandler(eventName: string) {
   return function(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
 
+<<<<<<< HEAD
     descriptor.value = async function(...args: any[]) {
+=======
+    descriptor.value = async function (...args: any[]) {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       const tracer = getTracer('ddd-event');
       const span = tracer.startSpan(`event.${eventName}`, {
         kind: SpanKind.INTERNAL,
@@ -401,7 +418,11 @@ export function traceDomainTransaction<T>(
       userId: metadata.userId,
       causationId: metadata.causationId,
     }),
+<<<<<<< HEAD
     async() => {
+=======
+    async () => {
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       try {
         const result = await fn();
         span.setStatus({ code: SpanStatusCode.OK });
@@ -416,6 +437,10 @@ export function traceDomainTransaction<T>(
       } finally {
         span.end();
       }
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 }

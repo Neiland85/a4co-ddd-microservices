@@ -1,0 +1,9 @@
+'use client';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Header = Header;
+const jsx_runtime_1 = require("react/jsx-runtime");
+function Header() {
+    return ((0, jsx_runtime_1.jsx)("header", { className: "border-b bg-white shadow-sm", children: (0, jsx_runtime_1.jsx)("div", { className: "container mx-auto px-4 py-4", children: (0, jsx_runtime_1.jsxs)("div", { className: "flex items-center justify-between", children: [(0, jsx_runtime_1.jsxs)("div", { className: "flex items-center space-x-4", children: [(0, jsx_runtime_1.jsx)("h1", { className: "text-2xl font-bold text-gray-900", children: "\uD83C\uDFA8 Mercado Local de Ja\u00E9n" }), (0, jsx_runtime_1.jsx)("span", { className: "text-sm text-gray-600", children: "Artesan\u00EDas y Productos Locales" })] }), (0, jsx_runtime_1.jsxs)("nav", { className: "hidden items-center space-x-8 md:flex", children: [(0, jsx_runtime_1.jsx)("a", { href: "#", className: "text-gray-700 transition-colors hover:text-gray-900", children: "Inicio" }), (0, jsx_runtime_1.jsx)("a", { href: "#", className: "text-gray-700 transition-colors hover:text-gray-900", children: "Productos" }), (0, jsx_runtime_1.jsx)("a", { href: "#", className: "text-gray-700 transition-colors hover:text-gray-900", children: "Artesanos" }), (0, jsx_runtime_1.jsx)("a", { href: "#", className: "text-gray-700 transition-colors hover:text-gray-900", children: "Contacto" })] }), (0, jsx_runtime_1.jsx)("div", { className: "flex items-center space-x-4", children: (0, jsx_runtime_1.jsx)("button", { className: "rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700", children: "Iniciar Sesi\u00F3n" }) })] }) }) }));
+}
+//# sourceMappingURL=Header.js.map

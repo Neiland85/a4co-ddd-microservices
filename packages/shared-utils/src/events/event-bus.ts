@@ -108,7 +108,11 @@ export class NatsEventBus implements IEventBus {
 
   async subscribe(
     subject: string,
+<<<<<<< HEAD
     handler: (event: DomainEvent) => Promise<void>,
+=======
+    handler: (event: DomainEvent) => Promise<void>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ): Promise<Subscription> {
     if (!this.nc) {
       throw new Error('NATS connection not established. Call connect() first.');
@@ -128,7 +132,11 @@ export class NatsEventBus implements IEventBus {
   async subscribeQueue(
     subject: string,
     queue: string,
+<<<<<<< HEAD
     handler: (event: DomainEvent) => Promise<void>,
+=======
+    handler: (event: DomainEvent) => Promise<void>
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ): Promise<Subscription> {
     if (!this.nc) {
       throw new Error('NATS connection not established. Call connect() first.');
@@ -156,7 +164,11 @@ export class NatsEventBus implements IEventBus {
         const eventData = JSON.parse(this.codec.decode(msg.data)) as EnhancedDomainEvent;
 
         console.log(
+<<<<<<< HEAD
           `📨 Received event ${eventData.eventType} on ${subject}${queue ? ` (queue: ${queue})` : ''}`,
+=======
+          `📨 Received event ${eventData.eventType} on ${subject}${queue ? ` (queue: ${queue})` : ''}`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
 
         // Add processing timestamp
@@ -194,12 +206,20 @@ export class NatsEventBus implements IEventBus {
               this.nc.publish(subject, this.codec.encode(JSON.stringify(eventData)));
             }
           },
+<<<<<<< HEAD
           Math.pow(2, retryCount) * 1000,
+=======
+          Math.pow(2, retryCount) * 1000
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         ); // Exponential backoff
       } else {
         // Send to dead letter queue
         console.error(
+<<<<<<< HEAD
           `💀 Sending event ${eventData.eventType} to dead letter queue after ${retryCount} retries`,
+=======
+          `💀 Sending event ${eventData.eventType} to dead letter queue after ${retryCount} retries`
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
 
         if (this.nc) {
@@ -214,8 +234,13 @@ export class NatsEventBus implements IEventBus {
                   stack: error.stack,
                 },
                 failedAt: new Date().toISOString(),
+<<<<<<< HEAD
               }),
             ),
+=======
+              })
+            )
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           );
         }
       }
