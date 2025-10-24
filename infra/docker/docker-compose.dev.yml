@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: a4co_local
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  apps/gateway:
+    build: ./apps/gateway
+    volumes:
+      - ./apps/gateway:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis

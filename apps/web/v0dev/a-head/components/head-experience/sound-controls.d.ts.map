@@ -1,1 +1,0 @@
-{"version":3,"file":"sound-controls.d.ts","sourceRoot":"","sources":["sound-controls.tsx"],"names":[],"mappings":"AAUA,OAAO,KAAK,EAAE,aAAa,EAAE,MAAM,mCAAmC,CAAC;AAEvE,UAAU,kBAAkB;IAC1B,QAAQ,EAAE,aAAa,CAAC;IACxB,gBAAgB,EAAE,CAAC,QAAQ,EAAE,aAAa,KAAK,IAAI,CAAC;CACrD;AAED,wBAAgB,aAAa,CAAC,EAAE,QAAQ,EAAE,gBAAgB,EAAE,EAAE,kBAAkB,2CAwI/E"}

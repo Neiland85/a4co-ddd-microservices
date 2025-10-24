@@ -1,13 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-<<<<<<< HEAD
-    "lib": [
-      "ES2022"
-    ],
-=======
     "lib": ["ES2022"],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -30,33 +24,15 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-<<<<<<< HEAD
-    "exactOptionalPropertyTypes": false,
+    "exactOptionalPropertyTypes": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@test/*": [
-        "test/*"
-      ],
-      "@a4co/shared-utils": [
-        "../packages/shared-utils/src"
-      ],
-      "@a4co/design-system": [
-        "../packages/design-system/src"
-      ]
-=======
-    "exactOptionalPropertyTypes": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@test/*": ["test/*"],
       "@a4co/shared-utils": ["../packages/shared-utils/src"],
       "@a4co/design-system": ["../packages/design-system/src"]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     },
     "resolveJsonModule": true,
     "allowJs": true,
@@ -64,20 +40,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
-<<<<<<< HEAD
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".next",
-    "coverage"
-  ]
-}
-=======
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist", ".next", "coverage"]
 }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+

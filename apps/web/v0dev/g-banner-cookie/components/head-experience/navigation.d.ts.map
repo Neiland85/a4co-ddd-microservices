@@ -1,1 +1,0 @@
-{"version":3,"file":"navigation.d.ts","sourceRoot":"","sources":["navigation.tsx"],"names":[],"mappings":"AASA,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,mCAAmC,CAAC;AAExE,UAAU,eAAe;IACvB,QAAQ,CAAC,KAAK,CAAC,EAAE,cAAc,EAAE,CAAC;IAClC,QAAQ,CAAC,WAAW,CAAC,EAAE,MAAM,CAAC;CAC/B;AASD,wBAAgB,UAAU,CAAC,EAAE,KAAoB,EAAE,WAAiB,EAAE,EAAE,eAAe,2CA0JtF"}

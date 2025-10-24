@@ -67,15 +67,11 @@
     @apply py-12 sm:py-16 lg:py-20;
   }
 
-<<<<<<< HEAD
   /* Botones base */
   .btn-a4co {
     @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
   }
 
-=======
-  /* Botones */
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   .btn-primary {
     @apply btn-a4co bg-primary hover:bg-primary/90 text-white;
   }
