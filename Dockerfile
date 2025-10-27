@@ -1,5 +1,5 @@
 # Optimized multi-stage build for CI/CD
-FROM node:20-alpine AS base
+FROM node:25-alpine AS base
 
 # Install pnpm and turbo globally
 RUN npm install -g pnpm@8 turbo
@@ -22,7 +22,7 @@ COPY . .
 RUN pnpm run build
 
 # Development stage - with hot reload support
-FROM node:20-alpine AS development
+FROM node:25-alpine AS development
 
 # Install pnpm and turbo globally
 RUN npm install -g pnpm@8 turbo
@@ -48,7 +48,7 @@ EXPOSE 3000
 CMD ["pnpm", "run", "dev"]
 
 # Production stage - minimal runtime
-FROM node:20-alpine AS production
+FROM node:25-alpine AS production
 
 # Install pnpm globally
 RUN npm install -g pnpm@8
