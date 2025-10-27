@@ -9,15 +9,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@5bd52570610d5f7c6f14d3c2d54c0e824b44e5d5 # v3.6.0
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm install -g pnpm@10.14.0
+          cache: 'pnpm'
+      - name: Install pnpm
+        run: npm install -g pnpm@10.14.0
+
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -32,10 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@5bd52570610d5f7c6f14d3c2d54c0e824b44e5d5 # v3.6.0
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
@@ -67,11 +70,12 @@ jobs:
     needs: [test, validate-api-contracts]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@5bd52570610d5f7c6f14d3c2d54c0e824b44e5d5 # v3.6.0
+      - uses: actions/checkout@v3
 
-      - name: Install pnpm
-        uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
+          node-version: '20'
           node-version: '20'
       - run: npm install -g pnpm@10.14.0
 
