@@ -4,7 +4,7 @@ module.exports = {
   verbose: true,
   testTimeout: 30000,
   transform: {
-    '^.+\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   moduleNameMapper: {
     '^@a4co/shared-utils$': '<rootDir>/packages/shared-utils/src/index.ts',

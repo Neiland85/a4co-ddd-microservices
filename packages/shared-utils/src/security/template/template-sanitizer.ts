@@ -1,5 +1,3 @@
-import { CommandInjectionValidator } from '../validators/command-injection.validator';
-
 export class TemplateSanitizer {
   static sanitizeTemplate(template: string): string {
     if (typeof template !== 'string') return template;
@@ -20,9 +18,9 @@ export class TemplateSanitizer {
     return new Function('data', 'user', 'config', 'return `' + sanitized + '`');
   }
 
-  static renderTemplate(template: string, params: Record<string, any>): string {
+  static renderTemplate(template: string, params: Record<string, unknown>): string {
     const compiled = this.compileSafeTemplate(template);
-    return compiled(params.data, params.user, params.config);
+    return compiled(params['data'], params['user'], params['config']);
   }
 }
 

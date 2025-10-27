@@ -8,8 +8,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest",
-    "lint": "eslint src --ext ts,tsx,js",
-    "lint:fix": "eslint src --ext ts,tsx,js --fix",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {

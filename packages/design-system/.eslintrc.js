@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['../../.eslintrc.js'],
+  extends: ['../../eslint.config.js'],
   parserOptions: {
     project: './tsconfig.json',
     sourceType: 'module',
@@ -12,11 +12,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: [
-    '../../.eslintrc.js',
-    'plugin:jsx-a11y/recommended',
-    'plugin:storybook/recommended',
-  ],
+  extends: ['../../eslint.config.js', 'plugin:jsx-a11y/recommended', 'plugin:storybook/recommended'],
   rules: {
     // TypeScript específicas para design system
     '@typescript-eslint/explicit-function-return-type': 'warn',
