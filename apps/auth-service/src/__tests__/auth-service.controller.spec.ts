@@ -1,51 +1,48 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthServiceController } from '../auth-service.controller';
-import { AuthServiceService } from '../auth-service.service';
+import { AuthController } from '../presentation/controllers/auth.controller';
+import { AuthService } from '../service';
 
-describe('AuthServiceController', () => {
-  let controller: AuthServiceController;
-  let service: AuthServiceService;
+describe('AuthController', () => {
+  let controller: AuthController;
+  let service: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthServiceController],
+      controllers: [AuthController],
       providers: [
         {
-          provide: AuthServiceService,
+          provide: AuthService,
           useValue: {
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
+            login: jest.fn(),
+            register: jest.fn(),
           },
         },
       ],
     }).compile();
 
-    controller = module.get<AuthServiceController>(AuthServiceController);
-    service = module.get<AuthServiceService>(AuthServiceService);
+    controller = module.get<AuthController>(AuthController);
+    service = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('findAll', () => {
-    it('should return an array of auth-service', async () => {
-      const result = [{ id: 1, name: 'Test auth-service' }];
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
+  describe('register', () => {
+    it('should register a user', async () => {
+      const result = 'Usuario test registrado.';
+      jest.spyOn(service, 'register').mockReturnValue(result);
 
-      expect(await controller.findAll()).toBe(result);
+      expect(service.register('test', 'password')).toBe(result);
     });
   });
 
-  describe('findOne', () => {
-    it('should return a single auth-service', async () => {
-      const result = { id: 1, name: 'Test auth-service' };
-      jest.spyOn(service, 'findOne').mockResolvedValue(result);
+  describe('login', () => {
+    it('should login a user', async () => {
+      const result = 'Usuario test autenticado.';
+      jest.spyOn(service, 'login').mockReturnValue(result);
 
-      expect(await controller.findOne('1')).toBe(result);
+      expect(service.login('test', 'password')).toBe(result);
     });
   });
 });

@@ -1,5 +1,4 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
@@ -11,40 +10,23 @@
     "target": "ES2022",
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strictNullChecks": true,
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": false,
-    "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "verbatimModuleSyntax": false,
     "allowImportingTsExtensions": false,
     "paths": {
-      "@a4co/shared-utils": [
-        "../../packages/shared-utils/index.ts"
-      ],
-      "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/*"
-      ]
+      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
     },
-    "types": [
-      "jest",
-      "node"
-    ],
-    "composite": true,
-    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+    "types": ["jest", "node"]
   },
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -47,7 +47,7 @@ describe('${serviceName}Service', () => {
   describe('error handling', () => {
     it('should handle errors gracefully', () => {
       const invalidData = null as any;
-      
+
       expect(() => {
         ${generateErrorTestCase(service)}
       }).toThrow();
@@ -57,7 +57,7 @@ describe('${serviceName}Service', () => {
   describe('logging', () => {
     it('should log operations', () => {
       ${generateLoggingTestCase(service, serviceName)}
-      
+
       expect(console.log).toHaveBeenCalled();
     });
   });
@@ -228,7 +228,7 @@ class MockService extends BaseService {
   constructor() {
     super('MockService');
   }
-  
+
   testMethod(param: string): string {
     return \`Result: \${param}\`;
   }
@@ -239,7 +239,7 @@ class MockController extends BaseController<MockService> {
   constructor() {
     super(MockService);
   }
-  
+
   testEndpoint(req: { param: string }): string {
     const validated = this.validateRequest<{ param: string }>(req, ['param']);
     return this.service.testMethod(validated.param);
@@ -422,7 +422,7 @@ describe('BaseService', () => {
 };
 
 // Función principal
-const generateTests = async() => {
+const generateTests = async () => {
   console.log('🧪 Generando tests para áreas críticas del dominio...\n');
 
   const allTests = [...generateServiceTests(), ...generateBaseClassTests()];

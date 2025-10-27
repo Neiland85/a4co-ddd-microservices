@@ -50,8 +50,8 @@ export class NotificationService {
       type: 'email',
       config: {
         service: 'sendgrid',
-        apiKey: process.env.SENDGRID_API_KEY,
-        from: process.env.NOTIFICATION_EMAIL || 'noreply@backoffice.com',
+        apiKey: process.env['SENDGRID_API_KEY'],
+        from: process.env['NOTIFICATION_EMAIL'] || 'noreply@backoffice.com',
       },
       enabled: true,
     });
@@ -59,21 +59,21 @@ export class NotificationService {
     this.channels.set('slack', {
       type: 'slack',
       config: {
-        webhookUrl: process.env.SLACK_WEBHOOK_URL,
+        webhookUrl: process.env['SLACK_WEBHOOK_URL'],
         channel: '#security-alerts',
       },
-      enabled: !!process.env.SLACK_WEBHOOK_URL,
+      enabled: !!process.env['SLACK_WEBHOOK_URL'],
     });
 
     this.channels.set('sms', {
       type: 'sms',
       config: {
         service: 'twilio',
-        accountSid: process.env.TWILIO_ACCOUNT_SID,
-        authToken: process.env.TWILIO_AUTH_TOKEN,
-        from: process.env.TWILIO_PHONE_NUMBER,
+        accountSid: process.env['TWILIO_ACCOUNT_SID'],
+        authToken: process.env['TWILIO_AUTH_TOKEN'],
+        from: process.env['TWILIO_PHONE_NUMBER'],
       },
-      enabled: !!process.env.TWILIO_ACCOUNT_SID,
+      enabled: !!process.env['TWILIO_ACCOUNT_SID'],
     });
   }
 
@@ -131,7 +131,6 @@ export class NotificationService {
 
   // Enviar notificación
   async sendNotification(
-    event: Omit<NotificationEvent, 'id' | 'timestamp' | 'sent' | 'attempts'>,
     event: Omit<NotificationEvent, 'id' | 'timestamp' | 'sent' | 'attempts'>
   ): Promise<void> {
     const notification: NotificationEvent = {
@@ -151,7 +150,6 @@ export class NotificationService {
 
   // Procesar cola de notificaciones
   private startQueueProcessor(): void {
-    setInterval(async() => {
     setInterval(async () => {
       if (this.queue.length === 0) return;
 
@@ -189,7 +187,6 @@ export class NotificationService {
   // Enviar a un canal específico
   private async sendToChannel(
     notification: NotificationEvent,
-    channel: NotificationChannel,
     channel: NotificationChannel
   ): Promise<void> {
     switch (channel.type) {

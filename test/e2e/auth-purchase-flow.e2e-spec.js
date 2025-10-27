@@ -1,14 +1,14 @@
-'use strict';
-var __importDefault = (this && this.__importDefault) || function(mod) {
-    return (mod && mod.__esModule) ? mod : { 'default': mod };
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, '__esModule', { value: true });
-const supertest_1 = __importDefault(require('supertest'));
+Object.defineProperty(exports, "__esModule", { value: true });
+const supertest_1 = __importDefault(require("supertest"));
 describe('E2E: Basic API Connectivity Test', () => {
     const authServiceUrl = process.env['AUTH_SERVICE_URL'] || 'http://localhost:3001';
     const orderServiceUrl = process.env['ORDER_SERVICE_URL'] || 'http://localhost:3003';
     describe('Service Health Checks', () => {
-        it('should check auth service health', async() => {
+        it('should check auth service health', async () => {
             try {
                 const response = await (0, supertest_1.default)(authServiceUrl).get('/health').timeout(5000);
                 if (response.status) {
@@ -19,7 +19,7 @@ describe('E2E: Basic API Connectivity Test', () => {
                 expect(error.code).toBeDefined();
             }
         });
-        it('should check order service health', async() => {
+        it('should check order service health', async () => {
             try {
                 const response = await (0, supertest_1.default)(orderServiceUrl).get('/health').timeout(5000);
                 if (response.status) {
@@ -32,7 +32,7 @@ describe('E2E: Basic API Connectivity Test', () => {
         });
     });
     describe('API Contract Validation', () => {
-        it('should validate auth service API structure', async() => {
+        it('should validate auth service API structure', async () => {
             try {
                 const endpoints = ['/api/v1/auth/login', '/api/v1/auth/register', '/api/v1/auth/me'];
                 for (const endpoint of endpoints) {
@@ -49,7 +49,7 @@ describe('E2E: Basic API Connectivity Test', () => {
                 expect(error).toBeDefined();
             }
         });
-        it('should validate order service API structure', async() => {
+        it('should validate order service API structure', async () => {
             try {
                 const endpoints = ['/api/v1/orders', '/api/v1/orders/123'];
                 for (const endpoint of endpoints) {
@@ -68,7 +68,7 @@ describe('E2E: Basic API Connectivity Test', () => {
         });
     });
     describe('Error Handling Validation', () => {
-        it('should handle malformed requests gracefully', async() => {
+        it('should handle malformed requests gracefully', async () => {
             try {
                 const response = await (0, supertest_1.default)(authServiceUrl)
                     .post('/api/v1/auth/login')
@@ -80,7 +80,7 @@ describe('E2E: Basic API Connectivity Test', () => {
                 expect(error.code).toBeDefined();
             }
         });
-        it('should handle invalid endpoints', async() => {
+        it('should handle invalid endpoints', async () => {
             try {
                 const response = await (0, supertest_1.default)(orderServiceUrl)
                     .get('/api/v1/nonexistent-endpoint')

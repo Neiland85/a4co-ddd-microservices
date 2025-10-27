@@ -1,34 +1,39 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AuthServiceModule } from '../../auth-service.module';
+import { AuthModule } from '../../auth.module';
 
-describe('AuthService API (e2e)', () => {
+describe('Auth API (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AuthServiceModule],
+      imports: [AuthModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  it('/auth-service (GET)', () => {
+  it('/auth/register (POST)', () => {
     return request(app.getHttpServer())
-      .get('/auth-service')
-      .expect(200)
-      .expect((res) => {
-        expect(Array.isArray(res.body)).toBe(true);
-      });
+      .post('/auth/register')
+      .send({
+        email: 'test@example.com',
+        password: 'password123',
+        name: 'Test User',
+      })
+      .expect(201);
   });
 
-  it('/auth-service (POST)', () => {
+  it('/auth/login (POST)', () => {
     return request(app.getHttpServer())
-      .post('/auth-service')
-      .send({ name: 'Test auth-service' })
-      .expect(201);
+      .post('/auth/login')
+      .send({
+        email: 'test@example.com',
+        password: 'password123',
+      })
+      .expect(200);
   });
 
   afterAll(async () => {

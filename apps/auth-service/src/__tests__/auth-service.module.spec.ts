@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthServiceModule } from '../auth-service.module';
+import { AuthModule } from '../auth.module';
 
-describe('AuthServiceModule', () => {
+describe('AuthModule', () => {
   let module: TestingModule;
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      imports: [AuthServiceModule],
+      imports: [AuthModule],
     }).compile();
   });
 
@@ -14,13 +14,13 @@ describe('AuthServiceModule', () => {
     expect(module).toBeDefined();
   });
 
-  it('should have auth-service controller', () => {
-    const controller = module.get('AuthServiceController');
+  it('should have auth controller', () => {
+    const controller = module.get('AuthController');
     expect(controller).toBeDefined();
   });
 
-  it('should have auth-service service', () => {
-    const service = module.get('AuthServiceService');
+  it('should have auth service', () => {
+    const service = module.get('AuthService');
     expect(service).toBeDefined();
   });
 });

@@ -44,7 +44,7 @@ export class SecurityMiddleware implements NestMiddleware {
       skipFailedRequests: false,
       keyGenerator: req => {
         // Usar IP + User ID si está autenticado
-        return req.user?.id ? `${req.ip}-${req.user.id}` : req.ip;
+        return req.user?.id ? `${req.ip || 'unknown'}-${req.user.id}` : req.ip || 'unknown';
       },
     });
   }
@@ -190,7 +190,7 @@ export class LoginRateLimitMiddleware implements NestMiddleware {
       standardHeaders: true,
       legacyHeaders: false,
       skipSuccessfulRequests: true, // No contar logins exitosos
-      keyGenerator: req => req.ip,
+      keyGenerator: req => req.ip || 'unknown',
       handler: (req, res) => {
         res.status(429).json({
           error: 'Too many login attempts',

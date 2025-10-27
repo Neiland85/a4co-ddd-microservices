@@ -133,9 +133,9 @@ function generateService(service: ServiceConfig): string {
             `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`
         )
         .join('\n      ')}
-      
+
       this.log('Creating ${entityName}', { ${method.params.map(p => p.name).join(', ')} });
-      
+
       return this.createSuccessMessage(
         '${service.name}',
         'created',
@@ -156,9 +156,9 @@ function generateService(service: ServiceConfig): string {
           }
         })
         .join('\n      ')}
-      
+
       this.log('Updating ${entityName}', { ${method.params.map(p => p.name).join(', ')} });
-      
+
       return this.createSuccessMessage(
         '${service.name}',
         'updated',
@@ -179,9 +179,9 @@ function generateService(service: ServiceConfig): string {
           }
         })
         .join('\n      ')}
-      
+
       this.log('Getting ${entityName}', { ${method.params.map(p => `${p.name}: validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)}`).join(', ')} });
-      
+
       return this.createSuccessMessage(
         '${service.name}',
         'retrieved',

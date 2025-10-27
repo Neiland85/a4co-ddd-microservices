@@ -9,3 +9,6 @@ export * from './types';
 
 // Exportar utilidades generales que funcionan
 export * from './utils/validation-utils';
+
+// Exportar domain primitives
+export * from './domain';

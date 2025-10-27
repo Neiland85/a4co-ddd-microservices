@@ -1,3 +1,6 @@
+// Exportar clases de dominio
+export * from './src/domain';
+
 // Exportar DTOs y sus interfaces
 export * from './src/dto';
 

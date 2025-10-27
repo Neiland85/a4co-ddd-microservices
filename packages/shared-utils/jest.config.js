@@ -14,6 +14,5 @@ export default {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   testMatch: ['<rootDir>/test/**/*.test.ts', '<rootDir>/*.test.ts', '<rootDir>/src/**/*.test.ts'],
-  testMatch: ['<rootDir>/test/**/*.test.ts', '<rootDir>/*.test.ts'],
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
 };
