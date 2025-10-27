@@ -1,4 +1,4 @@
-import { initializeTracing } from '@a4co/observability';
+import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -17,33 +17,16 @@ const logger = {
 };
 
 async function bootstrap() {
-  // Initialize observability
-  initializeTracing({
-    serviceName: 'product-service',
-    serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
-  });
-
   const app = await NestFactory.create(ProductModule, { logger });
 
   // Use Pino HTTP middleware for request logging
   app.use(logger.pinoHttpMiddleware());
-async function bootstrap() {
-  const app = await NestFactory.create(ProductModule);
 
   // Security middleware
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ['\'self\''],
-          styleSrc: ['\'self\'', '\'unsafe-inline\''],
-          scriptSrc: ['\'self\''],
-          imgSrc: ['\'self\'', 'data:', 'https:'],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-    }),
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
@@ -60,7 +43,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    }),
+    })
   );
 
   // Braces security middleware
@@ -75,12 +58,6 @@ async function bootstrap() {
   // CORS configuration
   app.enableCors({
     origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-    })
-  );
-
-  // CORS configuration
-  app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -101,9 +78,6 @@ async function bootstrap() {
   const port = process.env['PORT'] || 3003;
   logger.info(`🚀 Product Service iniciado en puerto ${port}`);
   logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
-  const port = process.env.PORT || 3003;
-  console.log(`🚀 Product Service iniciado en puerto ${port}`);
-  console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
 
   await app.listen(port);
 }

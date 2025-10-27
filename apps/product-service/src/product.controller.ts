@@ -17,8 +17,6 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async getProductById(@Param('id') id: string): Promise<any> {
     return await this.productService.findById(id);
-  async getProductById(@Param('id') id: string) {
-    return await this.productService.getProductById(id);
   }
 
   @Get('sku/:sku')
@@ -27,8 +25,6 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async getProductBySku(@Param('sku') sku: string): Promise<any> {
     return await this.productService.findBySku(sku);
-  async getProductBySku(@Param('sku') sku: string) {
-    return await this.productService.getProductBySku(sku);
   }
 
   @Get('slug/:slug')
@@ -37,8 +33,6 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async getProductBySlug(@Param('slug') slug: string): Promise<any> {
     return await this.productService.findBySlug(slug);
-  async getProductBySlug(@Param('slug') slug: string) {
-    return await this.productService.getProductBySlug(slug);
   }
 
   @Post()
@@ -46,7 +40,6 @@ export class ProductController {
   @ApiResponse({ status: 201, description: 'Producto creado exitosamente' })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   async createProduct(@Body() productData: CreateProductDTO): Promise<any> {
-  async createProduct(@Body() productData: CreateProductDTO) {
     return await this.productService.createProduct(productData);
   }
 
@@ -56,12 +49,9 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async updateProduct(
     @Param('id') id: string,
-    @Body() productData: UpdateProductDTO,
+    @Body() productData: UpdateProductDTO
   ): Promise<any> {
     return await this.productService.updateProduct({ ...productData, id });
-  async updateProduct(@Param('id') id: string, @Body() productData: UpdateProductDTO) {
-    const updateDto = { ...productData, id };
-    return await this.productService.updateProduct(updateDto);
   }
 
   @Delete(':id')
@@ -78,7 +68,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Agregar stock a producto' })
   @ApiResponse({ status: 200, description: 'Stock agregado exitosamente' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  async addStock(@Param('id') id: string, @Body() body: { quantity: number }) {
+  async addStock(@Param('id') id: string, @Body() body: { quantity: number }): Promise<any> {
     return await this.productService.addStockToProduct(id, body.quantity);
   }
 
@@ -95,7 +85,7 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Información de stock obtenida' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async getProductStock(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<{ stock: number; isInStock: boolean; isLowStock: boolean }> {
     return await this.productService.getProductStock(id);
   }
@@ -104,14 +94,6 @@ export class ProductController {
   @ApiOperation({ summary: 'Publicar producto' })
   @ApiResponse({ status: 200, description: 'Producto publicado exitosamente' })
   async publishProduct(@Param('id') id: string): Promise<any> {
-  async deleteProduct(@Param('id') id: string) {
-    return await this.productService.deleteProduct(id);
-  }
-
-  @Post(':id/publish')
-  @ApiOperation({ summary: 'Publicar producto' })
-  @ApiResponse({ status: 200, description: 'Producto publicado exitosamente' })
-  async publishProduct(@Param('id') id: string) {
     return await this.productService.publishProduct(id);
   }
 
@@ -119,7 +101,6 @@ export class ProductController {
   @ApiOperation({ summary: 'Archivar producto' })
   @ApiResponse({ status: 200, description: 'Producto archivado exitosamente' })
   async archiveProduct(@Param('id') id: string): Promise<any> {
-  async archiveProduct(@Param('id') id: string) {
     return await this.productService.archiveProduct(id);
   }
 }

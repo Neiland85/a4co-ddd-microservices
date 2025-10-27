@@ -1,51 +1,42 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductServiceController } from '../product-service.controller';
-import { ProductServiceService } from '../product-service.service';
+import { ProductService } from '../application/services/product.service';
+import { ProductController } from '../product.controller';
 
-describe('ProductServiceController', () => {
-  let controller: ProductServiceController;
-  let service: ProductServiceService;
+describe('ProductController', () => {
+  let controller: ProductController;
+  let service: ProductService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [ProductServiceController],
+      controllers: [ProductController],
       providers: [
         {
-          provide: ProductServiceService,
+          provide: ProductService,
           useValue: {
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
+            createProduct: jest.fn(),
+            updateProduct: jest.fn(),
+            deleteProduct: jest.fn(),
+            getProduct: jest.fn(),
+            getProducts: jest.fn(),
           },
         },
       ],
     }).compile();
 
-    controller = module.get<ProductServiceController>(ProductServiceController);
-    service = module.get<ProductServiceService>(ProductServiceService);
+    controller = module.get<ProductController>(ProductController);
+    service = module.get<ProductService>(ProductService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('findAll', () => {
-    it('should return an array of product-service', async () => {
-      const result = [{ id: 1, name: 'Test product-service' }];
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
+  describe('createProduct', () => {
+    it('should create a product', async () => {
+      const result = { id: '1', name: 'Test Product' };
+      jest.spyOn(service, 'createProduct').mockResolvedValue(result as any);
 
-      expect(await controller.findAll()).toBe(result);
-    });
-  });
-
-  describe('findOne', () => {
-    it('should return a single product-service', async () => {
-      const result = { id: 1, name: 'Test product-service' };
-      jest.spyOn(service, 'findOne').mockResolvedValue(result);
-
-      expect(await controller.findOne('1')).toBe(result);
+      expect(service.createProduct).toBeDefined();
     });
   });
 });

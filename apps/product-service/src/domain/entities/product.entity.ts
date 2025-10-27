@@ -1,11 +1,13 @@
-import { AggregateRoot, DomainEvent } from '../base-classes';
+import { AggregateRoot, DomainEvent } from '@a4co/shared-utils';
 
+// ========================================
 // VALUE OBJECTS
+// ========================================
 
 export class Money {
   constructor(
     public readonly amount: number,
-    public readonly currency: string = 'EUR',
+    public readonly currency: string = 'EUR'
   ) {
     if (amount < 0) {
       throw new Error('Money amount cannot be negative');
@@ -44,7 +46,7 @@ export class ProductImage {
     public readonly altText?: string,
     public readonly type: ImageType = ImageType.GALLERY,
     public readonly isPrimary: boolean = false,
-    public readonly sortOrder: number = 0,
+    public readonly sortOrder: number = 0
   ) {
     if (!url || !this.isValidUrl(url)) {
       throw new Error('Invalid image URL');
@@ -67,7 +69,7 @@ export class ProductSpecification {
     public readonly value: string,
     public readonly type: SpecificationType = SpecificationType.TEXT,
     public readonly unit?: string,
-    public readonly category?: string,
+    public readonly category?: string
   ) {
     if (!name.trim()) {
       throw new Error('Specification name cannot be empty');
@@ -83,7 +85,7 @@ export class Dimensions {
     public readonly length: number,
     public readonly width: number,
     public readonly height: number,
-    public readonly unit: string = 'cm',
+    public readonly unit: string = 'cm'
   ) {
     if (length <= 0 || width <= 0 || height <= 0) {
       throw new Error('Dimensions must be positive numbers');
@@ -95,7 +97,9 @@ export class Dimensions {
   }
 }
 
+// ========================================
 // ENUMS
+// ========================================
 
 export enum ProductStatus {
   DRAFT = 'DRAFT',
@@ -130,79 +134,67 @@ export enum SpecificationType {
   COLOR = 'COLOR',
 }
 
+// ========================================
 // DOMAIN EVENTS
+// ========================================
 
 export class ProductCreatedEvent extends DomainEvent {
   constructor(
-    public readonly productId: string,
-    public readonly data: {
+    productId: string,
+    data: {
       name: string;
       price: Money;
       artisanId: string;
       categoryId: string;
       createdAt: Date;
-    },
+    }
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductCreated';
+    super(productId, data);
   }
 }
 
 export class ProductPublishedEvent extends DomainEvent {
   constructor(
-    public readonly productId: string,
-    public readonly data: {
+    productId: string,
+    data: {
       name: string;
       price: Money;
       artisanId: string;
       publishedAt: Date;
-    },
+    }
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductPublished';
+    super(productId, data);
   }
 }
 
 export class ProductPriceChangedEvent extends DomainEvent {
   constructor(
-    public readonly productId: string,
-    public readonly data: {
+    productId: string,
+    data: {
       previousPrice: Money;
       newPrice: Money;
       changedAt: Date;
-    },
+    }
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductPriceChanged';
+    super(productId, data);
   }
 }
 
 export class ProductDiscontinuedEvent extends DomainEvent {
   constructor(
-    public readonly productId: string,
-    public readonly data: {
+    productId: string,
+    data: {
       reason: string;
       discontinuedAt: Date;
-    },
+    }
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductDiscontinued';
+    super(productId, data);
   }
 }
 
+// ========================================
 // PRODUCT VARIANT ENTITY
+// ========================================
 
 export class ProductVariant {
   constructor(
@@ -215,7 +207,7 @@ export class ProductVariant {
     public readonly weight?: number,
     public readonly dimensions?: Dimensions,
     private _isActive: boolean = true,
-    public readonly isDefault: boolean = false,
+    public readonly isDefault: boolean = false
   ) {
     if (!name.trim()) {
       throw new Error('Variant name cannot be empty');
@@ -264,13 +256,15 @@ export class ProductVariant {
   }
 }
 
+// ========================================
 // PRODUCT AGGREGATE ROOT
+// ========================================
 
 export class Product extends AggregateRoot {
   private _status: ProductStatus;
   private _availability: ProductAvailability;
   private _price: Money;
-  private _originalPrice?: Money;
+  private _originalPrice: Money | undefined;
   private _variants: ProductVariant[] = [];
   private _images: ProductImage[] = [];
   private _specifications: ProductSpecification[] = [];
@@ -296,7 +290,7 @@ export class Product extends AggregateRoot {
     public readonly keywords: string[] = [],
     public readonly metaTitle?: string,
     public readonly metaDescription?: string,
-    public readonly featured: boolean = false,
+    public readonly featured: boolean = false
   ) {
     super(id);
 
@@ -318,9 +312,7 @@ export class Product extends AggregateRoot {
     }
 
     this._price = price;
-    if (originalPrice !== undefined) {
-      this._originalPrice = originalPrice;
-    }
+    this._originalPrice = originalPrice ?? undefined;
     this._status = ProductStatus.DRAFT;
     this._availability = ProductAvailability.AVAILABLE;
 
@@ -332,12 +324,13 @@ export class Product extends AggregateRoot {
         artisanId,
         categoryId,
         createdAt: new Date(),
-      }),
       })
     );
   }
 
+  // ========================================
   // GETTERS
+  // ========================================
 
   get status(): ProductStatus {
     return this._status;
@@ -379,7 +372,9 @@ export class Product extends AggregateRoot {
     return this._totalSold;
   }
 
+  // ========================================
   // BUSINESS METHODS
+  // ========================================
 
   publish(): void {
     if (this._status === ProductStatus.PUBLISHED) {
@@ -398,7 +393,6 @@ export class Product extends AggregateRoot {
         price: this._price,
         artisanId: this.artisanId,
         publishedAt: new Date(),
-      }),
       })
     );
   }
@@ -415,16 +409,13 @@ export class Product extends AggregateRoot {
   updatePrice(newPrice: Money, originalPrice?: Money): void {
     const previousPrice = this._price;
     this._price = newPrice;
-    if (originalPrice !== undefined) {
-      this._originalPrice = originalPrice;
-    }
+    this._originalPrice = originalPrice ?? undefined;
 
     this.addDomainEvent(
       new ProductPriceChangedEvent(this.id, {
         previousPrice,
         newPrice,
         changedAt: new Date(),
-      }),
       })
     );
   }
@@ -436,7 +427,6 @@ export class Product extends AggregateRoot {
       new ProductDiscontinuedEvent(this.id, {
         reason,
         discontinuedAt: new Date(),
-      }),
       })
     );
   }
@@ -469,8 +459,6 @@ export class Product extends AggregateRoot {
             v.weight,
             v.dimensions,
             v.isActive,
-            false,
-          ),
             false
           )
       );
@@ -492,7 +480,6 @@ export class Product extends AggregateRoot {
     // Si es la primera imagen o se marca como primary, hacer que sea la única primary
     if (image.isPrimary || this._images.length === 0) {
       this._images = this._images.map(
-        img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder),
         img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder)
       );
     }
@@ -558,7 +545,7 @@ export class Product extends AggregateRoot {
     }
 
     return Math.round(
-      ((this._originalPrice.amount - this._price.amount) / this._originalPrice.amount) * 100,
+      ((this._originalPrice.amount - this._price.amount) / this._originalPrice.amount) * 100
     );
   }
 
