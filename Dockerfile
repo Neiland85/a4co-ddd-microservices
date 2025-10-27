@@ -1,5 +1,8 @@
 # Optimized multi-stage build for CI/CD
+dependabot/docker/node-25-alpine
 FROM node:25-alpine AS base
+FROM node:20-alpine3.19 AS base
+main
 
 # Install pnpm and turbo globally
 RUN npm install -g pnpm@8 turbo
@@ -22,7 +25,10 @@ COPY . .
 RUN pnpm run build
 
 # Development stage - with hot reload support
+dependabot/docker/node-25-alpine
 FROM node:25-alpine AS development
+FROM node:20-alpine3.19 AS development
+main
 
 # Install pnpm and turbo globally
 RUN npm install -g pnpm@8 turbo
