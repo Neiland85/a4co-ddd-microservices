@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   # PostgreSQL Database
   postgres:
@@ -22,15 +20,14 @@ services:
 
   # NATS Message Broker
   nats:
-    image: nats:2-alpine
+    image: nats:alpine
     container_name: a4co-nats
     ports:
-      - "4222:4222" # Client connections
-      - "8222:8222" # HTTP monitoring
-      - "6222:6222" # Clustering
+      - "4222:4222"
+      - "8222:8222"
     command: ["-js", "-m", "8222"]
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8222/healthz"]
+      test: ["CMD", "nc", "-z", "localhost", "4222"]
       interval: 10s
       timeout: 5s
       retries: 5
