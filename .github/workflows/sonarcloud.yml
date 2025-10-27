@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for better analysis
+
       - name: Checkout code
         run: |
           git fetch origin ${{ github.head_ref }}:pr_branch || git fetch origin ${{ github.ref_name }}:pr_branch
@@ -43,7 +48,7 @@ jobs:
         run: pnpm run test:coverage
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: sonarsource/sonarcloud-github-action@06d4dd21fbc24627062efe00cc8bfb02d79497fc # v2.2.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
