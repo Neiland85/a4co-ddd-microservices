@@ -12,7 +12,11 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: ['../../eslint.config.js', 'plugin:jsx-a11y/recommended', 'plugin:storybook/recommended'],
+  extends: [
+    '../../eslint.config.js',
+    'plugin:jsx-a11y/recommended',
+    'plugin:storybook/recommended',
+  ],
   rules: {
     // TypeScript específicas para design system
     '@typescript-eslint/explicit-function-return-type': 'warn',
