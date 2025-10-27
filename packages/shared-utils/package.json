@@ -21,7 +21,12 @@
     "test:vite-static-security": "jest src/security/__tests__/vite-static-file-security.test.ts",
     "check:vite-static-security": "node scripts/check-vite-static-security.js"
   },
-  "keywords": ["shared", "utils", "microservices", "ddd"],
+  "keywords": [
+    "shared",
+    "utils",
+    "microservices",
+    "ddd"
+  ],
   "author": "A4CO Team <info@a4co.com>",
   "license": "Apache-2.0",
   "dependencies": {
@@ -59,4 +64,3 @@
     }
   }
 }
-
