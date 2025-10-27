@@ -27,8 +27,6 @@ const defaultSerializers = {
   }),
   err: pino.stdSerializers.err,
   error: pino.stdSerializers.err,
-<<<<<<< HEAD
-=======
   ddd: (metadata: DDDMetadata) => ({
     aggregate: metadata.aggregateName
       ? {
@@ -46,7 +44,6 @@ const defaultSerializers = {
     correlationId: metadata.correlationId,
     causationId: metadata.causationId,
   }),
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 };
 
 // Create enhanced logger with context support
@@ -75,11 +72,8 @@ function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
 
 // Create logger with configuration
 export function createLogger(
-<<<<<<< HEAD
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string },
-=======
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ObservabilityLogger {
   const options: LoggerOptions = {
     name: config.serviceName,
@@ -131,11 +125,8 @@ export function createLogger(
 
 // Initialize global logger
 export function initializeLogger(
-<<<<<<< HEAD
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string },
-=======
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ObservabilityLogger {
   globalLogger = createLogger(config);
   return globalLogger;
@@ -192,11 +183,8 @@ export function createHttpLogger(logger?: ObservabilityLogger) {
           duration,
           responseSize: res.get?.('content-length'),
         },
-<<<<<<< HEAD
         'Request completed',
-=======
         'Request completed'
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     });
 

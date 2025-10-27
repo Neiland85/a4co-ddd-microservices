@@ -30,7 +30,7 @@ export class FeatureFlagMonitoringService {
 
     // Verificar umbrales
     if (metrics.errorRate > ROLLOUT_CONFIG.errorThreshold) {
-      console.error(`🚨 HIGH ERROR RATE for feature '${flagName}': ${metrics.errorRate * 100}%`);
+      console.error(`[!] HIGH ERROR RATE for feature '${flagName}': ${metrics.errorRate * 100}%`);
       await this.triggerAlert(flagName, 'high_error_rate', metrics);
     }
 
@@ -60,7 +60,7 @@ export class FeatureFlagMonitoringService {
 
   private async triggerAlert(flagName: string, alertType: string, metrics: any) {
     // En producción, esto enviaría alertas a Slack, PagerDuty, etc.
-    console.error(`🚨 ALERT: ${alertType.toUpperCase()} for feature '${flagName}'`);
+    console.error(`[!] ALERT: ${alertType.toUpperCase()} for feature '${flagName}'`);
     console.error(`Metrics: ${JSON.stringify(metrics, null, 2)}`);
 
     // Auto-pause rollout si es crítico

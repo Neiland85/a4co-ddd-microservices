@@ -1,8 +1,6 @@
 import { Order, OrderItem, OrderId, IOrderRepository } from '../../domain';
 
-// ========================================
 // DTOs (Data Transfer Objects)
-// ========================================
 
 export interface CreateOrderDTO {
   orderId: string;
@@ -19,15 +17,11 @@ export interface GetOrderDTO {
   orderId: string;
 }
 
-// ========================================
 // PORTS/INTERFACES
-// ========================================
 
 // IOrderRepository is now imported from domain
 
-// ========================================
 // APPLICATION SERVICE
-// ========================================
 
 export class OrderService {
   constructor(

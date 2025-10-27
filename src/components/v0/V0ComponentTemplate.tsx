@@ -228,11 +228,8 @@ const V0ComponentTemplate: React.FC<V0ComponentTemplateProps> = ({
         variantClasses[variant],
         sizeClasses[size],
         disabled && 'cursor-not-allowed opacity-50',
-<<<<<<< HEAD
         className,
-=======
         className
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       )}
     >
       {/* Header */}
@@ -294,11 +291,8 @@ export const V0CardTemplate: React.FC<
   <div
     className={cn(
       'overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm',
-<<<<<<< HEAD
       className,
-=======
       className
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     )}
   >
     <div className="border-b border-gray-200 px-6 py-4">

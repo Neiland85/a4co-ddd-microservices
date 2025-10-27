@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-=======
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 exports.generateId = exports.truncateText = exports.formatDate = exports.formatCurrency = void 0;
 exports.cn = cn;
 function handleObjectInput(input, classes) {
@@ -63,8 +60,5 @@ const generateId = () => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 exports.generateId = generateId;
-<<<<<<< HEAD
 //# sourceMappingURL=utils.js.map
-=======
 //# sourceMappingURL=utils.js.map
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

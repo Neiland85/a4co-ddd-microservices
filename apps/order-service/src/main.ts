@@ -1,13 +1,9 @@
-<<<<<<< HEAD
 import { getGlobalLogger, initializeTracing } from '@a4co/observability';
 import { BracesSecurityMiddleware } from '@a4co/shared-utils'; // Agregar importación
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
-<<<<<<< HEAD
 import * as process from 'process';
 import { OrderModule } from './order.module';
 
@@ -25,12 +21,10 @@ async function bootstrap() {
   const app = await NestFactory.create(OrderModule, {
     logger: false, // Disable default NestJS logger
   });
-=======
 import { OrderModule } from './order.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(OrderModule);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   // Security middleware
   app.use(
@@ -56,7 +50,6 @@ async function bootstrap() {
     })
   );
 
-<<<<<<< HEAD
   // Braces security middleware
   const bracesMiddleware = new BracesSecurityMiddleware({
     maxExpansionSize: 50,
@@ -66,8 +59,6 @@ async function bootstrap() {
   app.use(bracesMiddleware.validateRequestBody());
   app.use(bracesMiddleware.validateQueryParams());
 
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   // CORS configuration
   app.enableCors({
     origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
@@ -89,23 +80,17 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env['PORT'] || 3004;
-<<<<<<< HEAD
   logger.info(`🚀 Order Service iniciado en puerto ${port}`);
   logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
-=======
   console.log(`🚀 Order Service iniciado en puerto ${port}`);
   console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   await app.listen(port);
 }
 
 bootstrap().catch(err => {
-<<<<<<< HEAD
   const logger = getGlobalLogger();
   logger.error('Error al iniciar el servicio:', err);
-=======
   console.error('Error al iniciar el servicio:', err);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   process.exit(1);
 });

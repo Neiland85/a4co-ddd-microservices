@@ -1,8 +1,6 @@
 import { IsString, IsNumber, IsBoolean, IsOptional, Min, IsUUID } from 'class-validator';
 
-// ========================================
 // INVENTORY SERVICE DTOs
-// ========================================
 
 export class CheckInventoryRequestDto {
   @IsUUID()

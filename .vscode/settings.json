@@ -1,55 +1,54 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Formateo y linting
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit"
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
   "eslint.validate": [
     "javascript",
-    "javascriptreact",
     "typescript",
-    "typescriptreact"
+    "jsx",
+    "tsx"
   ],
-  "files.autoSave": "onFocusChange",
-  "github.copilot.nextEditSuggestions.enabled": true,
-  "sonarlint.connectedMode.project": {
-    "connectionId": "eiland85",
-    "projectKey": "a4co-ddd-microservices"
+  "eslint.workingDirectories": [
+    "apps/**",
+    "packages/**"
+  ], // Soporte para monorepo: lint por workspace
+  // Configuración para TypeScript y pnpm en monorepo
+  "typescript.tsdk": "node_modules/typescript/lib", // Usa TS del proyecto (compatible con v5.x+)
+  "npm.packageManager": "pnpm", // Fuerza pnpm como gestor (evita yarn/npm mixups)
+  "npm.autoDetect": "off", // Desactiva detección auto de npm/yarn
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true // Excluye caches de Next.js
   },
-  "cSpell.words": [
-    "Archivos"
-  ],
-  "[jsonc]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
+  // Configuración específica para lenguajes
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "gitlens.launchpad.allowMultiple": true,
-  "gitlens.launchpad.experimental.queryLimit": 100,
-  "gitlens.views.launchpad.files.compact": true,
-  "gitlens.views.launchpad.files.threshold": 5,
-  "[sql]": {
-    "editor.defaultFormatter": "ms-ossdata.vscode-pgsql"
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "editor.codeActions.triggerOnFocusChange": true,
-  "[dockerfile]": {
-    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "chat.agent.maxRequests": 50,
-  "inlineChat.enableV2": true,
-  "inlineChat.finishOnType": true,
-  "inlineChat.hideOnRequest": true,
-  // Terminal Shell Integration Settings
-  "terminal.integrated.shellIntegration.enabled": true,
-  "terminal.integrated.shellIntegration.decorationsEnabled": "both",
-  "terminal.integrated.shellIntegration.showCommandGuide": true,
-  "terminal.integrated.stickyScroll.enabled": true,
-  "terminal.integrated.suggest.enabled": true,
-  "terminal.integrated.shellIntegration.history": 100,
-  // Terminal Keyboard Shortcuts for Shell Integration
-  "terminal.integrated.commandsToSkipShell": [
-    "workbench.action.terminal.runRecentCommand",
-    "workbench.action.terminal.goToRecentDirectory"
-  ]
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  // Docker y debugging
+  "docker.showStartPage": false,
+  "jest.autoRun": "off", // Ejecuta tests manualmente para evitar overhead en monorepo
+  // Consistencia general (alineado con .editorconfig recomendado)
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  // Copilot Pro+ optimizaciones
+  "github.copilot.inlineSuggestions.enable": true,
+  "github.copilot.editor.enableAutoCompletions": true
 }

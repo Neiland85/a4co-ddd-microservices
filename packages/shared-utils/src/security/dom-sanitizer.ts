@@ -1,10 +1,7 @@
 /// <reference lib="dom" />
 
-<<<<<<< HEAD
-=======
 import type { JSDOM } from 'jsdom'; // Usar import type para evitar bundling en browser
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 export interface SanitizeOptions {
   allowedTags: string[];
   allowedAttributes: Record<string, string[]>;
@@ -111,11 +108,8 @@ export class DomSanitizer {
     try {
       const parsedUrl = new URL(
         url,
-<<<<<<< HEAD
         typeof window !== 'undefined' ? window.location.href : 'http://localhost/',
-=======
         typeof window !== 'undefined' ? window.location.href : 'http://localhost/'
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
       return this.options.allowedSchemes.includes(parsedUrl.protocol.replace(':', ''));
     } catch (e) {

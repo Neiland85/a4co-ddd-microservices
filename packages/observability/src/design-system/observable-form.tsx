@@ -26,13 +26,10 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
   ...props
 }) => {
   const logger = useLogger();
-<<<<<<< HEAD
   const [fieldValues, setFieldValues] = useState<Record<string, unknown>>({});
   const submitStartTime = useRef<number | undefined>(undefined);
-=======
   const [fieldValues, setFieldValues] = useState<Record<string, any>>({});
   const submitStartTime = useRef<number>();
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   const traceFormInteraction = useInteractionTracing('form-interaction', formId, {
     attributes: {
@@ -43,11 +40,8 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
   });
 
   const handleFieldChange = useCallback(
-<<<<<<< HEAD
     (fieldName: string, value: unknown) => {
-=======
     (fieldName: string, value: any) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       if (trackFieldChanges) {
         setFieldValues(prev => ({ ...prev, [fieldName]: value }));
 
@@ -67,19 +61,16 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
         });
       }
     },
-<<<<<<< HEAD
     [formId, trackFieldChanges, logger, traceFormInteraction],
   );
 
   const handleSubmit = useCallback(
     async(event: React.FormEvent<HTMLFormElement>) => {
-=======
     [formId, trackFieldChanges, logger, traceFormInteraction]
   );
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       event.preventDefault();
 
       submitStartTime.current = Date.now();
@@ -140,11 +131,8 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
         submitSpan.end();
       }
     },
-<<<<<<< HEAD
     [formId, fieldValues, trackingMetadata, onSubmit, onSubmitSuccess, onSubmitError, logger],
-=======
     [formId, fieldValues, trackingMetadata, onSubmit, onSubmitSuccess, onSubmitError, logger]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   return (
@@ -154,17 +142,14 @@ export const ObservableForm: React.FC<ObservableFormProps> = ({
           const childProps = child.props as Record<string, unknown>;
           // Inject onChange handler to track field changes
           if (
-<<<<<<< HEAD
             childProps['name'] &&
             (child.type === 'input' || child.type === 'textarea' || child.type === 'select')
           ) {
             return React.cloneElement(child, {
-=======
             child.props.name &&
             (child.type === 'input' || child.type === 'textarea' || child.type === 'select')
           ) {
             return React.cloneElement(child as any, {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
               onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                 handleFieldChange(childProps['name'] as string, e.target.value);
                 if (childProps['onChange'] && typeof childProps['onChange'] === 'function') {
@@ -202,11 +187,8 @@ export const ObservableField: React.FC<ObservableFieldProps> = ({
   const traceInteraction = useInteractionTracing('field-interaction', name);
 
   const handleChange = useCallback(
-<<<<<<< HEAD
     (newValue: unknown) => {
-=======
     (newValue: any) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       logger.trace('Field value changed', {
         custom: {
           fieldName: name,
@@ -222,11 +204,8 @@ export const ObservableField: React.FC<ObservableFieldProps> = ({
 
       onChange(newValue);
     },
-<<<<<<< HEAD
     [name, onChange, trackingMetadata, logger, traceInteraction],
-=======
     [name, onChange, trackingMetadata, logger, traceInteraction]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   return (

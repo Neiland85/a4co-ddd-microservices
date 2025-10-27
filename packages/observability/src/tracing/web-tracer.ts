@@ -156,11 +156,8 @@ export async function traceWebOperation<T>(
 /**
  * Trace React component render
  */
-<<<<<<< HEAD
 export function traceComponentRender(componentName: string, props?: Attributes): Span {
-=======
 export function traceComponentRender(componentName: string, props?: Record<string, any>): Span {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   const span = startWebSpan(`Component: ${componentName}`, {
     kind: SpanKind.INTERNAL,
     attributes: {
@@ -222,17 +219,14 @@ export interface PerformanceMetrics {
 export function collectPerformanceMetrics(): PerformanceMetrics {
   const metrics: PerformanceMetrics = {};
 
-<<<<<<< HEAD
   if (typeof globalThis !== 'undefined' && 'performance' in globalThis) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const paintEntries = (globalThis as any).performance.getEntriesByType('paint');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fcpEntry = paintEntries.find((entry: any) => entry.name === 'first-contentful-paint');
-=======
   if (typeof window !== 'undefined' && 'performance' in window) {
     const paintEntries = performance.getEntriesByType('paint');
     const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     if (fcpEntry) {
       metrics.firstContentfulPaint = fcpEntry.startTime;
@@ -242,12 +236,9 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
     if ('PerformanceObserver' in globalThis) {
       try {
         // LCP
-<<<<<<< HEAD
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const lcpObserver = new (globalThis as any).PerformanceObserver((list: any) => {
-=======
         const lcpObserver = new PerformanceObserver(list => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1];
           if (lastEntry) {
@@ -258,12 +249,9 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
 
         // CLS
         let clsValue = 0;
-<<<<<<< HEAD
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const clsObserver = new (globalThis as any).PerformanceObserver((list: any) => {
-=======
         const clsObserver = new PerformanceObserver(list => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           for (const entry of list.getEntries()) {
             if (!(entry as { hadRecentInput?: boolean }).hadRecentInput) {
               clsValue += (entry as { value?: number }).value || 0;
@@ -274,12 +262,9 @@ export function collectPerformanceMetrics(): PerformanceMetrics {
         clsObserver.observe({ entryTypes: ['layout-shift'] });
 
         // FID
-<<<<<<< HEAD
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const fidObserver = new (globalThis as any).PerformanceObserver((list: any) => {
-=======
         const fidObserver = new PerformanceObserver(list => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           const firstEntry = list.getEntries()[0];
           if (firstEntry) {
             metrics.firstInputDelay =

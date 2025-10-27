@@ -26,11 +26,8 @@ export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableBu
       onClick,
       ...props
     },
-<<<<<<< HEAD
     ref,
-=======
     ref
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ) => {
     // Logging hook
     const logInteraction = useInteractionLogger('button.click', {
@@ -63,15 +60,12 @@ export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableBu
         traceInteraction({
           timestamp: new Date().toISOString(),
           eventType: event.type,
-<<<<<<< HEAD
           positionX: event.clientX,
           positionY: event.clientY,
-=======
           position: {
             x: event.clientX,
             y: event.clientY,
           },
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         });
 
         // Call original onClick handler
@@ -88,11 +82,8 @@ export const ObservableButton = React.forwardRef<HTMLButtonElement, ObservableBu
         trackingMetadata,
         logInteraction,
         traceInteraction,
-<<<<<<< HEAD
       ],
-=======
       ]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
 
     const classNames = [

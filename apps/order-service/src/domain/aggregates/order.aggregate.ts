@@ -1,8 +1,6 @@
 import { AggregateRoot, DomainEvent, ValueObject } from '../base-classes';
 
-// ========================================
 // VALUE OBJECTS
-// ========================================
 
 export class OrderId extends ValueObject<string> {
     constructor(value: string) {
@@ -42,9 +40,7 @@ export enum OrderStatus {
     CANCELLED = 'CANCELLED'
 }
 
-// ========================================
 // DOMAIN EVENTS
-// ========================================
 
 export class OrderCreatedEvent extends DomainEvent {
     constructor(
@@ -66,9 +62,7 @@ export class OrderStatusChangedEvent extends DomainEvent {
     }
 }
 
-// ========================================
 // AGGREGATE
-// ========================================
 
 export class Order extends AggregateRoot {
     private _customerId: string;

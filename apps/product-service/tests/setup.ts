@@ -21,11 +21,8 @@ afterAll(() => {
 });
 
 // Mock para servicios externos que podrían ser usados
-<<<<<<< HEAD
 jest.mock('@a4co/shared-utils/base', () => ({
-=======
 jest.mock('../../packages/shared-utils/src/base', () => ({
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   BaseService: jest.fn().mockImplementation(() => ({
     validateRequired: jest.fn((value, field) => {
       if (value === undefined || value === null || value === '') {
@@ -41,11 +38,8 @@ jest.mock('../../packages/shared-utils/src/base', () => ({
     }),
     log: jest.fn(),
     createSuccessMessage: jest.fn(
-<<<<<<< HEAD
       (entity, action, details) => `${entity} ${action} successfully ${details}`,
-=======
       (entity, action, details) => `${entity} ${action} successfully ${details}`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     ),
     handleServiceError: jest.fn((error, method) => `Error in ${method}: ${error.message}`),
   })),

@@ -13,7 +13,6 @@
     "test:coverage": "jest --coverage",
     "lint": "echo 'Linting temporarily disabled'",
     "lint:fix": "echo 'Linting temporarily disabled'",
-<<<<<<< HEAD
     "type-check": "echo 'Type-check temporarily disabled'",
     "test:dev-security": "jest src/security/__tests__/dev-server-security.test.ts",
     "check:dev-security": "node scripts/check-dev-security.js",
@@ -21,17 +20,9 @@
     "check:micromatch-security": "node scripts/check-micromatch-security.js",
     "test:vite-static-security": "jest src/security/__tests__/vite-static-file-security.test.ts",
     "check:vite-static-security": "node scripts/check-vite-static-security.js"
-=======
-    "type-check": "echo 'Type-check temporarily disabled'"
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
-  "keywords": [
-    "shared",
-    "utils",
-    "microservices",
-    "ddd"
-  ],
-  "author": "Neil Muñoz Lago <neiland85@gmail.com>",
+  "keywords": ["shared", "utils", "microservices", "ddd"],
+  "author": "A4CO Team <info@a4co.com>",
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "^1.12.0",
@@ -53,9 +44,6 @@
     "ts-jest": "^29.1.2",
     "typescript": "^5.9.2"
   },
-  "peerDependencies": {
-    "typescript": "^5.9.2"
-  },
   "exports": {
     "./security/validators/temp-file.validator": {
       "types": "./dist/security/validators/temp-file.validator.d.ts",
@@ -71,3 +59,4 @@
     }
   }
 }
+

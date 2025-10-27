@@ -107,13 +107,10 @@ export function createTracedSubscriber(config: NatsTracingConfig) {
 
       try {
         // Parse the message if it's a string
-<<<<<<< HEAD
         tracedMessage = typeof natsMsg.data === 'string' ? JSON.parse(natsMsg.data) : natsMsg.data;
       } catch {
-=======
         tracedMessage = typeof msg.data === 'string' ? JSON.parse(msg.data) : msg.data;
       } catch (e) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         // If parsing fails, treat as plain message
         tracedMessage = {
           data: natsMsg.data,
@@ -314,16 +311,13 @@ export class TracedNatsClient {
     });
   }
 
-<<<<<<< HEAD
   subscribeToEvents(
     subject: string,
     handler: (_event: unknown, _span: Span) => Promise<void>,
   ): void {
     this.subscribe(subject, async(event: unknown, span: Span) => {
-=======
   subscribeToEvents(subject: string, handler: (event: any, span: Span) => Promise<void>): void {
     this.subscribe(subject, async (event: any, span: Span) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       // Add event-specific attributes to span
       if (event && typeof event === 'object' && 'type' in event) {
         span.setAttribute('event.type', String(event.type));

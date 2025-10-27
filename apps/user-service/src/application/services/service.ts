@@ -1,8 +1,6 @@
 import { User, Username, Email, IUserRepository } from '../../domain';
 
-// ========================================
 // DTOs (Data Transfer Objects)
-// ========================================
 
 export interface CreateUserDTO {
   username: string;
@@ -21,9 +19,7 @@ export interface GetUserDTO {
   email?: string;
 }
 
-// ========================================
 // APPLICATION SERVICE
-// ========================================
 
 export class UserService {
   constructor(

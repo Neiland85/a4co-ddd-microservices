@@ -46,11 +46,8 @@ export const createSuccessResponse = <T>(data: T, message: string = ''): Success
 export const createErrorResponse = (
   code: string,
   message: string,
-<<<<<<< HEAD
   details?: any,
-=======
   details?: any
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ErrorResponse => ({
   success: false,
   error: { code, message, details },
@@ -61,11 +58,8 @@ export const createPaginatedResponse = <T>(
   data: T[],
   page: number,
   limit: number,
-<<<<<<< HEAD
   total: number,
-=======
   total: number
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): PaginatedResponse<T> => ({
   success: true,
   data,

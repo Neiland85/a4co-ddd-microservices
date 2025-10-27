@@ -226,7 +226,7 @@ class BracesSecurityScanner {
       return '✅ No dangerous brace expressions found!';
     }
 
-    let report = '🚨 Dangerous Brace Expressions Found:\n\n';
+    let report = '[!] Dangerous Brace Expressions Found:\n\n';
 
     // Agrupar por severidad
     const groupedIssues = issues.reduce(

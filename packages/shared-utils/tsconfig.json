@@ -6,18 +6,17 @@
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
     "rootDir": "./",
-    "lib": ["ES2022", "DOM"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "jsx": "react-jsx",
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
     "skipLibCheck": true,
     "target": "ES2022",
     "module": "ES2022",
-<<<<<<< HEAD
     "moduleResolution": "bundler",
-=======
-    "moduleResolution": "node",
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
@@ -27,15 +26,20 @@
     "emitDecoratorMetadata": true,
     "strictNullChecks": false,
     "exactOptionalPropertyTypes": false,
-<<<<<<< HEAD
     "types": [
       "jest",
       "node"
     ]
-=======
-    "types": ["jest", "node"]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
-  "include": ["index.ts", "src/**/*", "test/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "index.ts",
+    "src/**/*",
+    "test/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }

@@ -10,14 +10,11 @@ export function instrumentNatsClient(client: any): any {
   const tracer = trace.getTracer('@a4co/observability');
 
   // Wrap publish method
-<<<<<<< HEAD
   const originalPublish = client.publish.bind(client);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   client.publish = function(subject: string, data: any, options?: any): Promise<void> {
-=======
   const originalPublish = natsClient.publish.bind(natsClient);
   natsClient.publish = function (subject: string, data: any, options?: any) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const span = tracer.startSpan(`nats.publish ${subject}`, {
       kind: SpanKind.PRODUCER,
       attributes: {
@@ -40,13 +37,11 @@ export function instrumentNatsClient(client: any): any {
       }
 
       // Log publish
-<<<<<<< HEAD
       logger.debug('Publishing NATS message', {
         subject,
         messageSize: JSON.stringify(data).length,
         traceId: span.spanContext().traceId,
       });
-=======
       logger.debug(
         {
           subject,
@@ -55,18 +50,14 @@ export function instrumentNatsClient(client: any): any {
         },
         'Publishing NATS message'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       const result = originalPublish(subject, data, options);
 
       span.setStatus({ code: SpanStatusCode.OK });
 
       // Record metric
-<<<<<<< HEAD
       // recordEvent(`nats.${subject}`, 'messaging', 'published');
-=======
       recordEvent(`nats.${subject}`, 'messaging', 'published');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       return result;
     } catch (error) {
@@ -76,11 +67,8 @@ export function instrumentNatsClient(client: any): any {
         message: (error as Error).message,
       });
 
-<<<<<<< HEAD
       logger.error('Failed to publish NATS message', { error, subject });
-=======
       logger.error({ error, subject }, 'Failed to publish NATS message');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       throw error;
     } finally {
       span.end();
@@ -88,24 +76,18 @@ export function instrumentNatsClient(client: any): any {
   };
 
   // Wrap subscribe method
-<<<<<<< HEAD
   const originalSubscribe = client.subscribe.bind(client);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   client.subscribe = function(subject: string, options?: any, callback?: any): unknown {
-=======
   const originalSubscribe = natsClient.subscribe.bind(natsClient);
   natsClient.subscribe = function (subject: string, options?: any, callback?: any) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     // Handle different parameter combinations
     const cb = typeof options === 'function' ? options : callback;
     const opts = typeof options === 'function' ? {} : options || {};
 
-<<<<<<< HEAD
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wrappedCallback = function(msg: any): Promise<unknown> {
-=======
     const wrappedCallback = function (msg: any) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       const parentContext = extractContext(msg.headers || {});
       const span = tracer.startSpan(
         `nats.process ${subject}`,
@@ -118,11 +100,8 @@ export function instrumentNatsClient(client: any): any {
             'messaging.operation': 'process',
           },
         },
-<<<<<<< HEAD
         parentContext,
-=======
         parentContext
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
 
       return context.with(trace.setSpan(context.active(), span), async() => {
@@ -130,13 +109,11 @@ export function instrumentNatsClient(client: any): any {
           // Create context from message
           const natsContext = createNatsContext(msg);
 
-<<<<<<< HEAD
           logger.debug('Processing NATS message', {
             subject,
             traceId: span.spanContext().traceId,
             correlationId: natsContext.correlationId,
           });
-=======
           logger.debug(
             {
               subject,
@@ -145,7 +122,6 @@ export function instrumentNatsClient(client: any): any {
             },
             'Processing NATS message'
           );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
           // Call original callback
           const result = await cb(msg);
@@ -153,11 +129,8 @@ export function instrumentNatsClient(client: any): any {
           span.setStatus({ code: SpanStatusCode.OK });
 
           // Record metric
-<<<<<<< HEAD
           // recordEvent(`nats.${subject}`, 'messaging', 'processed');
-=======
           recordEvent(`nats.${subject}`, 'messaging', 'processed');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
           return result;
         } catch (error) {
@@ -167,11 +140,8 @@ export function instrumentNatsClient(client: any): any {
             message: (error as Error).message,
           });
 
-<<<<<<< HEAD
           logger.error('Failed to process NATS message', { error, subject });
-=======
           logger.error({ error, subject }, 'Failed to process NATS message');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           throw error;
         } finally {
           span.end();
@@ -208,17 +178,14 @@ export function instrumentRedisClient(client: any): any {
   ];
 
   commands.forEach(command => {
-<<<<<<< HEAD
     if (typeof client[command] === 'function') {
       const original = client[command].bind(client);
 
       client[command] = function(...args: any[]): Promise<unknown> {
-=======
     if (typeof redisClient[command] === 'function') {
       const original = redisClient[command].bind(redisClient);
 
       redisClient[command] = function (...args: any[]) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         const span = tracer.startSpan(`redis.${command}`, {
           kind: SpanKind.CLIENT,
           attributes: {
@@ -242,14 +209,12 @@ export function instrumentRedisClient(client: any): any {
                 message: err.message,
               });
 
-<<<<<<< HEAD
               logger.error('Redis command failed', {
                 error: err,
                 command,
                 key: args[0],
                 duration,
               });
-=======
               logger.error(
                 {
                   error: err,
@@ -259,19 +224,16 @@ export function instrumentRedisClient(client: any): any {
                 },
                 'Redis command failed'
               );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
               reject(err);
             } else {
               span.setStatus({ code: SpanStatusCode.OK });
 
-<<<<<<< HEAD
               logger.debug('Redis command completed', {
                 command,
                 key: args[0],
                 duration,
               });
-=======
               logger.debug(
                 {
                   command,
@@ -280,7 +242,6 @@ export function instrumentRedisClient(client: any): any {
                 },
                 'Redis command completed'
               );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
               resolve(result);
             }
@@ -322,11 +283,8 @@ export function instrumentMongoCollection(collection: any): any {
     if (typeof collection[method] === 'function') {
       const original = collection[method].bind(collection);
 
-<<<<<<< HEAD
       collection[method] = function(...args: any[]): Promise<unknown> {
-=======
       collection[method] = function (...args: any[]) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         const span = tracer.startSpan(`mongodb.${method}`, {
           kind: SpanKind.CLIENT,
           attributes: {
@@ -336,13 +294,11 @@ export function instrumentMongoCollection(collection: any): any {
           },
         });
 
-<<<<<<< HEAD
         logger.debug('MongoDB operation started', {
           method,
           collection: collection.collectionName,
           query: args[0],
         });
-=======
         logger.debug(
           {
             method,
@@ -351,7 +307,6 @@ export function instrumentMongoCollection(collection: any): any {
           },
           'MongoDB operation started'
         );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         const startTime = Date.now();
 
@@ -361,11 +316,8 @@ export function instrumentMongoCollection(collection: any): any {
           // Handle cursor operations
           if (result && typeof result.toArray === 'function') {
             const originalToArray = result.toArray.bind(result);
-<<<<<<< HEAD
             result.toArray = async function(): Promise<unknown[]> {
-=======
             result.toArray = async function () {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
               try {
                 const docs = await originalToArray();
                 const duration = Date.now() - startTime;
@@ -376,14 +328,12 @@ export function instrumentMongoCollection(collection: any): any {
                 });
                 span.setStatus({ code: SpanStatusCode.OK });
 
-<<<<<<< HEAD
                 logger.debug('MongoDB operation completed', {
                   method,
                   collection: collection.collectionName,
                   count: docs.length,
                   duration,
                 });
-=======
                 logger.debug(
                   {
                     method,
@@ -393,7 +343,6 @@ export function instrumentMongoCollection(collection: any): any {
                   },
                   'MongoDB operation completed'
                 );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
                 return docs;
               } catch (error) {
@@ -413,7 +362,6 @@ export function instrumentMongoCollection(collection: any): any {
 
           // Handle promise results
           if (result && typeof result.then === 'function') {
-<<<<<<< HEAD
             return (
               result
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -444,7 +392,6 @@ export function instrumentMongoCollection(collection: any): any {
                   throw error;
                 })
             );
-=======
             return result
               .then((data: any) => {
                 const duration = Date.now() - startTime;
@@ -475,7 +422,6 @@ export function instrumentMongoCollection(collection: any): any {
                 span.end();
                 throw error;
               });
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           }
 
           return result;
@@ -503,12 +449,9 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instrumentResolver = (resolver: any, typeName: string, fieldName: string) => {
-<<<<<<< HEAD
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return async function(parent: any, args: any, context: any, info: any): Promise<unknown> {
-=======
     return async function (parent: any, args: any, context: any, info: any) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       const span = tracer.startSpan(`graphql.${typeName}.${fieldName}`, {
         kind: SpanKind.INTERNAL,
         attributes: {
@@ -519,13 +462,11 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
         },
       });
 
-<<<<<<< HEAD
       logger.debug('GraphQL resolver started', {
         type: typeName,
         field: fieldName,
         args,
       });
-=======
       logger.debug(
         {
           type: typeName,
@@ -534,19 +475,16 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
         },
         'GraphQL resolver started'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       try {
         const result = await resolver(parent, args, context, info);
 
         span.setStatus({ code: SpanStatusCode.OK });
 
-<<<<<<< HEAD
         logger.debug('GraphQL resolver completed', {
           type: typeName,
           field: fieldName,
         });
-=======
         logger.debug(
           {
             type: typeName,
@@ -554,7 +492,6 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
           },
           'GraphQL resolver completed'
         );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         return result;
       } catch (error) {
@@ -564,13 +501,11 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
           message: (error as Error).message,
         });
 
-<<<<<<< HEAD
         logger.error('GraphQL resolver failed', {
           error,
           type: typeName,
           field: fieldName,
         });
-=======
         logger.error(
           {
             error,
@@ -579,7 +514,6 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
           },
           'GraphQL resolver failed'
         );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         throw error;
       } finally {
@@ -602,11 +536,8 @@ export function instrumentGraphQLResolvers(resolvers: any): any {
         instrumentedResolvers[typeName][fieldName] = instrumentResolver(
           resolver,
           typeName,
-<<<<<<< HEAD
           fieldName,
-=======
           fieldName
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         );
       } else if (typeof resolver === 'object' && resolver.resolve) {
         instrumentedResolvers[typeName][fieldName] = {
@@ -630,12 +561,9 @@ export function instrumentKafkaProducer(producer: any): any {
 
   const originalSend = producer.send.bind(producer);
 
-<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   producer.send = async function(record: any): Promise<unknown> {
-=======
   producer.send = async function (record: any) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const span = tracer.startSpan(`kafka.send ${record.topic}`, {
       kind: SpanKind.PRODUCER,
       attributes: {
@@ -652,22 +580,17 @@ export function instrumentKafkaProducer(producer: any): any {
         record.messages = [];
       }
 
-<<<<<<< HEAD
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       record.messages = record.messages.map((message: any) => {
         const headers = message.headers || {};
         injectContext(headers);
         return { ...message, headers };
       });
 
-<<<<<<< HEAD
       logger.debug('Sending Kafka messages', {
         topic: record.topic,
         messageCount: record.messages.length,
       });
-=======
       logger.debug(
         {
           topic: record.topic,
@@ -675,7 +598,6 @@ export function instrumentKafkaProducer(producer: any): any {
         },
         'Sending Kafka messages'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       const result = await originalSend(record);
 
@@ -689,11 +611,8 @@ export function instrumentKafkaProducer(producer: any): any {
         message: (error as Error).message,
       });
 
-<<<<<<< HEAD
       logger.error('Failed to send Kafka messages', { error, topic: record.topic });
-=======
       logger.error({ error, topic: record.topic }, 'Failed to send Kafka messages');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       throw error;
     } finally {
       span.end();
@@ -711,25 +630,20 @@ export function instrumentKafkaConsumer(consumer: any): any {
 
   const originalRun = consumer.run.bind(consumer);
 
-<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   consumer.run = async function(config: any): Promise<void> {
     const originalEachMessage = config.eachMessage;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     config.eachMessage = async function(payload: any): Promise<void> {
-=======
   consumer.run = async function (config: any) {
     const originalEachMessage = config.eachMessage;
 
     config.eachMessage = async function (payload: any) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       const { topic, partition, message } = payload;
 
       // Extract trace context from headers
       const parentContext = extractContext(message.headers || {});
-<<<<<<< HEAD
-=======
 
       const span = tracer.startSpan(
         `kafka.process ${topic}`,
@@ -745,7 +659,6 @@ export function instrumentKafkaConsumer(consumer: any): any {
         },
         parentContext
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       const span = tracer.startSpan(
         `kafka.process ${topic}`,
@@ -764,13 +677,11 @@ export function instrumentKafkaConsumer(consumer: any): any {
 
       return context.with(trace.setSpan(context.active(), span), async() => {
         try {
-<<<<<<< HEAD
           logger.debug('Processing Kafka message', {
             topic,
             partition,
             offset: message.offset,
           });
-=======
           logger.debug(
             {
               topic,
@@ -779,7 +690,6 @@ export function instrumentKafkaConsumer(consumer: any): any {
             },
             'Processing Kafka message'
           );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
           const result = await originalEachMessage(payload);
 
@@ -793,11 +703,8 @@ export function instrumentKafkaConsumer(consumer: any): any {
             message: (error as Error).message,
           });
 
-<<<<<<< HEAD
           logger.error('Failed to process Kafka message', { error, topic, partition });
-=======
           logger.error({ error, topic, partition }, 'Failed to process Kafka message');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           throw error;
         } finally {
           span.end();

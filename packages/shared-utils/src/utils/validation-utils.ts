@@ -72,11 +72,8 @@ export const pattern = (regex: RegExp, message: string): ValidationRule<string> 
 
 export const custom = <T>(
   validator: (value: T) => boolean,
-<<<<<<< HEAD
   message: string,
-=======
   message: string
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ValidationRule<T> => ({
   validate: validator,
   message,

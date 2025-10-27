@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   Product,
   ProductAvailability,
@@ -6,7 +5,6 @@ import {
 } from '../../domain/aggregates/product.aggregate';
 import type { $Enums } from '../generated/prisma';
 import { PrismaClient } from '../generated/prisma';
-=======
 import { PrismaClient } from '../generated/prisma';
 import {
   Product,
@@ -20,7 +18,6 @@ import {
   ImageType,
   SpecificationType,
 } from '../../domain/entities/product.entity';
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
 export interface IProductRepository {
   findById(id: string): Promise<Product | null>;
@@ -38,8 +35,6 @@ export class PrismaProductRepository implements IProductRepository {
   async findById(id: string): Promise<Product | null> {
     const productData = await this.prisma.product.findUnique({
       where: { id },
-<<<<<<< HEAD
-=======
       include: {
         variants: {
           include: {
@@ -52,12 +47,10 @@ export class PrismaProductRepository implements IProductRepository {
         artisan: true,
         inventory: true,
       },
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
 
     if (!productData) return null;
 
-<<<<<<< HEAD
     return Product.reconstruct({
       id: productData.id,
       productId: productData.id,
@@ -90,7 +83,6 @@ export class PrismaProductRepository implements IProductRepository {
       tags: [],
       createdAt: productData.createdAt,
       updatedAt: productData.updatedAt,
-=======
     return this.mapToDomainEntity(productData);
   }
 
@@ -109,15 +101,12 @@ export class PrismaProductRepository implements IProductRepository {
         artisan: true,
         inventory: true,
       },
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   }
 
   async findBySku(sku: string): Promise<Product | null> {
     const productData = await this.prisma.product.findUnique({
       where: { sku },
-<<<<<<< HEAD
-=======
       include: {
         variants: {
           include: {
@@ -130,7 +119,6 @@ export class PrismaProductRepository implements IProductRepository {
         artisan: true,
         inventory: true,
       },
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
 
     if (!productData) return null;
@@ -173,8 +161,6 @@ export class PrismaProductRepository implements IProductRepository {
   async findBySlug(slug: string): Promise<Product | null> {
     const productData = await this.prisma.product.findUnique({
       where: { slug },
-<<<<<<< HEAD
-=======
       include: {
         variants: {
           include: {
@@ -187,7 +173,6 @@ export class PrismaProductRepository implements IProductRepository {
         artisan: true,
         inventory: true,
       },
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
 
     if (!productData) return null;
@@ -227,7 +212,6 @@ export class PrismaProductRepository implements IProductRepository {
     });
   }
 
-<<<<<<< HEAD
   async findAll(): Promise<Product[]> {
     const productsData = await this.prisma.product.findMany({
       orderBy: { createdAt: 'desc' },
@@ -297,7 +281,6 @@ export class PrismaProductRepository implements IProductRepository {
         metaTitle: persistenceData.metaTitle,
         metaDescription: persistenceData.metaDescription,
       },
-=======
   async findByArtisan(artisanId: string, page: number = 1, limit: number = 10): Promise<Product[]> {
     const skip = (page - 1) * limit;
 
@@ -559,12 +542,10 @@ export class PrismaProductRepository implements IProductRepository {
           })),
         });
       }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   }
 
   async update(product: Product): Promise<void> {
-<<<<<<< HEAD
     const persistenceData = product.toPersistence();
 
     await this.prisma.product.update({
@@ -591,7 +572,6 @@ export class PrismaProductRepository implements IProductRepository {
         metaTitle: persistenceData.metaTitle,
         metaDescription: persistenceData.metaDescription,
       },
-=======
     await this.prisma.$transaction(async tx => {
       // Actualizar producto principal
       await tx.product.update({
@@ -680,7 +660,6 @@ export class PrismaProductRepository implements IProductRepository {
           })),
         });
       }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   }
 
@@ -689,8 +668,6 @@ export class PrismaProductRepository implements IProductRepository {
       where: { id },
     });
   }
-<<<<<<< HEAD
-=======
 
   async count(filters?: SearchFilters): Promise<number> {
     const where: any = {};
@@ -716,9 +693,7 @@ export class PrismaProductRepository implements IProductRepository {
     return await this.prisma.product.count({ where });
   }
 
-  // ========================================
   // MAPPERS - Convertir de Prisma a Domain Entity
-  // ========================================
 
   private mapToDomainEntity(productData: any): Product {
     // Crear el objeto Money para el precio
@@ -815,5 +790,4 @@ export class PrismaProductRepository implements IProductRepository {
 
     return product;
   }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }

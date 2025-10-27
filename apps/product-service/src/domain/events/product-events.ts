@@ -75,11 +75,8 @@ export class ProductDeactivatedEvent extends DomainEvent {
   ) {
     super();
   }
-<<<<<<< HEAD
 
   eventType(): string {
     return 'ProductDeactivatedEvent';
   }
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }
