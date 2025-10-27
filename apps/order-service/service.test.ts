@@ -63,16 +63,13 @@ describe('OrderService', () => {
         ],
       };
 
-<<<<<<< HEAD
       mockOrderRepository.findById.mockResolvedValue({} as any);
 
       await expect(service.createOrder(createOrderDto)).rejects.toThrow(
         'Order with id ORD-001 already exists',
-=======
     it('should validate items array', () => {
       expect(() => service.createOrder('ORD-001', [])).toThrow(
         'Order must contain at least one item'
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     });
   });
@@ -106,7 +103,6 @@ describe('OrderService', () => {
   });
 
   describe('error handling', () => {
-<<<<<<< HEAD
     it('should handle errors gracefully', async() => {
       const invalidData: CreateOrderDTO = {
         orderId: '',
@@ -115,19 +111,16 @@ describe('OrderService', () => {
       };
 
       await expect(service.createOrder(invalidData)).rejects.toThrow();
-=======
     it('should handle errors gracefully', () => {
       const invalidData = null as any;
 
       expect(() => {
         service.createOrder(invalidData, invalidData);
       }).toThrow();
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   });
 
   describe('logging', () => {
-<<<<<<< HEAD
     it('should log operations', async() => {
       const createOrderDto: CreateOrderDTO = {
         orderId: 'ORD-001',
@@ -145,10 +138,8 @@ describe('OrderService', () => {
       mockOrderRepository.save.mockResolvedValue();
 
       await service.createOrder(createOrderDto);
-=======
     it('should log operations', () => {
       service.createOrder('ORD-001', ['item1']);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       expect(console.log).toHaveBeenCalled();
     });

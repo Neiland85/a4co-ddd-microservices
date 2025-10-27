@@ -1,6 +1,4 @@
-// ========================================
 // API CONTRACTS - Version 1
-// ========================================
 
 export interface CreateUserRequestV1 {
   username: string;

@@ -20,26 +20,20 @@ jobs:
     steps:
       - name: Checkout code
         run: |
-          git clone --depth 1 --branch ${{ github.ref_name }} https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git .
+          git fetch origin ${{ github.head_ref }}:pr_branch || git fetch origin ${{ github.ref_name }}:pr_branch
+          git checkout pr_branch
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
       - name: Setup Node.js
         run: |
-          # Use Node.js that's already available
           node --version
           npm --version
 
       - name: Setup pnpm
         run: |
-          # Install pnpm
-          PNPM_VERSION="${{ env.PNPM_VERSION }}"
           echo "Installing pnpm ${PNPM_VERSION}..."
-          
-          # Install pnpm using npm
           npm install -g pnpm@${PNPM_VERSION}
-          
-          # Verify installation
           pnpm --version
 
       - name: Install dependencies
@@ -50,11 +44,8 @@ jobs:
 
       - name: SonarCloud Scan
         run: |
-          # Instalar SonarCloud Scanner
-          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner.zip
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-4.8.0.2856-linux.zip
+          unzip -q sonar-scanner.zip
           export PATH="$PWD/sonar-scanner-4.8.0.2856-linux/bin:$PATH"
-          
-          # Ejecutar análisis usando sonar-project.properties
-          sonar-scanner \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+

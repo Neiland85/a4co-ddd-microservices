@@ -1,2 +1,4 @@
+export * from './aggregate-root';
 export * from './base-entity';
-//# sourceMappingURL=index.d.ts.map
+export * from './domain-event';
+export * from './value-object';

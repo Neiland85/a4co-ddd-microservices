@@ -1,14 +1,10 @@
-<<<<<<< HEAD
-import { initializeTracing } from '@a4co/observability';
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { ProductModule } from './product.module';
 
-<<<<<<< HEAD
 // Simple logger for now until observability package is fixed
 const logger = {
   log: (message: string) => console.log(`[LOG] ${message}`),
@@ -21,37 +17,16 @@ const logger = {
 };
 
 async function bootstrap() {
-  // Initialize observability
-  initializeTracing({
-    serviceName: 'product-service',
-    serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
-  });
-
   const app = await NestFactory.create(ProductModule, { logger });
 
   // Use Pino HTTP middleware for request logging
   app.use(logger.pinoHttpMiddleware());
-=======
-async function bootstrap() {
-  const app = await NestFactory.create(ProductModule);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   // Security middleware
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
-<<<<<<< HEAD
-          defaultSrc: ['\'self\''],
-          styleSrc: ['\'self\'', '\'unsafe-inline\''],
-          scriptSrc: ['\'self\''],
-          imgSrc: ['\'self\'', 'data:', 'https:'],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-    }),
-=======
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
@@ -60,7 +35,6 @@ async function bootstrap() {
       },
       crossOriginEmbedderPolicy: false,
     })
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Global validation pipe
@@ -69,8 +43,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-<<<<<<< HEAD
-    }),
+    })
   );
 
   // Braces security middleware
@@ -85,14 +58,6 @@ async function bootstrap() {
   // CORS configuration
   app.enableCors({
     origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-=======
-    })
-  );
-
-  // CORS configuration
-  app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -110,24 +75,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-<<<<<<< HEAD
   const port = process.env['PORT'] || 3003;
   logger.info(`🚀 Product Service iniciado en puerto ${port}`);
   logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
-=======
-  const port = process.env.PORT || 3003;
-  console.log(`🚀 Product Service iniciado en puerto ${port}`);
-  console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
   await app.listen(port);
 }
 
 bootstrap().catch(err => {
-<<<<<<< HEAD
   logger.error('Error al iniciar el servicio:', err);
-=======
   console.error('Error al iniciar el servicio:', err);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   process.exit(1);
 });

@@ -1,31 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-<<<<<<< HEAD
-    "outDir": "./dist",
-    "rootDir": "./src"
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".next",
-    "build",
-    "coverage",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "**/jest.config.js",
-    "**/jest.setup.js",
-    "apps/**/*",
-    "libs/**/*",
-    "packages/**/*"
-  ]
-}
-=======
     "strict": true,
     "target": "ES2022",
     "module": "Node16",
@@ -41,15 +16,13 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@shared/*": ["packages/shared-utils/*"],
       "@apps/*": ["apps/*"]
     },
-    "jsx": "react-jsx",
-    "ignoreDeprecations": "6.0"
+    "jsx": "react-jsx"
   },
   "include": ["apps/**/*", "packages/**/*", "src/**/*"],
   "exclude": ["node_modules", "dist", "build", "coverage", "**/*.test.ts", "**/*.spec.ts"]
 }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

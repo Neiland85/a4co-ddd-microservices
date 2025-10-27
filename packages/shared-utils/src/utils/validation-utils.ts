@@ -1,7 +1,5 @@
-// Utilidades de validación
-
-export interface ValidationRule<T = any> {
-  validate(value: T): boolean;
+export interface ValidationRule<T = unknown> {
+  validate: (value: T) => boolean;
   message: string;
 }
 
@@ -10,7 +8,7 @@ export interface ValidationResult {
   errors: string[];
 }
 
-export class Validator<T = any> {
+export class Validator<T = unknown> {
   private rules: ValidationRule<T>[] = [];
 
   addRule(rule: ValidationRule<T>): this {
@@ -35,8 +33,8 @@ export class Validator<T = any> {
 }
 
 // Reglas de validación comunes
-export const required = (message: string = 'Este campo es requerido'): ValidationRule<any> => ({
-  validate: (value: any) => value !== null && value !== undefined && value !== '',
+export const required = (message: string = 'Este campo es requerido'): ValidationRule<unknown> => ({
+  validate: (value: unknown) => value !== null && value !== undefined && value !== '',
   message,
 });
 
@@ -72,11 +70,7 @@ export const pattern = (regex: RegExp, message: string): ValidationRule<string> 
 
 export const custom = <T>(
   validator: (value: T) => boolean,
-<<<<<<< HEAD
-  message: string,
-=======
   message: string
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ValidationRule<T> => ({
   validate: validator,
   message,

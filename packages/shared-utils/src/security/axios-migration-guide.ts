@@ -201,7 +201,7 @@ export const setupProductionMonitoring = (
 
     // Alertas de circuit breaker
     if (stats.circuitBreaker.state === 'OPEN') {
-      console.error('🚨 Circuit breaker is OPEN - service may be failing');
+      console.error('[!] Circuit breaker is OPEN - service may be failing');
       // Aquí enviar alerta a sistema de monitoreo (ej: DataDog, New Relic)
     }
 

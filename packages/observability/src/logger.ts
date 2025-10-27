@@ -40,15 +40,9 @@ export function createLogger(config: LoggerConfig): pino.Logger {
     formatters: {
       level: label => ({ level: label }),
       bindings: bindings => ({
-<<<<<<< HEAD
         service: bindings['name'] || config.serviceName,
         pid: bindings['pid'],
         hostname: bindings['hostname'],
-=======
-        service: bindings.name || config.serviceName,
-        pid: bindings.pid,
-        hostname: bindings.hostname,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         environment: config.environment,
       }),
     },
@@ -56,11 +50,7 @@ export function createLogger(config: LoggerConfig): pino.Logger {
     mixin() {
       const traceId = getTraceId();
       const spanId = getSpanId();
-<<<<<<< HEAD
       const contextData: Record<string, unknown> = {};
-=======
-      const contextData: any = {};
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       if (traceId) {
         contextData['traceId'] = traceId;
@@ -124,52 +114,59 @@ export function createLogger(config: LoggerConfig): pino.Logger {
 }
 
 // Logger middleware para HTTP requests
-<<<<<<< HEAD
-export function createHttpLogger(): ReturnType<typeof pinoHttp> {
-  return pinoHttp();
-=======
-export function createHttpLogger(logger: pino.Logger) {
-  const pinoHttp = require('pino-http');
-
-  return pinoHttp({
-    logger,
-    // Personalizar la generación de request ID
-    genReqId: (req: any) => {
-      // Usar trace ID si está disponible
-      const traceId = getTraceId();
-      return traceId || req.id || req.headers['x-request-id'];
-    },
-    // Personalizar el log de request
-    customLogLevel: (res: any, err: any) => {
-      if (res.statusCode >= 400 && res.statusCode < 500) {
-        return 'warn';
-      } else if (res.statusCode >= 500 || err) {
-        return 'error';
-      }
-      return 'info';
-    },
-    // Agregar propiedades adicionales al log
-    customProps: (req: any, res: any) => {
-      return {
-        traceId: getTraceId(),
-        spanId: getSpanId(),
-        method: req.method,
-        url: req.url,
-        statusCode: res.statusCode,
-        duration: Date.now() - req.startTime,
-        userAgent: req.headers['user-agent'],
-        ip: req.ip || req.connection.remoteAddress,
-      };
-    },
-    // Configurar qué loguear
-    autoLogging: {
-      ignore: (req: any) => {
-        // Ignorar health checks
-        return req.url === '/health' || req.url === '/metrics';
+export function createHttpLogger(logger?: pino.Logger): ReturnType<typeof pinoHttp> {
+  if (logger) {
+    return pinoHttp({
+      logger,
+      // Personalizar la generación de request ID
+      genReqId: (req: unknown) => {
+        // Usar trace ID si está disponible
+        const traceId = getTraceId();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return traceId || (req as any).id || (req as any).headers?.['x-request-id'];
       },
-    },
-  });
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+      // Personalizar el log de request
+      customLogLevel: (res: unknown, err: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const statusCode = (res as any).statusCode;
+        if (statusCode >= 400 && statusCode < 500) {
+          return 'warn';
+        } else if (statusCode >= 500 || err) {
+          return 'error';
+        }
+        return 'info';
+      },
+      // Agregar propiedades adicionales al log
+      customProps: (req: unknown, res: unknown) => {
+        return {
+          traceId: getTraceId(),
+          spanId: getSpanId(),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          method: (req as any).method,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          url: (req as any).url,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          statusCode: (res as any).statusCode,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          duration: Date.now() - (req as any).startTime,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          userAgent: (req as any).headers?.['user-agent'],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ip: (req as any).ip || (req as any).connection?.remoteAddress,
+        };
+      },
+      // Configurar qué loguear
+      autoLogging: {
+        ignore: (req: unknown) => {
+          // Ignorar health checks
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (req as any).url === '/health' || (req as any).url === '/metrics';
+        },
+      },
+    });
+  } else {
+    return pinoHttp();
+  }
 }
 
 // Utilidades para logging estructurado
@@ -188,7 +185,7 @@ export class StructuredLogger {
   logWithContext(
     level: string,
     messageOrContext: string | Record<string, unknown>,
-    context?: Record<string, unknown>,
+    context?: Record<string, unknown>
   ): void {
     let message: string;
     let finalContext: Record<string, unknown>;
@@ -213,16 +210,11 @@ export class StructuredLogger {
       });
     }
 
-<<<<<<< HEAD
     // eslint-disable-next-line no-unused-vars
-    (this.logger[level as keyof pino.Logger] as (obj: unknown, msg?: string) => void)({
-      ...finalContext,
-=======
-    (this.logger as any)[level]({
-      ...context,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-      msg: message,
-    });
+    (this.logger[level as keyof pino.Logger] as (obj: unknown, msg?: string) => void)(
+      finalContext,
+      message || undefined
+    );
   }
 
   // Métodos convenientes - API simplificada
@@ -230,22 +222,23 @@ export class StructuredLogger {
     this.logWithContext('info', message, context || {});
   }
 
-<<<<<<< HEAD
-  error(message: string, context?: Record<string, unknown>): void {
-    this.logWithContext('error', message, context || {});
-=======
-  error(message: string, error?: Error, context?: Record<string, any>) {
-    this.logWithContext('error', message, {
-      ...(context || {}),
-      error: error
-        ? {
-            message: error.message,
-            stack: error.stack,
-            name: error.name,
-          }
-        : undefined,
-    });
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+  error(
+    message: string,
+    errorOrContext?: Error | Record<string, unknown>,
+    context?: Record<string, unknown>
+  ): void {
+    if (errorOrContext instanceof Error) {
+      this.logWithContext('error', message, {
+        ...(context || {}),
+        error: {
+          message: errorOrContext.message,
+          stack: errorOrContext.stack,
+          name: errorOrContext.name,
+        },
+      });
+    } else {
+      this.logWithContext('error', message, errorOrContext || {});
+    }
   }
 
   warn(message: string, context?: Record<string, unknown>): void {
@@ -282,7 +275,6 @@ export class StructuredLogger {
       },
     });
   }
-<<<<<<< HEAD
 
   // Métodos adicionales para compatibilidad
   fatal(message: string, context?: Record<string, unknown>): void {
@@ -337,6 +329,4 @@ export function getLogger(): StructuredLogger {
     globalLogger = new StructuredLogger(pinoLogger);
   }
   return globalLogger;
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }

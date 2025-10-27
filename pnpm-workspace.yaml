@@ -1,3 +1,12 @@
 packages:
-  - apps/*
-  - packages/*
+  # Microservicios y aplicaciones frontend (bounded contexts principales en DDD)
+  - 'apps/**' # Incluye todos los subdirectorios en apps/ (e.g., auth-service, web, dashboard-web)
+
+  # Paquetes compartidos (utilidades cross-cutting como shared-utils y observability)
+  - 'packages/**' # Incluye todos los subdirectorios en packages/ (e.g., design-system, shared-utils)
+
+
+  # Infraestructura (scripts de despliegue, Terraform, Docker configs) - solo si contiene paquetes Node; de lo contrario, excluir para evitar errores de resolución
+  # - 'infra/**'  # Comentado: infra/ típicamente no es un workspace pnpm, ya que es para IaC no ejecutable en Node
+
+  # Exclusiones implícitas: Ignora carpetas obsoletas/experimentales como apps/web/v0dev/ si no son válidas (configurar manualmente si es necesario via .pnpmfile.cjs para hooks de exclusión)

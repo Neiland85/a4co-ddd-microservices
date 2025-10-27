@@ -1,4 +1,4 @@
-import { connect, NatsConnection, StringCodec, Subscription, ConnectionOptions } from 'nats';
+import { connect, NatsConnection, Subscription, StringCodec, ConnectionOptions } from 'nats';
 import { EventEmitter } from 'events';
 
 export interface EventMessage {
@@ -27,7 +27,7 @@ export class NatsEventBus extends EventEmitter {
   private subscriptions: Map<string, Subscription> = new Map();
   private codec = StringCodec();
   private config: NatsEventBusConfig;
-  private isConnected = false;
+  private connected = false;
 
   constructor(config: NatsEventBusConfig) {
     super();
@@ -42,7 +42,7 @@ export class NatsEventBus extends EventEmitter {
 
   async connect(): Promise<void> {
     try {
-      const connectionOptions: ConnectionOptions = {
+      const options: ConnectionOptions = {
         servers: this.config.servers,
         name: this.config.name || `a4co-event-bus-${Date.now()}`,
         timeout: this.config.timeout,
@@ -51,26 +51,19 @@ export class NatsEventBus extends EventEmitter {
         reconnectTimeWait: this.config.reconnectTimeWait,
       };
 
-      this.connection = await connect(connectionOptions);
-      this.isConnected = true;
+      this.connection = await connect(options);
+      this.connected = true;
       this.setupConnectionListeners();
 
-      this.emit('connected');
       console.log(
-<<<<<<< HEAD
-        `✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`,
-=======
-        `✅ Conectado a NATS en: ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers}`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+        `✅ Conectado a NATS en ${
+          Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers
+        }`
       );
     } catch (error) {
       this.emit('error', error);
       throw new Error(
-<<<<<<< HEAD
-        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`,
-=======
-        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : 'Unknown error'}`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : String(error)}`
       );
     }
   }
@@ -79,10 +72,9 @@ export class NatsEventBus extends EventEmitter {
     if (this.connection) {
       try {
         await this.connection.drain();
-        this.connection.close();
+        await this.connection.close();
         this.connection = null;
-        this.isConnected = false;
-        this.emit('disconnected');
+        this.connected = false;
         console.log('🔌 Desconectado de NATS');
       } catch (error) {
         this.emit('error', error);
@@ -94,43 +86,24 @@ export class NatsEventBus extends EventEmitter {
   private setupConnectionListeners(): void {
     if (!this.connection) return;
 
-    this.connection.closed().then(() => {
-      this.isConnected = false;
-      this.emit('disconnected');
-      console.log('🔌 Conexión NATS cerrada');
-    });
-
-    // NATS status es un AsyncIterable, no un Observable
-<<<<<<< HEAD
-    (async() => {
-=======
     (async () => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-      try {
-        for await (const status of this.connection!.status()) {
-          this.emit('status', status);
-
-          switch (status.type) {
-            case 'disconnect':
-              this.isConnected = false;
-              this.emit('disconnected');
-              console.log('🔌 Desconectado de NATS');
-              break;
-            case 'reconnect':
-              this.isConnected = true;
-              this.emit('reconnected');
-              console.log('🔄 Reconectado a NATS');
-              break;
-          }
+      for await (const status of this.connection!.status()) {
+        switch (status.type) {
+          case 'disconnect':
+            this.connected = false;
+            console.log('🔌 Desconectado de NATS');
+            break;
+          case 'reconnect':
+            this.connected = true;
+            console.log('🔄 Reconectado a NATS');
+            break;
         }
-      } catch (error) {
-        console.error('Error en status NATS:', error);
       }
     })();
   }
 
   async publish<T = any>(subject: string, event: EventMessage): Promise<void> {
-    if (!this.connection || !this.isConnected) {
+    if (!this.connection || !this.connected) {
       throw new Error('❌ No hay conexión activa con NATS');
     }
 
@@ -140,79 +113,35 @@ export class NatsEventBus extends EventEmitter {
         timestamp: event.timestamp.toISOString(),
       });
 
-      const encodedMessage = this.codec.encode(message);
-      await this.connection.publish(subject, encodedMessage);
-
-      this.emit('published', { subject, event });
-      console.log(`📤 Evento publicado en ${subject}:`, event.eventType);
+      const encoded = this.codec.encode(message);
+      this.connection.publish(subject, encoded);
+      console.log(`📤 Evento publicado en ${subject}: ${event.eventType}`);
     } catch (error) {
-      this.emit('error', error);
-      throw new Error(
-<<<<<<< HEAD
-        `❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-=======
-        `❌ Error publicando evento en ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-      );
+      console.error(`❌ Error publicando evento en ${subject}:`, error);
+      throw error;
     }
   }
 
   async subscribe(subject: string, handler: INatsEventHandler, queueGroup?: string): Promise<void> {
-    if (!this.connection || !this.isConnected) {
+    if (!this.connection || !this.connected) {
       throw new Error('❌ No hay conexión activa con NATS');
     }
 
-    try {
-      const subscription = queueGroup
-        ? this.connection.subscribe(subject, { queue: queueGroup })
-        : this.connection.subscribe(subject);
+    const sub = queueGroup
+      ? this.connection.subscribe(subject, { queue: queueGroup })
+      : this.connection.subscribe(subject);
 
-      const subscriptionKey = `${subject}-${queueGroup || 'default'}`;
-      this.setupMessageHandler(subscription, handler, subject);
-      this.subscriptions.set(subscriptionKey, subscription);
+    this.subscriptions.set(`${subject}-${queueGroup || 'default'}`, sub);
+    console.log(`📥 Suscrito a ${subject}${queueGroup ? ` (queue: ${queueGroup})` : ''}`);
 
-      this.emit('subscribed', { subject, queueGroup });
-      console.log(`📥 Suscrito a ${subject}${queueGroup ? ` (queue: ${queueGroup})` : ''}`);
-    } catch (error) {
-      this.emit('error', error);
-      throw new Error(
-<<<<<<< HEAD
-        `❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-=======
-        `❌ Error suscribiéndose a ${subject}: ${error instanceof Error ? error.message : 'Unknown error'}`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-      );
-    }
-  }
-
-  private setupMessageHandler(
-    subscription: Subscription,
-    handler: INatsEventHandler,
-<<<<<<< HEAD
-    subject: string,
-  ): void {
-    (async() => {
-=======
-    subject: string
-  ): void {
     (async () => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-      for await (const message of subscription) {
+      for await (const msg of sub) {
         try {
-          const decodedMessage = this.codec.decode(message.data);
-          const eventMessage: EventMessage = JSON.parse(decodedMessage);
-
-          if (typeof eventMessage.timestamp === 'string') {
-            eventMessage.timestamp = new Date(eventMessage.timestamp);
-          }
-
-          this.emit('message', { subject, message: eventMessage });
-          await handler(eventMessage);
-          if ('ack' in message) {
-            (message as any).ack();
-          }
+          const decoded = this.codec.decode(msg.data);
+          const event: EventMessage = JSON.parse(decoded);
+          if (typeof event.timestamp === 'string') event.timestamp = new Date(event.timestamp);
+          await handler(event);
         } catch (error) {
-          this.emit('error', error);
           console.error(`❌ Error procesando mensaje de ${subject}:`, error);
         }
       }
@@ -220,64 +149,32 @@ export class NatsEventBus extends EventEmitter {
   }
 
   async unsubscribe(subject: string, queueGroup?: string): Promise<void> {
-    const subscriptionKey = `${subject}-${queueGroup || 'default'}`;
-    const subscription = this.subscriptions.get(subscriptionKey);
-
-    if (subscription) {
-      subscription.unsubscribe();
-      this.subscriptions.delete(subscriptionKey);
-      this.emit('unsubscribed', { subject, queueGroup });
+    const key = `${subject}-${queueGroup || 'default'}`;
+    const sub = this.subscriptions.get(key);
+    if (sub) {
+      sub.unsubscribe();
+      this.subscriptions.delete(key);
       console.log(`📤 Desuscrito de ${subject}${queueGroup ? ` (queue: ${queueGroup})` : ''}`);
     }
   }
 
   async unsubscribeAll(): Promise<void> {
-    for (const [key, subscription] of this.subscriptions) {
-      subscription.unsubscribe();
+    for (const [key, sub] of this.subscriptions) {
+      sub.unsubscribe();
     }
     this.subscriptions.clear();
-    this.emit('unsubscribed-all');
     console.log('📤 Desuscrito de todos los eventos');
   }
 
-  private generateEventId(): string {
-    return `evt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
   getConnectionStatus(): boolean {
-    return this.isConnected;
+    return this.connected;
   }
 
   getActiveSubscriptions(): string[] {
     return Array.from(this.subscriptions.keys());
   }
 
-  // Métodos de conveniencia para eventos específicos
-  async publishOrderCreated(orderId: string, orderData: any): Promise<void> {
-    const event: EventMessage = {
-      eventId: this.generateEventId(),
-      eventType: 'OrderCreated',
-      timestamp: new Date(),
-      data: { orderId, ...orderData },
-    };
-    await this.publish('order.created', event);
-  }
-
-  async publishStockReserved(orderId: string, stockData: any): Promise<void> {
-    const event: EventMessage = {
-      eventId: this.generateEventId(),
-      eventType: 'StockReserved',
-      timestamp: new Date(),
-      data: { orderId, ...stockData },
-    };
-    await this.publish('inventory.stock.reserved', event);
-  }
-
-  async subscribeToOrderCreated(handler: INatsEventHandler): Promise<void> {
-    await this.subscribe('order.created', handler, 'order-service');
-  }
-
-  async subscribeToStockReserved(handler: INatsEventHandler): Promise<void> {
-    await this.subscribe('inventory.stock.reserved', handler, 'inventory-service');
+  private generateEventId(): string {
+    return `evt_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
 }

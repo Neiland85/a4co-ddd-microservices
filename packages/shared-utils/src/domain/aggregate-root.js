@@ -23,8 +23,6 @@ class AggregateRoot extends base_entity_1.BaseEntity {
         this._domainEvents = [];
     }
     markEventsForDispatch() {
-        // This method can be used by event dispatchers
-        // to mark events as ready for dispatch
     }
 }
 exports.AggregateRoot = AggregateRoot;

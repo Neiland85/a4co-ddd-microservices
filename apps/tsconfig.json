@@ -4,5 +4,5 @@
     "composite": true
   },
   "files": [],
-  "references": [{ "path": "./dashboard-web" }, { "path": "./auth-service" }]
+  "references": [{ "path": "./auth-service" }]
 }

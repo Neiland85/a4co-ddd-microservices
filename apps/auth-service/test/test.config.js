@@ -1,18 +1,17 @@
 "use strict";
-// Configuración de pruebas para auth-service
-// Usa variables de entorno para evitar secretos hardcodeados
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testConfig = void 0;
 exports.generateTestCredentials = generateTestCredentials;
 exports.cleanupTestCredentials = cleanupTestCredentials;
 exports.testConfig = {
-    // Credenciales de prueba genéricas
     testCredentials: {
+        username: process.env['TEST_USERNAME'] || 'test_user',
+        password: process.env['TEST_PASSWORD'] || 'test_password',
+        email: process.env['TEST_EMAIL'] || 'test@example.com',
         username: process.env.TEST_USERNAME || 'test_user',
         password: process.env.TEST_PASSWORD || 'test_password',
         email: process.env.TEST_EMAIL || 'test@example.com',
     },
-    // Datos de prueba para diferentes escenarios
     testData: {
         validUser: {
             username: 'valid_user',
@@ -24,14 +23,12 @@ exports.testConfig = {
         emptyString: '',
         numericInput: '12345',
     },
-    // Configuración de seguridad para pruebas
     security: {
         minPasswordLength: 8,
         maxUsernameLength: 50,
         allowedSpecialChars: /[@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
     },
 };
-// Función helper para generar credenciales de prueba seguras
 function generateTestCredentials(prefix = 'test') {
     const timestamp = Date.now();
     return {
@@ -39,10 +36,7 @@ function generateTestCredentials(prefix = 'test') {
         password: `${prefix}_pass_${timestamp}`,
     };
 }
-// Función helper para limpiar credenciales de prueba
 function cleanupTestCredentials() {
-    // En un entorno real, aquí se limpiarían las credenciales de prueba
-    // Por ahora, solo es un placeholder
     console.log('Test credentials cleanup completed');
 }
 //# sourceMappingURL=test.config.js.map

@@ -1,17 +1,4 @@
-<<<<<<< HEAD
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  roots: ['<rootDir>/src', '<rootDir>/tests', '<rootDir>'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
-  },
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
-  moduleFileExtensions: ['ts', 'js', 'json'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-=======
-const baseConfig = require('../../jest.config.base.js');
+const baseConfig = require('../../jest.config.base.cjs');
 
 module.exports = {
   ...baseConfig,
@@ -39,5 +26,4 @@ module.exports = {
   maxWorkers: 1,
   forceExit: true,
   detectOpenHandles: true,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 };

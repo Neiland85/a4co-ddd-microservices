@@ -1,5 +1,4 @@
 "use strict";
-// Utilidades de validación
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.custom = exports.pattern = exports.max = exports.min = exports.email = exports.maxLength = exports.minLength = exports.required = exports.Validator = void 0;
 class Validator {
@@ -22,7 +21,6 @@ class Validator {
     }
 }
 exports.Validator = Validator;
-// Reglas de validación comunes
 const required = (message = 'Este campo es requerido') => ({
     validate: (value) => value !== null && value !== undefined && value !== '',
     message,

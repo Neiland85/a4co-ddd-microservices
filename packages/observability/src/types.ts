@@ -1,14 +1,11 @@
 // Se comentan las importaciones porque los módulos pueden no estar disponibles en todos los entornos.
 // import { Logger } from 'pino';
-import type { Span } from '@opentelemetry/api';
+import type { Attributes, Span } from '@opentelemetry/api';
 import type { DDDMetadata } from './logging/types';
 
-<<<<<<< HEAD
 // Re-export DDDMetadata for convenience
 export type { DDDMetadata };
 
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Tipos de configuración
 export type ObservabilityConfig = {
   serviceName: string;
@@ -92,6 +89,7 @@ export type ObservabilityTracer = {
     _fn?: (_span: Span) => T
   ): T;
   withDDD?(_metadata: DDDMetadata): ObservabilityTracer;
+  addSpanEvent?(_name: string, _attributes?: Attributes): void;
 };
 
 // Middleware options

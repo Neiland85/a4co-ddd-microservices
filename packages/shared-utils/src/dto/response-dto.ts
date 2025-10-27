@@ -6,7 +6,7 @@ export interface BaseResponse {
   timestamp: Date;
 }
 
-export interface SuccessResponse<T = any> extends BaseResponse {
+export interface SuccessResponse<T = unknown> extends BaseResponse {
   success: true;
   data: T;
 }
@@ -16,11 +16,11 @@ export interface ErrorResponse extends BaseResponse {
   error: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
 }
 
-export interface PaginatedResponse<T = any> extends BaseResponse {
+export interface PaginatedResponse<T = unknown> extends BaseResponse {
   success: true;
   data: T[];
   pagination: {
@@ -33,7 +33,7 @@ export interface PaginatedResponse<T = any> extends BaseResponse {
   };
 }
 
-export type ApiResponse<T = any> = SuccessResponse<T> | ErrorResponse;
+export type ApiResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
 
 // Factories para crear respuestas
 export const createSuccessResponse = <T>(data: T, message: string = ''): SuccessResponse<T> => ({
@@ -46,11 +46,7 @@ export const createSuccessResponse = <T>(data: T, message: string = ''): Success
 export const createErrorResponse = (
   code: string,
   message: string,
-<<<<<<< HEAD
-  details?: any,
-=======
-  details?: any
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+  details?: unknown
 ): ErrorResponse => ({
   success: false,
   error: { code, message, details },
@@ -61,11 +57,7 @@ export const createPaginatedResponse = <T>(
   data: T[],
   page: number,
   limit: number,
-<<<<<<< HEAD
-  total: number,
-=======
   total: number
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): PaginatedResponse<T> => ({
   success: true,
   data,

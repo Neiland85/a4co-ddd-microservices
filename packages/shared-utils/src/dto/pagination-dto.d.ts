@@ -11,4 +11,3 @@ export declare class PaginatedResponse<T> {
     totalPages: number;
     constructor(data: T[], total: number, page: number, limit: number);
 }
-//# sourceMappingURL=pagination-dto.d.ts.map

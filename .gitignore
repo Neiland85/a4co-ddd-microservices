@@ -9,9 +9,6 @@ coverage
 *.lcov
 .nyc_output
 
-<<<<<<< HEAD
-# Next.js
-=======
 # TypeScript / TSBuild
 *.tsbuildinfo
 
@@ -50,7 +47,6 @@ pnpm-lock.yaml
 .svelte-kit/
 
 # Framework outputs
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 .next/
 out/
 build/
@@ -86,8 +82,8 @@ Thumbs.db
 .env.local
 .env.production
 .env.staging
+.env.compose
 
-<<<<<<< HEAD
 # Archivos .env en servicios
 apps/*/.env
 apps/*/.env.local
@@ -110,7 +106,7 @@ next-env.d.ts
 
 # Prisma generated
 /src/generated/prisma
-=======
+
 # Python
 __pycache__/
 *.py[cod]
@@ -118,8 +114,6 @@ __pycache__/
 
 /src/generated/prisma
 .turbo/
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md

@@ -1,12 +1,6 @@
+const baseConfig = require('../../jest.config.base.cjs');
+
 module.exports = {
-<<<<<<< HEAD
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
-=======
   ...baseConfig,
   displayName: 'auth-service',
   rootDir: '.',
@@ -23,9 +17,7 @@ module.exports = {
         tsconfig: 'tsconfig.spec.json',
       },
     ],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 };

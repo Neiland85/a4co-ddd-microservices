@@ -145,13 +145,8 @@ export class ComponentPerformanceTracker {
     return sorted[index]!;
   }
 
-<<<<<<< HEAD
   getPerformanceReport(): Record<string, unknown> {
     const report: Record<string, unknown> = {};
-=======
-  getPerformanceReport(): Record<string, any> {
-    const report: Record<string, any> = {};
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     this.renderTimes.forEach((times, component) => {
       report[component] = {
@@ -173,61 +168,36 @@ export class ComponentPerformanceTracker {
 export const ObservabilityStyleGuide = {
   // Span naming patterns
   spans: {
-<<<<<<< HEAD
     interaction: (component: string, action: string): string =>
       `ds.${component.toLowerCase()}.${action.toLowerCase()}`,
     render: (component: string): string => `ds.${component.toLowerCase()}.render`,
     api: (component: string, operation: string): string =>
-=======
-    interaction: (component: string, action: string) =>
-      `ds.${component.toLowerCase()}.${action.toLowerCase()}`,
-    render: (component: string) => `ds.${component.toLowerCase()}.render`,
-    api: (component: string, operation: string) =>
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       `ds.${component.toLowerCase()}.api.${operation.toLowerCase()}`,
   },
 
   // Log message patterns
   logs: {
-<<<<<<< HEAD
     interaction: (component: string, action: string): string =>
       `User interaction: ${action} on ${component}`,
     state: (component: string, state: string): string => `Component state: ${component} - ${state}`,
     error: (component: string, error: string): string => `Component error: ${component} - ${error}`,
-=======
-    interaction: (component: string, action: string) =>
-      `User interaction: ${action} on ${component}`,
-    state: (component: string, state: string) => `Component state: ${component} - ${state}`,
-    error: (component: string, error: string) => `Component error: ${component} - ${error}`,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
 
   // Attribute naming conventions
   attributes: {
     component: (_name: string): string => 'ds.component.name',
-
     variant: (_variant: string): string => 'ds.component.variant',
-
     size: (_size: string): string => 'ds.component.size',
-
     state: (_state: string): string => 'ds.component.state',
-
     theme: (_theme: string): string => 'ds.theme',
     token: (token: string): string => `ds.token.${token}`,
   },
 
   // Metric naming conventions
   metrics: {
-<<<<<<< HEAD
     renderTime: (component: string): string => `ds_${component.toLowerCase()}_render_duration_ms`,
     interactionCount: (component: string, interaction: string): string =>
       `ds_${component.toLowerCase()}_${interaction.toLowerCase()}_total`,
     errorCount: (component: string): string => `ds_${component.toLowerCase()}_errors_total`,
-=======
-    renderTime: (component: string) => `ds_${component.toLowerCase()}_render_duration_ms`,
-    interactionCount: (component: string, interaction: string) =>
-      `ds_${component.toLowerCase()}_${interaction.toLowerCase()}_total`,
-    errorCount: (component: string) => `ds_${component.toLowerCase()}_errors_total`,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
 };

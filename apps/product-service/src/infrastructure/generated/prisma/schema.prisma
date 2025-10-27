@@ -148,9 +148,7 @@ model ProductTag {
   @@map("product_tags")
 }
 
-// ========================================
 // ENUMERATIONS
-// ========================================
 
 enum ProductStatus {
   DRAFT

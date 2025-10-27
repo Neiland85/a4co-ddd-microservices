@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -20,15 +19,6 @@ declare global {
     }
   }
 }
-=======
-import { Injectable, NestMiddleware, HttpException, HttpStatus } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as rateLimit from 'express-rate-limit';
-import * as helmet from 'helmet';
-import * as cors from 'cors';
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
 @Injectable()
 export class SecurityMiddleware implements NestMiddleware {
@@ -54,7 +44,7 @@ export class SecurityMiddleware implements NestMiddleware {
       skipFailedRequests: false,
       keyGenerator: req => {
         // Usar IP + User ID si está autenticado
-        return req.user?.id ? `${req.ip}-${req.user.id}` : req.ip;
+        return req.user?.id ? `${req.ip || 'unknown'}-${req.user.id}` : req.ip || 'unknown';
       },
     });
   }
@@ -81,17 +71,6 @@ export class SecurityMiddleware implements NestMiddleware {
     helmet({
       contentSecurityPolicy: {
         directives: {
-<<<<<<< HEAD
-          defaultSrc: ['\'self\''],
-          styleSrc: ['\'self\'', '\'unsafe-inline\''],
-          scriptSrc: ['\'self\''],
-          imgSrc: ['\'self\'', 'data:', 'https:'],
-          connectSrc: ['\'self\''],
-          fontSrc: ['\'self\''],
-          objectSrc: ['\'none\''],
-          mediaSrc: ['\'self\''],
-          frameSrc: ['\'none\''],
-=======
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
@@ -101,7 +80,6 @@ export class SecurityMiddleware implements NestMiddleware {
           objectSrc: ["'none'"],
           mediaSrc: ["'self'"],
           frameSrc: ["'none'"],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         },
       },
       hsts: {
@@ -182,15 +160,9 @@ export class SecurityMiddleware implements NestMiddleware {
 
       next();
     } catch (error) {
-<<<<<<< HEAD
       if (error instanceof Error && error.name === 'JsonWebTokenError') {
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       } else if (error instanceof Error && error.name === 'TokenExpiredError') {
-=======
-      if (error.name === 'JsonWebTokenError') {
-        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-      } else if (error.name === 'TokenExpiredError') {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
       } else if (error instanceof HttpException) {
         throw error;
@@ -218,7 +190,7 @@ export class LoginRateLimitMiddleware implements NestMiddleware {
       standardHeaders: true,
       legacyHeaders: false,
       skipSuccessfulRequests: true, // No contar logins exitosos
-      keyGenerator: req => req.ip,
+      keyGenerator: req => req.ip || 'unknown',
       handler: (req, res) => {
         res.status(429).json({
           error: 'Too many login attempts',
@@ -286,11 +258,7 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
 
     // Log de request
     console.log(
-<<<<<<< HEAD
-      `[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`,
-=======
       `[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
 
     // Log de autenticación
@@ -300,17 +268,10 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
 
     // Interceptar response para logging
     const originalSend = res.send;
-<<<<<<< HEAD
-    res.send = function(data) {
-      const duration = Date.now() - startTime;
-      console.log(
-        `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`,
-=======
     res.send = function (data) {
       const duration = Date.now() - startTime;
       console.log(
         `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
 
       // Log de errores de seguridad

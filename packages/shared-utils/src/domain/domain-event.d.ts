@@ -17,4 +17,3 @@ export declare abstract class DomainEvent implements IDomainEvent {
     readonly sagaId?: string;
     constructor(aggregateId: string, eventData: any, eventVersion?: number, sagaId?: string);
 }
-//# sourceMappingURL=domain-event.d.ts.map

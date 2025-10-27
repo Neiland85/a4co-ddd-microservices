@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['../../.eslintrc.js'],
+  extends: ['../../eslint.config.js'],
   parserOptions: {
     project: './tsconfig.json',
     sourceType: 'module',
@@ -13,7 +13,7 @@ module.exports = {
     jest: true,
   },
   extends: [
-    '../../.eslintrc.js',
+    '../../eslint.config.js',
     'plugin:jsx-a11y/recommended',
     'plugin:storybook/recommended',
   ],

@@ -1,2 +1,2 @@
 export * from './base-dto';
-//# sourceMappingURL=index.d.ts.map
+export * from './pagination-dto';

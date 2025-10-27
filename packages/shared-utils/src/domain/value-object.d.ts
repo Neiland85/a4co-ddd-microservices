@@ -5,4 +5,3 @@ export declare abstract class ValueObject<T> {
     equals(vo: ValueObject<T>): boolean;
     toString(): string;
 }
-//# sourceMappingURL=value-object.d.ts.map

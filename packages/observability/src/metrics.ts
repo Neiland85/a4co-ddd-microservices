@@ -1,7 +1,6 @@
 import type { Counter, Histogram, Meter, UpDownCounter } from '@opentelemetry/api';
 import { metrics } from '@opentelemetry/api';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { Resource } from '@opentelemetry/resources';
 import { MeterProvider } from '@opentelemetry/sdk-metrics';
 import type { NextFunction, Request, Response } from 'express';
 
@@ -21,21 +20,22 @@ export function initializeMetrics(config: MetricsConfig): PrometheusExporter {
     },
     () => {
       console.log(`Prometheus metrics server started on port ${config.port || 9464}`);
-    },
+    }
   );
 
   // Crear meter provider
   const meterProvider = new MeterProvider({
-    resource: new Resource({
-      'service.name': config.serviceName,
-    }),
+    // resource: new Resource({
+    //   'service.name': config.serviceName,
+    // }),
   });
 
   // Registrar el meter provider globalmente
   metrics.setGlobalMeterProvider(meterProvider);
 
   // Agregar el exportador
-  meterProvider.addMetricReader(prometheusExporter);
+  // TODO: Fix metric reader registration with current OpenTelemetry version
+  // meterProvider.addMetricReader(prometheusExporter);
 
   return prometheusExporter;
 }
@@ -119,7 +119,7 @@ export class CustomMetrics {
     operation: string,
     collection: string,
     duration: number,
-    success: boolean,
+    success: boolean
   ): void {
     this.incrementCounter('db_queries_total', 1, {
       operation,
@@ -147,21 +147,13 @@ export class CustomMetrics {
     }
   }
 
-<<<<<<< HEAD
-=======
   // Queue metrics
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   recordQueueOperation(
     queue: string,
     operation: 'enqueue' | 'dequeue' | 'process',
     success: boolean,
-<<<<<<< HEAD
-    duration?: number,
-  ): void {
-=======
     duration?: number
-  ) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+  ): void {
     // Queue operation counter
     this.incrementCounter('queue_operations_total', 1, {
       queue,
@@ -182,34 +174,12 @@ export class CustomMetrics {
     this.updateGauge('active_connections', delta, { type });
   }
 
-<<<<<<< HEAD
   recordMemoryUsage(): void {
     const memUsage = process.memoryUsage();
     this.updateGauge('memory_heap_used', memUsage.heapUsed);
     this.updateGauge('memory_heap_total', memUsage.heapTotal);
     this.updateGauge('memory_external', memUsage.external);
     this.updateGauge('memory_rss', memUsage.rss);
-=======
-  // Memory usage
-  recordMemoryUsage() {
-    const memoryUsage = process.memoryUsage();
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.heapUsed, {
-      type: 'heap_used',
-    });
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.heapTotal, {
-      type: 'heap_total',
-    });
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.rss, {
-      type: 'rss',
-    });
-
-    this.metrics.updateGauge('memory_usage_bytes', memoryUsage.external, {
-      type: 'external',
-    });
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   }
 }
 
@@ -223,15 +193,7 @@ export function httpMetricsMiddleware(metrics: CustomMetrics) {
 
     // Interceptar el método end
     const originalEnd = res.end;
-<<<<<<< HEAD
-    (res.end as unknown) = function(
-      chunk?: unknown,
-      encoding?: unknown,
-      cb?: () => void,
-    ): unknown {
-=======
-    res.end = function (...args: any[]) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+    res.end = function (...args: any[]): any {
       // Registrar métricas
       const duration = Date.now() - startTime;
       metrics.recordHttpRequest(req.method, req.route?.path || req.path, res.statusCode, duration);
@@ -240,7 +202,7 @@ export function httpMetricsMiddleware(metrics: CustomMetrics) {
       metrics.updateActiveConnections(-1, 'http');
 
       // Llamar al método original
-      return (originalEnd as Function).call(res, chunk, encoding, cb);
+      return (originalEnd as Function).call(res, ...args);
     };
 
     next();
@@ -252,39 +214,18 @@ export async function measureAsync<T>(
   metrics: CustomMetrics,
   metricName: string,
   operation: () => Promise<T>,
-  labels?: Record<string, string>,
+  labels?: Record<string, string>
 ): Promise<T> {
   const startTime = Date.now();
-<<<<<<< HEAD
-=======
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   try {
     const result = await operation();
     const duration = Date.now() - startTime;
-<<<<<<< HEAD
     metrics.recordDuration(metricName, duration, { ...labels, success: 'true' });
     return result;
   } catch (error) {
     const duration = Date.now() - startTime;
     metrics.recordDuration(metricName, duration, { ...labels, success: 'false' });
-=======
-
-    metrics.recordDuration(metricName, duration / 1000, {
-      ...labels,
-      success: 'true',
-    });
-
-    return result;
-  } catch (error) {
-    const duration = Date.now() - startTime;
-
-    metrics.recordDuration(metricName, duration / 1000, {
-      ...labels,
-      success: 'false',
-    });
-
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     throw error;
   }
 }

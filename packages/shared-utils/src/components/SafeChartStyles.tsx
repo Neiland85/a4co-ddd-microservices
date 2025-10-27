@@ -47,11 +47,7 @@ ${theme} [data-chart="${id}"] {
  */
 export function useChartStyles(
   id: string,
-<<<<<<< HEAD
-  colorConfig: Array<{ theme: string; colors: Record<string, string> }>,
-=======
   colorConfig: Array<{ theme: string; colors: Record<string, string> }>
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ) {
   return React.useMemo(() => {
     if (!colorConfig.length) {
@@ -65,11 +61,7 @@ export function useChartStyles(
           ...acc,
           [`--color-${key}`]: value,
         }),
-<<<<<<< HEAD
-        {},
-=======
         {}
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       ),
     }));
   }, [id, colorConfig]);
@@ -80,11 +72,7 @@ export function useChartStyles(
  */
 export function createChartStyleSheet(
   id: string,
-<<<<<<< HEAD
-  colorConfig: Array<{ theme: string; colors: Record<string, string> }>,
-=======
   colorConfig: Array<{ theme: string; colors: Record<string, string> }>
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): string {
   return colorConfig
     .map(({ theme, colors }) => {

@@ -1,20 +1,14 @@
-// Exportar clases base de dominio (AggregateRoot, BaseEntity, ValueObject, DomainEvent)
-export * from './domain';
-
 // Exportar DTOs y sus interfaces
 export * from './dto';
 
-// Exportar Event Bus y eventos de dominio/integración
-export * from './events';
-
-// Exportar Sagas y orquestadores
-export * from './saga';
-
-// Exportar utilidades de seguridad
-export * from './security';
+// Exportar utilidades de seguridad que funcionan
+export * from './security/braces-web-middleware';
 
 // Exportar tipos compartidos
 export * from './types';
 
-// Exportar utilidades generales
-export * from './utils';
+// Exportar utilidades generales que funcionan
+export * from './utils/validation-utils';
+
+// Exportar domain primitives
+export * from './domain';

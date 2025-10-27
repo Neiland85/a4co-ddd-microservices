@@ -10,4 +10,3 @@ export declare abstract class AggregateRoot extends BaseEntity {
     clearDomainEvents(): void;
     markEventsForDispatch(): void;
 }
-//# sourceMappingURL=aggregate-root.d.ts.map

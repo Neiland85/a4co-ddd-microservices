@@ -7,12 +7,17 @@ updates:
     open-pull-requests-limit: 5
 
   - package-ecosystem: "npm"
-    directory: "/apps/auth"
+    directory: "/apps/auth-service"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm"
-    directory: "/apps/web"
+    directory: "/apps/frontend"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm"
+    directory: "/apps/gateway"
     schedule:
       interval: "weekly"
 

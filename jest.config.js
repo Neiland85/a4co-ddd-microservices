@@ -6,7 +6,7 @@ module.exports = {
     '**/__tests__/**/*.spec.ts',
     '**/__tests__/**/*.test.ts',
     '**/*.spec.ts',
-    '**/*.test.ts'
+    '**/*.test.ts',
   ],
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
@@ -21,26 +21,18 @@ module.exports = {
     '!**/dist/**',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: [
-    'text',
-    'lcov',
-    'json',
-    'html',
-    'json-summary'
-  ],
+  coverageReporters: ['text', 'lcov', 'json', 'html', 'json-summary'],
   coverageThreshold: {
-      global: {
-        lines: 85,
-        functions: 82,
-        branches: 78,
-        statements: 84,
-      },
+    global: {
+      lines: 85,
+      functions: 82,
+      branches: 78,
+      statements: 84,
     },
-    }
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testTimeout: 5000,
-  maxWorkers: "75%",
+  maxWorkers: '75%',
   detectOpenHandles: true,
   forceExit: true,
 };

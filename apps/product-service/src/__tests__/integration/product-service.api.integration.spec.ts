@@ -1,14 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { ProductServiceModule } from '../../product-service.module';
+import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+import { ProductModule } from '../../product.module';
 
-describe('ProductService API (e2e)', () => {
+describe('Product API (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ProductServiceModule],
+      imports: [ProductModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -19,7 +19,7 @@ describe('ProductService API (e2e)', () => {
     return request(app.getHttpServer())
       .get('/product-service')
       .expect(200)
-      .expect((res) => {
+      .expect(res => {
         expect(Array.isArray(res.body)).toBe(true);
       });
   });

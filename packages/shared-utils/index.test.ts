@@ -6,11 +6,8 @@ describe('Shared Utils Import Test', () => {
     class TestEntity extends BaseEntity {
       constructor(
         public name: string,
-<<<<<<< HEAD
         id?: string,
-=======
         id?: string
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       ) {
         super(id);
       }

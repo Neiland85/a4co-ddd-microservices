@@ -130,15 +130,12 @@ function generateService(service: ServiceConfig): string {
         .map(
           p =>
 <<<<<<< HEAD
-            `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`,
-=======
             `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         )
         .join('\n      ')}
-      
+
       this.log('Creating ${entityName}', { ${method.params.map(p => p.name).join(', ')} });
-      
+
       return this.createSuccessMessage(
         '${service.name}',
         'created',
@@ -159,9 +156,9 @@ function generateService(service: ServiceConfig): string {
           }
         })
         .join('\n      ')}
-      
+
       this.log('Updating ${entityName}', { ${method.params.map(p => p.name).join(', ')} });
-      
+
       return this.createSuccessMessage(
         '${service.name}',
         'updated',
@@ -182,9 +179,9 @@ function generateService(service: ServiceConfig): string {
           }
         })
         .join('\n      ')}
-      
+
       this.log('Getting ${entityName}', { ${method.params.map(p => `${p.name}: validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)}`).join(', ')} });
-      
+
       return this.createSuccessMessage(
         '${service.name}',
         'retrieved',
@@ -230,10 +227,4 @@ services.forEach(service => {
 });
 
 console.log('\n🎯 Refactorización completada para reducir duplicación de código');
-console.log(
-<<<<<<< HEAD
-  '📊 Esto debería reducir significativamente el porcentaje de líneas duplicadas en SonarQube',
-=======
-  '📊 Esto debería reducir significativamente el porcentaje de líneas duplicadas en SonarQube'
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-);
+console.log('📊 Esto debería reducir significativamente el porcentaje de líneas duplicadas en SonarQube');

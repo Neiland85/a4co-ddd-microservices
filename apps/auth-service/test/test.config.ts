@@ -4,15 +4,12 @@
 export const testConfig = {
   // Credenciales de prueba genéricas
   testCredentials: {
-<<<<<<< HEAD
     username: process.env['TEST_USERNAME'] || 'test_user',
     password: process.env['TEST_PASSWORD'] || 'test_password',
     email: process.env['TEST_EMAIL'] || 'test@example.com',
-=======
     username: process.env.TEST_USERNAME || 'test_user',
     password: process.env.TEST_PASSWORD || 'test_password',
     email: process.env.TEST_EMAIL || 'test@example.com',
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   },
 
   // Datos de prueba para diferentes escenarios

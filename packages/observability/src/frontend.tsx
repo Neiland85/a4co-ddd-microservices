@@ -7,16 +7,12 @@ import {
   type Span,
 } from '@opentelemetry/api';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { DocumentLoadInstrumentation } from '@opentelemetry/instrumentation-document-load';
 import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
 import { UserInteractionInstrumentation } from '@opentelemetry/instrumentation-user-interaction';
 import { XMLHttpRequestInstrumentation } from '@opentelemetry/instrumentation-xml-http-request';
-import { Resource } from '@opentelemetry/resources';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import type { ComponentType, ReactNode } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -133,7 +129,7 @@ class FrontendLogger {
             }
           : undefined,
         ...(data as Record<string, unknown>),
-      }),
+      })
     );
   }
 
@@ -160,22 +156,22 @@ class FrontendTracer {
 
   private initializeTracer(): void {
     this.provider = new WebTracerProvider({
-      resource: new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
-        [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion,
-        [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment,
-      }),
+      // resource: new OTResource({
+      //   [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
+      //   [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion,
+      //   [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment,
+      // }),
     });
 
     // Configurar exportador
     if (this.config.endpoint) {
-      this.provider.addSpanProcessor(
-        new BatchSpanProcessor(
-          new OTLPTraceExporter({
-            url: this.config.endpoint,
-          }),
-        ),
-      );
+      // this.provider.addSpanProcessor(
+      //   new BatchSpanProcessor(
+      //     new OTLPTraceExporter({
+      //       url: this.config.endpoint,
+      //     }),
+      //   ),
+      // );
     }
 
     // Registrar instrumentaciones automáticas
@@ -225,7 +221,7 @@ let frontendTracer: FrontendTracer | null = null;
 // Función de inicialización
 export function initializeFrontendObservability(
   loggerConfig: FrontendLoggerConfig,
-  tracingConfig: FrontendTracingConfig,
+  tracingConfig: FrontendTracingConfig
 ): { logger: FrontendLogger; tracer: FrontendTracer } {
   frontendLogger = new FrontendLogger(loggerConfig);
   frontendTracer = new FrontendTracer(tracingConfig);
@@ -289,7 +285,7 @@ export function useComponentTracing(componentName: string): {
       }
       return null;
     },
-    [componentName],
+    [componentName]
   );
 
   return { createChildSpan };
@@ -298,7 +294,7 @@ export function useComponentTracing(componentName: string): {
 // HOC para instrumentar componentes
 export function withObservability<P extends object>(
   WrappedComponent: ComponentType<P>,
-  componentName: string,
+  componentName: string
 ): ComponentType<P> {
   return function ObservabilityWrapper(props: P): ReactNode {
     const { logUIEvent } = useUILogger();
@@ -318,7 +314,7 @@ export function withObservability<P extends object>(
           props: data as Record<string, unknown>,
         });
       },
-      [componentName, createChildSpan, logUIEvent],
+      [componentName, createChildSpan, logUIEvent]
     );
 
     return <WrappedComponent {...props} onInteraction={handleInteraction} />;
@@ -328,9 +324,9 @@ export function withObservability<P extends object>(
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Wrapper para fetch con observabilidad
 export function createObservableFetch(
-  baseURL?: string,
+  baseURL?: string
 ): (_url: string, _options?: any) => Promise<any> {
-  return async(url: string, options?: any): Promise<any> => {
+  return async (url: string, options?: any): Promise<any> => {
     const fullUrl = baseURL ? `${baseURL}${url}` : url;
     const span = frontendTracer?.createSpan('http.request', SpanKind.CLIENT);
 
@@ -361,7 +357,7 @@ export function createObservableFetch(
           {
             url: fullUrl,
             status: response.status,
-          },
+          }
         );
       }
 
@@ -380,7 +376,7 @@ export function createObservableFetch(
         error instanceof Error ? error : new Error(String(error)),
         {
           url: fullUrl,
-        },
+        }
       );
 
       throw error;

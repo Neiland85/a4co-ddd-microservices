@@ -10,13 +10,8 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-<<<<<<< HEAD
-    "lint": "eslint src --ext ts,js",
-    "lint:fix": "eslint src --ext ts,js --fix",
-=======
-    "lint": "echo 'Linting temporarily disabled'",
-    "lint:fix": "echo 'Linting temporarily disabled'",
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -43,12 +38,9 @@
     "@types/cors": "^2.8.19",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
+    "class-validator": "^0.14.2",
     "cors": "^2.8.5",
-<<<<<<< HEAD
     "express-rate-limit": "^7.1.5",
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "helmet": "^7.2.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -77,5 +69,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"
-  }
+  },
+  "license": "Apache-2.0"
 }

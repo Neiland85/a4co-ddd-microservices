@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductServiceService } from '../product-service.service';
+import { ProductService } from '../application/services/product.service';
 
-describe('ProductServiceService', () => {
-  let service: ProductServiceService;
+describe('ProductService', () => {
+  let service: ProductService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ProductServiceService],
+      providers: [ProductService],
     }).compile();
 
-    service = module.get<ProductServiceService>(ProductServiceService);
+    service = module.get<ProductService>(ProductService);
   });
 
   it('should be defined', () => {
@@ -17,9 +17,8 @@ describe('ProductServiceService', () => {
   });
 
   describe('business logic', () => {
-    it('should perform core product-service operations', () => {
-      // Add specific business logic tests
-      expect(true).toBe(true);
+    it('should perform core product operations', () => {
+      expect(service).toBeDefined();
     });
   });
 });

@@ -1,15 +1,11 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { InventoryServicePort } from '../../application/ports/inventory.ports';
 
 export function inventoryRoutes(inventoryService: InventoryServicePort): Router {
   const router = Router();
 
   // GET /api/inventory/check/:productId
-<<<<<<< HEAD
-  router.get('/check/:productId', async(req: Request, res: Response) => {
-=======
   router.get('/check/:productId', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { productId } = req.params;
       if (!productId) {
@@ -29,11 +25,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   });
 
   // POST /api/inventory/check/bulk
-<<<<<<< HEAD
-  router.post('/check/bulk', async(req: Request, res: Response) => {
-=======
   router.post('/check/bulk', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { productIds } = req.body;
       if (!Array.isArray(productIds)) {
@@ -53,11 +45,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   });
 
   // POST /api/inventory/reserve
-<<<<<<< HEAD
-  router.post('/reserve', async(req: Request, res: Response) => {
-=======
   router.post('/reserve', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { productId, quantity, orderId, customerId, expiresAt } = req.body;
 
@@ -90,11 +78,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   });
 
   // POST /api/inventory/release
-<<<<<<< HEAD
-  router.post('/release', async(req: Request, res: Response) => {
-=======
   router.post('/release', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { productId, quantity, reason } = req.body;
 
@@ -125,11 +109,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   });
 
   // GET /api/inventory/products
-<<<<<<< HEAD
-  router.get('/products', async(req: Request, res: Response) => {
-=======
   router.get('/products', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const products = await inventoryService.getAllProducts();
       res.json(products.map(p => p.toJSON()));
@@ -142,11 +122,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   });
 
   // GET /api/inventory/products/low-stock
-<<<<<<< HEAD
-  router.get('/products/low-stock', async(req: Request, res: Response) => {
-=======
   router.get('/products/low-stock', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const products = await inventoryService.getLowStockProducts();
       res.json(products.map(p => p.toJSON()));
@@ -159,11 +135,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   });
 
   // GET /api/inventory/products/out-of-stock
-<<<<<<< HEAD
-  router.get('/products/out-of-stock', async(req: Request, res: Response) => {
-=======
   router.get('/products/out-of-stock', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const products = await inventoryService.getOutOfStockProducts();
       res.json(products.map(p => p.toJSON()));
@@ -176,11 +148,7 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   });
 
   // GET /api/inventory/products/:id
-<<<<<<< HEAD
-  router.get('/products/:id', async(req: Request, res: Response) => {
-=======
   router.get('/products/:id', async (req: Request, res: Response) => {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     try {
       const { id } = req.params;
       if (!id) {

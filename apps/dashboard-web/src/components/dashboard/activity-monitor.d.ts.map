@@ -1,1 +1,0 @@
-{"version":3,"file":"activity-monitor.d.ts","sourceRoot":"","sources":["activity-monitor.tsx"],"names":[],"mappings":"AAsBA,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,+BAA+B,CAAC;AAEtE,UAAU,oBAAoB;IAC5B,OAAO,EAAE,gBAAgB,CAAC,SAAS,CAAC,CAAC;CACtC;AAED,wBAAgB,eAAe,CAAC,EAAE,OAAO,EAAE,EAAE,oBAAoB,2CAsUhE"}

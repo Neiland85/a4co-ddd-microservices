@@ -26,4 +26,3 @@ export declare function generateTestCredentials(prefix?: string): {
     password: string;
 };
 export declare function cleanupTestCredentials(): void;
-//# sourceMappingURL=test.config.d.ts.map
