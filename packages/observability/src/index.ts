@@ -334,10 +334,4 @@ export function createDDDSpan(name: string, metadata: DDDMetadata, options?: Spa
 }
 
 // Export logger utilities
-export {
-  createChildLogger,
-  createHttpLogger,
-  createLogger,
-  getLogger,
-  initializeLogger,
-} from './logger';
+export { createHttpLogger, createLogger, getLogger, initializeLogger } from './logger';
