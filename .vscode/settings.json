@@ -50,5 +50,12 @@
   "files.insertFinalNewline": true,
   // Copilot Pro+ optimizaciones
   "github.copilot.inlineSuggestions.enable": true,
-  "github.copilot.editor.enableAutoCompletions": true
+  "github.copilot.editor.enableAutoCompletions": true,
+  "sonarlint.connectedMode.project": {
+    "connectionId": "Neiland85",
+    "projectKey": "Neiland85_a4co-ddd-microservices_KEY"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
