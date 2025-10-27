@@ -13,14 +13,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@c9246124e916628df8ca03dcb8d82c59e5039c6d # v2.4.0
-        with:
-          version: 10.14.0
-
-      - uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
+      - name: Install pnpm
+        uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
         with:
           node-version: '20'
-          cache: 'pnpm'
+      - run: npm install -g pnpm@10.14.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -72,14 +69,11 @@ jobs:
     steps:
       - uses: actions/checkout@5bd52570610d5f7c6f14d3c2d54c0e824b44e5d5 # v3.6.0
 
-      - uses: pnpm/action-setup@c9246124e916628df8ca03dcb8d82c59e5039c6d # v2.4.0
-        with:
-          version: 10.14.0
-
-      - uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
+      - name: Install pnpm
+        uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
         with:
           node-version: '20'
-          cache: 'pnpm'
+      - run: npm install -g pnpm@10.14.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -129,14 +123,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@c9246124e916628df8ca03dcb8d82c59e5039c6d # v2.4.0
-        with:
-          version: 10.14.0
-
-      - uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
+      - name: Install pnpm
+        uses: actions/setup-node@b39b52d1210af95d7e50df8f6a24856030c4ec07 # v4.0.4
         with:
           node-version: '20'
-          cache: 'pnpm'
+      - run: npm install -g pnpm@10.14.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
