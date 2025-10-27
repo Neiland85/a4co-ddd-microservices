@@ -49,11 +49,16 @@ export default [
       '**/apps/user-service/src/main.ts',
       '**/apps/user-service/service.ts',
       '**/apps/user-service/service.test.ts',
-      // EXCLUIR TODOS LOS ARCHIVOS DE SERVICIOS CON ERRORES DE PARSING
-      '**/apps/**/*.ts',
-      '**/apps/**/*.tsx',
-      '**/apps/**/*.js',
-      '**/apps/**/*.jsx',
+      // EXCLUIR SOLO ARCHIVOS DE SERVICIOS CON ERRORES DE PARSING GRAVES
+      '**/apps/user-service/**', // Excluir por errores de sintaxis
+      '**/apps/product-service/tests/**', // Excluir tests con errores
+      '**/apps/product-service/src/__tests__/**', // Excluir tests con errores
+      '**/apps/auth-service/src/__tests__/**', // Excluir tests con errores
+      '**/apps/order-service/src/__tests__/**', // Excluir tests con errores
+      '**/apps/inventory-service/src/__tests__/**', // Excluir tests con errores
+      '**/apps/notification-service/src/__tests__/**', // Excluir tests con errores
+      '**/apps/payment-service/src/__tests__/**', // Excluir tests con errores
+      '**/apps/transportista-service/src/__tests__/**', // Excluir tests con errores
       '**/packages/design-system/src/**/*.ts',
       '**/packages/design-system/src/**/*.tsx',
       '**/packages/design-system/src/**/*.js',
@@ -156,81 +161,62 @@ export default [
       'no-case-declarations': 'off',
     },
   },
-  // Configuración más estricta para código fuente de aplicaciones TypeScript
-  // DESACTIVADA: Todos los archivos de apps están excluidos por errores de sintaxis
-  // {
-  //   files: [
-  //     "apps/**/*.ts",
-  //     "apps/**/*.tsx",
-  //     "packages/design-system/**/*.ts",
-  //     "packages/design-system/**/*.tsx",
-  //   ],
-  //   ignores: [
-  //     "**/f-modern-backoffice/**", // Excluir archivos con errores de sintaxis
-  //     "**/h-modern-dashboard/**", // Excluir archivos con errores de sintaxis
-  //     "**/feature-flags/**", // Excluir archivos con errores de sintaxis
-  //     "**/tests/visual/**", // Excluir archivos con errores de sintaxis
-  //     "**/apps/user-service/**", // Excluir archivos con errores de sintaxis
-  //     "**/apps/product-service/tests/**", // Excluir archivos con errores de sintaxis
-  //   ],
-  //   languageOptions: {
-  //     ecmaVersion: 2022,
-  //     sourceType: "module",
-  //     globals: {
-  //       window: "readonly",
-  //       document: "readonly",
-  //       navigator: "readonly",
-  //       localStorage: "readonly",
-  //       sessionStorage: "readonly",
-  //       console: "readonly",
-  //       alert: "readonly",
-  //       confirm: "readonly",
-  //       prompt: "readonly",
-  //       fetch: "readonly",
-  //       setTimeout: "readonly",
-  //       clearTimeout: "readonly",
-  //       setInterval: "readonly",
-  //       clearInterval: "readonly",
-  //       setImmediate: "readonly",
-  //       clearImmediate: "readonly",
-  //       React: "readonly",
-  //       JSX: "readonly",
-  //       jest: "readonly",
-  //       describe: "readonly",
-  //       it: "readonly",
-  //       test: "readonly",
-  //       expect: "readonly",
-  //       beforeEach: "readonly",
-  //       afterEach: "readonly",
-  //       beforeAll: "readonly",
-  //       afterAll: "readonly",
-  //       process: "readonly",
-  //       Buffer: "readonly",
-  //       global: "readonly",
-  //       module: "readonly",
-  //       exports: "readonly",
-  //       require: "readonly",
-  //       __dirname: "readonly",
-  //       __filename: "readonly",
-  //     },
-  //   },
-  //   rules: {
-  //     // CONFIGURACIÓN MÁS ESTRICTA PARA CÓDIGO FUENTE
-  //     "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-  //     "no-undef": "off",
-  //     "no-console": "off",
-  //     "no-debugger": "off",
-  //     semi: "warn",
-  //     quotes: "warn",
-  //     indent: "warn",
-  //     "comma-dangle": "warn",
-  //     "object-curly-spacing": "warn",
-  //     "array-bracket-spacing": "warn",
-  //     "space-before-function-paren": "warn",
-  //     "eol-last": "warn",
-  //     "no-dupe-else-if": "warn",
-  //     "no-useless-escape": "warn",
-  //     "no-case-declarations": "warn",
-  //   },
-  // },
+  // Configuración específica para servicios NestJS - configuración temporal permisiva
+  // TODO: Mejorar configuración TypeScript ESLint cuando se actualice a ESLint v9
+  {
+    files: [
+      'apps/notification-service/src/**/*.ts',
+      'apps/auth-service/src/**/*.ts',
+      'apps/order-service/src/**/*.ts',
+      'apps/inventory-service/src/**/*.ts',
+      'apps/payment-service/src/**/*.ts',
+      'apps/transportista-service/src/**/*.ts',
+    ],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+        require: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        // Globals de testing
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+      },
+    },
+    rules: {
+      // Configuración permisiva para evitar bloqueos en CI/CD
+      'no-unused-vars': 'off', // Temporalmente desactivado
+      'no-console': 'off',
+      'no-debugger': 'off',
+      'no-undef': 'off', // Temporalmente desactivado para TypeScript
+      semi: 'off',
+      quotes: 'off',
+      'comma-dangle': 'off',
+      'object-curly-spacing': 'off',
+      'array-bracket-spacing': 'off',
+      'space-before-function-paren': 'off',
+      'eol-last': 'off',
+      'no-dupe-else-if': 'off',
+      'no-useless-escape': 'off',
+      'no-case-declarations': 'off',
+    },
+  },
 ];
