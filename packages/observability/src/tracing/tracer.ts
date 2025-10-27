@@ -10,11 +10,11 @@ import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { GrpcInstrumentation } from '@opentelemetry/instrumentation-grpc';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { Resource } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+// Note: Resource and SemanticResourceAttributes are intentionally omitted to
+// avoid version compatibility issues with different OpenTelemetry packages.
 import type { Logger } from '../logging/types';
 
 export type TracerConfig = {
@@ -45,12 +45,8 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
     logger,
   } = config;
 
-  // Create resource
-  const resource = new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
-    [SemanticResourceAttributes.SERVICE_VERSION]: serviceVersion,
-    [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: environment,
-  });
+  // Resource creation omitted for compatibility with installed OpenTelemetry versions.
+  // If desired, a Resource instance can be created here and passed to the NodeSDK.
 
   // Create Jaeger exporter
   const jaegerExporter = new JaegerExporter({
@@ -64,7 +60,6 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
     },
     () => {
       logger?.info(`Prometheus metrics server started on port ${prometheusPort}`);
-    },
     }
   );
 
@@ -77,7 +72,7 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
             'http.request.body.size',
             (request as { headers?: Record<string, string | string[] | undefined> }).headers?.[
               'content-length'
-            ] || 0,
+            ] || 0
           );
         },
         responseHook: (span, response): void => {
@@ -85,7 +80,7 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
             'http.response.body.size',
             (response as { headers?: Record<string, string | string[] | undefined> }).headers?.[
               'content-length'
-            ] || 0,
+            ] || 0
           );
         },
       }),
@@ -94,16 +89,14 @@ export function initializeTracer(config: TracerConfig): NodeSDK {
     ],
   });
 
-  // Create SDK
+  // Create SDK (resource intentionally omitted)
   const sdk = new NodeSDK({
-    resource,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     spanProcessor: new BatchSpanProcessor(jaegerExporter) as any,
     metricReader: new PeriodicExportingMetricReader({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       exporter: prometheusExporter as any,
       exportIntervalMillis: 10000,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }) as any,
   });
 
@@ -139,32 +132,28 @@ export function startSpan(
     kind?: SpanKind;
     attributes?: Attributes;
     parent?: Span;
-  },
+  }
 ): Span {
   const tracer = getTracer('default');
 
   if (options?.parent) {
     const ctx = trace.setSpan(context.active(), options.parent);
-    return tracer.startSpan(
-      name,
-      {
-        kind: options.kind,
-        attributes: options.attributes,
-      },
-      ctx,
-      ctx
-    );
+    const spanOptions: { kind?: SpanKind; attributes?: Attributes } = {
+      kind: options.kind || SpanKind.INTERNAL,
+    };
+    if (options.attributes) {
+      spanOptions.attributes = options.attributes;
+    }
+    return tracer.startSpan(name, spanOptions, ctx);
   }
 
-  return tracer.startActiveSpan(
-    name,
-    {
-      kind: options?.kind,
-      attributes: options?.attributes,
-    },
-    span => span,
-    span => span
-  );
+  const spanOptions: { kind?: SpanKind; attributes?: Attributes } = {
+    kind: options?.kind || SpanKind.INTERNAL,
+  };
+  if (options?.attributes) {
+    spanOptions.attributes = options.attributes;
+  }
+  return tracer.startSpan(name, spanOptions);
 }
 
 /**
@@ -179,17 +168,14 @@ export function Trace(options?: {
   _propertyKey: string,
   _descriptor: PropertyDescriptor
 ) => PropertyDescriptor {
-  return function(
+  return function (
     target: unknown,
     propertyKey: string,
-    descriptor: PropertyDescriptor,
+    descriptor: PropertyDescriptor
   ): PropertyDescriptor {
-  attributes?: Record<string, any>;
-}) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function(...args: unknown[]): Promise<unknown> {
+    descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       const constructorName =
         target &&
         typeof target === 'object' &&
@@ -240,7 +226,7 @@ export async function withSpan<T>(
   options?: {
     kind?: SpanKind;
     attributes?: Attributes;
-  },
+  }
 ): Promise<T> {
   const span = startSpan(name, options);
 
@@ -286,7 +272,6 @@ export function getTracingContext(): TracingContext | null {
  * Add event to current span
  */
 export function addSpanEvent(name: string, attributes?: Attributes): void {
-export function addSpanEvent(name: string, attributes?: Record<string, any>): void {
   const span = trace.getActiveSpan();
 
   if (span) {

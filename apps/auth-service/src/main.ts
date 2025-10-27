@@ -1,4 +1,4 @@
-import { getGlobalLogger, initializeTracing } from '@a4co/observability';
+import { getLogger, initializeTracing } from '@a4co/observability';
 import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -14,7 +14,8 @@ async function bootstrap() {
     environment: process.env['NODE_ENV'] || 'development',
   });
 
-  const logger = getGlobalLogger();
+  // Get logger instance
+  const logger = getLogger();
 
   const app = await NestFactory.create(AuthModule);
 
@@ -54,7 +55,6 @@ async function bootstrap() {
   // CORS configuration
   app.enableCors({
     origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

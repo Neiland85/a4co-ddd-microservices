@@ -56,7 +56,6 @@ export class PinoLoggerAdapter implements Logger {
           level: label => ({ level: label }),
         },
       },
-      destination ? pino.destination(destination) : undefined,
       destination ? pino.destination(destination) : undefined
     );
   }
@@ -104,7 +103,6 @@ export class PinoLoggerAdapter implements Logger {
         ...this.mergeContext(context),
         ...errorContext,
       },
-      message,
       message
     );
   }
@@ -128,7 +126,6 @@ export class PinoLoggerAdapter implements Logger {
         ...this.mergeContext(context),
         ...errorContext,
       },
-      message,
       message
     );
   }

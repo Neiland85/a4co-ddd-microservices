@@ -16,5 +16,4 @@ export type { ButtonProps } from './Button/Button';
 // export { Pagination } from './Pagination/Pagination'
 // export { Tabs } from './Tabs/Tabs'
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 // export { Tooltip } from './Tooltip/Tooltip'

@@ -41,8 +41,6 @@ export function createLogger(config: LoggerConfig): pino.Logger {
     formatters: {
       level: label => ({ level: label }),
       bindings: bindings => ({
-        pid: bindings['pid'],
-        host: bindings['hostname'],
         pid: bindings.pid,
         host: bindings.hostname,
         service: config.serviceName,

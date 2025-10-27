@@ -20,7 +20,6 @@ export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('es-ES', {
     style: 'currency',
     currency: 'EUR',
-    currency: 'EUR'
   }).format(amount);
 }
 
@@ -32,5 +31,4 @@ export function formatCurrency(amount: number): string {
 export function generateId(prefix?: string): string {
   const id = Math.random().toString(36).substring(2, 9);
   return prefix ? `${prefix}-${id}` : id;
-}
 }

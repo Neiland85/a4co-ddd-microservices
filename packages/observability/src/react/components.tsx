@@ -1,4 +1,5 @@
-import React, { ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes } from 'react';
+import React from 'react';
 import { useComponentTracking, useEventTracking } from './index';
 
 // Button with integrated observability
@@ -73,7 +74,6 @@ export const TrackedInput: React.FC<TrackedInputProps> = ({
   const { trackInput, trackCustom } = useEventTracking();
   const componentName = trackingName || 'ds-input';
   const debounceTimer = React.useRef<NodeJS.Timeout | undefined>(undefined);
-  const debounceTimer = React.useRef<NodeJS.Timeout>();
 
   useComponentTracking(componentName, {
     trackProps: ['type', 'required', 'disabled'],

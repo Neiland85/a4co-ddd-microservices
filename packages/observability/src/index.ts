@@ -1,179 +1,343 @@
-import { resetObservabilityState } from './config';
-import type { LoggerConfig } from './logging';
+import type {
+  Attributes,
+  Context,
+  Span,
+  SpanOptions,
+  TextMapGetter,
+  TextMapSetter,
+  Tracer,
+} from '@opentelemetry/api';
+import { context, SpanStatusCode, trace } from '@opentelemetry/api';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import {
-  createHttpLogger,
-  createLogger,
-  getGlobalLogger,
-  initializeLogger,
-  resetLoggerState,
-} from './logging';
-import {
-  createCustomHistogram,
-  initializeMetrics,
-  recordCommandExecution,
-  recordEvent,
-  recordHttpRequest,
-  shutdownMetrics,
-} from './metrics/index';
-import type { MetricsConfig, TracingConfig } from './tracing';
-import { getTracer, initializeTracing, shutdown } from './tracing';
+  CompositePropagator,
+  W3CBaggagePropagator,
+  W3CTraceContextPropagator,
+} from '@opentelemetry/core';
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { registerInstrumentations } from '@opentelemetry/instrumentation';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { KoaInstrumentation } from '@opentelemetry/instrumentation-koa';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { getLogger } from './logger';
+import type {
+  DDDMetadata,
+  ObservabilityContext,
+  ObservabilityTracer,
+  TracingConfig,
+} from './types';
 
-// Re-exportar tipos
-export type { LoggerConfig, MetricsConfig, TracingConfig };
+// Global tracer provider
+let globalTracerProvider: NodeTracerProvider | null = null;
+let globalSDK: NodeSDK | null = null;
 
-// Re-exportar funciones individuales
-export {
-  createCustomHistogram,
-  createHttpLogger,
-  createLogger,
-  getGlobalLogger,
-  getTracer,
-  initializeLogger,
-  initializeMetrics,
-  initializeTracing,
-  recordCommandExecution,
-  recordEvent,
-  recordHttpRequest,
-  resetLoggerState,
-  resetObservabilityState,
-  shutdown,
-  shutdownMetrics,
-};
+// Custom propagator for NATS and other messaging systems
+class CustomMessagePropagator {
+  private propagator = new W3CTraceContextPropagator();
 
-console.log('DEBUG: index.ts loaded');
+  inject(context: Context, carrier: any): void {
+    const setter: TextMapSetter = {
+      set(carrier: any, key: string, value: string) {
+        if (!carrier.headers) carrier.headers = {};
+        carrier.headers[key] = value;
+      },
+    };
+    this.propagator.inject(context, carrier, setter);
+  }
 
-// Interfaz para configuración completa
-export interface ObservabilityConfig {
-  serviceName: string;
-  serviceVersion?: string;
-  environment?: string;
-  logging?: {
-    level?: string;
-    prettyPrint?: boolean;
-  };
-  tracing?: {
-    enabled?: boolean;
-    jaegerEndpoint?: string;
-    enableConsoleExporter?: boolean;
-    enableAutoInstrumentation?: boolean;
-  };
-  metrics?: {
-    enabled?: boolean;
-    port?: number;
-    endpoint?: string;
-  };
+  extract(context: Context, carrier: any): Context {
+    const getter: TextMapGetter = {
+      keys(carrier: any): string[] {
+        return carrier.headers ? Object.keys(carrier.headers) : [];
+      },
+      get(carrier: any, key: string): string | string[] | undefined {
+        return carrier.headers?.[key];
+      },
+    };
+    return this.propagator.extract(context, carrier, getter);
+  }
 }
 
-// Función principal para inicializar todo
-export function initializeObservability(config: ObservabilityConfig) {
-  // Inicializar logger global y local
-  const logger = initializeLogger({
-    serviceName: config.serviceName,
-    serviceVersion: config.serviceVersion,
-    environment: config.environment,
-    level: config.logging?.level,
-    prettyPrint: config.logging?.prettyPrint,
+const messagePropagator = new CustomMessagePropagator();
+
+// Enhanced tracer with context support
+function createEnhancedTracer(
+  baseTracer: Tracer,
+  defaultContext?: ObservabilityContext
+): ObservabilityTracer {
+  const enhancedTracer = Object.create(baseTracer) as ObservabilityTracer;
+
+  enhancedTracer.withContext = function (ctx: ObservabilityContext): ObservabilityTracer {
+    return createEnhancedTracer(baseTracer, { ...defaultContext, ...ctx });
+  };
+
+  enhancedTracer.withDDD = function (metadata: DDDMetadata): ObservabilityTracer {
+    const dddContext: ObservabilityContext = {
+      ...defaultContext,
+      metadata: {
+        ...defaultContext?.metadata,
+        ...metadata,
+      },
+    };
+    return createEnhancedTracer(baseTracer, dddContext);
+  };
+
+  // Override startSpan to include default context
+  const originalStartSpan = baseTracer.startSpan.bind(baseTracer);
+  enhancedTracer.startSpan = function (
+    name: string,
+    options?: SpanOptions,
+    context?: Context
+  ): Span {
+    const attributes = {
+      ...options?.attributes,
+      ...defaultContext?.metadata,
+    };
+
+    if (defaultContext?.correlationId) {
+      attributes['correlation.id'] = defaultContext.correlationId;
+    }
+    if (defaultContext?.causationId) {
+      attributes['causation.id'] = defaultContext.causationId;
+    }
+    if (defaultContext?.userId) {
+      attributes['user.id'] = defaultContext.userId;
+    }
+    if (defaultContext?.tenantId) {
+      attributes['tenant.id'] = defaultContext.tenantId;
+    }
+
+    return originalStartSpan(name, { ...options, attributes: attributes as Attributes }, context);
+  };
+
+  // Override startActiveSpan to include default context
+  const originalStartActiveSpan = (baseTracer as any).startActiveSpan?.bind(baseTracer);
+  if (originalStartActiveSpan) {
+    enhancedTracer.startActiveSpan = function (
+      name: string,
+      options?: SpanOptions,
+      fn?: (span: Span) => any
+    ): any {
+      const attributes = {
+        ...options?.attributes,
+        ...defaultContext?.metadata,
+      };
+
+      if (defaultContext?.correlationId) {
+        attributes['correlation.id'] = defaultContext.correlationId;
+      }
+      if (defaultContext?.causationId) {
+        attributes['causation.id'] = defaultContext.causationId;
+      }
+      if (defaultContext?.userId) {
+        attributes['user.id'] = defaultContext.userId;
+      }
+      if (defaultContext?.tenantId) {
+        attributes['tenant.id'] = defaultContext.tenantId;
+      }
+
+      return originalStartActiveSpan(name, { ...options, attributes }, fn);
+    };
+  }
+
+  // Ensure all original methods are available
+  Object.setPrototypeOf(enhancedTracer, baseTracer);
+
+  return enhancedTracer;
+}
+
+// Initialize tracing
+export function initializeTracing(
+  config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+): NodeSDK {
+  const logger = getLogger();
+
+  // Create resource
+  // const resource = Resource.default().merge(
+  //   new Resource({
+  //     [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
+  //     [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
+  //     [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
+  //   }),
+  // );
+
+  // Create tracer provider
+  const provider = new NodeTracerProvider({
+    // resource,
   });
 
-  console.log('DEBUG: logger initialized:', !!logger, typeof logger);
+  // Add exporters
+  const exporters: string[] = [];
 
-  if (!logger) {
-    throw new Error('Failed to initialize logger');
+  // Jaeger exporter
+  if (config.jaegerEndpoint) {
+    // const jaegerExporter = new JaegerExporter({
+    //   endpoint: config.jaegerEndpoint,
+    //   // Additional Jaeger configuration can be added here
+    // });
+    // provider.addSpanProcessor(new BatchSpanProcessor(jaegerExporter));
+    exporters.push('jaeger');
   }
 
-  // Inicializar tracing si está habilitado
-  let tracingSDK = null;
-  if (config.tracing?.enabled === true || config.tracing?.enabled === undefined) {
-    tracingSDK = initializeTracing({
-      serviceName: config.serviceName,
-      serviceVersion: config.serviceVersion,
-      environment: config.environment,
-      jaegerEndpoint: config.tracing?.jaegerEndpoint,
-      enableConsoleExporter: config.tracing?.enableConsoleExporter,
-      enableAutoInstrumentation: config.tracing?.enableAutoInstrumentation,
+  // Console exporter for development
+  if (config.enableConsoleExporter) {
+    // provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+    exporters.push('console');
+  }
+
+  // Register the provider
+  provider.register({
+    propagator: new CompositePropagator({
+      propagators: [new W3CTraceContextPropagator(), new W3CBaggagePropagator()],
+    }),
+  });
+
+  globalTracerProvider = provider;
+
+  // Register instrumentations
+  if (config.enableAutoInstrumentation !== false) {
+    registerInstrumentations({
+      instrumentations: [
+        new HttpInstrumentation({
+          requestHook: (span, request) => {
+            span.setAttributes({
+              'http.request.body.size': (request as any).headers?.['content-length'],
+              'http.user_agent': (request as any).headers?.['user-agent'],
+            });
+          },
+          responseHook: (span, response) => {
+            span.setAttributes({
+              'http.response.body.size': (response as any).headers?.['content-length'],
+            });
+          },
+        }),
+        new ExpressInstrumentation({
+          requestHook: (span, info) => {
+            span.setAttributes({
+              'express.route': info.route,
+              'express.layer_type': info.layerType,
+            });
+          },
+        }),
+        new KoaInstrumentation(),
+        // Add more instrumentations as needed
+      ],
     });
   }
-  // Si está explícitamente deshabilitado, devolver null
-  else if (config.tracing?.enabled === false) {
-    tracingSDK = null;
+
+  // Create SDK
+  const sdk = new NodeSDK({
+    // resource,
+    traceExporter: config.jaegerEndpoint
+      ? new JaegerExporter({
+          endpoint: config.jaegerEndpoint,
+        })
+      : undefined,
+    instrumentations: config.enableAutoInstrumentation ? [getNodeAutoInstrumentations()] : [],
+  });
+
+  // Initialize SDK
+  try {
+    sdk.start();
+    logger.info(`Tracing initialized with exporters: ${exporters.join(', ')}`);
+  } catch (error: unknown) {
+    logger.error(
+      `Error initializing tracing: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 
-  // Inicializar métricas si está habilitado
-  let metricsExporter = null;
-  if (config.metrics?.enabled === true || config.metrics?.enabled === undefined) {
-    metricsExporter = initializeMetrics({
-      serviceName: config.serviceName,
-      port: config.metrics?.port,
-      endpoint: config.metrics?.endpoint,
-    });
-  }
-  // Si está explícitamente deshabilitado, devolver null
-  else if (config.metrics?.enabled === false) {
-    metricsExporter = null;
-  }
+  globalSDK = sdk;
 
-  return {
-    logger,
-    tracingSDK,
-    metricsExporter,
-    httpLogger: createHttpLogger(logger),
-    getTracer,
-    shutdown,
-  };
+  return sdk;
 }
 
-// Exportar el logger global por defecto si no se ha inicializado
-let defaultLogger: any = null;
+// Get tracer instance
+export function getTracer(name?: string, version?: string): ObservabilityTracer {
+  const tracerName = name || '@a4co/observability';
+  const baseTracer = trace.getTracer(tracerName, version);
+  return createEnhancedTracer(baseTracer);
+}
 
-export const logger = new Proxy(
-  {},
-  {
-    get(target, prop) {
-      if (!defaultLogger) {
-        defaultLogger = createLogger({
-          serviceName: process.env['SERVICE_NAME'] || 'unknown-service',
-          environment: process.env['NODE_ENV'] || 'development',
+// Shutdown tracing
+export async function shutdownTracing(): Promise<void> {
+  if (globalSDK) {
+    await globalSDK.shutdown();
+  }
+  if (globalTracerProvider) {
+    await globalTracerProvider.shutdown();
+  }
+}
+
+// Span utilities
+export function startActiveSpan<T>(name: string, fn: (span: Span) => T, options?: SpanOptions): T {
+  const tracer = getTracer();
+  return tracer.startActiveSpan(name, options as SpanOptions & Record<string, unknown>, fn);
+}
+
+export function withSpan<T>(
+  name: string,
+  fn: () => T | Promise<T>,
+  options?: SpanOptions
+): Promise<T> {
+  return startActiveSpan(
+    name,
+    async span => {
+      try {
+        const result = await fn();
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.recordException(error as Error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error instanceof Error ? error.message : 'Unknown error',
         });
+        throw error;
+      } finally {
+        span.end();
       }
-      return defaultLogger[prop];
     },
-  },
-);
-
-// Función helper para obtener el tracer por defecto
-export function tracer(name?: string) {
-  return getTracer(name);
+    options
+  );
 }
 
-// Main exports for @a4co/observability package
-export * from './config';
-export * from './context';
-export * from './decorators';
-export * from './instrumentation';
-export * from './logger';
-export * from './metrics';
-export * from './middleware';
-export * from './tracer';
-export type * from './types';
-export * from './utils';
+// Context propagation utilities
+export function injectContext(carrier: Record<string, unknown>): void {
+  const activeContext = context.active();
+  messagePropagator.inject(activeContext, carrier);
+}
 
-// Specialized exports
-export * from './logging/http-client-wrapper';
-export * from './logging/pino-logger';
-export * from './logging/react-hooks';
+export function extractContext(carrier: Record<string, unknown>): Context {
+  return messagePropagator.extract(context.active(), carrier);
+}
 
-export * from './tracing/middleware';
-export * from './tracing/nats-tracing';
-export * from './tracing/web-tracer';
+// DDD span helpers
+export function createDDDSpan(name: string, metadata: DDDMetadata, options?: SpanOptions): Span {
+  const attributes: Attributes = {
+    ...options?.attributes,
+  };
 
-// Frontend and DDD exports
-// export * from './frontend'; // Commented out due to export conflicts
-export * from './ddd-tracing';
-export * from './design-system';
+  if (metadata.aggregateId) attributes['ddd.aggregate.id'] = metadata.aggregateId;
+  if (metadata.aggregateName) attributes['ddd.aggregate.name'] = metadata.aggregateName;
+  if (metadata.commandName) attributes['ddd.command.name'] = metadata.commandName;
+  if (metadata.eventName) attributes['ddd.event.name'] = metadata.eventName;
+  if (metadata.eventVersion) attributes['ddd.event.version'] = metadata.eventVersion;
+  if (metadata.correlationId) attributes['correlation.id'] = metadata.correlationId;
+  if (metadata.causationId) attributes['causation.id'] = metadata.causationId;
+  if (metadata.userId) attributes['user.id'] = metadata.userId;
+  if (metadata.tenantId) attributes['tenant.id'] = metadata.tenantId;
 
-// Re-export commonly used OpenTelemetry types
-export { context, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
-export type { Span, SpanContext } from '@opentelemetry/api';
+  const tracer = getTracer();
+  return tracer.startSpan(name, { ...options, attributes });
+}
 
-// Version
-export const VERSION = '1.0.0';
+// Export logger utilities
+export {
+  createChildLogger,
+  createHttpLogger,
+  createLogger,
+  getLogger,
+  initializeLogger,
+} from './logger';

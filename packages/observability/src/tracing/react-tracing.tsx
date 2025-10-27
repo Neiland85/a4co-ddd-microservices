@@ -1,7 +1,3 @@
-/**
- * React hooks and HOCs for distributed tracing
- */
-
 import type { Attributes, Span } from '@opentelemetry/api';
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -9,17 +5,20 @@ import {
   traceComponentRender,
   traceRouteNavigation,
   traceUserInteraction,
-import React, { useEffect, useRef, useCallback } from 'react';
-import { Span } from '@opentelemetry/api';
-import {
-  traceComponentRender,
-  traceRouteNavigation,
-  traceUserInteraction,
-  addPerformanceMetricsToSpan,
 } from './web-tracer';
 
-// Global type declarations for browser APIs
-declare const setTimeout: (_callback: () => void, _delay: number) => void;
+// Tipos para tracing
+interface WithTracingOptions {
+  componentName?: string;
+  trackProps?: string[];
+}
+
+interface TracingProviderProps {
+  children: React.ReactNode;
+  serviceName: string;
+  serviceVersion: string;
+  environment: string;
+}
 
 /**
  * Hook to trace component lifecycle
@@ -31,10 +30,10 @@ export function useComponentTracing(componentName: string, props?: Attributes): 
   useEffect(() => {
     // Start span on mount
     spanRef.current = traceComponentRender(componentName, props);
-    spanRef.current.setAttribute('component.mounted', true);
-    spanRef.current.setAttribute('component.renderCount', 1);
+    spanRef.current?.setAttribute('component.mounted', true);
+    spanRef.current?.setAttribute('component.renderCount', 1);
 
-    return (): void => {
+    return () => {
       // End span on unmount
       if (spanRef.current) {
         spanRef.current.setAttribute('component.unmounted', true);
@@ -100,13 +99,12 @@ export interface UseInteractionTracingOptions {
 export function useInteractionTracing(
   interactionType: string,
   target: string,
-  options?: UseInteractionTracingOptions,
-): (_metadata?: Attributes) => void {
+  options?: UseInteractionTracingOptions
+): (metadata?: Attributes) => void {
   const lastInteractionTime = useRef(0);
 
   const traceInteraction = useCallback(
-    (_metadata?: Attributes) => {
-    (metadata?: Record<string, any>) => {
+    (metadata?: Attributes) => {
       const now = Date.now();
 
       if (options?.throttle && now - lastInteractionTime.current < options.throttle) {
@@ -115,125 +113,72 @@ export function useInteractionTracing(
 
       const span = traceUserInteraction(interactionType, target, {
         ...options?.attributes,
-        ..._metadata,
         ...metadata,
       });
 
       span.end();
       lastInteractionTime.current = now;
     },
-    [interactionType, target, options],
-    [interactionType, target, options]
+    [interactionType, target, options?.throttle, options?.attributes]
   );
 
   return traceInteraction;
 }
 
 /**
- * Hook to trace API calls with spans
+ * HOC to trace component rendering and props
  */
-export function useApiTracing(): {
-  startApiTrace: (_operationName: string, _metadata?: Attributes) => string;
-  endApiTrace: (_traceId: string, _success: boolean, _metadata?: Attributes) => void;
-} {
-  const activeSpans = useRef<Map<string, Span>>(new Map());
-
-  const startApiTrace = useCallback((_operationName: string, _metadata?: Attributes) => {
-    const span = traceUserInteraction('api-call', _operationName, _metadata);
-    const traceId = span.spanContext().traceId;
-    activeSpans.current.set(traceId, span);
-    return traceId;
-  }, []);
-
-  const endApiTrace = useCallback((_traceId: string, _success: boolean, _metadata?: Attributes) => {
-    const span = activeSpans.current.get(_traceId);
-    if (span) {
-      span.setAttribute('api.success', _success);
-      if (_metadata) {
-        Object.entries(_metadata).forEach(([key, value]) => {
-          span.setAttribute(`api.${key}`, String(value));
-        });
-      }
-      span.end();
-      activeSpans.current.delete(_traceId);
-    }
-  }, []);
-  const endApiTrace = useCallback(
-    (traceId: string, success: boolean, metadata?: Record<string, any>) => {
-      const span = activeSpans.current.get(traceId);
-      if (span) {
-        span.setAttribute('api.success', success);
-        if (metadata) {
-          Object.entries(metadata).forEach(([key, value]) => {
-            span.setAttribute(`api.${key}`, value);
-          });
-        }
-        span.end();
-        activeSpans.current.delete(traceId);
-      }
-    },
-    []
-  );
-
-  return { startApiTrace, endApiTrace };
-}
-
-/**
- * HOC to add tracing to any component
- */
-export interface WithTracingOptions {
-  componentName?: string;
-  trackProps?: string[];
-}
-
-export function withTracing<P extends Record<string, unknown>>(
+export function withTracing<P extends object>(
   Component: React.ComponentType<P>,
-  options?: WithTracingOptions,
+  options: WithTracingOptions = {}
 ): React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<unknown>> {
-  options?: WithTracingOptions
-): React.ComponentType<P> {
   const displayName =
-    options?.componentName || Component.displayName || Component.name || 'Component';
+    options.componentName || Component.displayName || Component.name || 'Component';
 
   const WrappedComponent = React.forwardRef<unknown, P>((props, ref) => {
-    const span = useComponentTracing(displayName, props as Attributes);
+    const span = useComponentTracing(displayName, {
+      'component.props': JSON.stringify(
+        options.trackProps?.reduce(
+          (acc, prop) => {
+            if (prop in props) {
+              acc[prop] = (props as Record<string, unknown>)[prop];
+            }
+            return acc;
+          },
+          {} as Record<string, unknown>
+        )
+      ),
+    });
 
-    // Track specific prop changes
     useEffect(
       () => {
-        if (span && options?.trackProps) {
+        if (span && options.trackProps) {
           const trackedProps: Record<string, unknown> = {};
           options.trackProps.forEach(propName => {
             if (propName in props) {
               trackedProps[propName] = (props as Record<string, unknown>)[propName];
             }
           });
-          const trackedProps: Record<string, any> = {};
-          options.trackProps.forEach(propName => {
-            if (propName in props) {
-              trackedProps[propName] = (props as any)[propName];
-            }
-          });
-
-          span.addEvent('props.updated', {
-            props: trackedProps,
-            timestamp: new Date().toISOString(),
-          });
-        }
-      },
-      options?.trackProps?.map(prop => (props as any)[prop]) || []
-    );
 
           span.addEvent('props.updated', {
             props: JSON.stringify(trackedProps),
             timestamp: new Date().toISOString(),
           });
         }
+        // Build dependencies safely
+        // eslint-disable-next-line react-hooks/exhaustive-deps
       },
-      options?.trackProps?.map(prop => (props as Record<string, unknown>)[prop]) || [],
+      (() => {
+        const deps: unknown[] = [span];
+        if (options.trackProps) {
+          deps.push(...options.trackProps.map(prop => (props as Record<string, unknown>)[prop]));
+        }
+        return deps;
+      })()
     );
 
-    return <Component {...(props as P)} ref={ref} />;
+    // Do not forward ref to arbitrary component types to keep typing simple
+    return <Component {...(props as P)} />;
   });
 
   WrappedComponent.displayName = `withTracing(${displayName})`;
@@ -243,23 +188,15 @@ export function withTracing<P extends Record<string, unknown>>(
 /**
  * Provider component for tracing context
  */
-export interface TracingProviderProps {
-  children: React.ReactNode;
-  serviceName: string;
-  serviceVersion: string;
-  environment: string;
-}
-
 export function TracingProvider({
   children,
   serviceName,
   serviceVersion,
   environment,
 }: TracingProviderProps): React.ReactElement {
-}: TracingProviderProps): JSX.Element {
   useEffect(() => {
     // Initialize web tracer on mount
-    import('./web-tracer').then(({ initializeWebTracer }) => {
+    import('./web-tracer.js').then(({ initializeWebTracer }) => {
       initializeWebTracer({
         serviceName,
         serviceVersion,

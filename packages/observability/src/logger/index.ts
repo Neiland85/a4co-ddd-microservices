@@ -1,8 +1,10 @@
 import { trace } from '@opentelemetry/api';
-import pino, { Logger, LoggerOptions } from 'pino';
+import { hostname } from 'os';
+import type { Logger, LoggerOptions } from 'pino';
+import pino from 'pino';
 import { v4 as uuidv4 } from 'uuid';
 import type { ObservabilityLogger } from '../ObservabilityLogger';
-import { LogContext, LoggerConfig } from '../types';
+import type { DDDMetadata, LogContext, LoggerConfig } from '../types';
 
 // Global logger instance
 let globalLogger: ObservabilityLogger | null = null;
@@ -50,11 +52,11 @@ const defaultSerializers = {
 function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
   const enhancedLogger = Object.create(baseLogger) as ObservabilityLogger;
 
-  enhancedLogger.withContext = function(ctx: LogContext): ObservabilityLogger {
+  enhancedLogger.withContext = function (ctx: LogContext): ObservabilityLogger {
     return createEnhancedLogger(baseLogger.child(ctx));
   };
 
-  enhancedLogger.startSpan = function(name: string, attributes?: Record<string, any>) {
+  enhancedLogger.startSpan = function (name: string, attributes?: Record<string, any>) {
     const tracer = trace.getTracer('@a4co/observability');
     const span = tracer.startSpan(name, { attributes });
     // Log span start (opcional, solo si existe info)
@@ -72,7 +74,6 @@ function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
 
 // Create logger with configuration
 export function createLogger(
-  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string },
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
 ): ObservabilityLogger {
   const options: LoggerOptions = {
@@ -87,7 +88,7 @@ export function createLogger(
       version: config.serviceVersion,
       env: config.environment,
       pid: process.pid,
-      hostname: (process.env['HOSTNAME'] as string) || require('os').hostname(),
+      hostname: (process.env['HOSTNAME'] as string) || hostname(),
     },
     timestamp: pino.stdTimeFunctions.isoTime,
     formatters: {
@@ -125,7 +126,6 @@ export function createLogger(
 
 // Initialize global logger
 export function initializeLogger(
-  config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string },
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
 ): ObservabilityLogger {
   globalLogger = createLogger(config);
