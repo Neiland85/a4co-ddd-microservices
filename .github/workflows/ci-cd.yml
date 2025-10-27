@@ -35,10 +35,10 @@ jobs:
           # Install pnpm
           PNPM_VERSION="${{ env.PNPM_VERSION }}"
           echo "Installing pnpm ${PNPM_VERSION}..."
-          
+
           # Install pnpm using npm
           npm install -g pnpm@${PNPM_VERSION}
-          
+
           # Verify installation
           pnpm --version
 
@@ -78,10 +78,10 @@ jobs:
           # Install pnpm
           PNPM_VERSION="${{ env.PNPM_VERSION }}"
           echo "Installing pnpm ${PNPM_VERSION}..."
-          
+
           # Install pnpm using npm
           npm install -g pnpm@${PNPM_VERSION}
-          
+
           # Verify installation
           pnpm --version
 
@@ -121,10 +121,10 @@ jobs:
           # Install pnpm
           PNPM_VERSION="${{ env.PNPM_VERSION }}"
           echo "Installing pnpm ${PNPM_VERSION}..."
-          
+
           # Install pnpm using npm
           npm install -g pnpm@${PNPM_VERSION}
-          
+
           # Verify installation
           pnpm --version
 

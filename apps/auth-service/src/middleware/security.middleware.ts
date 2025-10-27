@@ -268,7 +268,7 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
 
     // Interceptar response para logging
     const originalSend = res.send;
-    res.send = function(data) {
+    res.send = function (data) {
       const duration = Date.now() - startTime;
       console.log(
         `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`
