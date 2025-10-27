@@ -1,8 +1,6 @@
 import { AggregateRoot, DomainEvent } from '../base-classes';
 
-// ========================================
 // VALUE OBJECTS
-// ========================================
 
 export class Money {
   constructor(
@@ -97,9 +95,7 @@ export class Dimensions {
   }
 }
 
-// ========================================
 // ENUMS
-// ========================================
 
 export enum ProductStatus {
   DRAFT = 'DRAFT',
@@ -134,9 +130,7 @@ export enum SpecificationType {
   COLOR = 'COLOR',
 }
 
-// ========================================
 // DOMAIN EVENTS
-// ========================================
 
 export class ProductCreatedEvent extends DomainEvent {
   constructor(
@@ -208,9 +202,7 @@ export class ProductDiscontinuedEvent extends DomainEvent {
   }
 }
 
-// ========================================
 // PRODUCT VARIANT ENTITY
-// ========================================
 
 export class ProductVariant {
   constructor(
@@ -272,9 +264,7 @@ export class ProductVariant {
   }
 }
 
-// ========================================
 // PRODUCT AGGREGATE ROOT
-// ========================================
 
 export class Product extends AggregateRoot {
   private _status: ProductStatus;
@@ -342,17 +332,12 @@ export class Product extends AggregateRoot {
         artisanId,
         categoryId,
         createdAt: new Date(),
-<<<<<<< HEAD
       }),
-=======
       })
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
   }
 
-  // ========================================
   // GETTERS
-  // ========================================
 
   get status(): ProductStatus {
     return this._status;
@@ -394,9 +379,7 @@ export class Product extends AggregateRoot {
     return this._totalSold;
   }
 
-  // ========================================
   // BUSINESS METHODS
-  // ========================================
 
   publish(): void {
     if (this._status === ProductStatus.PUBLISHED) {
@@ -415,11 +398,8 @@ export class Product extends AggregateRoot {
         price: this._price,
         artisanId: this.artisanId,
         publishedAt: new Date(),
-<<<<<<< HEAD
       }),
-=======
       })
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
   }
 
@@ -444,11 +424,8 @@ export class Product extends AggregateRoot {
         previousPrice,
         newPrice,
         changedAt: new Date(),
-<<<<<<< HEAD
       }),
-=======
       })
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
   }
 
@@ -459,11 +436,8 @@ export class Product extends AggregateRoot {
       new ProductDiscontinuedEvent(this.id, {
         reason,
         discontinuedAt: new Date(),
-<<<<<<< HEAD
       }),
-=======
       })
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
   }
 
@@ -495,13 +469,10 @@ export class Product extends AggregateRoot {
             v.weight,
             v.dimensions,
             v.isActive,
-<<<<<<< HEAD
             false,
           ),
-=======
             false
           )
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 
@@ -521,11 +492,8 @@ export class Product extends AggregateRoot {
     // Si es la primera imagen o se marca como primary, hacer que sea la única primary
     if (image.isPrimary || this._images.length === 0) {
       this._images = this._images.map(
-<<<<<<< HEAD
         img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder),
-=======
         img => new ProductImage(img.url, img.altText, img.type, false, img.sortOrder)
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 

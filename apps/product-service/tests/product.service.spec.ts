@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   Price,
   ProductDescription,
@@ -98,7 +97,6 @@ describe('Product Value Objects', () => {
       expect(() => new Price(100, 'EURO')).toThrow('Currency must be a valid 3-letter code');
       expect(() => new Price(100, 'EU')).toThrow('Currency must be a valid 3-letter code');
       expect(() => new Price(100, '')).toThrow('Currency must be a valid 3-letter code');
-=======
 import { ProductService } from '../service';
 import { ProductController } from '../controller';
 
@@ -465,7 +463,6 @@ describe('ProductService - Cobertura de Código', () => {
       const result = productService.addProduct(name as any, price as any);
       expect(result).toContain('Error in addProduct');
       expect(result).toContain(expectedError);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
   });
 });

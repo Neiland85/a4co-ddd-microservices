@@ -50,11 +50,8 @@ export function mergeContext(
         ...ctx.metadata,
       },
     }),
-<<<<<<< HEAD
     base,
-=======
     base
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 }
 
@@ -77,11 +74,8 @@ export function withObservabilityContext<T extends(..._args: unknown[]) => unkno
 
 // Extract context from HTTP headers
 export function extractContextFromHeaders(
-<<<<<<< HEAD
   headers: Record<string, string | string[] | undefined>,
-=======
   headers: Record<string, string | string[] | undefined>
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): ObservabilityContext {
   const ctx: ObservabilityContext = {};
 
@@ -163,9 +157,6 @@ export function injectNatsContext(
     message['headers'] = {};
   }
 
-<<<<<<< HEAD
   Object.assign(message['headers'] as Record<string, unknown>, injectContextToHeaders(ctx));
-=======
   Object.assign(message.headers, injectContextToHeaders(ctx));
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }

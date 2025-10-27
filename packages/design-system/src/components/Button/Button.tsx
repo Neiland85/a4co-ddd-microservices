@@ -1,5 +1,4 @@
 import React from 'react';
-<<<<<<< HEAD
 
 export interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'outline';
@@ -15,7 +14,6 @@ export const Button: React.FC<ButtonProps> = ({ variant = 'primary', children })
     </button>
   );
 };
-=======
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -111,6 +109,5 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
 Button.displayName = 'Button';

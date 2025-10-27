@@ -1,8 +1,6 @@
 import { DomainEvent } from '../domain/domain-event';
 
-// ========================================
 // INTEGRATION EVENTS - Para comunicación entre bounded contexts
-// ========================================
 
 /**
  * Evento de integración: Cuando se crea una orden, se solicita información de productos

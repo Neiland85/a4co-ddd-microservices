@@ -1,8 +1,6 @@
-<<<<<<< HEAD
 import { Product } from '../../domain/aggregates/product.aggregate';
 import { EventSubjects, IEventBus } from '../../domain/event-bus';
 import { IProductRepository } from '../../infrastructure/repositories/product.repository';
-=======
 import {
   Product,
   ProductVariant,
@@ -20,11 +18,8 @@ import {
 } from '../../infrastructure/repositories/product.repository';
 import { IEventBus } from '@a4co/shared-utils/events/event-bus';
 import { EventSubjects } from '@a4co/shared-utils/events/subjects';
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
-// ========================================
 // DTOs (Data Transfer Objects)
-// ========================================
 
 export interface CreateProductDTO {
   name: string;
@@ -59,9 +54,7 @@ export interface UpdateProductDTO {
   metaDescription?: string;
 }
 
-// ========================================
 // PRODUCT APPLICATION SERVICE
-// ========================================
 
 export class ProductService {
   constructor(
@@ -86,7 +79,6 @@ export class ProductService {
       }
     }
 
-<<<<<<< HEAD
     // Create product using the aggregate's create method
     const product = Product.create({
       name: dto.name,
@@ -108,13 +100,11 @@ export class ProductService {
       metaTitle: dto.metaTitle,
       metaDescription: dto.metaDescription,
     });
-=======
     // Crear el objeto Money
     const price = new Money(dto.price, dto.currency || 'EUR');
     const originalPrice = dto.originalPrice
       ? new Money(dto.originalPrice, dto.currency || 'EUR')
       : undefined;
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     // Save to repository
     await this.productRepository.save(product);
@@ -144,10 +134,8 @@ export class ProductService {
       ...(dto.metaDescription !== undefined && { metaDescription: dto.metaDescription }),
     };
 
-<<<<<<< HEAD
     // Reconstruct product with updated data
     const updatedProduct = Product.reconstruct(updatedData);
-=======
     // Actualizar precio si ha cambiado
     if (dto.price !== undefined) {
       const newPrice = new Money(dto.price, product.price.currency);
@@ -160,7 +148,6 @@ export class ProductService {
         hasChanges = true;
       }
     }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     await this.productRepository.update(updatedProduct);
     await this.publishDomainEvents(updatedProduct);
@@ -189,13 +176,9 @@ export class ProductService {
     await this.productRepository.delete(id);
   }
 
-  // ========================================
   // STOCK MANAGEMENT METHODS
-  // ========================================
 
-<<<<<<< HEAD
   async addStockToProduct(productId: string, quantity: number): Promise<Product> {
-=======
   async publishProduct(id: string): Promise<void> {
     const product = await this.productRepository.findById(id);
     if (!product) {
@@ -254,9 +237,7 @@ export class ProductService {
     await this.productRepository.update(product);
   }
 
-  // ========================================
   // VARIANT MANAGEMENT
-  // ========================================
 
   async addVariant(dto: AddVariantDTO): Promise<void> {
     const product = await this.productRepository.findById(dto.productId);
@@ -296,30 +277,22 @@ export class ProductService {
   }
 
   async removeVariant(productId: string, variantId: string): Promise<void> {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const product = await this.productRepository.findById(productId);
     if (!product) {
       throw new Error(`Product with id ${productId} not found`);
     }
 
-<<<<<<< HEAD
     product.addStock(quantity);
-=======
     product.removeVariant(variantId);
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     await this.productRepository.update(product);
     await this.publishDomainEvents(product);
 
     return product;
   }
 
-<<<<<<< HEAD
   async removeStockFromProduct(productId: string, quantity: number): Promise<Product> {
-=======
-  // ========================================
   // IMAGE MANAGEMENT
-  // ========================================
 
   async addImage(dto: AddImageDTO): Promise<void> {
     const product = await this.productRepository.findById(dto.productId);
@@ -341,32 +314,24 @@ export class ProductService {
   }
 
   async removeImage(productId: string, imageUrl: string): Promise<void> {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const product = await this.productRepository.findById(productId);
     if (!product) {
       throw new Error(`Product with id ${productId} not found`);
     }
 
-<<<<<<< HEAD
     product.removeStock(quantity);
-=======
     product.removeImage(imageUrl);
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     await this.productRepository.update(product);
     await this.publishDomainEvents(product);
 
     return product;
   }
 
-<<<<<<< HEAD
   async getProductStock(
     productId: string,
   ): Promise<{ stock: number; isInStock: boolean; isLowStock: boolean }> {
-=======
-  // ========================================
   // SPECIFICATION MANAGEMENT
-  // ========================================
 
   async addSpecification(dto: AddSpecificationDTO): Promise<void> {
     const product = await this.productRepository.findById(dto.productId);
@@ -388,13 +353,11 @@ export class ProductService {
   }
 
   async removeSpecification(productId: string, specificationName: string): Promise<void> {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     const product = await this.productRepository.findById(productId);
     if (!product) {
       throw new Error(`Product with id ${productId} not found`);
     }
 
-<<<<<<< HEAD
     return {
       stock: product.stock,
       isInStock: product.isInStock(),
@@ -402,15 +365,12 @@ export class ProductService {
     };
   }
 
-=======
     product.removeSpecification(specificationName);
 
     await this.productRepository.update(product);
   }
 
-  // ========================================
   // SEARCH AND FILTERING
-  // ========================================
 
   async searchProducts(dto: ProductSearchDTO): Promise<{
     products: Product[];
@@ -467,32 +427,23 @@ export class ProductService {
     return await this.productRepository.findByCategory(categoryId, page, limit);
   }
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
-  // ========================================
   // PRODUCT STATUS MANAGEMENT
-  // ========================================
 
-<<<<<<< HEAD
   async publishProduct(id: string): Promise<Product> {
     const product = await this.productRepository.findById(id);
-=======
   async updateProductRating(
     productId: string,
     averageRating: number,
     reviewCount: number
   ): Promise<void> {
     const product = await this.productRepository.findById(productId);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     if (!product) {
       throw new Error(`Product with id ${id} not found`);
     }
 
-<<<<<<< HEAD
     // TODO: Add domain method to change status to ACTIVE
     // For now, we'll handle it through reconstruction or direct update
-=======
     product.updateRating(averageRating, reviewCount);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     await this.productRepository.update(product);
     await this.publishDomainEvents(product);
@@ -506,15 +457,12 @@ export class ProductService {
       throw new Error(`Product with id ${id} not found`);
     }
 
-<<<<<<< HEAD
     // TODO: Add domain method to change status to INACTIVE
     // For now, we'll handle it through reconstruction or direct update
-=======
     product.incrementSoldCount(quantity);
 
     await this.productRepository.update(product);
   }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     await this.productRepository.update(product);
     await this.publishDomainEvents(product);
@@ -523,7 +471,6 @@ export class ProductService {
   }
 
   private async publishDomainEvents(product: Product): Promise<void> {
-<<<<<<< HEAD
     // For now, just publish a simple event
     // In a full implementation, this would collect all domain events
     await this.eventBus.publish(EventSubjects.PRODUCT_CREATED, {
@@ -534,7 +481,6 @@ export class ProductService {
     });
   }
 }
-=======
     const events = product.domainEvents;
 
     for (const event of events) {
@@ -559,9 +505,7 @@ export class ProductService {
   }
 }
 
-// ========================================
 // EXAMPLE USAGE AND INTEGRATION
-// ========================================
 
 /**
  * Ejemplo de uso del ProductService con eventos de dominio:
@@ -609,4 +553,3 @@ export class ProductService {
  * // - ProductPublishedEvent → notification-service, search-service
  * ```
  */
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

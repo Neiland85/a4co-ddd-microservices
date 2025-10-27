@@ -59,7 +59,6 @@ export interface LoggerConfig {
 }
 
 export interface Logger {
-<<<<<<< HEAD
   trace(_message: string, _context?: Partial<LogContext>): void;
   debug(_message: string, _context?: Partial<LogContext>): void;
   info(_message: string, _context?: Partial<LogContext>): void;
@@ -67,7 +66,6 @@ export interface Logger {
   error(_message: string, _error?: Error | unknown, _context?: Partial<LogContext>): void;
   fatal(_message: string, _error?: Error | unknown, _context?: Partial<LogContext>): void;
   child(_context: Partial<LogContext>): Logger;
-=======
   trace(message: string, context?: Partial<LogContext>): void;
   debug(message: string, context?: Partial<LogContext>): void;
   info(message: string, context?: Partial<LogContext>): void;
@@ -75,5 +73,4 @@ export interface Logger {
   error(message: string, error?: Error | unknown, context?: Partial<LogContext>): void;
   fatal(message: string, error?: Error | unknown, context?: Partial<LogContext>): void;
   child(context: Partial<LogContext>): Logger;
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 }

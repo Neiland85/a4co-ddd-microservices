@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 module.exports = {
   extends: ['../../.eslintrc.js'],
   parserOptions: {
@@ -52,7 +51,6 @@ module.exports = {
     },
   ],
 };
-=======
 const js = require('@eslint/js');
 const tseslint = require('@typescript-eslint/eslint-plugin');
 const tsparser = require('@typescript-eslint/parser');
@@ -79,4 +77,3 @@ module.exports = [
     },
   },
 ];
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

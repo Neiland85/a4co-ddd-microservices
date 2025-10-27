@@ -12,11 +12,8 @@ export class InMemoryUserRepositoryAdapter implements UserRepositoryPort {
 
   async findByEmail(email: string): Promise<User | null> {
     const user = Array.from(this.users.values()).find(
-<<<<<<< HEAD
       u => u.email.toLowerCase() === email.toLowerCase(),
-=======
       u => u.email.toLowerCase() === email.toLowerCase()
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
     return user || null;
   }

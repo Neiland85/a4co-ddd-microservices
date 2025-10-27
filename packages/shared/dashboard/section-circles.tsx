@@ -59,11 +59,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
           width: (200 + sectionMetrics.primary * 2) * animationParams.scale,
           height: (200 + sectionMetrics.primary * 2) * animationParams.scale,
           background: `radial-gradient(circle, ${animationParams.colors[0]}${Math.floor(
-<<<<<<< HEAD
             animationParams.opacity * 255,
-=======
             animationParams.opacity * 255
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           )
             .toString(16)
             .padStart(2, '0')}, transparent)`,
@@ -84,11 +81,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
         }}
       />
     ),
-<<<<<<< HEAD
     [animationParams, sectionMetrics.primary],
-=======
     [animationParams, sectionMetrics.primary]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función optimizada para renderizar círculo secundario
@@ -100,11 +94,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
           width: (150 + sectionMetrics.secondary * 3) * animationParams.scale,
           height: (150 + sectionMetrics.secondary * 3) * animationParams.scale,
           background: `radial-gradient(circle, ${animationParams.colors[1]}${Math.floor(
-<<<<<<< HEAD
             animationParams.opacity * 0.8 * 255,
-=======
             animationParams.opacity * 0.8 * 255
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           )
             .toString(16)
             .padStart(2, '0')}, transparent)`,
@@ -125,11 +116,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
         }}
       />
     ),
-<<<<<<< HEAD
     [animationParams, sectionMetrics.secondary],
-=======
     [animationParams, sectionMetrics.secondary]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función optimizada para renderizar círculo de acento
@@ -141,11 +129,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
           width: (100 + sectionMetrics.tertiary * 2) * animationParams.scale,
           height: (100 + sectionMetrics.tertiary * 2) * animationParams.scale,
           background: `radial-gradient(circle, ${animationParams.colors[2]}${Math.floor(
-<<<<<<< HEAD
             animationParams.opacity * 1.2 * 255,
-=======
             animationParams.opacity * 1.2 * 255
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           )
             .toString(16)
             .padStart(2, '0')}, transparent)`,
@@ -166,11 +151,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
         }}
       />
     ),
-<<<<<<< HEAD
     [animationParams, sectionMetrics.tertiary],
-=======
     [animationParams, sectionMetrics.tertiary]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Partículas flotantes memoizadas
@@ -210,15 +192,12 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
               delay: i * 0.5,
             },
           };
-<<<<<<< HEAD
         },
       ),
     [animationParams, sectionMetrics],
-=======
         }
       ),
     [animationParams, sectionMetrics]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función optimizada para renderizar partículas
@@ -231,11 +210,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
           width: particle.size,
           height: particle.size,
           background: `radial-gradient(circle, ${particle.color}${Math.floor(
-<<<<<<< HEAD
             animationParams.opacity * 1.5 * 255,
-=======
             animationParams.opacity * 1.5 * 255
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
           )
             .toString(16)
             .padStart(2, '0')}, transparent)`,
@@ -246,11 +222,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
         transition={particle.transition}
       />
     ),
-<<<<<<< HEAD
     [animationParams.opacity],
-=======
     [animationParams.opacity]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   // Función optimizada para renderizar indicadores de estado
@@ -322,11 +295,8 @@ export function SectionCircles({ section, animationParams, metrics }: SectionCir
         )}
       </>
     ),
-<<<<<<< HEAD
     [section, metrics],
-=======
     [section, metrics]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   if (!mounted) return null;

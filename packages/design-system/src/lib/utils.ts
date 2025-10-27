@@ -19,11 +19,8 @@ export function cn(...inputs: ClassValue[]) {
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('es-ES', {
     style: 'currency',
-<<<<<<< HEAD
     currency: 'EUR',
-=======
     currency: 'EUR'
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   }).format(amount);
 }
 
@@ -35,8 +32,5 @@ export function formatCurrency(amount: number): string {
 export function generateId(prefix?: string): string {
   const id = Math.random().toString(36).substring(2, 9);
   return prefix ? `${prefix}-${id}` : id;
-<<<<<<< HEAD
 }
-=======
 }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

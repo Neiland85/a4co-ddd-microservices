@@ -1,22 +1,16 @@
-<<<<<<< HEAD
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-=======
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import {
   logger,
   initializeObservability,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   createLogger,
   getTracer,
-<<<<<<< HEAD
   initializeLogger,
   initializeObservability,
   logger,
   resetLoggerState,
   resetObservabilityState,
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   shutdown,
 } from './index';
 
@@ -97,7 +91,6 @@ describe('@a4co/observability', () => {
 
   describe('initializeObservability', () => {
     it('should initialize with minimal configuration', () => {
-<<<<<<< HEAD
       // Just verify the function doesn't throw and returns something
       expect(() => {
         const result = initializeObservability({
@@ -129,7 +122,6 @@ describe('@a4co/observability', () => {
         });
         expect(result).toBeDefined();
       }).not.toThrow();
-=======
       const result = initializeObservability({
         serviceName: 'test-minimal-service',
       });
@@ -166,7 +158,6 @@ describe('@a4co/observability', () => {
       expect(result.logger).toBeDefined();
       expect(result.tracingSDK).toBeDefined();
       expect(result.metricsExporter).toBeDefined();
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     });
 
     it('should disable tracing when specified', () => {

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 // Product Service - Schema de Base de Datos con Prisma ORM
 // Siguiendo principios DDD: Aggregates, Entities, Value Objects
 // Marketplace Local de Jaén - A4CO
@@ -77,13 +74,10 @@ model Product {
   // Relaciones
   variants ProductVariant[]
   tags     ProductTag[]
-<<<<<<< HEAD
 
   // Índices
   @@index([categoryId])
-=======
   // Se elimina la relación ambigua con ProductReview y ProductCategoryMapping
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   @@index([artisanId])
   @@index([status])
   @@index([availability])
@@ -162,12 +156,8 @@ model ProductTag {
   @@map("product_tags")
 }
 
-<<<<<<< HEAD
-// ========================================
 // ENUMERATIONS
-// ========================================
 
-=======
 // TABLA DE REFERENCIA - CATEGORIES (externa al agregado)
 model Category {
   id          String  @id @default(uuid()) @db.Uuid
@@ -189,9 +179,7 @@ model Category {
   @@map("categories")
 }
 
-// ========================================
 // ARTISAN ENTITY (Reference from other bounded context)
-// ========================================
 
 model Artisan {
   id              String   @id @default(cuid())
@@ -232,9 +220,7 @@ model Artisan {
   @@index([status])
 }
 
-// ========================================
 // INVENTORY TRACKING (Separate bounded context integration)
-// ========================================
 
 model ProductInventory {
   id            String   @id @default(cuid())
@@ -266,9 +252,7 @@ model ProductInventory {
   @@index([quantity])
 }
 
-// ========================================
 // PRODUCT REVIEWS (Read model for analytics)
-// ========================================
 
 model ProductReview {
   id          String   @id @default(cuid())
@@ -304,9 +288,7 @@ model ProductReview {
   @@index([createdAt])
 }
 
-// ========================================
 // MANY-TO-MANY RELATIONSHIPS
-// ========================================
 
 model ProductCategoryMapping {
   id         String   @id @default(cuid())
@@ -323,11 +305,8 @@ model ProductCategoryMapping {
   @@map("product_category_mappings")
 }
 
-// ========================================
 // ENUMS
-// ========================================
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 enum ProductStatus {
   DRAFT
   PUBLISHED
@@ -338,11 +317,9 @@ enum ProductStatus {
 enum ProductAvailability {
   IN_STOCK
   OUT_OF_STOCK
-<<<<<<< HEAD
   PRE_ORDER
   DISCONTINUED
 }
-=======
   MADE_TO_ORDER
   SEASONAL
 }
@@ -377,4 +354,3 @@ enum ReviewStatus {
   REJECTED
   FLAGGED
 }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

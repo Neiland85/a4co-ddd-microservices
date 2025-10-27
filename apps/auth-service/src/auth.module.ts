@@ -76,7 +76,6 @@ import { UserRepositoryPort } from './application/ports/user-repository.port';
     // Use Cases
     {
       provide: RegisterUserUseCase,
-<<<<<<< HEAD
       useFactory: (
         userRepository: UserRepositoryPort,
         cryptographyService: any,
@@ -89,10 +88,8 @@ import { UserRepositoryPort } from './application/ports/user-repository.port';
           eventBus,
           userDomainService,
         );
-=======
       useFactory: (userRepository: UserRepository, userDomainService: UserDomainService) => {
         return new RegisterUserUseCase(userRepository, userDomainService);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       },
       inject: ['UserRepositoryPort', 'CryptographyServicePort', 'EventBusPort', UserDomainService],
     },

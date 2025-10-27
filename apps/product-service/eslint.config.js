@@ -5,7 +5,6 @@ const tsparser = require('@typescript-eslint/parser');
 module.exports = [
   js.configs.recommended,
   {
-<<<<<<< HEAD
     files: ['**/*.ts', '**/*.js'],
     ignores: [
       'node_modules/**',
@@ -18,9 +17,7 @@ module.exports = [
       '**/*.bak',
       'jest.config.js',
     ],
-=======
     files: ['**/*.ts'],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -28,7 +25,6 @@ module.exports = [
         sourceType: 'module',
         project: './tsconfig.json',
       },
-<<<<<<< HEAD
       globals: {
         // Node.js globals
         process: 'readonly',
@@ -49,15 +45,12 @@ module.exports = [
         beforeAll: 'readonly',
         afterAll: 'readonly',
       },
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     },
     plugins: {
       '@typescript-eslint': tseslint,
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-<<<<<<< HEAD
 
       // Relaxed rules for faster development
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -79,10 +72,8 @@ module.exports = [
       // Custom rules for this project
       'prefer-const': 'warn',
       'no-var': 'error',
-=======
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     },
   },
 ];

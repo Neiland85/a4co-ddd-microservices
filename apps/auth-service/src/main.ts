@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import { getGlobalLogger, initializeTracing } from '@a4co/observability';
 import { BracesSecurityMiddleware } from '@a4co/shared-utils';
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -36,7 +33,6 @@ async function bootstrap() {
     })
   );
 
-<<<<<<< HEAD
   // Braces security middleware
   const bracesMiddleware = new BracesSecurityMiddleware({
     maxExpansionSize: 50,
@@ -46,8 +42,6 @@ async function bootstrap() {
   app.use(bracesMiddleware.validateRequestBody());
   app.use(bracesMiddleware.validateQueryParams());
 
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -59,11 +53,8 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-<<<<<<< HEAD
     origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-=======
     origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

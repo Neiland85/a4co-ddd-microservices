@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
@@ -10,7 +9,6 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-=======
 const baseConfig = require('../../jest.config.base.js');
 
 module.exports = {
@@ -39,5 +37,4 @@ module.exports = {
   maxWorkers: 1,
   forceExit: true,
   detectOpenHandles: true,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 };

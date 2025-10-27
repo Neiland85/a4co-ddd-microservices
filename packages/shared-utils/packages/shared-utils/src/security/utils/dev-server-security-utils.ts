@@ -187,7 +187,7 @@ try {
       if (line.includes(`:${port} `)) {
         // Verificar si está bound a 0.0.0.0
         if (line.includes('0.0.0.0:${port}')) {
-          issues.push(`🚨 Puerto ${port} accesible desde cualquier interfaz (0.0.0.0)`);
+          issues.push(`[!] Puerto ${port} accesible desde cualquier interfaz (0.0.0.0)`);
         }
       }
     }
@@ -214,12 +214,12 @@ for (const configFile of configFiles) {
 
       // Verificar host inseguro
       if (content.includes("host: '0.0.0.0'") || content.includes('host: "0.0.0.0"')) {
-        issues.push(`🚨 ${configFile} tiene host 0.0.0.0 (accesible externamente)`);
+        issues.push(`[!] ${configFile} tiene host 0.0.0.0 (accesible externamente)`);
       }
 
       // Verificar CORS inseguro
       if (content.includes("origin: '*'") || content.includes('origin: "*"')) {
-        issues.push(`🚨 ${configFile} tiene CORS origin wildcard`);
+        issues.push(`[!] ${configFile} tiene CORS origin wildcard`);
       }
     } catch (error) {
       // Ignorar errores de lectura
@@ -244,7 +244,7 @@ for (const envFile of envFiles) {
 
       for (const pattern of sensitivePatterns) {
         if (pattern.test(content)) {
-          issues.push(`🚨 ${envFile} contiene posibles secrets sensibles`);
+          issues.push(`[!] ${envFile} contiene posibles secrets sensibles`);
           break;
         }
       }
@@ -257,7 +257,7 @@ for (const envFile of envFiles) {
 if (issues.length === 0) {
   console.log('✅ No se encontraron problemas de seguridad evidentes');
 } else {
-  console.log('\n🚨 Problemas de seguridad encontrados:');
+  console.log('\n[!] Problemas de seguridad encontrados:');
   issues.forEach(issue => console.log(`  ${issue}`));
   console.log('\n💡 Recomendaciones:');
   console.log('  - Configurar host: "127.0.0.1" en dev servers');

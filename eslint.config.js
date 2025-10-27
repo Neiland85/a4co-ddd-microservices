@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
@@ -29,7 +28,6 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx'],
-=======
 import js from '@eslint/js';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
@@ -44,14 +42,12 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     ignores: [
       'node_modules/**',
       'dist/**',
       'build/**',
       '.next/**',
       'coverage/**',
-<<<<<<< HEAD
       '**/*.d.ts',
       '**/dist/**',
       '**/build/**',
@@ -66,7 +62,6 @@ export default [
       parser: tsParser,
       parserOptions: {
         sourceType: 'module',
-=======
       '*.config.js',
       '*.config.ts',
       'prisma/**',
@@ -83,12 +78,10 @@ export default [
         project: ['./tsconfig.json', './apps/*/tsconfig.json', './packages/*/tsconfig.json'],
         sourceType: 'module',
         ecmaVersion: 2022,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         ecmaFeatures: {
           jsx: true,
         },
       },
-<<<<<<< HEAD
       ecmaVersion: 2022,
       globals: {
         // Browser globals
@@ -345,7 +338,6 @@ export default [
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-undef': 'off',
       'no-console': 'off',
-=======
       globals: {
         console: 'readonly',
         process: 'readonly',
@@ -423,7 +415,6 @@ export default [
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
       },
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     },
   },
 ];

@@ -17,11 +17,8 @@ export function generateCausationId(correlationId: string): string {
 // Sanitize sensitive data
 export function sanitize(
   data: any,
-<<<<<<< HEAD
   sensitiveKeys: string[] = ['password', 'token', 'apiKey', 'secret'],
-=======
   sensitiveKeys: string[] = ['password', 'token', 'apiKey', 'secret']
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): any {
   if (!data || typeof data !== 'object') {
     return data;
@@ -91,13 +88,11 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
       (config as any).__span = span;
       (config as any).__startTime = Date.now();
 
-<<<<<<< HEAD
       logger.debug('HTTP request started', {
         method: config.method,
         url: config.url,
         headers: sanitize(config.headers),
       });
-=======
       logger.debug(
         {
           method: config.method,
@@ -106,16 +101,12 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         },
         'HTTP request started'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       return config;
     },
     error => {
-<<<<<<< HEAD
       logger.error('HTTP request failed to start', { error });
-=======
       logger.error({ error }, 'HTTP request failed to start');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       return Promise.reject(error);
     },
   );
@@ -136,14 +127,12 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         span.end();
       }
 
-<<<<<<< HEAD
       logger.debug('HTTP request completed', {
         method: response.config.method,
         url: response.config.url,
         status: response.status,
         duration,
       });
-=======
       logger.debug(
         {
           method: response.config.method,
@@ -153,7 +142,6 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         },
         'HTTP request completed'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       return response;
     },
@@ -175,7 +163,6 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         span.end();
       }
 
-<<<<<<< HEAD
       logger.error('HTTP request failed', {
         method: error.config?.method,
         url: error.config?.url,
@@ -183,7 +170,6 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         duration,
         error: error.message,
       });
-=======
       logger.error(
         {
           method: error.config?.method,
@@ -194,7 +180,6 @@ export function createInstrumentedHttpClient(config?: AxiosRequestConfig): Axios
         },
         'HTTP request failed'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       return Promise.reject(error);
     },
@@ -232,13 +217,11 @@ export async function retryWithBackoff<T>(
 
       const delay = Math.min(initialDelay * Math.pow(factor, attempt), maxDelay);
 
-<<<<<<< HEAD
       logger.warn('Operation failed, retrying', {
         error: lastError.message,
         attempt: attempt + 1,
         nextRetryIn: delay,
       });
-=======
       logger.warn(
         {
           error: lastError.message,
@@ -247,7 +230,6 @@ export async function retryWithBackoff<T>(
         },
         'Operation failed, retrying'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       if (onRetry) {
         onRetry(lastError, attempt + 1);
@@ -306,13 +288,11 @@ export class CircuitBreaker<T> {
         this.setState('open');
       }
 
-<<<<<<< HEAD
       logger.error('Circuit breaker execution failed', {
         error,
         failures: this.failures,
         state: this.state,
       });
-=======
       logger.error(
         {
           error,
@@ -321,7 +301,6 @@ export class CircuitBreaker<T> {
         },
         'Circuit breaker execution failed'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       throw error;
     }
@@ -335,12 +314,10 @@ export class CircuitBreaker<T> {
         this.options.onStateChange(state);
       }
 
-<<<<<<< HEAD
       getLogger().info('Circuit breaker state changed', {
         previousState: this.state,
         newState: state,
       });
-=======
       getLogger().info(
         {
           previousState: this.state,
@@ -348,7 +325,6 @@ export class CircuitBreaker<T> {
         },
         'Circuit breaker state changed'
       );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     }
   }
 }
@@ -372,14 +348,12 @@ export class PerformanceTimer {
 
     const duration = end - start;
 
-<<<<<<< HEAD
     getLogger().debug('Performance measurement', {
       measurement: name,
       duration,
       startMark,
       endMark,
     });
-=======
     getLogger().debug(
       {
         measurement: name,
@@ -389,7 +363,6 @@ export class PerformanceTimer {
       },
       'Performance measurement'
     );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
     return duration;
   }
@@ -442,11 +415,8 @@ export class BatchProcessor<T, R> {
     try {
       await this.processor(items);
     } catch (error) {
-<<<<<<< HEAD
       getLogger().error('Batch processing failed', { error, batchSize: items.length });
-=======
       getLogger().error({ error, batchSize: items.length }, 'Batch processing failed');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       if (this.options.onError) {
         this.options.onError(error as Error, items);

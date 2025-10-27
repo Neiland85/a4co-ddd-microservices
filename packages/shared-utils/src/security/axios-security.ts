@@ -376,7 +376,7 @@ export class SecureAxiosClient {
       this.memoryMonitor.start();
 
       this.memoryMonitor.on('memoryThresholdExceeded', data => {
-        console.warn('🚨 Memory threshold exceeded:', data);
+        console.warn('[!] Memory threshold exceeded:', data);
         // Could implement emergency measures here
       });
 

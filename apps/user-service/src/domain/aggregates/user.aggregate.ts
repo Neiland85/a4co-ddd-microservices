@@ -1,8 +1,6 @@
 import { AggregateRoot, DomainEvent, ValueObject } from '../base-classes';
 
-// ========================================
 // VALUE OBJECTS
-// ========================================
 
 export class Email extends ValueObject<string> {
     constructor(value: string) {
@@ -30,9 +28,7 @@ export class Username extends ValueObject<string> {
     }
 }
 
-// ========================================
 // DOMAIN EVENTS
-// ========================================
 
 export class UserCreatedEvent extends DomainEvent {
     constructor(
@@ -53,9 +49,7 @@ export class UserUpdatedEvent extends DomainEvent {
     }
 }
 
-// ========================================
 // AGGREGATE
-// ========================================
 
 export class User extends AggregateRoot {
     private _username: Username;

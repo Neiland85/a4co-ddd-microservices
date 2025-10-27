@@ -279,7 +279,6 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 export default app;
-=======
 import express from 'express';
 import { initializeObservability } from '../src';
 import { 

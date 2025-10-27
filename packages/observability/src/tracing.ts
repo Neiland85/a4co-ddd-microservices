@@ -1,8 +1,6 @@
 import { metrics, trace } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-<<<<<<< HEAD
 import { CompositePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
-=======
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import {
@@ -11,7 +9,6 @@ import {
   SpanExporter,
   Tracer,
 } from '@opentelemetry/sdk-trace-base';
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
@@ -74,11 +71,8 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
       [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
       [SemanticResourceAttributes.SERVICE_INSTANCE_ID]:
-<<<<<<< HEAD
         process.env['HOSTNAME'] || `${config.serviceName}-${Date.now()}`,
-=======
         process.env.HOSTNAME || `${config.serviceName}-${Date.now()}`,
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       [SemanticResourceAttributes.PROCESS_PID]: process.pid,
       [SemanticResourceAttributes.PROCESS_RUNTIME_NAME]: 'nodejs',
       [SemanticResourceAttributes.PROCESS_RUNTIME_VERSION]: process.version,
@@ -143,11 +137,8 @@ export function initializeTracing(config: TracingConfig): NodeSDK {
 
 // Inicializar métricas con Prometheus
 export function initializeMetrics(
-<<<<<<< HEAD
   config: MetricsConfig & { serviceName: string },
-=======
   config: MetricsConfig & { serviceName: string }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): PrometheusExporter {
   prometheusExporter = new PrometheusExporter(
     {

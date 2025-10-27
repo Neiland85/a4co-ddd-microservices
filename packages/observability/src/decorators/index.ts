@@ -49,16 +49,13 @@ export function Trace(
           span.setAttribute('result', JSON.stringify(result));
         }
 
-<<<<<<< HEAD
         logger.debug(`${spanName} completed`, {
           result: options.recordResult ? result : undefined,
         });
-=======
         logger.debug(
           { result: options.recordResult ? result : undefined },
           `${spanName} completed`
         );
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         return result;
       } catch (error) {
@@ -73,11 +70,8 @@ export function Trace(
           message: err.message,
         });
 
-<<<<<<< HEAD
         logger.error(`${spanName} failed`, { error: err, stack: err.stack });
-=======
         logger.error({ error: err, stack: err.stack }, `${spanName} failed`);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         throw error;
       } finally {
@@ -107,15 +101,12 @@ export function Log(
 
     descriptor.value = async function(...args: unknown[]): Promise<unknown> {
       const logger = getLogger();
-<<<<<<< HEAD
       const methodName = `${className}.${_propertyName}`;
 
       logger[level](`Executing ${methodName}`, { method: methodName, args });
-=======
       const methodName = `${className}.${propertyName}`;
 
       logger[level]({ method: methodName, args }, `Executing ${methodName}`);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
       try {
         const result = await originalMethod.apply(this, args);
@@ -172,11 +163,8 @@ export function CommandHandler(
         span.setStatus({ code: SpanStatusCode.OK });
 
         const duration = Date.now() - startTime;
-<<<<<<< HEAD
         logger.info('Command executed successfully', { command: commandName, duration });
-=======
         logger.info({ command: commandName, duration }, 'Command executed successfully');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         recordCommandExecution(commandName, aggregateName, true, duration);
 
@@ -190,11 +178,8 @@ export function CommandHandler(
         });
 
         const duration = Date.now() - startTime;
-<<<<<<< HEAD
         logger.error('Command execution failed', { command: commandName, error: err, duration });
-=======
         logger.error({ command: commandName, error: err, duration }, 'Command execution failed');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         recordCommandExecution(commandName, aggregateName, false, duration);
 
@@ -247,11 +232,8 @@ export function EventHandler(
 
         span.setStatus({ code: SpanStatusCode.OK });
 
-<<<<<<< HEAD
         logger.info('Event processed successfully', { event: eventName });
-=======
         logger.info({ event: eventName }, 'Event processed successfully');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         recordEvent(eventName, aggregateName, 'processed');
 
@@ -264,11 +246,8 @@ export function EventHandler(
           message: err.message,
         });
 
-<<<<<<< HEAD
         logger.error('Event processing failed', { event: eventName, error: err });
-=======
         logger.error({ event: eventName, error: err }, 'Event processing failed');
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
         throw error;
       } finally {
@@ -400,17 +379,13 @@ export function Repository(aggregateName: string): (_constructor: unknown) => un
     const wrappedConstructor = function(...args: unknown[]): unknown {
       const instance = new originalConstructor(...args);
 
-<<<<<<< HEAD
-=======
     const wrappedConstructor: any = function (...args: any[]) {
       const instance = new (originalConstructor as any)(...args);
 
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       // Wrap common repository methods
       const methodsToWrap = ['save', 'findById', 'findAll', 'delete', 'update'];
 
       methodsToWrap.forEach(methodName => {
-<<<<<<< HEAD
         const instanceAny = instance as Record<string, unknown>;
         if (typeof instanceAny[methodName] === 'function') {
           const originalMethod = instanceAny[methodName] as (
@@ -418,12 +393,10 @@ export function Repository(aggregateName: string): (_constructor: unknown) => un
           ) => Promise<unknown>;
 
           instanceAny[methodName] = async function(...methodArgs: unknown[]): Promise<unknown> {
-=======
         if (typeof instance[methodName] === 'function') {
           const originalMethod = instance[methodName];
 
           instance[methodName] = async function (...methodArgs: any[]) {
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
             const span = trace.getActiveSpan();
             if (span) {
               span.setAttribute('repository.aggregate', aggregateName);
@@ -436,11 +409,8 @@ export function Repository(aggregateName: string): (_constructor: unknown) => un
               method: methodName,
             });
 
-<<<<<<< HEAD
             logger.debug(`Repository method ${methodName} called`, { args: methodArgs });
-=======
             logger.debug({ args: methodArgs }, `Repository ${methodName} called`);
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 
             try {
               const result = await originalMethod.apply(this, methodArgs);

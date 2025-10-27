@@ -16,11 +16,8 @@ export class NotificationController {
 
   // Nuevo método para enviar notificaciones avanzadas
   async sendAdvancedNotification(
-<<<<<<< HEAD
     request: NotificationRequestDTO,
-=======
     request: NotificationRequestDTO
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   ): Promise<NotificationResponseDTO> {
     try {
       await this.notificationService.sendNotification({
