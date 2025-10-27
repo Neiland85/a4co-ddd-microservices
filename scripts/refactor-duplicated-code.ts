@@ -129,7 +129,6 @@ function generateService(service: ServiceConfig): string {
       ${method.params
         .map(
           p =>
-<<<<<<< HEAD
             `const validated${p.name.charAt(0).toUpperCase() + p.name.slice(1)} = this.validateRequired(${p.name}, '${p.name}');`
         )
         .join('\n      ')}

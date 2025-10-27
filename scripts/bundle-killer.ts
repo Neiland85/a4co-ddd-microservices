@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { readFileSync, existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import * as path from 'path';
 
 interface ChunkInfo {
@@ -19,7 +19,7 @@ interface BundleAnalysis {
 const THRESHOLD_KB = 50;
 const LARGE_MODULE_KB = 10;
 
-export const analyzeBundle = async(): Promise<BundleAnalysis> => {
+export const analyzeBundle = async (): Promise<BundleAnalysis> => {
   console.log('🔍 Iniciando análisis de bundle...\n');
 
   try {
@@ -39,11 +39,7 @@ export const analyzeBundle = async(): Promise<BundleAnalysis> => {
     const statsPath = path.join('apps/dashboard-web/.next/analyze/client.json');
     if (!existsSync(statsPath)) {
       throw new Error(
-<<<<<<< HEAD
-        'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.',
-=======
         'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.'
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     }
 
@@ -94,7 +90,7 @@ export const analyzeBundle = async(): Promise<BundleAnalysis> => {
     const recommendations = generateRecommendations(
       problematicChunks,
       duplicatedModules,
-      totalSize,
+      totalSize
     );
 
     // Mostrar resultados
@@ -120,7 +116,7 @@ export const analyzeBundle = async(): Promise<BundleAnalysis> => {
 function generateRecommendations(
   chunks: ChunkInfo[],
   duplicates: Map<string, string[]>,
-  totalSize: number,
+  totalSize: number
 ): string[] {
   const recommendations: string[] = [];
 
@@ -128,7 +124,7 @@ function generateRecommendations(
   if (totalSize > 1024 * 1024) {
     // > 1MB
     recommendations.push(
-      `⚠️ Bundle total excede 1MB (${(totalSize / 1024 / 1024).toFixed(2)}MB). Considera:`,
+      `⚠️ Bundle total excede 1MB (${(totalSize / 1024 / 1024).toFixed(2)}MB). Considera:`
     );
     recommendations.push('  - Implementar lazy loading para rutas pesadas');
     recommendations.push('  - Revisar dependencias innecesarias en package.json');
