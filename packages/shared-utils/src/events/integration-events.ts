@@ -6,14 +6,14 @@ import { DomainEvent } from '../domain/domain-event';
  * Evento de integración: Cuando se crea una orden, se solicita información de productos
  * Este evento NO contiene datos de productos, solo solicita la información
  */
-export class ProductInformationRequestedEvent extends DomainEvent {
+export class ProductInformationRequestedIntegrationEvent extends DomainEvent {
   constructor(
     requestId: string,
     data: {
       orderId: string;
       productIds: string[]; // Solo IDs, no datos completos
       requestedAt: Date;
-    },
+    }
   ) {
     super(requestId, data);
   }
@@ -39,7 +39,7 @@ export class ProductInformationProvidedEvent extends DomainEvent {
         stockQuantity: number;
       }>;
       providedAt: Date;
-    },
+    }
   ) {
     super(responseId, data);
   }
@@ -48,7 +48,7 @@ export class ProductInformationProvidedEvent extends DomainEvent {
 /**
  * Evento de integración: Solicitud de validación de stock
  */
-export class StockValidationRequestedEvent extends DomainEvent {
+export class StockValidationRequestedIntegrationEvent extends DomainEvent {
   constructor(
     requestId: string,
     data: {
@@ -58,7 +58,7 @@ export class StockValidationRequestedEvent extends DomainEvent {
         quantity: number;
       }>;
       requestedAt: Date;
-    },
+    }
   ) {
     super(requestId, data);
   }
@@ -81,7 +81,7 @@ export class StockValidationResponseEvent extends DomainEvent {
       }>;
       allItemsAvailable: boolean;
       respondedAt: Date;
-    },
+    }
   ) {
     super(responseId, data);
   }
@@ -90,14 +90,14 @@ export class StockValidationResponseEvent extends DomainEvent {
 /**
  * Evento de integración: Solicitud de información de usuario
  */
-export class UserInformationRequestedEvent extends DomainEvent {
+export class UserInformationRequestedIntegrationEvent extends DomainEvent {
   constructor(
     requestId: string,
     data: {
       userId: string;
       requestedFields: string[]; // ['email', 'address', 'preferences']
       requestedAt: Date;
-    },
+    }
   ) {
     super(requestId, data);
   }
@@ -133,7 +133,7 @@ export class UserInformationProvidedEvent extends DomainEvent {
         };
       };
       providedAt: Date;
-    },
+    }
   ) {
     super(responseId, data);
   }

@@ -1,7 +1,5 @@
 /// <reference lib="dom" />
 
-import type { JSDOM } from 'jsdom'; // Usar import type para evitar bundling en browser
-
 export interface SanitizeOptions {
   allowedTags: string[];
   allowedAttributes: Record<string, string[]>;
@@ -108,7 +106,6 @@ export class DomSanitizer {
     try {
       const parsedUrl = new URL(
         url,
-        typeof window !== 'undefined' ? window.location.href : 'http://localhost/',
         typeof window !== 'undefined' ? window.location.href : 'http://localhost/'
       );
       return this.options.allowedSchemes.includes(parsedUrl.protocol.replace(':', ''));

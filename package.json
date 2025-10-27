@@ -14,7 +14,7 @@
     "dev:payment": "turbo run dev --filter=payment-service",
     "dev:frontend": "turbo run dev --filter=dashboard-web --filter=@a4co/design-system",
     "dev:backend": "turbo run dev --filter=...*-service",
-    "build": "turbo run build --filter=!@a4co/observability --filter=!dashboard-web",
+    "build": "turbo run build --filter=!@a4co/observability",
     "build:all": "turbo run build && pnpm design:sync",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",

@@ -1,10 +1,6 @@
+const baseConfig = require('../../jest.config.base');
+
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
   ...baseConfig,
   displayName: 'auth-service',
   rootDir: '.',
@@ -22,7 +18,6 @@ module.exports = {
       },
     ],
   },
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 };

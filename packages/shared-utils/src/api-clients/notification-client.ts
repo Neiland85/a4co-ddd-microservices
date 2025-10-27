@@ -14,7 +14,7 @@ export interface NotificationRequest {
   message: string;
   recipients: string[];
   channels?: string[];
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 export interface NotificationResponse {
@@ -55,7 +55,6 @@ export class NotificationApiClient {
         if (error.response) {
           // El servidor respondió con un código de estado fuera del rango 2xx
           throw new Error(
-            `Notification service error: ${error.response.status} - ${error.response.data?.message || error.message}`,
             `Notification service error: ${error.response.status} - ${error.response.data?.message || error.message}`
           );
         } else if (error.request) {
@@ -65,7 +64,7 @@ export class NotificationApiClient {
           // Algo sucedió al configurar la solicitud
           throw new Error(`Notification client error: ${error.message}`);
         }
-      },
+      }
     );
   }
 
@@ -76,7 +75,6 @@ export class NotificationApiClient {
     try {
       const response = await this.client.post<NotificationResponse>(
         '/api/v1/notifications',
-        request,
         request
       );
       return response.data;
@@ -89,12 +87,9 @@ export class NotificationApiClient {
   /**
    * Obtiene el estado de una notificación
    */
-  async getNotificationStatus(notificationId: string): Promise<NotificationResponse> {
+  async getNotificationStatus(notificationId: string): Promise<unknown> {
     try {
-      const response = await this.client.get<NotificationResponse>(
-        `/api/v1/notifications/${notificationId}`,
-        `/api/v1/notifications/${notificationId}`
-      );
+      const response = await this.client.get<unknown>(`/api/v1/notifications/${notificationId}`);
       return response.data;
     } catch (error) {
       console.error('Error getting notification status:', error);
@@ -124,7 +119,7 @@ export class NotificationApiClient {
     priority: 'low' | 'medium' | 'high' | 'critical';
     recipients: string[];
     channels: string[];
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
   }): Promise<NotificationResponse> {
     return this.sendNotification({
       type: 'security_alert',
@@ -143,7 +138,6 @@ export class NotificationApiClient {
   async retryNotification(notificationId: string): Promise<NotificationResponse> {
     try {
       const response = await this.client.post<NotificationResponse>(
-        `/api/v1/notifications/${notificationId}/retry`,
         `/api/v1/notifications/${notificationId}/retry`
       );
       return response.data;
