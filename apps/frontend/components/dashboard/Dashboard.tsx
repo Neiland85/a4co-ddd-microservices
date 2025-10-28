@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { User, Product, Category, Order, Producer, DashboardStats } from '../../types.ts';
 // FIX: Add file extension to api.ts import.
 import * as api from '../../api.ts';
+import { useAuth } from '../../contexts/AuthContext.tsx';
 
 import DashboardSidebar from './DashboardSidebar.tsx';
 import DashboardHome from './DashboardHome.tsx';
@@ -18,6 +19,7 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
+    const { token } = useAuth();
     const [view, setView] = useState<DashboardView>('home');
     const [producerProducts, setProducerProducts] = useState<Product[]>([]);
     const [producerOrders, setProducerOrders] = useState<Order[]>([]);
@@ -41,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
         try {
             const [productsData, ordersData, producersData, categoriesData] = await Promise.all([
                 api.getProducts(),
-                api.getOrdersByProducer(producerId),
+                api.getOrdersByProducer(producerId, token || undefined),
                 api.getProducers(),
                 api.getCategories(),
             ]);
@@ -77,7 +79,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
 
     const handleUpdateOrderStatus = async (orderId: string, status: Order['status']) => {
         try {
-            await api.updateOrderStatus(orderId, status);
+            await api.updateOrderStatus(orderId, status, token || undefined);
             fetchData(); // Refresh data after update
         } catch (err) {
             console.error("Failed to update order status:", err);
