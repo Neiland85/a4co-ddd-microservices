@@ -118,3 +118,71 @@ class TransportistaSuccessResponse(BaseModel):
     success: bool = True
     data: TransportistaResponse
     message: str = Field(..., description="Mensaje de éxito")
+
+
+# --- TRACKING MODELS ---
+
+class ShipmentLocation(BaseModel):
+    """Ubicación de un envío"""
+    latitude: float
+    longitude: float
+    address: str
+    city: str
+    region: str
+
+
+class ShipmentStatusHistory(BaseModel):
+    """Historial de estado de envío"""
+    status: str
+    location: str
+    timestamp: datetime
+    notes: Optional[str] = None
+
+
+class ShipmentCreate(BaseModel):
+    """Crear un nuevo envío"""
+    order_id: str
+    transportista_id: str
+    origin: ShipmentLocation
+    destination: ShipmentLocation
+    weight_kg: float = Field(..., gt=0)
+    estimated_delivery: datetime
+    special_instructions: Optional[str] = None
+
+
+class ShipmentResponse(BaseModel):
+    """Respuesta de envío"""
+    id: str
+    tracking_number: str
+    order_id: str
+    transportista_id: str
+    transportista_nombre: Optional[str] = None
+    status: str  # pending, picked_up, in_transit, delivered, cancelled
+    origin: ShipmentLocation
+    destination: ShipmentLocation
+    current_location: Optional[ShipmentLocation] = None
+    weight_kg: float
+    estimated_delivery: datetime
+    actual_delivery: Optional[datetime] = None
+    history: list[ShipmentStatusHistory] = []
+    special_instructions: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class TrackingResponse(BaseModel):
+    """Respuesta de tracking"""
+    tracking_number: str
+    status: str
+    estimated_delivery: datetime
+    actual_delivery: Optional[datetime] = None
+    current_location: Optional[str] = None
+    history: list[ShipmentStatusHistory] = []
+    last_update: datetime
+
+
+class UpdateShipmentStatus(BaseModel):
+    """Actualizar estado de envío"""
+    status: str = Field(..., description="Nuevo estado")
+    location: str = Field(..., description="Ubicación actual")
+    notes: Optional[str] = Field(None, description="Notas adicionales")

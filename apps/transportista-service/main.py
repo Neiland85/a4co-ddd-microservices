@@ -6,12 +6,17 @@ from typing import List, Optional
 import logging
 import time
 import uuid
+import os
 
 from models import (
     TransportistaCreate, 
     TransportistaResponse, 
     TransportistaSuccessResponse,
-    TransportistaErrorResponse
+    TransportistaErrorResponse,
+    ShipmentCreate,
+    ShipmentResponse,
+    TrackingResponse,
+    UpdateShipmentStatus
 )
 from service import TransportistaService
 
@@ -227,6 +232,129 @@ async def listar_transportistas(activo: Optional[bool] = None):
     return transportistas
 
 
+# --- ENDPOINTS DE ENVÍOS Y TRACKING ---
+
+@app.post(
+    "/shipments",
+    response_model=ShipmentResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Shipments"],
+    summary="Crear un nuevo envío",
+    description="Crea un nuevo envío y asigna un número de tracking"
+)
+async def crear_envio(shipment: ShipmentCreate):
+    """
+    Crear un nuevo envío con tracking
+    
+    - **order_id**: ID de la orden
+    - **transportista_id**: ID del transportista asignado
+    - **origin**: Ubicación de origen
+    - **destination**: Ubicación de destino
+    - **weight_kg**: Peso en kilogramos
+    - **estimated_delivery**: Fecha estimada de entrega
+    """
+    try:
+        nuevo_envio = await transportista_service.crear_envio(shipment)
+        logger.info(f"Envío creado: {nuevo_envio.tracking_number}")
+        return nuevo_envio
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "success": False,
+                "error": str(e),
+                "code": "SHIPMENT_CREATION_ERROR"
+            }
+        )
+
+
+@app.get(
+    "/tracking/{tracking_number}",
+    response_model=TrackingResponse,
+    tags=["Tracking"],
+    summary="Tracking de envío",
+    description="Obtiene información de tracking de un envío"
+)
+async def obtener_tracking(tracking_number: str):
+    """Obtener información de tracking por número"""
+    tracking = await transportista_service.tracking(tracking_number)
+    
+    if not tracking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "success": False,
+                "error": f"Tracking number {tracking_number} no encontrado",
+                "code": "TRACKING_NOT_FOUND"
+            }
+        )
+    
+    return tracking
+
+
+@app.put(
+    "/tracking/{tracking_number}/status",
+    response_model=ShipmentResponse,
+    tags=["Tracking"],
+    summary="Actualizar estado de envío",
+    description="Actualiza el estado y ubicación de un envío"
+)
+async def actualizar_estado_envio(
+    tracking_number: str,
+    update_data: UpdateShipmentStatus
+):
+    """Actualizar estado de un envío en tránsito"""
+    try:
+        shipment = await transportista_service.actualizar_estado_envio(
+            tracking_number, 
+            update_data
+        )
+        logger.info(f"Estado actualizado: {tracking_number} -> {update_data.status}")
+        return shipment
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "success": False,
+                "error": str(e),
+                "code": "SHIPMENT_UPDATE_ERROR"
+            }
+        )
+
+
+@app.get(
+    "/shipments",
+    response_model=List[ShipmentResponse],
+    tags=["Shipments"],
+    summary="Listar envíos",
+    description="Lista envíos con filtros opcionales"
+)
+async def listar_envios(
+    transportista_id: Optional[str] = None,
+    status: Optional[str] = None
+):
+    """Listar envíos con filtros opcionales"""
+    shipments = await transportista_service.listar_envios(
+        transportista_id=transportista_id,
+        status=status
+    )
+    return shipments
+
+
+@app.get(
+    "/shipments/order/{order_id}",
+    response_model=List[ShipmentResponse],
+    tags=["Shipments"],
+    summary="Obtener envíos de una orden",
+    description="Obtiene todos los envíos asociados a una orden"
+)
+async def obtener_envios_por_orden(order_id: str):
+    """Obtener envíos de una orden específica"""
+    shipments = await transportista_service.obtener_envios_por_orden(order_id)
+    return shipments
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", "3008"))
+    uvicorn.run(app, host="0.0.0.0", port=port)
