@@ -100,12 +100,12 @@ const App: React.FC = () => {
     }, [fetchData]);
 
      useEffect(() => {
-        if (currentUser && !currentUser.isProducer) {
-            api.getOrdersByUser(currentUser.id).then(setUserOrders);
+         if (currentUser && !currentUser.isProducer && token) {
+             api.getOrdersByUser(currentUser.id, token).then(setUserOrders);
         } else {
             setUserOrders([]);
         }
-    }, [currentUser]);
+     }, [currentUser, token]);
     
     // Redirect to producer dashboard if user is producer
     useEffect(() => {
@@ -207,12 +207,12 @@ const App: React.FC = () => {
     };
 
     const handleSubmitOrder = async (orderPayload: OrderPayload) => {
-        if (!currentUser) {
+        if (!currentUser || !token) {
             console.error("User must be logged in to submit an order.");
             setIsLoginModalOpen(true);
             return;
         }
-        const newOrder = await api.addOrder(orderPayload, currentUser.id);
+        const newOrder = await api.addOrder(orderPayload, currentUser.id, token);
         setCart([]);
         setView({ name: 'confirmation', order: newOrder });
     };

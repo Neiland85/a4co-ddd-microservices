@@ -2,6 +2,7 @@
 const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:3001/api/v1';
 const PRODUCT_SERVICE_URL = (import.meta as any).env?.VITE_PRODUCT_SERVICE_URL || 'http://localhost:3003/api/v1/products';
 const USER_SERVICE_URL = (import.meta as any).env?.VITE_USER_SERVICE_URL || 'http://localhost:3002/api/v1/users';
+const ORDER_SERVICE_URL = (import.meta as any).env?.VITE_ORDER_SERVICE_URL || 'http://localhost:3004/api/v1/orders';
 
 import type { User, Category, Product, Producer, Order, Review, DeliveryOption, OrderPayload } from './types.ts';
 
@@ -323,9 +324,30 @@ export const updateUserProfile = async (token: string, profileData: {
 
 // --- USER-SPECIFIC API ---
 
-export const getOrdersByUser = async (userId: string): Promise<Order[]> => {
-    await delay(400);
-    return JSON.parse(JSON.stringify(MOCK_ORDERS.filter(o => o.userId === userId)));
+export const getOrdersByUser = async (userId: string, token?: string): Promise<Order[]> => {
+    try {
+        if (token) {
+            const response = await fetch(`${ORDER_SERVICE_URL}/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return data.data || data;
+            }
+        }
+
+        // Fallback to mock
+        console.warn('Order service not available, using mock orders');
+        await delay(400);
+        return JSON.parse(JSON.stringify(MOCK_ORDERS.filter(o => o.userId === userId)));
+    } catch (error) {
+        console.warn('Order service error, using mock orders:', error);
+        await delay(400);
+        return JSON.parse(JSON.stringify(MOCK_ORDERS.filter(o => o.userId === userId)));
+    }
 };
 
 export const toggleFavorite = async (userId: string, productId: string, token?: string): Promise<void> => {
@@ -374,35 +396,143 @@ export const toggleFavorite = async (userId: string, productId: string, token?: 
     }
 };
 
-export const addOrder = async (orderPayload: OrderPayload, userId: string): Promise<Order> => {
-    await delay(1000);
-    const newOrder: Order = {
-        ...orderPayload,
-        id: `order-${Math.random().toString(36).substr(2, 9)}`,
-        userId,
-        date: new Date().toISOString(),
-        status: 'Pendiente',
-    };
-    MOCK_ORDERS.push(newOrder);
-    return JSON.parse(JSON.stringify(newOrder));
+export const addOrder = async (orderPayload: OrderPayload, userId: string, token?: string): Promise<Order> => {
+    try {
+        if (token) {
+            // Transform frontend OrderPayload to order-service format
+            const orderRequest = {
+                items: orderPayload.items.map(item => ({
+                    productId: item.product.id,
+                    quantity: item.quantity,
+                })),
+                shippingAddress: {
+                    street: orderPayload.customerDetails.address,
+                    city: orderPayload.customerDetails.city,
+                    postalCode: orderPayload.customerDetails.postalCode,
+                    country: 'Spain',
+                },
+                billingAddress: {
+                    street: orderPayload.customerDetails.address,
+                    city: orderPayload.customerDetails.city,
+                    postalCode: orderPayload.customerDetails.postalCode,
+                    country: 'Spain',
+                },
+                shippingMethod: 'standard',
+                notes: '',
+            };
+
+            const response = await fetch(`${ORDER_SERVICE_URL}/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderRequest),
+            });
+
+            if (response.ok) {
+                const order = await response.json();
+                return order;
+            }
+        }
+
+        // Fallback to mock
+        console.warn('Order service not available, using mock order creation');
+        await delay(1000);
+        const newOrder: Order = {
+            ...orderPayload,
+            id: `order-${Math.random().toString(36).substr(2, 9)}`,
+            userId,
+            date: new Date().toISOString(),
+            status: 'Pendiente',
+        };
+        MOCK_ORDERS.push(newOrder);
+        return JSON.parse(JSON.stringify(newOrder));
+    } catch (error) {
+        console.warn('Order service error, using mock order creation:', error);
+        await delay(1000);
+        const newOrder: Order = {
+            ...orderPayload,
+            id: `order-${Math.random().toString(36).substr(2, 9)}`,
+            userId,
+            date: new Date().toISOString(),
+            status: 'Pendiente',
+        };
+        MOCK_ORDERS.push(newOrder);
+        return JSON.parse(JSON.stringify(newOrder));
+    }
 };
 
 
 // --- PRODUCER DASHBOARD API ---
 
-export const getOrdersByProducer = async (producerId: string): Promise<Order[]> => {
-    await delay(400);
-    const producerOrders = MOCK_ORDERS.filter(order => order.items.some(item => item.product.producerId === producerId));
-    return JSON.parse(JSON.stringify(producerOrders));
+export const getOrdersByProducer = async (producerId: string, token?: string): Promise<Order[]> => {
+    try {
+        if (token) {
+            // Use admin endpoint with artisanId filter
+            const response = await fetch(`${ORDER_SERVICE_URL}/admin?artisanId=${producerId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return data.data || data;
+            }
+        }
+
+        // Fallback to mock
+        console.warn('Order service not available, using mock producer orders');
+        await delay(400);
+        const producerOrders = MOCK_ORDERS.filter(order => order.items.some(item => item.product.producerId === producerId));
+        return JSON.parse(JSON.stringify(producerOrders));
+    } catch (error) {
+        console.warn('Order service error, using mock producer orders:', error);
+        await delay(400);
+        const producerOrders = MOCK_ORDERS.filter(order => order.items.some(item => item.product.producerId === producerId));
+        return JSON.parse(JSON.stringify(producerOrders));
+    }
 };
 
-export const updateOrderStatus = async (orderId: string, status: Order['status']): Promise<void> => {
-    await delay(500);
-    const orderIndex = MOCK_ORDERS.findIndex(o => o.id === orderId);
-    if (orderIndex !== -1) {
-        MOCK_ORDERS[orderIndex].status = status;
+export const updateOrderStatus = async (orderId: string, status: Order['status'], token?: string, trackingNumber?: string): Promise<void> => {
+    try {
+        if (token) {
+            const response = await fetch(`${ORDER_SERVICE_URL}/${orderId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status,
+                    trackingNumber: trackingNumber || undefined,
+                }),
+            });
+
+            if (response.ok) {
+                console.log('Order status updated successfully');
+                return;
+            }
+        }
+
+        // Fallback to mock
+        console.warn('Order service not available, using mock update');
+        await delay(500);
+        const orderIndex = MOCK_ORDERS.findIndex(o => o.id === orderId);
+        if (orderIndex !== -1) {
+            MOCK_ORDERS[orderIndex].status = status;
+        }
+        return Promise.resolve();
+    } catch (error) {
+        console.warn('Order service error, using mock update:', error);
+        await delay(500);
+        const orderIndex = MOCK_ORDERS.findIndex(o => o.id === orderId);
+        if (orderIndex !== -1) {
+            MOCK_ORDERS[orderIndex].status = status;
+        }
+        return Promise.resolve();
     }
-    return Promise.resolve();
 };
 
 export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Product> => {
