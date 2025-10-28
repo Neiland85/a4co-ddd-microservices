@@ -36,6 +36,7 @@
 ### Endpoints API
 
 #### Transportistas
+
 ```python
 POST   /transportistas          # Crear transportista
 GET    /transportistas/{id}     # Obtener por ID
@@ -43,6 +44,7 @@ GET    /transportistas          # Listar (filtrar por activo)
 ```
 
 #### Shipments
+
 ```python
 POST   /shipments               # Crear envío
 GET    /shipments               # Listar (filtrar por transportista/estado)
@@ -50,12 +52,14 @@ GET    /shipments/order/{id}    # Envíos de una orden
 ```
 
 #### Tracking
+
 ```python
 GET    /tracking/{number}          # Obtener tracking
 PUT    /tracking/{number}/status   # Actualizar estado
 ```
 
 #### Health
+
 ```python
 GET    /health                  # Health check
 ```
@@ -122,6 +126,7 @@ GET    /health                  # Health check
 ## 🏗️ **Arquitectura**
 
 ### Domain-Driven Design
+
 - ✅ Domain entities
 - ✅ Value objects
 - ✅ Aggregates
@@ -129,6 +134,7 @@ GET    /health                  # Health check
 - ✅ Use cases
 
 ### Hexagonal Architecture
+
 - ✅ Ports and adapters
 - ✅ Repository pattern
 - ✅ Provider pattern
@@ -136,6 +142,7 @@ GET    /health                  # Health check
 - ✅ Separation of concerns
 
 ### Data Persistence
+
 - ✅ Prisma ORM (inventory-service)
 - ✅ In-memory (development)
 - ✅ PostgreSQL ready (production)
@@ -145,12 +152,14 @@ GET    /health                  # Health check
 ## 🔌 **Integraciones**
 
 ### Terceros
+
 - ✅ SendGrid (Email)
 - ✅ Twilio (SMS)
 - ✅ Firebase Admin (Push - mock)
 - ✅ Stripe (Payments)
 
 ### Infraestructura
+
 - ✅ PostgreSQL (Database)
 - ✅ NATS (Message broker)
 - ✅ Redis (Cache)
@@ -181,6 +190,7 @@ http://localhost:3008/docs
 ### Ejemplos de Uso
 
 **Crear envío:**
+
 ```bash
 curl -X POST http://localhost:3008/shipments \
   -H "Content-Type: application/json" \
@@ -207,11 +217,13 @@ curl -X POST http://localhost:3008/shipments \
 ```
 
 **Tracking:**
+
 ```bash
 curl http://localhost:3008/tracking/TR20251028123456
 ```
 
 **Actualizar estado:**
+
 ```bash
 curl -X PUT http://localhost:3008/tracking/TR20251028123456/status \
   -H "Content-Type: application/json" \
@@ -254,6 +266,7 @@ curl -X PUT http://localhost:3008/tracking/TR20251028123456/status \
 ## 🏆 **Logros Técnicos**
 
 ### Arquitectura
+
 - ✅ Domain-Driven Design en todos los servicios
 - ✅ Hexagonal Architecture
 - ✅ Repository Pattern (Prisma)
@@ -262,6 +275,7 @@ curl -X PUT http://localhost:3008/tracking/TR20251028123456/status \
 - ✅ Dependency Injection
 
 ### Integraciones
+
 - ✅ 8 microservicios funcionando
 - ✅ Frontend conectado a todos
 - ✅ Providers reales configurados
@@ -269,6 +283,7 @@ curl -X PUT http://localhost:3008/tracking/TR20251028123456/status \
 - ✅ Error handling robusto
 
 ### Calidad
+
 - ✅ TypeScript strict mode
 - ✅ Pydantic validation
 - ✅ Swagger/OpenAPI docs
@@ -281,17 +296,20 @@ curl -X PUT http://localhost:3008/tracking/TR20251028123456/status \
 ## 📝 **Próximos Pasos**
 
 ### Inmediatos
+
 1. ⏳ Tests unitarios (8 servicios)
 2. ⏳ Tests E2E automatizados
 3. ⏳ Ejecutar migraciones de Prisma
 
 ### Corto Plazo
+
 4. ⏳ Deploy a staging
 5. ⏳ Monitoring y observability
 6. ⏳ Performance testing
 7. ⏳ Load testing
 
 ### Mediano Plazo
+
 8. ⏳ Servicios adicionales (analytics, geo, loyalty, etc.)
 9. ⏳ Production deployment
 10. ⏳ Escalabilidad horizontal
