@@ -327,17 +327,17 @@ pnpm run test:coverage
 
 ### Corto Plazo
 
-5. ⏳ Ejecutar migraciones de Prisma en inventory-service
-6. ⏳ Configurar SendGrid y Twilio (keys)
-7. ⏳ Seed de datos de ejemplo
-8. ⏳ Testing manual completo
+1. ⏳ Ejecutar migraciones de Prisma en inventory-service
+2. ⏳ Configurar SendGrid y Twilio (keys)
+3. ⏳ Seed de datos de ejemplo
+4. ⏳ Testing manual completo
 
 ### Mediano Plazo
 
-9. ⏳ Deploy a staging
-10. ⏳ Monitoring y observability
-11. ⏳ Performance optimization
-12. ⏳ Security audit
+1. ⏳ Deploy a staging
+2. ⏳ Monitoring y observability
+3. ⏳ Performance optimization
+4. ⏳ Security audit
 
 ---
 
