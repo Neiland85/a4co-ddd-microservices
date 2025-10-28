@@ -1,5 +1,6 @@
 // API Configuration
 const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:3001/api/v1';
+const PRODUCT_SERVICE_URL = (import.meta as any).env?.VITE_PRODUCT_SERVICE_URL || 'http://localhost:3003/api/v1/products';
 
 import type { User, Category, Product, Producer, Order, Review, DeliveryOption, OrderPayload } from './types.ts';
 
@@ -64,18 +65,113 @@ const stripPassword = (user: UserWithPassword): User => {
 // --- PUBLIC API ---
 
 export const getProducts = async (): Promise<Product[]> => {
-    await delay(500);
-    return JSON.parse(JSON.stringify(MOCK_PRODUCTS));
+    try {
+        const response = await fetch(`${PRODUCT_SERVICE_URL}/`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            // Product service returns { data: Product[], pagination: {...} }
+            return data.data || data;
+        }
+        
+        // Fallback to mock if API fails
+        console.warn('Product service not available, using mock data');
+        await delay(500);
+        return JSON.parse(JSON.stringify(MOCK_PRODUCTS));
+    } catch (error) {
+        console.warn('Product service error, using mock data:', error);
+        await delay(500);
+        return JSON.parse(JSON.stringify(MOCK_PRODUCTS));
+    }
 };
 
 export const getCategories = async (): Promise<Category[]> => {
-    await delay(200);
-    return JSON.parse(JSON.stringify(MOCK_CATEGORIES));
+    try {
+        const response = await fetch(`${PRODUCT_SERVICE_URL}/categories`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            // Product service returns { data: Category[] }
+            return data.data || data;
+        }
+        
+        // Fallback to mock if API fails
+        console.warn('Product service not available, using mock categories');
+        await delay(200);
+        return JSON.parse(JSON.stringify(MOCK_CATEGORIES));
+    } catch (error) {
+        console.warn('Product service error, using mock categories:', error);
+        await delay(200);
+        return JSON.parse(JSON.stringify(MOCK_CATEGORIES));
+    }
 };
 
 export const getProducers = async (): Promise<Producer[]> => {
+    // Note: Producers should come from user-service in the future
+    // For now, using mocks
     await delay(300);
     return JSON.parse(JSON.stringify(MOCK_PRODUCERS));
+};
+
+export const getProductById = async (productId: string): Promise<Product | null> => {
+    try {
+        const response = await fetch(`${PRODUCT_SERVICE_URL}/${productId}`);
+        
+        if (response.ok) {
+            const product = await response.json();
+            return product;
+        }
+        
+        // Fallback to mock if API fails
+        console.warn('Product service not available, using mock data');
+        await delay(300);
+        return MOCK_PRODUCTS.find(p => p.id === productId) || null;
+    } catch (error) {
+        console.warn('Product service error, using mock data:', error);
+        await delay(300);
+        return MOCK_PRODUCTS.find(p => p.id === productId) || null;
+    }
+};
+
+export const searchProducts = async (query: string, filters?: {
+    category?: string;
+    location?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    rating?: number;
+}): Promise<Product[]> => {
+    try {
+        const params = new URLSearchParams();
+        params.append('q', query);
+        
+        if (filters?.category) params.append('category', filters.category);
+        if (filters?.location) params.append('location', filters.location);
+        if (filters?.minPrice !== undefined) params.append('minPrice', filters.minPrice.toString());
+        if (filters?.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString());
+        if (filters?.rating !== undefined) params.append('rating', filters.rating.toString());
+        
+        const response = await fetch(`${PRODUCT_SERVICE_URL}/search?${params.toString()}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.data || data;
+        }
+        
+        // Fallback to mock search
+        console.warn('Product service search not available, using mock search');
+        const searchLower = query.toLowerCase();
+        return MOCK_PRODUCTS.filter(p => 
+            p.name.toLowerCase().includes(searchLower) || 
+            p.description.toLowerCase().includes(searchLower)
+        );
+    } catch (error) {
+        console.warn('Product service search error, using mock search:', error);
+        const searchLower = query.toLowerCase();
+        return MOCK_PRODUCTS.filter(p => 
+            p.name.toLowerCase().includes(searchLower) || 
+            p.description.toLowerCase().includes(searchLower)
+        );
+    }
 };
 
 // --- AUTH API ---
