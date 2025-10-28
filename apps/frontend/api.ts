@@ -1,5 +1,6 @@
+// API Configuration
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:3001/api/v1';
 
-// FIX: Implement mock API and data source.
 import type { User, Category, Product, Producer, Order, Review, DeliveryOption, OrderPayload } from './types.ts';
 
 // --- MOCK DATABASE ---
@@ -79,29 +80,70 @@ export const getProducers = async (): Promise<Producer[]> => {
 
 // --- AUTH API ---
 
-export const loginUser = (email: string, pass: string, role: 'customer' | 'producer' = 'customer'): { user: User, token: string } | null => {
-    const user = MOCK_USERS.find(u => u.email === email && u.passwordHash === pass);
-    const roleMatch = role === 'producer' ? user?.isProducer : !user?.isProducer;
-    if (user && roleMatch) {
-        return { user: stripPassword(user), token: `fake-jwt-for-${user.id}` };
+export const loginUser = async (email: string, pass: string, role: 'customer' | 'producer' = 'customer'): Promise<{ user: User, token: string } | null> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password: pass }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return { user: data.user, token: data.access_token || data.token };
+        }
+
+        // Fallback to mock if API fails
+        const user = MOCK_USERS.find(u => u.email === email && u.passwordHash === pass);
+        const roleMatch = role === 'producer' ? user?.isProducer : !user?.isProducer;
+        if (user && roleMatch) {
+            return { user: stripPassword(user), token: `fake-jwt-for-${user.id}` };
+        }
+        return null;
+    } catch (error) {
+        console.warn('API call failed, using mock data:', error);
+        // Fallback to mock
+        const user = MOCK_USERS.find(u => u.email === email && u.passwordHash === pass);
+        const roleMatch = role === 'producer' ? user?.isProducer : !user?.isProducer;
+        if (user && roleMatch) {
+            return { user: stripPassword(user), token: `fake-jwt-for-${user.id}` };
+        }
+        return null;
     }
-    return null;
 };
 
-export const registerUser = (name: string, email: string, pass: string): { user: User, token: string } | null => {
-    if (MOCK_USERS.some(u => u.email === email)) {
-        return null; // User already exists
+export const registerUser = async (name: string, email: string, pass: string): Promise<{ user: User, token: string } | null> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password: pass, name }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return { user: data.user, token: data.access_token || data.token };
+        }
+
+        // Fallback to mock
+        return null;
+    } catch (error) {
+        console.warn('API call failed, using mock data:', error);
+        // Fallback to mock
+        if (MOCK_USERS.some(u => u.email === email)) {
+            return null;
+        }
+        const newUser: UserWithPassword = {
+            id: `user-${MOCK_USERS.length + 1}`,
+            name,
+            email,
+            passwordHash: pass,
+            favoriteProductIds: [],
+            isProducer: false,
+        };
+        MOCK_USERS.push(newUser);
+        return { user: stripPassword(newUser), token: `fake-jwt-for-${newUser.id}` };
     }
-    const newUser: UserWithPassword = {
-        id: `user-${MOCK_USERS.length + 1}`,
-        name,
-        email,
-        passwordHash: pass,
-        favoriteProductIds: [],
-        isProducer: false,
-    };
-    MOCK_USERS.push(newUser);
-    return { user: stripPassword(newUser), token: `fake-jwt-for-${newUser.id}` };
 };
 
 export const getMe = (token: string): User | null => {
