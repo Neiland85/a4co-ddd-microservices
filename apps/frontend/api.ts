@@ -1,6 +1,7 @@
 // API Configuration
 const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:3001/api/v1';
 const PRODUCT_SERVICE_URL = (import.meta as any).env?.VITE_PRODUCT_SERVICE_URL || 'http://localhost:3003/api/v1/products';
+const USER_SERVICE_URL = (import.meta as any).env?.VITE_USER_SERVICE_URL || 'http://localhost:3002/api/v1/users';
 
 import type { User, Category, Product, Producer, Order, Review, DeliveryOption, OrderPayload } from './types.ts';
 
@@ -67,13 +68,13 @@ const stripPassword = (user: UserWithPassword): User => {
 export const getProducts = async (): Promise<Product[]> => {
     try {
         const response = await fetch(`${PRODUCT_SERVICE_URL}/`);
-        
+
         if (response.ok) {
             const data = await response.json();
             // Product service returns { data: Product[], pagination: {...} }
             return data.data || data;
         }
-        
+
         // Fallback to mock if API fails
         console.warn('Product service not available, using mock data');
         await delay(500);
@@ -88,13 +89,13 @@ export const getProducts = async (): Promise<Product[]> => {
 export const getCategories = async (): Promise<Category[]> => {
     try {
         const response = await fetch(`${PRODUCT_SERVICE_URL}/categories`);
-        
+
         if (response.ok) {
             const data = await response.json();
             // Product service returns { data: Category[] }
             return data.data || data;
         }
-        
+
         // Fallback to mock if API fails
         console.warn('Product service not available, using mock categories');
         await delay(200);
@@ -107,21 +108,46 @@ export const getCategories = async (): Promise<Category[]> => {
 };
 
 export const getProducers = async (): Promise<Producer[]> => {
-    // Note: Producers should come from user-service in the future
-    // For now, using mocks
-    await delay(300);
-    return JSON.parse(JSON.stringify(MOCK_PRODUCERS));
+    try {
+        // Get users with role=artisan from user-service
+        const response = await fetch(`${USER_SERVICE_URL}/?role=artisan`);
+
+        if (response.ok) {
+            const data = await response.json();
+            const artisans = data.data || data;
+
+            // Transform artisan users to Producer format
+            return artisans.map((artisan: any) => ({
+                id: artisan.id,
+                name: `${artisan.firstName} ${artisan.lastName}`,
+                description: artisan.bio || 'Artesano local',
+                province: artisan.address?.city || 'Andalucía',
+                logoUrl: artisan.avatar || 'https://picsum.photos/id/1025/100/100',
+                bannerUrl: artisan.bannerUrl || 'https://picsum.photos/id/1015/1000/400',
+                videoUrl: artisan.videoUrl,
+            }));
+        }
+
+        // Fallback to mock if API fails
+        console.warn('User service not available, using mock producers');
+        await delay(300);
+        return JSON.parse(JSON.stringify(MOCK_PRODUCERS));
+    } catch (error) {
+        console.warn('User service error, using mock producers:', error);
+        await delay(300);
+        return JSON.parse(JSON.stringify(MOCK_PRODUCERS));
+    }
 };
 
 export const getProductById = async (productId: string): Promise<Product | null> => {
     try {
         const response = await fetch(`${PRODUCT_SERVICE_URL}/${productId}`);
-        
+
         if (response.ok) {
             const product = await response.json();
             return product;
         }
-        
+
         // Fallback to mock if API fails
         console.warn('Product service not available, using mock data');
         await delay(300);
@@ -143,32 +169,32 @@ export const searchProducts = async (query: string, filters?: {
     try {
         const params = new URLSearchParams();
         params.append('q', query);
-        
+
         if (filters?.category) params.append('category', filters.category);
         if (filters?.location) params.append('location', filters.location);
         if (filters?.minPrice !== undefined) params.append('minPrice', filters.minPrice.toString());
         if (filters?.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString());
         if (filters?.rating !== undefined) params.append('rating', filters.rating.toString());
-        
+
         const response = await fetch(`${PRODUCT_SERVICE_URL}/search?${params.toString()}`);
-        
+
         if (response.ok) {
             const data = await response.json();
             return data.data || data;
         }
-        
+
         // Fallback to mock search
         console.warn('Product service search not available, using mock search');
         const searchLower = query.toLowerCase();
-        return MOCK_PRODUCTS.filter(p => 
-            p.name.toLowerCase().includes(searchLower) || 
+        return MOCK_PRODUCTS.filter(p =>
+            p.name.toLowerCase().includes(searchLower) ||
             p.description.toLowerCase().includes(searchLower)
         );
     } catch (error) {
         console.warn('Product service search error, using mock search:', error);
         const searchLower = query.toLowerCase();
-        return MOCK_PRODUCTS.filter(p => 
-            p.name.toLowerCase().includes(searchLower) || 
+        return MOCK_PRODUCTS.filter(p =>
+            p.name.toLowerCase().includes(searchLower) ||
             p.description.toLowerCase().includes(searchLower)
         );
     }
@@ -248,6 +274,53 @@ export const getMe = (token: string): User | null => {
     return user ? stripPassword(user) : null;
 };
 
+export const getUserProfile = async (token: string): Promise<User | null> => {
+    try {
+        const response = await fetch(`${USER_SERVICE_URL}/profile`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+
+        // Fallback to getMe
+        return getMe(token);
+    } catch (error) {
+        console.warn('User service error, using mock:', error);
+        return getMe(token);
+    }
+};
+
+export const updateUserProfile = async (token: string, profileData: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    avatar?: string;
+}): Promise<User | null> => {
+    try {
+        const response = await fetch(`${USER_SERVICE_URL}/profile`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(profileData),
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+
+        return null;
+    } catch (error) {
+        console.warn('User service error:', error);
+        return null;
+    }
+};
+
 // --- USER-SPECIFIC API ---
 
 export const getOrdersByUser = async (userId: string): Promise<Order[]> => {
@@ -255,19 +328,50 @@ export const getOrdersByUser = async (userId: string): Promise<Order[]> => {
     return JSON.parse(JSON.stringify(MOCK_ORDERS.filter(o => o.userId === userId)));
 };
 
-export const toggleFavorite = (userId: string, productId: string) => {
-    const userIndex = MOCK_USERS.findIndex(u => u.id === userId);
-    if (userIndex === -1) return;
+export const toggleFavorite = async (userId: string, productId: string, token?: string): Promise<void> => {
+    try {
+        if (token) {
+            // Call user-service to toggle favorite
+            const response = await fetch(`${USER_SERVICE_URL}/${userId}/favorites/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-    const user = MOCK_USERS[userIndex];
-    const isFavorite = user.favoriteProductIds.includes(productId);
+            if (response.ok) {
+                console.log('Favorite toggled successfully');
+                return;
+            }
+        }
 
-    if (isFavorite) {
-        user.favoriteProductIds = user.favoriteProductIds.filter(id => id !== productId);
-    } else {
-        user.favoriteProductIds.push(productId);
+        // Fallback to mock
+        const userIndex = MOCK_USERS.findIndex(u => u.id === userId);
+        if (userIndex === -1) return;
+
+        const user = MOCK_USERS[userIndex];
+        const isFavorite = user.favoriteProductIds.includes(productId);
+
+        if (isFavorite) {
+            user.favoriteProductIds = user.favoriteProductIds.filter(id => id !== productId);
+        } else {
+            user.favoriteProductIds.push(productId);
+        }
+        console.log(`Favorites for ${user.name}:`, user.favoriteProductIds);
+    } catch (error) {
+        console.warn('User service error, using mock favorites:', error);
+        // Fallback to mock (same as above)
+        const userIndex = MOCK_USERS.findIndex(u => u.id === userId);
+        if (userIndex === -1) return;
+        const user = MOCK_USERS[userIndex];
+        const isFavorite = user.favoriteProductIds.includes(productId);
+        if (isFavorite) {
+            user.favoriteProductIds = user.favoriteProductIds.filter(id => id !== productId);
+        } else {
+            user.favoriteProductIds.push(productId);
+        }
     }
-    console.log(`Favorites for ${user.name}:`, user.favoriteProductIds);
 };
 
 export const addOrder = async (orderPayload: OrderPayload, userId: string): Promise<Order> => {

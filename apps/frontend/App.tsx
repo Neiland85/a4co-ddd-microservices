@@ -40,7 +40,7 @@ type View =
 
 const App: React.FC = () => {
     // Auth state from context
-    const { user: currentUser, logout } = useAuth();
+    const { user: currentUser, logout, token } = useAuth();
 
     // View state
     const [view, setView] = useState<View>({ name: 'home' });
@@ -161,17 +161,17 @@ const App: React.FC = () => {
         setCart([]); // Clear cart on logout
     };
 
-    const handleToggleFavorite = (productId: string) => {
+    const handleToggleFavorite = async (productId: string) => {
         if (!currentUser) {
             setPostLoginAction(() => () => handleToggleFavorite(productId));
             setIsLoginModalOpen(true);
             return;
         }
 
-        // Call API to toggle favorite
-        api.toggleFavorite(currentUser.id, productId);
+        // Call API to toggle favorite with token
+        await api.toggleFavorite(currentUser.id, productId, token || undefined);
         
-        // Note: In a real app, you'd update user state from the API response
+        // Note: In a real app, you'd refresh user state from the API response
         // For now, the favorites are managed by the mock API
     };
     
