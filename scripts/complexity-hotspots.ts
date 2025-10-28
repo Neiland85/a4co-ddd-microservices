@@ -218,11 +218,7 @@ function getThresholdForLayer(layer: string): { max: number; warning: number } {
 
 function getSeverity(
   complexity: number,
-<<<<<<< HEAD
-  threshold: { max: number; warning: number },
-=======
   threshold: { max: number; warning: number }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ): 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' {
   if (complexity > threshold.max * 2) return 'CRITICAL';
   if (complexity > threshold.max) return 'HIGH';
