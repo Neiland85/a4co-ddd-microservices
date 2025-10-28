@@ -7,10 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Inventory {
-  id        String   @id @default(uuid())
-  productId String
-  quantity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  sku           String   @unique
+  category      String
+  brand         String?
+  unitPrice     Float
+  currency      String   @default("USD")
+  currentStock  Int      @default(0)
+  reservedStock Int      @default(0)
+  minimumStock  Int      @default(10)
+  maximumStock  Int      @default(1000)
+  isActive      Boolean  @default(true)
+  artisanId     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([artisanId])
+  @@index([category])
+  @@index([sku])
+  @@index([isActive])
+  @@map("products")
+}
+
+model StockReservation {
+  id         String   @id @default(uuid())
+  productId  String
+  quantity   Int
+  orderId    String   @unique
+  customerId String
+  status     String   @default("active") // active, released, expired, confirmed
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([productId])
+  @@index([orderId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("stock_reservations")
+}
+
+model StockMovement {
+  id          String   @id @default(uuid())
+  productId   String
+  type        String   // addition, reduction, reservation, release, adjustment
+  quantity    Int
+  previousQty Int
+  newQty      Int
+  reason      String
+  reference   String? // Order ID, Adjustment ID, etc.
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("stock_movements")
 }
