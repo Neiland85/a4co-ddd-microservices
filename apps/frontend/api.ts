@@ -3,6 +3,7 @@ const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://loca
 const PRODUCT_SERVICE_URL = (import.meta as any).env?.VITE_PRODUCT_SERVICE_URL || 'http://localhost:3003/api/v1/products';
 const USER_SERVICE_URL = (import.meta as any).env?.VITE_USER_SERVICE_URL || 'http://localhost:3002/api/v1/users';
 const ORDER_SERVICE_URL = (import.meta as any).env?.VITE_ORDER_SERVICE_URL || 'http://localhost:3004/api/v1/orders';
+const PAYMENT_SERVICE_URL = (import.meta as any).env?.VITE_PAYMENT_SERVICE_URL || 'http://localhost:3005/api/v1/payments';
 
 import type { User, Category, Product, Producer, Order, Review, DeliveryOption, OrderPayload } from './types.ts';
 
@@ -573,4 +574,107 @@ export const updateProducer = async (producerData: Producer): Promise<Producer> 
         return JSON.parse(JSON.stringify(MOCK_PRODUCERS[index]));
     }
     throw new Error("Producer not found");
+};
+
+// --- PAYMENT API ---
+
+export const getPaymentMethods = async (token: string): Promise<any[]> => {
+    try {
+        const response = await fetch(`${PAYMENT_SERVICE_URL}/methods`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.data || data;
+        }
+        
+        // Fallback to mock
+        return [];
+    } catch (error) {
+        console.warn('Payment service error, using mock payment methods:', error);
+        return [];
+    }
+};
+
+export const createPaymentIntent = async (
+    orderId: string,
+    amount: number,
+    currency: string,
+    token: string,
+    paymentMethodId?: string
+): Promise<any> => {
+    try {
+        const response = await fetch(`${PAYMENT_SERVICE_URL}/intent`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderId,
+                amount,
+                currency,
+                paymentMethodId,
+            }),
+        });
+        
+        if (response.ok) {
+            return await response.json();
+        }
+        
+        // Fallback to mock success
+        console.warn('Payment service not available, simulating payment intent');
+        return {
+            id: `pi_mock_${Date.now()}`,
+            clientSecret: 'mock_secret',
+            status: 'requires_confirmation',
+        };
+    } catch (error) {
+        console.warn('Payment service error, simulating payment intent:', error);
+        return {
+            id: `pi_mock_${Date.now()}`,
+            clientSecret: 'mock_secret',
+            status: 'requires_confirmation',
+        };
+    }
+};
+
+export const confirmPayment = async (
+    paymentIntentId: string,
+    paymentMethodId: string,
+    token: string
+): Promise<any> => {
+    try {
+        const response = await fetch(`${PAYMENT_SERVICE_URL}/confirm`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                paymentIntentId,
+                paymentMethodId,
+            }),
+        });
+        
+        if (response.ok) {
+            return await response.json();
+        }
+        
+        // Fallback to mock success
+        console.warn('Payment service not available, simulating payment confirmation');
+        return {
+            id: `pay_mock_${Date.now()}`,
+            status: 'succeeded',
+        };
+    } catch (error) {
+        console.warn('Payment service error, simulating payment confirmation:', error);
+        return {
+            id: `pay_mock_${Date.now()}`,
+            status: 'succeeded',
+        };
+    }
 };
