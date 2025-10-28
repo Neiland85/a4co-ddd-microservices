@@ -4,6 +4,9 @@ const PRODUCT_SERVICE_URL = (import.meta as any).env?.VITE_PRODUCT_SERVICE_URL |
 const USER_SERVICE_URL = (import.meta as any).env?.VITE_USER_SERVICE_URL || 'http://localhost:3002/api/v1/users';
 const ORDER_SERVICE_URL = (import.meta as any).env?.VITE_ORDER_SERVICE_URL || 'http://localhost:3004/api/v1/orders';
 const PAYMENT_SERVICE_URL = (import.meta as any).env?.VITE_PAYMENT_SERVICE_URL || 'http://localhost:3005/api/v1/payments';
+const INVENTORY_SERVICE_URL = (import.meta as any).env?.VITE_INVENTORY_SERVICE_URL || 'http://localhost:3006/api/inventory';
+const NOTIFICATION_SERVICE_URL = (import.meta as any).env?.VITE_NOTIFICATION_SERVICE_URL || 'http://localhost:3007/api/notifications';
+const TRANSPORTISTA_SERVICE_URL = (import.meta as any).env?.VITE_TRANSPORTISTA_SERVICE_URL || 'http://localhost:3008';
 
 import type { User, Category, Product, Producer, Order, Review, DeliveryOption, OrderPayload } from './types.ts';
 
@@ -676,5 +679,243 @@ export const confirmPayment = async (
             id: `pay_mock_${Date.now()}`,
             status: 'succeeded',
         };
+    }
+};
+
+// --- INVENTORY API ---
+
+export const checkInventory = async (productId: string): Promise<any> => {
+    try {
+        const response = await fetch(`${INVENTORY_SERVICE_URL}/check/${productId}`);
+
+        if (response.ok) {
+            return await response.json();
+        }
+
+        // Fallback to mock stock data
+        const product = MOCK_PRODUCTS.find(p => p.id === productId);
+        return {
+            productId,
+            currentStock: product?.stock || 0,
+            availableStock: product?.stock || 0,
+            stockStatus: (product?.stock || 0) > 10 ? 'in_stock' : (product?.stock || 0) > 0 ? 'low_stock' : 'out_of_stock',
+            needsRestock: (product?.stock || 0) < 5,
+        };
+    } catch (error) {
+        console.warn('Inventory service error, using mock data:', error);
+        const product = MOCK_PRODUCTS.find(p => p.id === productId);
+        return {
+            productId,
+            currentStock: product?.stock || 0,
+            availableStock: product?.stock || 0,
+            stockStatus: (product?.stock || 0) > 10 ? 'in_stock' : (product?.stock || 0) > 0 ? 'low_stock' : 'out_of_stock',
+            needsRestock: (product?.stock || 0) < 5,
+        };
+    }
+};
+
+export const checkBulkInventory = async (productIds: string[]): Promise<any> => {
+    try {
+        const response = await fetch(`${INVENTORY_SERVICE_URL}/check/bulk`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productIds }),
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+
+        // Fallback to mock
+        const products = MOCK_PRODUCTS.filter(p => productIds.includes(p.id));
+        return {
+            products: products.map(p => ({
+                productId: p.id,
+                currentStock: p.stock,
+                availableStock: p.stock,
+                stockStatus: p.stock > 10 ? 'in_stock' : p.stock > 0 ? 'low_stock' : 'out_of_stock',
+            })),
+            summary: {
+                totalProducts: products.length,
+                inStock: products.filter(p => p.stock > 10).length,
+                lowStock: products.filter(p => p.stock > 0 && p.stock <= 10).length,
+                outOfStock: products.filter(p => p.stock === 0).length,
+            },
+        };
+    } catch (error) {
+        console.warn('Inventory service error, using mock data:', error);
+        const products = MOCK_PRODUCTS.filter(p => productIds.includes(p.id));
+        return {
+            products: products.map(p => ({
+                productId: p.id,
+                currentStock: p.stock,
+                availableStock: p.stock,
+                stockStatus: p.stock > 10 ? 'in_stock' : p.stock > 0 ? 'low_stock' : 'out_of_stock',
+            })),
+            summary: {
+                totalProducts: products.length,
+                inStock: products.filter(p => p.stock > 10).length,
+                lowStock: products.filter(p => p.stock > 0 && p.stock <= 10).length,
+                outOfStock: products.filter(p => p.stock === 0).length,
+            },
+        };
+    }
+};
+
+export const reserveStock = async (
+    productId: string,
+    quantity: number,
+    orderId: string,
+    customerId: string,
+    token?: string
+): Promise<{ success: boolean; message: string }> => {
+    try {
+        const expiresAt = new Date();
+        expiresAt.setMinutes(expiresAt.getMinutes() + 15); // 15 min expiry
+
+        const response = await fetch(`${INVENTORY_SERVICE_URL}/reserve`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+            },
+            body: JSON.stringify({
+                productId,
+                quantity,
+                orderId,
+                customerId,
+                expiresAt: expiresAt.toISOString(),
+            }),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        }
+
+        // Fallback to mock success
+        return { success: true, message: 'Stock reserved (mock)' };
+    } catch (error) {
+        console.warn('Inventory service error, using mock reservation:', error);
+        return { success: true, message: 'Stock reserved (mock)' };
+    }
+};
+
+export const getLowStockProducts = async (token?: string): Promise<Product[]> => {
+    try {
+        const response = await fetch(`${INVENTORY_SERVICE_URL}/products/low-stock`, {
+            headers: {
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+            },
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+
+        // Fallback to mock
+        return MOCK_PRODUCTS.filter(p => p.stock <= 10 && p.stock > 0);
+    } catch (error) {
+        console.warn('Inventory service error, using mock low stock:', error);
+        return MOCK_PRODUCTS.filter(p => p.stock <= 10 && p.stock > 0);
+    }
+};
+
+// --- NOTIFICATION API ---
+
+export const sendNotification = async (
+    type: 'email' | 'sms' | 'push',
+    title: string,
+    message: string,
+    recipients: string[],
+    token?: string
+): Promise<{ success: boolean; message: string }> => {
+    try {
+        const response = await fetch(`${NOTIFICATION_SERVICE_URL}/send`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+            },
+            body: JSON.stringify({
+                type,
+                priority: 'medium',
+                title,
+                message,
+                recipients,
+                channels: [type],
+            }),
+        });
+
+        if (response.ok) {
+            return { success: true, message: 'Notification sent' };
+        }
+
+        // Fallback to mock
+        console.warn('Notification service not available, simulating send');
+        console.log(`📧 Mock notification: ${title} to ${recipients.join(', ')}`);
+        return { success: true, message: 'Notification sent (mock)' };
+    } catch (error) {
+        console.warn('Notification service error, using mock:', error);
+        console.log(`📧 Mock notification: ${title} to ${recipients.join(', ')}`);
+        return { success: true, message: 'Notification sent (mock)' };
+    }
+};
+
+// --- SHIPPING/TRACKING API ---
+
+export const trackShipment = async (trackingNumber: string): Promise<any> => {
+    try {
+        // For now, transportista-service doesn't have a tracking endpoint
+        // This would call a tracking API when implemented
+        console.log(`Tracking shipment: ${trackingNumber}`);
+
+        // Mock tracking data
+        return {
+            trackingNumber,
+            status: 'in_transit',
+            estimatedDelivery: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+            currentLocation: 'Centro de distribución - Madrid',
+            history: [
+                { status: 'picked_up', location: 'Almacén Jaén', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
+                { status: 'in_transit', location: 'Centro distribución Madrid', timestamp: new Date().toISOString() },
+            ],
+        };
+    } catch (error) {
+        console.warn('Tracking service error, using mock data:', error);
+        return {
+            trackingNumber,
+            status: 'in_transit',
+            estimatedDelivery: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+            currentLocation: 'En tránsito',
+        };
+    }
+};
+
+export const getAvailableCarriers = async (token?: string): Promise<any[]> => {
+    try {
+        const response = await fetch(`${TRANSPORTISTA_SERVICE_URL}/transportistas?activo=true`, {
+            headers: {
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+            },
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+
+        // Fallback to mock
+        return [
+            { id: 'carrier-1', nombre: 'Express Jaén', tipo_vehiculo: 'furgon', capacidad_kg: 1000 },
+            { id: 'carrier-2', nombre: 'Andalucía Express', tipo_vehiculo: 'camion', capacidad_kg: 5000 },
+        ];
+    } catch (error) {
+        console.warn('Transportista service error, using mock carriers:', error);
+        return [
+            { id: 'carrier-1', nombre: 'Express Jaén', tipo_vehiculo: 'furgon', capacidad_kg: 1000 },
+            { id: 'carrier-2', nombre: 'Andalucía Express', tipo_vehiculo: 'camion', capacidad_kg: 5000 },
+        ];
     }
 };
