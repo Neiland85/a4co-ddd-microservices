@@ -1,6 +1,6 @@
 # 🧪 Testing Completo - 100%
 
-**Fecha:** Octubre 28, 2025  
+**Fecha:** Octubre 28, 2025
 **Hito:** Testing profesional implementado
 
 ---
@@ -118,17 +118,17 @@
 
 ## 📊 **Estadísticas Totales**
 
-| Métrica | Valor |
-|---------|-------|
-| **Líneas tests unitarios** | ~1,296 |
-| **Líneas tests E2E** | ~496 |
-| **Total líneas tests** | **~1,792** |
-| **Test files** | 13 |
-| **Test cases unitarios** | 35+ |
-| **Test scenarios E2E** | 15+ |
-| **Total test cases** | **50+** |
-| **Frameworks** | Jest, pytest, Playwright |
-| **Browsers** | Chrome, Firefox, Safari |
+| Métrica                    | Valor                    |
+| -------------------------- | ------------------------ |
+| **Líneas tests unitarios** | ~1,296                   |
+| **Líneas tests E2E**       | ~496                     |
+| **Total líneas tests**     | **~1,792**               |
+| **Test files**             | 13                       |
+| **Test cases unitarios**   | 35+                      |
+| **Test scenarios E2E**     | 15+                      |
+| **Total test cases**       | **50+**                  |
+| **Frameworks**             | Jest, pytest, Playwright |
+| **Browsers**               | Chrome, Firefox, Safari  |
 
 ---
 
@@ -189,7 +189,7 @@ pnpm test:coverage
 **Notification-Service:**
 
 ```bash
-cd apps/notification-service  
+cd apps/notification-service
 pnpm test
 pnpm test:coverage
 ```
@@ -326,6 +326,5 @@ pnpm test:report
 
 ---
 
-_Actualizado: Octubre 28, 2025_  
+_Actualizado: Octubre 28, 2025_
 _Estado: ✅ Testing Completo_
-
