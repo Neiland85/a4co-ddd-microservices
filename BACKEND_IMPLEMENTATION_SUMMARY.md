@@ -10,6 +10,7 @@
 ### 1. **Inventory-Service** (Puerto 3006)
 
 #### Tecnologías
+
 - NestJS
 - Prisma ORM
 - PostgreSQL
@@ -18,23 +19,27 @@
 #### Implementación
 
 **Prisma Schema:**
+
 - ✅ Modelo `Product` completo con todos los campos
 - ✅ Modelo `StockReservation` para gestión de reservas
 - ✅ Modelo `StockMovement` para historial de movimientos
 - ✅ Índices optimizados
 
 **Repository Pattern:**
+
 - ✅ `PrismaProductRepository` con implementación completa
 - ✅ Operaciones CRUD
 - ✅ Queries especializadas (low stock, out of stock, by category, by artisan)
 
 **NestJS Module:**
+
 - ✅ Dependency Injection configurada
 - ✅ Prisma Client como provider
 - ✅ Use Cases integrados
 - ✅ Service layer
 
 **HTTP Controller:**
+
 - ✅ Swagger documentation
 - ✅ Health check endpoint
 - ✅ Check inventory endpoints
@@ -49,6 +54,7 @@
 ### 2. **Notification-Service** (Puerto 3007)
 
 #### Tecnologías
+
 - NestJS
 - SendGrid (Email)
 - Twilio (SMS)
@@ -58,17 +64,20 @@
 #### Implementación
 
 **Provider Pattern:**
+
 - ✅ `EmailProvider` con SendGrid
 - ✅ `SMSProvider` con Twilio
 - ✅ `PushProvider` (mock, preparado para Firebase)
 - ✅ Fallback automático a mocks cuando proveedores no configurados
 
 **NestJS Module:**
+
 - ✅ Dependency Injection para providers
 - ✅ ConfigModule global
 - ✅ Provider factories
 
 **HTTP Controller:**
+
 - ✅ Swagger documentation
 - ✅ Health check con status de providers
 - ✅ POST /send para enviar notificaciones
@@ -76,12 +85,14 @@
 - ✅ Multi-channel support (email, SMS, push)
 
 **Service Layer:**
+
 - ✅ Queue system
 - ✅ Retry mechanism
 - ✅ Statistics tracking
 - ✅ Template support
 
 **Commits:**
+
 - `9edbb55` - Proveedores
 - `89f7d28` - Module completo
 
@@ -145,16 +156,19 @@ apps/notification-service/
 ## 🔌 Integraciones
 
 ### SendGrid (Email)
+
 - Configuración via `SENDGRID_API_KEY`
 - From email via `NOTIFICATION_EMAIL`
 - Fallback a mock si no configurado
 
 ### Twilio (SMS)
+
 - Configuración via `TWILIO_ACCOUNT_SID` y `TWILIO_AUTH_TOKEN`
 - Phone number via `TWILIO_PHONE_NUMBER`
 - Fallback a mock si no configurado
 
 ### Firebase Admin (Push)
+
 - Preparado para configuración
 - Actualmente usando mock
 
@@ -178,6 +192,7 @@ pnpm run dev
 ```
 
 **Endpoints:**
+
 - `GET /api/inventory/health`
 - `GET /api/inventory/check/:productId`
 - `POST /api/inventory/check/bulk`
@@ -205,6 +220,7 @@ pnpm run dev
 ```
 
 **Endpoints:**
+
 - `GET /api/notifications/health`
 - `POST /api/notifications/send`
 - `GET /api/notifications/stats`
@@ -212,6 +228,7 @@ pnpm run dev
 **Swagger:** `http://localhost:3007/api/notifications/docs`
 
 **Ejemplo de uso:**
+
 ```json
 POST /api/notifications/send
 {
@@ -233,6 +250,7 @@ POST /api/notifications/send
 ## 🔐 Variables de Entorno
 
 ### Inventory-Service
+
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/inventory
 PORT=3006
@@ -241,6 +259,7 @@ CORS_ORIGIN=*
 ```
 
 ### Notification-Service
+
 ```env
 # Email (SendGrid)
 SENDGRID_API_KEY=SG.xxx
@@ -264,6 +283,7 @@ CORS_ORIGIN=*
 ### Manual Testing
 
 **Inventory:**
+
 ```bash
 # Health check
 curl http://localhost:3006/api/inventory/health
@@ -273,6 +293,7 @@ curl http://localhost:3006/api/inventory/check/product-123
 ```
 
 **Notifications:**
+
 ```bash
 # Health check
 curl http://localhost:3007/api/notifications/health
@@ -295,18 +316,21 @@ curl -X POST http://localhost:3007/api/notifications/send \
 ## 📝 Próximos Pasos
 
 ### Corto Plazo
+
 - [ ] Ejecutar migraciones de Prisma en inventory-service
 - [ ] Seed de datos de ejemplo
 - [ ] Testing unitario de repositories
 - [ ] Testing E2E de endpoints
 
 ### Mediano Plazo
+
 - [ ] Implementar Firebase Push notifications
 - [ ] Agregar más templates de notificaciones
 - [ ] Dashboard de monitoreo de inventario
 - [ ] Alertas automáticas de stock bajo
 
 ### Largo Plazo
+
 - [ ] Deploy a staging
 - [ ] Monitoring y observability
 - [ ] Performance optimization
