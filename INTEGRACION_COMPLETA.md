@@ -318,7 +318,7 @@ cd apps/frontend && pnpm run dev
 
 ---
 
-_Fecha: Octubre 2025_  
-_Proyecto: a4co-ddd-microservices_  
+_Fecha: Octubre 2025_
+_Proyecto: a4co-ddd-microservices_
 _Equipo: DDD Microservices Team_
 
