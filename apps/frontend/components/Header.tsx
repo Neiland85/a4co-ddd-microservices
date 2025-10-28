@@ -16,6 +16,7 @@ interface HeaderProps {
     currentUser: User | null;
     onLoginClick: () => void;
     onUserDashboardClick: () => void;
+    onLogoutClick?: () => void;
     // FIX: Add onProducerZoneClick to props to handle navigation.
     onProducerZoneClick: () => void;
 }
@@ -29,8 +30,10 @@ const Header: React.FC<HeaderProps> = ({
     currentUser,
     onLoginClick,
     onUserDashboardClick,
+    onLogoutClick,
     onProducerZoneClick,
 }) => {
+    const [showUserMenu, setShowUserMenu] = React.useState(false);
     return (
         <header className="sticky top-0 z-40 bg-a4coBlack/60 backdrop-blur-lg border-b border-gray-800 text-white">
             <div className="container mx-auto px-6">
@@ -62,10 +65,33 @@ const Header: React.FC<HeaderProps> = ({
                             Zona Productores
                         </button>
                         {currentUser ? (
-                             <button onClick={onUserDashboardClick} className="flex items-center space-x-2 px-4 py-2 bg-a4coBlack/40 backdrop-blur-sm border border-gray-700 rounded-full hover:border-a4coGreen transition-colors duration-200">
-                                <UserIcon className="w-5 h-5 text-a4coGreen" />
-                                <span className="font-medium text-sm text-white hidden sm:block">{currentUser.name.split(' ')[0]}</span>
-                            </button>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowUserMenu(!showUserMenu)}
+                                    className="flex items-center space-x-2 px-4 py-2 bg-a4coBlack/40 backdrop-blur-sm border border-gray-700 rounded-full hover:border-a4coGreen transition-colors duration-200"
+                                >
+                                    <UserIcon className="w-5 h-5 text-a4coGreen" />
+                                    <span className="font-medium text-sm text-white hidden sm:block">{currentUser.name.split(' ')[0]}</span>
+                                </button>
+                                {showUserMenu && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                                        <button
+                                            onClick={() => { onUserDashboardClick(); setShowUserMenu(false); }}
+                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        >
+                                            Mi cuenta
+                                        </button>
+                                        {onLogoutClick && (
+                                            <button
+                                                onClick={() => { onLogoutClick(); setShowUserMenu(false); }}
+                                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                            >
+                                                Cerrar sesión
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         ) : (
                              <button onClick={onLoginClick} className="flex items-center space-x-2 px-4 py-2 bg-a4coBlack/40 backdrop-blur-sm border border-gray-700 rounded-full hover:border-a4coGreen transition-colors duration-200">
                                 <UserIcon className="w-5 h-5 text-gray-400" />
