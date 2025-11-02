@@ -28,7 +28,8 @@ export class RegisterUserUseCase implements UseCase<RegisterUserDto, UserRespons
       const hashedPassword = await this.cryptographyService.hashPassword(request.password);
 
       // Crear el usuario con contraseña ya hasheada
-      const user = await User.createWithHashedPassword(request.email, request.name, hashedPassword);
+      const name = (request.name ?? request.fullName ?? '').trim();
+    const user = await User.createWithHashedPassword(request.email, name, hashedPassword);
 
       // Persistir el usuario usando el adapter
       const savedUser = await this.userRepository.save(user);
