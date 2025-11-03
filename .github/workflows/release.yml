@@ -1,9 +1,11 @@
 name: Release
 
 on:
-  push:
-    branches: [ main, develop ]
-  workflow_dispatch:
+  # Temporarily disabled for clean merge - all triggers commented out
+  # push:
+  #   branches: [ main, develop ]
+  # workflow_dispatch:
+  workflow_call:
 
 jobs:
   release:

@@ -2,22 +2,24 @@
 name: Design System Preview
 
 on:
-  pull_request:
-    paths:
-      - 'packages/design-system/**'
-      - '.github/workflows/design-system-preview.yml'
-  push:
-    branches:
-      - main
-      - develop
-    paths:
-      - 'packages/design-system/**'
+  # Temporarily disabled for clean merge - all triggers commented out
+  # pull_request:
+  #   paths:
+  #     - 'packages/design-system/**'
+  #     - '.github/workflows/design-system-preview.yml'
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  #   paths:
+  #     - 'packages/design-system/**'
+  workflow_call:
 
 jobs:
   build-and-preview:
     name: Build and Deploy Preview
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         run: |

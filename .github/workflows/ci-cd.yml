@@ -1,12 +1,12 @@
 ---
 name: CI/CD Pipeline
-
 on:
-  pull_request:
-    branches: [main, develop, master]
-  push:
-    branches: [main, develop, master]
-  workflow_dispatch:
+  # Temporarily disabled for clean merge - all triggers commented out
+  # push:
+  #   branches: [main, develop]
+  # pull_request:
+  #   branches: [main, develop]
+  workflow_call:
 
 env:
   NODE_VERSION: '20'

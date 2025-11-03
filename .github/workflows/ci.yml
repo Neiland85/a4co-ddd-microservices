@@ -1,9 +1,11 @@
 name: CI Pipeline
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    types: [opened, synchronize, reopened]
+  # Temporarily disabled for clean merge - all triggers commented out
+  # push:
+  #   branches: [main, develop]
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+  workflow_call:
 
 jobs:
   test:

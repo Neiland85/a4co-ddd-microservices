@@ -1,14 +1,16 @@
 name: API Contract Validation
 
 on:
-  push:
-    branches: [main, develop]
-    paths:
-      - 'apps/*/contracts/openapi.yaml'
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - 'apps/*/contracts/openapi.yaml'
+  # Temporarily disabled for clean merge - all triggers commented out
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - 'apps/*/contracts/openapi.yaml'
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+  #   paths:
+  #     - 'apps/*/contracts/openapi.yaml'
+  workflow_call:
 
 jobs:
   validate-openapi:

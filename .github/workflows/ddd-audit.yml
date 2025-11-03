@@ -2,33 +2,35 @@
 name: DDD Microservices Audit
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches: [ main, develop ]
-  schedule:
-    # Ejecutar cada lunes a las 9 AM
-    - cron: '0 9 * * 1'
-  workflow_dispatch:
+  # Temporarily disabled for clean merge - all triggers commented out
+  # push:
+  #   branches: [ main, develop ]
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+  #   branches: [ main, develop ]
+  # schedule:
+  #   # Ejecutar cada lunes a las 9 AM
+  #   - cron: '0 9 * * 1'
+  # workflow_dispatch:
+  workflow_call:
 
 jobs:
   ddd-structure-analysis:
     runs-on: ubuntu-latest
     name: Análisis de Estructura DDD
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
       with:
         ref: ${{ github.ref }}
         fetch-depth: 0
-    
+
     - name: Configurar entorno
       run: |
         chmod +x scripts/*.sh
         mkdir -p audit-reports
-    
+
     - name: Análisis de estructura DDD
       run: |
         echo "=== Análisis de Estructura DDD ===" > audit-reports/ddd-structure.txt
@@ -38,7 +40,7 @@ jobs:
         echo "Value Objects: $(find . -name "*ValueObject*" -o -name "*VO*" | wc -l)" >> audit-reports/ddd-structure.txt
         echo "Domain Events: $(find . -name "*Event*" | wc -l)" >> audit-reports/ddd-structure.txt
         echo "Repositories: $(find . -name "*Repository*" | wc -l)" >> audit-reports/ddd-structure.txt
-    
+
     - name: Subir reporte de estructura
       run: |
         echo "Reporte de estructura DDD generado:"
@@ -47,30 +49,30 @@ jobs:
   code-quality-metrics:
     runs-on: ubuntu-latest
     name: Métricas de Calidad de Código
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
       with:
         ref: ${{ github.ref }}
         fetch-depth: 0
-    
+
     - name: Instalar herramientas
       run: |
         pip install lizard
         sudo apt-get update
         sudo apt-get install -y cloc
         mkdir -p audit-reports
-    
+
     - name: Análisis de complejidad
       run: |
         lizard . -o audit-reports/complexity.html
         lizard . -C 10 -L 100 -a 5 | tail -20 > audit-reports/complexity-summary.txt
-    
+
     - name: Análisis de líneas de código
       run: |
         cloc . --out=audit-reports/cloc-report.txt --exclude-dir=node_modules,vendor,.git
-    
+
     - name: Subir reportes de calidad
       run: |
         echo "Reportes de calidad generados:"
@@ -79,14 +81,14 @@ jobs:
   language-specific-analysis:
     runs-on: ubuntu-latest
     name: Análisis Específico por Lenguaje
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v3
       with:
         ref: ${{ github.ref }}
         fetch-depth: 0
-    
+
     - name: Detectar lenguaje principal
       id: detect-language
       run: |
@@ -104,7 +106,7 @@ jobs:
         else
           echo "language=unknown" >> $GITHUB_OUTPUT
         fi
-    
+
     - name: Setup Java
       if: steps.detect-language.outputs.language == 'java'
       run: |

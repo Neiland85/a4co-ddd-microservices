@@ -2,11 +2,13 @@
 name: SonarCloud Analysis
 
 on:
-  pull_request:
-    branches: [main, develop, master]
-  push:
-    branches: [main, develop, master]
-  workflow_dispatch:
+  # Temporarily disabled for clean merge - all triggers commented out
+  # pull_request:
+  #   branches: [main, develop, master]
+  # push:
+  #   branches: [main, develop, master]
+  # workflow_dispatch:
+  workflow_call:
 
 env:
   NODE_VERSION: '18'

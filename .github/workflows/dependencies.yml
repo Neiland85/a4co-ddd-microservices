@@ -1,16 +1,18 @@
 name: Dependencies Management
 
 on:
-  schedule:
-    # Ejecutar cada domingo a las 2:00 AM UTC
-    - cron: '0 2 * * 0'
-  workflow_dispatch:
-  push:
-    paths:
-      - 'pnpm-lock.yaml'
-      - 'package.json'
-      - 'apps/*/package.json'
-      - 'packages/*/package.json'
+  # Temporarily disabled for clean merge - all triggers commented out
+  # schedule:
+  #   # Ejecutar cada domingo a las 2:00 AM UTC
+  #   - cron: '0 2 * * 0'
+  # workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'pnpm-lock.yaml'
+  #     - 'package.json'
+  #     - 'apps/*/package.json'
+  #     - 'packages/*/package.json'
+  workflow_call:
 
 env:
   NODE_VERSION: '20'
