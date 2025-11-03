@@ -1,12 +1,17 @@
+# 📦 PNPM Workspace Configuration
+# Monorepo principal para A4CO DDD Microservices
+# Incluye microservicios, paquetes compartidos y scripts raíz
+
 packages:
-  # Microservicios y aplicaciones frontend (bounded contexts principales en DDD)
-  - 'apps/**' # Incluye todos los subdirectorios en apps/ (e.g., auth-service, web, dashboard-web)
+  # Aplicaciones y microservicios (Bounded Contexts)
+  - "apps/**"
 
-  # Paquetes compartidos (utilidades cross-cutting como shared-utils y observability)
-  - 'packages/**' # Incluye todos los subdirectorios en packages/ (e.g., design-system, shared-utils)
+  # Paquetes compartidos (shared-utils, design-system, etc.)
+  - "packages/**"
 
+  # Servicios adicionales o worker processes
+  - "services/**"
 
-  # Infraestructura (scripts de despliegue, Terraform, Docker configs) - solo si contiene paquetes Node; de lo contrario, excluir para evitar errores de resolución
-  # - 'infra/**'  # Comentado: infra/ típicamente no es un workspace pnpm, ya que es para IaC no ejecutable en Node
+  # Incluye la raíz del monorepo para scripts globales
+  - "."
 
-  # Exclusiones implícitas: Ignora carpetas obsoletas/experimentales como apps/web/v0dev/ si no son válidas (configurar manualmente si es necesario via .pnpmfile.cjs para hooks de exclusión)

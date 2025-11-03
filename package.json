@@ -119,6 +119,7 @@
     "@opentelemetry/sdk-trace-node": "^2.2.0",
     "@opentelemetry/sdk-trace-web": "^2.2.0",
     "@opentelemetry/semantic-conventions": "^1.37.0",
+    "@prisma/client": "6.18.0",
     "concurrently": "^9.2.1",
     "ejs": "^3.1.10",
     "jsdom": "^27.0.1",
@@ -126,15 +127,15 @@
     "lodash-es": "^4.17.21",
     "lodash.merge": "^4.6.2",
     "lucide-react": "^0.548.0",
-    "turbo": "^2.5.8",
     "prisma": "6.18.0",
-    "@prisma/client": "6.18.0"
+    "turbo": "^2.5.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.38.0",
     "@nestjs/cli": "^10.4.2",
     "@nestjs/testing": "^11.1.7",
+    "@types/cors": "^2.8.19",
     "@types/jest": "^30.0.0",
     "@types/jsdom": "^27.0.0",
     "@types/node": "^24.9.1",
@@ -184,4 +185,3 @@
     "url": "https://github.com/Neiland85/a4co-ddd-microservices"
   }
 }
-

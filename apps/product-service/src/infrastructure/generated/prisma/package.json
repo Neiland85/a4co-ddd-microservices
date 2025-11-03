@@ -179,5 +179,9 @@
       },
       "default": "./index.js"
     }
+  },
+  "dependencies": {
+    "@prisma/client": "6.18.0",
+    "prisma": "6.18.0"
   }
 }
