@@ -1,7 +1,8 @@
 name: Deploy with Feature Flags
 
 on:
-  # Temporarily disabled for clean merge - all triggers commented out
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
   # push:
   #   branches: [ main ]
   # workflow_dispatch:
@@ -10,11 +11,10 @@ on:
   #       description: 'Environment to deploy to'
   #       required: true
   #       default: 'staging'
-  #       type: choice
-  #       options:
-  #       - staging
-  #       - production
-  workflow_call:
+        type: choice
+        options:
+        - staging
+        - production
 
 jobs:
   deploy:

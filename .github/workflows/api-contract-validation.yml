@@ -1,7 +1,11 @@
 name: API Contract Validation
 
 on:
+    fix/auth-findbyemail
   # Temporarily disabled for clean merge - all triggers commented out
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+    main
   # push:
   #   branches: [main, develop]
   #   paths:
@@ -10,8 +14,9 @@ on:
   #   types: [opened, synchronize, reopened]
   #   paths:
   #     - 'apps/*/contracts/openapi.yaml'
+    fix/auth-findbyemail
   workflow_call:
-
+     main
 jobs:
   validate-openapi:
     runs-on: ubuntu-latest

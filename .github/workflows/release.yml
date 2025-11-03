@@ -1,11 +1,11 @@
 name: Release
 
 on:
-  # Temporarily disabled for clean merge - all triggers commented out
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
   # push:
   #   branches: [ main, develop ]
   # workflow_dispatch:
-  workflow_call:
 
 jobs:
   release:

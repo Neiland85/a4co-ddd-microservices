@@ -1,7 +1,8 @@
 name: Feature Flag Management
 
 on:
-  # Temporarily disabled for clean merge - all triggers commented out
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
   # workflow_dispatch:
   #   inputs:
   #     action:
@@ -29,7 +30,6 @@ on:
   #       description: 'Rollout value (percentage 0-1, hours, or user count)'
   #       required: false
   #       type: string
-  workflow_call:
 
 jobs:
   manage-feature-flag:

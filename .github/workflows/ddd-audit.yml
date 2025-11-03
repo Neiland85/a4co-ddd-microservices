@@ -2,7 +2,11 @@
 name: DDD Microservices Audit
 
 on:
+    fix/auth-findbyemail
   # Temporarily disabled for clean merge - all triggers commented out
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+     main
   # push:
   #   branches: [ main, develop ]
   # pull_request:
@@ -12,7 +16,9 @@ on:
   #   # Ejecutar cada lunes a las 9 AM
   #   - cron: '0 9 * * 1'
   # workflow_dispatch:
+     fix/auth-findbyemail
   workflow_call:
+     main
 
 jobs:
   ddd-structure-analysis:

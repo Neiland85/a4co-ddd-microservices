@@ -2,7 +2,8 @@
 name: Design System Preview
 
 on:
-  # Temporarily disabled for clean merge - all triggers commented out
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
   # pull_request:
   #   paths:
   #     - 'packages/design-system/**'
@@ -10,10 +11,9 @@ on:
   # push:
   #   branches:
   #     - main
-  #     - develop
-  #   paths:
-  #     - 'packages/design-system/**'
-  workflow_call:
+      - develop
+    paths:
+      - 'packages/design-system/**'
 
 jobs:
   build-and-preview:
