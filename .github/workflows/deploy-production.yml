@@ -1,10 +1,11 @@
 name: Production Deploy (Vercel / Supabase)
 
-# Dispara en push a main y manualmente
+# Temporarily disabled - use workflow_call only for manual triggers
 on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
+  workflow_call:
+  # push:
+  #   branches: ["main"]
+  # workflow_dispatch:
 
 permissions:
   contents: read

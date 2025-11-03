@@ -2,15 +2,17 @@
 name: DDD Microservices Audit
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches: [ main, develop ]
-  schedule:
-    # Ejecutar cada lunes a las 9 AM
-    - cron: '0 9 * * 1'
-  workflow_dispatch:
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # push:
+  #   branches: [ main, develop ]
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+  #   branches: [ main, develop ]
+  # schedule:
+  #   # Ejecutar cada lunes a las 9 AM
+  #   - cron: '0 9 * * 1'
+  # workflow_dispatch:
 
 jobs:
   ddd-structure-analysis:

@@ -1,11 +1,13 @@
 name: 🚀 A4CO Monorepo CI/CD (Node 22 + Prisma + Turbo + Docker)
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-  workflow_dispatch:
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # push:
+  #   branches: [ main, develop ]
+  # pull_request:
+  #   branches: [ main, develop ]
+  # workflow_dispatch:
 
 env:
   NODE_ENV: production
