@@ -1,12 +1,12 @@
 {
-  "name": "a4co-ddd-microservices",
+  "name": "@a4co/root",
   "version": "1.0.0",
   "description": "Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para una plataforma colaborativa de venta y logística del pequeño comercio andaluz.",
   "private": true,
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency=15",
     "dev:all": "docker-compose -f docker-compose.dev.yml up",
     "dev:auth": "turbo run dev --filter=auth-service",
     "dev:user": "turbo run dev --filter=user-service",
@@ -15,8 +15,8 @@
     "dev:payment": "turbo run dev --filter=payment-service",
     "dev:frontend": "turbo run dev --filter=dashboard-web --filter=@a4co/design-system",
     "dev:backend": "turbo run dev --filter=...*-service",
-    "build": "turbo run build",
-    "build:all": "turbo run build && pnpm design:sync",
+    "build": "turbo run build --filter=apps/**",
+    "build:all": "turbo run build --filter=apps/** && pnpm design:sync",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "test:visual": "pnpm --filter @a4co/design-system test:visual",
@@ -69,7 +69,11 @@
     "feature-flags:toggle": "node scripts/toggle-feature-flag.js",
     "excellence:validate": "node scripts/validate-excellence.js",
     "test:improve-coverage": "node scripts/test-coverage-improver.js",
-    "test:coverage-report": "pnpm run test:improve-coverage && pnpm run dora:report"
+    "test:coverage-report": "pnpm run test:improve-coverage && pnpm run dora:report",
+    "check:prisma": "node scripts/check-prisma-health.js",
+    "check:prisma:auto-fix": "node scripts/check-prisma-auto-fix.js",
+    "fix:prisma": "pnpm run check:prisma:auto-fix && pnpm exec prisma generate --schema=apps/product-service/prisma/schema.prisma && pnpm exec prisma generate --schema=apps/inventory-service/prisma/schema.prisma && pnpm run check:prisma && echo '🚀 Prisma clients regenerados, verificados y sincronizados para Node 22 y Prisma 6.18.0 ✅'",
+    "postinstall": "pnpm exec prisma generate --schema=apps/product-service/prisma/schema.prisma && pnpm exec prisma generate --schema=apps/inventory-service/prisma/schema.prisma && pnpm exec prisma --version && echo '✅ Prisma clients regenerados correctamente para Node 22 y Prisma 6.18.0'"
   },
   "keywords": [
     "microservices",
@@ -83,7 +87,7 @@
   ],
   "author": "Neil Muñoz Lago <info@a4co.com>",
   "license": "Apache-2.0",
-  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748",
+  "packageManager": "pnpm@10.14.0",
   "workspaces": [
     "apps/*",
     "services/*",
@@ -115,6 +119,7 @@
     "@opentelemetry/sdk-trace-node": "^2.2.0",
     "@opentelemetry/sdk-trace-web": "^2.2.0",
     "@opentelemetry/semantic-conventions": "^1.37.0",
+    "@prisma/client": "6.18.0",
     "concurrently": "^9.2.1",
     "ejs": "^3.1.10",
     "jsdom": "^27.0.1",
@@ -122,12 +127,15 @@
     "lodash-es": "^4.17.21",
     "lodash.merge": "^4.6.2",
     "lucide-react": "^0.548.0",
+    "prisma": "6.18.0",
     "turbo": "^2.5.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.38.0",
+    "@nestjs/cli": "^10.4.2",
     "@nestjs/testing": "^11.1.7",
+    "@types/cors": "^2.8.19",
     "@types/jest": "^30.0.0",
     "@types/jsdom": "^27.0.0",
     "@types/node": "^24.9.1",
@@ -161,8 +169,8 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "node": "22.x",
+    "pnpm": ">=10.0.0"
   },
   "pnpm": {
     "overrides": {

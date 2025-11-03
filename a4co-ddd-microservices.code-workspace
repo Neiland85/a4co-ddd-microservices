@@ -19,79 +19,55 @@
   },
   "folders": [
     {
+      "name": "🏠 Root",
       "path": ".",
     },
     {
-      "name": "inventory-service",
-      "path": "apps/inventory-service",
+      "name": "🌐 Frontend",
+      "path": "apps/frontend",
     },
     {
-      "name": "auth-service",
+      "name": "🔐 Auth Service",
       "path": "apps/auth-service",
     },
     {
-      "name": "dashboard-web",
-      "path": "apps/dashboard-web",
+      "name": "📦 Inventory Service",
+      "path": "apps/inventory-service",
     },
     {
-      "name": "web",
-      "path": "apps/web",
-    },
-    {
-      "name": "order-service",
+      "name": "🛒 Order Service",
       "path": "apps/order-service",
     },
     {
-      "name": "product-service",
+      "name": "💳 Payment Service",
+      "path": "apps/payment-service",
+    },
+    {
+      "name": "📦 Product Service",
       "path": "apps/product-service",
     },
     {
-      "name": "h-modern-dashboard",
-      "path": "apps/web/v0dev/h-modern-dashboard",
+      "name": "👤 User Service",
+      "path": "apps/user-service",
     },
     {
-      "name": "b-business-registration",
-      "path": "apps/web/v0dev/b-business-registration",
-    },
-    {
-      "name": "f-modern-backoffice",
-      "path": "apps/web/v0dev/f-modern-backoffice",
-    },
-    {
-      "name": "a-head",
-      "path": "apps/web/v0dev/a-head",
-    },
-    {
-      "name": "d-user-registration",
-      "path": "apps/web/v0dev/d-user-registration",
-    },
-    {
-      "name": "c-artisan-dashboard",
-      "path": "apps/web/v0dev/c-artisan-dashboard",
-    },
-    {
-      "name": "e-gamified-dashboard",
-      "path": "apps/web/v0dev/e-gamified-dashboard",
-    },
-    {
-      "name": "g-banner-cookie",
-      "path": "apps/web/v0dev/g-banner-cookie",
-    },
-    {
-      "name": "shared-utils",
-      "path": "packages/shared-utils",
-    },
-    {
-      "name": "design-system",
+      "name": "🎨 Design System",
       "path": "packages/design-system",
     },
     {
-      "name": "observability",
+      "name": "📊 Observability",
       "path": "packages/observability",
+    },
+    {
+      "name": "🔧 Shared Utils",
+      "path": "packages/shared-utils",
+    },
+    {
+      "name": "🚩 Feature Flags",
+      "path": "packages/feature-flags",
     },
   ],
   "settings": {
-<<<<<<< HEAD
     "editor.formatOnSave": true,
     "eslint.enable": true,
     "files.exclude": {
@@ -110,19 +86,6 @@
       "*": true,
       "plaintext": false,
     },
-    "codacy.cli.cliVersion": "1.0.0-main.358.sha.7cb05d0",
-    "github.copilot.nextEditSuggestions.enabled": true,
-    "gitlens.ai.largePromptWarningThreshold": 150000,
-    "editor.defaultFormatter": "YoavBls.pretty-ts-errors",
-    "azureResourceGroups.showHiddenTypes": true,
-    "appService.enablePythonRemoteDebugging": true,
-    "telemetry.editStats.details.enabled": true,
-    "application.experimental.rendererProfiling": true,
-    "windowsaistudio.enableRemoteFine-tuningAndInference": true,
-    "scm.alwaysShowActions": true,
-    "scm.alwaysShowRepositories": true,
-=======
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     "diffEditor.codeLens": true,
   },
 }

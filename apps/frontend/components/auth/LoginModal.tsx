@@ -1,31 +1,39 @@
 import React, { useState } from 'react';
 import { XIcon } from '../icons/XIcon.tsx';
 import { A4COLogo } from '../icons/A4COLogo.tsx';
-// FIX: Add imports for api and User type to handle login logic internally.
-import * as api from '../../api.ts';
-import type { User } from '../../types.ts';
+import { useAuth } from '../../contexts/AuthContext.tsx';
 
-// FIX: Update props to accept onLoginSuccess instead of onLogin to match App.tsx.
 interface LoginModalProps {
     onClose: () => void;
-    onLoginSuccess: (user: User, token: string) => void;
+    onLoginSuccess?: () => void;
     onSwitchToProducerAuth: () => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess, onSwitchToProducerAuth }) => {
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        // FIX: Call the login API directly and use the onLoginSuccess callback.
-        const result = api.loginUser(email, password, 'customer');
-        if (result) {
-            onLoginSuccess(result.user, result.token);
-        } else {
-            setError('Email o contraseña incorrectos.');
+        setIsLoading(true);
+
+        try {
+            const success = await login(email, password, 'customer');
+
+            if (success) {
+                onLoginSuccess?.();
+                onClose();
+            } else {
+                setError('Email o contraseña incorrectos.');
+            }
+        } catch (err) {
+            setError('Error al iniciar sesión. Inténtalo de nuevo.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -67,9 +75,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess, onSwit
                         <div>
                             <button
                                 type="submit"
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-a4coBlack bg-a4coGreen hover:bg-a4coBlack hover:text-white transition-colors"
+                                disabled={isLoading}
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-a4coBlack bg-a4coGreen hover:bg-a4coBlack hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Acceder
+                                {isLoading ? 'Accediendo...' : 'Acceder'}
                             </button>
                         </div>
                     </form>

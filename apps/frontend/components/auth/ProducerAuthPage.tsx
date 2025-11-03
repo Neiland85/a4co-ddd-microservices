@@ -1,39 +1,60 @@
 import React, { useState } from 'react';
 import { A4COLogo } from '../icons/A4COLogo.tsx';
 import { ArrowLeftIcon } from '../icons/ArrowLeftIcon.tsx';
-// FIX: Add imports for api and User type to handle login logic internally.
-import * as api from '../../api.ts';
-import type { User } from '../../types.ts';
+import { useAuth } from '../../contexts/AuthContext.tsx';
 
-
-// FIX: Update props to accept onLoginSuccess instead of onLogin to match App.tsx.
 interface ProducerAuthPageProps {
     onBack: () => void;
-    onLoginSuccess: (user: User, token: string) => void;
+    onLoginSuccess?: () => void;
 }
 
 const ProducerAuthPage: React.FC<ProducerAuthPageProps> = ({ onBack, onLoginSuccess }) => {
+    const { login, register } = useAuth();
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLoginSubmit = (e: React.FormEvent) => {
+    const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        // FIX: Call the login API directly and use the onLoginSuccess callback.
-        const result = api.loginUser(email, password, 'producer');
-        if (result) {
-            onLoginSuccess(result.user, result.token);
-        } else {
-            setError('Email o contraseña incorrectos.');
+        setIsLoading(true);
+
+        try {
+            const success = await login(email, password, 'producer');
+
+            if (success) {
+                onLoginSuccess?.();
+            } else {
+                setError('Email o contraseña incorrectos.');
+            }
+        } catch (err) {
+            setError('Error al iniciar sesión. Inténtalo de nuevo.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const handleRegisterSubmit = (e: React.FormEvent) => {
+    const handleRegisterSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, this would call a registration API
-        alert("Función de registro no implementada en esta demo.");
+        setError('');
+        setIsLoading(true);
+
+        try {
+            const success = await register(name, email, password);
+
+            if (success) {
+                onLoginSuccess?.();
+            } else {
+                setError('Error al registrar. El usuario puede ya existir.');
+            }
+        } catch (err) {
+            setError('Error al registrar. Inténtalo de nuevo.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const renderLoginForm = () => (
@@ -64,9 +85,10 @@ const ProducerAuthPage: React.FC<ProducerAuthPageProps> = ({ onBack, onLoginSucc
             <div>
                 <button
                     type="submit"
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-a4coBlack bg-a4coGreen hover:bg-a4coBlack hover:text-white transition-colors"
+                    disabled={isLoading}
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-a4coBlack bg-a4coGreen hover:bg-a4coBlack hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Acceder
+                    {isLoading ? 'Accediendo...' : 'Acceder'}
                 </button>
             </div>
         </form>
@@ -76,22 +98,45 @@ const ProducerAuthPage: React.FC<ProducerAuthPageProps> = ({ onBack, onLoginSucc
         <form onSubmit={handleRegisterSubmit} className="space-y-6">
              <div>
                 <label htmlFor="business-name" className="block text-sm font-medium text-gray-700">Nombre del Negocio</label>
-                <input type="text" id="business-name" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                <input
+                    type="text"
+                    id="business-name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-a4coGreen focus:ring-a4coGreen"
+                />
             </div>
             <div>
                 <label htmlFor="email-register" className="block text-sm font-medium text-gray-700">Email de Contacto</label>
-                <input type="email" id="email-register" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                <input
+                    type="email"
+                    id="email-register"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-a4coGreen focus:ring-a4coGreen"
+                />
             </div>
             <div>
                 <label htmlFor="password-register" className="block text-sm font-medium text-gray-700">Crear Contraseña</label>
-                <input type="password" id="password-register" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                <input
+                    type="password"
+                    id="password-register"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-a4coGreen focus:ring-a4coGreen"
+                />
             </div>
+            {error && <p className="text-sm text-red-600">{error}</p>}
             <div>
                 <button
                     type="submit"
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-a4coBlack bg-a4coGreen hover:bg-a4coBlack hover:text-white transition-colors"
+                    disabled={isLoading}
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-a4coBlack bg-a4coGreen hover:bg-a4coBlack hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Crear cuenta de productor
+                    {isLoading ? 'Registrando...' : 'Crear cuenta de productor'}
                 </button>
             </div>
         </form>

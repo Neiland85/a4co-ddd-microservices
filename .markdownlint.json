@@ -1,29 +1,5 @@
 {
   "default": true,
-<<<<<<< HEAD
-  "MD013": {
-    "line_length": 120,
-    "code_blocks": false,
-    "tables": false
-  },
-  "MD022": false,
-  "MD032": false,
-  "MD040": false,
-  "MD009": false,
-  "MD033": {
-    "allowed_elements": [
-      "br",
-      "div",
-      "span",
-      "details",
-      "summary"
-    ]
-  },
-  "MD034": false,
-  "MD036": false,
-  "MD041": false
-}
-=======
   "MD001": false,
   "MD003": {
     "style": "atx"
@@ -120,4 +96,3 @@
     "style": "asterisk"
   }
 }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

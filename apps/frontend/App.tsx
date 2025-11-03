@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 // FIX: Add file extensions to all imports to resolve modules.
-import type { Region, User, Category, Product, Producer, CartItem, Order, OrderPayload } from './types.ts';
+import type { Region, Category, Product, Producer, CartItem, Order, OrderPayload } from './types.ts';
 import * as api from './api.ts';
 import { REGIONS } from './constants.ts';
+import { useAuth } from './contexts/AuthContext.tsx';
 
 import Header from './components/Header.tsx';
 import Hero from './components/Hero.tsx';
@@ -38,6 +39,9 @@ type View =
     | { name: 'mission' };
 
 const App: React.FC = () => {
+    // Auth state from context
+    const { user: currentUser, logout, token } = useAuth();
+
     // View state
     const [view, setView] = useState<View>({ name: 'home' });
 
@@ -60,9 +64,6 @@ const App: React.FC = () => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [postLoginAction, setPostLoginAction] = useState<(() => void) | null>(null);
-    
-    // User/Auth state
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
 
     // Cart state
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -99,26 +100,19 @@ const App: React.FC = () => {
     }, [fetchData]);
 
      useEffect(() => {
-        if (currentUser && !currentUser.isProducer) {
-            api.getOrdersByUser(currentUser.id).then(setUserOrders);
+         if (currentUser && !currentUser.isProducer && token) {
+             api.getOrdersByUser(currentUser.id, token).then(setUserOrders);
         } else {
             setUserOrders([]);
         }
-    }, [currentUser]);
+     }, [currentUser, token]);
     
-    // Session persistence
+    // Redirect to producer dashboard if user is producer
     useEffect(() => {
-        const token = localStorage.getItem('a4co-token');
-        if (token) {
-            const user = api.getMe(token);
-            if (user) {
-                setCurrentUser(user);
-                 if(user.isProducer) {
-                    setView({ name: 'producerDashboard' });
-                }
-            }
+        if (currentUser?.isProducer && view.name === 'home') {
+            setView({ name: 'producerDashboard' });
         }
-    }, []);
+    }, [currentUser, view.name]);
 
     // Handlers
     const handleRegionChange = (region: Region) => {
@@ -152,44 +146,33 @@ const App: React.FC = () => {
         setShowOnboarding(false);
     };
     
-    const handleLoginSuccess = (user: User, token: string) => {
-        localStorage.setItem('a4co-token', token);
-        setCurrentUser(user);
+    const handleLoginSuccess = () => {
         setIsLoginModalOpen(false);
         if (postLoginAction) {
             postLoginAction();
             setPostLoginAction(null);
         }
-        if (user.isProducer) {
-            setView({ name: 'producerDashboard' });
-        }
+        // The view redirect is handled by useEffect above
     };
     
     const handleLogout = () => {
-        // Ensure the authentication token is removed on logout
-        localStorage.removeItem('a4co-token');
-        setCurrentUser(null);
+        logout(); // Use AuthContext logout
         setView({ name: 'home' });
-    }
+        setCart([]); // Clear cart on logout
+    };
 
-    const handleToggleFavorite = (productId: string) => {
+    const handleToggleFavorite = async (productId: string) => {
         if (!currentUser) {
             setPostLoginAction(() => () => handleToggleFavorite(productId));
             setIsLoginModalOpen(true);
             return;
         }
 
-        setCurrentUser(prevUser => {
-            if (!prevUser) return null;
-            const isFavorite = prevUser.favoriteProductIds.includes(productId);
-            const newFavorites = isFavorite
-                ? prevUser.favoriteProductIds.filter(id => id !== productId)
-                : [...prevUser.favoriteProductIds, productId];
-            
-            api.toggleFavorite(prevUser.id, productId);
-
-            return { ...prevUser, favoriteProductIds: newFavorites };
-        });
+        // Call API to toggle favorite with token
+        await api.toggleFavorite(currentUser.id, productId, token || undefined);
+        
+        // Note: In a real app, you'd refresh user state from the API response
+        // For now, the favorites are managed by the mock API
     };
     
     const handleUpdateCart = (productId: string, quantity: number) => {
@@ -224,12 +207,12 @@ const App: React.FC = () => {
     };
 
     const handleSubmitOrder = async (orderPayload: OrderPayload) => {
-        if (!currentUser) {
+        if (!currentUser || !token) {
             console.error("User must be logged in to submit an order.");
             setIsLoginModalOpen(true);
             return;
         }
-        const newOrder = await api.addOrder(orderPayload, currentUser.id);
+        const newOrder = await api.addOrder(orderPayload, currentUser.id, token);
         setCart([]);
         setView({ name: 'confirmation', order: newOrder });
     };
@@ -302,7 +285,7 @@ const App: React.FC = () => {
                             onLogout={handleLogout}
                         />;
             case 'producerAuth':
-                return <ProducerAuthPage onBack={() => setView({ name: 'home' })} onLoginSuccess={handleLoginSuccess} />;
+                return <ProducerAuthPage onBack={() => setView({ name: 'home' })} onLoginSuccess={() => setView({ name: 'producerDashboard' })} />;
             case 'producerDashboard':
                  if (!currentUser || !currentUser.isProducer) { setView({ name: 'home' }); return null; }
                 return <Dashboard currentUser={currentUser} onLogout={handleLogout} />;
@@ -348,6 +331,7 @@ const App: React.FC = () => {
                     // FIX: Replaced onUserIconClick with onUserDashboardClick and onLoginClick to match HeaderProps.
                     onUserDashboardClick={() => setView({ name: 'userDashboard' })}
                     onLoginClick={() => setIsLoginModalOpen(true)}
+                    onLogoutClick={handleLogout}
                     onProducerZoneClick={() => setView({ name: 'producerAuth' })}
                 />
             )}

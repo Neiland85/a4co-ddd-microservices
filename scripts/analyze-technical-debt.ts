@@ -99,11 +99,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
         encoding: 'utf8',
         maxBuffer: 1024 * 1024 * 10,
         cwd: path.join(process.cwd(), 'apps/auth-service'),
-<<<<<<< HEAD
-      },
-=======
       }
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
 
     if (authComplexity && authComplexity.trim() !== '') {
