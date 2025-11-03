@@ -1,0 +1,177 @@
+diff --git a/packages/shared-utils/package.json b/packages/shared-utils/package.json
+index e69de29..b7a33ac 100644
+--- a/packages/shared-utils/package.json
++++ b/packages/shared-utils/package.json
+@@ -1,63 +1,164 @@
+ {
+-  "name": "@a4co/shared-utils",
+-  "version": "1.0.0",
+-  "description": "Utilidades compartidas para el monorepo a4co-ddd-microservices",
+-  "main": "dist/index.js",
+-  "types": "dist/index.d.ts",
+-  "scripts": {
+-    "build": "tsc",
+-    "dev": "tsc --watch",
+-    "clean": "rm -rf dist",
+-    "test": "jest",
+-    "test:watch": "jest --watch",
+-    "test:coverage": "jest --coverage",
+-    "lint": "echo 'Linting temporarily disabled'",
+-    "lint:fix": "echo 'Linting temporarily disabled'",
+-    "type-check": "echo 'Type-check temporarily disabled'",
+-    "test:dev-security": "jest src/security/__tests__/dev-server-security.test.ts",
+-    "check:dev-security": "node scripts/check-dev-security.js",
+-    "test:micromatch-security": "jest src/security/__tests__/micromatch-redos.test.ts",
+-    "check:micromatch-security": "node scripts/check-micromatch-security.js",
+-    "test:vite-static-security": "jest src/security/__tests__/vite-static-file-security.test.ts",
+-    "check:vite-static-security": "node scripts/check-vite-static-security.js"
+-  },
+-  "keywords": [
+-    "shared",
+-    "utils",
+-    "microservices",
+-    "ddd"
+-  ],
+-  "author": "A4CO Team <info@a4co.com>",
+-  "license": "Apache-2.0",
+-  "dependencies": {
+-    "axios": "^1.12.0",
+-    "class-transformer": "^0.5.1",
+-    "class-validator": "^0.14.1",
+-    "micromatch": "^4.0.8",
+-    "nats": "^2.19.0",
+-    "react": "^19.1.0",
+-    "uuid": "^9.0.1"
+-  },
+-  "devDependencies": {
+-    "@types/jest": "^29.5.12",
+-    "@types/node": "^20.10.5",
+-    "@types/react": "^19.0.0",
+-    "@types/uuid": "^9.0.8",
+-    "jest": "^29.7.0",
+-    "jest-environment-jsdom": "^30.1.2",
+-    "jsdom": "^26.1.0",
+-    "ts-jest": "^29.1.2",
+-    "typescript": "^5.9.2"
+-  },
+-  "exports": {
+-    "./security/validators/temp-file.validator": {
+-      "types": "./dist/security/validators/temp-file.validator.d.ts",
+-      "default": "./dist/security/validators/temp-file.validator.js"
+-    },
+-    "./security/middleware/temp-file-protector": {
+-      "types": "./dist/security/middleware/temp-file-protector.d.ts",
+-      "default": "./dist/security/middleware/temp-file-protector.js"
+-    },
+-    "./security/utils/safe-temp-file-manager": {
+-      "types": "./dist/security/utils/safe-temp-file-manager.d.ts",
+-      "default": "./dist/security/utils/safe-temp-file-manager.js"
+-    }
+-  }
++  "name": "@a4co/shared-utils",
++  "version": "1.0.0",
++  "description": "Utilidades compartidas para el monorepo a4co-ddd-microservices",
++  "main": "dist/index.js",
++  "types": "dist/index.d.ts",
++  "sideEffects": false,
++  "files": [
++    "dist"
++  ],
++  "scripts": {
++    "build": "tsc",
++    "dev": "tsc --watch",
++    "clean": "rm -rf dist",
++    "test": "jest",
++    "test:watch": "jest --watch",
++    "test:coverage": "jest --coverage",
++    "lint": "echo 'Linting temporarily disabled'",
++    "lint:fix": "echo 'Linting temporarily disabled'",
++    "type-check": "tsc --noEmit",
++    "test:dev-security": "jest src/security/__tests__/dev-server-security.test.ts",
++    "check:dev-security": "node scripts/check-dev-security.js",
++    "test:micromatch-security": "jest src/security/__tests__/micromatch-redos.test.ts",
++    "check:micromatch-security": "node scripts/check-micromatch-security.js",
++    "test:vite-static-security": "jest src/security/__tests__/vite-static-file-security.test.ts",
++    "check:vite-static-security": "node scripts/check-vite-static-security.js"
++  },
++  "keywords": [
++    "shared",
++    "utils",
++    "microservices",
++    "ddd",
++    "a4co",
++    "typescript"
++  ],
++  "author": "A4CO Team <info@a4co.com>",
++  "license": "Apache-2.0",
++
++  "dependencies": {
++    "axios": "^1.12.0",
++    "class-transformer": "^0.5.1",
++    "class-validator": "^0.14.1",
++    "micromatch": "^4.0.8",
++    "nats": "^2.19.0",
++    "react": "^19.1.0",
++    "uuid": "^9.0.1"
++  },
++  "devDependencies": {
++    "@types/jest": "^29.5.12",
++    "@types/node": "^20.10.5",
++    "@types/react": "^19.0.0",
++    "@types/uuid": "^9.0.8",
++    "jest": "^29.7.0",
++    "jest-environment-jsdom": "^30.1.2",
++    "jsdom": "^26.1.0",
++    "ts-jest": "^29.1.2",
++    "typescript": "^5.9.2"
++  },
++
++  "exports": {
++    ".": {
++      "types": "./dist/index.d.ts",
++      "default": "./dist/index.js"
++    },
++
++    "./dto": {
++      "types": "./dist/dto/index.d.ts",
++      "default": "./dist/dto/index.js"
++    },
++
++    "./domain": {
++      "types": "./dist/domain/index.d.ts",
++      "default": "./dist/domain/index.js"
++    },
++    "./domain/domain-event": {
++      "types": "./dist/domain/domain-event.d.ts",
++      "default": "./dist/domain/domain-event.js"
++    },
++
++    "./types": {
++      "types": "./dist/types/index.d.ts",
++      "default": "./dist/types/index.js"
++    },
++
++    "./utils/validation-utils": {
++      "types": "./dist/utils/validation-utils.d.ts",
++      "default": "./dist/utils/validation-utils.js"
++    },
++
++    "./security/braces-web-middleware": {
++      "types": "./dist/security/braces-web-middleware.d.ts",
++      "default": "./dist/security/braces-web-middleware.js"
++    },
++    "./security/braces-monitor": {
++      "types": "./dist/security/braces-monitor.d.ts",
++      "default": "./dist/security/braces-monitor.js"
++    },
++    "./security/braces-security": {
++      "types": "./dist/security/braces-security.d.ts",
++      "default": "./dist/security/braces-security.js"
++    }
++  },
++
++  "publishConfig": {
++    "access": "public"
++  }
+ }
+

@@ -1,0 +1,22 @@
+diff --git a/package.json b/package.json
+index 0000001..0000002 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,20 @@
+ {
+   "name": "a4co-ddd-microservices",
+   "version": "1.0.0",
+   "description": "Monorepo DDD para microservicios construidos en NestJS + Next.js, diseñado para una plataforma colaborativa de venta y logística del pequeño comercio andaluz.",
+   "private": true,
+   "type": "module",
+   "main": "index.js",
++  "postinstall": "pnpm exec prisma generate --schema=apps/product-service/prisma/schema.prisma && pnpm exec prisma generate --schema=apps/inventory-service/prisma/schema.prisma && pnpm exec prisma --version && echo '✅ Prisma clients regenerados correctamente para Node 22 y Prisma 6.18.0'",
++  "dependencies": {
++    "prisma": "6.18.0",
++    "@prisma/client": "6.18.0"
++  },
++  "engines": {
++    "node": ">=22.0.0",
++    "pnpm": ">=10.0.0"
++  }
+ }

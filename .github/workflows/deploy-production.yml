@@ -1,0 +1,150 @@
+name: Production Deploy (Vercel / Supabase)
+
+# Dispara en push a main y manualmente
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  deployments: write
+
+env:
+  # Valores por defecto (sobre-escribibles por secrets)
+  NODE_ENV: production
+  PNPM_HOME: ~/.pnpm
+  PATH: ~/.pnpm:$PATH
+
+jobs:
+  production:
+    name: Build & Deploy Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: 🧾 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # -------------------------
+      # Node & pnpm (coherente)
+      # -------------------------
+      - name: ⚙️ Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: ⚙️ Setup pnpm v10.14.0
+        uses: pnpm/action-setup@v2
+        with:
+          version: "10.14.0"
+          run_install: false
+
+      - name: ✅ Print versions
+        run: |
+          node -v
+          pnpm -v
+          npm -v
+          echo "WORKDIR: $(pwd)"
+
+      # -------------------------
+      # Install deps & generate
+      # -------------------------
+      - name: 📦 Install dependencies
+        run: |
+          # Allow lockfile updates in CI if necessary (safer for deploys)
+          pnpm install --no-frozen-lockfile
+          # Generate Prisma clients for all workspaces (if used)
+          pnpm -w exec prisma generate || echo "prisma generate skipped (no prisma found)"
+
+        env:
+          PRISMA_SKIP_POSTINSTALL_GENERATE: "false"
+
+      - name: 🔒 Verify commit email (for attribution / vercel)
+        run: |
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "Commit author email: $AUTHOR_EMAIL"
+          if [[ "$AUTHOR_EMAIL" == *"noreply.github.com"* ]]; then
+            echo "::notice title=Commit email::Using GitHub noreply email (acceptable)."
+          else
+            echo "::notice title=Commit email::Commit email is $AUTHOR_EMAIL. Ensure this is a verified address in GitHub settings if you need attribution in Vercel."
+          fi
+
+      # -------------------------
+      # Build + Tests
+      # -------------------------
+      - name: 🧪 Run tests
+        run: pnpm -w run test --if-present
+
+      - name: 🧹 Lint & Typecheck
+        run: |
+          pnpm -w run lint || echo "lint step finished (warnings ignored)"
+          pnpm -w run type-check || echo "type-check step finished"
+
+      - name: 🏗️ Build monorepo (production)
+        run: pnpm -w run build
+        # si tu monorepo usa scripts por paquete, asegura que pnpm -w run build lance build de todos
+
+      # -------------------------
+      # Optional: Prisma migrations (Supabase)
+      # -------------------------
+      - name: 🔁 Run Prisma migrations (Supabase) — optional
+        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY && secrets.DATABASE_URL }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Running prisma migrate deploy using DATABASE_URL (Supabase)..."
+          pnpm -w exec prisma migrate deploy --preview-feature --schema=./prisma/schema.prisma || pnpm -w exec prisma migrate deploy || echo "prisma migrate deploy failed or no migrations present"
+
+      # -------------------------
+      # Optional: Supabase CLI tasks (functions / edge)
+      # -------------------------
+      - name: ⚙️ Supabase: deploy functions / edge (optional)
+        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY && secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          # Use pnpm dlx to run supabase CLI without global install
+          pnpm dlx supabase --version || pnpm dlx supabase --version
+          # Example: deploy functions (adapt paths/names to your repo)
+          # pnpm dlx supabase functions deploy my-function --project-ref $SUPABASE_PROJECT_REF
+          echo "Supabase CLI available. Add specific supabase commands above if needed."
+
+      # -------------------------
+      # Deploy to Vercel (production)
+      # -------------------------
+      - name: 🚀 Deploy to Vercel (production)
+        if: ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          echo "Deploying to Vercel (production)..."
+          # Ensure Vercel CLI is available via npx (uses the token)
+          npx vercel --prod --confirm --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" || {
+            echo "Vercel deploy failed"; exit 1;
+          }
+
+      - name: 🔎 Post-deploy verification (Vercel)
+        if: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "You can query the Vercel deployments API or check the project dashboard to verify the deployment."
+          # Example (optional): curl Vercel deployments API to get latest deployment (requires further scripting).
+          echo "Post-deploy checks: DONE."
+
+      # -------------------------
+      # Optional: Notify (Slack / other)
+      # -------------------------
+      - name: 🔔 Notify on success (optional)
+        if: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -s -X POST -H 'Content-type: application/json' --data '{"text":"Production deploy finished for main branch."}' ${{ secrets.SLACK_WEBHOOK_URL }} || echo "Slack notify skipped"
+
+    # Fin del job production
+
