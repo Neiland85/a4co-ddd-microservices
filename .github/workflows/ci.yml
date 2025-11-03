@@ -1,12 +1,18 @@
 name: CI/CD Pipeline – Auth Service
 
 on:
+    fix/auth-findbyemail
+  # Temporarily disabled for clean merge - all triggers commented out
   # Temporarily disabled - use workflow_call only for manual triggers
   workflow_call:
+     main
   # push:
   #   branches: [main, develop]
   # pull_request:
   #   types: [opened, synchronize, reopened]
+     fix/auth-findbyemail
+  workflow_call:
+     main
 
 jobs:
   build_and_analyze:
