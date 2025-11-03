@@ -1,9 +1,11 @@
 name: Release
 
 on:
-  push:
-    branches: [ main, develop ]
-  workflow_dispatch:
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # push:
+  #   branches: [ main, develop ]
+  # workflow_dispatch:
 
 jobs:
   release:
@@ -13,14 +15,11 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
-        feature/monitoring-dashboard-rollout
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
       with:
-        version: 9
+        version: 10
 
-       main
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:

@@ -123,7 +123,7 @@ export class BracesSecurityMonitor extends EventEmitter {
     this.emit('alert', alert);
 
     // Log de alerta
-    this.logger.warn('🚨 Braces Security Alert', {
+    this.logger.warn('[!] Braces Security Alert', {
       alertId: alert.id,
       service: alert.service,
       severity: alert.severity,
@@ -136,7 +136,7 @@ export class BracesSecurityMonitor extends EventEmitter {
     // Alertas críticas requieren acción inmediata
     if (severity === 'CRITICAL') {
       this.emit('critical-alert', alert);
-      this.logger.error('🚨 CRITICAL Braces Security Alert - Immediate Action Required', alert);
+      this.logger.error('[!] CRITICAL Braces Security Alert - Immediate Action Required', alert);
     }
   }
 
@@ -232,7 +232,7 @@ export class BracesSecurityMonitor extends EventEmitter {
     // - SMS a on-call engineer
     // - PagerDuty escalation
 
-    console.log(`🚨 CRITICAL ALERT: ${alert.id} - ${alert.type}`);
+    console.log(`[!] CRITICAL ALERT: ${alert.id} - ${alert.type}`);
   }
 
   /**

@@ -1,20 +1,22 @@
 name: Dependencies Management
 
 on:
-  schedule:
-    # Ejecutar cada domingo a las 2:00 AM UTC
-    - cron: '0 2 * * 0'
-  workflow_dispatch:
-  push:
-    paths:
-      - 'pnpm-lock.yaml'
-      - 'package.json'
-      - 'apps/*/package.json'
-      - 'packages/*/package.json'
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # schedule:
+  #   # Ejecutar cada domingo a las 2:00 AM UTC
+  #   - cron: '0 2 * * 0'
+  # workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'pnpm-lock.yaml'
+  #     - 'package.json'
+  #     - 'apps/*/package.json'
+  #     - 'packages/*/package.json'
 
 env:
-  NODE_VERSION: '18'
-  PNPM_VERSION: '8'
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10'
 
 jobs:
   update-dependencies:
@@ -32,9 +34,9 @@ jobs:
           cache: 'npm'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: 10
 
       - name: Setup pnpm cache
         uses: actions/cache@v3

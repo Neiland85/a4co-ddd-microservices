@@ -9,7 +9,44 @@ coverage
 *.lcov
 .nyc_output
 
-# Next.js
+# TypeScript / TSBuild
+*.tsbuildinfo
+
+# ESLint / Stylelint
+.eslintcache
+.stylelintcache
+
+# Node / Package managers
+node_modules/
+jspm_packages/
+.pnpm-store/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Node.js binaries and large files
+**/node
+**/*.node
+node-v*/**
+*.tar.xz
+*.tar.gz
+
+# pnpm lock
+pnpm-lock.yaml
+
+# Cache
+.cache
+.parcel-cache
+.vitepress/
+.temp
+.vuepress/dist
+.web_modules/
+.svelte-kit/
+
+# Framework outputs
 .next/
 out/
 build/
@@ -45,6 +82,7 @@ Thumbs.db
 .env.local
 .env.production
 .env.staging
+.env.compose
 
 # Archivos .env en servicios
 apps/*/.env
@@ -69,6 +107,13 @@ next-env.d.ts
 # Prisma generated
 /src/generated/prisma
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+/src/generated/prisma
+.turbo/
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md

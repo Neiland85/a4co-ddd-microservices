@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2022"],
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -26,23 +24,16 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "exactOptionalPropertyTypes": false,
+    "exactOptionalPropertyTypes": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@test/*": [
-        "test/*"
-      ],
-      "@a4co/shared-utils": [
-        "../packages/shared-utils/src"
-      ],
-      "@a4co/design-system": [
-        "../packages/design-system/src"
-      ]
+      "@/*": ["src/*"],
+      "@test/*": ["test/*"],
+      "@a4co/shared-utils": ["../packages/shared-utils/src"],
+      "@a4co/design-system": ["../packages/design-system/src"],
+      "@a4co/observability": ["../packages/observability/dist"]
     },
     "resolveJsonModule": true,
     "allowJs": true,
@@ -50,14 +41,6 @@
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".next",
-    "coverage"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", ".next", "coverage", "test/**/*"]
 }

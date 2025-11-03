@@ -1,4 +1,4 @@
-import { initializeTracing } from '@a4co/observability';
+import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -17,13 +17,6 @@ const logger = {
 };
 
 async function bootstrap() {
-  // Initialize observability
-  initializeTracing({
-    serviceName: 'product-service',
-    serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
-  });
-
   const app = await NestFactory.create(ProductModule, { logger });
 
   // Use Pino HTTP middleware for request logging
@@ -34,14 +27,14 @@ async function bootstrap() {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ['\'self\''],
-          styleSrc: ['\'self\'', '\'unsafe-inline\''],
-          scriptSrc: ['\'self\''],
-          imgSrc: ['\'self\'', 'data:', 'https:'],
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
       crossOriginEmbedderPolicy: false,
-    }),
+    })
   );
 
   // Global validation pipe
@@ -50,7 +43,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    }),
+    })
   );
 
   // Braces security middleware
@@ -91,5 +84,6 @@ async function bootstrap() {
 
 bootstrap().catch(err => {
   logger.error('Error al iniciar el servicio:', err);
+  console.error('Error al iniciar el servicio:', err);
   process.exit(1);
 });

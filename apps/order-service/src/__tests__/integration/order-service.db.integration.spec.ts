@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrderServiceService } from '../../order-service.service';
-import { PrismaService } from '@a4co/observability';
+import { PrismaClient } from '@prisma/client';
 
 describe('OrderService Database Integration', () => {
   let service: OrderServiceService;
-  let prisma: PrismaService;
+  let prisma: PrismaClient;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OrderServiceService,
-        PrismaService,
+        { provide: PrismaClient, useValue: new PrismaClient(), },
       ],
     }).compile();
 
     service = module.get<OrderServiceService>(OrderServiceService);
-    prisma = module.get<PrismaService>(PrismaService);
+    prisma = module.get<PrismaClient>(PrismaClient);
   });
 
   it('should connect to database', async () => {

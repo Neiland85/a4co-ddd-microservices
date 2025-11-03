@@ -1,0 +1,281 @@
+version: '3.8'
+
+services:
+  # ========================================
+  # INFRASTRUCTURE SERVICES
+  # ========================================
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: a4co-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nats:
+    image: nats:2.10-alpine
+    container_name: a4co-nats
+    command:
+      [
+        '--jetstream',
+        '--store_dir=/data',
+        '--max_file_store=1GB',
+        '--max_memory_store=256MB',
+        '--http_port=8222',
+      ]
+    ports:
+      - '4222:4222'
+      - '8222:8222'
+    volumes:
+      - nats_data:/data
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:8222/healthz']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: a4co-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ========================================
+  # CORE MICROSERVICES
+  # ========================================
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+    container_name: a4co-auth-service
+    ports:
+      - '3001:3001'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=a4co_dev_jwt_secret_key_change_in_production
+      - JWT_EXPIRES_IN=24h
+      - JWT_REFRESH_EXPIRES_IN=7d
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: ['pnpm', 'run', 'dev:auth']
+
+  user-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+    container_name: a4co-user-service
+    ports:
+      - '3003:3003'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3003
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3003/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: ['pnpm', 'run', 'dev:user']
+
+  product-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+    container_name: a4co-product-service
+    ports:
+      - '3002:3002'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3002/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: ['pnpm', 'run', 'dev:product']
+
+  order-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+    container_name: a4co-order-service
+    ports:
+      - '3004:3004'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - PRODUCT_SERVICE_URL=http://product-service:3002
+      - USER_SERVICE_URL=http://user-service:3003
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3004/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: ['pnpm', 'run', 'dev:order']
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+    container_name: a4co-payment-service
+    ports:
+      - '3006:3006'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3006
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - ORDER_SERVICE_URL=http://order-service:3004
+      - USER_SERVICE_URL=http://user-service:3003
+      - STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+      - STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    networks:
+      - a4co-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3006/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: ['pnpm', 'run', 'dev:payment']
+
+volumes:
+  postgres_data:
+  nats_data:
+  redis_data:
+
+networks:
+  a4co-network:
+    driver: bridge

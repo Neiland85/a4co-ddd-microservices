@@ -106,7 +106,7 @@ export const setupAxiosMonitoring = (client: SecureAxiosClient) => {
 
     // Alertas basadas en estado del circuit breaker
     if (stats.circuitBreaker.state === 'OPEN') {
-      console.warn('🚨 Circuit breaker is OPEN - service may be down');
+      console.warn('[!] Circuit breaker is OPEN - service may be down');
       // Aquí podrías enviar alertas a un sistema de monitoreo
     }
   }, 30000); // Cada 30 segundos

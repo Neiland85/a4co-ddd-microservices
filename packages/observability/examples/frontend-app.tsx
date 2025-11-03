@@ -89,6 +89,7 @@ const ProductList = withTracing(
             url: '/api/products',
           },
           response,
+          response
         );
 
         componentLogger.info('Products loaded successfully', {
@@ -109,6 +110,7 @@ const ProductList = withTracing(
             url: '/api/products',
           },
           error,
+          error
         );
 
         componentLogger.error('Failed to load products', error);

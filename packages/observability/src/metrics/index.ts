@@ -1,10 +1,9 @@
-import { Counter, Histogram, metrics, ObservableGauge, UpDownCounter } from '@opentelemetry/api';
+import type { Counter, Histogram, ObservableGauge, UpDownCounter } from '@opentelemetry/api';
+import { metrics } from '@opentelemetry/api';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { Resource } from '@opentelemetry/resources';
 import { MeterProvider } from '@opentelemetry/sdk-metrics';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { getLogger } from '../logger';
-import { MetricsConfig } from '../types';
+import type { MetricsConfig } from '../types';
 
 // Global metrics provider
 let globalMeterProvider: MeterProvider | null = null;
@@ -29,19 +28,20 @@ let appMetrics: AppMetrics | null = null;
 
 // Initialize metrics
 export function initializeMetrics(
-  config: MetricsConfig & { serviceName: string; serviceVersion?: string; environment?: string },
+  config: MetricsConfig & { serviceName: string; serviceVersion?: string; environment?: string }
 ): PrometheusExporter {
   const logger = getLogger();
 
   // Create resource
-  const resource = Resource.default().merge(
-    new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
-      [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
-      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
-      ...config.labels,
-    }),
-  );
+  // TODO: Fix Resource usage with current OpenTelemetry version
+  // const resource = Resource.default().merge(
+  //   new Resource({
+  //     [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
+  //     [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
+  //     [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
+  //     ...config.labels,
+  //   }),
+  // );
 
   // Create Prometheus exporter
   prometheusExporter = new PrometheusExporter(
@@ -55,12 +55,12 @@ export function initializeMetrics(
         port: config.port || 9090,
         endpoint: config.endpoint || '/metrics',
       });
-    },
+    }
   );
 
   // Create meter provider
   globalMeterProvider = new MeterProvider({
-    resource,
+    // resource,
   });
 
   // Register as global provider
@@ -159,7 +159,7 @@ export function recordHttpRequest(
   method: string,
   route: string,
   statusCode: number,
-  duration: number,
+  duration: number
 ): void {
   const metrics = getMetrics();
   const labels = { method, route, status_code: statusCode.toString() };
@@ -177,7 +177,7 @@ export function recordCommandExecution(
   commandName: string,
   aggregateName: string,
   success: boolean,
-  duration?: number,
+  duration?: number
 ): void {
   const metrics = getMetrics();
   const labels = {
@@ -206,7 +206,7 @@ export function recordCommandExecution(
 export function recordEvent(
   eventName: string,
   aggregateName: string,
-  action: 'published' | 'processed',
+  action: 'published' | 'processed'
 ): void {
   const metrics = getMetrics();
   const labels = { event: eventName, aggregate: aggregateName };
@@ -232,7 +232,7 @@ export function createCustomHistogram(name: string, description: string, unit?: 
 export function createCustomGauge(
   name: string,
   description: string,
-  unit?: string,
+  unit?: string
 ): ObservableGauge {
   const meter = metrics.getMeter('@a4co/observability');
   return meter.createObservableGauge(name, { description, unit });

@@ -1,8 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ──────────────────────────────────────────────
+// Prisma Schema – A4CO Auth-Service (Supabase)
+// ──────────────────────────────────────────────
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
 }
 
 datasource db {
@@ -10,16 +12,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  name          String
-  hashedPassword String   @map("hashed_password")
-  status        String    @default("active")
-  emailVerified Boolean   @default(false) @map("email_verified")
-  lastLoginAt   DateTime? @map("last_login_at")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+// ──────────────────────────────────────────────
+// PostgreSQL extensions (Supabase defaults)
+// ──────────────────────────────────────────────
+extension pgcrypto;
+extension "uuid-ossp";
 
-  @@map("users")
+// ──────────────────────────────────────────────
+// Core tables
+// ──────────────────────────────────────────────
+
+model User {
+  id              String         @id @default(uuid())
+  email           String         @unique
+  password        String
+  name            String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  sessions        Session[]
+  refreshTokens   RefreshToken[]
 }
+
+/// Active user sessions (JWT or cookie)
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+/// Refresh tokens for long-lived auth
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+// ──────────────────────────────────────────────
+// Example: synced with Supabase "notes" table
+// ──────────────────────────────────────────────
+
+model notes {
+  id    BigInt @id @default(autoincrement())
+  title String
+}
+
+// ──────────────────────────────────────────────
+// Optional view for monitoring / analytics
+// ──────────────────────────────────────────────
+
+view _UserCount {
+  count Int
+  @@ignore
+}
+

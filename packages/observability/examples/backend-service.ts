@@ -138,6 +138,7 @@ app.use(
     logger,
     captureRequestBody: true,
   }),
+  })
 );
 
 // Health check endpoint

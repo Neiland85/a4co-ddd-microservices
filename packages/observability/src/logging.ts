@@ -41,8 +41,8 @@ export function createLogger(config: LoggerConfig): pino.Logger {
     formatters: {
       level: label => ({ level: label }),
       bindings: bindings => ({
-        pid: bindings['pid'],
-        host: bindings['hostname'],
+        pid: bindings.pid,
+        host: bindings.hostname,
         service: config.serviceName,
         version: config.serviceVersion || '1.0.0',
         environment: config.environment || 'development',
@@ -85,6 +85,7 @@ export function createLogger(config: LoggerConfig): pino.Logger {
 // Crear HTTP logger middleware
 export function createHttpLogger(logger: pino.Logger) {
   return pinoHttp({
+    logger,
     genReqId: req => {
       // Usar trace ID si está disponible
       const traceId = getCurrentTraceId();

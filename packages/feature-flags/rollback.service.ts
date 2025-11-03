@@ -6,7 +6,7 @@ export class RollbackService {
   constructor(private featureFlagService: ProductionFeatureFlagService) {}
 
   async emergencyRollback(flagName: string): Promise<void> {
-    console.log(`🚨 EMERGENCY ROLLBACK for feature '${flagName}'`);
+    console.log(`[!] EMERGENCY ROLLBACK for feature '${flagName}'`);
 
     // Deshabilitar el flag inmediatamente
     await this.featureFlagService.setFlag(flagName, false);

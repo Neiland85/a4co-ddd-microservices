@@ -114,8 +114,59 @@ export function createLogger(config: LoggerConfig): pino.Logger {
 }
 
 // Logger middleware para HTTP requests
-export function createHttpLogger(): ReturnType<typeof pinoHttp> {
-  return pinoHttp();
+export function createHttpLogger(logger?: pino.Logger): ReturnType<typeof pinoHttp> {
+  if (logger) {
+    return pinoHttp({
+      logger,
+      // Personalizar la generación de request ID
+      genReqId: (req: unknown) => {
+        // Usar trace ID si está disponible
+        const traceId = getTraceId();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return traceId || (req as any).id || (req as any).headers?.['x-request-id'];
+      },
+      // Personalizar el log de request
+      customLogLevel: (res: unknown, err: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const statusCode = (res as any).statusCode;
+        if (statusCode >= 400 && statusCode < 500) {
+          return 'warn';
+        } else if (statusCode >= 500 || err) {
+          return 'error';
+        }
+        return 'info';
+      },
+      // Agregar propiedades adicionales al log
+      customProps: (req: unknown, res: unknown) => {
+        return {
+          traceId: getTraceId(),
+          spanId: getSpanId(),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          method: (req as any).method,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          url: (req as any).url,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          statusCode: (res as any).statusCode,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          duration: Date.now() - (req as any).startTime,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          userAgent: (req as any).headers?.['user-agent'],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ip: (req as any).ip || (req as any).connection?.remoteAddress,
+        };
+      },
+      // Configurar qué loguear
+      autoLogging: {
+        ignore: (req: unknown) => {
+          // Ignorar health checks
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (req as any).url === '/health' || (req as any).url === '/metrics';
+        },
+      },
+    });
+  } else {
+    return pinoHttp();
+  }
 }
 
 // Utilidades para logging estructurado
@@ -134,7 +185,7 @@ export class StructuredLogger {
   logWithContext(
     level: string,
     messageOrContext: string | Record<string, unknown>,
-    context?: Record<string, unknown>,
+    context?: Record<string, unknown>
   ): void {
     let message: string;
     let finalContext: Record<string, unknown>;
@@ -160,10 +211,10 @@ export class StructuredLogger {
     }
 
     // eslint-disable-next-line no-unused-vars
-    (this.logger[level as keyof pino.Logger] as (obj: unknown, msg?: string) => void)({
-      ...finalContext,
-      msg: message,
-    });
+    (this.logger[level as keyof pino.Logger] as (obj: unknown, msg?: string) => void)(
+      finalContext,
+      message || undefined
+    );
   }
 
   // Métodos convenientes - API simplificada
@@ -171,8 +222,23 @@ export class StructuredLogger {
     this.logWithContext('info', message, context || {});
   }
 
-  error(message: string, context?: Record<string, unknown>): void {
-    this.logWithContext('error', message, context || {});
+  error(
+    message: string,
+    errorOrContext?: Error | Record<string, unknown>,
+    context?: Record<string, unknown>
+  ): void {
+    if (errorOrContext instanceof Error) {
+      this.logWithContext('error', message, {
+        ...(context || {}),
+        error: {
+          message: errorOrContext.message,
+          stack: errorOrContext.stack,
+          name: errorOrContext.name,
+        },
+      });
+    } else {
+      this.logWithContext('error', message, errorOrContext || {});
+    }
   }
 
   warn(message: string, context?: Record<string, unknown>): void {

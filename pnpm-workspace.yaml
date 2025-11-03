@@ -1,3 +1,17 @@
+# 📦 PNPM Workspace Configuration
+# Monorepo principal para A4CO DDD Microservices
+# Incluye microservicios, paquetes compartidos y scripts raíz
+
 packages:
-  - apps/*
-  - packages/*
+  # Aplicaciones y microservicios (Bounded Contexts)
+  - "apps/**"
+
+  # Paquetes compartidos (shared-utils, design-system, etc.)
+  - "packages/**"
+
+  # Servicios adicionales o worker processes
+  - "services/**"
+
+  # Incluye la raíz del monorepo para scripts globales
+  - "."
+

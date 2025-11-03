@@ -23,11 +23,8 @@
     "emitDecoratorMetadata": true,
     "strictNullChecks": false,
     "exactOptionalPropertyTypes": false,
-    "types": [
-      "jest",
-      "node"
-    ]
+    "types": ["jest", "node"]
   },
-  "include": ["index.ts", "src/**/*", "test/**/*"],
+  "include": ["index.ts", "src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
 }

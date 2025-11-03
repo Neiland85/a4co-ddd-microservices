@@ -44,7 +44,7 @@ export class SecurityMiddleware implements NestMiddleware {
       skipFailedRequests: false,
       keyGenerator: req => {
         // Usar IP + User ID si está autenticado
-        return req.user?.id ? `${req.ip}-${req.user.id}` : req.ip;
+        return req.user?.id ? `${req.ip || 'unknown'}-${req.user.id}` : req.ip || 'unknown';
       },
     });
   }
@@ -71,15 +71,15 @@ export class SecurityMiddleware implements NestMiddleware {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ['\'self\''],
-          styleSrc: ['\'self\'', '\'unsafe-inline\''],
-          scriptSrc: ['\'self\''],
-          imgSrc: ['\'self\'', 'data:', 'https:'],
-          connectSrc: ['\'self\''],
-          fontSrc: ['\'self\''],
-          objectSrc: ['\'none\''],
-          mediaSrc: ['\'self\''],
-          frameSrc: ['\'none\''],
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          connectSrc: ["'self'"],
+          fontSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          mediaSrc: ["'self'"],
+          frameSrc: ["'none'"],
         },
       },
       hsts: {
@@ -190,7 +190,7 @@ export class LoginRateLimitMiddleware implements NestMiddleware {
       standardHeaders: true,
       legacyHeaders: false,
       skipSuccessfulRequests: true, // No contar logins exitosos
-      keyGenerator: req => req.ip,
+      keyGenerator: req => req.ip || 'unknown',
       handler: (req, res) => {
         res.status(429).json({
           error: 'Too many login attempts',
@@ -258,7 +258,7 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
 
     // Log de request
     console.log(
-      `[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`,
+      `[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`
     );
 
     // Log de autenticación
@@ -268,10 +268,10 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
 
     // Interceptar response para logging
     const originalSend = res.send;
-    res.send = function(data) {
+    res.send = function (data) {
       const duration = Date.now() - startTime;
       console.log(
-        `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`,
+        `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`
       );
 
       // Log de errores de seguridad

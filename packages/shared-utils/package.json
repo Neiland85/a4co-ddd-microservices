@@ -27,14 +27,16 @@
     "microservices",
     "ddd"
   ],
-  "author": "Neil Muñoz Lago <neiland85@gmail.com>",
+  "author": "A4CO Team <info@a4co.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "@prisma/client": "6.18.0",
     "axios": "^1.12.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "micromatch": "^4.0.8",
     "nats": "^2.19.0",
+    "prisma": "6.18.0",
     "react": "^19.1.0",
     "uuid": "^9.0.1"
   },
@@ -47,9 +49,6 @@
     "jest-environment-jsdom": "^30.1.2",
     "jsdom": "^26.1.0",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.9.2"
-  },
-  "peerDependencies": {
     "typescript": "^5.9.2"
   },
   "exports": {

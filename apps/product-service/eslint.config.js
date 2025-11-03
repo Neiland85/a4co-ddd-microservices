@@ -17,6 +17,7 @@ module.exports = [
       '**/*.bak',
       'jest.config.js',
     ],
+    files: ['**/*.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -71,6 +72,8 @@ module.exports = [
       // Custom rules for this project
       'prefer-const': 'warn',
       'no-var': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 ];

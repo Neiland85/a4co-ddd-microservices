@@ -9,9 +9,7 @@ import {
   IsEmail,
 } from 'class-validator';
 
-// ========================================
 // PAYMENT SERVICE DTOs
-// ========================================
 
 export enum PaymentMethodType {
   CREDIT_CARD = 'credit_card',

@@ -1,10 +1,10 @@
-import { getGlobalLogger, initializeTracing } from '@a4co/observability';
-import { BracesSecurityMiddleware } from '@a4co/shared-utils'; // Agregar importación
+import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as process from 'process';
+import { getLogger, initializeTracing } from '../../../packages/observability/dist';
 import { OrderModule } from './order.module';
 
 async function bootstrap() {
@@ -16,10 +16,10 @@ async function bootstrap() {
   });
 
   // Get logger instance
-  const logger = getGlobalLogger();
+  const logger = getLogger();
 
   const app = await NestFactory.create(OrderModule, {
-    logger: false, // Disable default NestJS logger
+    logger: false, // Disable default NestJS logger for now
   });
 
   // Security middleware
@@ -33,11 +33,16 @@ async function bootstrap() {
           imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
-      crossOriginEmbedderPolicy: false,
     })
   );
 
-  // Global validation pipe
+  // CORS
+  app.enableCors({
+    origin: process.env['CORS_ORIGIN'] || 'http://localhost:3000',
+    credentials: true,
+  });
+
+  // Validation
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -47,29 +52,24 @@ async function bootstrap() {
   );
 
   // Braces security middleware
-  const bracesMiddleware = new BracesSecurityMiddleware({
-    maxExpansionSize: 50,
-    maxRangeSize: 10,
-    monitoringEnabled: true,
-  });
+  const bracesMiddleware = new BracesSecurityMiddleware(
+    {
+      maxExpansionSize: 50,
+      maxRangeSize: 10,
+      monitoringEnabled: true,
+    },
+    'order-service'
+  );
   app.use(bracesMiddleware.validateRequestBody());
   app.use(bracesMiddleware.validateQueryParams());
 
-  // CORS configuration
-  app.enableCors({
-    origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  });
-
   // Swagger documentation
   const config = new DocumentBuilder()
-    .setTitle('A4CO Order Service')
-    .setDescription('Servicio de gestión de órdenes para la plataforma A4CO')
+    .setTitle('Order Service API')
+    .setDescription('API for order management in A4CO platform')
     .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('Orders')
+    .addTag('orders', 'Order management endpoints')
+    .addTag('health', 'Health check endpoints')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -78,12 +78,15 @@ async function bootstrap() {
   const port = process.env['PORT'] || 3004;
   logger.info(`🚀 Order Service iniciado en puerto ${port}`);
   logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
+  console.log(`🚀 Order Service iniciado en puerto ${port}`);
+  console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
 
   await app.listen(port);
 }
 
 bootstrap().catch(err => {
-  const logger = getGlobalLogger();
+  const logger = getLogger();
   logger.error('Error al iniciar el servicio:', err);
+  console.error('Error al iniciar el servicio:', err);
   process.exit(1);
 });

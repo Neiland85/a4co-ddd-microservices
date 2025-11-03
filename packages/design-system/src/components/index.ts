@@ -1,5 +1,6 @@
 // Exportar todos los componentes del Design System
 export { Button } from './Button/Button';
+export type { ButtonProps } from './Button/Button';
 
 // Aquí se agregarán más componentes conforme se desarrollen
 // export { Card } from './Card/Card'

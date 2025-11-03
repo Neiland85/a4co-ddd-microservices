@@ -44,12 +44,12 @@ import { UserRepositoryPort } from './application/ports/user-repository.port';
         // Simulamos PrismaClient por ahora para que compile
         return {
           user: {
-            findUnique: async() => null,
-            create: async() => ({}),
-            update: async() => ({}),
-            delete: async() => {},
-            count: async() => 0,
-            findMany: async() => [],
+            findUnique: async () => null,
+            create: async () => ({}),
+            update: async () => ({}),
+            delete: async () => {},
+            count: async () => 0,
+            findMany: async () => [],
           },
         };
       },
@@ -80,13 +80,13 @@ import { UserRepositoryPort } from './application/ports/user-repository.port';
         userRepository: UserRepositoryPort,
         cryptographyService: any,
         eventBus: any,
-        userDomainService: UserDomainService,
+        userDomainService: UserDomainService
       ) => {
         return new RegisterUserUseCase(
           userRepository,
           cryptographyService,
           eventBus,
-          userDomainService,
+          userDomainService
         );
       },
       inject: ['UserRepositoryPort', 'CryptographyServicePort', 'EventBusPort', UserDomainService],

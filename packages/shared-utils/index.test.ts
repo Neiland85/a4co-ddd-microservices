@@ -7,6 +7,7 @@ describe('Shared Utils Import Test', () => {
       constructor(
         public name: string,
         id?: string,
+        id?: string
       ) {
         super(id);
       }

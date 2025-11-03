@@ -22,6 +22,7 @@ afterAll(() => {
 
 // Mock para servicios externos que podrían ser usados
 jest.mock('@a4co/shared-utils/base', () => ({
+jest.mock('../../packages/shared-utils/src/base', () => ({
   BaseService: jest.fn().mockImplementation(() => ({
     validateRequired: jest.fn((value, field) => {
       if (value === undefined || value === null || value === '') {
@@ -38,6 +39,7 @@ jest.mock('@a4co/shared-utils/base', () => ({
     log: jest.fn(),
     createSuccessMessage: jest.fn(
       (entity, action, details) => `${entity} ${action} successfully ${details}`,
+      (entity, action, details) => `${entity} ${action} successfully ${details}`
     ),
     handleServiceError: jest.fn((error, method) => `Error in ${method}: ${error.message}`),
   })),

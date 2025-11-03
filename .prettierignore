@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 **/node_modules
 **/.next
 **/out
@@ -9,3 +10,38 @@
 **/*.min.css
 .git
 .DS_Store
+=======
+# Prettier ignore patterns
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.turbo/
+.tsbuildinfo
+*.log
+*.lock
+.env*
+.DS_Store
+
+# Generated files
+**/*.d.ts
+**/*.js.map
+**/*.d.ts.map
+
+# Test coverage
+lcov.info
+coverage/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Documentation that should maintain original formatting
+CHANGELOG.md
+LICENSE
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

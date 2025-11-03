@@ -13,6 +13,13 @@ export class ProductService extends BaseService {
       this.log(`Creating product: ${validatedName} with price ${validatedPrice}`);
 
       return `Product created successfully: ${validatedName}`;
+      this.log('Creating product', { name, price });
+
+      return this.createSuccessMessage(
+        'Product',
+        'created',
+        `with ${validatedName} and ${validatedPrice}`
+      );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return `Error creating product: ${errorMessage}`;
@@ -26,6 +33,11 @@ export class ProductService extends BaseService {
       this.log(`Getting product: ${validatedName}`);
 
       return `Product retrieved: ${validatedName}`;
+      const validatedName = this.validateId(name, 'name');
+
+      this.log('Getting product', { name: validatedName });
+
+      return this.createSuccessMessage('Product', 'retrieved', validatedName);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return `Error getting product: ${errorMessage}`;

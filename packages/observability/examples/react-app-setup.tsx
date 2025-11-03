@@ -273,6 +273,7 @@ function ProductGrid({ filters }: { filters: any }) {
     setLoading(true);
 
     await measurePerformance('ProductGrid.loadProducts', async() => {
+    await measurePerformance('ProductGrid.loadProducts', async () => {
       try {
         // Simular carga de productos
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -499,4 +500,5 @@ root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
+  </React.StrictMode>
 );

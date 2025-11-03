@@ -1,38 +1,13 @@
-/**
- * Safe Exec - Utilidad segura para ejecutar comandos del sistema
- * Mitiga vulnerabilidades de inyección de comandos detectadas por SonarQube
- */
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+const execPromise = promisify(execFile);
 
-import { exec } from 'child_process';
-
-export const safeExec = (command: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing command: ${command}`, error);
-        reject(new Error(`Command failed: ${(error as Error).message}`)); // Castear a Error
-        return;
-      }
-      if (stderr) {
-        console.warn(`Command stderr: ${command}`, stderr);
-      }
-      resolve(stdout);
-    });
-  });
-};
-
-/**
- * Executes a whitelisted command with arguments and parses the output as JSON.
- * @param command The command to execute (must be in whitelist)
- * @param args Array of arguments to pass to the command
- */
 export const safeExecAndParseJson = async <T>(command: string, args: string[] = []): Promise<T> => {
-  const fullCommand = [command, ...args].join(' ');
-  const stdout = await safeExec(fullCommand);
   try {
+    const { stdout } = await execPromise(command, args);
     return JSON.parse(stdout) as T;
-  } catch (error) {
-    console.error(`Error parsing JSON from command output: ${fullCommand}`, stdout, error);
-    throw new Error(`Failed to parse JSON from command output: ${(error as Error).message}`); // Castear a Error
+  } catch (error: any) {
+    console.error(`Error executing ${command}:`, error);
+    throw new Error(`safeExec failed: ${error.message}`);
   }
 };

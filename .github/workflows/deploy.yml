@@ -1,14 +1,16 @@
 name: Deploy with Feature Flags
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'staging'
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # push:
+  #   branches: [ main ]
+  # workflow_dispatch:
+  #   inputs:
+  #     environment:
+  #       description: 'Environment to deploy to'
+  #       required: true
+  #       default: 'staging'
         type: choice
         options:
         - staging
@@ -21,13 +23,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-      feature/monitoring-dashboard-rollout
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
       with:
-        version: 9
+        version: 10
 
-       main
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:

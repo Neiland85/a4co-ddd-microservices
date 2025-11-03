@@ -1,5 +1,9 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import {
+  logger,
+  initializeObservability,
   createLogger,
   getTracer,
   initializeLogger,
@@ -118,6 +122,42 @@ describe('@a4co/observability', () => {
         });
         expect(result).toBeDefined();
       }).not.toThrow();
+      const result = initializeObservability({
+        serviceName: 'test-minimal-service',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.logger).toBeDefined();
+      expect(result.httpLogger).toBeDefined();
+      expect(result.getTracer).toBeDefined();
+      expect(result.shutdown).toBeDefined();
+    });
+
+    it('should initialize with full configuration', () => {
+      const result = initializeObservability({
+        serviceName: 'test-full-service',
+        serviceVersion: '1.0.0',
+        environment: 'test',
+        logging: {
+          level: 'debug',
+          prettyPrint: false,
+        },
+        tracing: {
+          enabled: true,
+          enableConsoleExporter: true,
+          enableAutoInstrumentation: false,
+        },
+        metrics: {
+          enabled: true,
+          port: 9465,
+          endpoint: '/test-metrics',
+        },
+      });
+
+      expect(result).toBeDefined();
+      expect(result.logger).toBeDefined();
+      expect(result.tracingSDK).toBeDefined();
+      expect(result.metricsExporter).toBeDefined();
     });
 
     it('should disable tracing when specified', () => {

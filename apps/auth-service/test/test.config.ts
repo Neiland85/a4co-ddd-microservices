@@ -7,6 +7,9 @@ export const testConfig = {
     username: process.env['TEST_USERNAME'] || 'test_user',
     password: process.env['TEST_PASSWORD'] || 'test_password',
     email: process.env['TEST_EMAIL'] || 'test@example.com',
+    username: process.env.TEST_USERNAME || 'test_user',
+    password: process.env.TEST_PASSWORD || 'test_password',
+    email: process.env.TEST_EMAIL || 'test@example.com',
   },
 
   // Datos de prueba para diferentes escenarios

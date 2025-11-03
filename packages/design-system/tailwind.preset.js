@@ -132,7 +132,7 @@ module.exports = {
   },
   plugins: [
     // Plugin personalizado para componentes A4CO
-    plugin(function({ addBase, addComponents, addUtilities, theme }) {
+    plugin(function ({ addBase, addComponents, addUtilities, theme }) {
       // CSS Variables base
       addBase({
         ':root': {

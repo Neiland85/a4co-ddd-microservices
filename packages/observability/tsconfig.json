@@ -4,27 +4,13 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "rootDir": "./src",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "node",
-      "jest"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "jest"],
     "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    "exactOptionalPropertyTypes": false,
+    "noPropertyAccessFromIndexSignature": false
   },
-  "include": [
-    "src/**/*",
-    "src/global.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/*.js"
-  ]
+  "include": ["src/**/*", "src/global.d.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.js"]
 }

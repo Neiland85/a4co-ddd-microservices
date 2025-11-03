@@ -106,7 +106,7 @@ export function monitoringExample() {
 
   // Configurar alertas
   validator.on('securityAlert', alert => {
-    console.log('🚨 Security Alert:', alert);
+    console.log('[!] Security Alert:', alert);
 
     // Aquí podrías:
     // - Enviar alertas a un sistema de monitoreo

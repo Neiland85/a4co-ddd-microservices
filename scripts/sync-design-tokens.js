@@ -12,16 +12,7 @@ const TOKENS_PATH = path.join(DESIGN_SYSTEM_PATH, 'src/tokens');
 const TAILWIND_PRESET_PATH = path.join(DESIGN_SYSTEM_PATH, 'tailwind.preset.js');
 
 // Apps que necesitan sincronización
-const APPS_TO_SYNC = [
-  'apps/web/v0dev/a-head',
-  'apps/web/v0dev/b-business-registration',
-  'apps/web/v0dev/c-artisan-dashboard',
-  'apps/web/v0dev/d-user-registration',
-  'apps/web/v0dev/e-gamified-dashboard',
-  'apps/web/v0dev/f-modern-backoffice',
-  'apps/web/v0dev/g-banner-cookie',
-  'apps/dashboard-web',
-];
+const APPS_TO_SYNC = ['apps/dashboard-web'];
 
 // Función para notificar cambios
 function notify(message, type = 'info') {
@@ -75,7 +66,7 @@ function watchTokens() {
     {
       persistent: true,
       ignoreInitial: true,
-    },
+    }
   );
 
   let syncTimeout;

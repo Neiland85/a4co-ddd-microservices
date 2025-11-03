@@ -32,12 +32,14 @@ describe('BaseController', () => {
   });
 
   test('should validate request correctly', async() => {
+  test('should validate request correctly', async () => {
     const req = { param: 'test-value' };
     const result = await controller.handleRequest(req);
     expect(result).toBe('test-test-value');
   });
 
   test('should throw error for invalid request', async() => {
+  test('should throw error for invalid request', async () => {
     const req = { wrongParam: 'test-value' };
     await expect(controller.handleRequest(req)).rejects.toThrow();
   });

@@ -67,6 +67,9 @@ describe('OrderService', () => {
 
       await expect(service.createOrder(createOrderDto)).rejects.toThrow(
         'Order with id ORD-001 already exists',
+    it('should validate items array', () => {
+      expect(() => service.createOrder('ORD-001', [])).toThrow(
+        'Order must contain at least one item'
       );
     });
   });
@@ -108,6 +111,12 @@ describe('OrderService', () => {
       };
 
       await expect(service.createOrder(invalidData)).rejects.toThrow();
+    it('should handle errors gracefully', () => {
+      const invalidData = null as any;
+
+      expect(() => {
+        service.createOrder(invalidData, invalidData);
+      }).toThrow();
     });
   });
 
@@ -129,6 +138,8 @@ describe('OrderService', () => {
       mockOrderRepository.save.mockResolvedValue();
 
       await service.createOrder(createOrderDto);
+    it('should log operations', () => {
+      service.createOrder('ORD-001', ['item1']);
 
       expect(console.log).toHaveBeenCalled();
     });

@@ -4,9 +4,7 @@ export * from './aggregates/user.aggregate';
 // Need to import for the interface
 import { User } from './aggregates/user.aggregate';
 
-// ========================================
 // PORTS/INTERFACES
-// ========================================
 
 export interface IUserRepository {
     save(user: User): Promise<void>;

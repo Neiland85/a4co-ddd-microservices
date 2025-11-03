@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import { getGlobalLogger, initializeTracing } from '@a4co/observability';
+import { getLogger, initializeTracing } from '@a4co/observability';
 import { BracesSecurityMiddleware } from '@a4co/shared-utils'; // Agregar importación para resolver el error de clase no definida
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -18,7 +18,7 @@ async function bootstrap() {
   });
 
   // Get logger instance
-  const logger = getGlobalLogger();
+  const logger = getLogger();
 
   const app = await NestFactory.create(PaymentModule, {
     logger: false, // Disable default NestJS logger
@@ -85,7 +85,7 @@ async function bootstrap() {
 }
 
 bootstrap().catch(err => {
-  const logger = getGlobalLogger();
+  const logger = getLogger();
   logger.error('Error al iniciar el servicio:', err);
   process.exit(1);
 });

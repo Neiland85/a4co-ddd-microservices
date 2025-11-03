@@ -1,4 +1,5 @@
-import React, { ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes } from 'react';
+import React from 'react';
 import { useComponentTracking, useEventTracking } from './index';
 
 // Button with integrated observability

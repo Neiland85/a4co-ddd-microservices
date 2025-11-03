@@ -202,7 +202,7 @@ class AxiosSecurityValidator {
       return '✅ No axios security issues found!';
     }
 
-    let report = '🚨 Axios Security Issues Found:\n\n';
+    let report = '[!] Axios Security Issues Found:\n\n';
 
     const groupedIssues = issues.reduce(
       (groups, issue) => {

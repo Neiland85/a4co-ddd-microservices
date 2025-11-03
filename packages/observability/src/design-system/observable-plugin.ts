@@ -186,13 +186,9 @@ export const ObservabilityStyleGuide = {
   // Attribute naming conventions
   attributes: {
     component: (_name: string): string => 'ds.component.name',
-
     variant: (_variant: string): string => 'ds.component.variant',
-
     size: (_size: string): string => 'ds.component.size',
-
     state: (_state: string): string => 'ds.component.state',
-
     theme: (_theme: string): string => 'ds.theme',
     token: (token: string): string => `ds.token.${token}`,
   },

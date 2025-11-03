@@ -47,7 +47,7 @@ ${theme} [data-chart="${id}"] {
  */
 export function useChartStyles(
   id: string,
-  colorConfig: Array<{ theme: string; colors: Record<string, string> }>,
+  colorConfig: Array<{ theme: string; colors: Record<string, string> }>
 ) {
   return React.useMemo(() => {
     if (!colorConfig.length) {
@@ -61,7 +61,7 @@ export function useChartStyles(
           ...acc,
           [`--color-${key}`]: value,
         }),
-        {},
+        {}
       ),
     }));
   }, [id, colorConfig]);
@@ -72,7 +72,7 @@ export function useChartStyles(
  */
 export function createChartStyleSheet(
   id: string,
-  colorConfig: Array<{ theme: string; colors: Record<string, string> }>,
+  colorConfig: Array<{ theme: string; colors: Record<string, string> }>
 ): string {
   return colorConfig
     .map(({ theme, colors }) => {

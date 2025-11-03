@@ -59,6 +59,10 @@ describe('ProductService', () => {
       const invalidData = null as any;
       const result = service.addProduct(invalidData, invalidData);
       expect(result).toContain('Error creating product');
+
+      expect(() => {
+        service.addProduct(invalidData, invalidData);
+      }).toThrow();
     });
   });
 

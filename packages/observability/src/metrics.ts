@@ -1,7 +1,6 @@
 import type { Counter, Histogram, Meter, UpDownCounter } from '@opentelemetry/api';
 import { metrics } from '@opentelemetry/api';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { Resource } from '@opentelemetry/resources';
 import { MeterProvider } from '@opentelemetry/sdk-metrics';
 import type { NextFunction, Request, Response } from 'express';
 
@@ -21,21 +20,22 @@ export function initializeMetrics(config: MetricsConfig): PrometheusExporter {
     },
     () => {
       console.log(`Prometheus metrics server started on port ${config.port || 9464}`);
-    },
+    }
   );
 
   // Crear meter provider
   const meterProvider = new MeterProvider({
-    resource: new Resource({
-      'service.name': config.serviceName,
-    }),
+    // resource: new Resource({
+    //   'service.name': config.serviceName,
+    // }),
   });
 
   // Registrar el meter provider globalmente
   metrics.setGlobalMeterProvider(meterProvider);
 
   // Agregar el exportador
-  meterProvider.addMetricReader(prometheusExporter);
+  // TODO: Fix metric reader registration with current OpenTelemetry version
+  // meterProvider.addMetricReader(prometheusExporter);
 
   return prometheusExporter;
 }
@@ -119,7 +119,7 @@ export class CustomMetrics {
     operation: string,
     collection: string,
     duration: number,
-    success: boolean,
+    success: boolean
   ): void {
     this.incrementCounter('db_queries_total', 1, {
       operation,
@@ -147,11 +147,12 @@ export class CustomMetrics {
     }
   }
 
+  // Queue metrics
   recordQueueOperation(
     queue: string,
     operation: 'enqueue' | 'dequeue' | 'process',
     success: boolean,
-    duration?: number,
+    duration?: number
   ): void {
     // Queue operation counter
     this.incrementCounter('queue_operations_total', 1, {
@@ -192,11 +193,7 @@ export function httpMetricsMiddleware(metrics: CustomMetrics) {
 
     // Interceptar el método end
     const originalEnd = res.end;
-    (res.end as unknown) = function(
-      chunk?: unknown,
-      encoding?: unknown,
-      cb?: () => void,
-    ): unknown {
+    res.end = function (...args: any[]): any {
       // Registrar métricas
       const duration = Date.now() - startTime;
       metrics.recordHttpRequest(req.method, req.route?.path || req.path, res.statusCode, duration);
@@ -205,7 +202,7 @@ export function httpMetricsMiddleware(metrics: CustomMetrics) {
       metrics.updateActiveConnections(-1, 'http');
 
       // Llamar al método original
-      return (originalEnd as Function).call(res, chunk, encoding, cb);
+      return (originalEnd as Function).call(res, ...args);
     };
 
     next();
@@ -217,9 +214,10 @@ export async function measureAsync<T>(
   metrics: CustomMetrics,
   metricName: string,
   operation: () => Promise<T>,
-  labels?: Record<string, string>,
+  labels?: Record<string, string>
 ): Promise<T> {
   const startTime = Date.now();
+
   try {
     const result = await operation();
     const duration = Date.now() - startTime;

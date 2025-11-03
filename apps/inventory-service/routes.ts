@@ -1,17 +1,13 @@
 import { Router } from 'express';
 import { InventoryController } from './controller';
 
-// ========================================
 // CONFIGURACIÓN DE RUTAS PARA INVENTORY SERVICE
-// ========================================
 
 export function setupInventoryRoutes(): Router {
   const router = Router();
   const inventoryController = new InventoryController();
 
-  // ========================================
   // ENDPOINTS CRÍTICOS PARA OTROS SERVICIOS
-  // ========================================
 
   /**
    * GET /inventory/check/:productId
@@ -19,6 +15,7 @@ export function setupInventoryRoutes(): Router {
    * Query params: quantity (número)
    */
   router.get('/check/:productId', async(req, res) => {
+  router.get('/check/:productId', async (req, res) => {
     try {
       const { productId } = req.params;
       const quantity = parseInt(req.query.quantity as string) || 1;
@@ -53,6 +50,7 @@ export function setupInventoryRoutes(): Router {
    * Verificar disponibilidad de stock para múltiples productos
    */
   router.post('/check/bulk', async(req, res) => {
+  router.post('/check/bulk', async (req, res) => {
     try {
       const { items } = req.body;
 
@@ -79,6 +77,7 @@ export function setupInventoryRoutes(): Router {
    * Reservar stock para una orden
    */
   router.post('/reserve', async(req, res) => {
+  router.post('/reserve', async (req, res) => {
     try {
       const { orderId, productId, quantity, customerId } = req.body;
 
@@ -117,6 +116,7 @@ export function setupInventoryRoutes(): Router {
    * Liberar stock reservado
    */
   router.post('/release', async(req, res) => {
+  router.post('/release', async (req, res) => {
     try {
       const { orderId, productId, quantity } = req.body;
 
@@ -149,15 +149,14 @@ export function setupInventoryRoutes(): Router {
     }
   });
 
-  // ========================================
   // ENDPOINTS INTERNOS DEL SERVICIO
-  // ========================================
 
   /**
    * GET /inventory/product/:productId
    * Obtener información completa de inventario de un producto
    */
   router.get('/product/:productId', async(req, res) => {
+  router.get('/product/:productId', async (req, res) => {
     try {
       const { productId } = req.params;
 
@@ -184,6 +183,7 @@ export function setupInventoryRoutes(): Router {
    * Obtener estado general del inventario
    */
   router.get('/status', async(req, res) => {
+  router.get('/status', async (req, res) => {
     try {
       const result = await inventoryController.getInventoryStatus();
       res.json(result);
@@ -201,6 +201,7 @@ export function setupInventoryRoutes(): Router {
    * Actualizar stock de un producto
    */
   router.post('/update', async(req, res) => {
+  router.post('/update', async (req, res) => {
     try {
       const { productId, quantity, reason } = req.body;
 
@@ -222,15 +223,14 @@ export function setupInventoryRoutes(): Router {
     }
   });
 
-  // ========================================
   // ENDPOINTS DE MONITOREO Y SALUD
-  // ========================================
 
   /**
    * GET /inventory/health
    * Verificar salud del servicio de inventario
    */
   router.get('/health', async(req, res) => {
+  router.get('/health', async (req, res) => {
     try {
       const result = await inventoryController.getHealth();
       res.json(result);
@@ -248,6 +248,7 @@ export function setupInventoryRoutes(): Router {
    * Obtener métricas del servicio
    */
   router.get('/metrics', async(req, res) => {
+  router.get('/metrics', async (req, res) => {
     try {
       const result = await inventoryController.getMetrics();
       res.json(result);
@@ -260,9 +261,7 @@ export function setupInventoryRoutes(): Router {
     }
   });
 
-  // ========================================
   // MIDDLEWARE DE VALIDACIÓN GLOBAL
-  // ========================================
 
   // Middleware para validar que el servicio esté disponible
   router.use((req, res, next) => {
@@ -271,9 +270,7 @@ export function setupInventoryRoutes(): Router {
     next();
   });
 
-  // ========================================
   // MANEJO DE RUTAS NO ENCONTRADAS
-  // ========================================
 
   router.use('*', (req, res) => {
     res.status(404).json({

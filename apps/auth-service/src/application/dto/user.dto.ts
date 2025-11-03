@@ -1,55 +1,55 @@
-import { IsEmail, IsString, MinLength, MaxLength, IsNotEmpty } from 'class-validator';
-import { BaseDto } from '@a4co/shared-utils';
+import { IsEmail, IsOptional, IsString, MinLength, IsBoolean } from 'class-validator';
 
-export class RegisterUserDto extends BaseDto {
-  @IsEmail({}, { message: 'Debe ser un email válido' })
-  @IsNotEmpty({ message: 'Email es requerido' })
+/**
+ * DTO para registro: incluye `name` porque los use-cases lo usan.
+ */
+export class RegisterUserDto {
+  @IsEmail()
   email!: string;
 
-  @IsString({ message: 'Nombre debe ser texto' })
-  @IsNotEmpty({ message: 'Nombre es requerido' })
-  @MinLength(2, { message: 'Nombre debe tener al menos 2 caracteres' })
-  @MaxLength(50, { message: 'Nombre no puede tener más de 50 caracteres' })
-  name!: string;
+  @IsString()
+  @MinLength(8)
+  password!: string;
 
-  @IsString({ message: 'Password debe ser texto' })
-  @IsNotEmpty({ message: 'Password es requerido' })
-  @MinLength(8, { message: 'Password debe tener al menos 8 caracteres' })
-  @MaxLength(100, { message: 'Password no puede tener más de 100 caracteres' })
+  // Algunos archivos usan `name`, otros `fullName` — incluimos ambos (opcionales)
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  fullName?: string;
+}
+
+/**
+ * DTO para login
+ */
+export class LoginUserDto {
+  @IsEmail()
+  email!: string;
+
+  @IsString()
   password!: string;
 }
 
-export class LoginUserDto extends BaseDto {
-  @IsEmail({}, { message: 'Debe ser un email válido' })
-  @IsNotEmpty({ message: 'Email es requerido' })
-  email!: string;
-
-  @IsString({ message: 'Password debe ser texto' })
-  @IsNotEmpty({ message: 'Password es requerido' })
-  password!: string;
-}
-
-export class ChangePasswordDto extends BaseDto {
-  @IsString({ message: 'Password actual debe ser texto' })
-  @IsNotEmpty({ message: 'Password actual es requerido' })
-  currentPassword!: string;
-
-  @IsString({ message: 'Nuevo password debe ser texto' })
-  @IsNotEmpty({ message: 'Nuevo password es requerido' })
-  @MinLength(8, { message: 'Nuevo password debe tener al menos 8 caracteres' })
-  @MaxLength(100, {
-    message: 'Nuevo password no puede tener más de 100 caracteres',
-  })
-  newPassword!: string;
-}
-
-export class UserResponseDto extends BaseDto {
+/**
+ * Respuesta pública del usuario — refleja los campos que se usan en los use-cases.
+ * Usamos tipos Date | string para evitar errores cuando la entidad devuelve Date.
+ */
+export class UserResponseDto {
   id!: string;
   email!: string;
-  name!: string;
-  status!: string;
-  emailVerified!: boolean;
-  lastLoginAt?: Date;
-  createdAt!: Date;
-  updatedAt!: Date;
+
+  // Nombre (coexistencia name / fullName)
+  name?: string;
+  fullName?: string;
+
+  // Estado y verificación
+  status?: string;
+  emailVerified?: boolean;
+
+  // Fechas pueden venir como Date desde la entidad/DB — aceptar Date | string
+  lastLoginAt?: Date | string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }

@@ -114,6 +114,7 @@ function createExpressApp() {
         clientVersion: req.headers['x-client-version'],
       }),
     }),
+    })
   );
 
   app.use(express.json());

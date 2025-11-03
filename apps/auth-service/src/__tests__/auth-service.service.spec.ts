@@ -1,25 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthServiceService } from '../auth-service.service';
+import { AuthService } from '../service';
 
-describe('AuthServiceService', () => {
-  let service: AuthServiceService;
+describe('AuthService', () => {
+  let service: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthServiceService],
+      providers: [AuthService],
     }).compile();
 
-    service = module.get<AuthServiceService>(AuthServiceService);
+    service = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('business logic', () => {
-    it('should perform core auth-service operations', () => {
-      // Add specific business logic tests
-      expect(true).toBe(true);
+  describe('login', () => {
+    it('should return login message', () => {
+      const result = service.login('testuser', 'password');
+      expect(result).toBe('Usuario testuser autenticado.');
+    });
+  });
+
+  describe('register', () => {
+    it('should return register message', () => {
+      const result = service.register('testuser', 'password');
+      expect(result).toBe('Usuario testuser registrado.');
     });
   });
 });

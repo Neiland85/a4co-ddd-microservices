@@ -66,4 +66,11 @@ export interface Logger {
   error(_message: string, _error?: Error | unknown, _context?: Partial<LogContext>): void;
   fatal(_message: string, _error?: Error | unknown, _context?: Partial<LogContext>): void;
   child(_context: Partial<LogContext>): Logger;
+  trace(message: string, context?: Partial<LogContext>): void;
+  debug(message: string, context?: Partial<LogContext>): void;
+  info(message: string, context?: Partial<LogContext>): void;
+  warn(message: string, context?: Partial<LogContext>): void;
+  error(message: string, error?: Error | unknown, context?: Partial<LogContext>): void;
+  fatal(message: string, error?: Error | unknown, context?: Partial<LogContext>): void;
+  child(context: Partial<LogContext>): Logger;
 }

@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentServiceService } from '../../payment-service.service';
-import { PrismaService } from '@a4co/observability';
+import { PrismaClient } from '@prisma/client';
 
 describe('PaymentService Database Integration', () => {
   let service: PaymentServiceService;
-  let prisma: PrismaService;
+  let prisma: PrismaClient;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentServiceService,
-        PrismaService,
+        { provide: PrismaClient, useValue: new PrismaClient(), },
       ],
     }).compile();
 
     service = module.get<PaymentServiceService>(PaymentServiceService);
-    prisma = module.get<PrismaService>(PrismaService);
+    prisma = module.get<PrismaClient>(PrismaClient);
   });
 
   it('should connect to database', async () => {
