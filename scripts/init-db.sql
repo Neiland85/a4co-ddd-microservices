@@ -5,7 +5,8 @@
 -- CREATE DATABASE IF NOT EXISTS a4co_platform;
 
 -- Create a single application user with access to the main database
-CREATE USER IF NOT EXISTS a4co_app WITH PASSWORD 'a4co_local_dev';
+-- Note: Use environment variable for password in production
+CREATE USER IF NOT EXISTS a4co_app WITH PASSWORD '${APP_DB_PASSWORD:-secure_dev_password}';
 GRANT ALL PRIVILEGES ON DATABASE a4co_platform TO a4co_app;
 GRANT USAGE ON SCHEMA public TO a4co_app;
 

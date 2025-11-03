@@ -9,7 +9,7 @@ on:
   # workflow_dispatch:
   # push:
   #   paths:
-  https://github.com/Neiland85/a4co-ddd-microservices/pull/218/conflict?name=.github%252Fworkflows%252Fdependencies.yml&ancestor_oid=5132e087f7aac7e7b51a7f6ea2215a67f6e2a446&base_oid=527ea1b8802b75568818b694eac733250fcececf&head_oid=c52a535348a3e4079a7a7e5c75a4338fea8c7499#     - 'pnpm-lock.yaml'
+  #     - 'pnpm-lock.yaml'
   #     - 'package.json'
   #     - 'apps/*/package.json'
   #     - 'packages/*/package.json'
