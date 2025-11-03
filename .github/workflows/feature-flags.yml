@@ -1,33 +1,35 @@
 name: Feature Flag Management
 
 on:
-  workflow_dispatch:
-    inputs:
-      action:
-        description: 'Action to perform'
-        required: true
-        type: choice
-        options:
-        - start_rollout
-        - pause_rollout
-        - complete_rollout
-        - emergency_rollback
-      flag_name:
-        description: 'Feature flag name'
-        required: true
-        type: string
-      rollout_strategy:
-        description: 'Rollout strategy (for start_rollout)'
-        required: false
-        type: choice
-        options:
-        - percentage
-        - gradual
-        - user_list
-      rollout_value:
-        description: 'Rollout value (percentage 0-1, hours, or user count)'
-        required: false
-        type: string
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # workflow_dispatch:
+  #   inputs:
+  #     action:
+  #       description: 'Action to perform'
+  #       required: true
+  #       type: choice
+  #       options:
+  #       - start_rollout
+  #       - pause_rollout
+  #       - complete_rollout
+  #       - emergency_rollback
+  #     flag_name:
+  #       description: 'Feature flag name'
+  #       required: true
+  #       type: string
+  #     rollout_strategy:
+  #       description: 'Rollout strategy (for start_rollout)'
+  #       required: false
+  #       type: choice
+  #       options:
+  #       - percentage
+  #       - gradual
+  #       - user_list
+  #     rollout_value:
+  #       description: 'Rollout value (percentage 0-1, hours, or user count)'
+  #       required: false
+  #       type: string
 
 jobs:
   manage-feature-flag:
@@ -36,13 +38,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-       feature/monitoring-dashboard-rollout
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
       with:
-        version: 9
+        version: 10
 
-       main
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
