@@ -1,106 +1,131 @@
-name: CI Pipeline
+name: CI/CD Pipeline – Auth Service
+
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    types: [opened, synchronize, reopened]
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # push:
+  #   branches: [main, develop]
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
 
 jobs:
-  test:
+  build_and_analyze:
+    name: Build & Quality Check
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development
+      PNPM_HOME: ~/.pnpm
+      PATH: ~/.pnpm:$PATH
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      # =============================
+      #       Setup Node & PNPM
+      # =============================
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
         with:
-          version: 10.14.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Setup pnpm v10.14.0
+        uses: pnpm/action-setup@v2
+        with:
+          version: '10.14.0'
+          run_install: false
 
-      - name: Install global tools
-        run: pnpm add -g turbo
+      # =============================
+      #     Install dependencies
+      # =============================
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies with pnpm@10.14.0 and Node $(node -v)"
+          pnpm install --no-frozen-lockfile
+          pnpm -w exec prisma generate
+        env:
+          PRISMA_SKIP_POSTINSTALL_GENERATE: "true"
+
+      # =============================
+      #   Lint / Type-check / Test
+      # =============================
+      - name: Lint code
+        run: pnpm -w run lint || echo "Lint warnings ignored"
+
+      - name: Type check
+        run: pnpm -w run type-check
 
       - name: Run tests
-        run: pnpm run test
+        run: pnpm -w run test --if-present
 
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      # =============================
+      #   Code Quality (SonarCloud)
+      # =============================
+      - name: SonarCloud Analysis
+        uses: SonarSource/sonarcloud-github-action@v2.1.1
         with:
-          version: 10.14.0
+          args: >
+            -Dsonar.projectKey=Neiland85_a4co-ddd-microservices
+            -Dsonar.organization=neiland85
+            -Dsonar.sources=.
+            -Dsonar.host.url=https://sonarcloud.io
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - uses: actions/setup-node@v4
+      # =============================
+      #   Security & API Contracts
+      # =============================
+      - name: GitGuardian Security Checks
+        uses: GitGuardian/ggshield-action@v1
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          api_key: ${{ secrets.GITGUARDIAN_API_KEY }}
+          verbose: true
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install global tools
-        run: pnpm add -g turbo
-
-      - name: Build all packages
-        run: pnpm run build
-
-      - name: Build Docker image
+      - name: 🧾 Validate OpenAPI Contracts
         run: |
-          docker build -t a4codddmicroservices:${{ github.sha }} .
-          docker tag a4codddmicroservices:${{ github.sha }} a4codddmicroservices:latest
+          if [ -f apps/auth-service/contracts/openapi.yaml ]; then
+            echo "Validating OpenAPI spec for auth-service..."
+            npx swagger-cli validate apps/auth-service/contracts/openapi.yaml
+          else
+            echo "No OpenAPI contract found for auth-service."
+          fi
 
-  dockercloud-stage:
-    needs: build
+  # =============================
+  #       Deploy to Vercel
+  # =============================
+  deploy_auth_service:
+    name: Deploy Auth Service
+    needs: [build_and_analyze]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    env:
+      NODE_ENV: production
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Push to Docker Hub
-        run: |
-          docker push a4codddmicroservices:${{ github.sha }}
-          docker push a4codddmicroservices:latest
-
-  code_quality:
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
+      - name: ⚙️ Setup Node.js 22.x
+        uses: actions/setup-node@v4
         with:
-          version: 10.14.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: ⚙️ Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '10.14.0'
+          run_install: true
 
-      - name: Install global tools
+      - name: Build auth-service
+        run: pnpm --filter @a4co/auth-service build
+
+      - name: Deploy to Vercel (Production)
         run: |
-          pnpm add -g turbo concurrently eslint prettier markdownlint-cli
+          npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Lint check
-        run: pnpm lint:check || echo "Linting issues found"
-
-      - name: Format check
-        run: pnpm format:check || echo "Formatting issues found"

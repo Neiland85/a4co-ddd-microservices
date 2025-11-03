@@ -1,0 +1,90 @@
+name: API Contract Validation
+
+on:
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - 'apps/*/contracts/openapi.yaml'
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+  #   paths:
+  #     - 'apps/*/contracts/openapi.yaml'
+
+jobs:
+  validate-openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install OpenAPI CLI
+        run: npm install -g @apidevtools/swagger-cli
+
+      - name: Validate OpenAPI specifications
+        run: |
+          # Find all OpenAPI spec files
+          find apps -name "openapi.yaml" -type f | while read -r spec_file; do
+            echo "Validating $spec_file..."
+            swagger-cli validate "$spec_file" || exit 1
+          done
+
+      - name: Check OpenAPI spec consistency
+        run: |
+          # Ensure all services have OpenAPI specs
+          expected_services=("auth-service" "user-service" "product-service" "order-service" "payment-service")
+          for service in "${expected_services[@]}"; do
+            spec_file="apps/$service/contracts/openapi.yaml"
+            if [ ! -f "$spec_file" ]; then
+              echo "Missing OpenAPI spec for $service"
+              exit 1
+            fi
+          done
+          echo "All expected services have OpenAPI specifications"
+
+      - name: Lint OpenAPI specs
+        run: |
+          npm install -g ibm-openapi-validator
+          find apps -name "openapi.yaml" -type f | while read -r spec_file; do
+            echo "Linting $spec_file..."
+            lint-openapi "$spec_file" --errors-only || exit 1
+          done
+
+  generate-api-docs:
+    needs: validate-openapi
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Redoc CLI
+        run: npm install -g redoc-cli
+
+      - name: Generate API documentation
+        run: |
+          mkdir -p docs/api
+          find apps -name "openapi.yaml" -type f | while read -r spec_file; do
+            service_name=$(basename "$(dirname "$(dirname "$spec_file")")")
+            output_file="docs/api/${service_name}.html"
+            echo "Generating docs for $service_name..."
+            redoc-cli build "$spec_file" -o "$output_file" --title "A4CO $service_name API"
+          done
+
+      - name: Deploy API docs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/api
+          destination_dir: api

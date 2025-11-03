@@ -1,0 +1,120 @@
+name: 🚀 A4CO Monorepo CI/CD (Node 22 + Prisma + Turbo + Docker)
+
+on:
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # push:
+  #   branches: [ main, develop ]
+  # pull_request:
+  #   branches: [ main, develop ]
+  # workflow_dispatch:
+
+env:
+  NODE_ENV: production
+  PNPM_HOME: ~/.local/share/pnpm
+  PRISMA_ENGINES_CHECK_TIMEOUT: 60000
+
+jobs:
+  prisma-verify:
+    name: 🔍 Prisma Auto Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.14.0
+
+      - name: 🧱 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies (monorepo)
+        run: pnpm install --frozen-lockfile
+
+      - name: ⚡ Regenerate Prisma Clients (Fast Mode)
+        run: |
+          echo "⚡ Regenerando todos los Prisma Clients detectados en apps/* y services/*"
+          pnpm run fix:prisma:fast
+
+      - name: 🧠 Prisma Integrity Check
+        run: pnpm run check:prisma
+
+      - name: ✅ Prisma Validation Summary
+        run: echo "✅ Prisma Clients regenerados y verificados correctamente para Node 22 + Prisma 6.18.0"
+
+  build-and-test:
+    name: 🧪 Build & Test Monorepo
+    runs-on: ubuntu-latest
+    needs: prisma-verify
+
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.14.0
+
+      - name: 🧱 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧮 Type Check
+        run: pnpm run type-check
+
+      - name: 🏗️ Build all packages
+        run: pnpm run build
+
+      - name: 🧪 Run tests
+        run: pnpm run test --if-present
+
+      - name: ✅ Summary
+        run: echo "✅ Monorepo compilado y testeado correctamente"
+
+  docker-deploy:
+    name: 🐳 Docker Build & Deploy
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔑 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏗️ Build and Push Multi-stage Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          file: ./Dockerfile
+          tags: |
+            ghcr.io/neiland85/a4co-ddd-microservices:latest
+            ghcr.io/neiland85/a4co-ddd-microservices:${{ github.sha }}
+          cache-from: type=registry,ref=ghcr.io/neiland85/a4co-ddd-microservices:cache
+          cache-to: type=registry,ref=ghcr.io/neiland85/a4co-ddd-microservices:cache,mode=max
+
+      - name: ✅ Deploy summary
+        run: echo "🚀 Imagen Docker compilada y subida a GHCR correctamente para commit ${{ github.sha }}"
+

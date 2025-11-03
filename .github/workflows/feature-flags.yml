@@ -1,0 +1,98 @@
+name: Feature Flag Management
+
+on:
+  # Temporarily disabled - use workflow_call only for manual triggers
+  workflow_call:
+  # workflow_dispatch:
+  #   inputs:
+  #     action:
+  #       description: 'Action to perform'
+  #       required: true
+  #       type: choice
+  #       options:
+  #       - start_rollout
+  #       - pause_rollout
+  #       - complete_rollout
+  #       - emergency_rollback
+  #     flag_name:
+  #       description: 'Feature flag name'
+  #       required: true
+  #       type: string
+  #     rollout_strategy:
+  #       description: 'Rollout strategy (for start_rollout)'
+  #       required: false
+  #       type: choice
+  #       options:
+  #       - percentage
+  #       - gradual
+  #       - user_list
+  #     rollout_value:
+  #       description: 'Rollout value (percentage 0-1, hours, or user count)'
+  #       required: false
+  #       type: string
+
+jobs:
+  manage-feature-flag:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Execute feature flag action
+      run: |
+        ACTION="${{ github.event.inputs.action }}"
+        FLAG="${{ github.event.inputs.flag_name }}"
+        STRATEGY="${{ github.event.inputs.rollout_strategy }}"
+        VALUE="${{ github.event.inputs.rollout_value }}"
+
+        echo "🚩 Executing $ACTION for feature flag: $FLAG"
+
+        case $ACTION in
+          "start_rollout")
+            case $STRATEGY in
+              "percentage")
+                echo "📊 Starting percentage rollout: $VALUE"
+                # Add percentage rollout command
+                ;;
+              "gradual")
+                echo "⏰ Starting gradual rollout: $VALUE hours"
+                # Add gradual rollout command
+                ;;
+              "user_list")
+                echo "👥 Starting user list rollout: $VALUE users"
+                # Add user list rollout command
+                ;;
+            esac
+            ;;
+          "pause_rollout")
+            echo "⏸️ Pausing rollout for: $FLAG"
+            # Add pause command
+            ;;
+          "complete_rollout")
+            echo "✅ Completing rollout for: $FLAG"
+            # Add complete command
+            ;;
+          "emergency_rollback")
+            echo "🚨 Emergency rollback for: $FLAG"
+            # Add emergency rollback command
+            ;;
+        esac
+
+    - name: Notify stakeholders
+      run: |
+        echo "📢 Notifying stakeholders about feature flag change..."
+        # Add notification commands (Slack, email, etc.)
