@@ -1,0 +1,102 @@
+# =====================================================================
+# 🧩 A4CO DDD Microservices – Dev Container Compose
+# ---------------------------------------------------------------------
+# Contexto optimizado para Docker Desktop / Cursor
+# y compatible con DevContainers en monorepo pnpm
+# =====================================================================
+
+services:
+  dev:
+    # 🔧 Construcción principal del contenedor de desarrollo
+    build:
+      context: .. # 👈 Usa el directorio raíz del repo
+      dockerfile: .devcontainer/Dockerfile # 👈 Dockerfile dentro de .devcontainer
+      args:
+        NODE_ENV: development
+    volumes:
+      # Monta todo el monorepo dentro del contenedor
+      - ..:/workspace:cached
+      # Permite acceso al daemon de Docker del host
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: sleep infinity
+    user: vscode
+    networks:
+      - a4co_net
+    depends_on:
+      - postgres
+      - redis
+      - prometheus
+      - grafana
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/a4co_dev
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-secret-key
+      JWT_ISSUER: a4co-auth-service
+      JWT_AUDIENCE: a4co-platform
+      TZ: Europe/Madrid
+
+  # 🐘 PostgreSQL - Base de datos principal
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: a4co_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - a4co_net
+
+  # 🔴 Redis - Cache / PubSub / Queue
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - a4co_net
+
+  # 📊 Prometheus - Métricas DORA / Infra
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    volumes:
+      # 👇 Asegúrate de que este archivo exista
+      - ../infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - a4co_net
+
+  # 📈 Grafana - Dashboards de Observabilidad
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - a4co_net
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+# =====================================================================
+# 🔐 Volúmenes persistentes y red interna de microservicios
+# =====================================================================
+volumes:
+  postgres_data:
+  grafana_data:
+
+networks:
+  a4co_net:
+    driver: bridge
