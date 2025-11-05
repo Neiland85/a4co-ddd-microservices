@@ -1,0 +1,20 @@
+{
+  "editor.formatOnSave": true,
+  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
+  "prettier.requireConfig": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "github.copilot.chat.codeGeneration.instructions": [
+    { "text": "Generate only frontend React/Next.js components using TailwindCSS." },
+    { "text": "When touching API routes, use tRPC or REST conventions already defined in apps/gateway/src/pages/api/." }
+  ],
+  "files.exclude": {
+    "**/.next": true,
+    "**/node_modules": true,
+    "**/.turbo": true
+  },
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  }
+}
+

@@ -1,28 +1,74 @@
 {
-  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
+    /* 🔧 Compatibilidad moderna */
     "target": "ES2022",
-    "module": "Node16",
-    "lib": ["ES2022"],
-    "moduleResolution": "Node16",
-    "allowSyntheticDefaultImports": true,
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    /* ⚙️ interoperabilidad y módulos híbridos */
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+
+    /* 🧠 Reglas de calidad y consistencia */
+    "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+
+    /* 🧩 Decorators y metadata (NestJS + class-transformer) */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    /* 📦 Paths compartidos */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@test/*": ["test/*"],
+      "@a4co/shared-utils": ["packages/shared-utils/src"],
+      "@a4co/design-system": ["packages/design-system/src"],
+      "@a4co/observability": ["packages/observability/src"],
+      "@apps/*": ["apps/*/src"],
+      "@shared/*": ["packages/*/src"]
+    },
+
+    /* 🏗️ Output & build incremental */
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "resolveJsonModule": true,
-    "baseUrl": "./",
-    "paths": {
-      "@shared/*": ["packages/shared-utils/*"],
-      "@apps/*": ["apps/*"]
-    },
-    "jsx": "react-jsx"
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "removeComments": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
+
+    /* 🚨 Estrictos a nivel profesional */
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "exactOptionalPropertyTypes": true
   },
-  "include": ["apps/**/*", "packages/**/*", "src/**/*"],
-  "exclude": ["node_modules", "dist", "build", "coverage", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "src/**/*",
+    "apps/**/*",
+    "packages/**/*",
+    "types/**/*",
+    "global.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".next",
+    "coverage",
+    "**/test/**/*"
+  ]
 }
+

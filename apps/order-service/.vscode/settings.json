@@ -1,0 +1,15 @@
+{
+  "editor.formatOnSave": true,
+  "eslint.validate": ["typescript"],
+  "github.copilot.chat.codeGeneration.instructions": [
+    { "text": "Follow Domain-Driven Design (DDD) patterns for services, repositories, and aggregates." },
+    { "text": "Use Prisma ORM syntax when accessing the database." },
+    { "text": "All classes must follow the naming convention: <Domain>Service / <Domain>Repository." }
+  ],
+  "terminal.integrated.env.osx": {
+    "PORT": "3001",
+    "DATABASE_URL": "postgresql://postgres:password@localhost:5432/a4co_dev"
+  },
+  "python.analysis.extraPaths": ["./src", "../../packages/shared-utils/src"]
+}
+

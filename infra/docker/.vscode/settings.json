@@ -1,0 +1,19 @@
+{
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "docker-compose.*.yml": "yaml",
+    "Dockerfile*": "dockerfile"
+  },
+  "docker.extension.enableComposeLanguageServer": true,
+  "github.copilot.chat.codeGeneration.instructions": [
+    { "text": "Generate Dockerfiles optimized for BuildKit with multi-stage builds." },
+    { "text": "Always use alpine base images unless otherwise specified." },
+    { "text": "For docker-compose, ensure services are networked with bridge mode and healthchecks." }
+  ],
+  "chat.tools.terminal.autoApprove": {
+    "docker compose": true,
+    "docker build": true,
+    "docker system prune -f": true
+  }
+}
+
