@@ -29,9 +29,9 @@ services:
       - grafana
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/a4co_dev
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/${POSTGRES_DB:-a4co_dev}
       REDIS_URL: redis://redis:6379
-      JWT_SECRET: dev-secret-key
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-key-CHANGE_IN_PRODUCTION}
       JWT_ISSUER: a4co-auth-service
       JWT_AUDIENCE: a4co-platform
       TZ: Europe/Madrid
@@ -41,9 +41,9 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: a4co_dev
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME}
+      POSTGRES_DB: ${POSTGRES_DB:-a4co_dev}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -83,8 +83,8 @@ services:
     networks:
       - a4co_net
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-CHANGE_ME}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
     volumes:
