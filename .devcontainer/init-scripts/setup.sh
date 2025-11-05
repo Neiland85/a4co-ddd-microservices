@@ -12,13 +12,26 @@ global:
   evaluation_interval: 10s
 
 scrape_configs:
+  # Prometheus itself
   - job_name: "prometheus"
     static_configs:
       - targets: ["localhost:9090"]
 
+  # Microservicios del monorepo
   - job_name: "a4co-microservices"
     static_configs:
-      - targets: ["dev:3000", "dev:3001", "redis:6379", "postgres:5432"]
+      - targets:
+          - "dev:3000"    # gateway o BFF
+          - "dev:3001"    # transportista-service
+          - "dev:3002"    # otros servicios (Next.js, etc.)
+          - "redis:6379"
+          - "postgres:5432"
+
+  # Node exporter (si lo añades más adelante)
+  - job_name: "node"
+    static_configs:
+      - targets: ["dev:9100"]
+
 PROMEOF
   echo "✅ Archivo prometheus.yml creado correctamente."
 else
