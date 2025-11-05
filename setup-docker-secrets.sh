@@ -2,18 +2,34 @@
 
 # Script para configurar secretos Docker y crear servicio OCR Validator
 # Ejecutar cuando Docker esté funcionando correctamente
+#
+# USO:
+#   DB_USER="tu_usuario" DB_PASSWORD="tu_password" ./setup-docker-secrets.sh
 
 set -e
 
 echo "=== Configurando secretos Docker para PostgreSQL ==="
 
+# Validar que las variables de entorno requeridas estén definidas
+if [ -z "${DB_USER}" ]; then
+  echo "❌ ERROR: La variable DB_USER no está definida."
+  echo "   Uso: DB_USER=\"tu_usuario\" DB_PASSWORD=\"tu_password\" ./setup-docker-secrets.sh"
+  exit 1
+fi
+
+if [ -z "${DB_PASSWORD}" ]; then
+  echo "❌ ERROR: La variable DB_PASSWORD no está definida."
+  echo "   Uso: DB_USER=\"tu_usuario\" DB_PASSWORD=\"tu_password\" ./setup-docker-secrets.sh"
+  exit 1
+fi
+
 # Crear secreto para el usuario de la base de datos
 echo "Creando secreto db_user..."
-echo -n "readonly_user" | docker secret create db_user -
+echo -n "${DB_USER}" | docker secret create db_user -
 
 # Crear secreto para la contraseña de la base de datos
 echo "Creando secreto db_pass..."
-echo -n "X9v\$7kP#b2Q!r8Zt" | docker secret create db_pass -
+echo -n "${DB_PASSWORD}" | docker secret create db_pass -
 
 # Verificar que el secreto pg_ca existe (debe haberse creado antes)
 echo "Verificando secreto pg_ca..."
