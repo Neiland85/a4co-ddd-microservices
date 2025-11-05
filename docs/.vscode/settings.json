@@ -1,0 +1,16 @@
+{
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.md": "markdown"
+  },
+  "markdownlint.config": {
+    "default": true,
+    "line-length": false,
+    "no-duplicate-heading": false
+  },
+  "github.copilot.chat.codeGeneration.instructions": [
+    { "text": "Generate Markdown ADR templates following docs/adr/ format." },
+    { "text": "Use Spanish and English bilingual headings for clarity." }
+  ]
+}
+

@@ -1,0 +1,21 @@
+#!/bin/bash
+# 🧩 Alias local exclusivo para el entorno A4CO DevContainer
+
+PROJECT_NAME="a4co-ddd-microservices"
+CONTAINER_NAME="devcontainer-dev-1"
+SCRIPT_PATH=".devcontainer/init-scripts/setup.sh"
+
+# Verificar que estamos en el proyecto correcto
+if [[ "$(basename "$PWD")" != "$PROJECT_NAME" ]]; then
+  echo "⚠️  No estás dentro del proyecto $PROJECT_NAME"
+  exit 1
+fi
+
+# Asegurar permisos
+chmod +x "$SCRIPT_PATH"
+
+# Ejecutar dentro del contenedor
+echo "🚀 Ejecutando setup dentro del contenedor $CONTAINER_NAME..."
+docker exec -it "$CONTAINER_NAME" bash "$SCRIPT_PATH"
+
+echo "✅ Setup completado para $PROJECT_NAME"
