@@ -3,20 +3,18 @@
 
 export const testConfig = {
   // Credenciales de prueba genéricas
+  // IMPORTANTE: Estos son valores de prueba únicamente, NO usar en producción
   testCredentials: {
-    username: process.env['TEST_USERNAME'] || 'test_user',
-    password: process.env['TEST_PASSWORD'] || 'test_password',
-    email: process.env['TEST_EMAIL'] || 'test@example.com',
-    username: process.env.TEST_USERNAME || 'test_user',
-    password: process.env.TEST_PASSWORD || 'test_password',
-    email: process.env.TEST_EMAIL || 'test@example.com',
+    username: process.env.TEST_USERNAME || 'mock_test_user',
+    password: process.env.TEST_PASSWORD || 'FAKE_PASSWORD_FOR_TESTS_ONLY',
+    email: process.env.TEST_EMAIL || 'mock@test.example.com',
   },
 
   // Datos de prueba para diferentes escenarios
   testData: {
     validUser: {
-      username: 'valid_user',
-      password: 'valid_password',
+      username: 'mock_valid_user',
+      password: 'FAKE_VALID_PASSWORD_FOR_TESTS',
     },
     longUsername: 'user_with_very_long_username_that_exceeds_normal_length_limits',
     specialChars: 'user@domain.com',
