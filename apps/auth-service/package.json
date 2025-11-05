@@ -5,10 +5,9 @@
   "description": "Servicio de autenticación para a4co-ddd-microservices",
   "main": "dist/main.js",
   "scripts": {
-   "dev": "nest start --watch", 
-   "build": "nest build",
-  
-  "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -53,7 +52,7 @@
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.3.2",
+    "@nestjs/cli": "^10.4.5",
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/testing": "^10.3.3",
     "@types/bcryptjs": "^3.0.0",
