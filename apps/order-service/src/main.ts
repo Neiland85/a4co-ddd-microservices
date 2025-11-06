@@ -1,6 +1,7 @@
 import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as process from 'process';
@@ -21,6 +22,18 @@ async function bootstrap() {
   const app = await NestFactory.create(OrderModule, {
     logger: false, // Disable default NestJS logger for now
   });
+
+  // Conectar al microservicio NATS para escuchar eventos
+  app.connectMicroservice({
+    transport: Transport.NATS,
+    options: {
+      servers: process.env.NATS_URL || 'nats://localhost:4222',
+      token: process.env.NATS_AUTH_TOKEN || '',
+      name: 'order-service',
+    },
+  });
+
+  await app.startAllMicroservices();
 
   // Security middleware
   app.use(

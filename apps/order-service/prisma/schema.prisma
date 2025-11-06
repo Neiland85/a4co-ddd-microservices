@@ -8,10 +8,16 @@ datasource db {
 }
 
 model Order {
-  id        String   @id @default(uuid())
-  userId    String
-  status    String
-  total     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  customerId  String
+  status      String
+  totalAmount Float
+  currency    String   @default("EUR")
+  items       Json     // Array de OrderItem serializado: [{productId, quantity, unitPrice, currency}]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@map("orders")
 }
