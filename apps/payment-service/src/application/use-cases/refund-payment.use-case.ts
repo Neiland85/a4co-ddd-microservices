@@ -1,14 +1,14 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
-import { Payment } from '../../domain/entities';
-import { IPaymentRepository } from '../../domain/repositories/payment.repository';
-import { PaymentDomainService } from '../../domain/services/payment-domain.service';
-import { StripeGateway } from '../../infrastructure/stripe.gateway';
-import { PaymentRefundedEvent } from '../../domain/events';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Payment } from '../domain/entities/payment.entity';
+import { IPaymentRepository } from '../domain/repositories/payment.repository';
+import { PaymentDomainService } from '../domain/services/payment-domain.service';
+import { StripeGateway } from '../infrastructure/stripe.gateway';
+import { NatsService } from '../infrastructure/nats/nats.service';
 
 export interface RefundPaymentCommand {
   orderId: string;
-  reason?: 'duplicate' | 'fraudulent' | 'requested_by_customer';
-  partialAmount?: { amount: number; currency: string };
+  reason?: string;
+  sagaId?: string;
 }
 
 @Injectable()
@@ -19,83 +19,88 @@ export class RefundPaymentUseCase {
     private readonly paymentRepository: IPaymentRepository,
     private readonly paymentDomainService: PaymentDomainService,
     private readonly stripeGateway: StripeGateway,
-    @Inject('NATS_EVENT_BUS') private readonly eventBus: any
+    private readonly natsService: NatsService
   ) {}
 
   async execute(command: RefundPaymentCommand): Promise<Payment> {
     this.logger.log(`Processing refund for order ${command.orderId}`);
 
-    // Buscar payment por orderId
+    // 1. Buscar payment por orderId
     const payment = await this.paymentRepository.findByOrderId(command.orderId);
+
     if (!payment) {
-      throw new Error(`Payment not found for order ${command.orderId}`);
+      throw new NotFoundException(
+        `Payment not found for order ${command.orderId}`
+      );
     }
 
-    // Validar que se puede reembolsar
+    // 2. Validar que se puede reembolsar
     if (!this.paymentDomainService.canRefundPayment(payment)) {
-      throw new Error(`Payment cannot be refunded. Current status: ${payment.status}`);
+      throw new Error(
+        `Payment cannot be refunded. Current status: ${payment.status.toString()}`
+      );
     }
 
+    // 3. Calcular monto de reembolso
+    const refundAmount = this.paymentDomainService.calculateRefundAmount(
+      payment
+    );
+
+    // 4. Verificar que tiene stripePaymentIntentId
     if (!payment.stripePaymentIntentId) {
-      throw new Error(`Payment does not have a Stripe Payment Intent ID`);
+      throw new Error('Payment does not have a Stripe Payment Intent ID');
     }
 
+    // 5. Crear reembolso en Stripe
     try {
-      // Calcular monto de reembolso
-      const refundAmount = command.partialAmount
-        ? this.paymentDomainService.calculateRefundAmount(
-            payment,
-            new (await import('../../domain/value-objects')).Money(
-              command.partialAmount.amount,
-              command.partialAmount.currency as any
-            )
-          )
-        : this.paymentDomainService.calculateRefundAmount(payment);
-
-      // Crear reembolso en Stripe
-      const refund = await this.stripeGateway.refundPayment({
-        paymentIntentId: payment.stripePaymentIntentId,
+      const stripeRefund = await this.stripeGateway.refundPayment({
+        paymentIntentId: payment.stripePaymentIntentId.toString(),
         amount: refundAmount,
-        reason: command.reason,
+        reason: command.reason || 'requested_by_customer',
         metadata: {
           orderId: command.orderId,
           refundedAt: new Date().toISOString(),
         },
       });
 
-      // Actualizar payment aggregate
-      payment.refund(refund.id, command.reason);
+      // 6. Actualizar payment aggregate
+      payment.refund(stripeRefund.id, command.sagaId);
 
-      // Guardar payment
+      // 7. Guardar payment actualizado
       await this.paymentRepository.save(payment);
 
-      // Publicar evento de reembolso
-      const refundedEvent = new PaymentRefundedEvent(
-        payment.paymentId.value,
-        payment.orderId,
-        payment.amount,
-        refundAmount,
-        refund.id,
-        command.reason
-      );
-
-      // Publicar a NATS usando el event bus
-      if (this.eventBus && typeof this.eventBus.publish === 'function') {
-        await this.eventBus.publish('payment.refunded', {
-          eventId: refundedEvent.eventId,
-          eventType: refundedEvent.eventType(),
-          timestamp: refundedEvent.occurredOn,
-          data: refundedEvent.eventData,
-        });
+      // 8. Publicar eventos a NATS
+      const events = payment.getUncommittedEvents();
+      for (const event of events) {
+        await this.natsService.publish(
+          `payment.${event.eventType.toLowerCase()}`,
+          {
+            eventId: event.eventId,
+            eventType: event.eventType,
+            aggregateId: event.aggregateId,
+            eventVersion: event.eventVersion,
+            occurredOn: event.occurredOn,
+            eventData: event.eventData,
+            sagaId: event.sagaId,
+          }
+        );
       }
 
-      this.logger.log(`Refund completed for order ${command.orderId}, refund ID: ${refund.id}`);
+      payment.clearDomainEvents();
+
+      this.logger.log(
+        `Refund processed successfully for payment ${payment.paymentId.toString()}`
+      );
 
       return payment;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Error processing refund: ${errorMessage}`);
-      throw new Error(`Failed to process refund: ${errorMessage}`);
+      this.logger.error(
+        `Error processing refund for order ${command.orderId}:`,
+        error
+      );
+      throw new Error(
+        `Failed to process refund: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 }

@@ -1,7 +1,6 @@
 // API CONTRACTS - Version 1
 
 export interface CreateOrderRequestV1 {
-  orderId: string;
   customerId: string;
   items: {
     productId: string;

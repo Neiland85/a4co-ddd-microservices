@@ -1,91 +1,70 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
+import { PrismaClient } from '@prisma/client';
 import { PaymentController } from './presentation/payment.controller';
 import { PaymentService } from './application/services/payment.service';
 import { OrderEventsHandler } from './application/handlers/order-events.handler';
-
-// Domain
-import { PaymentDomainService } from './domain/services/payment-domain.service';
-
-// Infrastructure
-import { StripeGateway } from './infrastructure/stripe.gateway';
-import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
-import { IPaymentRepository } from './domain/repositories/payment.repository';
-
-// Use Cases
 import { ProcessPaymentUseCase } from './application/use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from './application/use-cases/refund-payment.use-case';
-
-// NATS Configuration
-const NATS_CONFIG = {
-  servers: process.env.NATS_SERVERS?.split(',') || ['nats://localhost:4222'],
-  name: 'payment-service',
-};
-
-// NatsEventBus Provider Factory
-const createNatsEventBus = async () => {
-  try {
-    const { NatsEventBus } = require('@a4co/shared-utils');
-    const eventBus = new NatsEventBus({
-      servers: NATS_CONFIG.servers,
-      name: NATS_CONFIG.name,
-    });
-    await eventBus.connect();
-    return eventBus;
-  } catch (error) {
-    console.error('Error creating NatsEventBus:', error);
-    // Retornar un mock para desarrollo
-    return {
-      publish: async (subject: string, data: any) => {
-        console.log(`[MOCK] Publishing to ${subject}:`, data);
-      },
-    };
-  }
-};
-
-// PrismaService Provider Factory
-const createPrismaService = () => {
-  // Intentar importar PrismaService desde el paquete compartido
-  try {
-    const { PrismaService } = require('@a4co/prisma');
-    return new PrismaService();
-  } catch {
-    // Si no existe, crear una implementación básica
-    // En producción, esto debería estar en un paquete compartido
-    const { PrismaClient } = require('@prisma/client');
-    return new PrismaClient();
-  }
-};
+import { IPaymentRepository } from './domain/repositories/payment.repository';
+import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
+import { PaymentDomainService } from './domain/services/payment-domain.service';
+import { StripeGateway } from './infrastructure/stripe.gateway';
+import { NatsModule } from './infrastructure/nats/nats.module';
+import { NatsService } from './infrastructure/nats/nats.service';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'NATS_CLIENT',
-        transport: Transport.NATS,
-        options: NATS_CONFIG,
-      },
-    ]),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    NatsModule,
   ],
   controllers: [PaymentController, OrderEventsHandler],
   providers: [
     PaymentService,
     PaymentDomainService,
     StripeGateway,
+    NatsService,
     {
-      provide: 'NATS_EVENT_BUS',
-      useFactory: createNatsEventBus,
+      provide: 'PrismaClient',
+      useFactory: () => {
+        return new PrismaClient({
+          log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
+        });
+      },
     },
     {
-      provide: 'PrismaService',
-      useFactory: createPrismaService,
+      provide: IPaymentRepository,
+      useFactory: (prisma: PrismaClient) => {
+        return new PrismaPaymentRepository(prisma);
+      },
+      inject: ['PrismaClient'],
     },
     {
-      provide: 'IPaymentRepository',
-      useClass: PrismaPaymentRepository,
+      provide: ProcessPaymentUseCase,
+      useFactory: (
+        repository: IPaymentRepository,
+        domainService: PaymentDomainService,
+        stripeGateway: StripeGateway,
+        natsService: NatsService
+      ) => {
+        return new ProcessPaymentUseCase(repository, domainService, stripeGateway, natsService);
+      },
+      inject: [IPaymentRepository, PaymentDomainService, StripeGateway, NatsService],
     },
-    ProcessPaymentUseCase,
-    RefundPaymentUseCase,
+    {
+      provide: RefundPaymentUseCase,
+      useFactory: (
+        repository: IPaymentRepository,
+        domainService: PaymentDomainService,
+        stripeGateway: StripeGateway,
+        natsService: NatsService
+      ) => {
+        return new RefundPaymentUseCase(repository, domainService, stripeGateway, natsService);
+      },
+      inject: [IPaymentRepository, PaymentDomainService, StripeGateway, NatsService],
+    },
   ],
   exports: [PaymentService, ProcessPaymentUseCase, RefundPaymentUseCase],
 })

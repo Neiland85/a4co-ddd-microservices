@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
-import { Money } from '../../domain/value-objects';
+import { Money } from '../domain/value-objects/money.vo';
 
 export interface CreatePaymentIntentParams {
   amount: Money;
@@ -13,7 +13,7 @@ export interface CreatePaymentIntentParams {
 export interface RefundPaymentParams {
   paymentIntentId: string;
   amount?: Money;
-  reason?: 'duplicate' | 'fraudulent' | 'requested_by_customer';
+  reason?: string;
   metadata?: Record<string, any>;
 }
 
@@ -23,13 +23,13 @@ export class StripeGateway {
   private readonly stripe: Stripe;
 
   constructor() {
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY_TEST;
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
-      throw new Error('STRIPE_SECRET_KEY or STRIPE_SECRET_KEY_TEST environment variable is required');
+      throw new Error('STRIPE_SECRET_KEY environment variable is required');
     }
 
     this.stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2024-11-20.acacia',
+      apiVersion: '2024-12-18.acacia',
       typescript: true,
     });
 
@@ -39,10 +39,12 @@ export class StripeGateway {
   /**
    * Crea un Payment Intent en Stripe
    */
-  async createPaymentIntent(params: CreatePaymentIntentParams): Promise<Stripe.PaymentIntent> {
+  async createPaymentIntent(
+    params: CreatePaymentIntentParams
+  ): Promise<Stripe.PaymentIntent> {
     try {
-      const options: Stripe.PaymentIntentCreateParams = {
-        amount: Math.round(params.amount.amount * 100), // Stripe usa centavos
+      const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
+        amount: Math.round(params.amount.amount * 100), // Convertir a centavos
         currency: params.amount.currency.toLowerCase(),
         customer: params.customerId,
         metadata: {
@@ -54,12 +56,15 @@ export class StripeGateway {
         },
       };
 
-      const requestOptions: Stripe.RequestOptions = {};
+      const options: Stripe.RequestOptions = {};
       if (params.idempotencyKey) {
-        requestOptions.idempotencyKey = params.idempotencyKey;
+        options.idempotencyKey = params.idempotencyKey;
       }
 
-      const paymentIntent = await this.stripe.paymentIntents.create(options, requestOptions);
+      const paymentIntent = await this.stripe.paymentIntents.create(
+        paymentIntentParams,
+        options
+      );
 
       this.logger.log(
         `Payment Intent created: ${paymentIntent.id} for order ${params.orderId}`
@@ -67,29 +72,12 @@ export class StripeGateway {
 
       return paymentIntent;
     } catch (error) {
-      this.logger.error(`Error creating payment intent: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Error creating payment intent for order ${params.orderId}:`,
+        error
+      );
       throw new Error(
         `Failed to create payment intent: ${error instanceof Error ? error.message : String(error)}`
-      );
-    }
-  }
-
-  /**
-   * Obtiene un Payment Intent por ID
-   */
-  async getPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
-    try {
-      const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
-
-      this.logger.log(`Payment Intent retrieved: ${paymentIntentId}`);
-
-      return paymentIntent;
-    } catch (error) {
-      this.logger.error(
-        `Error retrieving payment intent ${paymentIntentId}: ${error instanceof Error ? error.message : String(error)}`
-      );
-      throw new Error(
-        `Failed to retrieve payment intent: ${error instanceof Error ? error.message : String(error)}`
       );
     }
   }
@@ -107,14 +95,18 @@ export class StripeGateway {
         params.payment_method = paymentMethodId;
       }
 
-      const paymentIntent = await this.stripe.paymentIntents.confirm(paymentIntentId, params);
+      const paymentIntent = await this.stripe.paymentIntents.confirm(
+        paymentIntentId,
+        params
+      );
 
       this.logger.log(`Payment Intent confirmed: ${paymentIntentId}`);
 
       return paymentIntent;
     } catch (error) {
       this.logger.error(
-        `Error confirming payment intent ${paymentIntentId}: ${error instanceof Error ? error.message : String(error)}`
+        `Error confirming payment intent ${paymentIntentId}:`,
+        error
       );
       throw new Error(
         `Failed to confirm payment intent: ${error instanceof Error ? error.message : String(error)}`
@@ -123,21 +115,24 @@ export class StripeGateway {
   }
 
   /**
-   * Cancela un Payment Intent
+   * Obtiene un Payment Intent por ID
    */
-  async cancelPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
+  async getPaymentIntent(
+    paymentIntentId: string
+  ): Promise<Stripe.PaymentIntent> {
     try {
-      const paymentIntent = await this.stripe.paymentIntents.cancel(paymentIntentId);
-
-      this.logger.log(`Payment Intent cancelled: ${paymentIntentId}`);
+      const paymentIntent = await this.stripe.paymentIntents.retrieve(
+        paymentIntentId
+      );
 
       return paymentIntent;
     } catch (error) {
       this.logger.error(
-        `Error cancelling payment intent ${paymentIntentId}: ${error instanceof Error ? error.message : String(error)}`
+        `Error retrieving payment intent ${paymentIntentId}:`,
+        error
       );
       throw new Error(
-        `Failed to cancel payment intent: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to retrieve payment intent: ${error instanceof Error ? error.message : String(error)}`
       );
     }
   }
@@ -153,11 +148,11 @@ export class StripeGateway {
       };
 
       if (params.amount) {
-        refundParams.amount = Math.round(params.amount.amount * 100); // Stripe usa centavos
+        refundParams.amount = Math.round(params.amount.amount * 100); // Convertir a centavos
       }
 
       if (params.reason) {
-        refundParams.reason = params.reason;
+        refundParams.reason = params.reason as Stripe.RefundCreateParams.Reason;
       }
 
       const refund = await this.stripe.refunds.create(refundParams);
@@ -169,7 +164,8 @@ export class StripeGateway {
       return refund;
     } catch (error) {
       this.logger.error(
-        `Error creating refund: ${error instanceof Error ? error.message : String(error)}`
+        `Error creating refund for payment intent ${params.paymentIntentId}:`,
+        error
       );
       throw new Error(
         `Failed to create refund: ${error instanceof Error ? error.message : String(error)}`
@@ -183,14 +179,9 @@ export class StripeGateway {
   async getRefund(refundId: string): Promise<Stripe.Refund> {
     try {
       const refund = await this.stripe.refunds.retrieve(refundId);
-
-      this.logger.log(`Refund retrieved: ${refundId}`);
-
       return refund;
     } catch (error) {
-      this.logger.error(
-        `Error retrieving refund ${refundId}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      this.logger.error(`Error retrieving refund ${refundId}:`, error);
       throw new Error(
         `Failed to retrieve refund: ${error instanceof Error ? error.message : String(error)}`
       );
@@ -210,32 +201,20 @@ export class StripeGateway {
     }
 
     try {
-      const event = this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+      const event = this.stripe.webhooks.constructEvent(
+        payload,
+        signature,
+        webhookSecret
+      );
 
       this.logger.log(`Webhook received: ${event.type}`);
 
       return event;
     } catch (error) {
-      this.logger.error(
-        `Webhook signature verification failed: ${error instanceof Error ? error.message : String(error)}`
-      );
+      this.logger.error('Error handling webhook:', error);
       throw new Error(
         `Webhook signature verification failed: ${error instanceof Error ? error.message : String(error)}`
       );
     }
-  }
-
-  /**
-   * Verifica el estado de un Payment Intent
-   */
-  isPaymentSucceeded(paymentIntent: Stripe.PaymentIntent): boolean {
-    return paymentIntent.status === 'succeeded';
-  }
-
-  /**
-   * Verifica si un Payment Intent falló
-   */
-  isPaymentFailed(paymentIntent: Stripe.PaymentIntent): boolean {
-    return paymentIntent.status === 'canceled' || paymentIntent.status === 'requires_payment_method';
   }
 }

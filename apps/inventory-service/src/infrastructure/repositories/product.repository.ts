@@ -1,8 +1,13 @@
 import { Product, ProductProps } from '../../domain/entities/product.entity';
+import { SKU } from '../../domain/value-objects';
+import { WarehouseLocation } from '../../domain/value-objects/warehouse-location.vo';
 
 export interface ProductRepository {
   findById(id: string): Promise<Product | null>;
   findByIds(ids: string[]): Promise<Product[]>;
+  findBySKU(sku: SKU): Promise<Product | null>;
+  findLowStockProducts(): Promise<Product[]>;
+  findByWarehouse(location: string): Promise<Product[]>;
   save(product: Product): Promise<void>;
   delete(id: string): Promise<void>;
   findAll(): Promise<Product[]>;
@@ -112,7 +117,23 @@ export class InMemoryProductRepository implements ProductRepository {
   async findOutOfStock(): Promise<Product[]> {
     return Array.from(this.products.values()).filter(
       product => product.stockStatus === 'out_of_stock',
-      product => product.stockStatus === 'out_of_stock'
+    );
+  }
+
+  async findBySKU(sku: SKU): Promise<Product | null> {
+    const product = Array.from(this.products.values()).find(
+      p => p.sku.value === sku.value,
+    );
+    return product || null;
+  }
+
+  async findLowStockProducts(): Promise<Product[]> {
+    return this.findLowStock();
+  }
+
+  async findByWarehouse(location: string): Promise<Product[]> {
+    return Array.from(this.products.values()).filter(
+      product => product.warehouseLocation?.toString() === location,
     );
   }
 }

@@ -1,30 +1,33 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Payment, PaymentProps } from '../../domain/entities';
-import { PaymentId, Money, PaymentStatus, StripePaymentIntent } from '../../domain/value-objects';
+import { PrismaClient } from '@prisma/client';
+import { Payment } from '../../domain/entities/payment.entity';
+import { PaymentId } from '../../domain/value-objects/payment-id.vo';
+import { Money } from '../../domain/value-objects/money.vo';
+import { StripePaymentIntent } from '../../domain/value-objects/stripe-payment-intent.vo';
+import { PaymentStatus, PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
 import { IPaymentRepository } from '../../domain/repositories/payment.repository';
 
 @Injectable()
 export class PrismaPaymentRepository implements IPaymentRepository {
-  constructor(@Inject('PrismaService') private readonly prisma: any) {}
+  constructor(@Inject('PrismaClient') private readonly prisma: PrismaClient) {}
 
   async save(payment: Payment): Promise<void> {
     const paymentData = {
-      id: payment.paymentId.value,
+      id: payment.paymentId.toString(),
       orderId: payment.orderId,
       amount: payment.amount.amount,
       currency: payment.amount.currency,
-      status: payment.status,
+      status: payment.status.toString(),
+      stripePaymentIntentId: payment.stripePaymentIntentId?.toString() || null,
       customerId: payment.customerId,
-      stripePaymentIntentId: payment.stripePaymentIntentId,
-      stripeRefundId: payment.stripeRefundId,
-      failureReason: payment.failureReason,
       metadata: payment.metadata,
+      failureReason: payment.failureReason || null,
       createdAt: payment.createdAt,
       updatedAt: payment.updatedAt,
     };
 
     await this.prisma.payment.upsert({
-      where: { id: payment.paymentId.value },
+      where: { id: payment.paymentId.toString() },
       create: paymentData,
       update: paymentData,
     });
@@ -32,7 +35,7 @@ export class PrismaPaymentRepository implements IPaymentRepository {
 
   async findById(id: PaymentId): Promise<Payment | null> {
     const paymentData = await this.prisma.payment.findUnique({
-      where: { id: id.value },
+      where: { id: id.toString() },
     });
 
     if (!paymentData) {
@@ -43,8 +46,9 @@ export class PrismaPaymentRepository implements IPaymentRepository {
   }
 
   async findByOrderId(orderId: string): Promise<Payment | null> {
-    const paymentData = await this.prisma.payment.findUnique({
+    const paymentData = await this.prisma.payment.findFirst({
       where: { orderId },
+      orderBy: { createdAt: 'desc' },
     });
 
     if (!paymentData) {
@@ -55,7 +59,7 @@ export class PrismaPaymentRepository implements IPaymentRepository {
   }
 
   async findByStripeIntentId(intentId: string): Promise<Payment | null> {
-    const paymentData = await this.prisma.payment.findFirst({
+    const paymentData = await this.prisma.payment.findUnique({
       where: { stripePaymentIntentId: intentId },
     });
 
@@ -66,38 +70,25 @@ export class PrismaPaymentRepository implements IPaymentRepository {
     return this.toDomain(paymentData);
   }
 
-  async findAllByCustomerId(customerId: string): Promise<Payment[]> {
-    const paymentsData = await this.prisma.payment.findMany({
-      where: { customerId },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return paymentsData.map(data => this.toDomain(data));
-  }
-
   private toDomain(paymentData: any): Payment {
-    const props: PaymentProps = {
-      paymentId: PaymentId.fromString(paymentData.id),
+    const paymentId = PaymentId.fromString(paymentData.id);
+    const amount = new Money(paymentData.amount, paymentData.currency);
+    const status = PaymentStatusVO.fromString(paymentData.status);
+    const stripePaymentIntentId = paymentData.stripePaymentIntentId
+      ? StripePaymentIntent.fromString(paymentData.stripePaymentIntentId)
+      : null;
+
+    return Payment.reconstitute({
+      paymentId,
       orderId: paymentData.orderId,
-      amount: new Money(paymentData.amount, paymentData.currency as any),
+      amount,
+      status,
+      stripePaymentIntentId,
       customerId: paymentData.customerId,
-      status: paymentData.status as PaymentStatus,
-      stripePaymentIntentId: paymentData.stripePaymentIntentId,
       metadata: paymentData.metadata || {},
+      failureReason: paymentData.failureReason,
       createdAt: paymentData.createdAt,
       updatedAt: paymentData.updatedAt,
-    };
-
-    const payment = Payment.reconstitute(props);
-
-    // Restaurar campos adicionales si existen
-    if (paymentData.stripeRefundId) {
-      (payment as any)._stripeRefundId = paymentData.stripeRefundId;
-    }
-    if (paymentData.failureReason) {
-      (payment as any)._failureReason = paymentData.failureReason;
-    }
-
-    return payment;
+    });
   }
 }

@@ -1,31 +1,25 @@
-import { ValueObject } from '../base-classes';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
-export class PaymentId extends ValueObject<string> {
-  constructor(value?: string) {
-    const id = value || uuidv4();
-    super(id);
-    this.validate(id);
-  }
-
-  private validate(value: string): void {
-    if (!value || value.trim().length === 0) {
-      throw new Error('PaymentId cannot be empty');
-    }
+export class PaymentId {
+  private constructor(private readonly value: string) {
     if (!uuidValidate(value)) {
-      throw new Error(`Invalid PaymentId format: ${value}. Must be a valid UUID.`);
+      throw new Error(`Invalid PaymentId format: ${value}`);
     }
   }
 
-  public static fromString(value: string): PaymentId {
-    return new PaymentId(value);
+  static create(value?: string): PaymentId {
+    return new PaymentId(value || uuidv4());
   }
 
-  public static generate(): PaymentId {
-    return new PaymentId();
+  static fromString(value: string): PaymentId {
+    return new PaymentId(value);
   }
 
   toString(): string {
     return this.value;
+  }
+
+  equals(other: PaymentId): boolean {
+    return this.value === other.value;
   }
 }

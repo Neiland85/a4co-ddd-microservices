@@ -9,20 +9,18 @@ datasource db {
 
 model Payment {
   id                    String   @id @default(uuid())
-  orderId               String   @unique
+  orderId               String   @index
   amount                Float
-  currency              String   @default("USD")
-  status                String   @default("PENDING")
+  currency              String   @default("EUR")
+  status                String   // PENDING, PROCESSING, SUCCEEDED, FAILED, REFUNDED, CANCELLED
+  stripePaymentIntentId String?  @unique
   customerId            String
-  stripePaymentIntentId String?
-  stripeRefundId        String?
+  metadata              Json?    @default("{}")
   failureReason         String?
-  metadata              Json?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
   @@index([orderId])
   @@index([customerId])
-  @@index([stripePaymentIntentId])
   @@index([status])
 }

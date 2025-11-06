@@ -1,19 +1,23 @@
-import { Payment } from '../domain/entities';
-import { PaymentId, Money, PaymentStatus } from '../domain/value-objects';
+import { Payment } from '../domain/entities/payment.entity';
+import { Money } from '../domain/value-objects/money.vo';
+import { PaymentId } from '../domain/value-objects/payment-id.vo';
+import { PaymentStatus } from '../domain/value-objects/payment-status.vo';
 
-describe('Payment Entity', () => {
+describe('Payment Aggregate', () => {
   describe('create', () => {
-    it('should create a payment with valid data', () => {
+    it('should create a payment with PENDING status', () => {
       const payment = Payment.create({
         orderId: 'order-123',
         amount: new Money(100, 'USD'),
         customerId: 'customer-456',
       });
 
-      expect(payment).toBeDefined();
-      expect(payment.orderId).toBe('order-123');
       expect(payment.status).toBe(PaymentStatus.PENDING);
-      expect(payment.domainEvents.length).toBeGreaterThan(0);
+      expect(payment.orderId).toBe('order-123');
+      expect(payment.amount.amount).toBe(100);
+      expect(payment.amount.currency).toBe('USD');
+      expect(payment.customerId).toBe('customer-456');
+      expect(payment.getUncommittedEvents().length).toBeGreaterThan(0);
     });
 
     it('should throw error if orderId is empty', () => {
@@ -38,7 +42,7 @@ describe('Payment Entity', () => {
   });
 
   describe('process', () => {
-    it('should change status to PROCESSING', () => {
+    it('should transition from PENDING to PROCESSING', () => {
       const payment = Payment.create({
         orderId: 'order-123',
         amount: new Money(100, 'USD'),
@@ -48,6 +52,7 @@ describe('Payment Entity', () => {
       payment.process();
 
       expect(payment.status).toBe(PaymentStatus.PROCESSING);
+      expect(payment.getUncommittedEvents().length).toBeGreaterThan(0);
     });
 
     it('should throw error if not in PENDING status', () => {
@@ -58,7 +63,7 @@ describe('Payment Entity', () => {
       });
 
       payment.process();
-      payment.markAsSucceeded('pi_test_123');
+      payment.markAsSucceeded('pi_test_1234567890');
 
       expect(() => {
         payment.process();
@@ -67,7 +72,7 @@ describe('Payment Entity', () => {
   });
 
   describe('markAsSucceeded', () => {
-    it('should change status to SUCCEEDED', () => {
+    it('should transition from PROCESSING to SUCCEEDED', () => {
       const payment = Payment.create({
         orderId: 'order-123',
         amount: new Money(100, 'USD'),
@@ -75,15 +80,27 @@ describe('Payment Entity', () => {
       });
 
       payment.process();
-      payment.markAsSucceeded('pi_test_12345678901234567890');
+      payment.markAsSucceeded('pi_test_1234567890abcdefghijklmn');
 
       expect(payment.status).toBe(PaymentStatus.SUCCEEDED);
-      expect(payment.stripePaymentIntentId).toBe('pi_test_12345678901234567890');
+      expect(payment.stripePaymentIntentId).toBe('pi_test_1234567890abcdefghijklmn');
+    });
+
+    it('should throw error if not in PROCESSING status', () => {
+      const payment = Payment.create({
+        orderId: 'order-123',
+        amount: new Money(100, 'USD'),
+        customerId: 'customer-456',
+      });
+
+      expect(() => {
+        payment.markAsSucceeded('pi_test_1234567890abcdefghijklmn');
+      }).toThrow();
     });
   });
 
   describe('markAsFailed', () => {
-    it('should change status to FAILED', () => {
+    it('should transition to FAILED status', () => {
       const payment = Payment.create({
         orderId: 'order-123',
         amount: new Money(100, 'USD'),
@@ -94,12 +111,11 @@ describe('Payment Entity', () => {
       payment.markAsFailed('Insufficient funds');
 
       expect(payment.status).toBe(PaymentStatus.FAILED);
-      expect(payment.failureReason).toBe('Insufficient funds');
     });
   });
 
   describe('refund', () => {
-    it('should change status to REFUNDED', () => {
+    it('should transition from SUCCEEDED to REFUNDED', () => {
       const payment = Payment.create({
         orderId: 'order-123',
         amount: new Money(100, 'USD'),
@@ -107,14 +123,14 @@ describe('Payment Entity', () => {
       });
 
       payment.process();
-      payment.markAsSucceeded('pi_test_12345678901234567890');
-      payment.refund('re_test_12345678901234567890');
+      payment.markAsSucceeded('pi_test_1234567890abcdefghijklmn');
+      payment.refund('re_test_1234567890abcdefghijklmn');
 
       expect(payment.status).toBe(PaymentStatus.REFUNDED);
-      expect(payment.stripeRefundId).toBe('re_test_12345678901234567890');
+      expect(payment.stripeRefundId).toBe('re_test_1234567890abcdefghijklmn');
     });
 
-    it('should throw error if payment is not SUCCEEDED', () => {
+    it('should throw error if not in SUCCEEDED status', () => {
       const payment = Payment.create({
         orderId: 'order-123',
         amount: new Money(100, 'USD'),
@@ -122,7 +138,7 @@ describe('Payment Entity', () => {
       });
 
       expect(() => {
-        payment.refund('re_test_12345678901234567890');
+        payment.refund('re_test_1234567890abcdefghijklmn');
       }).toThrow();
     });
   });

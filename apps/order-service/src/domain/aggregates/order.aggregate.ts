@@ -1,4 +1,8 @@
-import { AggregateRoot, DomainEvent, ValueObject } from '../base-classes';
+import { AggregateRoot, ValueObject } from '../base-classes';
+import { DomainEvent } from '@a4co/shared-utils';
+import { OrderStatus, OrderStatusEnum } from '../value-objects/order-status.vo';
+import { Money } from '../value-objects/money.vo';
+import { CustomerId } from '../value-objects/customer-id.vo';
 
 // VALUE OBJECTS
 
@@ -29,113 +33,301 @@ export class OrderItem {
     get totalPrice(): number {
         return this.quantity * this.unitPrice;
     }
-}
 
-export enum OrderStatus {
-    PENDING = 'PENDING',
-    CONFIRMED = 'CONFIRMED',
-    PAID = 'PAID',
-    SHIPPED = 'SHIPPED',
-    DELIVERED = 'DELIVERED',
-    CANCELLED = 'CANCELLED'
+    toJSON() {
+        return {
+            productId: this.productId,
+            quantity: this.quantity,
+            unitPrice: this.unitPrice,
+            currency: this.currency,
+            totalPrice: this.totalPrice,
+        };
+    }
 }
 
 // DOMAIN EVENTS
 
 export class OrderCreatedEvent extends DomainEvent {
     constructor(
-        public readonly orderId: string,
-        public readonly customerId: string,
-        public readonly items: OrderItem[],
+        orderId: string,
+        customerId: string,
+        items: OrderItem[],
+        totalAmount: number,
+        currency: string,
     ) {
-        super(orderId, 'order.created.v1');
+        super(orderId, {
+            orderId,
+            customerId,
+            items: items.map(item => item.toJSON()),
+            totalAmount,
+            currency,
+        });
     }
 }
 
 export class OrderStatusChangedEvent extends DomainEvent {
     constructor(
-        public readonly orderId: string,
-        public readonly oldStatus: OrderStatus,
-        public readonly newStatus: OrderStatus,
+        orderId: string,
+        oldStatus: OrderStatusEnum,
+        newStatus: OrderStatusEnum,
     ) {
-        super(orderId, 'order.status.changed.v1');
+        super(orderId, {
+            orderId,
+            oldStatus,
+            newStatus,
+        });
+    }
+}
+
+export class OrderCancelledEvent extends DomainEvent {
+    constructor(
+        orderId: string,
+        reason: string,
+    ) {
+        super(orderId, {
+            orderId,
+            reason,
+        });
+    }
+}
+
+export class OrderCompletedEvent extends DomainEvent {
+    constructor(
+        orderId: string,
+        customerId: string,
+    ) {
+        super(orderId, {
+            orderId,
+            customerId,
+        });
+    }
+}
+
+export class OrderFailedEvent extends DomainEvent {
+    constructor(
+        orderId: string,
+        reason: string,
+    ) {
+        super(orderId, {
+            orderId,
+            reason,
+        });
     }
 }
 
 // AGGREGATE
 
 export class Order extends AggregateRoot {
-    private _customerId: string;
+    private _customerId: CustomerId;
     private _items: OrderItem[];
     private _status: OrderStatus;
-    private _totalAmount: number;
+    private _totalAmount: Money;
+    private _cancelledAt?: Date;
+    private _cancelledReason?: string;
 
     constructor(
         id: string,
         customerId: string,
         items: OrderItem[],
-        status: OrderStatus = OrderStatus.PENDING,
+        status: OrderStatusEnum = OrderStatusEnum.PENDING,
         createdAt?: Date,
         updatedAt?: Date,
     ) {
         super(id, createdAt, updatedAt);
-        this._customerId = customerId;
+        this._customerId = new CustomerId(customerId);
         this._items = [...items];
-        this._status = status;
-        this._totalAmount = this.calculateTotal();
+        this._status = new OrderStatus(status);
+        
+        const currency = items.length > 0 ? items[0].currency : 'EUR';
+        const totalAmount = items.reduce((sum, item) => sum + item.totalPrice, 0);
+        this._totalAmount = new Money(totalAmount, currency);
 
         // Add domain event if this is a new order
-        if (status === OrderStatus.PENDING && !createdAt) {
-            this.addDomainEvent(new OrderCreatedEvent(id, customerId, items));
+        if (status === OrderStatusEnum.PENDING && !createdAt) {
+            this.addDomainEvent(new OrderCreatedEvent(
+                id,
+                customerId,
+                items,
+                totalAmount,
+                currency,
+            ));
         }
     }
 
+    // Factory method para reconstruir desde persistencia
+    static reconstruct(
+        id: string,
+        customerId: string,
+        items: OrderItem[],
+        status: OrderStatusEnum,
+        totalAmount: number,
+        currency: string,
+        cancelledAt?: Date,
+        cancelledReason?: string,
+        createdAt?: Date,
+        updatedAt?: Date,
+    ): Order {
+        const order = new Order(id, customerId, items, status, createdAt, updatedAt);
+        order._totalAmount = new Money(totalAmount, currency);
+        order._cancelledAt = cancelledAt;
+        order._cancelledReason = cancelledReason;
+        return order;
+    }
+
     get customerId(): string {
-        return this._customerId;
+        return this._customerId.value;
     }
 
     get items(): OrderItem[] {
         return [...this._items];
     }
 
-    get status(): OrderStatus {
-        return this._status;
+    get status(): OrderStatusEnum {
+        return this._status.value;
     }
 
     get totalAmount(): number {
-        return this._totalAmount;
+        return this._totalAmount.amount;
     }
 
-    private calculateTotal(): number {
-        return this._items.reduce((total, item) => total + item.totalPrice, 0);
+    get currency(): string {
+        return this._totalAmount.currency;
     }
 
-    changeStatus(newStatus: OrderStatus): void {
-        if (this._status === newStatus) {
-            return;
+    get cancelledAt(): Date | undefined {
+        return this._cancelledAt;
+    }
+
+    get cancelledReason(): string | undefined {
+        return this._cancelledReason;
+    }
+
+    confirmPayment(): void {
+        if (!this._status.canTransitionTo(OrderStatusEnum.PAYMENT_CONFIRMED)) {
+            throw new Error(
+                `Cannot confirm payment. Current status: ${this._status.value}, ` +
+                `valid transitions: PENDING -> PAYMENT_CONFIRMED`
+            );
         }
 
-        const oldStatus = this._status;
-        this._status = newStatus;
+        const oldStatus = this._status.value;
+        this._status = new OrderStatus(OrderStatusEnum.PAYMENT_CONFIRMED);
         this.touch();
 
-        this.addDomainEvent(new OrderStatusChangedEvent(this.id, oldStatus, newStatus));
+        this.addDomainEvent(new OrderStatusChangedEvent(this.id, oldStatus, OrderStatusEnum.PAYMENT_CONFIRMED));
+    }
+
+    reserveInventory(): void {
+        if (!this._status.canTransitionTo(OrderStatusEnum.INVENTORY_RESERVED)) {
+            throw new Error(
+                `Cannot reserve inventory. Current status: ${this._status.value}, ` +
+                `valid transitions: PAYMENT_CONFIRMED -> INVENTORY_RESERVED`
+            );
+        }
+
+        const oldStatus = this._status.value;
+        this._status = new OrderStatus(OrderStatusEnum.INVENTORY_RESERVED);
+        this.touch();
+
+        this.addDomainEvent(new OrderStatusChangedEvent(this.id, oldStatus, OrderStatusEnum.INVENTORY_RESERVED));
+    }
+
+    complete(): void {
+        if (!this._status.canTransitionTo(OrderStatusEnum.COMPLETED)) {
+            throw new Error(
+                `Cannot complete order. Current status: ${this._status.value}, ` +
+                `valid transitions: INVENTORY_RESERVED -> COMPLETED`
+            );
+        }
+
+        const oldStatus = this._status.value;
+        this._status = new OrderStatus(OrderStatusEnum.COMPLETED);
+        this.touch();
+
+        this.addDomainEvent(new OrderStatusChangedEvent(this.id, oldStatus, OrderStatusEnum.COMPLETED));
+        this.addDomainEvent(new OrderCompletedEvent(this.id, this._customerId.value));
+    }
+
+    cancel(reason: string): void {
+        if (!reason || reason.trim().length === 0) {
+            throw new Error('Cancellation reason is required');
+        }
+
+        if (!this._status.canTransitionTo(OrderStatusEnum.CANCELLED)) {
+            throw new Error(
+                `Cannot cancel order. Current status: ${this._status.value}, ` +
+                `valid transitions: PENDING, PAYMENT_CONFIRMED, INVENTORY_RESERVED -> CANCELLED`
+            );
+        }
+
+        const oldStatus = this._status.value;
+        this._status = new OrderStatus(OrderStatusEnum.CANCELLED);
+        this._cancelledAt = new Date();
+        this._cancelledReason = reason.trim();
+        this.touch();
+
+        this.addDomainEvent(new OrderStatusChangedEvent(this.id, oldStatus, OrderStatusEnum.CANCELLED));
+        this.addDomainEvent(new OrderCancelledEvent(this.id, reason));
+    }
+
+    markAsFailed(reason: string): void {
+        if (!reason || reason.trim().length === 0) {
+            throw new Error('Failure reason is required');
+        }
+
+        if (!this._status.canTransitionTo(OrderStatusEnum.FAILED)) {
+            throw new Error(
+                `Cannot mark order as failed. Current status: ${this._status.value}, ` +
+                `valid transitions: PENDING, PAYMENT_CONFIRMED, INVENTORY_RESERVED -> FAILED`
+            );
+        }
+
+        const oldStatus = this._status.value;
+        this._status = new OrderStatus(OrderStatusEnum.FAILED);
+        this.touch();
+
+        this.addDomainEvent(new OrderStatusChangedEvent(this.id, oldStatus, OrderStatusEnum.FAILED));
+        this.addDomainEvent(new OrderFailedEvent(this.id, reason));
     }
 
     addItem(item: OrderItem): void {
+        if (this._status.value !== OrderStatusEnum.PENDING) {
+            throw new Error('Cannot add items to an order that is not in PENDING status');
+        }
         this._items.push(item);
-        this._totalAmount = this.calculateTotal();
+        const newTotal = this._items.reduce((sum, i) => sum + i.totalPrice, 0);
+        this._totalAmount = new Money(newTotal, this._totalAmount.currency);
         this.touch();
     }
 
     removeItem(productId: string): void {
+        if (this._status.value !== OrderStatusEnum.PENDING) {
+            throw new Error('Cannot remove items from an order that is not in PENDING status');
+        }
         const index = this._items.findIndex(item => item.productId === productId);
         if (index === -1) {
             throw new Error(`Item with productId ${productId} not found in order`);
         }
 
         this._items.splice(index, 1);
-        this._totalAmount = this.calculateTotal();
+        const newTotal = this._items.reduce((sum, i) => sum + i.totalPrice, 0);
+        this._totalAmount = new Money(newTotal, this._totalAmount.currency);
         this.touch();
+    }
+
+    // Método para serialización a persistencia
+    toPersistence() {
+        return {
+            id: this.id,
+            customerId: this._customerId.value,
+            status: this._status.value,
+            totalAmount: this._totalAmount.amount,
+            currency: this._totalAmount.currency,
+            items: this._items.map(item => item.toJSON()),
+            cancelledAt: this._cancelledAt,
+            cancelledReason: this._cancelledReason,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+        };
     }
 }

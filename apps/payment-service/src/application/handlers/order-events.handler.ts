@@ -1,9 +1,35 @@
 import { Controller, Logger } from '@nestjs/common';
-import { EventPattern, Payload, Ctx, NatsContext } from '@nestjs/microservices';
-import { ProcessPaymentUseCase } from '../use-cases/process-payment.use-case';
-import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case';
-import { Money } from '../../domain/value-objects';
-import { OrderCreatedEvent, OrderCancelledEvent } from '@a4co/shared-utils';
+import { EventPattern, Payload, Ctx } from '@nestjs/microservices';
+import { ProcessPaymentUseCase } from '../application/use-cases/process-payment.use-case';
+import { RefundPaymentUseCase } from '../application/use-cases/refund-payment.use-case';
+import { Money } from '../domain/value-objects/money.vo';
+
+interface OrderCreatedEvent {
+  eventId: string;
+  eventType: string;
+  aggregateId: string;
+  eventData: {
+    orderId: string;
+    customerId: string;
+    totalAmount: number;
+    currency: string;
+    items: Array<{ productId: string; quantity: number }>;
+    createdAt: Date;
+  };
+  sagaId?: string;
+}
+
+interface OrderCancelledEvent {
+  eventId: string;
+  eventType: string;
+  aggregateId: string;
+  eventData: {
+    orderId: string;
+    reason: string;
+    cancelledAt: Date;
+  };
+  sagaId?: string;
+}
 
 @Controller()
 export class OrderEventsHandler {
@@ -17,72 +43,70 @@ export class OrderEventsHandler {
   @EventPattern('order.created')
   async handleOrderCreated(
     @Payload() event: OrderCreatedEvent,
-    @Ctx() context: NatsContext
-  ): Promise<void> {
-    this.logger.log(`Received order.created event for order ${event.aggregateId}`);
+    @Ctx() context: any
+  ) {
+    this.logger.log(
+      `Received OrderCreated event for order ${event.eventData.orderId}`
+    );
 
     try {
-      // Extraer datos del evento
-      const orderId = event.aggregateId;
-      const eventData = event.eventData || {};
-
-      // Validar datos requeridos
-      if (!eventData.customerId) {
-        throw new Error('customerId is required in order.created event');
-      }
-      if (!eventData.totalAmount || eventData.totalAmount <= 0) {
-        throw new Error('totalAmount must be greater than 0');
-      }
-
-      // Crear Money value object
       const amount = new Money(
-        eventData.totalAmount,
-        (eventData.currency || 'USD').toUpperCase() as any
+        event.eventData.totalAmount,
+        event.eventData.currency || 'EUR'
       );
 
-      // Ejecutar use case
       await this.processPaymentUseCase.execute({
-        orderId,
+        orderId: event.eventData.orderId,
         amount,
-        customerId: eventData.customerId,
+        customerId: event.eventData.customerId,
         metadata: {
-          ...eventData.metadata,
-          orderCreatedAt: event.occurredOn?.toISOString() || new Date().toISOString(),
+          orderItems: event.eventData.items,
+          orderCreatedAt: event.eventData.createdAt,
         },
-        idempotencyKey: `order-${orderId}`,
+        sagaId: event.sagaId,
       });
 
-      this.logger.log(`Payment processing initiated for order ${orderId}`);
+      this.logger.log(
+        `Payment processing initiated for order ${event.eventData.orderId}`
+      );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Error handling order.created event: ${errorMessage}`, error);
-      // No relanzamos el error para evitar que el mensaje se reintente infinitamente
-      // En producción, deberíamos implementar dead letter queue
+      this.logger.error(
+        `Error processing payment for order ${event.eventData.orderId}:`,
+        error
+      );
+      throw error;
     }
   }
 
   @EventPattern('order.cancelled')
   async handleOrderCancelled(
     @Payload() event: OrderCancelledEvent,
-    @Ctx() context: NatsContext
-  ): Promise<void> {
-    this.logger.log(`Received order.cancelled event for order ${event.aggregateId}`);
+    @Ctx() context: any
+  ) {
+    this.logger.log(
+      `Received OrderCancelled event for order ${event.eventData.orderId}`
+    );
 
     try {
-      const orderId = event.aggregateId;
-      const eventData = event.eventData || {};
-
-      // Ejecutar refund use case (compensación)
       await this.refundPaymentUseCase.execute({
-        orderId,
-        reason: eventData.reason || 'requested_by_customer',
+        orderId: event.eventData.orderId,
+        reason: event.eventData.reason || 'Order cancelled',
+        sagaId: event.sagaId,
       });
 
-      this.logger.log(`Refund processed for cancelled order ${orderId}`);
+      this.logger.log(
+        `Refund processed for order ${event.eventData.orderId}`
+      );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Error handling order.cancelled event: ${errorMessage}`, error);
-      // No relanzamos el error para evitar que el mensaje se reintente infinitamente
+      this.logger.error(
+        `Error processing refund for order ${event.eventData.orderId}:`,
+        error
+      );
+      // No lanzamos el error para evitar que se propague y rompa la saga
+      // En producción, deberíamos tener un mecanismo de retry o dead letter queue
+      this.logger.warn(
+        `Refund failed for order ${event.eventData.orderId}, but continuing saga compensation`
+      );
     }
   }
 }

@@ -1,5 +1,3 @@
-import { ValueObject } from '../base-classes';
-
 export enum PaymentStatus {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
@@ -9,39 +7,43 @@ export enum PaymentStatus {
   CANCELLED = 'CANCELLED',
 }
 
-export class PaymentStatusVO extends ValueObject<PaymentStatus> {
-  private static readonly VALID_TRANSITIONS: Map<PaymentStatus, PaymentStatus[]> = new Map([
-    [PaymentStatus.PENDING, [PaymentStatus.PROCESSING, PaymentStatus.CANCELLED]],
-    [PaymentStatus.PROCESSING, [PaymentStatus.SUCCEEDED, PaymentStatus.FAILED]],
-    [PaymentStatus.SUCCEEDED, [PaymentStatus.REFUNDED]],
-    [PaymentStatus.FAILED, []],
-    [PaymentStatus.REFUNDED, []],
-    [PaymentStatus.CANCELLED, []],
-  ]);
+export class PaymentStatusVO {
+  private constructor(private readonly value: PaymentStatus) {}
 
-  constructor(value: PaymentStatus) {
-    super(value);
-    this.validate(value);
+  static create(status: PaymentStatus): PaymentStatusVO {
+    return new PaymentStatusVO(status);
   }
 
-  private validate(value: PaymentStatus): void {
-    if (!Object.values(PaymentStatus).includes(value)) {
-      throw new Error(`Invalid PaymentStatus: ${value}`);
+  static fromString(status: string): PaymentStatusVO {
+    if (!Object.values(PaymentStatus).includes(status as PaymentStatus)) {
+      throw new Error(`Invalid payment status: ${status}`);
     }
+    return new PaymentStatusVO(status as PaymentStatus);
+  }
+
+  getValue(): PaymentStatus {
+    return this.value;
+  }
+
+  toString(): string {
+    return this.value;
+  }
+
+  equals(other: PaymentStatusVO): boolean {
+    return this.value === other.value;
   }
 
   canTransitionTo(newStatus: PaymentStatus): boolean {
-    const allowedTransitions = PaymentStatusVO.VALID_TRANSITIONS.get(this.value) || [];
-    return allowedTransitions.includes(newStatus);
-  }
+    const validTransitions: Record<PaymentStatus, PaymentStatus[]> = {
+      [PaymentStatus.PENDING]: [PaymentStatus.PROCESSING, PaymentStatus.CANCELLED],
+      [PaymentStatus.PROCESSING]: [PaymentStatus.SUCCEEDED, PaymentStatus.FAILED],
+      [PaymentStatus.SUCCEEDED]: [PaymentStatus.REFUNDED],
+      [PaymentStatus.FAILED]: [],
+      [PaymentStatus.REFUNDED]: [],
+      [PaymentStatus.CANCELLED]: [],
+    };
 
-  transitionTo(newStatus: PaymentStatus): PaymentStatusVO {
-    if (!this.canTransitionTo(newStatus)) {
-      throw new Error(
-        `Invalid status transition from ${this.value} to ${newStatus}. Valid transitions: ${PaymentStatusVO.VALID_TRANSITIONS.get(this.value)?.join(', ') || 'none'}`
-      );
-    }
-    return new PaymentStatusVO(newStatus);
+    return validTransitions[this.value]?.includes(newStatus) ?? false;
   }
 
   isFinal(): boolean {
@@ -71,9 +73,5 @@ export class PaymentStatusVO extends ValueObject<PaymentStatus> {
 
   isRefunded(): boolean {
     return this.value === PaymentStatus.REFUNDED;
-  }
-
-  toString(): string {
-    return this.value;
   }
 }

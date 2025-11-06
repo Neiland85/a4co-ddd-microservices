@@ -1,136 +1,76 @@
-# Payment Service - Documentación DDD
+# Payment Service
+
+Servicio de procesamiento de pagos para la plataforma A4CO implementado con DDD, CQRS y Saga Pattern.
 
 ## Arquitectura
 
-Este servicio implementa Domain-Driven Design (DDD) completo con las siguientes capas:
+El servicio sigue los principios de Domain-Driven Design (DDD) con:
 
-### Domain Layer (`src/domain/`)
-- **Entities**: `Payment` - Aggregate Root
-- **Value Objects**: `PaymentId`, `Money`, `StripePaymentIntent`, `PaymentStatus`
-- **Domain Events**: `PaymentCreatedEvent`, `PaymentProcessingEvent`, `PaymentSucceededEvent`, `PaymentFailedEvent`, `PaymentRefundedEvent`
-- **Domain Services**: `PaymentDomainService` - Validaciones de negocio
-- **Repository Interfaces**: `IPaymentRepository`
-
-### Application Layer (`src/application/`)
-- **Use Cases**: 
-  - `ProcessPaymentUseCase` - Procesa pagos
-  - `RefundPaymentUseCase` - Maneja reembolsos (compensación)
-- **Handlers**: `OrderEventsHandler` - Escucha eventos de Order Service
-
-### Infrastructure Layer (`src/infrastructure/`)
-- **Repositories**: `PrismaPaymentRepository` - Implementación con Prisma
-- **Gateways**: `StripeGateway` - Integración con Stripe API
+- **Domain Layer**: Aggregates, Value Objects, Domain Events, Domain Services
+- **Application Layer**: Use Cases, Event Handlers
+- **Infrastructure Layer**: Repositories (Prisma), Stripe Gateway, NATS Integration
+- **Presentation Layer**: REST Controllers, NATS Event Handlers
 
 ## Eventos de Dominio
 
-### Eventos Publicados
+El servicio publica los siguientes eventos a NATS:
 
-1. **payment.created** - Cuando se crea un nuevo pago
-2. **payment.processing** - Cuando el pago está siendo procesado
-3. **payment.succeeded** - Cuando el pago se completa exitosamente
-4. **payment.failed** - Cuando el pago falla
-5. **payment.refunded** - Cuando se procesa un reembolso
+- `payment.paymentcreatedevent` - Cuando se crea un nuevo pago
+- `payment.paymentprocessingevent` - Cuando el pago comienza a procesarse
+- `payment.paymentsucceededevent` - Cuando el pago se completa exitosamente
+- `payment.paymentfailedevent` - Cuando el pago falla
+- `payment.paymentrefundedevent` - Cuando se procesa un reembolso
 
-### Eventos Escuchados
+## Eventos Escuchados
 
-1. **order.created** - Inicia el procesamiento de pago
-2. **order.cancelled** - Ejecuta compensación (reembolso)
+El servicio escucha los siguientes eventos de NATS:
+
+- `order.created` - Inicia el procesamiento de pago para una orden
+- `order.cancelled` - Procesa el reembolso de un pago (compensación de saga)
 
 ## Flujo de Saga
 
-```
-Order Service → order.created → Payment Service
-                                    ↓
-                            ProcessPaymentUseCase
-                                    ↓
-                            Stripe Payment Intent
-                                    ↓
-                    ┌───────────────┴───────────────┐
-                    ↓                               ↓
-            payment.succeeded              payment.failed
-                    ↓                               ↓
-            Inventory Service              Order Service
-```
-
-### Compensación
-
-Cuando se cancela una orden:
-```
-Order Service → order.cancelled → Payment Service
-                                        ↓
-                                RefundPaymentUseCase
-                                        ↓
-                                Stripe Refund
-                                        ↓
-                                payment.refunded
-```
+1. **Order Service** publica `order.created`
+2. **Payment Service** recibe el evento y crea un Payment aggregate
+3. Se crea un Payment Intent en Stripe
+4. Se confirma el pago automáticamente (en producción esto se hace desde el frontend)
+5. Se publica `payment.succeeded` o `payment.failed`
+6. Si la orden se cancela, se publica `order.cancelled` y se procesa el reembolso
 
 ## Configuración
 
-### Variables de Entorno
-
-Ver `.env.example` para la lista completa de variables requeridas.
-
-### Prisma Schema
-
-El modelo `Payment` incluye:
-- `id`: UUID del pago
-- `orderId`: ID de la orden (único)
-- `amount`: Monto del pago
-- `currency`: Moneda (USD, EUR, etc.)
-- `status`: Estado del pago
-- `customerId`: ID del cliente
-- `stripePaymentIntentId`: ID del Payment Intent de Stripe
-- `stripeRefundId`: ID del reembolso de Stripe (si aplica)
-- `failureReason`: Razón del fallo (si aplica)
-- `metadata`: Metadatos adicionales (JSON)
-
-## Uso
-
-### Procesar un Pago
-
-```typescript
-const payment = await processPaymentUseCase.execute({
-  orderId: 'order-123',
-  amount: new Money(100, 'USD'),
-  customerId: 'customer-456',
-  metadata: { source: 'web' }
-});
-```
-
-### Reembolsar un Pago
-
-```typescript
-const refundedPayment = await refundPaymentUseCase.execute({
-  orderId: 'order-123',
-  reason: 'requested_by_customer'
-});
-```
+1. Copiar `.env.example` a `.env` y configurar las variables
+2. Ejecutar migraciones de Prisma: `npx prisma migrate dev`
+3. Generar cliente de Prisma: `npx prisma generate`
+4. Iniciar el servicio: `npm run start:dev`
 
 ## Testing
 
-Ejecutar tests:
 ```bash
+# Tests unitarios
 npm test
+
+# Tests de integración
+npm run test:integration
 ```
 
-Tests incluidos:
-- Unit tests para entidades y value objects
-- Integration tests para use cases
-- Repository tests
+## Estructura del Proyecto
 
-## Integración con Stripe
-
-El servicio usa Stripe Payment Intents API. Configurar:
-- `STRIPE_SECRET_KEY` o `STRIPE_SECRET_KEY_TEST`
-- `STRIPE_WEBHOOK_SECRET` (para webhooks)
-
-## NATS JetStream
-
-El servicio se conecta a NATS para:
-- Escuchar eventos de Order Service
-- Publicar eventos de dominio
-- Participar en la saga distribuida
-
-Configurar:
-- `NATS_SERVERS`: URLs de servidores NATS (separadas por coma)
+```
+src/
+├── domain/
+│   ├── entities/          # Aggregates
+│   ├── value-objects/     # Value Objects
+│   ├── events/           # Domain Events
+│   ├── repositories/     # Repository interfaces
+│   └── services/         # Domain Services
+├── application/
+│   ├── use-cases/        # Use Cases
+│   └── handlers/         # Event Handlers
+├── infrastructure/
+│   ├── repositories/     # Prisma implementations
+│   ├── stripe.gateway.ts # Stripe integration
+│   └── nats/             # NATS configuration
+└── presentation/
+    └── payment.controller.ts # REST API
+```
