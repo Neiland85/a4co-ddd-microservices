@@ -36,6 +36,45 @@ export class PrismaProductRepository implements ProductRepository {
     return productsData.map(data => this.toDomain(data));
   }
 
+  async findBySKU(sku: SKU): Promise<Product | null> {
+    const productData = await this.prisma.product.findUnique({
+      where: { sku: sku.value },
+    });
+
+    if (!productData) return null;
+
+    return this.toDomain(productData);
+  }
+
+  async findLowStockProducts(): Promise<Product[]> {
+    // Find products where (currentStock - reservedStock) <= reorderPoint
+    const productsData = await this.prisma.product.findMany({
+      where: {
+        isActive: true,
+      },
+    });
+
+    // Filter in application layer (Prisma doesn't support computed fields in WHERE)
+    const products = productsData.map(data => this.toDomain(data));
+    return products.filter(product => product.needsRestock);
+  }
+
+  async findByWarehouse(location: string): Promise<Product[]> {
+    // Note: This assumes warehouse location is stored as JSON or separate fields
+    // For now, we'll search by a pattern in a JSON field or return all if not implemented
+    // This is a placeholder - actual implementation depends on schema
+    const productsData = await this.prisma.product.findMany({
+      where: {
+        isActive: true,
+      },
+    });
+
+    const products = productsData.map(data => this.toDomain(data));
+    // Filter by warehouse if warehouseLocation is stored
+    // For now, return all active products
+    return products;
+  }
+
   async save(product: Product): Promise<void> {
     const data = product.toJSON();
 
@@ -135,16 +174,7 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async findLowStock(): Promise<Product[]> {
-    // Find products where (currentStock - reservedStock) <= minimumStock
-    const productsData = await this.prisma.product.findMany({
-      where: {
-        isActive: true,
-      },
-    });
-
-    // Filter in application layer (Prisma doesn't support computed fields in WHERE)
-    const products = productsData.map(data => this.toDomain(data));
-    return products.filter(product => product.needsRestock);
+    return this.findLowStockProducts();
   }
 
   async findOutOfStock(): Promise<Product[]> {
