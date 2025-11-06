@@ -1,0 +1,93 @@
+# Dockerfile.prod optimizado para Dashboard-Client (Next.js)
+# Usa multi-stage builds y caché de pnpm para reducir build time
+
+# Stage 1: Dependencias
+FROM node:22-alpine AS dependencies
+
+# Instalar pnpm
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
+
+# Instalar libc6-compat para compatibilidad
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copiar archivos de configuración de pnpm y dependencias
+COPY package.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+COPY .npmrc* ./
+
+# Copiar package.json de la aplicación
+COPY apps/dashboard-client/package.json ./apps/dashboard-client/
+
+# Configurar y cachear el pnpm store
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm config set store-dir /root/.pnpm-store && \
+    pnpm fetch --frozen-lockfile
+
+# Instalar dependencias usando el caché
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile --prefer-offline
+
+# Stage 2: Builder
+FROM node:22-alpine AS builder
+
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copiar dependencias desde la stage anterior
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=dependencies /app/apps/dashboard-client/node_modules ./apps/dashboard-client/node_modules
+
+# Copiar archivos de configuración
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc* ./
+
+# Copiar el código fuente de la aplicación
+COPY apps/dashboard-client ./apps/dashboard-client
+
+# Copiar packages compartidos si existen
+COPY packages ./packages
+
+# Establecer variables de entorno para Next.js
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Build de la aplicación
+WORKDIR /app/apps/dashboard-client
+RUN pnpm run build
+
+# Stage 3: Production - Solo runtime
+FROM node:22-alpine AS production
+
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app/apps/dashboard-client
+
+# Copiar archivos necesarios para producción
+COPY --from=builder /app/apps/dashboard-client/next.config.* ./
+COPY --from=builder /app/apps/dashboard-client/package.json ./
+COPY --from=builder /app/apps/dashboard-client/public ./public
+
+# Copiar los archivos del build
+COPY --from=builder /app/apps/dashboard-client/.next/standalone /app
+COPY --from=builder /app/apps/dashboard-client/.next/static ./.next/static
+
+# Crear usuario non-root para seguridad
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs && \
+    chown -R nextjs:nodejs /app
+
+USER nextjs
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 3000
+
+CMD ["node", "/app/apps/dashboard-client/server.js"]
