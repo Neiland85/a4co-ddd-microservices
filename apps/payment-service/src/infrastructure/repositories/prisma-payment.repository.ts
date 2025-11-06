@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { Injectable, Inject } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 import { Payment } from '../../domain/entities/payment.entity';
 import { PaymentId } from '../../domain/value-objects/payment-id.vo';
 import { Money } from '../../domain/value-objects/money.vo';
-import { PaymentStatus } from '../../domain/value-objects/payment-status.vo';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
+import { StripePaymentIntent } from '../../domain/value-objects/stripe-payment-intent.vo';
+import { PaymentStatus, PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
+import { IPaymentRepository } from '../../domain/repositories/payment.repository';
 
 @Injectable()
-export class PrismaPaymentRepository implements PaymentRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class PrismaPaymentRepository implements IPaymentRepository {
+  constructor(@Inject('PrismaClient') private readonly prisma: PrismaClient) {}
 
   async save(payment: Payment): Promise<void> {
     const paymentData = {
@@ -16,20 +17,18 @@ export class PrismaPaymentRepository implements PaymentRepository {
       orderId: payment.orderId,
       amount: payment.amount.amount,
       currency: payment.amount.currency,
-      status: payment.status,
+      status: payment.status.toString(),
+      stripePaymentIntentId: payment.stripePaymentIntentId?.toString() || null,
       customerId: payment.customerId,
-      stripePaymentIntentId: payment.stripePaymentIntentId,
-      stripeRefundId: payment.stripeRefundId,
       metadata: payment.metadata,
-      updatedAt: new Date(),
+      failureReason: payment.failureReason || null,
+      createdAt: payment.createdAt,
+      updatedAt: payment.updatedAt,
     };
 
     await this.prisma.payment.upsert({
       where: { id: payment.paymentId.toString() },
-      create: {
-        ...paymentData,
-        createdAt: new Date(),
-      },
+      create: paymentData,
       update: paymentData,
     });
   }
@@ -43,23 +42,24 @@ export class PrismaPaymentRepository implements PaymentRepository {
       return null;
     }
 
-    return this.mapToDomain(paymentData);
+    return this.toDomain(paymentData);
   }
 
   async findByOrderId(orderId: string): Promise<Payment | null> {
-    const paymentData = await this.prisma.payment.findUnique({
+    const paymentData = await this.prisma.payment.findFirst({
       where: { orderId },
+      orderBy: { createdAt: 'desc' },
     });
 
     if (!paymentData) {
       return null;
     }
 
-    return this.mapToDomain(paymentData);
+    return this.toDomain(paymentData);
   }
 
   async findByStripeIntentId(intentId: string): Promise<Payment | null> {
-    const paymentData = await this.prisma.payment.findFirst({
+    const paymentData = await this.prisma.payment.findUnique({
       where: { stripePaymentIntentId: intentId },
     });
 
@@ -67,25 +67,26 @@ export class PrismaPaymentRepository implements PaymentRepository {
       return null;
     }
 
-    return this.mapToDomain(paymentData);
+    return this.toDomain(paymentData);
   }
 
-  async exists(id: PaymentId): Promise<boolean> {
-    const count = await this.prisma.payment.count({
-      where: { id: id.toString() },
-    });
-    return count > 0;
-  }
+  private toDomain(paymentData: any): Payment {
+    const paymentId = PaymentId.fromString(paymentData.id);
+    const amount = new Money(paymentData.amount, paymentData.currency);
+    const status = PaymentStatusVO.fromString(paymentData.status);
+    const stripePaymentIntentId = paymentData.stripePaymentIntentId
+      ? StripePaymentIntent.fromString(paymentData.stripePaymentIntentId)
+      : null;
 
-  private mapToDomain(paymentData: any): Payment {
     return Payment.reconstitute({
-      paymentId: PaymentId.fromString(paymentData.id),
+      paymentId,
       orderId: paymentData.orderId,
-      amount: new Money(paymentData.amount, paymentData.currency),
+      amount,
+      status,
+      stripePaymentIntentId,
       customerId: paymentData.customerId,
-      status: paymentData.status as PaymentStatus,
-      stripePaymentIntentId: paymentData.stripePaymentIntentId,
-      metadata: paymentData.metadata as Record<string, any>,
+      metadata: paymentData.metadata || {},
+      failureReason: paymentData.failureReason,
       createdAt: paymentData.createdAt,
       updatedAt: paymentData.updatedAt,
     });

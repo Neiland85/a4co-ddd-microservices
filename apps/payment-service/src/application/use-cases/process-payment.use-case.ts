@@ -1,116 +1,158 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Payment } from '../domain/entities/payment.entity';
-import { PaymentRepository } from '../domain/repositories/payment.repository';
-import { PaymentDomainService } from '../domain/services/payment-domain.service';
-import { StripeGateway } from '../../infrastructure/stripe.gateway';
-import { NatsEventPublisher } from '../../infrastructure/events/nats-event-publisher';
 import { Money } from '../domain/value-objects/money.vo';
-import { PaymentId } from '../domain/value-objects/payment-id.vo';
-import { getLogger } from '@a4co/observability';
+import { IPaymentRepository } from '../domain/repositories/payment.repository';
+import { PaymentDomainService } from '../domain/services/payment-domain.service';
+import { StripeGateway } from '../infrastructure/stripe.gateway';
+import { NatsService } from '../infrastructure/nats/nats.service';
+
+export interface ProcessPaymentCommand {
+  orderId: string;
+  amount: Money;
+  customerId: string;
+  metadata?: Record<string, any>;
+  sagaId?: string;
+}
 
 @Injectable()
 export class ProcessPaymentUseCase {
-  private readonly logger = getLogger(ProcessPaymentUseCase.name);
+  private readonly logger = new Logger(ProcessPaymentUseCase.name);
 
   constructor(
-    private readonly paymentRepository: PaymentRepository,
+    private readonly paymentRepository: IPaymentRepository,
     private readonly paymentDomainService: PaymentDomainService,
     private readonly stripeGateway: StripeGateway,
-    private readonly eventPublisher: NatsEventPublisher
+    private readonly natsService: NatsService
   ) {}
 
-  async execute(
-    orderId: string,
-    amount: Money,
-    customerId: string,
-    metadata?: Record<string, any>
-  ): Promise<Payment> {
-    this.logger.info(`Processing payment for order ${orderId}`, {
-      orderId,
-      amount: amount.amount,
-      currency: amount.currency,
-      customerId,
-    });
+  async execute(command: ProcessPaymentCommand): Promise<Payment> {
+    this.logger.log(
+      `Processing payment for order ${command.orderId}, amount: ${command.amount.amount} ${command.amount.currency}`
+    );
 
-    // Validar límites de pago
-    this.paymentDomainService.validatePaymentLimits(amount);
-    this.paymentDomainService.validateCustomerId(customerId);
+    // 1. Validar límites de pago
+    this.paymentDomainService.validatePaymentLimits(command.amount);
 
-    // Verificar si ya existe un pago para esta orden (idempotencia)
-    const existingPayment = await this.paymentRepository.findByOrderId(orderId);
-    if (existingPayment && existingPayment.isFinal()) {
-      this.logger.warn(`Payment already exists and is final for order ${orderId}`);
+    // 2. Verificar si ya existe un pago para esta orden
+    const existingPayment = await this.paymentRepository.findByOrderId(
+      command.orderId
+    );
+
+    if (existingPayment && !existingPayment.isFinal()) {
+      this.logger.warn(
+        `Payment already exists for order ${command.orderId} with status ${existingPayment.status.toString()}`
+      );
       return existingPayment;
     }
 
-    // Crear Payment aggregate
-    const payment = Payment.create({
-      orderId,
-      amount,
-      customerId,
-      metadata,
-    });
+    // 3. Crear Payment aggregate
+    const payment = Payment.create(
+      command.orderId,
+      command.amount,
+      command.customerId,
+      command.metadata,
+      command.sagaId
+    );
 
-      // Guardar inicialmente
-      await this.paymentRepository.save(payment);
-      
-      // Publicar eventos iniciales
-      const initialEvents = payment.getUncommittedEvents();
-      await this.eventPublisher.publishAll(initialEvents);
-      payment.clearDomainEvents();
+    // 4. Guardar payment inicial
+    await this.paymentRepository.save(payment);
 
-      try {
-        // Marcar como procesando
-        payment.process();
-        await this.paymentRepository.save(payment);
-        
-        // Publicar evento de procesamiento
-        const processingEvents = payment.getUncommittedEvents();
-        await this.eventPublisher.publishAll(processingEvents);
-        payment.clearDomainEvents();
+    // 5. Procesar el pago (marcar como PROCESSING)
+    payment.process(command.sagaId);
+    await this.paymentRepository.save(payment);
 
-      // Crear Payment Intent en Stripe
-      const stripeIntent = await this.stripeGateway.createPaymentIntent({
-        amount: amount.toCents(),
-        currency: amount.currency.toLowerCase(),
-        customer: customerId,
-        metadata: {
-          orderId,
-          paymentId: payment.paymentId.toString(),
-          ...metadata,
-        },
+    // 6. Crear Payment Intent en Stripe
+    try {
+      const idempotencyKey = `${command.orderId}-${Date.now()}`;
+      const stripePaymentIntent = await this.stripeGateway.createPaymentIntent({
+        amount: command.amount,
+        customerId: command.customerId,
+        orderId: command.orderId,
+        metadata: command.metadata,
+        idempotencyKey,
       });
 
-      // Marcar como exitoso
-      payment.markAsSucceeded(stripeIntent.id);
+      // 7. Confirmar el Payment Intent automáticamente
+      // En producción, esto normalmente se hace desde el frontend
+      // Aquí lo hacemos automáticamente para simplificar el flujo
+      const confirmedIntent = await this.stripeGateway.confirmPaymentIntent(
+        stripePaymentIntent.id
+      );
+
+      // 8. Actualizar payment según el resultado
+      if (confirmedIntent.status === 'succeeded') {
+        payment.markAsSucceeded(confirmedIntent.id, command.sagaId);
+      } else if (confirmedIntent.status === 'requires_payment_method') {
+        // Si requiere método de pago, marcamos como fallido por ahora
+        // En producción, esto debería esperar a que el cliente complete el pago
+        payment.markAsFailed(
+          'Payment requires payment method',
+          command.sagaId
+        );
+      } else {
+        payment.markAsFailed(
+          `Payment status: ${confirmedIntent.status}`,
+          command.sagaId
+        );
+      }
+
+      // 9. Guardar payment actualizado
       await this.paymentRepository.save(payment);
 
-      // Publicar eventos de dominio
+      // 10. Publicar eventos a NATS
       const events = payment.getUncommittedEvents();
-      await this.eventPublisher.publishAll(events);
+      for (const event of events) {
+        await this.natsService.publish(
+          `payment.${event.eventType.toLowerCase()}`,
+          {
+            eventId: event.eventId,
+            eventType: event.eventType,
+            aggregateId: event.aggregateId,
+            eventVersion: event.eventVersion,
+            occurredOn: event.occurredOn,
+            eventData: event.eventData,
+            sagaId: event.sagaId,
+          }
+        );
+      }
+
       payment.clearDomainEvents();
 
-      this.logger.info(`Payment succeeded for order ${orderId}`, {
-        paymentId: payment.paymentId.toString(),
-        stripeIntentId: stripeIntent.id,
-      });
+      this.logger.log(
+        `Payment processed successfully: ${payment.paymentId.toString()} for order ${command.orderId}`
+      );
 
       return payment;
     } catch (error) {
-      this.logger.error(`Payment failed for order ${orderId}`, {
-        error: error.message,
-        stack: error.stack,
-      });
+      this.logger.error(
+        `Error processing payment for order ${command.orderId}:`,
+        error
+      );
 
       // Marcar como fallido
       payment.markAsFailed(
-        error.message || 'Payment processing failed'
+        error instanceof Error ? error.message : String(error),
+        command.sagaId
       );
       await this.paymentRepository.save(payment);
 
       // Publicar evento de fallo
-      const failureEvents = payment.getUncommittedEvents();
-      await this.eventPublisher.publishAll(failureEvents);
+      const events = payment.getUncommittedEvents();
+      for (const event of events) {
+        await this.natsService.publish(
+          `payment.${event.eventType.toLowerCase()}`,
+          {
+            eventId: event.eventId,
+            eventType: event.eventType,
+            aggregateId: event.aggregateId,
+            eventVersion: event.eventVersion,
+            occurredOn: event.occurredOn,
+            eventData: event.eventData,
+            sagaId: event.sagaId,
+          }
+        );
+      }
+
       payment.clearDomainEvents();
 
       throw error;

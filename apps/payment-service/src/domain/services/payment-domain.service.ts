@@ -1,93 +1,83 @@
 import { Injectable } from '@nestjs/common';
 import { Payment } from '../entities/payment.entity';
 import { Money } from '../value-objects/money.vo';
+import { PaymentStatus } from '../value-objects/payment-status.vo';
 
 @Injectable()
 export class PaymentDomainService {
+  // Límites de pago por transacción (en centavos/euros)
+  private readonly MIN_PAYMENT_AMOUNT = 0.01; // Mínimo 1 céntimo
+  private readonly MAX_PAYMENT_AMOUNT = 100000; // Máximo 100,000 EUR
+
   /**
    * Valida si un pago puede ser procesado
    */
   canProcessPayment(payment: Payment): boolean {
-    // Validaciones de negocio
+    // Verificar que el pago no esté en estado final
     if (payment.isFinal()) {
       return false;
     }
 
-    if (payment.status !== 'PENDING') {
+    // Verificar que el estado permita procesamiento
+    if (!payment.status.isPending() && !payment.status.isProcessing()) {
       return false;
     }
 
-    // Validar que el monto sea válido
-    if (payment.amount.amount <= 0) {
+    // Validar límites de pago
+    try {
+      this.validatePaymentLimits(payment.amount);
+      return true;
+    } catch {
       return false;
     }
-
-    return true;
   }
 
   /**
    * Calcula el monto de reembolso
-   * Por defecto, reembolsa el monto completo
+   * Por ahora, siempre reembolsamos el monto completo
+   * En el futuro se puede agregar lógica para reembolsos parciales
    */
-  calculateRefundAmount(payment: Payment, partialAmount?: Money): Money {
+  calculateRefundAmount(payment: Payment): Money {
     if (!payment.canBeRefunded()) {
       throw new Error('Payment cannot be refunded');
     }
 
-    if (partialAmount) {
-      if (partialAmount.isGreaterThan(payment.amount)) {
-        throw new Error('Refund amount cannot exceed payment amount');
-      }
-      if (partialAmount.currency !== payment.amount.currency) {
-        throw new Error('Refund currency must match payment currency');
-      }
-      return partialAmount;
-    }
-
+    // Por ahora, siempre reembolsamos el monto completo
     return payment.amount;
   }
 
   /**
-   * Valida límites de pago por transacción
+   * Valida los límites de pago por transacción
    */
   validatePaymentLimits(amount: Money): void {
-    const MAX_AMOUNT_USD = 100000; // $100,000 USD
-    const MAX_AMOUNT_EUR = 90000;  // €90,000 EUR
-    const MIN_AMOUNT = 0.50; // Mínimo $0.50
-
-    if (amount.amount < MIN_AMOUNT) {
-      throw new Error(`Payment amount must be at least ${MIN_AMOUNT} ${amount.currency}`);
+    if (amount.amount < this.MIN_PAYMENT_AMOUNT) {
+      throw new Error(
+        `Payment amount must be at least ${this.MIN_PAYMENT_AMOUNT} ${amount.currency}`
+      );
     }
 
-    const maxAmounts: Record<string, number> = {
-      USD: MAX_AMOUNT_USD,
-      EUR: MAX_AMOUNT_EUR,
-      GBP: 80000,
-      MXN: 2000000,
-      COP: 400000000,
-    };
-
-    const maxAmount = maxAmounts[amount.currency] || MAX_AMOUNT_USD;
-    if (amount.amount > maxAmount) {
+    if (amount.amount > this.MAX_PAYMENT_AMOUNT) {
       throw new Error(
-        `Payment amount exceeds maximum limit of ${maxAmount} ${amount.currency}`
+        `Payment amount cannot exceed ${this.MAX_PAYMENT_AMOUNT} ${amount.currency}`
       );
     }
   }
 
   /**
-   * Valida que el customerId tenga formato válido
+   * Valida si un pago puede ser reembolsado
    */
-  validateCustomerId(customerId: string): void {
-    if (!customerId || !customerId.trim()) {
-      throw new Error('CustomerId is required');
-    }
-    // Validar formato UUID o Stripe customer ID
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    const stripeCustomerRegex = /^cus_[a-zA-Z0-9]{24,}$/;
-    
-    if (!uuidRegex.test(customerId) && !stripeCustomerRegex.test(customerId)) {
-      throw new Error('Invalid customerId format');
-    }
+  canRefundPayment(payment: Payment): boolean {
+    return payment.canBeRefunded();
+  }
+
+  /**
+   * Valida la transición de estado
+   */
+  validateStatusTransition(
+    currentStatus: PaymentStatus,
+    newStatus: PaymentStatus
+  ): boolean {
+    const statusVO = PaymentStatusVO.fromString(currentStatus);
+    return statusVO.canTransitionTo(newStatus);
   }
 }

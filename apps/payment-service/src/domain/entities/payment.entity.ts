@@ -1,83 +1,88 @@
 import { AggregateRoot } from '@a4co/shared-utils';
-import { PaymentId } from './value-objects/payment-id.vo';
-import { Money } from './value-objects/money.vo';
-import { StripePaymentIntent } from './value-objects/stripe-payment-intent.vo';
-import { PaymentStatus, PaymentStatusVO } from './value-objects/payment-status.vo';
+import { PaymentId } from '../value-objects/payment-id.vo';
+import { Money } from '../value-objects/money.vo';
+import { StripePaymentIntent } from '../value-objects/stripe-payment-intent.vo';
+import { PaymentStatus, PaymentStatusVO } from '../value-objects/payment-status.vo';
 import {
   PaymentCreatedEvent,
   PaymentProcessingEvent,
   PaymentSucceededEvent,
   PaymentFailedEvent,
   PaymentRefundedEvent,
-} from './events/payment.events';
+} from '../events/payment.events';
 
 export interface PaymentProps {
-  paymentId?: PaymentId;
+  paymentId: PaymentId;
   orderId: string;
   amount: Money;
+  status: PaymentStatusVO;
+  stripePaymentIntentId: StripePaymentIntent | null;
   customerId: string;
-  status?: PaymentStatus;
-  stripePaymentIntentId?: string | null;
   metadata?: Record<string, any>;
-  createdAt?: Date;
-  updatedAt?: Date;
+  failureReason?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class Payment extends AggregateRoot {
   private _paymentId: PaymentId;
   private _orderId: string;
   private _amount: Money;
-  private _customerId: string;
   private _status: PaymentStatusVO;
-  private _stripePaymentIntentId: string | null;
+  private _stripePaymentIntentId: StripePaymentIntent | null;
+  private _customerId: string;
   private _metadata: Record<string, any>;
-  private _stripeRefundId: string | null;
+  private _failureReason?: string;
+  private _createdAt: Date;
+  private _updatedAt: Date;
 
   private constructor(props: PaymentProps) {
-    super(props.paymentId?.toString() || PaymentId.generate().toString());
-    
-    this._paymentId = props.paymentId || PaymentId.generate();
+    super(props.paymentId.toString());
+    this._paymentId = props.paymentId;
     this._orderId = props.orderId;
     this._amount = props.amount;
+    this._status = props.status;
+    this._stripePaymentIntentId = props.stripePaymentIntentId;
     this._customerId = props.customerId;
-    this._status = props.status 
-      ? PaymentStatusVO.fromString(props.status)
-      : new PaymentStatusVO(PaymentStatus.PENDING);
-    this._stripePaymentIntentId = props.stripePaymentIntentId || null;
     this._metadata = props.metadata || {};
-    this._stripeRefundId = null;
-
-    // Emitir evento de creación solo si es nuevo
-    if (!props.paymentId) {
-      this.addDomainEvent(
-        new PaymentCreatedEvent(this._paymentId, {
-          orderId: this._orderId,
-          amount: {
-            amount: this._amount.amount,
-            currency: this._amount.currency,
-          },
-          customerId: this._customerId,
-          createdAt: props.createdAt || new Date(),
-        })
-      );
-    }
+    this._failureReason = props.failureReason;
+    this._createdAt = props.createdAt;
+    this._updatedAt = props.updatedAt;
   }
 
-  // Factory method
-  static create(props: PaymentProps): Payment {
-    // Validaciones de dominio
-    if (!props.orderId || !props.orderId.trim()) {
-      throw new Error('OrderId is required');
-    }
-    if (!props.customerId || !props.customerId.trim()) {
-      throw new Error('CustomerId is required');
-    }
+  static create(
+    orderId: string,
+    amount: Money,
+    customerId: string,
+    metadata?: Record<string, any>,
+    sagaId?: string
+  ): Payment {
+    const paymentId = PaymentId.create();
+    const payment = new Payment({
+      paymentId,
+      orderId,
+      amount,
+      status: PaymentStatusVO.create(PaymentStatus.PENDING),
+      stripePaymentIntentId: null,
+      customerId,
+      metadata,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    return new Payment(props);
+    payment.addDomainEvent(
+      new PaymentCreatedEvent(paymentId.toString(), {
+        orderId,
+        amount: amount.toJSON(),
+        customerId,
+        createdAt: payment._createdAt,
+      }, sagaId)
+    );
+
+    return payment;
   }
 
-  // Factory method para reconstruir desde persistencia
-  static reconstitute(props: PaymentProps & { paymentId: PaymentId }): Payment {
+  static reconstitute(props: PaymentProps): Payment {
     return new Payment(props);
   }
 
@@ -94,154 +99,157 @@ export class Payment extends AggregateRoot {
     return this._amount;
   }
 
+  get status(): PaymentStatusVO {
+    return this._status;
+  }
+
+  get stripePaymentIntentId(): StripePaymentIntent | null {
+    return this._stripePaymentIntentId;
+  }
+
   get customerId(): string {
     return this._customerId;
-  }
-
-  get status(): PaymentStatus {
-    return this._status.getValue();
-  }
-
-  get stripePaymentIntentId(): string | null {
-    return this._stripePaymentIntentId;
   }
 
   get metadata(): Record<string, any> {
     return { ...this._metadata };
   }
 
-  get stripeRefundId(): string | null {
-    return this._stripeRefundId;
+  get failureReason(): string | undefined {
+    return this._failureReason;
   }
 
-  // Métodos de dominio
-  process(): void {
+  get createdAt(): Date {
+    return this._createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this._updatedAt;
+  }
+
+  // Domain methods
+  process(sagaId?: string): void {
     if (!this._status.isPending()) {
-      throw new Error(`Cannot process payment in status: ${this._status.getValue()}`);
+      throw new Error(`Cannot process payment with status: ${this._status.toString()}`);
     }
 
-    this._status = this._status.transitionTo(PaymentStatus.PROCESSING);
-    this.touch();
+    if (!this._status.canTransitionTo(PaymentStatus.PROCESSING)) {
+      throw new Error(`Invalid status transition from ${this._status.toString()} to PROCESSING`);
+    }
+
+    this._status = PaymentStatusVO.create(PaymentStatus.PROCESSING);
+    this._updatedAt = new Date();
 
     this.addDomainEvent(
-      new PaymentProcessingEvent(this._paymentId, {
+      new PaymentProcessingEvent(this._paymentId.toString(), {
         orderId: this._orderId,
-        amount: {
-          amount: this._amount.amount,
-          currency: this._amount.currency,
-        },
-        stripePaymentIntentId: this._stripePaymentIntentId || undefined,
-        processedAt: new Date(),
-      })
+        amount: this._amount.toJSON(),
+        startedAt: this._updatedAt,
+      }, sagaId)
     );
   }
 
-  markAsSucceeded(stripeIntentId: string): void {
+  markAsSucceeded(stripeIntentId: string, sagaId?: string): void {
     if (!this._status.isProcessing()) {
-      throw new Error(`Cannot mark as succeeded from status: ${this._status.getValue()}`);
+      throw new Error(`Cannot mark as succeeded payment with status: ${this._status.toString()}`);
     }
 
-    const stripeIntent = StripePaymentIntent.fromString(stripeIntentId);
-    this._stripePaymentIntentId = stripeIntent.toString();
-    this._status = this._status.transitionTo(PaymentStatus.SUCCEEDED);
-    this.touch();
+    if (!this._status.canTransitionTo(PaymentStatus.SUCCEEDED)) {
+      throw new Error(`Invalid status transition from ${this._status.toString()} to SUCCEEDED`);
+    }
+
+    const stripePaymentIntent = StripePaymentIntent.create(stripeIntentId);
+    this._stripePaymentIntentId = stripePaymentIntent;
+    this._status = PaymentStatusVO.create(PaymentStatus.SUCCEEDED);
+    this._updatedAt = new Date();
 
     this.addDomainEvent(
-      new PaymentSucceededEvent(this._paymentId, {
+      new PaymentSucceededEvent(this._paymentId.toString(), {
         orderId: this._orderId,
-        amount: {
-          amount: this._amount.amount,
-          currency: this._amount.currency,
-        },
-        stripePaymentIntentId: this._stripePaymentIntentId,
-        customerId: this._customerId,
-        succeededAt: new Date(),
-      })
+        amount: this._amount.toJSON(),
+        stripePaymentIntentId: stripeIntentId,
+        succeededAt: this._updatedAt,
+      }, sagaId)
     );
   }
 
-  markAsFailed(reason: string): void {
+  markAsFailed(reason: string, sagaId?: string): void {
+    if (!this._status.isProcessing() && !this._status.isPending()) {
+      throw new Error(`Cannot mark as failed payment with status: ${this._status.toString()}`);
+    }
+
     if (!this._status.canTransitionTo(PaymentStatus.FAILED)) {
-      throw new Error(`Cannot mark as failed from status: ${this._status.getValue()}`);
+      throw new Error(`Invalid status transition from ${this._status.toString()} to FAILED`);
     }
 
-    if (!reason || !reason.trim()) {
-      throw new Error('Failure reason is required');
-    }
-
-    this._status = this._status.transitionTo(PaymentStatus.FAILED);
-    this.touch();
+    this._failureReason = reason;
+    this._status = PaymentStatusVO.create(PaymentStatus.FAILED);
+    this._updatedAt = new Date();
 
     this.addDomainEvent(
-      new PaymentFailedEvent(this._paymentId, {
+      new PaymentFailedEvent(this._paymentId.toString(), {
         orderId: this._orderId,
-        amount: {
-          amount: this._amount.amount,
-          currency: this._amount.currency,
-        },
+        amount: this._amount.toJSON(),
         reason,
-        stripePaymentIntentId: this._stripePaymentIntentId || undefined,
-        failedAt: new Date(),
-      })
+        failedAt: this._updatedAt,
+      }, sagaId)
     );
   }
 
-  refund(stripeRefundId: string, refundAmount?: Money, reason?: string): void {
+  refund(stripeRefundId?: string, sagaId?: string): void {
     if (!this._status.isSucceeded()) {
-      throw new Error(`Cannot refund payment in status: ${this._status.getValue()}`);
+      throw new Error(`Cannot refund payment with status: ${this._status.toString()}`);
     }
 
-    if (!stripeRefundId || !stripeRefundId.trim()) {
-      throw new Error('Stripe refund ID is required');
+    if (!this._status.canTransitionTo(PaymentStatus.REFUNDED)) {
+      throw new Error(`Invalid status transition from ${this._status.toString()} to REFUNDED`);
     }
 
-    const actualRefundAmount = refundAmount || this._amount;
-    
-    if (actualRefundAmount.isGreaterThan(this._amount)) {
-      throw new Error('Refund amount cannot exceed payment amount');
-    }
+    this._status = PaymentStatusVO.create(PaymentStatus.REFUNDED);
+    this._updatedAt = new Date();
 
-    this._stripeRefundId = stripeRefundId;
-    this._status = this._status.transitionTo(PaymentStatus.REFUNDED);
-    this.touch();
+    if (stripeRefundId) {
+      this._metadata = {
+        ...this._metadata,
+        stripeRefundId,
+        refundedAt: this._updatedAt.toISOString(),
+      };
+    }
 
     this.addDomainEvent(
-      new PaymentRefundedEvent(this._paymentId, {
+      new PaymentRefundedEvent(this._paymentId.toString(), {
         orderId: this._orderId,
-        amount: {
-          amount: this._amount.amount,
-          currency: this._amount.currency,
-        },
-        refundAmount: {
-          amount: actualRefundAmount.amount,
-          currency: actualRefundAmount.currency,
-        },
+        refundAmount: this._amount.toJSON(),
+        originalAmount: this._amount.toJSON(),
         stripeRefundId,
-        reason,
-        refundedAt: new Date(),
-      })
+        refundedAt: this._updatedAt,
+      }, sagaId)
     );
   }
 
-  cancel(): void {
-    if (this._status.isFinal()) {
-      throw new Error(`Cannot cancel payment in final status: ${this._status.getValue()}`);
+  cancel(sagaId?: string): void {
+    if (!this._status.isPending()) {
+      throw new Error(`Cannot cancel payment with status: ${this._status.toString()}`);
     }
 
-    this._status = this._status.transitionTo(PaymentStatus.CANCELLED);
-    this.touch();
+    if (!this._status.canTransitionTo(PaymentStatus.CANCELLED)) {
+      throw new Error(`Invalid status transition from ${this._status.toString()} to CANCELLED`);
+    }
+
+    this._status = PaymentStatusVO.create(PaymentStatus.CANCELLED);
+    this._updatedAt = new Date();
   }
 
   updateMetadata(metadata: Record<string, any>): void {
-    if (this._status.isFinal()) {
-      throw new Error('Cannot update metadata of payment in final status');
-    }
-    this._metadata = { ...this._metadata, ...metadata };
-    this.touch();
+    this._metadata = {
+      ...this._metadata,
+      ...metadata,
+    };
+    this._updatedAt = new Date();
   }
 
   canBeRefunded(): boolean {
-    return this._status.isSucceeded() && !this._status.isRefunded();
+    return this._status.isSucceeded();
   }
 
   isFinal(): boolean {

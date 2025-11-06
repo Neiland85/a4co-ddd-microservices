@@ -1,17 +1,18 @@
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 
 export class PaymentId {
-  private readonly value: string;
-
-  constructor(value?: string) {
-    if (value) {
-      if (!uuidValidate(value)) {
-        throw new Error(`Invalid PaymentId format: ${value}`);
-      }
-      this.value = value;
-    } else {
-      this.value = uuidv4();
+  private constructor(private readonly value: string) {
+    if (!uuidValidate(value)) {
+      throw new Error(`Invalid PaymentId format: ${value}`);
     }
+  }
+
+  static create(value?: string): PaymentId {
+    return new PaymentId(value || uuidv4());
+  }
+
+  static fromString(value: string): PaymentId {
+    return new PaymentId(value);
   }
 
   toString(): string {
@@ -20,13 +21,5 @@ export class PaymentId {
 
   equals(other: PaymentId): boolean {
     return this.value === other.value;
-  }
-
-  static fromString(value: string): PaymentId {
-    return new PaymentId(value);
-  }
-
-  static generate(): PaymentId {
-    return new PaymentId();
   }
 }

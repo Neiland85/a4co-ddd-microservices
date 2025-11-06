@@ -1,92 +1,106 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { PaymentRepository } from '../domain/repositories/payment.repository';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Payment } from '../domain/entities/payment.entity';
+import { IPaymentRepository } from '../domain/repositories/payment.repository';
 import { PaymentDomainService } from '../domain/services/payment-domain.service';
-import { StripeGateway } from '../../infrastructure/stripe.gateway';
-import { NatsEventPublisher } from '../../infrastructure/events/nats-event-publisher';
-import { Money } from '../domain/value-objects/money.vo';
-import { getLogger } from '@a4co/observability';
+import { StripeGateway } from '../infrastructure/stripe.gateway';
+import { NatsService } from '../infrastructure/nats/nats.service';
+
+export interface RefundPaymentCommand {
+  orderId: string;
+  reason?: string;
+  sagaId?: string;
+}
 
 @Injectable()
 export class RefundPaymentUseCase {
-  private readonly logger = getLogger(RefundPaymentUseCase.name);
+  private readonly logger = new Logger(RefundPaymentUseCase.name);
 
   constructor(
-    private readonly paymentRepository: PaymentRepository,
+    private readonly paymentRepository: IPaymentRepository,
     private readonly paymentDomainService: PaymentDomainService,
     private readonly stripeGateway: StripeGateway,
-    private readonly eventPublisher: NatsEventPublisher
+    private readonly natsService: NatsService
   ) {}
 
-  async execute(
-    orderId: string,
-    refundAmount?: Money,
-    reason?: string
-  ): Promise<void> {
-    this.logger.info(`Processing refund for order ${orderId}`, {
-      orderId,
-      refundAmount: refundAmount?.amount,
-    });
+  async execute(command: RefundPaymentCommand): Promise<Payment> {
+    this.logger.log(`Processing refund for order ${command.orderId}`);
 
-    // Buscar pago por orderId
-    const payment = await this.paymentRepository.findByOrderId(orderId);
+    // 1. Buscar payment por orderId
+    const payment = await this.paymentRepository.findByOrderId(command.orderId);
+
     if (!payment) {
-      throw new NotFoundException(`Payment not found for order ${orderId}`);
-    }
-
-    // Validar que se puede reembolsar
-    if (!payment.canBeRefunded()) {
-      throw new BadRequestException(
-        `Payment cannot be refunded. Current status: ${payment.status}`
+      throw new NotFoundException(
+        `Payment not found for order ${command.orderId}`
       );
     }
 
+    // 2. Validar que se puede reembolsar
+    if (!this.paymentDomainService.canRefundPayment(payment)) {
+      throw new Error(
+        `Payment cannot be refunded. Current status: ${payment.status.toString()}`
+      );
+    }
+
+    // 3. Calcular monto de reembolso
+    const refundAmount = this.paymentDomainService.calculateRefundAmount(
+      payment
+    );
+
+    // 4. Verificar que tiene stripePaymentIntentId
     if (!payment.stripePaymentIntentId) {
-      throw new BadRequestException(
-        'Payment does not have a Stripe Payment Intent ID'
-      );
+      throw new Error('Payment does not have a Stripe Payment Intent ID');
     }
 
+    // 5. Crear reembolso en Stripe
     try {
-      // Calcular monto de reembolso
-      const actualRefundAmount = this.paymentDomainService.calculateRefundAmount(
-        payment,
-        refundAmount
-      );
+      const stripeRefund = await this.stripeGateway.refundPayment({
+        paymentIntentId: payment.stripePaymentIntentId.toString(),
+        amount: refundAmount,
+        reason: command.reason || 'requested_by_customer',
+        metadata: {
+          orderId: command.orderId,
+          refundedAt: new Date().toISOString(),
+        },
+      });
 
-      // Procesar reembolso en Stripe
-      const stripeRefund = await this.stripeGateway.refundPayment(
-        payment.stripePaymentIntentId,
-        {
-          amount: actualRefundAmount.toCents(),
-          reason: reason || 'requested_by_customer',
-          metadata: {
-            orderId,
-            paymentId: payment.paymentId.toString(),
-            originalAmount: payment.amount.amount,
-          },
-        }
-      );
+      // 6. Actualizar payment aggregate
+      payment.refund(stripeRefund.id, command.sagaId);
 
-      // Actualizar payment aggregate
-      payment.refund(stripeRefund.id, actualRefundAmount, reason);
+      // 7. Guardar payment actualizado
       await this.paymentRepository.save(payment);
 
-      // Publicar evento de reembolso
-      const refundEvents = payment.getUncommittedEvents();
-      await this.eventPublisher.publishAll(refundEvents);
+      // 8. Publicar eventos a NATS
+      const events = payment.getUncommittedEvents();
+      for (const event of events) {
+        await this.natsService.publish(
+          `payment.${event.eventType.toLowerCase()}`,
+          {
+            eventId: event.eventId,
+            eventType: event.eventType,
+            aggregateId: event.aggregateId,
+            eventVersion: event.eventVersion,
+            occurredOn: event.occurredOn,
+            eventData: event.eventData,
+            sagaId: event.sagaId,
+          }
+        );
+      }
+
       payment.clearDomainEvents();
 
-      this.logger.info(`Refund processed successfully for order ${orderId}`, {
-        paymentId: payment.paymentId.toString(),
-        refundId: stripeRefund.id,
-        refundAmount: actualRefundAmount.amount,
-      });
+      this.logger.log(
+        `Refund processed successfully for payment ${payment.paymentId.toString()}`
+      );
+
+      return payment;
     } catch (error) {
-      this.logger.error(`Refund failed for order ${orderId}`, {
-        error: error.message,
-        stack: error.stack,
-      });
-      throw error;
+      this.logger.error(
+        `Error processing refund for order ${command.orderId}:`,
+        error
+      );
+      throw new Error(
+        `Failed to process refund: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 }

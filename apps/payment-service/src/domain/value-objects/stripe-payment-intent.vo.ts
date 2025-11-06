@@ -1,17 +1,17 @@
 export class StripePaymentIntent {
-  private static readonly STRIPE_INTENT_PREFIX = 'pi_';
-  private static readonly STRIPE_INTENT_REGEX = /^pi_[a-zA-Z0-9]{24,}$/;
+  private constructor(private readonly value: string) {
+    // Stripe Payment Intent IDs tienen formato: pi_xxxxxxxxxxxxx
+    if (!this.isValidStripePaymentIntentId(value)) {
+      throw new Error(`Invalid Stripe Payment Intent ID format: ${value}`);
+    }
+  }
 
-  constructor(private readonly value: string) {
-    if (!value || !value.trim()) {
-      throw new Error('Stripe Payment Intent ID cannot be empty');
-    }
-    if (!value.startsWith(StripePaymentIntent.STRIPE_INTENT_PREFIX)) {
-      throw new Error(`Invalid Stripe Payment Intent format: must start with ${StripePaymentIntent.STRIPE_INTENT_PREFIX}`);
-    }
-    if (!StripePaymentIntent.STRIPE_INTENT_REGEX.test(value)) {
-      throw new Error(`Invalid Stripe Payment Intent format: ${value}`);
-    }
+  static create(value: string): StripePaymentIntent {
+    return new StripePaymentIntent(value);
+  }
+
+  static fromString(value: string): StripePaymentIntent {
+    return new StripePaymentIntent(value);
   }
 
   toString(): string {
@@ -22,16 +22,9 @@ export class StripePaymentIntent {
     return this.value === other.value;
   }
 
-  static fromString(value: string): StripePaymentIntent {
-    return new StripePaymentIntent(value);
-  }
-
-  static isValid(value: string): boolean {
-    try {
-      new StripePaymentIntent(value);
-      return true;
-    } catch {
-      return false;
-    }
+  private isValidStripePaymentIntentId(id: string): boolean {
+    // Stripe Payment Intent ID format: pi_[a-zA-Z0-9]{24,}
+    const stripePaymentIntentRegex = /^pi_[a-zA-Z0-9]{24,}$/;
+    return stripePaymentIntentRegex.test(id);
   }
 }

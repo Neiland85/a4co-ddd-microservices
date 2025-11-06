@@ -1,62 +1,71 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PaymentService } from './application/services/payment.service';
+import { ConfigModule } from '@nestjs/config';
+import { PrismaClient } from '@prisma/client';
 import { PaymentController } from './presentation/payment.controller';
+import { PaymentService } from './application/services/payment.service';
 import { OrderEventsHandler } from './application/handlers/order-events.handler';
-
-// Domain
-import { PaymentDomainService } from './domain/services/payment-domain.service';
-
-// Infrastructure
-import { PrismaService } from './infrastructure/database/prisma.service';
-import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
-import { PaymentRepository } from './domain/repositories/payment.repository';
-import { StripeGateway } from './infrastructure/stripe.gateway';
-import { NatsEventPublisher } from './infrastructure/events/nats-event-publisher';
-
-// Use Cases
 import { ProcessPaymentUseCase } from './application/use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from './application/use-cases/refund-payment.use-case';
-
-const NATS_CONFIG = {
-  servers: process.env.NATS_URL || 'nats://localhost:4222',
-  token: process.env.NATS_AUTH_TOKEN || '',
-  name: 'payment-service',
-};
+import { IPaymentRepository } from './domain/repositories/payment.repository';
+import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
+import { PaymentDomainService } from './domain/services/payment-domain.service';
+import { StripeGateway } from './infrastructure/stripe.gateway';
+import { NatsModule } from './infrastructure/nats/nats.module';
+import { NatsService } from './infrastructure/nats/nats.service';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'NATS_CLIENT',
-        transport: Transport.NATS,
-        options: NATS_CONFIG,
-      },
-    ]),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    NatsModule,
   ],
   controllers: [PaymentController, OrderEventsHandler],
   providers: [
-    // Application Services
     PaymentService,
-
-    // Use Cases
-    ProcessPaymentUseCase,
-    RefundPaymentUseCase,
-
-    // Domain Services
     PaymentDomainService,
-
-    // Infrastructure
-    PrismaService,
     StripeGateway,
-    NatsEventPublisher,
-
-    // Repositories
+    NatsService,
     {
-      provide: PaymentRepository,
-      useClass: PrismaPaymentRepository,
+      provide: 'PrismaClient',
+      useFactory: () => {
+        return new PrismaClient({
+          log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
+        });
+      },
+    },
+    {
+      provide: IPaymentRepository,
+      useFactory: (prisma: PrismaClient) => {
+        return new PrismaPaymentRepository(prisma);
+      },
+      inject: ['PrismaClient'],
+    },
+    {
+      provide: ProcessPaymentUseCase,
+      useFactory: (
+        repository: IPaymentRepository,
+        domainService: PaymentDomainService,
+        stripeGateway: StripeGateway,
+        natsService: NatsService
+      ) => {
+        return new ProcessPaymentUseCase(repository, domainService, stripeGateway, natsService);
+      },
+      inject: [IPaymentRepository, PaymentDomainService, StripeGateway, NatsService],
+    },
+    {
+      provide: RefundPaymentUseCase,
+      useFactory: (
+        repository: IPaymentRepository,
+        domainService: PaymentDomainService,
+        stripeGateway: StripeGateway,
+        natsService: NatsService
+      ) => {
+        return new RefundPaymentUseCase(repository, domainService, stripeGateway, natsService);
+      },
+      inject: [IPaymentRepository, PaymentDomainService, StripeGateway, NatsService],
     },
   ],
-  exports: [PaymentService, PaymentRepository],
+  exports: [PaymentService, ProcessPaymentUseCase, RefundPaymentUseCase],
 })
 export class PaymentModule {}

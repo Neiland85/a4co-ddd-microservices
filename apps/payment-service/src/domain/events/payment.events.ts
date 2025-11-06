@@ -1,77 +1,77 @@
 import { DomainEvent } from '@a4co/shared-utils';
-import { Money } from '../value-objects/money.vo';
-import { PaymentId } from '../value-objects/payment-id.vo';
 
 export class PaymentCreatedEvent extends DomainEvent {
   constructor(
-    paymentId: PaymentId,
-    data: {
+    paymentId: string,
+    eventData: {
       orderId: string;
       amount: { amount: number; currency: string };
       customerId: string;
       createdAt: Date;
-    }
+    },
+    sagaId?: string
   ) {
-    super(paymentId.toString(), data);
+    super(paymentId, eventData, 1, sagaId);
   }
 }
 
 export class PaymentProcessingEvent extends DomainEvent {
   constructor(
-    paymentId: PaymentId,
-    data: {
+    paymentId: string,
+    eventData: {
       orderId: string;
       amount: { amount: number; currency: string };
       stripePaymentIntentId?: string;
-      processedAt: Date;
-    }
+      startedAt: Date;
+    },
+    sagaId?: string
   ) {
-    super(paymentId.toString(), data);
+    super(paymentId, eventData, 1, sagaId);
   }
 }
 
 export class PaymentSucceededEvent extends DomainEvent {
   constructor(
-    paymentId: PaymentId,
-    data: {
+    paymentId: string,
+    eventData: {
       orderId: string;
       amount: { amount: number; currency: string };
       stripePaymentIntentId: string;
-      customerId: string;
       succeededAt: Date;
-    }
+    },
+    sagaId?: string
   ) {
-    super(paymentId.toString(), data);
+    super(paymentId, eventData, 1, sagaId);
   }
 }
 
 export class PaymentFailedEvent extends DomainEvent {
   constructor(
-    paymentId: PaymentId,
-    data: {
+    paymentId: string,
+    eventData: {
       orderId: string;
       amount: { amount: number; currency: string };
       reason: string;
-      stripePaymentIntentId?: string;
       failedAt: Date;
-    }
+    },
+    sagaId?: string
   ) {
-    super(paymentId.toString(), data);
+    super(paymentId, eventData, 1, sagaId);
   }
 }
 
 export class PaymentRefundedEvent extends DomainEvent {
   constructor(
-    paymentId: PaymentId,
-    data: {
+    paymentId: string,
+    eventData: {
       orderId: string;
-      amount: { amount: number; currency: string };
       refundAmount: { amount: number; currency: string };
-      stripeRefundId: string;
-      reason?: string;
+      originalAmount: { amount: number; currency: string };
+      stripeRefundId?: string;
       refundedAt: Date;
-    }
+    },
+    sagaId?: string
   ) {
-    super(paymentId.toString(), data);
+    super(paymentId, eventData, 1, sagaId);
   }
 }

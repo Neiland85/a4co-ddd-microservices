@@ -1,13 +1,15 @@
 /// <reference types="node" />
 
 import { getLogger, initializeTracing } from '@a4co/observability';
-import { BracesSecurityMiddleware } from '@a4co/shared-utils'; // Agregar importación para resolver el error de clase no definida
+import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as process from 'process';
 import { PaymentModule } from './payment.module';
+import { NATS_CONFIG } from './infrastructure/nats/nats.constants';
 
 async function bootstrap() {
   // Initialize observability
@@ -23,6 +25,14 @@ async function bootstrap() {
   const app = await NestFactory.create(PaymentModule, {
     logger: false, // Disable default NestJS logger
   });
+
+  // Connect microservice for NATS event handlers
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: NATS_CONFIG,
+  });
+
+  await app.startAllMicroservices();
 
   // Security middleware
   app.use(

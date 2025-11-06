@@ -1,30 +1,29 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
-import { getLogger } from '@a4co/observability';
+import { Money } from '../domain/value-objects/money.vo';
 
 export interface CreatePaymentIntentParams {
-  amount: number; // en centavos
-  currency: string;
-  customer: string;
+  amount: Money;
+  customerId: string;
+  orderId: string;
   metadata?: Record<string, any>;
-  paymentMethodId?: string;
-  description?: string;
+  idempotencyKey?: string;
 }
 
 export interface RefundPaymentParams {
-  amount?: number; // en centavos, opcional para reembolso completo
-  reason?: 'duplicate' | 'fraudulent' | 'requested_by_customer';
+  paymentIntentId: string;
+  amount?: Money;
+  reason?: string;
   metadata?: Record<string, any>;
 }
 
 @Injectable()
-export class StripeGateway implements OnModuleInit {
+export class StripeGateway {
+  private readonly logger = new Logger(StripeGateway.name);
   private readonly stripe: Stripe;
-  private readonly logger = getLogger(StripeGateway.name);
 
   constructor() {
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-    
     if (!stripeSecretKey) {
       throw new Error('STRIPE_SECRET_KEY environment variable is required');
     }
@@ -34,21 +33,7 @@ export class StripeGateway implements OnModuleInit {
       typescript: true,
     });
 
-    this.logger.info('Stripe gateway initialized', {
-      mode: stripeSecretKey.startsWith('sk_test_') ? 'test' : 'live',
-    });
-  }
-
-  async onModuleInit() {
-    // Verificar conexión con Stripe
-    try {
-      await this.stripe.balance.retrieve();
-      this.logger.info('Stripe connection verified');
-    } catch (error) {
-      this.logger.error('Failed to verify Stripe connection', {
-        error: error.message,
-      });
-    }
+    this.logger.log('Stripe gateway initialized');
   }
 
   /**
@@ -57,39 +42,43 @@ export class StripeGateway implements OnModuleInit {
   async createPaymentIntent(
     params: CreatePaymentIntentParams
   ): Promise<Stripe.PaymentIntent> {
-    this.logger.debug('Creating payment intent', {
-      amount: params.amount,
-      currency: params.currency,
-      customer: params.customer,
-    });
-
     try {
-      const paymentIntent = await this.stripe.paymentIntents.create({
-        amount: params.amount,
-        currency: params.currency.toLowerCase(),
-        customer: params.customer,
-        metadata: params.metadata || {},
-        description: params.description,
-        payment_method: params.paymentMethodId,
-        confirmation_method: 'manual',
-        confirm: false,
+      const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
+        amount: Math.round(params.amount.amount * 100), // Convertir a centavos
+        currency: params.amount.currency.toLowerCase(),
+        customer: params.customerId,
+        metadata: {
+          orderId: params.orderId,
+          ...params.metadata,
+        },
         automatic_payment_methods: {
           enabled: true,
         },
-      });
+      };
 
-      this.logger.info('Payment intent created', {
-        paymentIntentId: paymentIntent.id,
-        status: paymentIntent.status,
-      });
+      const options: Stripe.RequestOptions = {};
+      if (params.idempotencyKey) {
+        options.idempotencyKey = params.idempotencyKey;
+      }
+
+      const paymentIntent = await this.stripe.paymentIntents.create(
+        paymentIntentParams,
+        options
+      );
+
+      this.logger.log(
+        `Payment Intent created: ${paymentIntent.id} for order ${params.orderId}`
+      );
 
       return paymentIntent;
     } catch (error) {
-      this.logger.error('Failed to create payment intent', {
-        error: error.message,
-        stack: error.stack,
-      });
-      throw new Error(`Stripe error: ${error.message}`);
+      this.logger.error(
+        `Error creating payment intent for order ${params.orderId}:`,
+        error
+      );
+      throw new Error(
+        `Failed to create payment intent: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -100,28 +89,28 @@ export class StripeGateway implements OnModuleInit {
     paymentIntentId: string,
     paymentMethodId?: string
   ): Promise<Stripe.PaymentIntent> {
-    this.logger.debug('Confirming payment intent', { paymentIntentId });
-
     try {
+      const params: Stripe.PaymentIntentConfirmParams = {};
+      if (paymentMethodId) {
+        params.payment_method = paymentMethodId;
+      }
+
       const paymentIntent = await this.stripe.paymentIntents.confirm(
         paymentIntentId,
-        {
-          payment_method: paymentMethodId,
-        }
+        params
       );
 
-      this.logger.info('Payment intent confirmed', {
-        paymentIntentId: paymentIntent.id,
-        status: paymentIntent.status,
-      });
+      this.logger.log(`Payment Intent confirmed: ${paymentIntentId}`);
 
       return paymentIntent;
     } catch (error) {
-      this.logger.error('Failed to confirm payment intent', {
-        error: error.message,
-        paymentIntentId,
-      });
-      throw new Error(`Stripe error: ${error.message}`);
+      this.logger.error(
+        `Error confirming payment intent ${paymentIntentId}:`,
+        error
+      );
+      throw new Error(
+        `Failed to confirm payment intent: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -131,8 +120,6 @@ export class StripeGateway implements OnModuleInit {
   async getPaymentIntent(
     paymentIntentId: string
   ): Promise<Stripe.PaymentIntent> {
-    this.logger.debug('Retrieving payment intent', { paymentIntentId });
-
     try {
       const paymentIntent = await this.stripe.paymentIntents.retrieve(
         paymentIntentId
@@ -140,98 +127,75 @@ export class StripeGateway implements OnModuleInit {
 
       return paymentIntent;
     } catch (error) {
-      this.logger.error('Failed to retrieve payment intent', {
-        error: error.message,
-        paymentIntentId,
-      });
-      throw new Error(`Stripe error: ${error.message}`);
+      this.logger.error(
+        `Error retrieving payment intent ${paymentIntentId}:`,
+        error
+      );
+      throw new Error(
+        `Failed to retrieve payment intent: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
   /**
-   * Procesa un reembolso
+   * Reembolsa un pago
    */
-  async refundPayment(
-    paymentIntentId: string,
-    params?: RefundPaymentParams
-  ): Promise<Stripe.Refund> {
-    this.logger.info('Processing refund', {
-      paymentIntentId,
-      amount: params?.amount,
-      reason: params?.reason,
-    });
-
+  async refundPayment(params: RefundPaymentParams): Promise<Stripe.Refund> {
     try {
-      // Primero obtener el Payment Intent para obtener el charge ID
-      const paymentIntent = await this.getPaymentIntent(paymentIntentId);
-      
-      if (!paymentIntent.latest_charge) {
-        throw new Error('Payment intent does not have a charge');
+      const refundParams: Stripe.RefundCreateParams = {
+        payment_intent: params.paymentIntentId,
+        metadata: params.metadata,
+      };
+
+      if (params.amount) {
+        refundParams.amount = Math.round(params.amount.amount * 100); // Convertir a centavos
       }
 
-      const refundParams: Stripe.RefundCreateParams = {
-        charge: paymentIntent.latest_charge as string,
-        amount: params?.amount,
-        reason: params?.reason,
-        metadata: params?.metadata || {},
-      };
+      if (params.reason) {
+        refundParams.reason = params.reason as Stripe.RefundCreateParams.Reason;
+      }
 
       const refund = await this.stripe.refunds.create(refundParams);
 
-      this.logger.info('Refund processed successfully', {
-        refundId: refund.id,
-        amount: refund.amount,
-        status: refund.status,
-      });
+      this.logger.log(
+        `Refund created: ${refund.id} for payment intent ${params.paymentIntentId}`
+      );
 
       return refund;
     } catch (error) {
-      this.logger.error('Failed to process refund', {
-        error: error.message,
-        paymentIntentId,
-        stack: error.stack,
-      });
-      throw new Error(`Stripe refund error: ${error.message}`);
-    }
-  }
-
-  /**
-   * Cancela un Payment Intent
-   */
-  async cancelPaymentIntent(
-    paymentIntentId: string
-  ): Promise<Stripe.PaymentIntent> {
-    this.logger.info('Cancelling payment intent', { paymentIntentId });
-
-    try {
-      const paymentIntent = await this.stripe.paymentIntents.cancel(
-        paymentIntentId
+      this.logger.error(
+        `Error creating refund for payment intent ${params.paymentIntentId}:`,
+        error
       );
-
-      this.logger.info('Payment intent cancelled', {
-        paymentIntentId: paymentIntent.id,
-        status: paymentIntent.status,
-      });
-
-      return paymentIntent;
-    } catch (error) {
-      this.logger.error('Failed to cancel payment intent', {
-        error: error.message,
-        paymentIntentId,
-      });
-      throw new Error(`Stripe error: ${error.message}`);
+      throw new Error(
+        `Failed to create refund: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
   /**
-   * Verifica un webhook de Stripe
+   * Obtiene un reembolso por ID
    */
-  verifyWebhook(
+  async getRefund(refundId: string): Promise<Stripe.Refund> {
+    try {
+      const refund = await this.stripe.refunds.retrieve(refundId);
+      return refund;
+    } catch (error) {
+      this.logger.error(`Error retrieving refund ${refundId}:`, error);
+      throw new Error(
+        `Failed to retrieve refund: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
+  /**
+   * Maneja webhooks de Stripe
+   */
+  async handleWebhook(
     payload: string | Buffer,
     signature: string
-  ): Stripe.Event {
+  ): Promise<Stripe.Event> {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
     if (!webhookSecret) {
       throw new Error('STRIPE_WEBHOOK_SECRET environment variable is required');
     }
@@ -243,17 +207,14 @@ export class StripeGateway implements OnModuleInit {
         webhookSecret
       );
 
-      this.logger.debug('Webhook verified', {
-        eventId: event.id,
-        eventType: event.type,
-      });
+      this.logger.log(`Webhook received: ${event.type}`);
 
       return event;
     } catch (error) {
-      this.logger.error('Webhook verification failed', {
-        error: error.message,
-      });
-      throw new Error(`Webhook verification failed: ${error.message}`);
+      this.logger.error('Error handling webhook:', error);
+      throw new Error(
+        `Webhook signature verification failed: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 }

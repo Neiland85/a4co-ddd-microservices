@@ -1,7 +1,7 @@
 export class Money {
   constructor(
     public readonly amount: number,
-    public readonly currency: string = 'USD'
+    public readonly currency: string = 'EUR'
   ) {
     if (amount < 0) {
       throw new Error('Money amount cannot be negative');
@@ -12,13 +12,17 @@ export class Money {
     if (!currency || currency.length !== 3) {
       throw new Error('Currency must be a valid 3-letter code (ISO 4217)');
     }
-    if (!['USD', 'EUR', 'GBP', 'MXN', 'COP'].includes(currency.toUpperCase())) {
-      throw new Error(`Unsupported currency: ${currency}`);
+    // Validar que el amount tenga máximo 2 decimales
+    if (Math.round(amount * 100) !== amount * 100) {
+      throw new Error('Money amount cannot have more than 2 decimal places');
     }
   }
 
   equals(other: Money): boolean {
-    return this.amount === other.amount && this.currency === other.currency;
+    if (this.currency !== other.currency) {
+      throw new Error('Cannot compare different currencies');
+    }
+    return this.amount === other.amount;
   }
 
   add(other: Money): Money {
@@ -33,16 +37,16 @@ export class Money {
       throw new Error('Cannot subtract different currencies');
     }
     if (this.amount < other.amount) {
-      throw new Error('Cannot subtract: result would be negative');
+      throw new Error('Result cannot be negative');
     }
     return new Money(this.amount - other.amount, this.currency);
   }
 
   multiply(factor: number): Money {
     if (factor < 0) {
-      throw new Error('Multiplication factor cannot be negative');
+      throw new Error('Factor cannot be negative');
     }
-    return new Money(this.amount * factor, this.currency);
+    return new Money(Math.round(this.amount * factor * 100) / 100, this.currency);
   }
 
   isGreaterThan(other: Money): boolean {
@@ -59,15 +63,10 @@ export class Money {
     return this.amount < other.amount;
   }
 
-  toCents(): number {
-    return Math.round(this.amount * 100);
-  }
-
-  static fromCents(cents: number, currency: string = 'USD'): Money {
-    return new Money(cents / 100, currency);
-  }
-
-  static zero(currency: string = 'USD'): Money {
-    return new Money(0.01, currency); // Mínimo permitido (1 centavo)
+  toJSON(): { amount: number; currency: string } {
+    return {
+      amount: this.amount,
+      currency: this.currency,
+    };
   }
 }

@@ -3,28 +3,37 @@ import { EventPattern, Payload, Ctx } from '@nestjs/microservices';
 import { ProcessPaymentUseCase } from '../application/use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from '../application/use-cases/refund-payment.use-case';
 import { Money } from '../domain/value-objects/money.vo';
-import { getLogger } from '@a4co/observability';
 
 interface OrderCreatedEvent {
-  orderId: string;
-  customerId: string;
-  totalAmount: number;
-  currency?: string;
-  items?: Array<{ productId: string; quantity: number; price: number }>;
-  metadata?: Record<string, any>;
+  eventId: string;
+  eventType: string;
+  aggregateId: string;
+  eventData: {
+    orderId: string;
+    customerId: string;
+    totalAmount: number;
+    currency: string;
+    items: Array<{ productId: string; quantity: number }>;
+    createdAt: Date;
+  };
   sagaId?: string;
 }
 
 interface OrderCancelledEvent {
-  orderId: string;
-  reason?: string;
-  cancelledAt?: Date;
+  eventId: string;
+  eventType: string;
+  aggregateId: string;
+  eventData: {
+    orderId: string;
+    reason: string;
+    cancelledAt: Date;
+  };
   sagaId?: string;
 }
 
 @Controller()
 export class OrderEventsHandler {
-  private readonly logger = getLogger(OrderEventsHandler.name);
+  private readonly logger = new Logger(OrderEventsHandler.name);
 
   constructor(
     private readonly processPaymentUseCase: ProcessPaymentUseCase,
@@ -36,55 +45,35 @@ export class OrderEventsHandler {
     @Payload() event: OrderCreatedEvent,
     @Ctx() context: any
   ) {
-    this.logger.info('Received order.created event', {
-      orderId: event.orderId,
-      customerId: event.customerId,
-      totalAmount: event.totalAmount,
-      sagaId: event.sagaId,
-    });
+    this.logger.log(
+      `Received OrderCreated event for order ${event.eventData.orderId}`
+    );
 
     try {
-      // Validar datos del evento
-      if (!event.orderId || !event.customerId || !event.totalAmount) {
-        throw new Error('Missing required fields in order.created event');
-      }
-
       const amount = new Money(
-        event.totalAmount,
-        event.currency?.toUpperCase() || 'USD'
+        event.eventData.totalAmount,
+        event.eventData.currency || 'EUR'
       );
 
-      // Procesar pago
-      const payment = await this.processPaymentUseCase.execute(
-        event.orderId,
+      await this.processPaymentUseCase.execute({
+        orderId: event.eventData.orderId,
         amount,
-        event.customerId,
-        {
-          ...event.metadata,
-          sagaId: event.sagaId,
-          source: 'order.created',
-        }
+        customerId: event.eventData.customerId,
+        metadata: {
+          orderItems: event.eventData.items,
+          orderCreatedAt: event.eventData.createdAt,
+        },
+        sagaId: event.sagaId,
+      });
+
+      this.logger.log(
+        `Payment processing initiated for order ${event.eventData.orderId}`
       );
-
-      this.logger.info('Payment processed successfully from order.created', {
-        orderId: event.orderId,
-        paymentId: payment.paymentId.toString(),
-        status: payment.status,
-      });
-
-      return {
-        success: true,
-        paymentId: payment.paymentId.toString(),
-        status: payment.status,
-      };
     } catch (error) {
-      this.logger.error('Failed to process payment from order.created event', {
-        orderId: event.orderId,
-        error: error.message,
-        stack: error.stack,
-      });
-
-      // Re-lanzar el error para que NATS pueda manejarlo
+      this.logger.error(
+        `Error processing payment for order ${event.eventData.orderId}:`,
+        error
+      );
       throw error;
     }
   }
@@ -94,57 +83,30 @@ export class OrderEventsHandler {
     @Payload() event: OrderCancelledEvent,
     @Ctx() context: any
   ) {
-    this.logger.info('Received order.cancelled event', {
-      orderId: event.orderId,
-      reason: event.reason,
-      sagaId: event.sagaId,
-    });
+    this.logger.log(
+      `Received OrderCancelled event for order ${event.eventData.orderId}`
+    );
 
     try {
-      // Validar datos del evento
-      if (!event.orderId) {
-        throw new Error('Missing orderId in order.cancelled event');
-      }
-
-      // Procesar reembolso (compensación)
-      await this.refundPaymentUseCase.execute(
-        event.orderId,
-        undefined, // Reembolso completo
-        event.reason || 'Order cancelled'
-      );
-
-      this.logger.info('Refund processed successfully from order.cancelled', {
-        orderId: event.orderId,
+      await this.refundPaymentUseCase.execute({
+        orderId: event.eventData.orderId,
+        reason: event.eventData.reason || 'Order cancelled',
+        sagaId: event.sagaId,
       });
 
-      return {
-        success: true,
-        orderId: event.orderId,
-      };
+      this.logger.log(
+        `Refund processed for order ${event.eventData.orderId}`
+      );
     } catch (error) {
       this.logger.error(
-        'Failed to process refund from order.cancelled event',
-        {
-          orderId: event.orderId,
-          error: error.message,
-          stack: error.stack,
-        }
+        `Error processing refund for order ${event.eventData.orderId}:`,
+        error
       );
-
-      // Si el pago no existe o ya fue reembolsado, no es un error crítico
-      if (error.message?.includes('not found') || error.message?.includes('cannot be refunded')) {
-        this.logger.warn('Refund skipped (payment not found or already refunded)', {
-          orderId: event.orderId,
-        });
-        return {
-          success: true,
-          skipped: true,
-          reason: error.message,
-        };
-      }
-
-      // Re-lanzar el error para otros casos
-      throw error;
+      // No lanzamos el error para evitar que se propague y rompa la saga
+      // En producción, deberíamos tener un mecanismo de retry o dead letter queue
+      this.logger.warn(
+        `Refund failed for order ${event.eventData.orderId}, but continuing saga compensation`
+      );
     }
   }
 }
