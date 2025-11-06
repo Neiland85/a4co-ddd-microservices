@@ -83,12 +83,23 @@ Thumbs.db
 .env.production
 .env.staging
 .env.compose
+.env.*.local
 
 # Archivos .env en servicios
 apps/*/.env
 apps/*/.env.local
 apps/*/.env.production
 apps/*/.env.staging
+
+# Production secrets
+infra/.env.production
+**/.env.production
+**/.env.*.local
+
+# Docker secrets
+**/secrets/
+docker-secrets/
+*.secret
 
 # Otros comunes
 node_modules/
