@@ -1,0 +1,275 @@
+{{- $globalValues := .Values.global -}}
+{{- $chartName := .Chart.Name -}}
+{{- range $serviceName, $serviceConfig := .Values }}
+{{- if and (kindIs "map" $serviceConfig) (hasKey $serviceConfig "enabled") $serviceConfig.enabled (hasKey $serviceConfig "image") }}
+{{- $fullServiceName := $serviceName | replace "Service" "-service" | kebabcase }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+    app: {{ $fullServiceName }}
+    app.kubernetes.io/name: {{ $fullServiceName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/version: {{ $serviceConfig.image.tag | default $.Chart.AppVersion | quote }}
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: a4co-platform
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    tier: backend
+    environment: {{ $globalValues.environment }}
+spec:
+  replicas: {{ $serviceConfig.replicaCount | default 2 }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: {{ $fullServiceName }}
+      app.kubernetes.io/name: {{ $fullServiceName }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: {{ $fullServiceName }}
+        app.kubernetes.io/name: {{ $fullServiceName }}
+        app.kubernetes.io/instance: {{ $.Release.Name }}
+        app.kubernetes.io/version: {{ $serviceConfig.image.tag | default $.Chart.AppVersion | quote }}
+        tier: backend
+        version: {{ $serviceConfig.image.tag | default $.Chart.AppVersion | quote }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ $serviceConfig.service.port | quote }}
+        prometheus.io/path: "/metrics"
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") $ | sha256sum }}
+    spec:
+      serviceAccountName: {{ $fullServiceName }}-sa
+      
+      {{- if $globalValues.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml $globalValues.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      
+      # Security context for the pod
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      
+      # Init container to wait for dependencies
+      initContainers:
+      - name: wait-for-db
+        image: busybox:1.36
+        command: ['sh', '-c', 'until nc -z {{ $globalValues.database.host }} {{ $globalValues.database.port }}; do echo waiting for database; sleep 2; done;']
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+      
+      containers:
+      - name: {{ $fullServiceName }}
+        image: "{{ $globalValues.imageRegistry }}/{{ $serviceConfig.image.repository }}:{{ $serviceConfig.image.tag | default $.Chart.AppVersion }}"
+        imagePullPolicy: {{ $serviceConfig.image.pullPolicy | default "IfNotPresent" }}
+        
+        ports:
+        - name: http
+          containerPort: {{ $serviceConfig.service.port }}
+          protocol: TCP
+        - name: metrics
+          containerPort: {{ $serviceConfig.service.port }}
+          protocol: TCP
+        
+        # Environment variables
+        env:
+        {{- range $key, $value := $serviceConfig.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        # Global database configuration
+        - name: DATABASE_HOST
+          value: {{ $globalValues.database.host | quote }}
+        - name: DATABASE_PORT
+          value: {{ $globalValues.database.port | quote }}
+        - name: DATABASE_NAME
+          value: {{ $globalValues.database.name | quote }}
+        - name: DATABASE_SSL
+          value: {{ $globalValues.database.ssl | quote }}
+        # NATS configuration
+        - name: NATS_URL
+          value: {{ include "a4co.natsUrl" $ | quote }}
+        # Redis configuration
+        - name: REDIS_HOST
+          value: {{ $globalValues.redis.host | quote }}
+        - name: REDIS_PORT
+          value: {{ $globalValues.redis.port | quote }}
+        # Service metadata
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: KUBERNETES_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        
+        # Secrets from external secret manager
+        {{- if $serviceConfig.secrets }}
+        envFrom:
+        {{- range $secretName := $serviceConfig.secrets }}
+        - secretRef:
+            name: {{ $secretName }}
+            optional: true
+        {{- end }}
+        {{- end }}
+        
+        # Liveness probe
+        {{- with $serviceConfig.livenessProbe }}
+        livenessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        
+        # Readiness probe
+        {{- with $serviceConfig.readinessProbe }}
+        readinessProbe:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        
+        # Startup probe (gives more time for initial startup)
+        startupProbe:
+          httpGet:
+            path: /health
+            port: {{ $serviceConfig.service.port }}
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+        
+        # Resources
+        {{- with $serviceConfig.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        
+        # Container security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+        
+        # Volume mounts
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /app/.cache
+        - name: logs
+          mountPath: /app/logs
+      
+      # Volumes
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+      
+      # Node affinity for better distribution
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ $fullServiceName }}
+              topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: node.kubernetes.io/instance-type
+                operator: In
+                values:
+                - t3.medium
+                - t3.large
+      
+      # Tolerations for spot instances
+      tolerations:
+      - key: "spot"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      # DNS configuration
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+    app: {{ $fullServiceName }}
+    app.kubernetes.io/name: {{ $fullServiceName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: microservice
+    app.kubernetes.io/part-of: a4co-platform
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+spec:
+  type: {{ $serviceConfig.service.type | default "ClusterIP" }}
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  ports:
+  - port: {{ $serviceConfig.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  - port: {{ $serviceConfig.service.port }}
+    targetPort: metrics
+    protocol: TCP
+    name: metrics
+  selector:
+    app: {{ $fullServiceName }}
+    app.kubernetes.io/name: {{ $fullServiceName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $fullServiceName }}-sa
+  labels:
+    app: {{ $fullServiceName }}
+    app.kubernetes.io/name: {{ $fullServiceName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+automountServiceAccountToken: true
+
+{{- end }}
+{{- end }}

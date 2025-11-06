@@ -1,0 +1,67 @@
+{{- range $serviceName, $serviceConfig := .Values }}
+{{- if and (kindIs "map" $serviceConfig) (hasKey $serviceConfig "enabled") $serviceConfig.enabled (hasKey $serviceConfig "autoscaling") $serviceConfig.autoscaling.enabled }}
+{{- $fullServiceName := $serviceName | replace "Service" "-service" | kebabcase }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $fullServiceName }}-hpa
+  labels:
+    app: {{ $fullServiceName }}
+    app.kubernetes.io/name: {{ $fullServiceName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: autoscaling
+    app.kubernetes.io/part-of: a4co-platform
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $fullServiceName }}
+  minReplicas: {{ $serviceConfig.autoscaling.minReplicas | default 2 }}
+  maxReplicas: {{ $serviceConfig.autoscaling.maxReplicas | default 10 }}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Min
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30
+      - type: Pods
+        value: 4
+        periodSeconds: 30
+      selectPolicy: Max
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ $serviceConfig.autoscaling.targetCPUUtilizationPercentage | default 70 }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ $serviceConfig.autoscaling.targetMemoryUtilizationPercentage | default 80 }}
+  {{- if eq $.Values.global.environment "production" }}
+  - type: Pods
+    pods:
+      metric:
+        name: http_requests_per_second
+      target:
+        type: AverageValue
+        averageValue: "1000"
+  {{- end }}
+{{- end }}
+{{- end }}

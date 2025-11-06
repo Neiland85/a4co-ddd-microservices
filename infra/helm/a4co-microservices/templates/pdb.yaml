@@ -1,0 +1,33 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+{{- range $serviceName, $serviceConfig := .Values }}
+{{- if and (kindIs "map" $serviceConfig) (hasKey $serviceConfig "enabled") $serviceConfig.enabled (hasKey $serviceConfig "image") }}
+{{- $fullServiceName := $serviceName | replace "Service" "-service" | kebabcase }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ $fullServiceName }}-pdb
+  labels:
+    app: {{ $fullServiceName }}
+    app.kubernetes.io/name: {{ $fullServiceName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: availability
+    app.kubernetes.io/part-of: a4co-platform
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+spec:
+  {{- if $.Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ $.Values.podDisruptionBudget.minAvailable }}
+  {{- else if $.Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ $.Values.podDisruptionBudget.maxUnavailable }}
+  {{- else }}
+  minAvailable: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ $fullServiceName }}
+      app.kubernetes.io/name: {{ $fullServiceName }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+  unhealthyPodEvictionPolicy: IfHealthyBudget
+{{- end }}
+{{- end }}
+{{- end }}

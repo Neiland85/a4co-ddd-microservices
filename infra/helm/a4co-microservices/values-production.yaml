@@ -1,0 +1,199 @@
+# =============================================================================
+# A4CO Microservices Platform - Production Environment
+# =============================================================================
+
+global:
+  environment: production
+  domain: a4co.com
+  
+  database:
+    host: postgresql
+    port: 5432
+    name: a4co_prod
+    ssl: true
+  
+  tls:
+    enabled: true
+    issuer: letsencrypt-prod
+
+# Full replicas for production
+orderService:
+  replicaCount: 3
+  image:
+    tag: "latest"
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+  env:
+    NODE_ENV: production
+    LOG_LEVEL: warn
+
+paymentService:
+  replicaCount: 3
+  image:
+    tag: "latest"
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+  env:
+    NODE_ENV: production
+    LOG_LEVEL: warn
+
+inventoryService:
+  replicaCount: 2
+  image:
+    tag: "latest"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+  env:
+    NODE_ENV: production
+    LOG_LEVEL: warn
+
+authService:
+  replicaCount: 3
+  image:
+    tag: "latest"
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+  env:
+    NODE_ENV: production
+    LOG_LEVEL: warn
+
+productService:
+  replicaCount: 2
+  image:
+    tag: "latest"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+  env:
+    NODE_ENV: production
+    LOG_LEVEL: warn
+
+# Production-grade database
+postgresql:
+  primary:
+    persistence:
+      enabled: true
+      size: 50Gi
+      storageClass: "gp3"
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+      limits:
+        cpu: 4000m
+        memory: 4Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# NATS cluster for production
+nats:
+  config:
+    cluster:
+      replicas: 3
+    jetstream:
+      fileStorage:
+        size: 20Gi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+
+# Redis with replication for production
+redis:
+  replica:
+    replicaCount: 3
+  master:
+    persistence:
+      size: 10Gi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# Full observability stack in production
+observability:
+  enabled: true
+  prometheus:
+    retention: 30d
+    storageSize: 100Gi
+  grafana:
+    enabled: true
+  jaeger:
+    enabled: true
+
+# Production ingress with strict rate limiting
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "200"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
+  hosts:
+    - host: api.a4co.com
+      paths:
+        - path: /api/v1/auth
+          pathType: Prefix
+          service: authService
+          port: 3001
+        - path: /api/v1/products
+          pathType: Prefix
+          service: productService
+          port: 3003
+        - path: /api/v1/orders
+          pathType: Prefix
+          service: orderService
+          port: 3004
+        - path: /api/v1/payments
+          pathType: Prefix
+          service: paymentService
+          port: 3006
+        - path: /api/v1/inventory
+          pathType: Prefix
+          service: inventoryService
+          port: 3007
+  tls:
+    - secretName: a4co-api-prod-tls
+      hosts:
+        - api.a4co.com
+
+# Strict network policies in production
+networkPolicy:
+  enabled: true
+
+# External secrets in production
+externalSecrets:
+  enabled: true
+  provider:
+    aws:
+      region: us-east-1
+      service: SecretsManager
+
+# PDB with higher availability in production
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2

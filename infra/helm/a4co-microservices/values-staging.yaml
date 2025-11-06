@@ -1,0 +1,225 @@
+# =============================================================================
+# A4CO Microservices Platform - Staging Environment
+# =============================================================================
+
+global:
+  environment: staging
+  domain: staging.a4co.com
+  
+  database:
+    host: postgresql
+    port: 5432
+    name: a4co_staging
+    ssl: true
+  
+  tls:
+    enabled: true
+    issuer: letsencrypt-staging
+
+# Moderate replicas for staging
+orderService:
+  replicaCount: 2
+  image:
+    tag: "staging"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+  resources:
+    requests:
+      cpu: 150m
+      memory: 192Mi
+    limits:
+      cpu: 750m
+      memory: 384Mi
+  env:
+    NODE_ENV: staging
+    LOG_LEVEL: info
+
+paymentService:
+  replicaCount: 2
+  image:
+    tag: "staging"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+  resources:
+    requests:
+      cpu: 150m
+      memory: 192Mi
+    limits:
+      cpu: 750m
+      memory: 384Mi
+  env:
+    NODE_ENV: staging
+    LOG_LEVEL: info
+
+inventoryService:
+  replicaCount: 2
+  image:
+    tag: "staging"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+  resources:
+    requests:
+      cpu: 75m
+      memory: 128Mi
+    limits:
+      cpu: 375m
+      memory: 256Mi
+  env:
+    NODE_ENV: staging
+    LOG_LEVEL: info
+
+authService:
+  replicaCount: 2
+  image:
+    tag: "staging"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+  resources:
+    requests:
+      cpu: 150m
+      memory: 192Mi
+    limits:
+      cpu: 750m
+      memory: 384Mi
+  env:
+    NODE_ENV: staging
+    LOG_LEVEL: info
+
+productService:
+  replicaCount: 2
+  image:
+    tag: "staging"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+  resources:
+    requests:
+      cpu: 100m
+      memory: 192Mi
+    limits:
+      cpu: 500m
+      memory: 384Mi
+  env:
+    NODE_ENV: staging
+    LOG_LEVEL: info
+
+# Moderate database for staging
+postgresql:
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: "gp3"
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+  metrics:
+    enabled: true
+
+# NATS with 3 replicas for staging
+nats:
+  config:
+    cluster:
+      replicas: 3
+    jetstream:
+      fileStorage:
+        size: 5Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Redis with replication for staging
+redis:
+  replica:
+    replicaCount: 1
+  master:
+    persistence:
+      size: 5Gi
+    resources:
+      requests:
+        cpu: 75m
+        memory: 192Mi
+      limits:
+        cpu: 375m
+        memory: 384Mi
+  metrics:
+    enabled: true
+
+# Observability enabled in staging
+observability:
+  enabled: true
+  prometheus:
+    retention: 7d
+    storageSize: 20Gi
+  grafana:
+    enabled: true
+
+# Ingress with staging TLS
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "50"
+  hosts:
+    - host: api.staging.a4co.com
+      paths:
+        - path: /api/v1/auth
+          pathType: Prefix
+          service: authService
+          port: 3001
+        - path: /api/v1/products
+          pathType: Prefix
+          service: productService
+          port: 3003
+        - path: /api/v1/orders
+          pathType: Prefix
+          service: orderService
+          port: 3004
+        - path: /api/v1/payments
+          pathType: Prefix
+          service: paymentService
+          port: 3006
+        - path: /api/v1/inventory
+          pathType: Prefix
+          service: inventoryService
+          port: 3007
+  tls:
+    - secretName: a4co-api-staging-tls
+      hosts:
+        - api.staging.a4co.com
+
+# Enable network policies in staging
+networkPolicy:
+  enabled: true
+
+# Enable external secrets in staging
+externalSecrets:
+  enabled: true
+  provider:
+    aws:
+      region: us-east-1
+      service: SecretsManager
+
+# Enable PDB in staging
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

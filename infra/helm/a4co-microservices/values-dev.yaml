@@ -1,0 +1,199 @@
+# =============================================================================
+# A4CO Microservices Platform - Development Environment
+# =============================================================================
+
+global:
+  environment: development
+  domain: dev.a4co.local
+  
+  database:
+    host: postgresql
+    port: 5432
+    name: a4co_dev
+    ssl: false
+  
+  tls:
+    enabled: false
+
+# Reduced replicas for dev
+orderService:
+  replicaCount: 1
+  image:
+    tag: "dev"
+    pullPolicy: Always
+  autoscaling:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  env:
+    NODE_ENV: development
+    LOG_LEVEL: debug
+
+paymentService:
+  replicaCount: 1
+  image:
+    tag: "dev"
+    pullPolicy: Always
+  autoscaling:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  env:
+    NODE_ENV: development
+    LOG_LEVEL: debug
+
+inventoryService:
+  replicaCount: 1
+  image:
+    tag: "dev"
+    pullPolicy: Always
+  autoscaling:
+    enabled: false
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  env:
+    NODE_ENV: development
+    LOG_LEVEL: debug
+
+authService:
+  replicaCount: 1
+  image:
+    tag: "dev"
+    pullPolicy: Always
+  autoscaling:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  env:
+    NODE_ENV: development
+    LOG_LEVEL: debug
+
+productService:
+  replicaCount: 1
+  image:
+    tag: "dev"
+    pullPolicy: Always
+  autoscaling:
+    enabled: false
+  resources:
+    requests:
+      cpu: 75m
+      memory: 128Mi
+    limits:
+      cpu: 375m
+      memory: 256Mi
+  env:
+    NODE_ENV: development
+    LOG_LEVEL: debug
+
+# Minimal database for dev
+postgresql:
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+# Minimal NATS for dev
+nats:
+  config:
+    cluster:
+      replicas: 1
+    jetstream:
+      fileStorage:
+        size: 2Gi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+# Minimal Redis for dev
+redis:
+  replica:
+    replicaCount: 0
+  master:
+    persistence:
+      size: 2Gi
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
+
+# Observability optional in dev
+observability:
+  enabled: false
+
+# Ingress for local development
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  hosts:
+    - host: api.dev.a4co.local
+      paths:
+        - path: /api/v1/auth
+          pathType: Prefix
+          service: authService
+          port: 3001
+        - path: /api/v1/products
+          pathType: Prefix
+          service: productService
+          port: 3003
+        - path: /api/v1/orders
+          pathType: Prefix
+          service: orderService
+          port: 3004
+        - path: /api/v1/payments
+          pathType: Prefix
+          service: paymentService
+          port: 3006
+        - path: /api/v1/inventory
+          pathType: Prefix
+          service: inventoryService
+          port: 3007
+  tls: []
+
+# Disable network policies in dev for easier debugging
+networkPolicy:
+  enabled: false
+
+# Disable external secrets in dev (use regular secrets)
+externalSecrets:
+  enabled: false
+
+# Disable PDB in dev
+podDisruptionBudget:
+  enabled: false

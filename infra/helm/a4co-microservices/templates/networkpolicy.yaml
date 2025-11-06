@@ -1,0 +1,234 @@
+{{- if .Values.networkPolicy.enabled }}
+---
+# Network Policy: Allow microservices to communicate with each other
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "a4co.fullname" . }}-allow-microservices
+  labels:
+    {{- include "a4co.labels" . | nindent 4 }}
+    app.kubernetes.io/component: security
+spec:
+  podSelector:
+    matchLabels:
+      tier: backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow from other backend services
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: backend
+    ports:
+    - protocol: TCP
+      port: 3001
+    - protocol: TCP
+      port: 3003
+    - protocol: TCP
+      port: 3004
+    - protocol: TCP
+      port: 3006
+    - protocol: TCP
+      port: 3007
+  # Allow from ingress controller
+  {{- if .Values.networkPolicy.ingress.enabled }}
+  - from:
+    {{- toYaml .Values.networkPolicy.ingress.from | nindent 4 }}
+    ports:
+    - protocol: TCP
+      port: 3001
+    - protocol: TCP
+      port: 3003
+    - protocol: TCP
+      port: 3004
+    - protocol: TCP
+      port: 3006
+    - protocol: TCP
+      port: 3007
+  {{- end }}
+  egress:
+  # Allow to other backend services
+  - to:
+    - podSelector:
+        matchLabels:
+          tier: backend
+    ports:
+    - protocol: TCP
+      port: 3001
+    - protocol: TCP
+      port: 3003
+    - protocol: TCP
+      port: 3004
+    - protocol: TCP
+      port: 3006
+    - protocol: TCP
+      port: 3007
+  # Allow to PostgreSQL
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: postgresql
+    ports:
+    - protocol: TCP
+      port: 5432
+  # Allow to NATS
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: nats
+    ports:
+    - protocol: TCP
+      port: 4222
+    - protocol: TCP
+      port: 6222
+    - protocol: TCP
+      port: 8222
+  # Allow to Redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  # Allow DNS
+  - to:
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow HTTPS egress for external APIs (Stripe, etc.)
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+
+---
+# Network Policy: PostgreSQL - Allow only from microservices
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "a4co.fullname" . }}-postgresql-access
+  labels:
+    {{- include "a4co.labels" . | nindent 4 }}
+    app.kubernetes.io/component: security
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: backend
+    ports:
+    - protocol: TCP
+      port: 5432
+
+---
+# Network Policy: NATS - Allow only from microservices
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "a4co.fullname" . }}-nats-access
+  labels:
+    {{- include "a4co.labels" . | nindent 4 }}
+    app.kubernetes.io/component: security
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: nats
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: backend
+    ports:
+    - protocol: TCP
+      port: 4222
+  # Allow NATS cluster communication
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: nats
+    ports:
+    - protocol: TCP
+      port: 6222
+  # Allow monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: a4co-observability
+    ports:
+    - protocol: TCP
+      port: 8222
+  egress:
+  # Allow NATS cluster communication
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: nats
+    ports:
+    - protocol: TCP
+      port: 6222
+  # Allow DNS
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+
+---
+# Network Policy: Redis - Allow only from microservices
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "a4co.fullname" . }}-redis-access
+  labels:
+    {{- include "a4co.labels" . | nindent 4 }}
+    app.kubernetes.io/component: security
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: backend
+    ports:
+    - protocol: TCP
+      port: 6379
+
+---
+# Default Deny All (applied last as baseline security)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "a4co.fullname" . }}-default-deny-all
+  labels:
+    {{- include "a4co.labels" . | nindent 4 }}
+    app.kubernetes.io/component: security
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+{{- end }}

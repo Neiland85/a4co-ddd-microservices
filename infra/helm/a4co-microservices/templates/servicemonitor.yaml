@@ -1,0 +1,30 @@
+{{- if .Values.observability.enabled }}
+{{- range $serviceName, $serviceConfig := .Values }}
+{{- if and (kindIs "map" $serviceConfig) (hasKey $serviceConfig "enabled") $serviceConfig.enabled (hasKey $serviceConfig "image") }}
+{{- $fullServiceName := $serviceName | replace "Service" "-service" | kebabcase }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $fullServiceName }}-metrics
+  labels:
+    app: {{ $fullServiceName }}
+    app.kubernetes.io/name: {{ $fullServiceName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: monitoring
+    app.kubernetes.io/part-of: a4co-platform
+    prometheus: kube-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullServiceName }}
+      app.kubernetes.io/name: {{ $fullServiceName }}
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+    scheme: http
+{{- end }}
+{{- end }}
+{{- end }}
