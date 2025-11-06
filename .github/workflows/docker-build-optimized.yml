@@ -1,0 +1,182 @@
+name: Docker Build - Optimizado con Caché
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'apps/frontend/**'
+      - 'apps/dashboard-client/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'apps/frontend/**'
+      - 'apps/dashboard-client/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_FRONTEND: ${{ github.repository }}/frontend
+  IMAGE_DASHBOARD: ${{ github.repository }}/dashboard
+
+jobs:
+  build-frontend:
+    name: Build Frontend (Vite + React)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+      
+      - name: Log in al Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extraer metadata para Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+      
+      - name: Build y Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/frontend/Dockerfile.prod
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Caché optimizado de GitHub Actions
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+          # BuildKit optimizations
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+          platforms: linux/amd64
+
+      - name: Verificar tamaño de imagen
+        if: github.event_name != 'pull_request'
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest || true
+          docker images ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+
+  build-dashboard:
+    name: Build Dashboard (Next.js)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+      
+      - name: Log in al Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extraer metadata para Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_DASHBOARD }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+      
+      - name: Build y Push Dashboard
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/dashboard-client/Dockerfile.prod
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Caché optimizado de GitHub Actions
+          cache-from: type=gha,scope=dashboard
+          cache-to: type=gha,mode=max,scope=dashboard
+          # BuildKit optimizations
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+          platforms: linux/amd64
+
+      - name: Verificar tamaño de imagen
+        if: github.event_name != 'pull_request'
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_DASHBOARD }}:latest || true
+          docker images ${{ env.REGISTRY }}/${{ env.IMAGE_DASHBOARD }}:latest --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+
+  # Job para analizar y reportar métricas de build
+  build-metrics:
+    name: Analizar Métricas de Build
+    needs: [build-frontend, build-dashboard]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+      
+      - name: Generar reporte de build
+        run: |
+          echo "## 🚀 Build Docker Completado" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Imágenes construidas exitosamente" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- 🎨 **Frontend:** \`${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 **Dashboard:** \`${{ env.REGISTRY }}/${{ env.IMAGE_DASHBOARD }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📈 Optimizaciones Aplicadas" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Multi-stage builds" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Caché de pnpm store" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ GitHub Actions cache (type=gha)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ BuildKit inline cache" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ⏱️ Objetivo de Performance" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎯 **Meta:** Build time < 2 minutos (con caché)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Revisa los logs de cada job para ver los tiempos exactos." >> $GITHUB_STEP_SUMMARY
