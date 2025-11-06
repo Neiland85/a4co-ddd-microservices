@@ -32,10 +32,6 @@ export class ReserveStockUseCase {
       throw new Error('Quantity must be greater than 0');
     }
 
-    if (expiresAt <= new Date()) {
-      throw new Error('Expiration date must be in the future');
-    }
-
     // Find product
     const product = await this.productRepository.findById(productId);
     if (!product) {
@@ -53,14 +49,28 @@ export class ReserveStockUseCase {
     // Check if stock can be reserved
     if (!product.canReserveStock(stockQuantity)) {
       return {
-        success: false,
-        reservationId: '',
+        success: true,
+        reservationId,
         productId,
         quantity,
-        availableStock: product.availableStock,
-        expiresAt,
-        message: `Cannot reserve ${quantity} units. Available: ${product.availableStock}`,
+        availableStock: product.availableStockValue,
+        expiresAt: request.expiresAt,
+        message: `Successfully reserved ${quantity} units of ${product.name}`,
       };
+    } catch (error: any) {
+      // If out of stock, return failure response
+      if (error.message.includes('Cannot reserve')) {
+        return {
+          success: false,
+          reservationId: '',
+          productId,
+          quantity,
+          availableStock: product.availableStockValue,
+          expiresAt: request.expiresAt,
+          message: error.message,
+        };
+      }
+      throw error;
     }
 
     try {

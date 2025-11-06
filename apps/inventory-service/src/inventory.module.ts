@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { InventoryController } from './inventory.controller';
 import { InventoryService } from './application/services/inventory.service';
 import { PrismaProductRepository } from './infrastructure/repositories/prisma-product.repository';
+import { ProductRepositoryWithEvents } from './infrastructure/repositories/product-repository-with-events';
 import { CheckInventoryUseCase } from './application/use-cases/check-inventory.use-case';
 import { ReserveStockUseCase } from './application/use-cases/reserve-stock.use-case';
 import { ReleaseStockUseCase } from './application/use-cases/release-stock.use-case';
@@ -44,7 +45,7 @@ import { EventPublisherService } from './infrastructure/events/event-publisher.s
         return prisma;
       },
     },
-    // Repository
+    // Base Repository
     {
       provide: 'PRODUCT_REPOSITORY',
       useFactory: (prisma: PrismaClient, eventPublisher: EventPublisherService) => {
@@ -53,6 +54,17 @@ import { EventPublisherService } from './infrastructure/events/event-publisher.s
       },
       inject: ['PRISMA_CLIENT', EventPublisherService],
     },
+    // Repository with Event Dispatching
+    {
+      provide: 'PRODUCT_REPOSITORY',
+      useFactory: (baseRepository: any, dispatcher: DomainEventDispatcher) => {
+        return new ProductRepositoryWithEvents(baseRepository, dispatcher);
+      },
+      inject: ['BASE_PRODUCT_REPOSITORY', DomainEventDispatcher],
+    },
+    // Event Services
+    EventPublisherService,
+    DomainEventDispatcher,
     // Use Cases
     {
       provide: CheckInventoryUseCase,

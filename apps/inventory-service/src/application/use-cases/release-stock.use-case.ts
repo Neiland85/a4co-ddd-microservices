@@ -5,6 +5,7 @@ import { ProductRepository } from '../../infrastructure/repositories/product.rep
 export interface ReleaseStockRequest {
   productId: string;
   quantity: number;
+  orderId: string;
   reservationId?: string;
   orderId: string;
   reason: string;
@@ -51,12 +52,24 @@ export class ReleaseStockUseCase {
     // Check if stock can be released
     if (product.reservedStockQuantity.isLessThan(stockQuantity)) {
       return {
-        success: false,
+        success: true,
         productId,
         quantity,
-        availableStock: product.availableStock,
-        message: `Cannot release ${quantity} units. Reserved: ${product.reservedStock}`,
+        availableStock: product.availableStockValue,
+        message: `Successfully released ${quantity} units of ${product.name}. Reason: ${reason}`,
       };
+    } catch (error: any) {
+      // If cannot release, return failure response
+      if (error.message.includes('Cannot release')) {
+        return {
+          success: false,
+          productId,
+          quantity,
+          availableStock: product.availableStockValue,
+          message: error.message,
+        };
+      }
+      throw error;
     }
 
     // Release stock (this will emit domain events)

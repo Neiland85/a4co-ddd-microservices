@@ -287,6 +287,7 @@ export class Product extends AggregateRoot {
         `Cannot release ${quantity.value} units. Reserved: ${this._reservedStock.value}`
       );
     }
+  }
 
     // Reducir stock reservado
     this._reservedStock = this._reservedStock.subtract(quantity);
@@ -394,12 +395,12 @@ export class Product extends AggregateRoot {
 
   deactivate(): void {
     this._isActive = false;
-    this._updatedAt = new Date();
+    this.touch();
   }
 
   activate(): void {
     this._isActive = true;
-    this._updatedAt = new Date();
+    this.touch();
   }
 
   updatePricing(newPrice: number, newCurrency?: string): void {
@@ -411,7 +412,12 @@ export class Product extends AggregateRoot {
     if (newCurrency) {
       this._currency = newCurrency;
     }
-    this._updatedAt = new Date();
+    this.touch();
+  }
+
+  updateWarehouseLocation(location: WarehouseLocation): void {
+    this._warehouseLocation = location;
+    this.touch();
   }
 
   // ========================================
