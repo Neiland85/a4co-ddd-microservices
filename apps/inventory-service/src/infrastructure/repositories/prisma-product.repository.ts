@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { Product, ProductProps } from '../../domain/entities/product.entity';
+import { Product } from '../../domain/entities/product.entity';
 import { ProductRepository } from './product.repository';
+import { SKU } from '../../domain/value-objects/sku.vo';
+import { WarehouseLocation } from '../../domain/value-objects/warehouse-location.vo';
 
 export class PrismaProductRepository implements ProductRepository {
   constructor(private prisma: PrismaClient) {}
@@ -47,6 +49,8 @@ export class PrismaProductRepository implements ProductRepository {
         isActive: data.isActive,
         artisanId: data.artisanId,
         updatedAt: data.updatedAt,
+        // Note: reorderPoint and reorderQuantity are not in Prisma schema yet
+        // They will be added when schema is updated
       },
       create: {
         id: data.id,
@@ -133,8 +137,39 @@ export class PrismaProductRepository implements ProductRepository {
     return products.filter(product => product.stockStatus === 'out_of_stock');
   }
 
+  async findBySKU(sku: SKU): Promise<Product | null> {
+    const productData = await this.prisma.product.findUnique({
+      where: { sku: sku.value },
+    });
+
+    if (!productData) return null;
+
+    return this.toDomain(productData);
+  }
+
+  async findLowStockProducts(): Promise<Product[]> {
+    return this.findLowStock();
+  }
+
+  async findByWarehouse(location: string): Promise<Product[]> {
+    // Note: This assumes warehouse location is stored in a separate field
+    // For now, we'll return empty array as Prisma schema doesn't have warehouseLocation
+    // This can be extended when warehouseLocation is added to the schema
+    const productsData = await this.prisma.product.findMany({
+      where: {
+        isActive: true,
+      },
+    });
+
+    const products = productsData.map(data => this.toDomain(data));
+    return products.filter(
+      product =>
+        product.warehouseLocation?.warehouse.toLowerCase() === location.toLowerCase()
+    );
+  }
+
   private toDomain(data: any): Product {
-    const props: ProductProps = {
+    return Product.reconstruct({
       id: data.id,
       name: data.name,
       description: data.description,
@@ -151,9 +186,7 @@ export class PrismaProductRepository implements ProductRepository {
       artisanId: data.artisanId,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
-    };
-
-    return Product.reconstruct(props);
+    });
   }
 }
 

@@ -51,12 +51,12 @@ export class CheckInventoryUseCase {
     }
 
     return {
-      productId: product.id,
+      productId: product.id.value,
       name: product.name,
-      sku: product.sku,
-      currentStock: product.currentStock,
-      reservedStock: product.reservedStock,
-      availableStock: product.availableStock,
+      sku: product.sku.value,
+      currentStock: product.stock.value,
+      reservedStock: product.reservedStock.value,
+      availableStock: product.availableStock.value,
       stockStatus: product.stockStatus,
       needsRestock: product.needsRestock,
       unitPrice: product.unitPrice,
@@ -86,12 +86,12 @@ export class CheckInventoryUseCase {
 
     // Transform to response format
     const productResponses = products.map(product => ({
-      productId: product.id,
+      productId: product.id.value,
       name: product.name,
-      sku: product.sku,
-      currentStock: product.currentStock,
-      reservedStock: product.reservedStock,
-      availableStock: product.availableStock,
+      sku: product.sku.value,
+      currentStock: product.stock.value,
+      reservedStock: product.reservedStock.value,
+      availableStock: product.availableStock.value,
       stockStatus: product.stockStatus,
       needsRestock: product.needsRestock,
       unitPrice: product.unitPrice,

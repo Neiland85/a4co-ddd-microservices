@@ -7,6 +7,10 @@ import { PrismaProductRepository } from './infrastructure/repositories/prisma-pr
 import { CheckInventoryUseCase } from './application/use-cases/check-inventory.use-case';
 import { ReserveStockUseCase } from './application/use-cases/reserve-stock.use-case';
 import { ReleaseStockUseCase } from './application/use-cases/release-stock.use-case';
+import { ConfirmStockUseCase } from './application/use-cases/confirm-stock.use-case';
+import { EventPublisherService } from './infrastructure/events/event-publisher.service';
+import { AggregateEventPublisher } from './infrastructure/events/aggregate-event-publisher.service';
+import { OrderEventsHandler } from './application/handlers/order-events.handler';
 
 @Module({
   imports: [
@@ -14,7 +18,7 @@ import { ReleaseStockUseCase } from './application/use-cases/release-stock.use-c
       isGlobal: true,
     }),
   ],
-  controllers: [InventoryController],
+  controllers: [InventoryController, OrderEventsHandler],
   providers: [
     // Prisma Client
     {
@@ -34,6 +38,9 @@ import { ReleaseStockUseCase } from './application/use-cases/release-stock.use-c
       },
       inject: ['PRISMA_CLIENT'],
     },
+    // Event Publisher
+    EventPublisherService,
+    AggregateEventPublisher,
     // Use Cases
     {
       provide: CheckInventoryUseCase,
@@ -44,21 +51,59 @@ import { ReleaseStockUseCase } from './application/use-cases/release-stock.use-c
     },
     {
       provide: ReserveStockUseCase,
-      useFactory: (repository: any) => {
-        return new ReserveStockUseCase(repository);
+      useFactory: (repository: any, eventPublisher: AggregateEventPublisher) => {
+        const useCase = new ReserveStockUseCase(repository);
+        // Wrap execute to publish events after save
+        const originalExecute = useCase.execute.bind(useCase);
+        useCase.execute = async (request) => {
+          const result = await originalExecute(request);
+          // Get product and publish events
+          const product = await repository.findById(request.productId);
+          if (product) {
+            await eventPublisher.publishAggregateEvents(product);
+          }
+          return result;
+        };
+        return useCase;
       },
-      inject: ['PRODUCT_REPOSITORY'],
+      inject: ['PRODUCT_REPOSITORY', AggregateEventPublisher],
     },
     {
       provide: ReleaseStockUseCase,
-      useFactory: (repository: any) => {
-        return new ReleaseStockUseCase(repository);
+      useFactory: (repository: any, eventPublisher: AggregateEventPublisher) => {
+        const useCase = new ReleaseStockUseCase(repository);
+        const originalExecute = useCase.execute.bind(useCase);
+        useCase.execute = async (request) => {
+          const result = await originalExecute(request);
+          const product = await repository.findById(request.productId);
+          if (product) {
+            await eventPublisher.publishAggregateEvents(product);
+          }
+          return result;
+        };
+        return useCase;
       },
-      inject: ['PRODUCT_REPOSITORY'],
+      inject: ['PRODUCT_REPOSITORY', AggregateEventPublisher],
+    },
+    {
+      provide: ConfirmStockUseCase,
+      useFactory: (repository: any, eventPublisher: AggregateEventPublisher) => {
+        const useCase = new ConfirmStockUseCase(repository);
+        const originalExecute = useCase.execute.bind(useCase);
+        useCase.execute = async (request) => {
+          const result = await originalExecute(request);
+          const product = await repository.findById(request.productId);
+          if (product) {
+            await eventPublisher.publishAggregateEvents(product);
+          }
+          return result;
+        };
+        return useCase;
+      },
+      inject: ['PRODUCT_REPOSITORY', AggregateEventPublisher],
     },
     // Service
     InventoryService,
   ],
 })
 export class InventoryModule {}
-

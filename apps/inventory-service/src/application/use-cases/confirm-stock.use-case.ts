@@ -2,36 +2,31 @@ import { Product } from '../../domain/entities/product.entity';
 import { StockQuantity } from '../../domain/value-objects/stock-quantity.vo';
 import { ProductRepository } from '../../infrastructure/repositories/product.repository';
 
-export interface ReleaseStockRequest {
+export interface ConfirmStockRequest {
   productId: string;
   quantity: number;
-  reservationId?: string;
   orderId: string;
-  reason: string;
   sagaId?: string;
 }
 
-export interface ReleaseStockResponse {
+export interface ConfirmStockResponse {
   success: boolean;
   productId: string;
   quantity: number;
+  currentStock: number;
   availableStock: number;
   message?: string;
 }
 
-export class ReleaseStockUseCase {
+export class ConfirmStockUseCase {
   constructor(private productRepository: ProductRepository) {}
 
-  async execute(request: ReleaseStockRequest): Promise<ReleaseStockResponse> {
-    const { productId, quantity, orderId, reason, sagaId } = request;
+  async execute(request: ConfirmStockRequest): Promise<ConfirmStockResponse> {
+    const { productId, quantity, orderId, sagaId } = request;
 
     // Validate input
     if (quantity <= 0) {
       throw new Error('Quantity must be greater than 0');
-    }
-
-    if (!reason || reason.trim().length === 0) {
-      throw new Error('Reason is required');
     }
 
     // Find product
@@ -40,22 +35,18 @@ export class ReleaseStockUseCase {
       throw new Error(`Product with id ${productId} not found`);
     }
 
-    // Check if product is active
-    if (!product.isActive) {
-      throw new Error(`Product ${product.name} is not active`);
-    }
-
     // Convert quantity to value object
     const stockQuantity = StockQuantity.create(quantity);
 
-    // Release stock (this will emit events automatically)
+    // Confirm reservation and deduct stock (this will emit events automatically)
     try {
-      product.releaseStock(stockQuantity, orderId, reason, sagaId);
+      product.confirmReservation(stockQuantity, orderId, sagaId);
     } catch (error: any) {
       return {
         success: false,
         productId,
         quantity,
+        currentStock: product.stock.value,
         availableStock: product.availableStock.value,
         message: error.message,
       };
@@ -68,8 +59,9 @@ export class ReleaseStockUseCase {
       success: true,
       productId,
       quantity,
+      currentStock: product.stock.value,
       availableStock: product.availableStock.value,
-      message: `Successfully released ${quantity} units of ${product.name}. Reason: ${reason}`,
+      message: `Successfully confirmed and deducted ${quantity} units of ${product.name}`,
     };
   }
 }

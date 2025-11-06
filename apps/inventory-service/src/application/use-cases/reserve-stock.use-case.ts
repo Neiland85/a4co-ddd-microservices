@@ -1,4 +1,6 @@
 import { Product } from '../../domain/entities/product.entity';
+import { StockQuantity } from '../../domain/value-objects/stock-quantity.vo';
+import { ProductRepository } from '../../infrastructure/repositories/product.repository';
 
 export interface ReserveStockRequest {
   productId: string;
@@ -6,6 +8,7 @@ export interface ReserveStockRequest {
   orderId: string;
   customerId: string;
   expiresAt: Date;
+  sagaId?: string;
 }
 
 export interface ReserveStockResponse {
@@ -18,16 +21,11 @@ export interface ReserveStockResponse {
   message?: string;
 }
 
-export interface ProductRepository {
-  findById(id: string): Promise<Product | null>;
-  save(product: Product): Promise<void>;
-}
-
 export class ReserveStockUseCase {
   constructor(private productRepository: ProductRepository) {}
 
   async execute(request: ReserveStockRequest): Promise<ReserveStockResponse> {
-    const { productId, quantity, orderId, customerId, expiresAt } = request;
+    const { productId, quantity, orderId, customerId, expiresAt, sagaId } = request;
 
     // Validate input
     if (quantity <= 0) {
@@ -49,23 +47,29 @@ export class ReserveStockUseCase {
       throw new Error(`Product ${product.name} is not active`);
     }
 
-    // Check if stock can be reserved
-    if (!product.canReserveStock(quantity)) {
-      return {
-        success: false,
-        reservationId: '',
-        productId,
-        quantity,
-        availableStock: product.availableStock,
-        expiresAt,
-        message: `Cannot reserve ${quantity} units. Available: ${product.availableStock}`,
-      };
+    // Convert quantity to value object
+    const stockQuantity = StockQuantity.create(quantity);
+
+    // Try to reserve stock (this will emit events automatically)
+    try {
+      product.reserveStock(stockQuantity, orderId, sagaId);
+    } catch (error: any) {
+      // If OutOfStock event was emitted, return failure response
+      if (error.message.includes('Cannot reserve')) {
+        return {
+          success: false,
+          reservationId: '',
+          productId,
+          quantity,
+          availableStock: product.availableStock.value,
+          expiresAt,
+          message: error.message,
+        };
+      }
+      throw error;
     }
 
-    // Reserve stock
-    product.reserveStock(quantity);
-
-    // Save changes
+    // Save changes (events will be published by EventPublisher)
     await this.productRepository.save(product);
 
     // Generate reservation ID
@@ -76,7 +80,7 @@ export class ReserveStockUseCase {
       reservationId,
       productId,
       quantity,
-      availableStock: product.availableStock,
+      availableStock: product.availableStock.value,
       expiresAt,
       message: `Successfully reserved ${quantity} units of ${product.name}`,
     };
