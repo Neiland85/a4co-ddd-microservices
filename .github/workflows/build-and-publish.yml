@@ -41,7 +41,7 @@ jobs:
       - name: 🧱 Build & Push Frontend (Vite)
         uses: docker/build-push-action@v6
         with:
-          context: ./apps/frontend
+          context: .
           file: ./apps/frontend/Dockerfile.prod
           push: true
           tags: |
@@ -51,7 +51,7 @@ jobs:
       - name: 🧱 Build & Push Dashboard (Next.js)
         uses: docker/build-push-action@v6
         with:
-          context: ./apps/dashboard-client
+          context: .
           file: ./apps/dashboard-client/Dockerfile.prod
           push: true
           tags: |
