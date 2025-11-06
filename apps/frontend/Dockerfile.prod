@@ -1,3 +1,4 @@
+  cursor/optimize-docker-builds-for-frontend-and-dashboard-2278
 # Dockerfile.prod optimizado para Frontend (Vite + React)
 # Usa multi-stage builds y caché de pnpm para reducir build time
 
@@ -74,4 +75,83 @@ RUN echo 'server { \
 
 EXPOSE 80
 
+=======
+# Optimized multi-stage build for frontend (Vite + React)
+# Stage 1: Dependencies with cache
+FROM node:20-alpine3.19 AS deps
+
+# Install pnpm globally
+RUN npm install -g pnpm@10
+
+# Set working directory
+WORKDIR /app
+
+# Copy workspace configuration and root package files for dependency resolution
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Copy app-specific package.json
+COPY apps/frontend/package.json ./apps/frontend/
+
+# Copy package.json files from packages (needed for workspace dependencies)
+# Copy all package.json files from packages directory
+COPY packages/design-system/package.json ./packages/design-system/
+COPY packages/shared-utils/package.json ./packages/shared-utils/
+COPY packages/observability/package.json ./packages/observability/
+
+# Fetch dependencies using pnpm store cache
+# This will cache packages in /root/.pnpm-store for faster subsequent builds
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm store path && \
+    pnpm fetch --frozen-lockfile
+
+# Stage 2: Build with dependencies
+FROM node:20-alpine3.19 AS builder
+
+# Install pnpm globally
+RUN npm install -g pnpm@10
+
+# Set working directory
+WORKDIR /app
+
+# Copy workspace configuration and root package files
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Copy app-specific package.json
+COPY apps/frontend/package.json ./apps/frontend/
+
+# Copy package.json files from packages (needed for workspace dependencies)
+# Copy all package.json files from packages directory
+COPY packages/design-system/package.json ./packages/design-system/
+COPY packages/shared-utils/package.json ./packages/shared-utils/
+COPY packages/observability/package.json ./packages/observability/
+
+# Install all dependencies (including dev dependencies for building)
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile --prefer-offline
+
+# Copy source code for frontend app only
+COPY apps/frontend ./apps/frontend
+
+# Copy shared packages if they exist (adjust based on your dependencies)
+# We copy only if packages directory exists to avoid build failures
+COPY packages ./packages
+
+# Build the frontend application
+WORKDIR /app/apps/frontend
+RUN pnpm build
+
+# Stage 3: Production runtime
+FROM nginx:alpine AS production
+
+# Copy built artifacts from builder stage
+COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
+
+# Copy nginx configuration if you have one (optional)
+# COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Nginx will serve the static files
+  ci/github-actions
 CMD ["nginx", "-g", "daemon off;"]

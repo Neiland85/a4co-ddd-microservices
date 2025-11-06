@@ -1,3 +1,4 @@
+  cursor/optimize-docker-builds-for-frontend-and-dashboard-2278
 # Dockerfile.prod optimizado para Dashboard-Client (Next.js)
 # Usa multi-stage builds y caché de pnpm para reducir build time
 
@@ -91,3 +92,93 @@ ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
 
 CMD ["node", "/app/apps/dashboard-client/server.js"]
+=======
+# Optimized multi-stage build for dashboard-client (Next.js)
+# Stage 1: Dependencies with cache
+FROM node:20-alpine3.19 AS deps
+
+# Install pnpm globally
+RUN npm install -g pnpm@10
+
+# Set working directory
+WORKDIR /app
+
+# Copy workspace configuration and root package files for dependency resolution
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Copy app-specific package.json
+COPY apps/dashboard-client/package.json ./apps/dashboard-client/
+
+# Copy package.json files from packages (needed for workspace dependencies)
+# Copy all package.json files from packages directory
+COPY packages/design-system/package.json ./packages/design-system/
+COPY packages/shared-utils/package.json ./packages/shared-utils/
+COPY packages/observability/package.json ./packages/observability/
+
+# Fetch dependencies using pnpm store cache
+# This will cache packages in /root/.pnpm-store for faster subsequent builds
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm store path && \
+    pnpm fetch --frozen-lockfile
+
+# Stage 2: Build with dependencies
+FROM node:20-alpine3.19 AS builder
+
+# Install pnpm globally
+RUN npm install -g pnpm@10
+
+# Set working directory
+WORKDIR /app
+
+# Copy workspace configuration and root package files
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Copy app-specific package.json
+COPY apps/dashboard-client/package.json ./apps/dashboard-client/
+
+# Copy package.json files from packages (needed for workspace dependencies)
+# Copy all package.json files from packages directory
+COPY packages/design-system/package.json ./packages/design-system/
+COPY packages/shared-utils/package.json ./packages/shared-utils/
+COPY packages/observability/package.json ./packages/observability/
+
+# Install all dependencies (including dev dependencies for building)
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile --prefer-offline
+
+# Copy source code for dashboard-client app only
+COPY apps/dashboard-client ./apps/dashboard-client
+
+# Copy shared packages if they exist (adjust based on your dependencies)
+# We copy only if packages directory exists to avoid build failures
+COPY packages ./packages
+
+# Build the Next.js application
+WORKDIR /app/apps/dashboard-client
+RUN pnpm build
+
+# Stage 3: Production runtime
+# Next.js standalone build already includes all necessary dependencies
+FROM node:20-alpine3.19 AS production
+
+# Set working directory
+WORKDIR /app
+
+# Copy built Next.js standalone application from builder stage
+# The standalone build includes all production dependencies in node_modules
+COPY --from=builder /app/apps/dashboard-client/.next/standalone ./
+COPY --from=builder /app/apps/dashboard-client/.next/static ./apps/dashboard-client/.next/static
+COPY --from=builder /app/apps/dashboard-client/public ./apps/dashboard-client/public
+
+# Set environment to production
+ENV NODE_ENV=production
+
+# Expose port 3000 (Next.js default)
+EXPOSE 3000
+
+# Set working directory to the app
+WORKDIR /app/apps/dashboard-client
+
+# Start the Next.js server
+CMD ["node", "server.js"]
+ci/github-actions
