@@ -1,1 +1,1 @@
-export * from './inventory-events';
+export * from './inventory.events';

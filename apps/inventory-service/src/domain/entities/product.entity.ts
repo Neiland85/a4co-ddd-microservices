@@ -22,11 +22,11 @@ export interface ProductProps {
   reservedStock: number;
   minimumStock: number;
   maximumStock: number;
+  reorderPoint: number;
+  reorderQuantity: number;
   isActive: boolean;
   artisanId: string;
-  reorderPoint?: number;
-  reorderQuantity?: number;
-  warehouseLocation?: { warehouse: string; aisle?: string; shelf?: string };
+  warehouseLocation?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,16 +42,36 @@ export class Product extends AggregateRoot {
   private _currency: string;
   private _stock: StockQuantity;
   private _reservedStock: StockQuantity;
-  private _minimumStock: number;
-  private _maximumStock: number;
-  private _reorderPoint: number;
-  private _reorderQuantity: number;
+  private _minimumStock: StockQuantity;
+  private _maximumStock: StockQuantity;
+  private _reorderPoint: StockQuantity;
+  private _reorderQuantity: StockQuantity;
   private _isActive: boolean;
   private _artisanId: string;
   private _warehouseLocation?: WarehouseLocation;
+  private _createdAt: Date;
+  private _updatedAt: Date;
 
   constructor(props: ProductProps) {
     super(props.id);
+    
+    // Validaciones de dominio
+    if (!props.name || props.name.trim().length === 0) {
+      throw new Error('Product name cannot be empty');
+    }
+    if (!props.sku || props.sku.trim().length === 0) {
+      throw new Error('SKU cannot be empty');
+    }
+    if (props.currentStock < 0) {
+      throw new Error('Current stock cannot be negative');
+    }
+    if (props.reservedStock < 0) {
+      throw new Error('Reserved stock cannot be negative');
+    }
+    if (props.reservedStock > props.currentStock) {
+      throw new Error('Reserved stock cannot exceed current stock');
+    }
+
     this._productId = ProductId.create(props.id);
     this._name = props.name;
     this._description = props.description;
@@ -62,28 +82,29 @@ export class Product extends AggregateRoot {
     this._currency = props.currency;
     this._stock = StockQuantity.create(props.currentStock);
     this._reservedStock = StockQuantity.create(props.reservedStock);
-    this._minimumStock = props.minimumStock;
-    this._maximumStock = props.maximumStock;
-    this._reorderPoint = props.reorderPoint ?? props.minimumStock;
-    this._reorderQuantity = props.reorderQuantity ?? props.minimumStock * 2;
+    this._minimumStock = StockQuantity.create(props.minimumStock);
+    this._maximumStock = StockQuantity.create(props.maximumStock);
+    this._reorderPoint = StockQuantity.create(props.reorderPoint || props.minimumStock);
+    this._reorderQuantity = StockQuantity.create(props.reorderQuantity || props.minimumStock * 2);
     this._isActive = props.isActive;
     this._artisanId = props.artisanId;
     this._warehouseLocation = props.warehouseLocation
-      ? WarehouseLocation.create(
-          props.warehouseLocation.warehouse,
-          props.warehouseLocation.aisle,
-          props.warehouseLocation.shelf
-        )
+      ? WarehouseLocation.create(props.warehouseLocation)
       : undefined;
+    this._createdAt = props.createdAt;
+    this._updatedAt = props.updatedAt;
   }
 
-  // Getters
-  get productId(): ProductId {
-    return this._productId;
-  }
+  // ========================================
+  // GETTERS
+  // ========================================
 
   get id(): string {
     return this._productId.value;
+  }
+
+  get productId(): ProductId {
+    return this._productId;
   }
 
   get name(): string {
@@ -114,36 +135,36 @@ export class Product extends AggregateRoot {
     return this._currency;
   }
 
-  get stock(): StockQuantity {
-    return this._stock;
-  }
-
   get currentStock(): number {
     return this._stock.value;
   }
 
-  get reservedStock(): StockQuantity {
-    return this._reservedStock;
+  get stock(): StockQuantity {
+    return this._stock;
   }
 
-  get reservedStockValue(): number {
+  get reservedStock(): number {
     return this._reservedStock.value;
   }
 
+  get reservedStockQuantity(): StockQuantity {
+    return this._reservedStock;
+  }
+
   get minimumStock(): number {
-    return this._minimumStock;
+    return this._minimumStock.value;
   }
 
   get maximumStock(): number {
-    return this._maximumStock;
+    return this._maximumStock.value;
   }
 
   get reorderPoint(): number {
-    return this._reorderPoint;
+    return this._reorderPoint.value;
   }
 
   get reorderQuantity(): number {
-    return this._reorderQuantity;
+    return this._reorderQuantity.value;
   }
 
   get isActive(): boolean {
@@ -158,30 +179,44 @@ export class Product extends AggregateRoot {
     return this._warehouseLocation;
   }
 
-  // Computed properties
-  get availableStock(): StockQuantity {
-    return StockQuantity.create(this._stock.value - this._reservedStock.value);
+  get createdAt(): Date {
+    return this._createdAt;
   }
 
-  get availableStockValue(): number {
-    return this._stock.value - this._reservedStock.value;
+  get updatedAt(): Date {
+    return this._updatedAt;
+  }
+
+  // ========================================
+  // COMPUTED PROPERTIES
+  // ========================================
+
+  get availableStock(): number {
+    return this._stock.subtract(this._reservedStock).value;
+  }
+
+  get availableStockQuantity(): StockQuantity {
+    return this._stock.subtract(this._reservedStock);
   }
 
   get stockStatus(): 'in_stock' | 'low_stock' | 'out_of_stock' | 'discontinued' {
     if (!this._isActive) return 'discontinued';
-    const available = this.availableStock;
-    if (available.isZero() || available.isLessThan(StockQuantity.zero())) return 'out_of_stock';
-    if (available.isLessThanOrEqual(StockQuantity.create(this._reorderPoint))) return 'low_stock';
+    const available = this.availableStockQuantity;
+    if (available.isLessThanOrEqual(StockQuantity.zero())) return 'out_of_stock';
+    if (available.isLessThanOrEqual(this._reorderPoint)) return 'low_stock';
     return 'in_stock';
   }
 
   get needsRestock(): boolean {
-    return this.availableStock.isLessThanOrEqual(StockQuantity.create(this._reorderPoint));
+    return this.availableStockQuantity.isLessThanOrEqual(this._reorderPoint);
   }
 
-  // Business logic methods
+  // ========================================
+  // BUSINESS LOGIC METHODS
+  // ========================================
+
   canReserveStock(quantity: StockQuantity): boolean {
-    return this._isActive && this.availableStock.isGreaterThanOrEqual(quantity);
+    return this._isActive && this.availableStockQuantity.isGreaterThanOrEqual(quantity);
   }
 
   reserveStock(quantity: StockQuantity, orderId: string, sagaId?: string): void {
@@ -190,14 +225,14 @@ export class Product extends AggregateRoot {
     }
 
     if (!this.canReserveStock(quantity)) {
-      const available = this.availableStock;
+      const available = this.availableStockQuantity;
       this.addDomainEvent(
         new InventoryOutOfStockEvent(
           this.id,
           {
-            orderId,
             requestedQuantity: quantity.value,
             availableStock: available.value,
+            orderId,
             timestamp: new Date(),
           },
           sagaId
@@ -208,26 +243,27 @@ export class Product extends AggregateRoot {
       );
     }
 
+    // Actualizar stock reservado
     this._reservedStock = this._reservedStock.add(quantity);
-    this.touch();
+    this._updatedAt = new Date();
 
-    const available = this.availableStock;
+    // Emitir evento de reserva exitosa
     this.addDomainEvent(
       new InventoryReservedEvent(
         this.id,
         {
-          orderId,
           quantity: quantity.value,
           currentStock: this._stock.value,
           reservedStock: this._reservedStock.value,
-          availableStock: available.value,
+          availableStock: this.availableStock,
+          orderId,
           timestamp: new Date(),
         },
         sagaId
       )
     );
 
-    // Check for low stock alert
+    // Verificar si necesita reorden y emitir alerta
     if (this.needsRestock) {
       this.addDomainEvent(
         new LowStockEvent(
@@ -235,9 +271,8 @@ export class Product extends AggregateRoot {
           {
             currentStock: this._stock.value,
             reservedStock: this._reservedStock.value,
-            availableStock: available.value,
-            reorderPoint: this._reorderPoint,
-            reorderQuantity: this._reorderQuantity,
+            availableStock: this.availableStock,
+            reorderPoint: this._reorderPoint.value,
             timestamp: new Date(),
           },
           sagaId
@@ -252,20 +287,22 @@ export class Product extends AggregateRoot {
         `Cannot release ${quantity.value} units. Reserved: ${this._reservedStock.value}`
       );
     }
+  }
 
+    // Reducir stock reservado
     this._reservedStock = this._reservedStock.subtract(quantity);
-    this.touch();
+    this._updatedAt = new Date();
 
-    const available = this.availableStock;
+    // Emitir evento de liberación
     this.addDomainEvent(
       new InventoryReleasedEvent(
         this.id,
         {
-          orderId,
           quantity: quantity.value,
           currentStock: this._stock.value,
           reservedStock: this._reservedStock.value,
-          availableStock: available.value,
+          availableStock: this.availableStock,
+          orderId,
           reason,
           timestamp: new Date(),
         },
@@ -281,34 +318,28 @@ export class Product extends AggregateRoot {
       );
     }
 
-    if (this._stock.isLessThan(quantity)) {
-      throw new Error(
-        `Cannot deduct ${quantity.value} units. Current stock: ${this._stock.value}`
-      );
-    }
-
-    // Deduct from both stock and reserved stock
+    // Reducir stock y stock reservado
     this._stock = this._stock.subtract(quantity);
     this._reservedStock = this._reservedStock.subtract(quantity);
-    this.touch();
+    this._updatedAt = new Date();
 
-    const available = this.availableStock;
+    // Emitir evento de deducción de stock
     this.addDomainEvent(
       new StockDeductedEvent(
         this.id,
         {
-          orderId,
           quantity: quantity.value,
           currentStock: this._stock.value,
           reservedStock: this._reservedStock.value,
-          availableStock: available.value,
+          availableStock: this.availableStock,
+          orderId,
           timestamp: new Date(),
         },
         sagaId
       )
     );
 
-    // Check for low stock alert after deduction
+    // Verificar si necesita reorden después de la deducción
     if (this.needsRestock) {
       this.addDomainEvent(
         new LowStockEvent(
@@ -316,9 +347,8 @@ export class Product extends AggregateRoot {
           {
             currentStock: this._stock.value,
             reservedStock: this._reservedStock.value,
-            availableStock: available.value,
-            reorderPoint: this._reorderPoint,
-            reorderQuantity: this._reorderQuantity,
+            availableStock: this.availableStock,
+            reorderPoint: this._reorderPoint.value,
             timestamp: new Date(),
           },
           sagaId
@@ -330,15 +360,16 @@ export class Product extends AggregateRoot {
   replenishStock(quantity: StockQuantity, reason: string, sagaId?: string): void {
     const previousStock = this._stock.value;
     this._stock = this._stock.add(quantity);
-    this.touch();
+    this._updatedAt = new Date();
 
+    // Emitir evento de reposición
     this.addDomainEvent(
       new StockReplenishedEvent(
         this.id,
         {
           quantity: quantity.value,
           previousStock,
-          currentStock: this._stock.value,
+          newStock: this._stock.value,
           reason,
           timestamp: new Date(),
         },
@@ -347,18 +378,19 @@ export class Product extends AggregateRoot {
     );
   }
 
-  updateStock(newStock: number, reason: string): void {
-    if (newStock < 0) {
-      throw new Error('Stock cannot be negative');
-    }
-
-    this._stock = StockQuantity.create(newStock);
-    this.touch();
+  updateStock(newStock: StockQuantity, reason: string): void {
+    this._stock = newStock;
+    this._updatedAt = new Date();
   }
 
   adjustStock(adjustment: number, reason: string): void {
-    const newStock = this._stock.value + adjustment;
-    this.updateStock(newStock, reason);
+    const adjustmentQuantity = StockQuantity.create(Math.abs(adjustment));
+    if (adjustment >= 0) {
+      this._stock = this._stock.add(adjustmentQuantity);
+    } else {
+      this._stock = this._stock.subtract(adjustmentQuantity);
+    }
+    this._updatedAt = new Date();
   }
 
   deactivate(): void {
@@ -388,12 +420,19 @@ export class Product extends AggregateRoot {
     this.touch();
   }
 
-  // Static factory methods
-  static create(props: Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'>): Product {
+  // ========================================
+  // STATIC FACTORY METHODS
+  // ========================================
+
+  static create(
+    props: Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'>
+  ): Product {
     const now = new Date();
     return new Product({
       ...props,
       id: `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      reorderPoint: props.reorderPoint || props.minimumStock,
+      reorderQuantity: props.reorderQuantity || props.minimumStock * 2,
       createdAt: now,
       updatedAt: now,
     });
@@ -403,10 +442,13 @@ export class Product extends AggregateRoot {
     return new Product(props);
   }
 
-  // Serialization
+  // ========================================
+  // SERIALIZATION
+  // ========================================
+
   toJSON(): ProductProps {
     return {
-      id: this.id,
+      id: this._productId.value,
       name: this._name,
       description: this._description,
       sku: this._sku.value,
@@ -416,15 +458,15 @@ export class Product extends AggregateRoot {
       currency: this._currency,
       currentStock: this._stock.value,
       reservedStock: this._reservedStock.value,
-      minimumStock: this._minimumStock,
-      maximumStock: this._maximumStock,
-      reorderPoint: this._reorderPoint,
-      reorderQuantity: this._reorderQuantity,
+      minimumStock: this._minimumStock.value,
+      maximumStock: this._maximumStock.value,
+      reorderPoint: this._reorderPoint.value,
+      reorderQuantity: this._reorderQuantity.value,
       isActive: this._isActive,
       artisanId: this._artisanId,
-      warehouseLocation: this._warehouseLocation?.toJSON(),
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      warehouseLocation: this._warehouseLocation?.toString(),
+      createdAt: this._createdAt,
+      updatedAt: this._updatedAt,
     };
   }
 }

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrismaClient } from '@prisma/client';
 import { InventoryController } from './inventory.controller';
@@ -12,24 +12,24 @@ import { ReleaseStockUseCase } from './application/use-cases/release-stock.use-c
 import { ConfirmStockUseCase } from './application/use-cases/confirm-stock.use-case';
 import { OrderEventsHandler } from './application/handlers/order-events.handler';
 import { EventPublisherService } from './infrastructure/events/event-publisher.service';
-import { DomainEventDispatcher } from './infrastructure/events/domain-event-dispatcher.service';
-
-const NATS_CONFIG = {
-  servers: process.env.NATS_URL || 'nats://localhost:4222',
-  token: process.env.NATS_AUTH_TOKEN || '',
-  name: 'inventory-service',
-};
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'NATS_CLIENT',
-        transport: Transport.NATS,
-        options: NATS_CONFIG,
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.NATS,
+          options: {
+            servers: configService.get<string>('NATS_URL') || 'nats://localhost:4222',
+            name: 'inventory-service',
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
   ],
@@ -47,11 +47,12 @@ const NATS_CONFIG = {
     },
     // Base Repository
     {
-      provide: 'BASE_PRODUCT_REPOSITORY',
-      useFactory: (prisma: PrismaClient) => {
-        return new PrismaProductRepository(prisma);
+      provide: 'PRODUCT_REPOSITORY',
+      useFactory: (prisma: PrismaClient, eventPublisher: EventPublisherService) => {
+        const repo = new PrismaProductRepository(prisma, eventPublisher);
+        return repo;
       },
-      inject: ['PRISMA_CLIENT'],
+      inject: ['PRISMA_CLIENT', EventPublisherService],
     },
     // Repository with Event Dispatching
     {
@@ -93,6 +94,8 @@ const NATS_CONFIG = {
       },
       inject: ['PRODUCT_REPOSITORY'],
     },
+    // Event Publisher
+    EventPublisherService,
     // Service
     InventoryService,
   ],

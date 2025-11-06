@@ -1,5 +1,6 @@
 import { Product } from '../../domain/entities/product.entity';
 import { StockQuantity } from '../../domain/value-objects';
+import { ProductRepository } from '../../infrastructure/repositories/product.repository';
 
 export interface ConfirmStockRequest {
   productId: string;
@@ -15,11 +16,6 @@ export interface ConfirmStockResponse {
   currentStock: number;
   availableStock: number;
   message?: string;
-}
-
-export interface ProductRepository {
-  findById(id: string): Promise<Product | null>;
-  save(product: Product): Promise<void>;
 }
 
 export class ConfirmStockUseCase {
@@ -44,37 +40,22 @@ export class ConfirmStockUseCase {
       throw new Error(`Product ${product.name} is not active`);
     }
 
-    // Create StockQuantity value object
+    // Convert quantity to value object
     const stockQuantity = StockQuantity.create(quantity);
 
-    try {
-      // Confirm reservation and deduct stock (this will emit events automatically)
-      product.confirmReservation(stockQuantity, orderId, sagaId);
+    // Confirm reservation and deduct stock (this will emit domain events)
+    product.confirmReservation(stockQuantity, orderId, sagaId);
 
-      // Save changes (events will be published by event publisher)
-      await this.productRepository.save(product);
+    // Save changes (events will be published by event publisher)
+    await this.productRepository.save(product);
 
-      return {
-        success: true,
-        productId,
-        quantity,
-        currentStock: product.currentStock,
-        availableStock: product.availableStockValue,
-        message: `Successfully confirmed and deducted ${quantity} units of ${product.name}`,
-      };
-    } catch (error: any) {
-      // If cannot confirm, return failure response
-      if (error.message.includes('Cannot confirm') || error.message.includes('Cannot deduct')) {
-        return {
-          success: false,
-          productId,
-          quantity,
-          currentStock: product.currentStock,
-          availableStock: product.availableStockValue,
-          message: error.message,
-        };
-      }
-      throw error;
-    }
+    return {
+      success: true,
+      productId,
+      quantity,
+      currentStock: product.currentStock,
+      availableStock: product.availableStock,
+      message: `Successfully confirmed and deducted ${quantity} units of ${product.name}`,
+    };
   }
 }

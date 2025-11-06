@@ -1,25 +1,21 @@
 export class SKU {
   private static readonly SKU_PATTERN = /^[A-Z]{3}-[0-9]{4}$/;
 
-  constructor(private readonly _value: string) {
-    if (!_value || _value.trim().length === 0) {
+  constructor(public readonly value: string) {
+    if (!value || value.trim().length === 0) {
       throw new Error('SKU cannot be empty');
     }
-    if (!SKU.SKU_PATTERN.test(_value)) {
-      throw new Error(`SKU must match pattern [A-Z]{3}-[0-9]{4}. Received: ${_value}`);
+    if (!SKU.SKU_PATTERN.test(value)) {
+      throw new Error(`SKU must match pattern [A-Z]{3}-[0-9]{4}. Example: INV-1234`);
     }
-  }
-
-  get value(): string {
-    return this._value;
   }
 
   equals(other: SKU): boolean {
-    return this._value === other._value;
+    return this.value === other.value;
   }
 
   toString(): string {
-    return this._value;
+    return this.value;
   }
 
   static create(value: string): SKU {

@@ -1,29 +1,31 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { ClientNats } from '@nestjs/microservices';
-import { Inject } from '@nestjs/common';
 import { DomainEvent } from '@a4co/shared-utils';
+import {
+  InventoryReservedEvent,
+  InventoryOutOfStockEvent,
+  InventoryReleasedEvent,
+  StockDeductedEvent,
+  StockReplenishedEvent,
+  LowStockEvent,
+} from '../../domain/events';
 
 @Injectable()
-export class EventPublisherService implements OnModuleInit {
+export class EventPublisherService {
   private readonly logger = new Logger(EventPublisherService.name);
 
   constructor(@Inject('NATS_CLIENT') private readonly natsClient: ClientNats) {}
 
-  async onModuleInit() {
-    try {
-      await this.natsClient.connect();
-      this.logger.log('NATS client connected for event publishing');
-    } catch (error) {
-      this.logger.error('Failed to connect to NATS', error);
+  async publishEvents(events: DomainEvent[]): Promise<void> {
+    for (const event of events) {
+      await this.publishEvent(event);
     }
   }
 
-  async publish(event: DomainEvent): Promise<void> {
+  async publishEvent(event: DomainEvent): Promise<void> {
     try {
-      const eventType = this.getEventType(event);
-      const subject = this.getSubject(eventType);
-
-      const eventPayload = {
+      const subject = this.getSubjectForEvent(event);
+      const payload = {
         eventId: event.eventId,
         eventType: event.eventType,
         aggregateId: event.aggregateId,
@@ -33,44 +35,36 @@ export class EventPublisherService implements OnModuleInit {
         sagaId: event.sagaId,
       };
 
-      this.logger.debug(`Publishing event: ${eventType} to subject: ${subject}`, {
-        eventId: event.eventId,
-        aggregateId: event.aggregateId,
-        sagaId: event.sagaId,
-      });
-
-      await this.natsClient.emit(subject, eventPayload).toPromise();
-
-      this.logger.log(`Event published successfully: ${eventType}`, {
-        eventId: event.eventId,
-        subject,
-      });
+      this.logger.log(`Publishing event: ${event.eventType} to ${subject}`);
+      this.natsClient.emit(subject, payload);
     } catch (error) {
-      this.logger.error(`Failed to publish event: ${event.eventType}`, error);
+      this.logger.error(`Failed to publish event ${event.eventType}:`, error);
       throw error;
     }
   }
 
-  async publishBatch(events: DomainEvent[]): Promise<void> {
-    const promises = events.map(event => this.publish(event));
-    await Promise.allSettled(promises);
-  }
+  private getSubjectForEvent(event: DomainEvent): string {
+    // Mapear eventos de dominio a subjects NATS
+    if (event instanceof InventoryReservedEvent) {
+      return 'inventory.reserved';
+    }
+    if (event instanceof InventoryOutOfStockEvent) {
+      return 'inventory.out_of_stock';
+    }
+    if (event instanceof InventoryReleasedEvent) {
+      return 'inventory.released';
+    }
+    if (event instanceof StockDeductedEvent) {
+      return 'inventory.stock_deducted';
+    }
+    if (event instanceof StockReplenishedEvent) {
+      return 'inventory.stock_replenished';
+    }
+    if (event instanceof LowStockEvent) {
+      return 'inventory.low_stock';
+    }
 
-  private getEventType(event: DomainEvent): string {
-    return event.eventType;
-  }
-
-  private getSubject(eventType: string): string {
-    // Map domain events to NATS subjects
-    const eventSubjectMap: Record<string, string> = {
-      InventoryReservedEvent: 'inventory.reserved',
-      InventoryOutOfStockEvent: 'inventory.out_of_stock',
-      InventoryReleasedEvent: 'inventory.released',
-      StockDeductedEvent: 'inventory.deducted',
-      StockReplenishedEvent: 'inventory.replenished',
-      LowStockEvent: 'inventory.low_stock',
-    };
-
-    return eventSubjectMap[eventType] || `inventory.${eventType.toLowerCase()}`;
+    // Fallback: usar el nombre del evento en minúsculas con puntos
+    return `inventory.${event.eventType.toLowerCase().replace(/event$/, '')}`;
   }
 }

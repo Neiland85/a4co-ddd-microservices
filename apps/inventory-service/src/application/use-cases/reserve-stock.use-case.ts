@@ -1,5 +1,6 @@
 import { Product } from '../../domain/entities/product.entity';
 import { StockQuantity } from '../../domain/value-objects';
+import { ProductRepository } from '../../infrastructure/repositories/product.repository';
 
 export interface ReserveStockRequest {
   productId: string;
@@ -20,16 +21,11 @@ export interface ReserveStockResponse {
   message?: string;
 }
 
-export interface ProductRepository {
-  findById(id: string): Promise<Product | null>;
-  save(product: Product): Promise<void>;
-}
-
 export class ReserveStockUseCase {
   constructor(private productRepository: ProductRepository) {}
 
   async execute(request: ReserveStockRequest): Promise<ReserveStockResponse> {
-    const { productId, quantity, orderId, sagaId } = request;
+    const { productId, quantity, orderId, customerId, expiresAt, sagaId } = request;
 
     // Validate input
     if (quantity <= 0) {
@@ -47,19 +43,11 @@ export class ReserveStockUseCase {
       throw new Error(`Product ${product.name} is not active`);
     }
 
-    // Create StockQuantity value object
+    // Convert quantity to value object
     const stockQuantity = StockQuantity.create(quantity);
 
-    try {
-      // Reserve stock (this will emit events automatically)
-      product.reserveStock(stockQuantity, orderId, sagaId);
-
-      // Save changes (events will be published by event publisher)
-      await this.productRepository.save(product);
-
-      // Generate reservation ID
-      const reservationId = `res_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
+    // Check if stock can be reserved
+    if (!product.canReserveStock(stockQuantity)) {
       return {
         success: true,
         reservationId,
@@ -79,6 +67,41 @@ export class ReserveStockUseCase {
           quantity,
           availableStock: product.availableStockValue,
           expiresAt: request.expiresAt,
+          message: error.message,
+        };
+      }
+      throw error;
+    }
+
+    try {
+      // Reserve stock (this will emit domain events)
+      product.reserveStock(stockQuantity, orderId, sagaId);
+
+      // Save changes (events will be published by event publisher)
+      await this.productRepository.save(product);
+
+      // Generate reservation ID
+      const reservationId = `res_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      return {
+        success: true,
+        reservationId,
+        productId,
+        quantity,
+        availableStock: product.availableStock,
+        expiresAt,
+        message: `Successfully reserved ${quantity} units of ${product.name}`,
+      };
+    } catch (error: any) {
+      // Si es un error de out of stock, ya se emitió el evento
+      if (error.message.includes('Cannot reserve')) {
+        return {
+          success: false,
+          reservationId: '',
+          productId,
+          quantity,
+          availableStock: product.availableStock,
+          expiresAt,
           message: error.message,
         };
       }

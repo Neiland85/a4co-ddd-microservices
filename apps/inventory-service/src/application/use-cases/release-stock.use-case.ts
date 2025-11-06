@@ -1,11 +1,13 @@
 import { Product } from '../../domain/entities/product.entity';
 import { StockQuantity } from '../../domain/value-objects';
+import { ProductRepository } from '../../infrastructure/repositories/product.repository';
 
 export interface ReleaseStockRequest {
   productId: string;
   quantity: number;
   orderId: string;
   reservationId?: string;
+  orderId: string;
   reason: string;
   sagaId?: string;
 }
@@ -16,11 +18,6 @@ export interface ReleaseStockResponse {
   quantity: number;
   availableStock: number;
   message?: string;
-}
-
-export interface ProductRepository {
-  findById(id: string): Promise<Product | null>;
-  save(product: Product): Promise<void>;
 }
 
 export class ReleaseStockUseCase {
@@ -49,16 +46,11 @@ export class ReleaseStockUseCase {
       throw new Error(`Product ${product.name} is not active`);
     }
 
-    // Create StockQuantity value object
+    // Convert quantity to value object
     const stockQuantity = StockQuantity.create(quantity);
 
-    try {
-      // Release stock (this will emit events automatically)
-      product.releaseStock(stockQuantity, orderId, reason, sagaId);
-
-      // Save changes (events will be published by event publisher)
-      await this.productRepository.save(product);
-
+    // Check if stock can be released
+    if (product.reservedStockQuantity.isLessThan(stockQuantity)) {
       return {
         success: true,
         productId,
@@ -79,5 +71,19 @@ export class ReleaseStockUseCase {
       }
       throw error;
     }
+
+    // Release stock (this will emit domain events)
+    product.releaseStock(stockQuantity, orderId, reason, sagaId);
+
+    // Save changes (events will be published by event publisher)
+    await this.productRepository.save(product);
+
+    return {
+      success: true,
+      productId,
+      quantity,
+      availableStock: product.availableStock,
+      message: `Successfully released ${quantity} units of ${product.name}. Reason: ${reason}`,
+    };
   }
 }
