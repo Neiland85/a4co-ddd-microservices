@@ -1,8 +1,12 @@
 import { Product, ProductProps } from '../../domain/entities/product.entity';
+import { SKU } from '../../domain/value-objects';
 
 export interface ProductRepository {
   findById(id: string): Promise<Product | null>;
   findByIds(ids: string[]): Promise<Product[]>;
+  findBySKU(sku: SKU): Promise<Product | null>;
+  findLowStockProducts(): Promise<Product[]>;
+  findByWarehouse(location: string): Promise<Product[]>;
   save(product: Product): Promise<void>;
   delete(id: string): Promise<void>;
   findAll(): Promise<Product[]>;

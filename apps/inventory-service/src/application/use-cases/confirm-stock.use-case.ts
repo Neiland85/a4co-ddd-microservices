@@ -1,19 +1,18 @@
 import { Product } from '../../domain/entities/product.entity';
 import { StockQuantity } from '../../domain/value-objects';
 
-export interface ReleaseStockRequest {
+export interface ConfirmStockRequest {
   productId: string;
   quantity: number;
   orderId: string;
-  reservationId?: string;
-  reason: string;
   sagaId?: string;
 }
 
-export interface ReleaseStockResponse {
+export interface ConfirmStockResponse {
   success: boolean;
   productId: string;
   quantity: number;
+  currentStock: number;
   availableStock: number;
   message?: string;
 }
@@ -23,19 +22,15 @@ export interface ProductRepository {
   save(product: Product): Promise<void>;
 }
 
-export class ReleaseStockUseCase {
+export class ConfirmStockUseCase {
   constructor(private productRepository: ProductRepository) {}
 
-  async execute(request: ReleaseStockRequest): Promise<ReleaseStockResponse> {
-    const { productId, quantity, orderId, reason, sagaId } = request;
+  async execute(request: ConfirmStockRequest): Promise<ConfirmStockResponse> {
+    const { productId, quantity, orderId, sagaId } = request;
 
     // Validate input
     if (quantity <= 0) {
       throw new Error('Quantity must be greater than 0');
-    }
-
-    if (!reason || reason.trim().length === 0) {
-      throw new Error('Reason is required');
     }
 
     // Find product
@@ -53,8 +48,8 @@ export class ReleaseStockUseCase {
     const stockQuantity = StockQuantity.create(quantity);
 
     try {
-      // Release stock (this will emit events automatically)
-      product.releaseStock(stockQuantity, orderId, reason, sagaId);
+      // Confirm reservation and deduct stock (this will emit events automatically)
+      product.confirmReservation(stockQuantity, orderId, sagaId);
 
       // Save changes (events will be published by event publisher)
       await this.productRepository.save(product);
@@ -63,16 +58,18 @@ export class ReleaseStockUseCase {
         success: true,
         productId,
         quantity,
+        currentStock: product.currentStock,
         availableStock: product.availableStockValue,
-        message: `Successfully released ${quantity} units of ${product.name}. Reason: ${reason}`,
+        message: `Successfully confirmed and deducted ${quantity} units of ${product.name}`,
       };
     } catch (error: any) {
-      // If cannot release, return failure response
-      if (error.message.includes('Cannot release')) {
+      // If cannot confirm, return failure response
+      if (error.message.includes('Cannot confirm') || error.message.includes('Cannot deduct')) {
         return {
           success: false,
           productId,
           quantity,
+          currentStock: product.currentStock,
           availableStock: product.availableStockValue,
           message: error.message,
         };

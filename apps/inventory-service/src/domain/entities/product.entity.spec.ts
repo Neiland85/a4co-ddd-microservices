@@ -1,10 +1,18 @@
 import { Product, ProductProps } from './product.entity';
+import { StockQuantity } from '../value-objects';
+import {
+  InventoryReservedEvent,
+  InventoryOutOfStockEvent,
+  InventoryReleasedEvent,
+  StockDeductedEvent,
+  LowStockEvent,
+} from '../events';
 
-describe('Product Entity', () => {
+describe('Product Entity (AggregateRoot)', () => {
   const baseProps: Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'> = {
     name: 'Test Product',
     description: 'Test Description',
-    sku: 'TEST-SKU-001',
+    sku: 'INV-1234', // Valid SKU format
     category: 'Test Category',
     brand: 'Test Brand',
     unitPrice: 29.99,
@@ -22,7 +30,7 @@ describe('Product Entity', () => {
       const product = Product.create(baseProps);
 
       expect(product.name).toBe(baseProps.name);
-      expect(product.sku).toBe(baseProps.sku);
+      expect(product.sku.value).toBe(baseProps.sku);
       expect(product.currentStock).toBe(100);
       expect(product.isActive).toBe(true);
       expect(product.id).toBeDefined();
@@ -41,7 +49,8 @@ describe('Product Entity', () => {
     it('should calculate available stock correctly', () => {
       const product = Product.create(baseProps);
 
-      expect(product.availableStock).toBe(90); // 100 - 10
+      expect(product.availableStockValue).toBe(90); // 100 - 10
+      expect(product.availableStock.value).toBe(90);
     });
 
     it('should return 0 when all stock is reserved', () => {
@@ -51,7 +60,8 @@ describe('Product Entity', () => {
         reservedStock: 50,
       });
 
-      expect(product.availableStock).toBe(0);
+      expect(product.availableStockValue).toBe(0);
+      expect(product.availableStock.value).toBe(0);
     });
   });
 
@@ -99,26 +109,33 @@ describe('Product Entity', () => {
   });
 
   describe('Stock Reservation', () => {
-    it('should reserve stock when sufficient quantity available', () => {
+    it('should reserve stock when sufficient quantity available and emit event', () => {
       const product = Product.create(baseProps);
-      const initialReserved = product.reservedStock;
+      const initialReserved = product.reservedStockValue;
 
-      product.reserveStock(20);
+      product.reserveStock(StockQuantity.create(20), 'order-123');
 
-      expect(product.reservedStock).toBe(initialReserved + 20);
-      expect(product.availableStock).toBe(70); // 100 - 10 - 20
+      expect(product.reservedStockValue).toBe(initialReserved + 20);
+      expect(product.availableStockValue).toBe(70); // 100 - 10 - 20
+      
+      // Check that event was emitted
+      const events = product.domainEvents;
+      expect(events.length).toBeGreaterThan(0);
+      expect(events.some(e => e instanceof InventoryReservedEvent)).toBe(true);
     });
 
-    it('should throw error when trying to reserve more than available', () => {
+    it('should throw error and emit OutOfStockEvent when trying to reserve more than available', () => {
       const product = Product.create({
         ...baseProps,
         currentStock: 50,
         reservedStock: 40,
       });
 
-      expect(() => product.reserveStock(20)).toThrow(
-        'Cannot reserve 20 units. Available: 10'
-      );
+      expect(() => product.reserveStock(StockQuantity.create(20), 'order-123')).toThrow();
+      
+      // Check that OutOfStockEvent was emitted
+      const events = product.domainEvents;
+      expect(events.some(e => e instanceof InventoryOutOfStockEvent)).toBe(true);
     });
 
     it('should not reserve stock for inactive products', () => {
@@ -127,18 +144,36 @@ describe('Product Entity', () => {
         isActive: false,
       });
 
-      expect(() => product.reserveStock(10)).toThrow();
+      expect(() => product.reserveStock(StockQuantity.create(10), 'order-123')).toThrow();
+    });
+
+    it('should emit LowStockEvent when stock falls below reorder point', () => {
+      const product = Product.create({
+        ...baseProps,
+        currentStock: 30,
+        reservedStock: 10,
+        minimumStock: 20,
+      });
+
+      product.reserveStock(StockQuantity.create(5), 'order-123');
+
+      const events = product.domainEvents;
+      expect(events.some(e => e instanceof LowStockEvent)).toBe(true);
     });
   });
 
   describe('Stock Release', () => {
-    it('should release reserved stock', () => {
+    it('should release reserved stock and emit event', () => {
       const product = Product.create(baseProps);
 
-      product.releaseStock(5);
+      product.releaseStock(StockQuantity.create(5), 'order-123', 'Order cancelled');
 
-      expect(product.reservedStock).toBe(5);
-      expect(product.availableStock).toBe(95);
+      expect(product.reservedStockValue).toBe(5);
+      expect(product.availableStockValue).toBe(95);
+      
+      // Check that event was emitted
+      const events = product.domainEvents;
+      expect(events.some(e => e instanceof InventoryReleasedEvent)).toBe(true);
     });
 
     it('should throw error when trying to release more than reserved', () => {
@@ -147,9 +182,7 @@ describe('Product Entity', () => {
         reservedStock: 5,
       });
 
-      expect(() => product.releaseStock(10)).toThrow(
-        'Cannot release 10 units. Reserved: 5'
-      );
+      expect(() => product.releaseStock(StockQuantity.create(10), 'order-123', 'Test')).toThrow();
     });
   });
 
@@ -184,6 +217,34 @@ describe('Product Entity', () => {
       product.adjustStock(-30, 'Damaged units');
 
       expect(product.currentStock).toBe(70);
+    });
+  });
+
+  describe('Confirm Reservation', () => {
+    it('should confirm reservation and deduct stock, emitting StockDeductedEvent', () => {
+      const product = Product.create({
+        ...baseProps,
+        currentStock: 100,
+        reservedStock: 20,
+      });
+
+      product.confirmReservation(StockQuantity.create(20), 'order-123');
+
+      expect(product.currentStock).toBe(80);
+      expect(product.reservedStockValue).toBe(0);
+      
+      // Check that event was emitted
+      const events = product.domainEvents;
+      expect(events.some(e => e instanceof StockDeductedEvent)).toBe(true);
+    });
+
+    it('should throw error when trying to confirm more than reserved', () => {
+      const product = Product.create({
+        ...baseProps,
+        reservedStock: 10,
+      });
+
+      expect(() => product.confirmReservation(StockQuantity.create(20), 'order-123')).toThrow();
     });
   });
 
