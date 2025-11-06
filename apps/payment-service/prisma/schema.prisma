@@ -8,10 +8,20 @@ datasource db {
 }
 
 model Payment {
-  id        String   @id @default(uuid())
-  orderId   String
-  amount    Float
-  status    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   String   @id @default(uuid())
+  paymentId            String   @unique
+  orderId              String
+  amount               Float
+  currency             String   @default("EUR")
+  customerId           String
+  status               String
+  stripePaymentIntentId String?
+  metadata             Json?
+  failureReason        String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([stripePaymentIntentId])
+  @@index([paymentId])
 }
