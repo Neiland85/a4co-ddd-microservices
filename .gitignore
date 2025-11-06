@@ -90,6 +90,16 @@ apps/*/.env.local
 apps/*/.env.production
 apps/*/.env.staging
 
+# Production secrets
+.env.production
+infra/.env.production
+**/.env.local
+**/.env.*.local
+
+# Docker secrets
+**/secrets/
+docker-secrets/
+
 # Otros comunes
 node_modules/
 *.log

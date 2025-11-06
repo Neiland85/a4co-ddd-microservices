@@ -1,0 +1,491 @@
+version: '3.8'
+
+services:
+  # ========================================
+  # INFRASTRUCTURE SERVICES
+  # ========================================
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: a4co-postgres-prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-a4co_prod}
+      POSTGRES_USER: ${POSTGRES_USER:-a4co_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - database
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-a4co_user} -d ${POSTGRES_DB:-a4co_prod}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+
+  nats:
+    image: nats:2.10-alpine
+    container_name: a4co-nats-prod
+    command:
+      [
+        '--jetstream',
+        '--store_dir=/data',
+        '--max_file_store=1GB',
+        '--max_memory_store=256MB',
+        '--http_port=8222',
+      ]
+    ports:
+      - '4222:4222'
+      - '8222:8222'
+    volumes:
+      - nats_data:/data
+    networks:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:8222/healthz']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: a4co-redis-prod
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes', '--requirepass', '${REDIS_PASSWORD}']
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # ========================================
+  # CORE MICROSERVICES
+  # ========================================
+
+  auth-service:
+    build:
+      context: ../../
+      dockerfile: apps/auth-service/Dockerfile.prod
+    image: ghcr.io/neiland85/a4co-auth-service:${VERSION:-latest}
+    container_name: a4co-auth-service-prod
+    restart: unless-stopped
+    
+    # Security configurations
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    
+    # User (non-root)
+    user: "node"
+    
+    # Environment from .env file (NO hardcoded secrets)
+    env_file:
+      - ../../.env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-3600}
+      - JWT_REFRESH_EXPIRES_IN=${JWT_REFRESH_EXPIRES_IN:-604800}
+    
+    # Secrets (Docker Swarm mode)
+    secrets:
+      - db_password
+      - jwt_secret
+    
+    # Resources limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Volumes (read-only where possible)
+    volumes:
+      - /app/node_modules
+      - /tmp  # writable tmp dir
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    networks:
+      - backend
+      - database
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  product-service:
+    build:
+      context: ../../
+      dockerfile: apps/product-service/Dockerfile.prod
+    image: ghcr.io/neiland85/a4co-product-service:${VERSION:-latest}
+    container_name: a4co-product-service-prod
+    restart: unless-stopped
+    
+    # Security configurations
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    
+    # User (non-root)
+    user: "node"
+    
+    # Environment from .env file
+    env_file:
+      - ../../.env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=3003
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+    
+    # Secrets
+    secrets:
+      - db_password
+    
+    # Resources limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Volumes
+    volumes:
+      - /app/node_modules
+      - /tmp
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    networks:
+      - backend
+      - database
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+
+  order-service:
+    build:
+      context: ../../
+      dockerfile: apps/order-service/Dockerfile.prod
+    image: ghcr.io/neiland85/a4co-order-service:${VERSION:-latest}
+    container_name: a4co-order-service-prod
+    restart: unless-stopped
+    
+    # Security configurations
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    
+    # User (non-root)
+    user: "node"
+    
+    # Environment from .env file (NO hardcoded secrets)
+    env_file:
+      - ../../.env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=3004
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - PRODUCT_SERVICE_URL=http://product-service:3003
+    
+    # Secrets (Docker Swarm mode)
+    secrets:
+      - db_password
+    
+    # Resources limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Volumes (read-only where possible)
+    volumes:
+      - /app/node_modules
+      - /tmp  # writable tmp dir
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    networks:
+      - backend
+      - database
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+
+  payment-service:
+    build:
+      context: ../../
+      dockerfile: apps/payment-service/Dockerfile.prod
+    image: ghcr.io/neiland85/a4co-payment-service:${VERSION:-latest}
+    container_name: a4co-payment-service-prod
+    restart: unless-stopped
+    
+    # Security configurations
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    
+    # User (non-root)
+    user: "node"
+    
+    # Environment from .env file (NO hardcoded secrets)
+    env_file:
+      - ../../.env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=3006
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - ORDER_SERVICE_URL=http://order-service:3004
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+    
+    # Secrets (Docker Swarm mode)
+    secrets:
+      - db_password
+      - stripe_secret_key
+      - stripe_webhook_secret
+    
+    # Resources limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Volumes (read-only where possible)
+    volumes:
+      - /app/node_modules
+      - /tmp  # writable tmp dir
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    networks:
+      - backend
+      - database
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+
+  inventory-service:
+    build:
+      context: ../../
+      dockerfile: apps/inventory-service/Dockerfile.prod
+    image: ghcr.io/neiland85/a4co-inventory-service:${VERSION:-latest}
+    container_name: a4co-inventory-service-prod
+    restart: unless-stopped
+    
+    # Security configurations
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    
+    # User (non-root)
+    user: "node"
+    
+    # Environment from .env file
+    env_file:
+      - ../../.env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=3007
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_URL=${NATS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3001
+    
+    # Secrets
+    secrets:
+      - db_password
+    
+    # Resources limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Volumes
+    volumes:
+      - /app/node_modules
+      - /tmp
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    networks:
+      - backend
+      - database
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  nats_data:
+  redis_data:
+
+# Secrets definition (Docker Swarm mode)
+# These should be created using: docker secret create <name> <file>
+secrets:
+  db_password:
+    external: true
+  jwt_secret:
+    external: true
+  stripe_secret_key:
+    external: true
+  stripe_webhook_secret:
+    external: true
+
+# Networks segmentation
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: false  # Backend services need internet for external APIs
+  database:
+    driver: bridge
+    internal: true  # No internet access, only internal communication
