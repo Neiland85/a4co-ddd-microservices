@@ -1,279 +1,180 @@
-import { Product, ProductProps } from './product.entity';
+import { Product } from './product.entity';
+import { StockQuantity, SKU } from '../value-objects';
+import {
+  InventoryReservedEvent,
+  InventoryOutOfStockEvent,
+  LowStockEvent,
+  InventoryReleasedEvent,
+  StockDeductedEvent,
+} from '../events';
 
-describe('Product Entity', () => {
-  const baseProps: Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'> = {
-    name: 'Test Product',
-    description: 'Test Description',
-    sku: 'TEST-SKU-001',
-    category: 'Test Category',
-    brand: 'Test Brand',
-    unitPrice: 29.99,
-    currency: 'EUR',
-    currentStock: 100,
-    reservedStock: 10,
-    minimumStock: 20,
-    maximumStock: 500,
-    isActive: true,
-    artisanId: 'artisan-123',
+describe('Product Aggregate', () => {
+  const createProduct = (overrides?: Partial<any>) => {
+    return Product.create({
+      name: 'Test Product',
+      description: 'Test Description',
+      sku: 'INV-1234',
+      category: 'Test Category',
+      unitPrice: 10.99,
+      currency: 'USD',
+      currentStock: 100,
+      reservedStock: 0,
+      minimumStock: 10,
+      maximumStock: 1000,
+      reorderPoint: 20,
+      reorderQuantity: 50,
+      isActive: true,
+      artisanId: 'artisan_001',
+      ...overrides,
+    });
   };
 
-  describe('Product Creation', () => {
-    it('should create a product with valid properties', () => {
-      const product = Product.create(baseProps);
+  describe('reserveStock', () => {
+    it('should reserve stock successfully and emit InventoryReservedEvent', () => {
+      const product = createProduct({ currentStock: 100, reservedStock: 0 });
+      const orderId = 'order_123';
+      const quantity = StockQuantity.create(10);
 
-      expect(product.name).toBe(baseProps.name);
-      expect(product.sku).toBe(baseProps.sku);
-      expect(product.currentStock).toBe(100);
-      expect(product.isActive).toBe(true);
-      expect(product.id).toBeDefined();
-      expect(product.createdAt).toBeInstanceOf(Date);
+      product.reserveStock(quantity, orderId);
+
+      expect(product.reservedStock).toBe(10);
+      expect(product.availableStock).toBe(90);
+
+      const events = product.getUncommittedEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(InventoryReservedEvent);
+      expect(events[0].eventData.orderId).toBe(orderId);
+      expect(events[0].eventData.quantity).toBe(10);
     });
 
-    it('should generate unique IDs for different products', () => {
-      const product1 = Product.create(baseProps);
-      const product2 = Product.create(baseProps);
+    it('should throw error and emit InventoryOutOfStockEvent when insufficient stock', () => {
+      const product = createProduct({ currentStock: 10, reservedStock: 0 });
+      const orderId = 'order_123';
+      const quantity = StockQuantity.create(20);
 
-      expect(product1.id).not.toBe(product2.id);
-    });
-  });
+      expect(() => {
+        product.reserveStock(quantity, orderId);
+      }).toThrow('Cannot reserve');
 
-  describe('Available Stock Calculation', () => {
-    it('should calculate available stock correctly', () => {
-      const product = Product.create(baseProps);
-
-      expect(product.availableStock).toBe(90); // 100 - 10
-    });
-
-    it('should return 0 when all stock is reserved', () => {
-      const product = Product.create({
-        ...baseProps,
-        currentStock: 50,
-        reservedStock: 50,
-      });
-
-      expect(product.availableStock).toBe(0);
-    });
-  });
-
-  describe('Stock Status', () => {
-    it('should return "in_stock" when stock is above minimum', () => {
-      const product = Product.create({
-        ...baseProps,
-        currentStock: 100,
-        reservedStock: 10,
-        minimumStock: 20,
-      });
-
-      expect(product.stockStatus).toBe('in_stock');
+      const events = product.getUncommittedEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(InventoryOutOfStockEvent);
     });
 
-    it('should return "low_stock" when available stock equals minimum', () => {
-      const product = Product.create({
-        ...baseProps,
+    it('should emit LowStockEvent when stock falls below reorder point', () => {
+      const product = createProduct({
         currentStock: 30,
-        reservedStock: 10,
-        minimumStock: 20,
+        reservedStock: 0,
+        reorderPoint: 20,
       });
+      const orderId = 'order_123';
+      const quantity = StockQuantity.create(15); // Stock quedará en 15, por debajo de reorderPoint
 
-      expect(product.stockStatus).toBe('low_stock');
-    });
+      product.reserveStock(quantity, orderId);
 
-    it('should return "out_of_stock" when available stock is 0', () => {
-      const product = Product.create({
-        ...baseProps,
-        currentStock: 10,
-        reservedStock: 10,
-      });
-
-      expect(product.stockStatus).toBe('out_of_stock');
-    });
-
-    it('should return "discontinued" when product is inactive', () => {
-      const product = Product.create({
-        ...baseProps,
-        isActive: false,
-      });
-
-      expect(product.stockStatus).toBe('discontinued');
+      const events = product.getUncommittedEvents();
+      expect(events.length).toBeGreaterThanOrEqual(2);
+      expect(events.some(e => e instanceof InventoryReservedEvent)).toBe(true);
+      expect(events.some(e => e instanceof LowStockEvent)).toBe(true);
     });
   });
 
-  describe('Stock Reservation', () => {
-    it('should reserve stock when sufficient quantity available', () => {
-      const product = Product.create(baseProps);
-      const initialReserved = product.reservedStock;
+  describe('releaseStock', () => {
+    it('should release stock and emit InventoryReleasedEvent', () => {
+      const product = createProduct({ currentStock: 100, reservedStock: 20 });
+      const orderId = 'order_123';
+      const quantity = StockQuantity.create(10);
+      const reason = 'Order cancelled';
 
-      product.reserveStock(20);
+      product.releaseStock(quantity, orderId, reason);
 
-      expect(product.reservedStock).toBe(initialReserved + 20);
-      expect(product.availableStock).toBe(70); // 100 - 10 - 20
-    });
+      expect(product.reservedStock).toBe(10);
+      expect(product.availableStock).toBe(90);
 
-    it('should throw error when trying to reserve more than available', () => {
-      const product = Product.create({
-        ...baseProps,
-        currentStock: 50,
-        reservedStock: 40,
-      });
-
-      expect(() => product.reserveStock(20)).toThrow(
-        'Cannot reserve 20 units. Available: 10'
-      );
-    });
-
-    it('should not reserve stock for inactive products', () => {
-      const product = Product.create({
-        ...baseProps,
-        isActive: false,
-      });
-
-      expect(() => product.reserveStock(10)).toThrow();
-    });
-  });
-
-  describe('Stock Release', () => {
-    it('should release reserved stock', () => {
-      const product = Product.create(baseProps);
-
-      product.releaseStock(5);
-
-      expect(product.reservedStock).toBe(5);
-      expect(product.availableStock).toBe(95);
+      const events = product.getUncommittedEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(InventoryReleasedEvent);
+      expect(events[0].eventData.orderId).toBe(orderId);
+      expect(events[0].eventData.reason).toBe(reason);
     });
 
     it('should throw error when trying to release more than reserved', () => {
-      const product = Product.create({
-        ...baseProps,
-        reservedStock: 5,
+      const product = createProduct({ currentStock: 100, reservedStock: 10 });
+      const quantity = StockQuantity.create(20);
+
+      expect(() => {
+        product.releaseStock(quantity, 'order_123', 'test');
+      }).toThrow('Cannot release');
+    });
+  });
+
+  describe('confirmReservation', () => {
+    it('should deduct stock and emit StockDeductedEvent', () => {
+      const product = createProduct({ currentStock: 100, reservedStock: 20 });
+      const orderId = 'order_123';
+      const quantity = StockQuantity.create(10);
+
+      product.confirmReservation(quantity, orderId);
+
+      expect(product.currentStock).toBe(90);
+      expect(product.reservedStock).toBe(10);
+      expect(product.availableStock).toBe(80);
+
+      const events = product.getUncommittedEvents();
+      expect(events.length).toBeGreaterThanOrEqual(1);
+      expect(events.some(e => e instanceof StockDeductedEvent)).toBe(true);
+    });
+  });
+
+  describe('computed properties', () => {
+    it('should calculate availableStock correctly', () => {
+      const product = createProduct({ currentStock: 100, reservedStock: 30 });
+      expect(product.availableStock).toBe(70);
+    });
+
+    it('should return correct stockStatus', () => {
+      const inStock = createProduct({ currentStock: 100, reservedStock: 0 });
+      expect(inStock.stockStatus).toBe('in_stock');
+
+      const lowStock = createProduct({
+        currentStock: 15,
+        reservedStock: 0,
+        reorderPoint: 20,
       });
+      expect(lowStock.stockStatus).toBe('low_stock');
 
-      expect(() => product.releaseStock(10)).toThrow(
-        'Cannot release 10 units. Reserved: 5'
-      );
-    });
-  });
-
-  describe('Stock Updates', () => {
-    it('should update stock to new value', () => {
-      const product = Product.create(baseProps);
-
-      product.updateStock(150, 'Inventory recount');
-
-      expect(product.currentStock).toBe(150);
+      const outOfStock = createProduct({ currentStock: 10, reservedStock: 10 });
+      expect(outOfStock.stockStatus).toBe('out_of_stock');
     });
 
-    it('should throw error when setting negative stock', () => {
-      const product = Product.create(baseProps);
-
-      expect(() => product.updateStock(-10, 'Test')).toThrow(
-        'Stock cannot be negative'
-      );
-    });
-
-    it('should adjust stock by positive amount', () => {
-      const product = Product.create(baseProps);
-
-      product.adjustStock(50, 'New shipment arrived');
-
-      expect(product.currentStock).toBe(150);
-    });
-
-    it('should adjust stock by negative amount', () => {
-      const product = Product.create(baseProps);
-
-      product.adjustStock(-30, 'Damaged units');
-
-      expect(product.currentStock).toBe(70);
-    });
-  });
-
-  describe('Product Activation', () => {
-    it('should deactivate product', () => {
-      const product = Product.create(baseProps);
-
-      product.deactivate();
-
-      expect(product.isActive).toBe(false);
-      expect(product.stockStatus).toBe('discontinued');
-    });
-
-    it('should activate product', () => {
-      const product = Product.create({
-        ...baseProps,
-        isActive: false,
+    it('should detect needsRestock correctly', () => {
+      const product = createProduct({
+        currentStock: 15,
+        reservedStock: 0,
+        reorderPoint: 20,
       });
-
-      product.activate();
-
-      expect(product.isActive).toBe(true);
-    });
-  });
-
-  describe('Pricing Updates', () => {
-    it('should update product price', () => {
-      const product = Product.create(baseProps);
-
-      product.updatePricing(39.99);
-
-      expect(product.unitPrice).toBe(39.99);
-    });
-
-    it('should update price and currency', () => {
-      const product = Product.create(baseProps);
-
-      product.updatePricing(25.99, 'USD');
-
-      expect(product.unitPrice).toBe(25.99);
-      expect(product.currency).toBe('USD');
-    });
-
-    it('should throw error for negative price', () => {
-      const product = Product.create(baseProps);
-
-      expect(() => product.updatePricing(-10)).toThrow(
-        'Price cannot be negative'
-      );
-    });
-  });
-
-  describe('Serialization', () => {
-    it('should serialize to JSON correctly', () => {
-      const product = Product.create(baseProps);
-      const json = product.toJSON();
-
-      expect(json).toMatchObject({
-        name: baseProps.name,
-        sku: baseProps.sku,
-        currentStock: baseProps.currentStock,
-        isActive: baseProps.isActive,
-      });
-      expect(json.id).toBeDefined();
-      expect(json.createdAt).toBeInstanceOf(Date);
-    });
-  });
-
-  describe('Needs Restock', () => {
-    it('should indicate restock needed when below minimum', () => {
-      const product = Product.create({
-        ...baseProps,
-        currentStock: 25,
-        reservedStock: 10,
-        minimumStock: 20,
-      });
-
       expect(product.needsRestock).toBe(true);
     });
+  });
 
-    it('should not need restock when above minimum', () => {
-      const product = Product.create({
-        ...baseProps,
-        currentStock: 100,
-        reservedStock: 10,
-        minimumStock: 20,
-      });
+  describe('value objects', () => {
+    it('should use ProductId value object', () => {
+      const product = createProduct();
+      expect(product.productId).toBeDefined();
+      expect(product.productId.value).toBe(product.id);
+    });
 
-      expect(product.needsRestock).toBe(false);
+    it('should use SKU value object', () => {
+      const product = createProduct({ sku: 'INV-5678' });
+      expect(product.sku).toBeInstanceOf(SKU);
+      expect(product.sku.value).toBe('INV-5678');
+    });
+
+    it('should use StockQuantity value objects', () => {
+      const product = createProduct({ currentStock: 100, reservedStock: 20 });
+      expect(product.stock).toBeInstanceOf(StockQuantity);
+      expect(product.reservedStockQuantity).toBeInstanceOf(StockQuantity);
+      expect(product.availableStockQuantity).toBeInstanceOf(StockQuantity);
     });
   });
 });
-
