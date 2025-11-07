@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss"
-import colors from "tailwindcss/colors"
 
 const config: Config = {
   darkMode: ["class"],
@@ -20,8 +19,8 @@ const config: Config = {
           accent: "#00c4b3",
           muted: "#e0e7ff",
         },
-        background: colors.slate[50],
-        foreground: colors.slate[900],
+        background: "#f8fafc",
+        foreground: "#0f172a",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],

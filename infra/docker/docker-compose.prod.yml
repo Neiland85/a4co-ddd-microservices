@@ -1,0 +1,28 @@
+services:
+  frontend-prod:
+    build:
+      context: ../..                # 👈 build desde la raíz del monorepo
+      dockerfile: apps/frontend/Dockerfile.prod
+    image: ghcr.io/neiland85/a4co-frontend:latest
+    ports:
+      - "3000:80"
+
+  dashboard-prod:
+    build:
+      context: ../..                # 👈 igual: raíz del monorepo
+      dockerfile: apps/dashboard-client/Dockerfile.prod
+    image: ghcr.io/neiland85/a4co-dashboard:latest
+    ports:
+      - "3001:3001"
+
+  proxy:
+    image: nginx:alpine
+    container_name: a4co-proxy
+    depends_on:
+      - frontend-prod
+      - dashboard-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro

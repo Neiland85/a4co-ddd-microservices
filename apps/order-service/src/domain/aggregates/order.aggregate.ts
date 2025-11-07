@@ -138,4 +138,43 @@ export class Order extends AggregateRoot {
         this._totalAmount = this.calculateTotal();
         this.touch();
     }
+
+    // Helper method to get domain events
+    getDomainEvents(): DomainEvent[] {
+        return this.domainEvents || [];
+    }
+
+    // Helper method to clear domain events
+    clearDomainEvents(): void {
+        this.domainEvents = [];
+    }
+
+    // Saga-related methods
+    confirmPayment(): void {
+        if (this._status !== OrderStatus.PENDING) {
+            throw new Error(`Cannot confirm payment for order in status: ${this._status}`);
+        }
+        this.changeStatus(OrderStatus.PAID);
+    }
+
+    markAsShipped(): void {
+        if (this._status !== OrderStatus.PAID) {
+            throw new Error(`Cannot ship order in status: ${this._status}`);
+        }
+        this.changeStatus(OrderStatus.SHIPPED);
+    }
+
+    markAsDelivered(): void {
+        if (this._status !== OrderStatus.SHIPPED) {
+            throw new Error(`Cannot deliver order in status: ${this._status}`);
+        }
+        this.changeStatus(OrderStatus.DELIVERED);
+    }
+
+    cancel(reason?: string): void {
+        if (this._status === OrderStatus.DELIVERED) {
+            throw new Error('Cannot cancel a delivered order');
+        }
+        this.changeStatus(OrderStatus.CANCELLED);
+    }
 }

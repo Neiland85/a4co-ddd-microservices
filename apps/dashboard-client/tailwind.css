@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Configure source files */
+@source "./app/**/*.{js,ts,jsx,tsx}";
+
+/* Additional configuration for Tailwind v4 */

@@ -1,14 +1,31 @@
-// Exportar DTOs y sus interfaces
-export * from './dto';
+import { connect, JSONCodec, NatsConnection } from 'nats';
+import { Logger } from '@nestjs/common';
 
-// Exportar utilidades de seguridad que funcionan
-export * from './security/braces-web-middleware';
-
-// Exportar tipos compartidos
-export * from './types';
-
-// Exportar utilidades generales que funcionan
-export * from './utils/validation-utils';
-
-// Exportar domain primitives
 export * from './domain';
+
+export class NatsEventBus {
+  private nc: NatsConnection;
+  private logger = new Logger('NatsEventBus');
+  private codec = JSONCodec();
+
+  async connect(url: string = 'nats://localhost:4222') {
+    this.nc = await connect({ servers: url });
+    this.logger.log(`✅ Conectado a NATS en ${url}`);
+  }
+
+  async publish<T>(subject: string, data: T) {
+    if (!this.nc) await this.connect();
+    this.nc.publish(subject, this.codec.encode(data));
+    this.logger.log(`📤 Evento publicado → ${subject}`);
+  }
+
+  async subscribe<T>(subject: string, handler: (data: T) => Promise<void>) {
+    if (!this.nc) await this.connect();
+    const sub = this.nc.subscribe(subject);
+    for await (const msg of sub) {
+      const decoded = this.codec.decode(msg.data) as T;
+      this.logger.log(`📥 Evento recibido → ${subject}`);
+      await handler(decoded);
+    }
+  }
+}

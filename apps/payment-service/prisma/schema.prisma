@@ -8,10 +8,16 @@ datasource db {
 }
 
 model Payment {
-  id        String   @id @default(uuid())
-  orderId   String
-  amount    Float
-  status    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    String   @id @default(uuid())
+  orderId               String   @unique
+  amount                Decimal  @db.Decimal(12, 2)
+  currency              String
+  status                String
+  stripePaymentIntentId String?  @unique
+  customerId            String
+  metadata              Json?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([customerId], name: "idx_payment_customer")
 }
