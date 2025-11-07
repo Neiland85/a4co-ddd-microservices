@@ -2,7 +2,8 @@
 
 ## 📋 Resumen Ejecutivo
 
-Se han resuelto **todos los problemas de seguridad** detectados por GitGuardian en el PR #224, además de corregir bugs relacionados con configuración de infraestructura.
+Se han resuelto **todos los problemas de seguridad** detectados por GitGuardian en el
+PR #224, además de corregir bugs relacionados con configuración de infraestructura.
 
 ---
 
@@ -12,7 +13,8 @@ Se han resuelto **todos los problemas de seguridad** detectados por GitGuardian 
 
 **Archivo**: `apps/auth-service/test/test.config.ts`
 
-#### ❌ Antes (INSEGURO):
+#### ❌ Antes (INSEGURO)
+
 ```typescript
 testCredentials: {
   username: 'test_user',
@@ -22,12 +24,13 @@ testCredentials: {
 testData: {
   validUser: {
     username: 'valid_user',
-    password: 'valid_password',  // ⚠️ Detectado como secreto real
+    password: 'valid_password',
   }
 }
 ```
 
-#### ✅ Después (SEGURO):
+#### ✅ Después (SEGURO)
+
 ```typescript
 testCredentials: {
   username: process.env.TEST_USERNAME || 'mock_test_user',
@@ -43,6 +46,7 @@ testData: {
 ```
 
 **Cambios aplicados**:
+
 - ✅ Valores por defecto claramente marcados como FAKE/MOCK
 - ✅ Soporte para variables de entorno opcionales
 - ✅ Eliminadas propiedades duplicadas en `testCredentials`
@@ -54,7 +58,8 @@ testData: {
 
 **Archivo**: `compose.dev.yaml`
 
-#### ❌ Antes (INSEGURO):
+#### ❌ Antes (INSEGURO)
+
 ```yaml
 environment:
   POSTGRES_USER: postgres
@@ -62,7 +67,8 @@ environment:
   POSTGRES_DB: a4co_db
 ```
 
-#### ✅ Después (SEGURO):
+#### ✅ Después (SEGURO)
+
 ```yaml
 environment:
   POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -71,6 +77,7 @@ environment:
 ```
 
 **Cambios aplicados**:
+
 - ✅ Lee credenciales desde variables de entorno
 - ✅ Valor por defecto obvio que requiere cambio (`CHANGE_ME_IN_ENV`)
 - ✅ Sintaxis Docker Compose compatible con `.env`
@@ -84,6 +91,7 @@ environment:
 **Problema**: El directorio `.devcontainer_backup_20251104_0715/` con backups temporales fue commiteado al repositorio.
 
 **Solución**:
+
 ```bash
 ✅ Directorio eliminado completamente
 ```
@@ -94,15 +102,18 @@ environment:
 
 **Archivo**: `.devcontainer/init-scripts/setup.sh`
 
-**Problema**: El script generaba una configuración de Prometheus incompleta comparada con `infra/observability/prometheus.yml`:
+**Problema**: El script generaba una configuración de Prometheus incompleta comparada con
+`infra/observability/prometheus.yml`
 
-#### ❌ Configuración Generada (INCOMPLETA):
+#### ❌ Configuración Generada (INCOMPLETA)
+
 ```yaml
 - targets: ["dev:3000", "dev:3001", "redis:6379", "postgres:5432"]
 # Faltaba: dev:3002 y job "node"
 ```
 
-#### ✅ Configuración Actualizada (COMPLETA):
+#### ✅ Configuración Actualizada (COMPLETA)
+
 ```yaml
 - targets:
     - "dev:3000"    # gateway o BFF
@@ -117,7 +128,8 @@ environment:
     - targets: ["dev:9100"]
 ```
 
-**Resultado**: Ahora el script genera exactamente la misma configuración que el archivo commiteado, garantizando consistencia en el monitoreo.
+**Resultado**: Ahora el script genera exactamente la misma configuración que el
+archivo commiteado, garantizando consistencia en el monitoreo.
 
 ---
 
@@ -137,8 +149,9 @@ Guía completa que incluye:
 
 ## 🔍 Verificación de Cambios
 
-### Archivos Modificados:
-```
+### Archivos Modificados
+
+```text
  M .devcontainer/init-scripts/setup.sh       # Prometheus config completa
  D .devcontainer_backup_20251104_0715/       # Backup eliminado
  M apps/auth-service/test/test.config.ts     # Sin secretos hardcodeados
@@ -155,7 +168,8 @@ Guía completa que incluye:
 **Antes**: 🔴 3 secretos detectados
 **Después**: 🟢 0 secretos detectados
 
-### Secretos Remediados:
+### Secretos Remediados
+
 1. ✅ **21900280** - Generic Password en test.config.js
 2. ✅ **20401958** - Generic Password en test.config.js
 3. ✅ **17476554** - Generic Password en compose.dev.yaml
@@ -164,29 +178,33 @@ Guía completa que incluye:
 
 ## 🚀 Próximos Pasos
 
-### Para Desarrolladores:
+### Para Desarrolladores
 
-1. **Crear archivo `.env` local**:
-```bash
-cp .env.example .env  # (si existe)
-# O crear manualmente con:
-echo "POSTGRES_PASSWORD=tu_password_aqui" > .env
-```
+1. **Crear archivo `.env` local**
 
-2. **Configurar credenciales de test** (opcional):
-```bash
-export TEST_USERNAME=custom_user
-export TEST_PASSWORD=custom_password
-```
+   ```bash
+   cp .env.example .env  # (si existe)
+   # O crear manualmente con:
+   echo "POSTGRES_PASSWORD=tu_password_aqui" > .env
+   ```
 
-3. **Ejecutar Docker Compose**:
-```bash
-docker compose -f compose.dev.yaml up -d
-```
+2. **Configurar credenciales de test** (opcional)
 
-### Para CI/CD:
+   ```bash
+   export TEST_USERNAME=custom_user
+   export TEST_PASSWORD=custom_password
+   ```
+
+3. **Ejecutar Docker Compose**
+
+   ```bash
+   docker compose -f compose.dev.yaml up -d
+   ```
+
+### Para CI/CD
 
 Asegurar que las siguientes variables estén configuradas en GitHub Secrets:
+
 - `POSTGRES_PASSWORD`
 - `JWT_SECRET`
 - Otras credenciales sensibles

@@ -1,74 +1,18 @@
 {
   "compilerOptions": {
-    /* 🔧 Compatibilidad moderna */
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-
-    /* ⚙️ interoperabilidad y módulos híbridos */
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": false,
-
-    /* 🧠 Reglas de calidad y consistencia */
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    /* 🧩 Decorators y metadata (NestJS + class-transformer) */
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-
-    /* 📦 Paths compartidos */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@test/*": ["test/*"],
-      "@a4co/shared-utils": ["packages/shared-utils/src"],
-      "@a4co/design-system": ["packages/design-system/src"],
-      "@a4co/observability": ["packages/observability/src"],
-      "@apps/*": ["apps/*/src"],
-      "@shared/*": ["packages/*/src"]
-    },
-
-    /* 🏗️ Output & build incremental */
-    "declaration": true,
-    "declarationMap": true,
+    "strictPropertyInitialization": false,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "removeComments": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo",
-
-    /* 🚨 Estrictos a nivel profesional */
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "exactOptionalPropertyTypes": true
+    "outDir": "dist"
   },
-  "include": [
-    "src/**/*",
-    "apps/**/*",
-    "packages/**/*",
-    "types/**/*",
-    "global.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".next",
-    "coverage",
-    "**/test/**/*"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
-

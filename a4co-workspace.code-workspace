@@ -25,7 +25,16 @@
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
-    }
+    },
+    "json.schemas": [
+      {
+        "fileMatch": [
+          "**/package.json"
+        ],
+        "schema": null
+      }
+    ],
+    "json.schemaDownload.enable": false
   },
   "extensions": {
     "recommendations": [

@@ -1,68 +1,20 @@
 {
   "name": "@a4co/shared-utils",
   "version": "1.0.0",
-  "description": "Utilidades compartidas para el monorepo a4co-ddd-microservices",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "clean": "rm -rf dist",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "lint": "echo 'Linting temporarily disabled'",
-    "lint:fix": "echo 'Linting temporarily disabled'",
-    "type-check": "echo 'Type-check temporarily disabled'",
-    "test:dev-security": "jest src/security/__tests__/dev-server-security.test.ts",
-    "check:dev-security": "node scripts/check-dev-security.js",
-    "test:micromatch-security": "jest src/security/__tests__/micromatch-redos.test.ts",
-    "check:micromatch-security": "node scripts/check-micromatch-security.js",
-    "test:vite-static-security": "jest src/security/__tests__/vite-static-file-security.test.ts",
-    "check:vite-static-security": "node scripts/check-vite-static-security.js"
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist"
   },
-  "keywords": [
-    "shared",
-    "utils",
-    "microservices",
-    "ddd"
-  ],
-  "author": "A4CO Team <info@a4co.com>",
-  "license": "Apache-2.0",
   "dependencies": {
-    "@prisma/client": "6.18.0",
-    "axios": "^1.12.0",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
-    "micromatch": "^4.0.8",
-    "nats": "^2.19.0",
-    "prisma": "6.18.0",
-    "react": "^19.1.0",
-    "uuid": "^9.0.1"
+    "nats": "^2.29.3",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.10.5",
-    "@types/react": "^19.0.0",
-    "@types/uuid": "^9.0.8",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^30.1.2",
-    "jsdom": "^26.1.0",
-    "ts-jest": "^29.1.2",
-    "typescript": "^5.9.2"
-  },
-  "exports": {
-    "./security/validators/temp-file.validator": {
-      "types": "./dist/security/validators/temp-file.validator.d.ts",
-      "default": "./dist/security/validators/temp-file.validator.js"
-    },
-    "./security/middleware/temp-file-protector": {
-      "types": "./dist/security/middleware/temp-file-protector.d.ts",
-      "default": "./dist/security/middleware/temp-file-protector.js"
-    },
-    "./security/utils/safe-temp-file-manager": {
-      "types": "./dist/security/utils/safe-temp-file-manager.d.ts",
-      "default": "./dist/security/utils/safe-temp-file-manager.js"
-    }
+    "@nestjs/common": "^10.4.20",
+    "@types/node": "^24.10.0",
+    "typescript": "^5.9.3"
   }
 }

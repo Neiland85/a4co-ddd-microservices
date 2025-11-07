@@ -1,9 +1,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-<<<<<<< HEAD
-  collectCoverage: true,
-=======
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/apps', '<rootDir>/packages'],
   testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   transform: {
@@ -15,6 +12,7 @@ module.exports = {
     'apps/**/src/**/*.{js,jsx,ts,tsx}',
     'packages/**/src/**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
+    '!**/*.config.ts',
     '!**/node_modules/**',
     '!**/dist/**',
     '!**/build/**',
@@ -25,7 +23,6 @@ module.exports = {
     '!**/*.test.{js,jsx,ts,tsx}',
     '!**/*.spec.{js,jsx,ts,tsx}',
   ],
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   coverageDirectory: 'coverage',
   coverageReporters: [
     'text',
@@ -55,22 +52,8 @@ module.exports = {
       statements: 80,
     },
   },
-<<<<<<< HEAD
-  collectCoverageFrom: [
-    'apps/**/*.ts',
-    'packages/**/*.ts',
-    '!**/*.d.ts',
-    '!**/*.config.ts',
-    '!**/node_modules/**',
-    '!**/dist/**',
-    '!**/coverage/**',
-    '!**/*.spec.ts',
-    '!**/*.test.ts'
-  ],
-=======
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@shared/(.*)$': '<rootDir>/packages/shared-utils/src/$1',
   },
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 };

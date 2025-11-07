@@ -1,61 +1,11 @@
 {
-  // Formateo y linting
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
-  },
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "jsx",
-    "tsx"
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "**/package.json"
+      ],
+      "schema": null
+    }
   ],
-  "eslint.workingDirectories": [
-    "apps/**",
-    "packages/**"
-  ], // Soporte para monorepo: lint por workspace
-  // Configuración para TypeScript y pnpm en monorepo
-  "typescript.tsdk": "node_modules/typescript/lib", // Usa TS del proyecto (compatible con v5.x+)
-  "npm.packageManager": "pnpm", // Fuerza pnpm como gestor (evita yarn/npm mixups)
-  "npm.autoDetect": "off", // Desactiva detección auto de npm/yarn
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/build": true,
-    "**/.next": true // Excluye caches de Next.js
-  },
-  // Configuración específica para lenguajes
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml"
-  },
-  // Docker y debugging
-  "docker.showStartPage": false,
-  "jest.autoRun": "off", // Ejecuta tests manualmente para evitar overhead en monorepo
-  // Consistencia general (alineado con .editorconfig recomendado)
-  "files.eol": "\n",
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
-  // Copilot Pro+ optimizaciones
-  "github.copilot.inlineSuggestions.enable": true,
-  "github.copilot.editor.enableAutoCompletions": true,
-  "sonarlint.connectedMode.project": {
-    "connectionId": "Neiland85",
-    "projectKey": "Neiland85_a4co-ddd-microservices_KEY"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  "json.schemaDownload.enable": false
 }
