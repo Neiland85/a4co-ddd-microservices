@@ -1,50 +1,24 @@
 # Diccionario del Proyecto
 
-Última sincronización: 7/11/2025, 22:26:50
+Última sincronización: 7/11/2025, 22:35:24
 
 ---
-### User (global VSCode) (11)
-- apps
-- conf
-- frontend
-- into
-- nginx
-- otel
-- proxy
-- publish
-- reverse
-- stack
-- updates
+### User (global VSCode) (3)
+- conflicts
+- lockfile
+- regenerate
 
-### Workspace (proyecto local) (18)
-- apps
-- auto
-- commit
-- conf
-- cspell
-- dictionary
-- enrichment
-- frontend
-- integrate
-- into
-- nginx
-- otel
-- post
-- proxy
-- publish
-- reverse
-- stack
-- updates
+### Workspace (proyecto local) (3)
+- conflicts
+- lockfile
+- regenerate
 
-### Commits recientes detectados (154)
+### Commits recientes detectados (137)
 - about
 - accidental
 - actions
 - actual
-- actualizar
 - added
-- afectados
-- ahora
 - align
 - already
 - apps
@@ -62,21 +36,18 @@
 - client
 - command
 - commit
-- completa
 - compose
 - conf
 - configuration
 - configurations
+- conflicts
 - confusion
 - contained
 - correct
-- corregidos
-- corregir
 - cspell
 - dashboard
 - defined
 - definition
-- dependencias
 - deps
 - devcontainer
 - development
@@ -95,11 +66,10 @@
 - entries
 - event
 - executes
-- existe
 - exists
-- exitosamente
 - files
 - first
+- from
 - frontend
 - github
 - gmail
@@ -110,30 +80,25 @@
 - incorrect
 - infra
 - init
-- install
 - integrate
 - integration
 - into
 - invalid
-- inventory
-- jest
 - json
 - kept
 - keys
 - last
 - line
+- lockfile
 - main
 - mapping
-- matching
 - methods
 - metrics
 - nats
 - neiland
 - nest
-- nestjs
 - nginx
 - node
-- notification
 - observability
 - only
 - opentelemetry
@@ -145,7 +110,6 @@
 - passwords
 - path
 - paths
-- payment
 - pipeline
 - pnpm
 - post
@@ -155,16 +119,15 @@
 - proxy
 - publish
 - redundant
+- regenerate
 - remove
 - removed
-- resuelve
+- resolve
 - reverse
-- schematics
 - script
 - scripts
 - security
 - service
-- servicios
 - setup
 - shared
 - silently
@@ -174,17 +137,14 @@
 - sync
 - that
 - this
-- transportista
 - tsconfig
 - twice
 - updated
 - updates
 - used
-- user
 - utils
 - value
 - various
-- versiones
 - vulnerabilities
 - which
 - with
