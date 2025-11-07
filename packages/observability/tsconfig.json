@@ -5,7 +5,13 @@
     "baseUrl": "./",
     "rootDir": "./src",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["node", "jest"],
+    "types": [
+      "node",
+      "vitest/globals",
+      "uuid"
+    ],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "exactOptionalPropertyTypes": false,
