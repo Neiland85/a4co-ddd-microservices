@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2022",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -12,7 +12,10 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
-    "types": ["node", "reflect-metadata"]
+    "types": [
+      "node",
+      "reflect-metadata"
+    ]
   },
   "include": [
     "src/index.ts",
