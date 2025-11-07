@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "es2022",
-    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -16,14 +16,14 @@
   },
   "include": [
     "src/index.ts",
-    "src/events/**/*.ts"
+    "src/events/**/*.ts",
+    "src/dto/**/*.ts"
   ],
   "exclude": [
     "**/__tests__/**",
     "**/*.test.ts",
     "src/api-clients/**",
     "src/components/**",
-    "src/dto/**",
     "src/security/**"
   ]
 }

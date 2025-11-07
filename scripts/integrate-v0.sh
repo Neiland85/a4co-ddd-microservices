@@ -8,9 +8,11 @@ echo "========================================="
 
 # Crear estructura de directorios
 echo "📁 Creando estructura de directorios..."
-mkdir -p src/components/v0
-mkdir -p src/types/v0
-mkdir -p src/utils/v0
+BASE_DIR="packages/copilot-dashboard"
+
+mkdir -p "$BASE_DIR/src/components/v0"
+mkdir -p "$BASE_DIR/src/types/v0"
+mkdir -p "$BASE_DIR/src/utils/v0"
 
 # Función para integrar un componente de V0
 integrate_v0_component() {
@@ -20,19 +22,19 @@ integrate_v0_component() {
     echo "🔧 Integrando componente: $component_name"
     
     # Backup del componente existente si existe
-    if [ -f "src/components/market/$component_name.tsx" ]; then
-        cp "src/components/market/$component_name.tsx" "src/components/market/$component_name.backup.tsx"
+    if [ -f "$BASE_DIR/src/components/market/$component_name.tsx" ]; then
+        cp "$BASE_DIR/src/components/market/$component_name.tsx" "$BASE_DIR/src/components/market/$component_name.backup.tsx"
         echo "   ✅ Backup creado: $component_name.backup.tsx"
     fi
     
     # Copiar componente de V0
     if [ -f "$v0_file" ]; then
-        cp "$v0_file" "src/components/v0/$component_name.tsx"
+        cp "$v0_file" "$BASE_DIR/src/components/v0/$component_name.tsx"
         echo "   ✅ Componente V0 copiado"
         
         # Auto-ajustar imports para nuestro proyecto
-        sed -i '' 's/import { Button }/import { Button } from "..\/ui\/button"/g' "src/components/v0/$component_name.tsx"
-        sed -i '' 's/import { Card }/import { Card } from "..\/ui\/card"/g' "src/components/v0/$component_name.tsx"
+        sed -i '' 's/import { Button }/import { Button } from "..\/ui\/button"/g' "$BASE_DIR/src/components/v0/$component_name.tsx"
+        sed -i '' 's/import { Card }/import { Card } from "..\/ui\/card"/g' "$BASE_DIR/src/components/v0/$component_name.tsx"
         
         echo "   ✅ Imports ajustados"
     else
@@ -107,7 +109,7 @@ npm run lint
 echo ""
 echo "🎉 ¡Integración completada!"
 echo "📝 Próximos pasos:"
-echo "   1. Revisar componentes en src/components/v0/"
+echo "   1. Revisar componentes en $BASE_DIR/src/components/v0/"
 echo "   2. Conectar con hooks existentes"
 echo "   3. Ajustar styling si es necesario"
 echo "   4. Probar en http://localhost:3001"

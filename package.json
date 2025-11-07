@@ -6,8 +6,22 @@
     "dev:order": "turbo run start:dev --filter=@a4co/order-service",
     "dev:payment": "turbo run start:dev --filter=@a4co/payment-service",
     "dev:inventory": "turbo run start:dev --filter=@a4co/inventory-service",
+    "dev": "pnpm -r run dev",
+    "build": "pnpm -r run build",
     "build:all": "turbo run build",
-    "test:all": "turbo run test"
+    "test": "pnpm -r run test",
+    "test:all": "turbo run test",
+    "clean": "find . -type d -name dist -not -path './node_modules/*' -exec rm -rf {} +",
+    "prisma:generate": "pnpm -r exec prisma generate",
+    "prisma:migrate": "pnpm -r exec prisma migrate dev --name init",
+    "prisma:studio": "pnpm -r exec prisma studio",
+    "lint": "pnpm -r run lint",
+    "lint:fix": "pnpm -r run lint:fix",
+    "metrics": "curl http://localhost:3004/orders/metrics | grep saga || true",
+    "ci:prepare": "pnpm -w run clean && pnpm install && pnpm build",
+    "ci:test": "pnpm run test && pnpm run lint",
+    "update:dicts": "ts-node scripts/update-cspell-dicts.ts",
+    "prepare": "simple-git-hooks"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.2",
@@ -16,19 +30,38 @@
     "pnpm": "^10.14.0",
     "turbo": "^2.6.0"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "pnpm@10.14.0",
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/express": "^5.0.5",
+    "@types/jest": "^30.0.0",
     "@types/jsdom": "^27.0.0",
     "@types/micromatch": "^4.0.10",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/uuid": "^10.0.0",
+    "@types/vscode": "^1.105.0",
     "axios": "^1.13.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "express": "^5.1.0",
     "jsdom": "^27.1.0",
-    "micromatch": "^4.0.8"
-  }
+    "json5": "^2.2.3",
+    "micromatch": "^4.0.8",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "simple-git-hooks": "^2.13.1",
+    "tailwindcss": "^3.4.18",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "simple-git-hooks": {
+    "post-commit": "pnpm run update:dicts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.14.0"
 }

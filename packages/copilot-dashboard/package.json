@@ -1,0 +1,31 @@
+{
+  "name": "@a4co/copilot-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Panel de control y utilidades para la extensión Copilot Pro+.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "media"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/uuid": "^11.0.0",
+    "@types/vscode": "^1.105.0",
+    "jest": "^30.2.0",
+    "typescript": "^5.9.3"
+  }
+}
