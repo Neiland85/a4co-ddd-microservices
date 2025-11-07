@@ -59,6 +59,22 @@ export class OrderController {
     };
   }
 
+  @Get()
+  @ApiOperation({ summary: 'Health check endpoint' })
+  getHealth() {
+    return {
+      status: 'ok',
+      service: 'order-service',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get('metrics')
+  @ApiOperation({ summary: 'Prometheus metrics endpoint' })
+  async getMetrics() {
+    return this.metricsService.getMetrics();
+  }
+
   @Get(':orderId')
   @ApiOperation({ summary: 'Get order by ID' })
   @ApiResponse({ status: 200, description: 'Order found' })
@@ -80,21 +96,5 @@ export class OrderController {
       createdAt: result.createdAt.toISOString(),
       updatedAt: result.updatedAt.toISOString(),
     };
-  }
-
-  @Get()
-  @ApiOperation({ summary: 'Health check endpoint' })
-  getHealth() {
-    return {
-      status: 'ok',
-      service: 'order-service',
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  @Get('metrics')
-  @ApiOperation({ summary: 'Prometheus metrics endpoint' })
-  async getMetrics() {
-    return this.metricsService.getMetrics();
   }
 }
