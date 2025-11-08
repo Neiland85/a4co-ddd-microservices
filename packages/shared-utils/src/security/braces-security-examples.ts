@@ -295,7 +295,9 @@ export async function runAllExamples() {
   console.log('✅ All examples completed');
 }
 
-// Ejecutar ejemplos si se llama directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Ejecutar ejemplos si se llama directamente (evita import.meta para compatibilidad CommonJS)
+const isDirectExecution = Boolean(process?.argv?.[1]?.includes('braces-security-examples'));
+
+if (isDirectExecution) {
   runAllExamples().catch(console.error);
 }

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "es2022",
+    "module": "NodeNext",
     "moduleResolution": "nodenext",
     "declaration": true,
     "emitDecoratorMetadata": true,
@@ -12,18 +12,21 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
-    "types": ["node", "reflect-metadata"]
+    "types": [
+      "node",
+      "reflect-metadata"
+    ]
   },
   "include": [
     "src/index.ts",
-    "src/events/**/*.ts"
+    "src/events/**/*.ts",
+    "src/dto/**/*.ts"
   ],
   "exclude": [
     "**/__tests__/**",
     "**/*.test.ts",
     "src/api-clients/**",
     "src/components/**",
-    "src/dto/**",
     "src/security/**"
   ]
 }

@@ -11,9 +11,12 @@ on:
   # push:
   #   branches:
   #     - main
-      - develop
-    paths:
-      - 'packages/design-system/**'
+      # - develop
+    # paths:
+    #   - 'packages/design-system/**'
+
+# NOTE: push/pull_request triggers temporarily disabled. Uncomment the block above
+# to re-enable push/pull_request triggers for design-system preview workflows.
 
 jobs:
   build-and-preview:

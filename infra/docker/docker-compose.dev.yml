@@ -12,8 +12,7 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-
-  apps/gateway:
+  gateway:
     build: ./apps/gateway
     volumes:
       - ./apps/gateway:/app

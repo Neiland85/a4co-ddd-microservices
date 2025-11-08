@@ -315,8 +315,10 @@ async function main() {
   process.exit(hasCriticalOrHigh ? 1 : 0);
 }
 
-// Ejecutar si se llama directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Ejecutar si se llama directamente (evita import.meta para compatibilidad CommonJS)
+const isCliExecution = Boolean(process?.argv?.[1]?.includes('validate-braces-security'));
+
+if (isCliExecution) {
   main().catch(console.error);
 }
 
