@@ -11,10 +11,13 @@ on:
   #       description: 'Environment to deploy to'
   #       required: true
   #       default: 'staging'
-        type: choice
-        options:
-        - staging
-        - production
+  # type: choice
+  # options:
+  #   - staging
+  #   - production
+
+# NOTE: workflow_dispatch inputs temporarily disabled. Uncomment the block above
+# (lines related to workflow_dispatch and inputs) to re-enable manual environment selection.
 
 jobs:
   deploy:

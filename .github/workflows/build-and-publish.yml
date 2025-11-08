@@ -20,16 +20,10 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        chore/observability-otel-updates
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
-
-      - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         uses: actions/checkout@v4
 
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
-        main
         with:
           node-version: 22
           cache: 'pnpm'
@@ -38,10 +32,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: 🔐 Login to GitHub Container Registry
-        chore/observability-otel-updates
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef
         uses: docker/login-action@v3
-        main
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

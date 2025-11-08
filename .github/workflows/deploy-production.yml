@@ -1,22 +1,48 @@
 name: Production Deploy (Vercel / Supabase)
 
-# Temporarily disabled - use workflow_call only for manual triggers
 on:
   workflow_call:
-  # push:
-  #   branches: ["main"]
-  # workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        description: 'Target environment'
+        required: false
+        default: 'production'
+      app_path:
+        type: string
+        description: 'Relative path to app to deploy (monorepo)'
+        required: false
+        default: 'apps/dashboard-client'
+      version:
+        type: string
+        description: 'Optional version/tag for release'
+        required: false
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        description: 'Target environment'
+        required: false
+        default: 'production'
+      app_path:
+        type: string
+        description: 'Relative path to app to deploy (monorepo)'
+        required: false
+        default: 'apps/dashboard-client'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - '.github/workflows/deploy-production.yml'
+      - 'apps/**'
 
 permissions:
   contents: read
-  id-token: write
   deployments: write
 
 env:
-  # Valores por defecto (sobre-escribibles por secrets)
   NODE_ENV: production
-  PNPM_HOME: ~/.pnpm
-  PATH: ~/.pnpm:$PATH
 
 jobs:
   production:
@@ -104,16 +130,13 @@ jobs:
       # -------------------------
       # Optional: Supabase CLI tasks (functions / edge)
       # -------------------------
-      - name: ⚙️ Supabase: deploy functions / edge (optional)
+      - name: Supabase deploy functions (optional)
         if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY && secrets.SUPABASE_PROJECT_REF }}
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_ACCESS_TOKEN: "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+          SUPABASE_PROJECT_REF: "${{ secrets.SUPABASE_PROJECT_REF }}"
         run: |
-          # Use pnpm dlx to run supabase CLI without global install
           pnpm dlx supabase --version || pnpm dlx supabase --version
-          # Example: deploy functions (adapt paths/names to your repo)
-          # pnpm dlx supabase functions deploy my-function --project-ref $SUPABASE_PROJECT_REF
           echo "Supabase CLI available. Add specific supabase commands above if needed."
 
       # -------------------------

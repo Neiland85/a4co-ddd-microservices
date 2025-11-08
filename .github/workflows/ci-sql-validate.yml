@@ -2,6 +2,13 @@ name: Validate SQL scripts (PostgreSQL)
 
 # Validates scripts/init-db.sql by running it against a disposable Postgres DB.
 # Triggers on PRs and can be called manually via workflow_call.
+#
+# Optional repository secrets used by this workflow:
+# - CI_POSTGRES_PASSWORD: password for disposable CI postgres (defaults to 'postgres')
+# - APP_DB_PASSWORD: password for the application user created during the test run
+#
+# Note: These secrets are for CI testing only. Production credentials must be managed
+# separately and should never be stored in repository files.
 on:
   workflow_call: {}
   pull_request:
@@ -42,14 +49,60 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y postgresql-client
 
-      - name: Run init-db.sql against disposable Postgres
-        env:
-          PGPASSWORD: postgres
+      - name: Ensure envsubst available (gettext-base)
         run: |
-          echo "Running scripts/init-db.sql against local Postgres (a4co_platform)..."
-          # Print a short header and fail fast on errors
+          if command -v envsubst >/dev/null 2>&1; then
+            echo "envsubst already available"
+          else
+            sudo apt-get update -y
+            sudo apt-get install -y gettext-base
+          fi
+
+      - name: Preprocess and run init-db.sql against disposable Postgres
+        env:
+          PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'postgres' }}
+          APP_DB_PASSWORD: ${{ secrets.APP_DB_PASSWORD || 'secure_ci_test_password' }}
+        run: |
+          echo "Preprocessing scripts/init-db.sql with envsubst..."
           set -euo pipefail
-          psql -h localhost -U postgres -d a4co_platform -f scripts/init-db.sql
+          # Expand variables into a temporary processed SQL file
+          envsubst < scripts/init-db.sql > /tmp/init-db-processed.sql
+          echo "Processed SQL preview (first 80 chars):"
+          head -c 80 /tmp/init-db-processed.sql || true
+          echo "Running processed SQL against local Postgres (a4co_platform)..."
+          psql -h localhost -U postgres -d a4co_platform -f /tmp/init-db-processed.sql
+
+      - name: Upload processed SQL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: processed-sql-script
+          path: /tmp/init-db-processed.sql
+          retention-days: 7
+
+      - name: Validate SQL security best practices (warnings)
+        run: |
+          echo "Running SQL security validation script..."
+          chmod +x ./scripts/validate-sql-security.sh || true
+          ./scripts/validate-sql-security.sh /tmp/init-db-processed.sql || true
+
+      - name: Verify no unexpanded variables remain
+        run: |
+          if grep -qE '\$\{[A-Z_]+\}' /tmp/init-db-processed.sql; then
+            echo "::error file=/tmp/init-db-processed.sql::Unexpanded variables found in processed SQL"
+            exit 1
+          else
+            echo "No unexpanded variables found in processed SQL"
+          fi
+
+      - name: Test idempotency (run processed SQL twice)
+        env:
+          PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'postgres' }}
+        run: |
+          echo "Running processed SQL twice to verify idempotency..."
+          set -euo pipefail
+          psql -h localhost -U postgres -d a4co_platform -f /tmp/init-db-processed.sql
+          psql -h localhost -U postgres -d a4co_platform -f /tmp/init-db-processed.sql
+
 
       - name: Success notice
-        run: echo "scripts/init-db.sql executed successfully against disposable Postgres." 
+        run: echo "scripts/init-db.sql executed successfully against disposable Postgres."
