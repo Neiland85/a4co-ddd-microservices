@@ -28,8 +28,8 @@ const backendTemplate = {
     baseUrl: ".",
     paths: {
       "@/*": ["src/*"],
-      "@a4co/shared-utils": ["../shared-utils/src"],
-      "@a4co/shared-utils/*": ["../shared-utils/src/*"]
+      "@a4co/shared-utils": [],
+      "@a4co/shared-utils/*": []
     }
   },
   include: ["src/**/*.ts"],
@@ -62,8 +62,9 @@ const frontendTemplate = {
     baseUrl: ".",
     paths: {
       "@/*": ["./*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
-      "@a4co/design-system": ["../../packages/design-system/src"]
+      "@a4co/shared-utils": [],
+      "@a4co/shared-utils/*": [],
+      "@a4co/design-system": []
     },
     plugins: [{ name: "next" }]
   },
@@ -87,8 +88,39 @@ function detectProjectType(dir: string): "backend" | "frontend" | null {
   return null;
 }
 
+function toRelativeImportPath(fromDir: string, target: string): string {
+  let relativePath = path.relative(fromDir, target);
+  if (!relativePath.startsWith(".")) {
+    relativePath = `./${relativePath}`;
+  }
+  return relativePath.replace(/\\/g, "/");
+}
+
 function writeConfig(dir: string, type: "backend" | "frontend") {
-  const config = type === "backend" ? backendTemplate : frontendTemplate;
+  const config = JSON.parse(
+    JSON.stringify(type === "backend" ? backendTemplate : frontendTemplate)
+  );
+
+  const sharedUtilsSrc = path.join(root, "packages", "shared-utils", "src");
+  const sharedUtilsPath = toRelativeImportPath(dir, sharedUtilsSrc);
+
+  config.compilerOptions.paths["@a4co/shared-utils"] = [sharedUtilsPath];
+  if (config.compilerOptions.paths["@a4co/shared-utils/*"]) {
+    config.compilerOptions.paths["@a4co/shared-utils/*"] = [
+      `${sharedUtilsPath}/*`
+    ];
+  }
+
+  if (type === "frontend") {
+    const designSystemSrc = path.join(root, "packages", "design-system", "src");
+    if (fs.existsSync(designSystemSrc)) {
+      const designSystemPath = toRelativeImportPath(dir, designSystemSrc);
+      config.compilerOptions.paths["@a4co/design-system"] = [designSystemPath];
+    } else {
+      delete config.compilerOptions.paths["@a4co/design-system"];
+    }
+  }
+
   const filePath = path.join(dir, "tsconfig.json");
   fs.writeFileSync(filePath, JSON.stringify(config, null, 2) + "\n");
   console.log(`✅ Updated ${type.toUpperCase()} tsconfig: ${filePath}`);

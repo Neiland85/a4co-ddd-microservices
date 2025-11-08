@@ -32,10 +32,10 @@
         "src/*"
       ],
       "@a4co/shared-utils": [
-        "../shared-utils/src"
+        "../../packages/shared-utils/src"
       ],
       "@a4co/shared-utils/*": [
-        "../shared-utils/src/*"
+        "../../packages/shared-utils/src/*"
       ]
     }
   },
