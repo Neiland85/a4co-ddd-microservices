@@ -396,9 +396,9 @@
     "json"
   ],
   "editor.codeActionsOnSave": {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.useEditorConfig": true,
+    "editor.formatOnSave": "explicit",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.useEditorConfig": "explicit",
     "source.fixAll.eslint": "explicit"
   }
 }
