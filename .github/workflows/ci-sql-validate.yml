@@ -60,7 +60,7 @@ jobs:
 
       - name: Preprocess and run init-db.sql against disposable Postgres
         env:
-          PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'postgres' }}
+          PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD }}
           APP_DB_PASSWORD: ${{ secrets.APP_DB_PASSWORD || 'secure_ci_test_password' }}
         run: |
           echo "Preprocessing scripts/init-db.sql with envsubst..."
@@ -81,8 +81,11 @@ jobs:
 
       - name: Validate SQL security best practices (warnings)
         run: |
-          echo "Running SQL security validation script..."
+          echo "Running SQL security validation script against source and processed SQL..."
           chmod +x ./scripts/validate-sql-security.sh || true
+          echo "Checking original script: scripts/init-db.sql"
+          ./scripts/validate-sql-security.sh scripts/init-db.sql || true
+          echo "Checking processed script: /tmp/init-db-processed.sql"
           ./scripts/validate-sql-security.sh /tmp/init-db-processed.sql || true
 
       - name: Verify no unexpanded variables remain

@@ -1,14 +1,17 @@
 # A4CO DDD Microservices (Monorepo)
 
-This repository contains multiple microservices following DDD patterns. Below is a short developer guide and notes about CI/CD workflows.
+This repository contains multiple microservices following DDD patterns.
+Below is a short developer guide and notes about CI/CD workflows.
 
 ## CI/CD Workflows
 
 ### SQL Script Validation
 
-The repository includes `ci-sql-validate.yml` which validates SQL scripts under `scripts/**` on pull requests and pushes to `develop`.
+- The repository includes `ci-sql-validate.yml` which validates SQL scripts under `scripts/**` on pull requests
+  and pushes to `develop`.
 
-- It runs a disposable PostgreSQL 15 container, preprocesses `scripts/init-db.sql` with `envsubst`, and executes the processed SQL.
+- It runs a disposable PostgreSQL 15 container, preprocesses `scripts/init-db.sql` with `envsubst`,
+  and executes the processed SQL.
 - Optional secrets used by the workflow (can be set in GitHub repository secrets):
   - `CI_POSTGRES_PASSWORD` (defaults to `postgres` for disposable CI DB)
   - `APP_DB_PASSWORD` (defaults to `secure_ci_test_password` for CI user)

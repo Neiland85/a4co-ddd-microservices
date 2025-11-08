@@ -2,7 +2,8 @@
 
 ## Introducción
 
-Este documento describe las mejores prácticas para la seguridad de la base de datos, gestión de secretos y workflows en CI/CD para el repositorio A4CO.
+Este documento describe las mejores prácticas para la seguridad de la base de datos,
+la gestión de secretos y los workflows en CI/CD para el repositorio A4CO.
 
 ## Database Security Best Practices
 
@@ -20,7 +21,8 @@ Este documento describe las mejores prácticas para la seguridad de la base de d
 ## Secrets Management in CI/CD
 
 - Referenciar secretos con `${{ secrets.NAME }}`.
-- Para valores usados en archivos de configuración, procesarlos con `envsubst` y verificar que todas las variables han sido expandidas antes de la ejecución.
+- Para valores usados en archivos de configuración, procesarlos con `envsubst`.
+  Verificar que todas las variables han sido expandidas antes de la ejecución.
 - No subir artefactos que contengan secretos.
 - Establecer caducidad/retención razonable para artefactos y logs.
 
