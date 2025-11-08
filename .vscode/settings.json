@@ -400,5 +400,11 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.useEditorConfig": true,
     "source.fixAll.eslint": "explicit"
+  },
+  "thunder-client.customMethods": "SEARCH,SUBSCRIBE,UNSUBSCRIBE,PROPFIND,REPORT",
+  "chat.mcp.discovery.enabled": {
+    "cursor-global": true,
+    "claude-desktop": true,
+    "cursor-workspace": true
   }
 }

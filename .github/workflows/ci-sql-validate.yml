@@ -9,11 +9,12 @@ name: Validate SQL scripts (PostgreSQL)
 #
 # Note: These secrets are for CI testing only. Production credentials must be managed
 # separately and should never be stored in repository files.
+
 on:
   workflow_call: {}
   pull_request:
     paths:
-      - 'scripts/**'
+      - "scripts/**"
   push:
     branches:
       - develop
@@ -21,17 +22,21 @@ on:
 jobs:
   validate-sql:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:15
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'postgres' }}
           POSTGRES_DB: a4co_platform
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready --health-interval=1s --health-timeout=5s --health-retries=30
+          --health-cmd pg_isready
+          --health-interval=1s
+          --health-timeout=5s
+          --health-retries=30
 
     steps:
       - name: Checkout repo
@@ -60,15 +65,16 @@ jobs:
 
       - name: Preprocess and run init-db.sql against disposable Postgres
         env:
-          PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD }}
+          PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'postgres' }}
           APP_DB_PASSWORD: ${{ secrets.APP_DB_PASSWORD || 'secure_ci_test_password' }}
         run: |
           echo "Preprocessing scripts/init-db.sql with envsubst..."
           set -euo pipefail
-          # Expand variables into a temporary processed SQL file
           envsubst < scripts/init-db.sql > /tmp/init-db-processed.sql
+
           echo "Processed SQL preview (first 80 chars):"
           head -c 80 /tmp/init-db-processed.sql || true
+
           echo "Running processed SQL against local Postgres (a4co_platform)..."
           psql -h localhost -U postgres -d a4co_platform -f /tmp/init-db-processed.sql
 
@@ -79,13 +85,11 @@ jobs:
           path: /tmp/init-db-processed.sql
           retention-days: 7
 
-      - name: Validate SQL security best practices (warnings)
+      - name: Validate SQL security best practices
         run: |
-          echo "Running SQL security validation script against source and processed SQL..."
+          echo "Running SQL security validation..."
           chmod +x ./scripts/validate-sql-security.sh || true
-          echo "Checking original script: scripts/init-db.sql"
           ./scripts/validate-sql-security.sh scripts/init-db.sql || true
-          echo "Checking processed script: /tmp/init-db-processed.sql"
           ./scripts/validate-sql-security.sh /tmp/init-db-processed.sql || true
 
       - name: Verify no unexpanded variables remain
@@ -106,6 +110,6 @@ jobs:
           psql -h localhost -U postgres -d a4co_platform -f /tmp/init-db-processed.sql
           psql -h localhost -U postgres -d a4co_platform -f /tmp/init-db-processed.sql
 
-
       - name: Success notice
-        run: echo "scripts/init-db.sql executed successfully against disposable Postgres."
+        run: echo "✅ scripts/init-db.sql executed successfully against disposable Postgres."
+
