@@ -60,7 +60,10 @@ jobs:
 
       - name: Preprocess and run init-db.sql against disposable Postgres
         env:
+        develop
+          PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD }}
           PGPASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'postgres' }}
+        main
           APP_DB_PASSWORD: ${{ secrets.APP_DB_PASSWORD || 'secure_ci_test_password' }}
         run: |
           echo "Preprocessing scripts/init-db.sql with envsubst..."
