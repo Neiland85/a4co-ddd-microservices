@@ -1,0 +1,55 @@
+name: Validate SQL scripts (PostgreSQL)
+
+# Validates scripts/init-db.sql by running it against a disposable Postgres DB.
+# Triggers on PRs and can be called manually via workflow_call.
+on:
+  workflow_call: {}
+  pull_request:
+    paths:
+      - 'scripts/**'
+  push:
+    branches:
+      - develop
+
+jobs:
+  validate-sql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: a4co_platform
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval=1s --health-timeout=5s --health-retries=30
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Wait for Postgres
+        run: |
+          echo "Waiting for Postgres to be ready..."
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 && break || sleep 1
+          done
+
+      - name: Install psql client
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y postgresql-client
+
+      - name: Run init-db.sql against disposable Postgres
+        env:
+          PGPASSWORD: postgres
+        run: |
+          echo "Running scripts/init-db.sql against local Postgres (a4co_platform)..."
+          # Print a short header and fail fast on errors
+          set -euo pipefail
+          psql -h localhost -U postgres -d a4co_platform -f scripts/init-db.sql
+
+      - name: Success notice
+        run: echo "scripts/init-db.sql executed successfully against disposable Postgres." 
