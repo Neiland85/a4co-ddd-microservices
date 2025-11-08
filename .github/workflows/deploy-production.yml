@@ -156,16 +156,13 @@ jobs:
       # Optional: Supabase CLI tasks (functions / edge)
       # -------------------------
       - name: Supabase deploy functions (optional)
+        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY && secrets.SUPABASE_PROJECT_REF }}
         env:
-          SUPABASE_ACCESS_TOKEN: "${{ secrets.SUPABASE_SERVICE_ROLE_KEY || '' }}"
-          SUPABASE_PROJECT_REF: "${{ secrets.SUPABASE_PROJECT_REF || '' }}"
+          SUPABASE_ACCESS_TOKEN: "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+          SUPABASE_PROJECT_REF: "${{ secrets.SUPABASE_PROJECT_REF }}"
         run: |
-          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_REF" ]; then
-            echo "Supabase credentials not provided; skipping Supabase CLI tasks"
-          else
-            pnpm dlx supabase --version || pnpm dlx supabase --version
-            echo "Supabase CLI available. Add specific supabase commands above if needed."
-          fi
+          pnpm dlx supabase --version || pnpm dlx supabase --version
+          echo "Supabase CLI available. Add specific supabase commands above if needed."
 
       # -------------------------
       # Deploy to Vercel (production)
