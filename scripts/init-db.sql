@@ -40,14 +40,7 @@
 -- CREATE DATABASE IF NOT EXISTS a4co_platform;
 
 -- Create a single application user with an explicitly provided password (no fallback)
--- Use an idempotent DO block to avoid duplicate-role errors when run multiple times
-DO $$
-BEGIN
-	IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'a4co_app') THEN
-		EXECUTE format('CREATE ROLE a4co_app WITH LOGIN PASSWORD %L', '${APP_DB_PASSWORD}');
-	END IF;
-END
-$$;
+CREATE ROLE a4co_app WITH LOGIN PASSWORD '${APP_DB_PASSWORD}';
 
 -- Grant only necessary privileges (least-privilege principle)
 -- Allow connection to the database
