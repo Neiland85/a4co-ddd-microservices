@@ -48,6 +48,9 @@ jobs:
   production:
     name: Build & Deploy Production
     runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production-${{ github.ref }}
+      cancel-in-progress: true
     timeout-minutes: 60
 
     steps:
@@ -77,6 +80,24 @@ jobs:
           pnpm -v
           npm -v
           echo "WORKDIR: $(pwd)"
+
+      - name: ⚠️ Preflight: validate production secrets
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN || '' }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || '' }}
+        run: |
+          # Only enforce strict secret checks for main branch pushes
+          if [ "${GITHUB_REF:-}" != "refs/heads/main" ]; then
+            echo "Not a main-branch run; skipping strict preflight checks."
+            exit 0
+          fi
+          echo "Checking required secrets for production deploy..."
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "ERROR: Required Vercel secrets (VERCEL_TOKEN or VERCEL_PROJECT_ID) are missing."
+            echo "Set repository secrets before running a production deploy."
+            exit 1
+          fi
+          echo "Production secrets appear present. Continuing..."
 
       # -------------------------
       # Install deps & generate
