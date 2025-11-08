@@ -36,8 +36,9 @@ jobs:
       - name: Verify json5 is available
         run: node -e "require('json5'); console.log('✓ json5 available')"
 
-      - name: Verify ts-node can compile scripts (transpile only)
-        run: npx ts-node --project tsconfig.scripts.json --transpile-only scripts/update-cspell-dicts.ts
+      - name: Verify scripts compile (no side-effects)
+        # Do not execute the script to avoid writing files in CI. Compile only.
+        run: pnpm -s exec tsc -p tsconfig.scripts.json --noEmit
 
       - name: Install hooks (prepare)
         run: pnpm run prepare
