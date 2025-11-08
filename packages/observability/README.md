@@ -13,6 +13,21 @@ Este paquete proporciona una configuración unificada para:
 - **Métricas** con Prometheus
 - Correlación automática de logs con trace IDs
 
+## OpenTelemetry Versions
+
+Las dependencias de OpenTelemetry alineadas en este paquete son:
+
+- `@opentelemetry/api`: ^1.9.0
+- `@opentelemetry/sdk-metrics`: ^2.2.0
+- `@opentelemetry/sdk-trace-base`: ^2.2.0
+- `@opentelemetry/sdk-trace-node`: ^2.2.0
+- `@opentelemetry/sdk-trace-web`: ^2.2.0
+- `@opentelemetry/instrumentation-*`: ^0.208.0
+- `@opentelemetry/semantic-conventions`: ^1.37.0
+
+Rationale: estas versiones se eligieron por compatibilidad con el Collector y estabilidad de API.
+Revisa la sección "Integración" más abajo para ejemplos actualizados y notas de migración.
+
 ## Instalación
 
 

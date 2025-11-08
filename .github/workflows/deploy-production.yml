@@ -1,22 +1,48 @@
 name: Production Deploy (Vercel / Supabase)
 
-# Temporarily disabled - use workflow_call only for manual triggers
 on:
   workflow_call:
-  # push:
-  #   branches: ["main"]
-  # workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        description: 'Target environment'
+        required: false
+        default: 'production'
+      app_path:
+        type: string
+        description: 'Relative path to app to deploy (monorepo)'
+        required: false
+        default: 'apps/dashboard-client'
+      version:
+        type: string
+        description: 'Optional version/tag for release'
+        required: false
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        description: 'Target environment'
+        required: false
+        default: 'production'
+      app_path:
+        type: string
+        description: 'Relative path to app to deploy (monorepo)'
+        required: false
+        default: 'apps/dashboard-client'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - '.github/workflows/deploy-production.yml'
+      - 'apps/**'
 
 permissions:
   contents: read
-  id-token: write
   deployments: write
 
 env:
-  # Valores por defecto (sobre-escribibles por secrets)
   NODE_ENV: production
-  PNPM_HOME: ~/.pnpm
-  PATH: ~/.pnpm:$PATH
 
 jobs:
   production:
@@ -94,58 +120,75 @@ jobs:
       # Optional: Prisma migrations (Supabase)
       # -------------------------
       - name: 🔁 Run Prisma migrations (Supabase) — optional
-        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY && secrets.DATABASE_URL }}
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || '' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || '' }}
         run: |
-          echo "Running prisma migrate deploy using DATABASE_URL (Supabase)..."
-          pnpm -w exec prisma migrate deploy --preview-feature --schema=./prisma/schema.prisma || pnpm -w exec prisma migrate deploy || echo "prisma migrate deploy failed or no migrations present"
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$DATABASE_URL" ]; then
+            echo "Supabase credentials not provided; skipping Prisma migrations"
+          else
+            echo "Running prisma migrate deploy using DATABASE_URL (Supabase)..."
+            pnpm -w exec prisma migrate deploy --preview-feature --schema=./prisma/schema.prisma || pnpm -w exec prisma migrate deploy || echo "prisma migrate deploy failed or no migrations present"
+          fi
 
       # -------------------------
       # Optional: Supabase CLI tasks (functions / edge)
       # -------------------------
-      - name: ⚙️ Supabase: deploy functions / edge (optional)
-        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY && secrets.SUPABASE_PROJECT_REF }}
+      - name: Supabase deploy functions (optional)
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_ACCESS_TOKEN: "${{ secrets.SUPABASE_SERVICE_ROLE_KEY || '' }}"
+          SUPABASE_PROJECT_REF: "${{ secrets.SUPABASE_PROJECT_REF || '' }}"
         run: |
-          # Use pnpm dlx to run supabase CLI without global install
-          pnpm dlx supabase --version || pnpm dlx supabase --version
-          # Example: deploy functions (adapt paths/names to your repo)
-          # pnpm dlx supabase functions deploy my-function --project-ref $SUPABASE_PROJECT_REF
-          echo "Supabase CLI available. Add specific supabase commands above if needed."
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "Supabase credentials not provided; skipping Supabase CLI tasks"
+          else
+            pnpm dlx supabase --version || pnpm dlx supabase --version
+            echo "Supabase CLI available. Add specific supabase commands above if needed."
+          fi
 
       # -------------------------
       # Deploy to Vercel (production)
       # -------------------------
       - name: 🚀 Deploy to Vercel (production)
-        if: ${{ secrets.VERCEL_TOKEN }}
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN || '' }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID || '' }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || '' }}
         run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN not provided; skipping Vercel deploy"
+            exit 0
+          fi
           echo "Deploying to Vercel (production)..."
-          # Ensure Vercel CLI is available via npx (uses the token)
           npx vercel --prod --confirm --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" || {
             echo "Vercel deploy failed"; exit 1;
           }
 
       - name: 🔎 Post-deploy verification (Vercel)
-        if: ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN || '' }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || '' }}
         run: |
-          echo "You can query the Vercel deployments API or check the project dashboard to verify the deployment."
-          # Example (optional): curl Vercel deployments API to get latest deployment (requires further scripting).
-          echo "Post-deploy checks: DONE."
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN not provided; skipping post-deploy verification"
+          else
+            echo "You can query the Vercel deployments API or check the project dashboard to verify the deployment."
+            # Example (optional): curl Vercel deployments API to get latest deployment (requires further scripting).
+            echo "Post-deploy checks: DONE."
+          fi
 
       # -------------------------
       # Optional: Notify (Slack / other)
       # -------------------------
       - name: 🔔 Notify on success (optional)
-        if: ${{ secrets.SLACK_WEBHOOK_URL }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL || '' }}
         run: |
-          curl -s -X POST -H 'Content-type: application/json' --data '{"text":"Production deploy finished for main branch."}' ${{ secrets.SLACK_WEBHOOK_URL }} || echo "Slack notify skipped"
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "SLACK_WEBHOOK_URL not provided; skipping Slack notification"
+          else
+            curl -s -X POST -H 'Content-type: application/json' --data '{"text":"Production deploy finished for main branch."}' "$SLACK_WEBHOOK_URL" || echo "Slack notify failed"
+          fi
 
     # Fin del job production
 

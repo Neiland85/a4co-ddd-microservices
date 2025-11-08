@@ -77,7 +77,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const port = process.env['PORT'] || 3006;
+  const port = process.env['PORT'] ? Number(process.env['PORT']) : 3006;
   logger.info(`🚀 Payment Service iniciado en puerto ${port}`);
   logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
 

@@ -51,7 +51,7 @@
     "twilio": "^5.10.3"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.3.2",
+    "@nestjs/cli": "^10.4.5",
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/testing": "^10.3.3",
     "@types/cors": "^2.8.17",

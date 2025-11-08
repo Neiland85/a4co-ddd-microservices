@@ -32,6 +32,9 @@
       "@/*": ["src/*"],
       "@test/*": ["test/*"],
       "@a4co/shared-utils": ["../packages/shared-utils/src"],
+      "@a4co/shared-utils/*": [
+        "../packages/shared-utils/src/*"
+      ],
       "@a4co/design-system": ["../packages/design-system/src"],
       "@a4co/observability": ["../packages/observability/dist"]
     },

@@ -87,5 +87,14 @@
       "plaintext": false,
     },
     "diffEditor.codeLens": true,
+    "json.schemas": [
+      {
+        "fileMatch": [
+          "**/package.json"
+        ],
+        "schema": null
+      }
+    ],
+    "json.schemaDownload.enable": false,
   },
 }

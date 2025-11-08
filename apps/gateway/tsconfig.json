@@ -1,7 +1,6 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    fix/pipeline-and-backend
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
@@ -20,15 +19,4 @@
   },
   "include": ["**/*.js", "**/*.ts"],
   "exclude": ["node_modules", "../dist"]
-    "allowJs": true, // Allow JavaScript files to be compiled
-    "checkJs": true, // Report errors in .js files
-      fix/pipeline-and-backend
-    "noEmit": true, // Do not emit outputs, just type check
-    "outDir": "../dist/backend",
-    "rootDir": "./"
-    "noEmit": true // Do not emit outputs, just type check
-       main
-  },
-  "include": ["**/*.js", "**/*.ts"]
-       main
 }

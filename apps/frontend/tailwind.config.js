@@ -1,11 +1,19 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const colors = require('tailwindcss/colors.js');
+
+module.exports = {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: colors.emerald,
+        secondary: colors.slate,
+        accent: colors.amber,
+      },
+    },
   },
   plugins: [],
 };
