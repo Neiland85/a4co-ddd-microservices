@@ -4,9 +4,8 @@ exports.bracesSecurityFactory = exports.BracesSecurityFactory = exports.SecureSh
 const child_process_1 = require("child_process");
 const events_1 = require("events");
 class BracesSecurityValidator {
-    config;
-    eventEmitter = new events_1.EventEmitter();
     constructor(config = {}) {
+        this.eventEmitter = new events_1.EventEmitter();
         this.config = {
             maxExpansionSize: 1000,
             maxRangeSize: 100,
@@ -183,9 +182,8 @@ class BracesSecurityValidator {
 }
 exports.BracesSecurityValidator = BracesSecurityValidator;
 class SecureShellExecutor {
-    validator;
-    activeProcesses = new Map();
     constructor(securityConfig) {
+        this.activeProcesses = new Map();
         this.validator = new BracesSecurityValidator(securityConfig);
     }
     async executeSecure(command, options) {

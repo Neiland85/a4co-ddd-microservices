@@ -1,65 +1,59 @@
 # Diccionario del Proyecto
 
-Última sincronización: 8/11/2025, 15:41:06
+Última sincronización: 9/11/2025, 4:47:48
 
 ---
-### User (global VSCode) (12)
-- adjust
-- enhancing
-- explicit
-- formatting
-- hook
-- modifying
-- module
-- multiple
-- refine
-- resolution
-- safety
-- updating
+### User (global VSCode) (22)
+- adjusted
+- aggregate
+- autoprefixer
+- chaining
+- classes
+- compatibility
+- consistent
+- cors
+- data
+- distribution
+- enhanced
+- ensure
+- helmet
+- improved
+- installations
+- optional
+- refactored
+- reflect
+- sensitive
+- spec
+- type
+- unused
 
-### Workspace (proyecto local) (40)
-- adjust
-- better
-- checks
-- concurrency
-- cross
-- enhancing
-- exclude
-- explicit
-- file
-- finalize
-- formatting
-- hardening
-- hook
-- hooks
-- idempotent
-- improve
-- include
-- libs
-- lint
-- merging
-- modifying
-- module
-- multiple
-- options
-- organization
-- packages
-- patterns
-- platform
-- preflight
-- preprocessing
-- refine
-- resolution
-- retaining
-- safety
-- section
-- settings
-- simplify
-- template
-- updating
-- validate
+### Workspace (proyecto local) (24)
+- adjusted
+- aggregate
+- autoprefixer
+- chaining
+- classes
+- compatibility
+- consistent
+- cors
+- data
+- dependency
+- distribution
+- enhanced
+- ensure
+- helmet
+- improved
+- installations
+- middleware
+- optional
+- refactored
+- reflect
+- sensitive
+- spec
+- type
+- unused
 
-### Commits recientes detectados (330)
+### Commits recientes detectados (354)
 - about
 - accidental
 - across
@@ -70,7 +64,9 @@
 - added
 - addresses
 - adjust
+- adjusted
 - afectados
+- aggregate
 - ahora
 - alert
 - alerts
@@ -85,6 +81,7 @@
 - auto
 - automated
 - automatic
+- autoprefixer
 - base
 - before
 - being
@@ -94,10 +91,12 @@
 - call
 - caused
 - causing
+- chaining
 - changes
 - check
 - checks
 - clarity
+- classes
 - clean
 - cleanly
 - client
@@ -105,6 +104,7 @@
 - commented
 - commit
 - commits
+- compatibility
 - completa
 - complete
 - compose
@@ -116,6 +116,7 @@
 - configured
 - conflicts
 - confusion
+- consistent
 - contained
 - containing
 - contract
@@ -123,6 +124,7 @@
 - correct
 - corregidos
 - corregir
+- cors
 - coverage
 - credential
 - credentials
@@ -130,6 +132,7 @@
 - cross
 - cspell
 - dashboard
+- data
 - database
 - date
 - default
@@ -138,6 +141,7 @@
 - definition
 - dependencias
 - dependencies
+- dependency
 - deploy
 - deployment
 - deps
@@ -151,6 +155,7 @@
 - disabled
 - dispatch
 - dist
+- distribution
 - docker
 - dockerfile
 - documentation
@@ -161,8 +166,10 @@
 - endpoints
 - enero
 - enhance
+- enhanced
 - enhancing
 - enrichment
+- ensure
 - ensures
 - entries
 - environment
@@ -200,6 +207,7 @@
 - hardcoded
 - hardening
 - health
+- helmet
 - hook
 - hooks
 - idempotent
@@ -207,6 +215,7 @@
 - images
 - immediate
 - improve
+- improved
 - improvements
 - include
 - includes
@@ -214,6 +223,7 @@
 - infra
 - init
 - install
+- installations
 - instructions
 - integrate
 - integration
@@ -245,6 +255,7 @@
 - methods
 - metrics
 - microservices
+- middleware
 - missing
 - modified
 - modifying
@@ -262,6 +273,7 @@
 - observability
 - only
 - opentelemetry
+- optional
 - options
 - order
 - ordercontroller
@@ -304,8 +316,10 @@
 - real
 - rebase
 - redundant
+- refactored
 - references
 - refine
+- reflect
 - regenerate
 - release
 - remain
@@ -338,6 +352,7 @@
 - section
 - secure
 - security
+- sensitive
 - service
 - services
 - servicios
@@ -348,6 +363,7 @@
 - simplify
 - solution
 - sonarcloud
+- spec
 - stack
 - start
 - strategy
@@ -364,7 +380,9 @@
 - triggers
 - tsconfig
 - twice
+- type
 - typescript
+- unused
 - updated
 - updates
 - updating

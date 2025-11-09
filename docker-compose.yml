@@ -2,7 +2,7 @@ version: '3.9'
 services:
   auth-service:
     build:
-      context: ./gateway
+      context: ./apps/auth-service
     ports:
       - "4000:4000"
     environment:
