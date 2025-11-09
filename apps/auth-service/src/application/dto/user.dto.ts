@@ -19,6 +19,23 @@ export class RegisterUserDto {
   @IsString()
   @IsOptional()
   fullName?: string;
+
+  toJSON(): Record<string, unknown> {
+    const payload: Record<string, unknown> = {
+      email: this.email,
+      password: this.password,
+    };
+
+    if (this.name !== undefined) {
+      payload['name'] = this.name;
+    }
+
+    if (this.fullName !== undefined) {
+      payload['fullName'] = this.fullName;
+    }
+
+    return payload;
+  }
 }
 
 /**
@@ -41,15 +58,15 @@ export class UserResponseDto {
   email!: string;
 
   // Nombre (coexistencia name / fullName)
-  name?: string;
-  fullName?: string;
+  name?: string | undefined;
+  fullName?: string | undefined;
 
   // Estado y verificación
   status?: string;
   emailVerified?: boolean;
 
   // Fechas pueden venir como Date desde la entidad/DB — aceptar Date | string
-  lastLoginAt?: Date | string;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
+  lastLoginAt?: Date | string | undefined;
+  createdAt?: Date | string | undefined;
+  updatedAt?: Date | string | undefined;
 }
