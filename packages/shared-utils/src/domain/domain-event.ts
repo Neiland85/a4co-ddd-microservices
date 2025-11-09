@@ -26,6 +26,8 @@ export abstract class DomainEvent implements IDomainEvent {
     this.eventVersion = eventVersion;
     this.occurredOn = new Date();
     this.eventData = eventData;
-    this.sagaId = sagaId; // Asignar sagaId
+    if (sagaId !== undefined) {
+      this.sagaId = sagaId; // Asignar sagaId solo cuando está definido
+    }
   }
 }
