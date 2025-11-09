@@ -9,8 +9,12 @@
     "resolveJsonModule": true,
     "baseUrl": "./",
     "paths": {
-      "@a4co/shared-utils": ["../../packages/shared-utils/index.ts"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/*"]
+      "@a4co/shared-utils": [
+        "../../packages/shared-utils/dist/index"
+      ],
+      "@a4co/shared-utils/*": [
+        "../../packages/shared-utils/dist/*"
+      ]
     }
   },
   "include": ["test/**/*.ts", "src/**/*.ts"],

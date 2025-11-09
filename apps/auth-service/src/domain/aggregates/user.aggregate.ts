@@ -154,14 +154,25 @@ export class User extends AggregateRoot {
     this._lastLoginAt = new Date();
     this.touch();
 
-    this.addDomainEvent(
-      new UserLoginEvent(this.id, {
+    const loginData: {
+      email: string;
+      loginAt: Date;
+      ip?: string;
+      userAgent?: string;
+    } = {
         email: this._email.value,
         loginAt: this._lastLoginAt,
-        ip,
-        userAgent,
-      }),
-    );
+    };
+
+    if (ip !== undefined) {
+      loginData.ip = ip;
+    }
+
+    if (userAgent !== undefined) {
+      loginData.userAgent = userAgent;
+    }
+
+    this.addDomainEvent(new UserLoginEvent(this.id, loginData));
   }
 
   public async changePassword(
@@ -209,13 +220,20 @@ export class User extends AggregateRoot {
     this._status = UserStatus.INACTIVE;
     this.touch();
 
-    this.addDomainEvent(
-      new UserDeactivatedEvent(this.id, {
+    const deactivationData: {
+      deactivatedAt: Date;
+      reason?: string;
+      deactivatedBy?: string;
+    } = {
         deactivatedAt: new Date(),
-        reason,
         deactivatedBy: deactivatedBy || 'system',
-      }),
-    );
+    };
+
+    if (reason !== undefined) {
+      deactivationData.reason = reason;
+    }
+
+    this.addDomainEvent(new UserDeactivatedEvent(this.id, deactivationData));
   }
 
   public activate(): void {
@@ -244,16 +262,31 @@ export class User extends AggregateRoot {
     createdAt: Date;
     updatedAt: Date;
   } {
-    return {
+    const persistence: {
+      id: string;
+      email: string;
+      name: string;
+      hashedPassword: string;
+      status: UserStatus;
+      emailVerified: boolean;
+      lastLoginAt?: Date;
+      createdAt: Date;
+      updatedAt: Date;
+    } = {
       id: this.id,
       email: this._email.value,
       name: this._name.value,
       hashedPassword: this._hashedPassword,
       status: this._status,
       emailVerified: this._emailVerified,
-      lastLoginAt: this._lastLoginAt,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
+
+    if (this._lastLoginAt !== undefined) {
+      persistence.lastLoginAt = this._lastLoginAt;
+    }
+
+    return persistence;
   }
 }

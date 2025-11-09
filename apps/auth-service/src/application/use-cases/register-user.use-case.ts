@@ -55,7 +55,9 @@ export class RegisterUserUseCase implements UseCase<RegisterUserDto, UserRespons
     dto.name = user.name;
     dto.status = user.status;
     dto.emailVerified = user.emailVerified;
+    if (user.lastLoginAt !== undefined) {
     dto.lastLoginAt = user.lastLoginAt;
+    }
     dto.createdAt = user.createdAt;
     dto.updatedAt = user.updatedAt;
     return dto;
