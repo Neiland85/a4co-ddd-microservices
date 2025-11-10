@@ -624,7 +624,7 @@ importers:
         version: 14.25.0
     devDependencies:
       '@eslint/js':
-        specifier: ^9.13.0
+        specifier: ^9.15.0
         version: 9.39.1
       '@nestjs/cli':
         specifier: ^11.0.10
@@ -642,7 +642,7 @@ importers:
         specifier: ^8.13.0
         version: 8.46.3(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint:
-        specifier: ^9.13.0
+        specifier: ^9.15.0
         version: 9.39.1(jiti@2.6.1)
       jest:
         specifier: ^29.7.0
