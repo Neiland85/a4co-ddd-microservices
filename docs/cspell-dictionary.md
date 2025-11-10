@@ -1,19 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 8:50:20
+Última sincronización: 10/11/2025, 8:58:16
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (5)
-- adds
-- adjusts
-- eslint
-- project
-- words
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (217)
+### Commits recientes detectados (168)
 - able
 - across
 - actions
@@ -23,13 +19,11 @@ Sin nuevas palabras.
 - adjusted
 - adjusts
 - aggregate
-- align
 - apps
 - assign
 - assigning
 - auth
 - authored
-- auto
 - automated
 - autoprefixer
 - avoids
@@ -42,28 +36,20 @@ Sin nuevas palabras.
 - changes
 - check
 - checkpoint
-- checks
-- clarity
 - classes
 - commit
 - compatibility
 - compose
-- concurrency
 - config
 - configurations
-- conflicts
 - consistent
 - context
 - cors
-- cross
-- cspell
 - data
 - deem
 - defined
 - dependencies
 - dependency
-- deploy
-- deps
 - develop
 - dictionary
 - distribution
@@ -73,7 +59,6 @@ Sin nuevas palabras.
 - enhance
 - enhanced
 - enhancing
-- enrichment
 - ensure
 - ensures
 - entries
@@ -84,12 +69,10 @@ Sin nuevas palabras.
 - eslint
 - event
 - exactoptionalpropertytypes
-- exclude
 - explicit
 - explicitly
 - failure
 - feature
-- file
 - files
 - finalize
 - fixed
@@ -100,36 +83,23 @@ Sin nuevas palabras.
 - gateway
 - github
 - gmail
-- hardening
 - health
 - helmet
-- hook
-- hooks
-- idempotent
 - image
 - images
 - impact
-- improve
 - improved
-- improvements
 - include
-- init
 - installations
-- integrate
 - integration
 - invalid
 - jest
 - json
-- keep
-- libs
-- lint
 - lints
 - local
 - lock
 - lockfile
-- main
 - mapping
-- merging
 - message
 - methods
 - metrics
@@ -143,50 +113,31 @@ Sin nuevas palabras.
 - necessary
 - neiland
 - nestjs
-- observability
 - only
-- opentelemetry
 - optional
 - options
 - order
 - ordercontroller
-- organization
 - package
 - packages
-- password
 - path
 - paths
-- patterns
 - pipeline
-- platform
 - pnpm
-- post
-- postgres
-- preflight
-- preprocessing
-- production
 - project
 - read
-- readme
 - rebase
 - redundant
 - refactored
 - reference
 - refine
 - reflect
-- regenerate
 - remove
-- removed
 - removing
 - resolution
-- resolve
-- retaining
 - running
 - safety
 - sagaid
-- secret
-- secrets
-- section
 - security
 - sensitive
 - service
@@ -195,12 +146,10 @@ Sin nuevas palabras.
 - settings
 - shared
 - should
-- simplify
 - spec
 - start
 - suggest
 - sync
-- template
 - tests
 - that
 - theia
@@ -217,7 +166,6 @@ Sin nuevas palabras.
 - user
 - usual
 - utils
-- validation
 - value
 - variables
 - various
@@ -228,7 +176,6 @@ Sin nuevas palabras.
 - without
 - words
 - workflow
-- workflows
 - yaml
 - your
 
