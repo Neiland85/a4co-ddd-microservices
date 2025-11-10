@@ -31,12 +31,10 @@ RUN npm install -g pnpm@8 turbo
 WORKDIR /app
 
 # Copy workspace config and package files
-COPY pnpm-workspace.yaml turbo.json package.json pnpm-lock.yaml ./
 COPY apps/*/package.json ./apps/
 COPY packages/*/package.json ./packages/
 
-# Install all dependencies (including dev dependencies) with force
-RUN pnpm install --frozen-lockfile --force
+# Install all dependencies (including dev dependencies) with forceRUN pnpm install --frozen-lockfile --force
 
 # Copy source code
 COPY . .

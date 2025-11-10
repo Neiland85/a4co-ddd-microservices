@@ -1,10 +1,8 @@
 import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import cors from 'cors';
 import { NextFunction, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
 
 // Extender la interfaz Request para incluir la propiedad user
 declare global {
@@ -56,40 +54,6 @@ export class SecurityMiddleware implements NestMiddleware {
         throw new HttpException('Rate limit exceeded', HttpStatus.TOO_MANY_REQUESTS);
       }
     });
-
-    // Configurar CORS
-    const corsOptions = {
-      origin: this.configService.get<string>('CORS_ORIGINS', '*').split(','),
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-      credentials: true,
-      maxAge: 86400, // 24 horas
-    };
-    cors(corsOptions)(req, res, () => {});
-
-    // Configurar Helmet para cabeceras de seguridad
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'"],
-          fontSrc: ["'self'"],
-          objectSrc: ["'none'"],
-          mediaSrc: ["'self'"],
-          frameSrc: ["'none'"],
-        },
-      },
-      hsts: {
-        maxAge: 31536000, // 1 año
-        includeSubDomains: true,
-        preload: true,
-      },
-      noSniff: true,
-      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-    })(req, res, () => {});
 
     // Validar JWT si la ruta lo requiere
     if (this.requiresAuth(req.path)) {

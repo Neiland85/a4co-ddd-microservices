@@ -1,21 +1,36 @@
 # Diccionario del Proyecto
 
-Última sincronización: 8/11/2025, 6:56:36
+Última sincronización: 8/11/2025, 15:41:06
 
 ---
-### User (global VSCode)
-Sin nuevas palabras.
+### User (global VSCode) (12)
+- adjust
+- enhancing
+- explicit
+- formatting
+- hook
+- modifying
+- module
+- multiple
+- refine
+- resolution
+- safety
+- updating
 
-### Workspace (proyecto local) (29)
+### Workspace (proyecto local) (40)
+- adjust
 - better
 - checks
 - concurrency
 - cross
-- dependency
+- enhancing
 - exclude
+- explicit
 - file
 - finalize
+- formatting
 - hardening
+- hook
 - hooks
 - idempotent
 - improve
@@ -23,6 +38,9 @@ Sin nuevas palabras.
 - libs
 - lint
 - merging
+- modifying
+- module
+- multiple
 - options
 - organization
 - packages
@@ -30,14 +48,18 @@ Sin nuevas palabras.
 - platform
 - preflight
 - preprocessing
+- refine
+- resolution
 - retaining
+- safety
 - section
 - settings
 - simplify
 - template
+- updating
 - validate
 
-### Commits recientes detectados (317)
+### Commits recientes detectados (330)
 - about
 - accidental
 - across
@@ -47,6 +69,7 @@ Sin nuevas palabras.
 - actualizar
 - added
 - addresses
+- adjust
 - afectados
 - ahora
 - alert
@@ -71,6 +94,7 @@ Sin nuevas palabras.
 - call
 - caused
 - causing
+- changes
 - check
 - checks
 - clarity
@@ -114,7 +138,6 @@ Sin nuevas palabras.
 - definition
 - dependencias
 - dependencies
-- dependency
 - deploy
 - deployment
 - deps
@@ -138,6 +161,7 @@ Sin nuevas palabras.
 - endpoints
 - enero
 - enhance
+- enhancing
 - enrichment
 - ensures
 - entries
@@ -150,6 +174,7 @@ Sin nuevas palabras.
 - existe
 - exists
 - exitosamente
+- explicit
 - exposed
 - exposure
 - external
@@ -163,6 +188,7 @@ Sin nuevas palabras.
 - fixes
 - flag
 - flags
+- formatting
 - from
 - frontend
 - future
@@ -174,6 +200,7 @@ Sin nuevas palabras.
 - hardcoded
 - hardening
 - health
+- hook
 - hooks
 - idempotent
 - ignored
@@ -220,7 +247,10 @@ Sin nuevas palabras.
 - microservices
 - missing
 - modified
+- modifying
+- module
 - monitoring
+- multiple
 - nats
 - neiland
 - nest
@@ -275,6 +305,7 @@ Sin nuevas palabras.
 - rebase
 - redundant
 - references
+- refine
 - regenerate
 - release
 - remain
@@ -285,6 +316,7 @@ Sin nuevas palabras.
 - request
 - require
 - required
+- resolution
 - resolve
 - resolved
 - resolves
@@ -295,6 +327,7 @@ Sin nuevas palabras.
 - review
 - rollout
 - rotate
+- safety
 - scan
 - schedule
 - schematics
@@ -331,8 +364,10 @@ Sin nuevas palabras.
 - triggers
 - tsconfig
 - twice
+- typescript
 - updated
 - updates
+- updating
 - used
 - user
 - uses

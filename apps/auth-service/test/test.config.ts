@@ -5,9 +5,9 @@ export const testConfig = {
   // Credenciales de prueba genéricas
   // IMPORTANTE: Estos son valores de prueba únicamente, NO usar en producción
   testCredentials: {
-    username: process.env.TEST_USERNAME || 'mock_test_user',
-    password: process.env.TEST_PASSWORD || 'FAKE_PASSWORD_FOR_TESTS_ONLY',
-    email: process.env.TEST_EMAIL || 'mock@test.example.com',
+    username: process.env['TEST_USERNAME'] || 'mock_test_user',
+    password: process.env['TEST_PASSWORD'] || 'FAKE_PASSWORD_FOR_TESTS_ONLY',
+    email: process.env['TEST_EMAIL'] || 'mock@test.example.com',
   },
 
   // Datos de prueba para diferentes escenarios
