@@ -1,71 +1,16 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 8:38:07
+Última sincronización: 10/11/2025, 8:38:23
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (57)
-- able
-- adjusted
-- aggregate
-- assign
-- assigning
-- autoprefixer
-- avoids
-- builds
-- chaining
-- classes
-- compatibility
-- consistent
-- context
-- cors
-- data
-- deem
-- dependency
-- distribution
-- enhanced
-- ensure
-- error
-- errors
-- exactoptionalpropertytypes
-- explicitly
-- failure
-- fixed
-- found
-- gateway
-- helmet
-- image
-- improved
-- installations
-- lints
-- middleware
-- migrate
-- monolith
-- necessary
-- optional
-- read
-- refactored
-- reference
-- reflect
-- removing
-- running
-- sagaid
-- sensitive
-- setting
-- spec
-- suggest
-- tslines
-- type
-- undefined
-- unused
-- usual
-- were
-- when
-- your
+### Workspace (proyecto local) (2)
+- dictionaries
+- theia
 
-### Commits recientes detectados (389)
+### Commits recientes detectados (392)
 - able
 - about
 - accidental
@@ -168,6 +113,7 @@ Sin nuevas palabras.
 - devcontainer
 - develop
 - development
+- dictionaries
 - dictionary
 - directory
 - disable
@@ -242,6 +188,7 @@ Sin nuevas palabras.
 - image
 - images
 - immediate
+- impact
 - improve
 - improved
 - improvements
@@ -413,6 +360,7 @@ Sin nuevas palabras.
 - template
 - tests
 - that
+- theia
 - these
 - this
 - total
