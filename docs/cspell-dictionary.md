@@ -1,15 +1,13 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 8:38:51
+Última sincronización: 10/11/2025, 9:04:56
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (3)
-- checkpoint
-- follow
-- message
+### Workspace (proyecto local) (1)
+- linting
 
 ### Commits recientes detectados (213)
 - able
@@ -113,13 +111,13 @@ Sin nuevas palabras.
 - installations
 - integrate
 - integration
-- into
 - invalid
 - jest
 - json
 - keep
 - libs
 - lint
+- linting
 - lints
 - local
 - lock
