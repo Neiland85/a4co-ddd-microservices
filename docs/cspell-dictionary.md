@@ -1,23 +1,27 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 8:38:13
+Última sincronización: 10/11/2025, 8:50:20
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (3)
-- checkpoint
-- follow
-- message
+### Workspace (proyecto local) (5)
+- adds
+- adjusts
+- eslint
+- project
+- words
 
-### Commits recientes detectados (212)
+### Commits recientes detectados (217)
 - able
 - across
 - actions
 - added
+- adds
 - adjust
 - adjusted
+- adjusts
 - aggregate
 - align
 - apps
@@ -77,6 +81,7 @@ Sin nuevas palabras.
 - environments
 - error
 - errors
+- eslint
 - event
 - exactoptionalpropertytypes
 - exclude
@@ -112,7 +117,6 @@ Sin nuevas palabras.
 - installations
 - integrate
 - integration
-- into
 - invalid
 - jest
 - json
@@ -161,6 +165,7 @@ Sin nuevas palabras.
 - preflight
 - preprocessing
 - production
+- project
 - read
 - readme
 - rebase
@@ -207,6 +212,7 @@ Sin nuevas palabras.
 - undefined
 - unused
 - updated
+- updates
 - updating
 - user
 - usual
@@ -220,6 +226,7 @@ Sin nuevas palabras.
 - when
 - with
 - without
+- words
 - workflow
 - workflows
 - yaml
