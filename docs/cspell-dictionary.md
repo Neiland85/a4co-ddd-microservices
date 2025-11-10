@@ -1,15 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 9:28:03
+Última sincronización: 10/11/2025, 9:28:22
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (1)
+- timestamp
 
-### Commits recientes detectados (141)
+### Commits recientes detectados (145)
 - able
 - across
 - added
@@ -39,12 +39,14 @@ Sin nuevas palabras.
 - consolidate
 - context
 - cors
+- cspell
 - data
 - deem
 - defined
 - dependencies
 - dependency
 - dictionaries
+- dictionary
 - distribution
 - docker
 - domain
@@ -126,10 +128,12 @@ Sin nuevas palabras.
 - spec
 - start
 - suggest
+- sync
 - tests
 - that
 - theia
 - this
+- timestamp
 - tsconfig
 - tslines
 - type
