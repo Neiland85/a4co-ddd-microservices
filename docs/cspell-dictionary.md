@@ -1,18 +1,17 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 8:59:44
+Última sincronización: 10/11/2025, 9:34:09
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (1)
-- workspace
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (169)
+### Commits recientes detectados (145)
 - able
 - across
-- actions
 - added
 - adds
 - adjust
@@ -24,17 +23,13 @@ Sin nuevas palabras.
 - assigning
 - auth
 - authored
-- automated
 - autoprefixer
 - avoids
-- base
 - before
 - better
-- branch
 - builds
 - chaining
 - changes
-- check
 - checkpoint
 - classes
 - commit
@@ -55,13 +50,10 @@ Sin nuevas palabras.
 - distribution
 - docker
 - domain
-- endpoints
-- enhance
 - enhanced
 - enhancing
 - ensure
 - ensures
-- entries
 - environment
 - environments
 - error
@@ -74,24 +66,19 @@ Sin nuevas palabras.
 - failure
 - feature
 - files
-- finalize
 - fixed
 - follow
 - formatting
 - found
 - from
 - gateway
-- github
 - gmail
-- health
 - helmet
 - image
-- images
 - impact
 - improved
 - include
 - installations
-- integration
 - invalid
 - jest
 - json
@@ -99,39 +86,30 @@ Sin nuevas palabras.
 - local
 - lock
 - lockfile
-- mapping
 - message
-- methods
-- metrics
 - middleware
 - migrate
 - modifying
 - module
 - monolith
 - multiple
-- nats
 - necessary
 - neiland
 - nestjs
 - only
 - optional
 - options
-- order
-- ordercontroller
 - package
 - packages
-- path
 - paths
-- pipeline
 - pnpm
 - project
 - read
-- rebase
-- redundant
 - refactored
 - reference
 - refine
 - reflect
+- refresh
 - remove
 - removing
 - resolution
@@ -146,10 +124,10 @@ Sin nuevas palabras.
 - settings
 - shared
 - should
+- snapshot
 - spec
 - start
 - suggest
-- sync
 - tests
 - that
 - theia
@@ -168,14 +146,12 @@ Sin nuevas palabras.
 - utils
 - value
 - variables
-- various
 - vscode
 - were
 - when
 - with
 - without
 - words
-- workflow
 - workspace
 - yaml
 - your
