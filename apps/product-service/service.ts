@@ -1,4 +1,4 @@
-import { BaseService } from './src/domain/base-classes';
+import { BaseService } from '@a4co/shared-utils/src/base';
 
 export class ProductService extends BaseService {
   constructor() {
@@ -10,37 +10,27 @@ export class ProductService extends BaseService {
       const validatedName = this.validateRequired(name, 'name');
       const validatedPrice = this.validateRequired(price, 'price');
 
-      this.log(`Creating product: ${validatedName} with price ${validatedPrice}`);
-
-      return `Product created successfully: ${validatedName}`;
-      this.log('Creating product', { name, price });
+      this.log('Creating product', { name: validatedName, price: validatedPrice });
 
       return this.createSuccessMessage(
         'Product',
         'created',
-        `with ${validatedName} and ${validatedPrice}`
+        `${validatedName} with price ${validatedPrice}`,
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      return `Error creating product: ${errorMessage}`;
+      return this.handleServiceError(error, 'addProduct');
     }
   }
 
-  getProduct(name: string): string {
+  getProduct(productId: string): string {
     try {
-      const validatedName = this.validateRequired(name, 'name');
+      const validatedId = this.validateId(productId, 'productId');
 
-      this.log(`Getting product: ${validatedName}`);
+      this.log('Getting product', { productId: validatedId });
 
-      return `Product retrieved: ${validatedName}`;
-      const validatedName = this.validateId(name, 'name');
-
-      this.log('Getting product', { name: validatedName });
-
-      return this.createSuccessMessage('Product', 'retrieved', validatedName);
+      return this.createSuccessMessage('Product', 'retrieved', validatedId);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      return `Error getting product: ${errorMessage}`;
+      return this.handleServiceError(error, 'getProduct');
     }
   }
 }

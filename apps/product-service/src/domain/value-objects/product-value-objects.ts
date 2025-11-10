@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ValueObject } from '../base-classes';
+import { ValueObject } from '@a4co/shared-utils';
 
 export class ProductId extends ValueObject<string> {
   constructor(value?: string) {

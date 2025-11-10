@@ -9,11 +9,11 @@ describe('AuthService', () => {
 
   it('should authenticate a user', () => {
     const result = authService.login('testUser', 'testPass');
-    expect(result).toBe('Usuario testUser autenticado.');
+    expect(result).toBe('User authenticated successfully: testUser');
   });
 
   it('should register a user', () => {
     const result = authService.register('newUser', 'newPass');
-    expect(result).toBe('Usuario newUser registrado.');
+    expect(result).toBe('User registered successfully: newUser');
   });
 });
