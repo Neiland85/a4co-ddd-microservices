@@ -1,15 +1,19 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 9:06:31
+Última sincronización: 10/11/2025, 9:22:22
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (5)
+- consolidate
+- eslint
+- imports
+- maintainability
+- utilities
 
-### Commits recientes detectados (163)
+### Commits recientes detectados (168)
 - able
 - across
 - actions
@@ -38,8 +42,10 @@ Sin nuevas palabras.
 - compatibility
 - compose
 - config
+- configuration
 - configurations
 - consistent
+- consolidate
 - context
 - cors
 - data
@@ -47,7 +53,6 @@ Sin nuevas palabras.
 - defined
 - dependencies
 - dependency
-- develop
 - dictionaries
 - dictionary
 - distribution
@@ -64,6 +69,7 @@ Sin nuevas palabras.
 - environments
 - error
 - errors
+- eslint
 - event
 - exactoptionalpropertytypes
 - explicit
@@ -85,6 +91,7 @@ Sin nuevas palabras.
 - image
 - images
 - impact
+- imports
 - improved
 - include
 - installations
@@ -97,6 +104,7 @@ Sin nuevas palabras.
 - local
 - lock
 - lockfile
+- maintainability
 - mapping
 - message
 - methods
@@ -161,6 +169,7 @@ Sin nuevas palabras.
 - updating
 - user
 - usual
+- utilities
 - utils
 - value
 - variables
