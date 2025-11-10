@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home, Factory, FileBarChart2, Leaf, Settings, LogOut } from 'lucide-react';
+import { Home, Factory, FileBarChart2, Leaf, Settings } from 'lucide-react';
 
 export function Sidebar() {
   return (
