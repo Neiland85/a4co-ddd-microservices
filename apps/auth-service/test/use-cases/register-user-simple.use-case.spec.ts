@@ -68,7 +68,7 @@ describe('RegisterUserUseCase', () => {
     const user = createUser({
       id: 'test-uuid-1234',
       email: registerDto.email,
-      name: registerDto.name,
+      name: registerDto.name ?? 'Test User',
       hashedPassword: 'hashed-password',
     });
 
