@@ -1,15 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 8:58:16
+Última sincronización: 10/11/2025, 8:59:44
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (1)
+- workspace
 
-### Commits recientes detectados (168)
+### Commits recientes detectados (169)
 - able
 - across
 - actions
@@ -45,12 +45,12 @@ Sin nuevas palabras.
 - consistent
 - context
 - cors
+- cspell
 - data
 - deem
 - defined
 - dependencies
 - dependency
-- develop
 - dictionary
 - distribution
 - docker
@@ -176,6 +176,7 @@ Sin nuevas palabras.
 - without
 - words
 - workflow
+- workspace
 - yaml
 - your
 
