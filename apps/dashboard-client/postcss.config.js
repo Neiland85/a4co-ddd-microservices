@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 module.exports = {
   plugins: [
     // Tailwind CSS v4 configuration

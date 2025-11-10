@@ -13,6 +13,10 @@ export default [
         sourceType: 'module',
         project: './tsconfig.json',
       },
+      globals: {
+        Buffer: 'readonly',
+        process: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': tseslint,
@@ -22,9 +26,20 @@ export default [
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
     },
   },
   {
-    ignores: ['node_modules/', 'dist/', 'build/', 'jest.config.js', '**/*.js', '**/*.d.ts'],
+    ignores: [
+      'node_modules/',
+      'dist/',
+      'build/',
+      'jest.config.js',
+      '**/*.js',
+      '**/*.d.ts',
+      'src/__tests__/**',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+    ],
   },
 ];
