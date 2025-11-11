@@ -74,5 +74,11 @@
   "simple-git-hooks": {
     "post-commit": "pnpm run update:dicts"
   },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "0.25.0",
+      "tmp": "0.2.4"
+    }
+  },
   "packageManager": "pnpm@10.14.0"
 }
