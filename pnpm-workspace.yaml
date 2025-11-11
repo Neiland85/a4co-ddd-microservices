@@ -3,3 +3,5 @@ packages:
   - "packages/*"
   - "infra"
   - "frontend"
+  - "backend"
+  - "frontend-monolith"
