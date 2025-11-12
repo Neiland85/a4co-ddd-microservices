@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 interface BaseComponentProps {
     className?: string;
     children?: React.ReactNode;
@@ -51,12 +52,12 @@ export declare const V0ModalTemplate: React.FC<BaseComponentProps & {
     size?: 'sm' | 'md' | 'lg' | 'xl';
 }>;
 export declare const useV0State: <T>(initialValue: T) => {
-    value: any;
-    isLoading: any;
-    error: any;
-    updateValue: any;
-    setValue: any;
-    setError: any;
+    value: T;
+    isLoading: boolean;
+    error: string | null;
+    updateValue: (newValue: T | ((prev: T) => T)) => Promise<void>;
+    setValue: Dispatch<SetStateAction<T>>;
+    setError: Dispatch<SetStateAction<string | null>>;
 };
 export type { V0ComponentTemplateProps, LoadingState, BaseComponentProps };
 export { useLoadingState, LoadingSpinner, ErrorMessage, EmptyState };

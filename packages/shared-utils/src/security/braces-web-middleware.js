@@ -7,8 +7,6 @@ exports.createBracesMonitoringService = createBracesMonitoringService;
 const braces_monitor_1 = require("./braces-monitor");
 const braces_security_1 = require("./braces-security");
 class BracesSecurityMiddleware {
-    validator;
-    monitor;
     constructor(config, serviceName = 'unknown-service') {
         this.validator = braces_security_1.BracesSecurityFactory.createValidator({
             maxExpansionSize: 50,
@@ -137,7 +135,6 @@ class BracesSecurityMiddleware {
 }
 exports.BracesSecurityMiddleware = BracesSecurityMiddleware;
 class BracesSanitizer {
-    validator;
     constructor() {
         this.validator = braces_security_1.BracesSecurityFactory.createValidator({
             maxExpansionSize: 100,
@@ -181,14 +178,13 @@ class BracesSanitizer {
 }
 exports.BracesSanitizer = BracesSanitizer;
 class BracesMonitoringService {
-    validator;
-    alerts = [];
-    stats = {
-        totalValidations: 0,
-        blockedExpressions: 0,
-        alertsTriggered: 0,
-    };
     constructor() {
+        this.alerts = [];
+        this.stats = {
+            totalValidations: 0,
+            blockedExpressions: 0,
+            alertsTriggered: 0,
+        };
         this.validator = braces_security_1.BracesSecurityFactory.createValidator();
         this.validator.on('securityAlert', alert => {
             this.alerts.push({
