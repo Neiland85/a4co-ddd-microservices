@@ -140,13 +140,13 @@ export class Order extends AggregateRoot {
     }
 
     // Helper method to get domain events
-    getDomainEvents(): DomainEvent[] {
-        return this.domainEvents || [];
+    override getDomainEvents(): DomainEvent[] {
+        return super.getUncommittedEvents();
     }
 
     // Helper method to clear domain events
     clearDomainEvents(): void {
-        this.domainEvents = [];
+        super.clearDomainEvents();
     }
 
     // Saga-related methods

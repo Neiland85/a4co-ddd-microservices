@@ -279,7 +279,12 @@ export class BracesSecurityMonitorFactory {
   static getGlobalMetrics(): BracesSecurityMetrics {
     const allMetrics = Array.from(this.monitors.values()).map(m => m.getMetrics());
 
-    return {
+    const lastAlert = allMetrics
+      .map(m => m.lastAlertTime)
+      .filter((t): t is Date => t !== undefined)
+      .sort((a, b) => b.getTime() - a.getTime())[0];
+
+    const metrics: BracesSecurityMetrics = {
       totalRequests: allMetrics.reduce((sum, m) => sum + m.totalRequests, 0),
       blockedRequests: allMetrics.reduce((sum, m) => sum + m.blockedRequests, 0),
       averageProcessingTime:
@@ -288,11 +293,13 @@ export class BracesSecurityMonitorFactory {
           : 0,
       peakMemoryUsage: Math.max(...allMetrics.map(m => m.peakMemoryUsage), 0),
       alertsTriggered: allMetrics.reduce((sum, m) => sum + m.alertsTriggered, 0),
-      lastAlertTime: allMetrics
-        .map(m => m.lastAlertTime)
-        .filter(t => t !== undefined)
-        .sort((a, b) => b!.getTime() - a!.getTime())[0],
       topBlockedPatterns: [], // TODO: Agregar agregación global
     };
+    
+    if (lastAlert !== undefined) {
+      metrics.lastAlertTime = lastAlert;
+    }
+    
+    return metrics;
   }
 }
