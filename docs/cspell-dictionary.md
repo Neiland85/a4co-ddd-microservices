@@ -1,46 +1,28 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 9:59:47
+Última sincronización: 10/11/2025, 14:21:43
 
 ---
-### User (global VSCode) (15)
-- authentication
-- cases
-- code
-- consistency
-- eslint
-- ignore
-- implementations
-- latest
-- messages
-- obsolete
-- product
-- streamline
-- utilities
-- utilize
-- workspace
+### User (global VSCode) (5)
+- actualizaciones
+- duplicados
+- limpiar
+- pendientes
+- resolviendo
 
-### Workspace (proyecto local) (15)
-- authentication
-- cases
-- code
-- consistency
-- experience
-- ignore
-- implementations
-- latest
-- messages
-- obsolete
-- product
-- streamline
-- utilize
-- versions
-- workspace
+### Workspace (proyecto local) (5)
+- actualizaciones
+- duplicados
+- limpiar
+- pendientes
+- resolviendo
 
-### Commits recientes detectados (233)
+### Commits recientes detectados (238)
 - able
 - across
 - actions
+- actualizaciones
+- actualizar
 - added
 - adjust
 - adjusted
@@ -99,6 +81,7 @@
 - docker
 - domain
 - duplicadas
+- duplicados
 - endpoints
 - enhance
 - enhanced
@@ -149,7 +132,6 @@
 - installations
 - integrate
 - integration
-- into
 - invalid
 - inventory
 - jest
@@ -157,6 +139,7 @@
 - keep
 - latest
 - libs
+- limpiar
 - lint
 - lints
 - local
@@ -194,6 +177,7 @@
 - paths
 - patterns
 - payment
+- pendientes
 - pipeline
 - platform
 - pnpm
@@ -217,6 +201,7 @@
 - removing
 - resolution
 - resolve
+- resolviendo
 - retaining
 - running
 - safety

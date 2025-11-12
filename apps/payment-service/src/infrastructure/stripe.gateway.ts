@@ -115,13 +115,17 @@ export class StripeGateway {
     }
   }
 
-  public constructWebhookEvent(options: ConstructWebhookOptions): Stripe.Event {
+  public constructWebhookEvent(payload: any, signature: string): Stripe.Event {
     if (!this.webhookSecret) {
       throw new Error('Stripe webhook secret is not configured');
     }
 
     try {
-      return this.stripe.webhooks.constructEvent(options.payload, options.signature, this.webhookSecret);
+      return this.stripe.webhooks.constructEvent(
+        JSON.stringify(payload),
+        signature,
+        this.webhookSecret
+      );
     } catch (error) {
       this.logger.error('Failed to construct Stripe webhook event', error as Error);
       throw error;
