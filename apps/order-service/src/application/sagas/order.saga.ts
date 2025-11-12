@@ -36,7 +36,7 @@ export class OrderSaga {
 
   constructor(
     @Inject('OrderRepository')
-    private readonly orderRepository: IOrderRepository,
+    private readonly orderRepository: OrderRepository,
     @Inject('NATS_CLIENT')
     private readonly natsClient: ClientProxy,
   ) {
@@ -66,7 +66,7 @@ export class OrderSaga {
       await this.publishEvent('order.created', {
         orderId,
         customerId: order.customerId,
-        items: order.items.map(item => ({
+        items: order.items.map((item: any) => ({
           productId: item.productId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,

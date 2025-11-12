@@ -6,8 +6,9 @@ export const safeExecAndParseJson = async <T>(command: string, args: string[] = 
   try {
     const { stdout } = await execPromise(command, args);
     return JSON.parse(stdout) as T;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error(`Error executing ${command}:`, error);
-    throw new Error(`safeExec failed: ${error.message}`);
+    throw new Error(`safeExec failed: ${errorMessage}`);
   }
 };

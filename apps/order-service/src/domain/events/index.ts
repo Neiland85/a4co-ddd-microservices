@@ -58,3 +58,4 @@ export class OrderCancelledEvent {
 
 export * from './order-confirmed.event';
 export * from './order-failed.event';
+export * from './order-status-changed.event';
