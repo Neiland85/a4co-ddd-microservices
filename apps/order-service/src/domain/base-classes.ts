@@ -1,7 +1,7 @@
 // Temporary AggregateRoot implementation until shared-utils is fixed
 export abstract class AggregateRoot {
     protected _id: string;
-    protected _domainEvents: any[] = [];
+    protected _domainEvents: DomainEvent[] = [];
     protected _createdAt: Date;
     protected _updatedAt: Date;
 
@@ -23,11 +23,11 @@ export abstract class AggregateRoot {
         return this._updatedAt;
     }
 
-    get domainEvents(): any[] {
+    get domainEvents(): DomainEvent[] {
         return [...this._domainEvents];
     }
 
-    protected addDomainEvent(event: any): void {
+    protected addDomainEvent(event: DomainEvent): void {
         this._domainEvents.push(event);
     }
 

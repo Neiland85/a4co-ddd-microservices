@@ -1,12 +1,8 @@
-import { Order } from '../aggregates/order.aggregate';
+import { Order, OrderId } from '../aggregates/order.aggregate';
 
 export interface IOrderRepository {
   save(order: Order): Promise<void>;
-  findById(id: string): Promise<Order | null>;
+  findById(id: OrderId | string): Promise<Order | null>;
   findAll(): Promise<Order[]>;
-  update(order: Order): Promise<void>;
-  delete(id: string): Promise<void>;
+  delete(id: OrderId | string): Promise<void>;
 }
-
-// Export alias for backward compatibility
-export type OrderRepository = IOrderRepository;

@@ -28,33 +28,37 @@ export class OrderService {
     private readonly orderRepository: IOrderRepository,
   ) { }
 
-  async createOrder(dto: CreateOrderDTO): Promise<Order> {
-    const orderId = new OrderId(dto.orderId);
+    async createOrder(dto: CreateOrderDTO): Promise<Order> {
+      const orderId = new OrderId(dto.orderId);
 
-    // Check if order already exists
-    const existingOrder = await this.orderRepository.findById(orderId);
-    if (existingOrder) {
-      throw new Error(`Order with id ${dto.orderId} already exists`);
+      // Check if order already exists
+      const existingOrder = await this.orderRepository.findById(orderId);
+      if (existingOrder) {
+        throw new Error(`Order with id ${dto.orderId} already exists`);
+      }
+
+      // Create order items
+      const items = dto.items.map(item =>
+        new OrderItem(
+          item.productId,
+          item.quantity,
+          item.unitPrice,
+          item.currency ?? 'EUR',
+        ),
+      );
+
+      // Create order aggregate
+      const order = new Order({
+        id: dto.orderId,
+        customerId: dto.customerId,
+        items,
+      });
+
+      // Save order
+      await this.orderRepository.save(order);
+
+      return order;
     }
-
-    // Create order items
-    const items = dto.items.map(item =>
-      new OrderItem(
-        item.productId,
-        item.quantity,
-        item.unitPrice,
-        item.currency || 'EUR',
-      ),
-    );
-
-    // Create order aggregate
-    const order = new Order(dto.orderId, dto.customerId, items);
-
-    // Save order
-    await this.orderRepository.save(order);
-
-    return order;
-  }
 
   async getOrder(dto: GetOrderDTO): Promise<Order> {
     const orderId = new OrderId(dto.orderId);

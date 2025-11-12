@@ -1,186 +1,264 @@
 import { AggregateRoot, DomainEvent, ValueObject } from '../base-classes';
-
-// VALUE OBJECTS
+import {
+  OrderCancelledEvent,
+  OrderCompletedEvent,
+  OrderCreatedEvent,
+  OrderFailedEvent,
+  OrderStatusChangedEvent,
+} from '../events';
 
 export class OrderId extends ValueObject<string> {
-    constructor(value: string) {
-        super(value);
-        if (!value || value.trim().length === 0) {
-            throw new Error('OrderId cannot be empty');
-        }
+  constructor(value: string) {
+    super(value);
+    if (!value || !value.trim()) {
+      throw new Error('OrderId cannot be empty');
     }
+  }
 }
 
 export class OrderItem {
-    constructor(
-        public readonly productId: string,
-        public readonly quantity: number,
-        public readonly unitPrice: number,
-        public readonly currency: string = 'EUR',
-    ) {
-        if (quantity <= 0) {
-            throw new Error('Quantity must be positive');
-        }
-        if (unitPrice < 0) {
-            throw new Error('Unit price cannot be negative');
-        }
+  constructor(
+    public readonly productId: string,
+    public readonly quantity: number,
+    public readonly unitPrice: number,
+    public readonly currency: string = 'EUR',
+  ) {
+    if (quantity <= 0) {
+      throw new Error('Quantity must be positive');
     }
+    if (unitPrice < 0) {
+      throw new Error('Unit price cannot be negative');
+    }
+  }
 
-    get totalPrice(): number {
-        return this.quantity * this.unitPrice;
-    }
+  get totalPrice(): number {
+    return this.quantity * this.unitPrice;
+  }
+
+  toJSON(): { productId: string; quantity: number; unitPrice: number; currency: string } {
+    return {
+      productId: this.productId,
+      quantity: this.quantity,
+      unitPrice: this.unitPrice,
+      currency: this.currency,
+    };
+  }
 }
 
-export enum OrderStatus {
-    PENDING = 'PENDING',
-    CONFIRMED = 'CONFIRMED',
-    PAID = 'PAID',
-    SHIPPED = 'SHIPPED',
-    DELIVERED = 'DELIVERED',
-    CANCELLED = 'CANCELLED'
+export interface OrderReservation {
+  reservationId: string;
+  productId: string;
+  quantity: number;
 }
 
-// DOMAIN EVENTS
-
-export class OrderCreatedEvent extends DomainEvent {
-    constructor(
-        public readonly orderId: string,
-        public readonly customerId: string,
-        public readonly items: OrderItem[],
-    ) {
-        super(orderId, 'order.created.v1');
-    }
+export enum OrderStatusEnum {
+  PENDING = 'PENDING',
+  PAYMENT_CONFIRMED = 'PAYMENT_CONFIRMED',
+  INVENTORY_RESERVED = 'INVENTORY_RESERVED',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  FAILED = 'FAILED',
 }
-
-export class OrderStatusChangedEvent extends DomainEvent {
-    constructor(
-        public readonly orderId: string,
-        public readonly oldStatus: OrderStatus,
-        public readonly newStatus: OrderStatus,
-    ) {
-        super(orderId, 'order.status.changed.v1');
-    }
-}
-
-// AGGREGATE
 
 export class Order extends AggregateRoot {
-    private _customerId: string;
-    private _items: OrderItem[];
-    private _status: OrderStatus;
-    private _totalAmount: number;
+  private readonly _customerId: string;
+  private readonly _items: OrderItem[];
+  private _status: OrderStatusEnum;
+  private readonly _totalAmount: number;
+  private _paymentId?: string;
+  private _reservations: OrderReservation[] = [];
+  private _failureReason?: string;
 
-    constructor(
-        id: string,
-        customerId: string,
-        items: OrderItem[],
-        status: OrderStatus = OrderStatus.PENDING,
-        createdAt?: Date,
-        updatedAt?: Date,
-    ) {
-        super(id, createdAt, updatedAt);
-        this._customerId = customerId;
-        this._items = [...items];
-        this._status = status;
-        this._totalAmount = this.calculateTotal();
+  constructor(params: {
+    id: string;
+    customerId: string;
+    items: OrderItem[];
+    status?: OrderStatusEnum;
+    paymentId?: string;
+    reservations?: OrderReservation[];
+    failureReason?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+  }) {
+    super(params.id, params.createdAt, params.updatedAt);
+    this._customerId = params.customerId;
+    this._items = [...params.items];
+    this._status = params.status ?? OrderStatusEnum.PENDING;
+    this._totalAmount = this._items.reduce((acc, item) => acc + item.totalPrice, 0);
+    this._paymentId = params.paymentId;
+    this._reservations = params.reservations ? [...params.reservations] : [];
+    this._failureReason = params.failureReason;
 
-        // Add domain event if this is a new order
-        if (status === OrderStatus.PENDING && !createdAt) {
-            this.addDomainEvent(new OrderCreatedEvent(id, customerId, items));
-        }
+    if (!params.createdAt) {
+      this.addDomainEvent(
+        new OrderCreatedEvent({
+          orderId: this.id,
+          customerId: this._customerId,
+          items: this._items.map(item => item.toJSON()),
+          totalAmount: this._totalAmount,
+        }),
+      );
+    }
+  }
+
+  get customerId(): string {
+    return this._customerId;
+  }
+
+  get items(): OrderItem[] {
+    return [...this._items];
+  }
+
+  get status(): OrderStatusEnum {
+    return this._status;
+  }
+
+  get totalAmount(): number {
+    return this._totalAmount;
+  }
+
+  get paymentId(): string | undefined {
+    return this._paymentId;
+  }
+
+  get reservations(): OrderReservation[] {
+    return [...this._reservations];
+  }
+
+  get failureReason(): string | undefined {
+    return this._failureReason;
+  }
+
+  confirmPayment(paymentId: string): void {
+    if (!paymentId || !paymentId.trim()) {
+      throw new Error('paymentId is required to confirm payment');
+    }
+    if (this._status !== OrderStatusEnum.PENDING && this._status !== OrderStatusEnum.INVENTORY_RESERVED) {
+      throw new Error(`Cannot confirm payment from status ${this._status}`);
     }
 
-    get customerId(): string {
-        return this._customerId;
+    const previous = this._status;
+    this._paymentId = paymentId;
+    this._status = OrderStatusEnum.PAYMENT_CONFIRMED;
+    this.touch();
+    this.addDomainEvent(
+      new OrderStatusChangedEvent({
+        orderId: this.id,
+        oldStatus: previous,
+        newStatus: this._status,
+      }),
+    );
+  }
+
+  recordInventoryReservations(reservations: OrderReservation[]): void {
+    if (!reservations.length) {
+      throw new Error('At least one reservation is required');
     }
 
-    get items(): OrderItem[] {
-        return [...this._items];
+    const previous = this._status;
+    this._reservations = reservations.map(r => ({ ...r }));
+    this._status = OrderStatusEnum.INVENTORY_RESERVED;
+    this.touch();
+    this.addDomainEvent(
+      new OrderStatusChangedEvent({
+        orderId: this.id,
+        oldStatus: previous,
+        newStatus: this._status,
+      }),
+    );
+  }
+
+  complete(): void {
+    if (this._status !== OrderStatusEnum.INVENTORY_RESERVED && this._status !== OrderStatusEnum.PAYMENT_CONFIRMED) {
+      throw new Error(`Cannot complete order from status ${this._status}`);
     }
 
-    get status(): OrderStatus {
-        return this._status;
+    const previous = this._status;
+    this._status = OrderStatusEnum.COMPLETED;
+    this.touch();
+    this.addDomainEvent(
+      new OrderStatusChangedEvent({
+        orderId: this.id,
+        oldStatus: previous,
+        newStatus: this._status,
+      }),
+    );
+    this.addDomainEvent(
+      new OrderCompletedEvent({
+        orderId: this.id,
+        customerId: this._customerId,
+        totalAmount: this._totalAmount,
+        paymentId: this._paymentId,
+        items: this._items.map(item => item.toJSON()),
+      }),
+    );
+  }
+
+  cancel(reason: string): void {
+    if (!reason || !reason.trim()) {
+      throw new Error('Cancellation reason is required');
     }
 
-    get totalAmount(): number {
-        return this._totalAmount;
+    const previous = this._status;
+    this._status = OrderStatusEnum.CANCELLED;
+    this._failureReason = reason;
+    this.touch();
+    this.addDomainEvent(
+      new OrderStatusChangedEvent({
+        orderId: this.id,
+        oldStatus: previous,
+        newStatus: this._status,
+      }),
+    );
+    this.addDomainEvent(
+      new OrderCancelledEvent({
+        orderId: this.id,
+        reason,
+      }),
+    );
+  }
+
+  markAsFailed(reason: string): void {
+    if (!reason || !reason.trim()) {
+      throw new Error('Failure reason is required');
     }
 
-    private calculateTotal(): number {
-        return this._items.reduce((total, item) => total + item.totalPrice, 0);
-    }
+    const previous = this._status;
+    this._status = OrderStatusEnum.FAILED;
+    this._failureReason = reason;
+    this.touch();
+    this.addDomainEvent(
+      new OrderStatusChangedEvent({
+        orderId: this.id,
+        oldStatus: previous,
+        newStatus: this._status,
+      }),
+    );
+    this.addDomainEvent(
+      new OrderFailedEvent({
+        orderId: this.id,
+        reason,
+      }),
+    );
+  }
 
-    changeStatus(newStatus: OrderStatus): void {
-        if (this._status === newStatus) {
-            return;
-        }
+  pullDomainEvents(): DomainEvent[] {
+    const events = this.domainEvents;
+    this.clearDomainEvents();
+    return events;
+  }
 
-        const oldStatus = this._status;
-        this._status = newStatus;
-        this.touch();
-
-        this.addDomainEvent(new OrderStatusChangedEvent(this.id, oldStatus, newStatus));
-    }
-
-    addItem(item: OrderItem): void {
-        this._items.push(item);
-        this._totalAmount = this.calculateTotal();
-        this.touch();
-    }
-
-    removeItem(productId: string): void {
-        const index = this._items.findIndex(item => item.productId === productId);
-        if (index === -1) {
-            throw new Error(`Item with productId ${productId} not found in order`);
-        }
-
-        this._items.splice(index, 1);
-        this._totalAmount = this.calculateTotal();
-        this.touch();
-    }
-
-    // Helper method to get domain events
-    getDomainEvents(): DomainEvent[] {
-        return this.domainEvents;
-    }
-
-    // Helper method to clear domain events
-    override clearDomainEvents(): void {
-    override getDomainEvents(): DomainEvent[] {
-        return super.getUncommittedEvents();
-    }
-
-    // Helper method to clear domain events
-    clearDomainEvents(): void {
-        super.clearDomainEvents();
-    }
-
-    // Saga-related methods
-    confirmPayment(): void {
-        if (this._status !== OrderStatus.PENDING) {
-            throw new Error(`Cannot confirm payment for order in status: ${this._status}`);
-        }
-        this.changeStatus(OrderStatus.PAID);
-    }
-
-    markAsShipped(): void {
-        if (this._status !== OrderStatus.PAID) {
-            throw new Error(`Cannot ship order in status: ${this._status}`);
-        }
-        this.changeStatus(OrderStatus.SHIPPED);
-    }
-
-    markAsDelivered(): void {
-        if (this._status !== OrderStatus.SHIPPED) {
-            throw new Error(`Cannot deliver order in status: ${this._status}`);
-        }
-        this.changeStatus(OrderStatus.DELIVERED);
-    }
-
-    cancel(reason?: string): void {
-        if (this._status === OrderStatus.DELIVERED) {
-            throw new Error('Cannot cancel a delivered order');
-        }
-        this.changeStatus(OrderStatus.CANCELLED);
-    }
+  static reconstruct(params: {
+    id: string;
+    customerId: string;
+    items: OrderItem[];
+    status: OrderStatusEnum;
+    paymentId?: string;
+    reservations?: OrderReservation[];
+    failureReason?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+  }): Order {
+    return new Order(params);
+  }
 }

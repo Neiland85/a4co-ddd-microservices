@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { lastValueFrom } from 'rxjs';
 import { Order, OrderItem } from '../../domain/aggregates/order.aggregate';
 import { IOrderRepository } from '../../domain';
-import { CreateOrderCommand } from '../commands/create-order.command';
-import { ClientProxy } from '@nestjs/microservices';
 
 export interface CreateOrderDto {
   customerId: string;
@@ -29,31 +29,36 @@ export class CreateOrderUseCase {
     }
 
     // 2. Crear value objects
-    const orderItems = dto.items.map(
-      (item) =>
-        new OrderItem(
-          item.productId,
-          item.quantity,
-          item.unitPrice,
-          'EUR', // TODO: Get from config or request
-        ),
-    );
+      const orderItems = dto.items.map(
+        item =>
+          new OrderItem(
+            item.productId,
+            item.quantity,
+            item.unitPrice,
+            'EUR', // TODO: Get from config or request
+          ),
+      );
 
     // 3. Crear aggregate
-    const orderId = this.generateOrderId();
-    const order = new Order(orderId, dto.customerId, orderItems);
+      const orderId = this.generateOrderId();
+      const order = new Order({
+        id: orderId,
+        customerId: dto.customerId,
+        items: orderItems,
+      });
 
     // 4. Guardar en repository
     await this.orderRepository.save(order);
 
     // 5. Publicar eventos de dominio
-    const events = order.getDomainEvents();
+    const events = order.pullDomainEvents();
     for (const event of events) {
-      await this.eventBus.emit(event.eventName, event).toPromise();
+      const payload =
+        'toJSON' in event && typeof (event as { toJSON?: unknown }).toJSON === 'function'
+          ? (event as { toJSON: () => unknown }).toJSON()
+          : event;
+      await lastValueFrom(this.eventBus.emit(event.eventName, payload));
     }
-
-    // 6. Limpiar eventos
-    order.clearDomainEvents();
 
     return orderId;
   }

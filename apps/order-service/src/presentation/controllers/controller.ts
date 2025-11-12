@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { OrderService } from '../../application/services/service';
 import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case';
 import { OrderMetricsService } from '../../infrastructure/metrics/order-metrics.service';
-import { CreateOrderRequestV1, GetOrderRequestV1, OrderResponseV1 } from '../../contracts/api/v1/dto';
+import { CreateOrderRequestV1, OrderResponseV1 } from '../../contracts/api/v1/dto';
 import { OrderItem } from '../../domain/aggregates/order.aggregate';
 
 @ApiTags('orders')
@@ -21,27 +21,22 @@ export class OrderController {
   @ApiResponse({ status: 201, description: 'Order created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
   async createOrder(@Body() req: CreateOrderRequestV1): Promise<OrderResponseV1> {
-    // Use the new Use Case approach
     const orderId = await this.createOrderUseCase.execute({
       customerId: req.customerId,
-      items: req.items.map((item) => ({
+      items: req.items.map(item => ({
         productId: item.productId,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
       })),
     });
 
-    // Get the created order
     const order = await this.orderService.getOrder({ orderId });
-
-    // Record metrics
     this.metricsService.recordOrderCreated(order.totalAmount);
 
     return {
       orderId: order.id,
       customerId: order.customerId,
       items: order.items.map((item: OrderItem) => ({
-      items: order.items.map((item: any) => ({
         productId: item.productId,
         quantity: item.quantity,
         unitPrice: item.unitPrice,

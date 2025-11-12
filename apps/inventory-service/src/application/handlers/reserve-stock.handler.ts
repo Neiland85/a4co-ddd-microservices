@@ -1,5 +1,6 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
+import { lastValueFrom } from 'rxjs';
 import { ReserveStockUseCase } from '../use-cases/reserve-stock.use-case';
 import { ReleaseStockUseCase } from '../use-cases/release-stock.use-case';
 import { IStockReservationRepository } from '../../infrastructure/repositories/stock-reservation.repository';
@@ -90,13 +91,15 @@ export class ReserveStockHandler {
 
       if (allReserved) {
         // Publicar evento de stock reservado
-        await this.natsClient.emit('inventory.reserved', {
-          orderId: event.orderId,
-          customerId: event.customerId,
-          reservations: reservationResults,
-          totalAmount: event.totalAmount,
-          timestamp: new Date().toISOString(),
-        }).toPromise();
+        await lastValueFrom(
+          this.natsClient.emit('inventory.reserved', {
+            orderId: event.orderId,
+            customerId: event.customerId,
+            reservations: reservationResults,
+            totalAmount: event.totalAmount,
+            timestamp: new Date().toISOString(),
+          }),
+        );
 
         this.logger.log(`✅ Stock reservado exitosamente para orden ${event.orderId}`);
       } else {
@@ -111,11 +114,13 @@ export class ReserveStockHandler {
         }
 
         // Publicar evento de stock insuficiente
-        await this.natsClient.emit('inventory.out_of_stock', {
-          orderId: event.orderId,
-          reason: 'Stock insuficiente para uno o más productos',
-          timestamp: new Date().toISOString(),
-        }).toPromise();
+        await lastValueFrom(
+          this.natsClient.emit('inventory.out_of_stock', {
+            orderId: event.orderId,
+            reason: 'Stock insuficiente para uno o más productos',
+            timestamp: new Date().toISOString(),
+          }),
+        );
 
         this.logger.error(`❌ Stock insuficiente para orden ${event.orderId}`);
       }
@@ -123,11 +128,13 @@ export class ReserveStockHandler {
       this.logger.error(`❌ Error procesando reserva de stock para orden ${event.orderId}:`, error);
 
       // Publicar evento de error
-      await this.natsClient.emit('inventory.reservation_failed', {
-        orderId: event.orderId,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-      }).toPromise();
+      await lastValueFrom(
+        this.natsClient.emit('inventory.reservation_failed', {
+          orderId: event.orderId,
+          error: error instanceof Error ? error.message : 'Unknown error',
+          timestamp: new Date().toISOString(),
+        }),
+      );
     }
   }
 
