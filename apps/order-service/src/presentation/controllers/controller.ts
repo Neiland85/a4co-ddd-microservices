@@ -1,10 +1,10 @@
-import { Controller, Post, Get, Body, Param, HttpCode, HttpStatus, Inject } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { OrderService } from '../../application/services/service';
 import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case';
 import { OrderMetricsService } from '../../infrastructure/metrics/order-metrics.service';
 import { CreateOrderRequestV1, GetOrderRequestV1, OrderResponseV1 } from '../../contracts/api/v1/dto';
-import { IOrderRepository } from '../../domain/repositories/order.repository';
+import { OrderItem } from '../../domain/aggregates/order.aggregate';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -13,7 +13,6 @@ export class OrderController {
     private readonly orderService: OrderService,
     private readonly createOrderUseCase: CreateOrderUseCase,
     private readonly metricsService: OrderMetricsService,
-    @Inject('OrderRepository') private readonly repository: IOrderRepository,
   ) {}
 
   @Post()
@@ -33,11 +32,7 @@ export class OrderController {
     });
 
     // Get the created order
-    const order = await this.repository.findById({ value: orderId } as any);
-
-    if (!order) {
-      throw new Error('Order not found after creation');
-    }
+    const order = await this.orderService.getOrder({ orderId });
 
     // Record metrics
     this.metricsService.recordOrderCreated(order.totalAmount);
@@ -45,7 +40,7 @@ export class OrderController {
     return {
       orderId: order.id,
       customerId: order.customerId,
-      items: order.items.map((item: any) => ({
+      items: order.items.map((item: OrderItem) => ({
         productId: item.productId,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
@@ -84,7 +79,7 @@ export class OrderController {
     return {
       orderId: result.id,
       customerId: result.customerId,
-      items: result.items.map((item) => ({
+      items: result.items.map((item: OrderItem) => ({
         productId: item.productId,
         quantity: item.quantity,
         unitPrice: item.unitPrice,

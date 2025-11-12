@@ -140,12 +140,12 @@ export class Order extends AggregateRoot {
     }
 
     // Helper method to get domain events
-    override getDomainEvents(): DomainEvent[] {
-        return super.getUncommittedEvents();
+    getDomainEvents(): DomainEvent[] {
+        return this.domainEvents;
     }
 
     // Helper method to clear domain events
-    clearDomainEvents(): void {
+    override clearDomainEvents(): void {
         super.clearDomainEvents();
     }
 

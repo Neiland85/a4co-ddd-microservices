@@ -16,8 +16,8 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "outDir": "dist",
-    "rootDir": "src",
+      "outDir": "dist",
+      "rootDir": ".",
     "types": [
       "node",
       "reflect-metadata"
@@ -26,22 +26,17 @@
       "ES2022",
       "DOM"
     ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@a4co/shared-utils": [
-        "../../packages/shared-utils/src"
-      ],
-      "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/src/*"
-      ]
-    }
+      "baseUrl": ".",
+      "paths": {
+        "@/*": [
+          "src/*"
+        ]
+      }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.d.ts"
+    ],
   "exclude": [
     "**/__tests__/**",
     "**/*.spec.ts",
