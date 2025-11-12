@@ -1,10 +1,15 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { NatsEventBus, EventMessage } from "@a4co/shared-utils";
+import { NatsEventBus } from "@a4co/shared-utils";
 import { CreateOrderCommand } from "../commands/create-order.command";
 import { OrderCreatedEvent, OrderCancelledEvent, OrderStatusChangedEvent } from "../../domain/events";
 import { OrderStatus } from "../../domain/aggregates/order.aggregate";
-import { IOrderRepository } from "../../domain/repositories/order.repository";
+import { OrderRepository } from "../../domain/repositories/order.repository";
+
+export interface EventMessage<T = any> {
+  data: T;
+  eventType?: string;
+}
 
 export enum SagaState {
   STARTED = 'STARTED',
@@ -34,7 +39,7 @@ export class OrderSaga {
 
   constructor(
     @Inject('OrderRepository')
-    private readonly orderRepository: IOrderRepository,
+    private readonly orderRepository: OrderRepository,
     @Inject('NATS_CLIENT')
     private readonly natsClient: ClientProxy,
   ) {
@@ -64,7 +69,7 @@ export class OrderSaga {
       await this.publishEvent('order.created', {
         orderId,
         customerId: order.customerId,
-        items: order.items.map(item => ({
+        items: order.items.map((item: any) => ({
           productId: item.productId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
