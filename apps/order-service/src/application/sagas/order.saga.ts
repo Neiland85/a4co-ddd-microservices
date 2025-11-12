@@ -90,7 +90,7 @@ export class OrderSaga {
     }
   }
 
-  private async handleInventoryReserved(event: EventMessage): Promise<void> {
+  async handleInventoryReserved(event: EventMessage): Promise<void> {
     const { orderId, reservationId } = event.data;
     const context = this.sagaContexts.get(orderId);
 
@@ -121,13 +121,13 @@ export class OrderSaga {
     context.updatedAt = new Date();
   }
 
-  private async handleInventoryOutOfStock(event: EventMessage): Promise<void> {
+  async handleInventoryOutOfStock(event: EventMessage): Promise<void> {
     const { orderId } = event.data;
     this.logger.error(`❌ Stock insuficiente para orden ${orderId}`);
     await this.compensate(orderId, 'Stock insuficiente');
   }
 
-  private async handlePaymentSucceeded(event: EventMessage): Promise<void> {
+  async handlePaymentSucceeded(event: EventMessage): Promise<void> {
     const { orderId, paymentIntentId } = event.data;
     const context = this.sagaContexts.get(orderId);
 
@@ -171,7 +171,7 @@ export class OrderSaga {
     }
   }
 
-  private async handlePaymentFailed(event: EventMessage): Promise<void> {
+  async handlePaymentFailed(event: EventMessage): Promise<void> {
     const { orderId, reason } = event.data;
     this.logger.error(`❌ Pago fallido para orden ${orderId}: ${reason}`);
     await this.compensate(orderId, `Pago fallido: ${reason}`);

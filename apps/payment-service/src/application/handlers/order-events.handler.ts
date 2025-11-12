@@ -22,6 +22,14 @@ export interface OrderCancelledEventPayload {
   sagaId?: string;
 }
 
+export interface PaymentInitiateEventPayload {
+  orderId: string;
+  amount: number;
+  customerId: string;
+  currency?: string;
+  timestamp: string;
+}
+
 @Controller()
 export class OrderEventsHandler {
   private readonly logger = new Logger(OrderEventsHandler.name);
@@ -31,7 +39,7 @@ export class OrderEventsHandler {
     private readonly refundPaymentUseCase: RefundPaymentUseCase,
   ) { }
 
-  @EventPattern('order.created.v1')
+  @EventPattern('order.created')
   public async handleOrderCreated(@Payload() event: OrderCreatedEventPayload): Promise<void> {
     this.logger.log(`Received order.created event for order ${event.orderId}`);
 
@@ -62,11 +70,26 @@ export class OrderEventsHandler {
     await this.processPaymentUseCase.execute(command);
   }
 
-  @EventPattern('order.cancelled.v1')
+  @EventPattern('order.cancelled')
   public async handleOrderCancelled(@Payload() event: OrderCancelledEventPayload): Promise<void> {
     this.logger.log(`Received order.cancelled event for order ${event.orderId}`);
 
     await this.refundPaymentUseCase.execute(event.orderId);
+  }
+
+  @EventPattern('payment.initiate')
+  public async handlePaymentInitiate(@Payload() event: PaymentInitiateEventPayload): Promise<void> {
+    this.logger.log(`Received payment.initiate event for order ${event.orderId}`);
+
+    const amount = Money.create(event.amount, event.currency || 'EUR');
+
+    const command: ProcessPaymentCommand = {
+      orderId: event.orderId,
+      amount,
+      customerId: event.customerId,
+    };
+
+    await this.processPaymentUseCase.execute(command);
   }
 }
 

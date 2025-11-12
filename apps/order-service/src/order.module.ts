@@ -6,6 +6,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { OrderSaga } from './application/sagas/order.saga';
 import { CreateOrderUseCase } from './application/use-cases/create-order.use-case';
 import { OrderService } from './application/services/service';
+import { SagaEventsHandler } from './application/handlers/saga-events.handler';
 
 // Infrastructure Layer
 import { InMemoryOrderRepository } from './infrastructure/repositories/order.repository';
@@ -35,7 +36,7 @@ import { OrderMetricsService } from './infrastructure/metrics/order-metrics.serv
     ]),
   ],
 
-  controllers: [OrderController],
+  controllers: [OrderController, SagaEventsHandler],
 
   providers: [
     // Application Services
