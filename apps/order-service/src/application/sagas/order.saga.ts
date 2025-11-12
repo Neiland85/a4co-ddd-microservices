@@ -6,6 +6,15 @@ import { IOrderRepository } from '../../domain';
 
 interface EventMessage<T = any> {
   data: T;
+import { NatsEventBus } from "@a4co/shared-utils";
+import { CreateOrderCommand } from "../commands/create-order.command";
+import { OrderCreatedEvent, OrderCancelledEvent, OrderStatusChangedEvent } from "../../domain/events";
+import { OrderStatus } from "../../domain/aggregates/order.aggregate";
+import { OrderRepository } from "../../domain/repositories/order.repository";
+
+export interface EventMessage<T = any> {
+  data: T;
+  eventType?: string;
 }
 
 export enum SagaState {
@@ -58,6 +67,9 @@ export class OrderSaga {
       try {
       // 1. Crear orden
         const order = await this.orderRepository.findById(new OrderId(orderId));
+    try {
+      // 1. Crear orden
+      const order = await this.orderRepository.findById(orderId);
       if (!order) {
         throw new Error(`Order ${orderId} not found`);
       }
@@ -85,6 +97,13 @@ export class OrderSaga {
         await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
         throw error;
       }
+      this.logger.log(`✅ Saga iniciada para orden ${orderId}`);
+      return orderId;
+    } catch (error) {
+      this.logger.error(`❌ Error iniciando saga para orden ${orderId}:`, error);
+      await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
+      throw error;
+    }
   }
 
   private async handleInventoryReserved(event: EventMessage): Promise<void> {
@@ -140,6 +159,8 @@ export class OrderSaga {
 
       try {
         const order = await this.orderRepository.findById(new OrderId(orderId));
+    try {
+      const order = await this.orderRepository.findById(orderId);
       if (!order) {
         throw new Error(`Order ${orderId} not found`);
       }
@@ -166,6 +187,12 @@ export class OrderSaga {
         this.logger.error(`❌ Error procesando pago exitoso para orden ${orderId}:`, error);
         await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
       }
+      // Limpiar contexto después de un tiempo
+      setTimeout(() => this.sagaContexts.delete(orderId), 60000);
+    } catch (error) {
+      this.logger.error(`❌ Error procesando pago exitoso para orden ${orderId}:`, error);
+      await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
+    }
   }
 
   private async handlePaymentFailed(event: EventMessage): Promise<void> {
@@ -193,6 +220,7 @@ export class OrderSaga {
     this.logger.log(`🔄 Iniciando compensación para orden ${orderId}: ${reason}`);
 
       try {
+    try {
       // 1. Liberar reserva de stock si existe
       if (context.reservationId) {
         await this.publishEvent('inventory.release', {
@@ -217,6 +245,7 @@ export class OrderSaga {
 
       // 3. Actualizar estado de orden
         const order = await this.orderRepository.findById(new OrderId(orderId));
+      const order = await this.orderRepository.findById(orderId);
       if (order) {
         order.cancel(reason);
         await this.orderRepository.save(order);
@@ -241,6 +270,13 @@ export class OrderSaga {
         context.state = SagaState.FAILED;
         context.error = `Compensación falló: ${error instanceof Error ? error.message : 'Unknown error'}`;
       }
+      // Limpiar contexto después de un tiempo
+      setTimeout(() => this.sagaContexts.delete(orderId), 60000);
+    } catch (error) {
+      this.logger.error(`❌ Error en compensación para orden ${orderId}:`, error);
+      context.state = SagaState.FAILED;
+      context.error = `Compensación falló: ${error instanceof Error ? error.message : 'Unknown error'}`;
+    }
   }
 
   private setupEventHandlers(): void {
@@ -267,6 +303,14 @@ export class OrderSaga {
         this.logger.error(`❌ Error publicando evento ${subject}:`, error);
         throw error;
       }
+  private async publishEvent(subject: string, data: any): Promise<void> {
+    try {
+      await this.natsClient.emit(subject, data).toPromise();
+      this.logger.log(`📤 Evento publicado: ${subject}`);
+    } catch (error) {
+      this.logger.error(`❌ Error publicando evento ${subject}:`, error);
+      throw error;
+    }
   }
 
   private generateOrderId(): string {

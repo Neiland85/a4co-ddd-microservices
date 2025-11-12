@@ -17,12 +17,14 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // NATS Client for Event Bus
     ClientsModule.register([
       {
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
           servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
+          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
           queue: 'inventory-service-queue',
         },
       },
@@ -39,6 +41,7 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
         return prisma;
       },
     },
+    // Repositories
     {
       provide: 'PRODUCT_REPOSITORY',
       useFactory: (prisma: PrismaClient) => new PrismaProductRepository(prisma),
@@ -49,6 +52,14 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
       useFactory: (prisma: PrismaClient) => new PrismaStockReservationRepository(prisma),
       inject: ['PRISMA_CLIENT'],
     },
+    {
+      provide: 'STOCK_RESERVATION_REPOSITORY',
+      useFactory: (prisma: PrismaClient) => {
+        return new PrismaStockReservationRepository(prisma);
+      },
+      inject: ['PRISMA_CLIENT'],
+    },
+    // Use Cases
     {
       provide: CheckInventoryUseCase,
       useFactory: (repository: ProductRepository) => new CheckInventoryUseCase(repository),

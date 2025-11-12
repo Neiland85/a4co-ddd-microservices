@@ -146,6 +146,12 @@ export class Order extends AggregateRoot {
 
     // Helper method to clear domain events
     override clearDomainEvents(): void {
+    override getDomainEvents(): DomainEvent[] {
+        return super.getUncommittedEvents();
+    }
+
+    // Helper method to clear domain events
+    clearDomainEvents(): void {
         super.clearDomainEvents();
     }
 
