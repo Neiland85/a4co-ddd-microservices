@@ -111,7 +111,8 @@ export class OrderSagaOrchestrator {
       this.logger.log(`✅ Evento orders.created publicado para orden ${command.orderId}`);
     } catch (error) {
       this.logger.error(`❌ Error iniciando saga ${sagaId}:`, error);
-      await this.handleSagaFailure(sagaId, 'inventory_check', error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      await this.handleSagaFailure(sagaId, 'inventory_check', errorMessage);
     }
   }
 
@@ -280,7 +281,7 @@ export class OrderSagaOrchestrator {
       this.logger.log(`✅ Compensación completada para saga ${saga.sagaId}`);
     } catch (error) {
       this.logger.error(`❌ Error en compensación de saga ${saga.sagaId}:`, error);
-      saga.error = error.message;
+      saga.error = error instanceof Error ? error.message : String(error);
     }
   }
 
