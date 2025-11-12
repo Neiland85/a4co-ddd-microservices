@@ -69,3 +69,4 @@ export declare class BracesSecurityFactory {
     static createDefaultConfig(): BracesSecurityConfig;
 }
 export declare const bracesSecurityFactory: typeof BracesSecurityFactory;
+//# sourceMappingURL=braces-security.d.ts.map
