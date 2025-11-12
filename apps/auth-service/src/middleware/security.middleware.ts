@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, NestMiddleware } from '@nestjs/c
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request, Response } from 'express';
-import rateLimit from 'express-rate-limit';
+import rateLimit, { RateLimitRequestHandler } from 'express-rate-limit';
 
 // Extender la interfaz Request para incluir la propiedad user
 declare global {
@@ -20,7 +20,7 @@ declare global {
 
 @Injectable()
 export class SecurityMiddleware implements NestMiddleware {
-  private rateLimiter: any;
+  private rateLimiter: RateLimitRequestHandler;
   private jwtService: JwtService;
   private configService: ConfigService;
 
@@ -49,7 +49,7 @@ export class SecurityMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     // Aplicar rate limiting
-    this.rateLimiter(req, res, (err: any) => {
+    this.rateLimiter(req, res, (err?: unknown) => {
       if (err) {
         throw new HttpException('Rate limit exceeded', HttpStatus.TOO_MANY_REQUESTS);
       }
@@ -140,7 +140,7 @@ export class SecurityMiddleware implements NestMiddleware {
 // Middleware específico para rate limiting de login
 @Injectable()
 export class LoginRateLimitMiddleware implements NestMiddleware {
-  private loginRateLimiter: any;
+  private loginRateLimiter: RateLimitRequestHandler;
 
   constructor() {
     // Rate limiting más estricto para login
@@ -194,20 +194,22 @@ export class InputValidationMiddleware implements NestMiddleware {
     next();
   }
 
-  private sanitizeInput(obj: any) {
-    if (!obj || typeof obj !== 'object') return;
+  private sanitizeInput(obj: unknown): void {
+    if (!obj || typeof obj !== 'object' || obj === null) return;
+    
+    const record = obj as Record<string, unknown>;
 
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        if (typeof obj[key] === 'string') {
+    for (const key in record) {
+      if (Object.prototype.hasOwnProperty.call(record, key)) {
+        if (typeof record[key] === 'string') {
           // Remover caracteres peligrosos
-          obj[key] = obj[key]
+          record[key] = (record[key] as string)
             .replace(/[<>]/g, '') // Remover < y >
             .replace(/javascript:/gi, '') // Remover javascript:
             .replace(/on\w+=/gi, '') // Remover event handlers
             .trim();
-        } else if (typeof obj[key] === 'object') {
-          this.sanitizeInput(obj[key]);
+        } else if (typeof record[key] === 'object' && record[key] !== null) {
+          this.sanitizeInput(record[key]);
         }
       }
     }
