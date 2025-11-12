@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-import * as morgan from 'morgan';
+import morgan from 'morgan';
 import { InventoryModule } from './inventory.module';
 
 async function bootstrap() {
@@ -48,7 +48,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/inventory/docs', app, document);
 
-  const port = process.env.PORT || 3006;
+  const port = process.env['PORT'] || 3006;
   await app.listen(port);
 
   console.log(`
@@ -60,8 +60,8 @@ async function bootstrap() {
 📚 Swagger:    http://localhost:${port}/api/inventory/docs
 🔍 Health:     http://localhost:${port}/api/inventory/health
 
-Environment:  ${process.env.NODE_ENV || 'development'}
-Database:     ${process.env.DATABASE_URL ? '✅ Connected' : '⚠️  Not configured'}
+Environment:  ${process.env['NODE_ENV'] || 'development'}
+Database:     ${process.env['DATABASE_URL'] ? '✅ Connected' : '⚠️  Not configured'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `);

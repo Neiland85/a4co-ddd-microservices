@@ -15,9 +15,9 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
         });
       }
       const result = await inventoryService.checkInventory({ productId });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         error: 'Bad Request',
         message: error instanceof Error ? error.message : 'Unknown error',
       });
@@ -35,9 +35,9 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
         });
       }
       const result = await inventoryService.bulkCheckInventory({ productIds });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         error: 'Bad Request',
         message: error instanceof Error ? error.message : 'Unknown error',
       });
@@ -65,12 +65,12 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
       });
 
       if (result.success) {
-        res.status(200).json(result);
+        return res.status(200).json(result);
       } else {
-        res.status(409).json(result); // Conflict - cannot reserve
+        return res.status(409).json(result); // Conflict - cannot reserve
       }
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         error: 'Bad Request',
         message: error instanceof Error ? error.message : 'Unknown error',
       });
@@ -96,12 +96,12 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
       });
 
       if (result.success) {
-        res.status(200).json(result);
+        return res.status(200).json(result);
       } else {
-        res.status(409).json(result); // Conflict - cannot release
+        return res.status(409).json(result); // Conflict - cannot release
       }
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         error: 'Bad Request',
         message: error instanceof Error ? error.message : 'Unknown error',
       });
@@ -166,9 +166,9 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
         });
       }
 
-      res.json(product.toJSON());
+      return res.json(product.toJSON());
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         error: 'Internal Server Error',
         message: error instanceof Error ? error.message : 'Unknown error',
       });

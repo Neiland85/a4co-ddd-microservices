@@ -1,5 +1,4 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2022",
     "module": "NodeNext",
@@ -17,7 +16,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
-    "rootDir": "src",
     "types": [
       "node",
       "reflect-metadata"
@@ -47,6 +45,9 @@
     "**/*.spec.ts",
     "**/*.test.ts",
     "dist",
-    "node_modules"
+    "node_modules",
+    "../../packages/shared-utils/src/**/__tests__/**",
+    "../../packages/shared-utils/src/**/*.test.ts",
+    "../../packages/shared-utils/src/**/*.spec.ts"
   ]
 }

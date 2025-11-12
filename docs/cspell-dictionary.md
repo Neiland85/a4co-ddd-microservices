@@ -1,60 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 12/11/2025, 8:49:19
+Última sincronización: 12/11/2025, 9:09:37
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (46)
-- agent
-- agents
-- also
-- bookingnadarecords
-- communication
-- compensation
-- compile
-- completion
-- coordinate
-- cursor
-- cursoragent
-- document
-- documents
-- driven
-- effects
-- encompass
-- failed
-- failures
-- flows
-- handling
-- implement
-- implementation
-- including
-- infrastructure
-- introduces
-- investor
-- jetstream
-- logic
-- mockup
-- noemit
-- orchestrate
-- orchestrator
-- outputs
-- pattern
-- persist
-- plan
-- planning
-- processing
-- refactors
-- saga
-- scenarios
-- side
-- successful
-- testing
-- transactions
-- types
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (191)
+### Commits recientes detectados (194)
 - across
 - actions
 - added
@@ -74,6 +29,7 @@ Sin nuevas palabras.
 - changes
 - check
 - checklist
+- checkpoint
 - checks
 - clarity
 - code
@@ -119,6 +75,7 @@ Sin nuevas palabras.
 - files
 - finalize
 - flows
+- follow
 - from
 - github
 - gmail
@@ -157,6 +114,7 @@ Sin nuevas palabras.
 - maintainability
 - mapping
 - merging
+- message
 - methods
 - metrics
 - microservices

@@ -26,7 +26,7 @@ import { NatsEventBus } from '@a4co/shared-utils';
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
+          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
           queue: 'payment-service-queue',
         },
       },
@@ -56,7 +56,7 @@ import { NatsEventBus } from '@a4co/shared-utils';
       provide: 'NATS_EVENT_BUS',
       useFactory: () => {
         return new NatsEventBus({
-          servers: process.env.NATS_URL || 'nats://localhost:4222',
+          servers: process.env['NATS_URL'] || 'nats://localhost:4222',
           name: 'payment-service-event-bus',
         });
       },

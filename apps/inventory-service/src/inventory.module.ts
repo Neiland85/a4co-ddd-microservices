@@ -22,7 +22,7 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
+          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
           queue: 'inventory-service-queue',
         },
       },

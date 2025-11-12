@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { NatsEventBus, EventMessage } from '@a4co/shared-utils/events/nats-event-bus';
-import { EventSubjects } from '@a4co/shared-utils/events/subjects';
-import { DomainEvent } from '@a4co/shared-utils/domain/domain-event';
+import { NatsEventBus, DomainEvent } from '@a4co/shared-utils';
 import { Payment } from '../../domain/entities/payment.entity';
 import {
   PaymentCreatedEvent,

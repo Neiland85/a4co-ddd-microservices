@@ -4,19 +4,21 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as process from 'process';
-import { getLogger, initializeTracing } from '../../../packages/observability/dist';
+// import { getLogger, initializeTracing } from '../../../packages/observability/dist';
 import { OrderModule } from './order.module';
+import { Logger as NestLogger } from '@nestjs/common';
 
 async function bootstrap() {
   // Initialize observability
-  initializeTracing({
-    serviceName: 'order-service',
-    serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
-  });
+  // TODO: Uncomment when observability package is built
+  // initializeTracing({
+  //   serviceName: 'order-service',
+  //   serviceVersion: '1.0.0',
+  //   environment: process.env['NODE_ENV'] || 'development',
+  // });
 
   // Get logger instance
-  const logger = getLogger();
+  const logger = new NestLogger('OrderService');
 
   const app = await NestFactory.create(OrderModule, {
     logger: false, // Disable default NestJS logger for now
@@ -76,8 +78,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env['PORT'] || 3004;
-  logger.info(`🚀 Order Service iniciado en puerto ${port}`);
-  logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
+  logger.log(`🚀 Order Service iniciado en puerto ${port}`);
+  logger.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
   console.log(`🚀 Order Service iniciado en puerto ${port}`);
   console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
 
@@ -85,7 +87,7 @@ async function bootstrap() {
 }
 
 bootstrap().catch(err => {
-  const logger = getLogger();
+  const logger = new NestLogger('OrderService');
   logger.error('Error al iniciar el servicio:', err);
   console.error('Error al iniciar el servicio:', err);
   process.exit(1);

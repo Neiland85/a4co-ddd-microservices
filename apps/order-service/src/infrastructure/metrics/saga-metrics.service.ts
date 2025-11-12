@@ -160,8 +160,8 @@ export class SagaMetricsService {
    * Calcula la tasa de éxito de sagas
    */
   calculateSuccessRate(): number {
-    const started = this.sagaStartedCounter['hashMap'];
-    const success = this.sagaSuccessCounter['hashMap'];
+    const started = (this.sagaStartedCounter as any).hashMap;
+    const success = (this.sagaSuccessCounter as any).hashMap;
     
     const totalStarted = Object.values(started).reduce((sum: number, val: any) => sum + val.value, 0);
     const totalSuccess = Object.values(success).reduce((sum: number, val: any) => sum + val.value, 0);
