@@ -23,7 +23,6 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
           servers: [process.env.NATS_URL || 'nats://localhost:4222'],
           queue: 'inventory-service-queue',
         },
@@ -50,13 +49,6 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
     {
       provide: 'STOCK_RESERVATION_REPOSITORY',
       useFactory: (prisma: PrismaClient) => new PrismaStockReservationRepository(prisma),
-      inject: ['PRISMA_CLIENT'],
-    },
-    {
-      provide: 'STOCK_RESERVATION_REPOSITORY',
-      useFactory: (prisma: PrismaClient) => {
-        return new PrismaStockReservationRepository(prisma);
-      },
       inject: ['PRISMA_CLIENT'],
     },
     // Use Cases
