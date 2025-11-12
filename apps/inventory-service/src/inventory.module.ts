@@ -6,6 +6,7 @@ import { InventoryController } from './inventory.controller';
 import { InventoryService } from './application/services/inventory.service';
 import { PrismaProductRepository } from './infrastructure/repositories/prisma-product.repository';
 import { PrismaStockReservationRepository } from './infrastructure/repositories/stock-reservation.repository';
+import { ProductRepository } from './infrastructure/repositories/product.repository';
 import { CheckInventoryUseCase } from './application/use-cases/check-inventory.use-case';
 import { ReserveStockUseCase } from './application/use-cases/reserve-stock.use-case';
 import { ReleaseStockUseCase } from './application/use-cases/release-stock.use-case';
@@ -16,13 +17,12 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // NATS Client for Event Bus
     ClientsModule.register([
       {
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
+          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
           queue: 'inventory-service-queue',
         },
       },
@@ -30,7 +30,6 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
   ],
   controllers: [InventoryController, ReserveStockHandler],
   providers: [
-    // Prisma Client
     {
       provide: 'PRISMA_CLIENT',
       useFactory: () => {
@@ -40,44 +39,31 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
         return prisma;
       },
     },
-    // Repositories
     {
       provide: 'PRODUCT_REPOSITORY',
-      useFactory: (prisma: PrismaClient) => {
-        return new PrismaProductRepository(prisma);
-      },
+      useFactory: (prisma: PrismaClient) => new PrismaProductRepository(prisma),
       inject: ['PRISMA_CLIENT'],
     },
     {
       provide: 'STOCK_RESERVATION_REPOSITORY',
-      useFactory: (prisma: PrismaClient) => {
-        return new PrismaStockReservationRepository(prisma);
-      },
+      useFactory: (prisma: PrismaClient) => new PrismaStockReservationRepository(prisma),
       inject: ['PRISMA_CLIENT'],
     },
-    // Use Cases
     {
       provide: CheckInventoryUseCase,
-      useFactory: (repository: any) => {
-        return new CheckInventoryUseCase(repository);
-      },
+      useFactory: (repository: ProductRepository) => new CheckInventoryUseCase(repository),
       inject: ['PRODUCT_REPOSITORY'],
     },
     {
       provide: ReserveStockUseCase,
-      useFactory: (repository: any) => {
-        return new ReserveStockUseCase(repository);
-      },
+      useFactory: (repository: ProductRepository) => new ReserveStockUseCase(repository),
       inject: ['PRODUCT_REPOSITORY'],
     },
     {
       provide: ReleaseStockUseCase,
-      useFactory: (repository: any) => {
-        return new ReleaseStockUseCase(repository);
-      },
+      useFactory: (repository: ProductRepository) => new ReleaseStockUseCase(repository),
       inject: ['PRODUCT_REPOSITORY'],
     },
-    // Service
     InventoryService,
   ],
 })

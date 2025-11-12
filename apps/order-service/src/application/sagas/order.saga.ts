@@ -1,10 +1,12 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { NatsEventBus, EventMessage } from "@a4co/shared-utils";
-import { CreateOrderCommand } from "../commands/create-order.command";
-import { OrderCreatedEvent, OrderCancelledEvent, OrderStatusChangedEvent } from "../../domain/events";
-import { OrderStatus } from "../../domain/aggregates/order.aggregate";
-import { IOrderRepository } from "../../domain/repositories/order.repository";
+import { CreateOrderCommand } from '../commands/create-order.command';
+import { OrderStatus, OrderId } from '../../domain/aggregates/order.aggregate';
+import { IOrderRepository } from '../../domain';
+
+interface EventMessage<T = any> {
+  data: T;
+}
 
 export enum SagaState {
   STARTED = 'STARTED',
@@ -53,9 +55,9 @@ export class OrderSaga {
     this.sagaContexts.set(orderId, sagaContext);
     this.logger.log(`🚀 Iniciando Saga para orden ${orderId}`);
 
-    try {
+      try {
       // 1. Crear orden
-      const order = await this.orderRepository.findById(orderId);
+        const order = await this.orderRepository.findById(new OrderId(orderId));
       if (!order) {
         throw new Error(`Order ${orderId} not found`);
       }
@@ -76,13 +78,13 @@ export class OrderSaga {
       // 3. Configurar timeout
       this.setupTimeout(orderId);
 
-      this.logger.log(`✅ Saga iniciada para orden ${orderId}`);
-      return orderId;
-    } catch (error) {
-      this.logger.error(`❌ Error iniciando saga para orden ${orderId}:`, error);
-      await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
-      throw error;
-    }
+        this.logger.log(`✅ Saga iniciada para orden ${orderId}`);
+        return orderId;
+      } catch (error: unknown) {
+        this.logger.error(`❌ Error iniciando saga para orden ${orderId}:`, error);
+        await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
+        throw error;
+      }
   }
 
   private async handleInventoryReserved(event: EventMessage): Promise<void> {
@@ -136,8 +138,8 @@ export class OrderSaga {
       return;
     }
 
-    try {
-      const order = await this.orderRepository.findById(orderId);
+      try {
+        const order = await this.orderRepository.findById(new OrderId(orderId));
       if (!order) {
         throw new Error(`Order ${orderId} not found`);
       }
@@ -158,12 +160,12 @@ export class OrderSaga {
         timestamp: new Date().toISOString(),
       });
 
-      // Limpiar contexto después de un tiempo
-      setTimeout(() => this.sagaContexts.delete(orderId), 60000);
-    } catch (error) {
-      this.logger.error(`❌ Error procesando pago exitoso para orden ${orderId}:`, error);
-      await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
-    }
+        // Limpiar contexto después de un tiempo
+        setTimeout(() => this.sagaContexts.delete(orderId), 60000);
+      } catch (error: unknown) {
+        this.logger.error(`❌ Error procesando pago exitoso para orden ${orderId}:`, error);
+        await this.compensate(orderId, error instanceof Error ? error.message : 'Unknown error');
+      }
   }
 
   private async handlePaymentFailed(event: EventMessage): Promise<void> {
@@ -190,7 +192,7 @@ export class OrderSaga {
 
     this.logger.log(`🔄 Iniciando compensación para orden ${orderId}: ${reason}`);
 
-    try {
+      try {
       // 1. Liberar reserva de stock si existe
       if (context.reservationId) {
         await this.publishEvent('inventory.release', {
@@ -214,7 +216,7 @@ export class OrderSaga {
       }
 
       // 3. Actualizar estado de orden
-      const order = await this.orderRepository.findById(orderId);
+        const order = await this.orderRepository.findById(new OrderId(orderId));
       if (order) {
         order.cancel(reason);
         await this.orderRepository.save(order);
@@ -232,13 +234,13 @@ export class OrderSaga {
 
       this.logger.log(`✅ Compensación completada para orden ${orderId}`);
 
-      // Limpiar contexto después de un tiempo
-      setTimeout(() => this.sagaContexts.delete(orderId), 60000);
-    } catch (error) {
-      this.logger.error(`❌ Error en compensación para orden ${orderId}:`, error);
-      context.state = SagaState.FAILED;
-      context.error = `Compensación falló: ${error instanceof Error ? error.message : 'Unknown error'}`;
-    }
+        // Limpiar contexto después de un tiempo
+        setTimeout(() => this.sagaContexts.delete(orderId), 60000);
+      } catch (error: unknown) {
+        this.logger.error(`❌ Error en compensación para orden ${orderId}:`, error);
+        context.state = SagaState.FAILED;
+        context.error = `Compensación falló: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      }
   }
 
   private setupEventHandlers(): void {
@@ -257,14 +259,14 @@ export class OrderSaga {
     }, this.SAGA_TIMEOUT);
   }
 
-  private async publishEvent(subject: string, data: any): Promise<void> {
-    try {
-      await this.natsClient.emit(subject, data).toPromise();
-      this.logger.log(`📤 Evento publicado: ${subject}`);
-    } catch (error) {
-      this.logger.error(`❌ Error publicando evento ${subject}:`, error);
-      throw error;
-    }
+    private async publishEvent(subject: string, data: any): Promise<void> {
+      try {
+        await this.natsClient.emit(subject, data).toPromise();
+        this.logger.log(`📤 Evento publicado: ${subject}`);
+      } catch (error: unknown) {
+        this.logger.error(`❌ Error publicando evento ${subject}:`, error);
+        throw error;
+      }
   }
 
   private generateOrderId(): string {
