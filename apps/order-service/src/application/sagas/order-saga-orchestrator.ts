@@ -109,6 +109,10 @@ export class OrderSagaOrchestrator {
       await this.eventBus.publish('orders.created', event.toJSON());
       
       this.logger.log(`✅ Evento orders.created publicado para orden ${command.orderId}`);
+    } catch (error: unknown) {
+      this.logger.error(`❌ Error iniciando saga ${sagaId}:`, error);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      await this.handleSagaFailure(sagaId, 'inventory_check', message);
     } catch (error) {
       this.logger.error(`❌ Error iniciando saga ${sagaId}:`, error);
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -279,6 +283,9 @@ export class OrderSagaOrchestrator {
       saga.completedAt = new Date();
 
       this.logger.log(`✅ Compensación completada para saga ${saga.sagaId}`);
+    } catch (error: unknown) {
+      this.logger.error(`❌ Error en compensación de saga ${saga.sagaId}:`, error);
+      saga.error = error instanceof Error ? error.message : 'Unknown error';
     } catch (error) {
       this.logger.error(`❌ Error en compensación de saga ${saga.sagaId}:`, error);
       saga.error = error instanceof Error ? error.message : String(error);

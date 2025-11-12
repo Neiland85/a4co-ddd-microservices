@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule, Transport, ClientProxy } from '@nestjs/microservices';
 
 // Application Layer
 import { OrderSaga } from './application/sagas/order.saga';
@@ -55,7 +55,7 @@ import { OrderMetricsService } from './infrastructure/metrics/order-metrics.serv
     // Event Bus (injected from NATS_CLIENT)
     {
       provide: 'EventBus',
-      useFactory: (natsClient) => natsClient,
+      useFactory: (natsClient: ClientProxy) => natsClient,
       inject: ['NATS_CLIENT'],
     },
   ],
