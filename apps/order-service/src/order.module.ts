@@ -28,7 +28,7 @@ import { OrderMetricsService } from './infrastructure/metrics/order-metrics.serv
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
+          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
           queue: 'order-service-queue',
         },
       },

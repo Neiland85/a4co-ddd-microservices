@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValueObject = void 0;
 class ValueObject {
-    _value;
     constructor(value) {
         this._value = Object.freeze(value);
     }
