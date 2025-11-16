@@ -1,12 +1,12 @@
 import { trace } from '@opentelemetry/api';
 import { hostname } from 'os';
-import type { Logger, LoggerOptions } from 'pino';
+import type { Logger, LoggerOptions, DestinationStream } from 'pino';
 import pino from 'pino';
 import { v4 as uuidv4 } from 'uuid';
 import type { ObservabilityLogger } from '../ObservabilityLogger';
 import type { DDDMetadata, LogContext, LoggerConfig } from '../types';
 
-// Global logger instance
+// Variable global para el logger. Evita el acceso directo.
 let globalLogger: ObservabilityLogger | null = null;
 
 // Custom serializers for common objects
@@ -73,7 +73,7 @@ function createEnhancedLogger(baseLogger: Logger): ObservabilityLogger {
 }
 
 // Create logger with configuration
-export function createLogger(
+function createLogger(
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
 ): ObservabilityLogger {
   const options: LoggerOptions = {
@@ -87,7 +87,7 @@ export function createLogger(
       service: config.serviceName,
       version: config.serviceVersion,
       env: config.environment,
-      pid: process.pid,
+      pid: process.pid, // Usar process.pid en lugar de process.id
       hostname: (process.env['HOSTNAME'] as string) || hostname(),
     },
     timestamp: pino.stdTimeFunctions.isoTime,
@@ -107,20 +107,23 @@ export function createLogger(
     redact: config.redact || ['password', 'token', 'apiKey', 'secret'],
   };
 
+  let transport;
   // Add pretty print for development
-  if (config.prettyPrint && process.env['NODE_ENV'] === 'development') {
-    options.transport = {
+  if (config.prettyPrint && process.env['NODE_ENV'] !== 'production') {
+    transport = {
       target: 'pino-pretty',
       options: {
         colorize: true,
         levelFirst: true,
         translateTime: 'yyyy-mm-dd HH:MM:ss.l',
-        ignore: 'pid,hostname',
+        ignore: 'pid,hostname,service,version,env',
       },
     };
   }
 
-  const baseLogger = pino(options);
+  const destination = transport ? pino.transport(transport) : undefined;
+  const baseLogger = destination ? pino(options, destination as DestinationStream) : pino(options);
+
   return createEnhancedLogger(baseLogger);
 }
 
@@ -128,6 +131,9 @@ export function createLogger(
 export function initializeLogger(
   config: LoggerConfig & { serviceName: string; serviceVersion?: string; environment?: string }
 ): ObservabilityLogger {
+  if (globalLogger) {
+    console.warn('Logger is already initialized. Overwriting existing instance.');
+  }
   globalLogger = createLogger(config);
   return globalLogger;
 }
@@ -135,7 +141,14 @@ export function initializeLogger(
 // Get global logger instance
 export function getLogger(): ObservabilityLogger {
   if (!globalLogger) {
-    throw new Error('Logger not initialized. Call initializeLogger() first.');
+    // Auto-inicialización con configuración por defecto si no se ha llamado a initializeLogger
+    console.warn('Logger not initialized. Initializing with default settings.');
+    initializeLogger({
+      serviceName: process.env['SERVICE_NAME'] || 'unnamed-service',
+      environment: process.env['NODE_ENV'] || 'development',
+      level: 'info',
+      prettyPrint: process.env['NODE_ENV'] !== 'production',
+    });
   }
   return globalLogger;
 }
@@ -146,7 +159,7 @@ export function createChildLogger(context: LogContext): ObservabilityLogger {
 }
 
 // Create HTTP logger middleware
-export function createHttpLogger(logger?: ObservabilityLogger) {
+export function createHttpLoggerMiddleware(logger?: ObservabilityLogger) {
   const log = logger || getLogger();
 
   return (req: any, res: any, next: any) => {
@@ -181,9 +194,8 @@ export function createHttpLogger(logger?: ObservabilityLogger) {
         {
           res,
           duration,
-          responseSize: res.get?.('content-length'),
+          responseLength: res.getHeader?.('content-length'),
         },
-        'Request completed',
         'Request completed'
       );
     });

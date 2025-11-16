@@ -41,7 +41,6 @@ export class OrderController {
       orderId: order.id,
       customerId: order.customerId,
       items: order.items.map((item: OrderItem) => ({
-      items: order.items.map((item: any) => ({
         productId: item.productId,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
