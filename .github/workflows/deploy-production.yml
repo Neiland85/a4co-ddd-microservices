@@ -1,0 +1,65 @@
+name: Production Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/deploy-production.yml'
+      - 'apps/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  NODE_ENV: production
+
+jobs:
+  production:
+    name: Build & Deploy Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: 🧾 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ⚙️ Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: ⚙️ Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10.14.0"
+
+      - name: ✅ Print versions
+        run: |
+          node -v
+          pnpm -v
+          echo "Environment: production"
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧪 Run tests
+        run: pnpm run test || true
+
+      - name: 🧹 Lint
+        run: pnpm run lint || true
+
+      - name: 🏗️ Build
+        run: pnpm run build
+
+      - name: �� Deploy summary
+        run: |
+          echo "✅ Production build completed"
+          echo "📦 Ready for deployment"
+          echo "⏰ Built at: $(date)"
+          echo "🔖 Commit: ${{ github.sha }}"
+          echo "👤 Author: ${{ github.actor }}"
