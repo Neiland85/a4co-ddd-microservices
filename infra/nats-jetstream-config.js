@@ -1,9 +1,9 @@
 /**
  * NATS JetStream Configuration Script
- * 
+ *
  * Este script configura los streams, subjects y consumers necesarios
  * para el flujo Order → Inventory → Payment
- * 
+ *
  * Ejecutar: node infra/nats-jetstream-config.js
  */
 
@@ -64,7 +64,7 @@ const consumers = [
     filter: 'inventory.reserved',
     queue: 'order-service-queue',
   },
-  
+
   // Payment Service Consumers
   {
     stream: 'PAYMENTS',
@@ -72,7 +72,7 @@ const consumers = [
     filter: 'order.created',
     queue: 'payment-service-queue',
   },
-  
+
   // Inventory Service Consumers
   {
     stream: 'INVENTORY',
@@ -91,14 +91,14 @@ const consumers = [
 async function setupJetStream() {
   let nc;
   try {
-    console.log(`🔌 Conectando a NATS en ${NATS_URL}...`);
+    console.info(`🔌 Conectando a NATS en ${NATS_URL}...`);
     nc = await connect({ servers: NATS_URL });
-    console.log('✅ Conectado a NATS');
+    console.info('✅ Conectado a NATS');
 
     const js = nc.jetstream();
 
     // Crear streams
-    console.log('\n📦 Creando streams...');
+    console.info('\n📦 Creando/Actualizando streams...');
     for (const streamConfig of streams) {
       try {
         await js.streams.add({
@@ -111,10 +111,10 @@ async function setupJetStream() {
           storage: streamConfig.storage,
           num_replicas: streamConfig.replicas,
         });
-        console.log(`  ✅ Stream '${streamConfig.name}' creado`);
+        console.info(`  ✅ Stream '${streamConfig.name}' configurado.`);
       } catch (error) {
         if (error.message.includes('stream name already in use')) {
-          console.log(`  ⚠️  Stream '${streamConfig.name}' ya existe`);
+          console.warn(`  ⚠️  Stream '${streamConfig.name}' ya existe, se omitió la creación.`);
         } else {
           throw error;
         }
@@ -122,7 +122,7 @@ async function setupJetStream() {
     }
 
     // Crear consumers
-    console.log('\n👥 Creando consumers...');
+    console.info('\n👥 Creando/Actualizando consumers...');
     for (const consumerConfig of consumers) {
       try {
         const stream = await js.streams.info(consumerConfig.stream);
@@ -133,20 +133,20 @@ async function setupJetStream() {
           ack_policy: 'explicit',
           max_deliver: 5,
         });
-        console.log(`  ✅ Consumer '${consumerConfig.name}' creado`);
+        console.info(`  ✅ Consumer '${consumerConfig.name}' en stream '${consumerConfig.stream}' configurado.`);
       } catch (error) {
         if (error.message.includes('consumer name already in use')) {
-          console.log(`  ⚠️  Consumer '${consumerConfig.name}' ya existe`);
+          console.warn(`  ⚠️  Consumer '${consumerConfig.name}' ya existe, se omitió la creación.`);
         } else {
           console.error(`  ❌ Error creando consumer '${consumerConfig.name}':`, error.message);
         }
       }
     }
 
-    console.log('\n✅ Configuración de JetStream completada');
-    console.log('\n📊 Resumen:');
-    console.log(`  - Streams: ${streams.length}`);
-    console.log(`  - Consumers: ${consumers.length}`);
+    console.info('\n✅ Configuración de JetStream completada.');
+    console.info('\n📊 Resumen:');
+    console.info(`  - Streams configurados: ${streams.length}`);
+    console.info(`  - Consumers configurados: ${consumers.length}`);
 
   } catch (error) {
     console.error('❌ Error configurando JetStream:', error);
@@ -154,7 +154,7 @@ async function setupJetStream() {
   } finally {
     if (nc) {
       await nc.close();
-      console.log('\n🔌 Desconectado de NATS');
+      console.info('\n🔌 Desconectado de NATS.');
     }
   }
 }

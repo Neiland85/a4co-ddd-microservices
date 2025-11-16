@@ -10,8 +10,10 @@ import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
 
 export interface ProcessPaymentCommand {
   orderId: string;
-  amount: Money;
+  amount: number;
+  currency: string;
   customerId: string;
+  description?: string;
   metadata?: Record<string, any>;
   paymentMethodId?: string;
   idempotencyKey?: string;
@@ -31,18 +33,20 @@ export class ProcessPaymentUseCase {
   ) { }
 
   public async execute(command: ProcessPaymentCommand): Promise<Payment> {
-    this.paymentDomainService.validatePaymentLimits(command.amount);
+    const money = Money.create(command.amount / 100, command.currency);
+    this.paymentDomainService.validatePaymentLimits(money);
 
     const existingPayment = await this.paymentRepository.findByOrderId(command.orderId);
 
     if (existingPayment) {
       // Idempotent behavior: if already succeeded or refunded, return existing state
-      if ([PaymentStatusValue.SUCCEEDED, PaymentStatusValue.REFUNDED].includes(existingPayment.status.value)) {
-        this.logger.log(`Payment for order ${command.orderId} already processed with status ${existingPayment.status.value}`);
+      const statusValue = existingPayment.status.getValue();
+      if ([PaymentStatusValue.SUCCEEDED, PaymentStatusValue.REFUNDED].includes(statusValue)) {
+        this.logger.log(`Payment for order ${command.orderId} already processed with status ${statusValue}`);
         return existingPayment;
       }
 
-      if (existingPayment.status.value === PaymentStatusValue.PROCESSING) {
+      if (statusValue === PaymentStatusValue.PROCESSING) {
         this.logger.log(`Payment for order ${command.orderId} is already processing`);
         return existingPayment;
       }
@@ -51,13 +55,13 @@ export class ProcessPaymentUseCase {
     const payment = existingPayment ??
       Payment.create({
         orderId: command.orderId,
-        amount: command.amount,
+        amount: money,
         customerId: command.customerId,
         metadata: command.metadata,
       });
 
     if (!this.paymentDomainService.canProcessPayment(payment)) {
-      throw new Error(`Payment ${payment.paymentId.value} cannot be processed from status ${payment.status.value}`);
+      throw new Error(`Payment ${payment.paymentId.getValue()} cannot be processed from status ${payment.status.getValue()}`);
     }
 
     payment.process();
@@ -65,7 +69,7 @@ export class ProcessPaymentUseCase {
 
     try {
       const intent = await this.stripeGateway.createPaymentIntent({
-        amount: command.amount,
+        amount: money,
         orderId: command.orderId,
         customerId: command.customerId,
         metadata: command.metadata,

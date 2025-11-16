@@ -1,24 +1,77 @@
-version: '3.9'
-services:
-  auth-service:
-    build:
-      context: ./gateway
-    ports:
-      - "4000:4000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://user:password@postgres:5432/auth_db
-    depends_on:
-      - postgres
+version: '3.8'
 
+services:
+  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
+    container_name: artisan-portal-db
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: auth_db
+      POSTGRES_USER: artisan_user
+      POSTGRES_PASSWORD: artisan_pass
+      POSTGRES_DB: artisan_portal_db
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=es_ES.UTF-8"
     ports:
       - "5432:5432"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U artisan_user -d artisan_portal_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - artisan-network
+
+  # pgAdmin (Opcional - Interfaz gráfica para PostgreSQL)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: artisan-portal-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@artisan-portal.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - artisan-network
+    profiles:
+      - tools
+
+  # Redis (Opcional - para caché y sesiones)
+  redis:
+    image: redis:7-alpine
+    container_name: artisan-portal-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - artisan-network
+    profiles:
+      - cache
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  artisan-network:
+    driver: bridge
 

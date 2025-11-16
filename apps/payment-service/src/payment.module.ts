@@ -2,6 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PaymentService } from './application/services/payment.service';
+import { PaymentEventPublisher } from './application/services/payment-event.publisher';
+import { ProcessPaymentUseCase } from './application/use-cases/process-payment.use-case';
+import { RefundPaymentUseCase } from './application/use-cases/refund-payment.use-case';
+import { PaymentDomainService } from './domain/services/payment-domain.service';
+import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
+import { StripeGateway } from './infrastructure/stripe.gateway';
+import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { PaymentController } from './presentation/payment.controller';
 import { StripeGateway } from './infrastructure/stripe.gateway';
 import { PaymentEventPublisher } from './application/services/payment-event.publisher';
@@ -38,10 +45,10 @@ import { NatsEventBus } from '@a4co/shared-utils';
     PaymentService,
     PaymentDomainService,
     StripeGateway,
-    
+
     // Prisma
     PrismaService,
-    
+
     // Repositories
     {
       provide: PAYMENT_REPOSITORY_TOKEN,
@@ -50,7 +57,7 @@ import { NatsEventBus } from '@a4co/shared-utils';
       },
       inject: [PrismaService],
     },
-    
+
     // Event Bus
     {
       provide: 'NATS_EVENT_BUS',
@@ -61,7 +68,7 @@ import { NatsEventBus } from '@a4co/shared-utils';
         });
       },
     },
-    
+
     // Event Publisher
     {
       provide: PaymentEventPublisher,
@@ -70,7 +77,7 @@ import { NatsEventBus } from '@a4co/shared-utils';
       },
       inject: ['NATS_EVENT_BUS'],
     },
-    
+
     // Use Cases
     ProcessPaymentUseCase,
     RefundPaymentUseCase,
