@@ -1,25 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  HttpCode,
-  HttpStatus,
-  ValidationPipe,
-  UsePipes,
-  Headers,
-  BadRequestException,
-  NotFoundException,
-  Logger,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Headers, RawBodyRequest, Req, Logger } from '@nestjs/common';
 import { PaymentService } from '../application/services/payment.service';
-import { ProcessPaymentCommand } from '../application/use-cases/process-payment.use-case';
-import { CreatePaymentDto, RefundPaymentDto, WebhookEventDto } from './dtos';
 import { StripeGateway } from '../infrastructure/stripe.gateway';
+import { PaymentEventPublisher } from '../application/services/payment-event.publisher';
+import { PaymentRepository } from '../domain/repositories/payment.repository';
 
-@ApiTags('payments')
 @Controller('payments')
 export class PaymentController {
   private readonly logger = new Logger(PaymentController.name);
@@ -27,112 +11,142 @@ export class PaymentController {
   constructor(
     private readonly paymentService: PaymentService,
     private readonly stripeGateway: StripeGateway,
+    private readonly eventPublisher: PaymentEventPublisher,
+    private readonly paymentRepository: PaymentRepository,
   ) {}
 
   @Get('health')
-  @ApiOperation({ summary: 'Health check del servicio' })
-  @ApiResponse({ status: 200, description: 'Servicio funcionando correctamente' })
   getHealth() {
     return this.paymentService.getHealth();
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Procesar un nuevo pago' })
-  @ApiResponse({ status: 201, description: 'Pago procesado exitosamente' })
-  @ApiResponse({ status: 400, description: 'Datos inválidos' })
-  async createPayment(@Body() dto: CreatePaymentDto) {
-    const command: ProcessPaymentCommand = {
-      orderId: dto.orderId,
-      amount: dto.amount,
-      currency: dto.currency,
-      customerId: dto.customerId,
-      description: dto.description,
-      metadata: dto.metadata,
-    };
-
-    const payment = await this.paymentService.processPayment(command);
-    return payment.toPrimitives();
-  }
-
-  @Get('order/:orderId')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Obtener pago por ID de orden' })
-  @ApiResponse({ status: 200, description: 'Pago encontrado' })
-  @ApiResponse({ status: 404, description: 'Pago no encontrado' })
-  async getPaymentByOrder(@Param('orderId') orderId: string) {
-    const payment = await this.paymentService.getPaymentByOrderId(orderId);
-    if (!payment) {
-      throw new NotFoundException('Pago no encontrado para esta orden');
-    }
-    return payment.toPrimitives();
-  }
-
-  @Get(':paymentId')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Obtener detalles de un pago' })
-  @ApiResponse({ status: 200, description: 'Pago encontrado' })
-  @ApiResponse({ status: 404, description: 'Pago no encontrado' })
-  async getPayment(@Param('paymentId') paymentId: string) {
-    const payment = await this.paymentService.getPaymentById(paymentId);
-    if (!payment) {
-      throw new NotFoundException('Pago no encontrado');
-    }
-    return payment.toPrimitives();
-  }
-
-  @Post(':paymentId/refund')
-  @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Procesar un reembolso' })
-  @ApiResponse({ status: 200, description: 'Reembolso procesado exitosamente' })
-  @ApiResponse({ status: 400, description: 'No se puede procesar el reembolso' })
-  async refundPayment(
-    @Param('paymentId') paymentId: string,
-    @Body() dto: RefundPaymentDto,
-  ) {
-    return await this.paymentService.refundPayment(
-      paymentId,
-      dto.amount,
-      dto.reason,
-    );
-  }
-
   @Post('webhook')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Webhook para eventos de Stripe' })
-  @ApiResponse({ status: 200, description: 'Webhook procesado' })
-  @ApiResponse({ status: 400, description: 'Error en el webhook' })
-  async handleWebhook(
-    @Body() rawBody: any,
+  async handleStripeWebhook(
+    @Req() req: RawBodyRequest<Request>,
     @Headers('stripe-signature') signature: string,
   ) {
+    this.logger.log('📥 Recibiendo webhook de Stripe');
+
+    if (!signature) {
+      this.logger.error('❌ Firma de Stripe no proporcionada');
+      throw new Error('Missing stripe-signature header');
+    }
+
     try {
-      const event = this.stripeGateway.constructWebhookEvent(rawBody, signature);
-      this.logger.log(`Webhook recibido: ${event.type}`);
-      
-      // TODO: Implementar manejo de eventos específicos
+      const event = this.stripeGateway.constructWebhookEvent({
+        payload: req.rawBody as Buffer,
+        signature,
+      });
+
+      this.logger.log(`📨 Evento de Stripe recibido: ${event.type}`);
+
       switch (event.type) {
         case 'payment_intent.succeeded':
-          // Manejar pago exitoso
+          await this.handlePaymentIntentSucceeded(event);
           break;
+
         case 'payment_intent.payment_failed':
-          // Manejar pago fallido
+          await this.handlePaymentIntentFailed(event);
           break;
-        case 'charge.refunded':
-          // Manejar reembolso
+
+        case 'payment_intent.canceled':
+          await this.handlePaymentIntentCanceled(event);
           break;
+
         default:
-          this.logger.warn(`Evento no manejado: ${event.type}`);
+          this.logger.log(`⚠️  Tipo de evento no manejado: ${event.type}`);
       }
 
       return { received: true };
     } catch (error) {
-      this.logger.error('Error procesando webhook:', error);
-      throw new BadRequestException('Webhook signature verification failed');
+      this.logger.error('❌ Error procesando webhook de Stripe:', error);
+      throw error;
+    }
+  }
+
+  private async handlePaymentIntentSucceeded(event: any): Promise<void> {
+    const paymentIntent = event.data.object;
+    const orderId = paymentIntent.metadata?.orderId;
+
+    if (!orderId) {
+      this.logger.warn('⚠️  PaymentIntent sin orderId en metadata');
+      return;
+    }
+
+    this.logger.log(`✅ Pago exitoso para orden ${orderId}, PaymentIntent: ${paymentIntent.id}`);
+
+    try {
+      // Buscar payment en la base de datos
+      const payment = await this.paymentRepository.findByOrderId(orderId);
+      
+      if (payment) {
+        // Actualizar estado del pago
+        payment.markAsSucceeded(paymentIntent.id);
+        await this.paymentRepository.save(payment);
+        
+        // Publicar eventos de dominio
+        await this.eventPublisher.publishPaymentEvents(payment);
+      } else {
+        this.logger.warn(`⚠️  Payment no encontrado para orden ${orderId}`);
+      }
+    } catch (error) {
+      this.logger.error(`❌ Error procesando pago exitoso para orden ${orderId}:`, error);
+      throw error;
+    }
+  }
+
+  private async handlePaymentIntentFailed(event: any): Promise<void> {
+    const paymentIntent = event.data.object;
+    const orderId = paymentIntent.metadata?.orderId;
+    const failureReason = paymentIntent.last_payment_error?.message || 'Unknown error';
+
+    if (!orderId) {
+      this.logger.warn('⚠️  PaymentIntent sin orderId en metadata');
+      return;
+    }
+
+    this.logger.error(`❌ Pago fallido para orden ${orderId}: ${failureReason}`);
+
+    try {
+      const payment = await this.paymentRepository.findByOrderId(orderId);
+      
+      if (payment) {
+        payment.markAsFailed(failureReason);
+        await this.paymentRepository.save(payment);
+        
+        await this.eventPublisher.publishPaymentEvents(payment);
+      } else {
+        this.logger.warn(`⚠️  Payment no encontrado para orden ${orderId}`);
+      }
+    } catch (error) {
+      this.logger.error(`❌ Error procesando pago fallido para orden ${orderId}:`, error);
+      throw error;
+    }
+  }
+
+  private async handlePaymentIntentCanceled(event: any): Promise<void> {
+    const paymentIntent = event.data.object;
+    const orderId = paymentIntent.metadata?.orderId;
+
+    if (!orderId) {
+      this.logger.warn('⚠️  PaymentIntent sin orderId en metadata');
+      return;
+    }
+
+    this.logger.log(`🔄 Pago cancelado para orden ${orderId}`);
+
+    try {
+      const payment = await this.paymentRepository.findByOrderId(orderId);
+      
+      if (payment) {
+        payment.cancel('Cancelado desde Stripe');
+        await this.paymentRepository.save(payment);
+        
+        await this.eventPublisher.publishPaymentEvents(payment);
+      }
+    } catch (error) {
+      this.logger.error(`❌ Error procesando pago cancelado para orden ${orderId}:`, error);
+      throw error;
     }
   }
 }

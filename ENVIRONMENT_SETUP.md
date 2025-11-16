@@ -20,7 +20,22 @@ Se eliminaron los siguientes secretos hardcodeados del código:
 5. ✅ JWT Secret hardcodeado en `.devcontainer/docker-compose.dev.yml`
 6. ✅ Contraseña de Grafana en `.devcontainer/docker-compose.dev.yml`
 
-## 🔧 Configuración Local
+## � Required Environment Variables
+
+### Database
+- `DB_PASSWORD`: Database password (generate securely, do not hardcode)
+
+### Observability
+- `JAEGER_ENDPOINT`: Jaeger tracing endpoint (default: http://localhost:14268/api/traces)
+- `GRAFANA_ADMIN_PASSWORD`: Grafana admin password (generate securely)
+- `PROMETHEUS_ADMIN_PASSWORD`: Prometheus admin password (generate securely)
+
+### Security Notes
+- Never commit real values to `.env` or `.env.example`.
+- Use GitHub Secrets for CI/CD (e.g., `${{ secrets.DB_PASSWORD }}`).
+- OpenTelemetry configuration uses `process.env.JAEGER_ENDPOINT`.
+
+## �🔧 Configuración Local
 
 ### 1. Variables para Docker Compose (compose.dev.yaml)
 
@@ -29,7 +44,7 @@ Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
 ```bash
 # PostgreSQL
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=tu_contraseña_segura_aqui
+POSTGRES_PASSWORD=CHANGE_ME_IN_DOT_ENV
 POSTGRES_DB=a4co_db
 ```
 
@@ -40,15 +55,15 @@ Crea un archivo `.env` en el directorio `.devcontainer/` con las siguientes vari
 ```bash
 # PostgreSQL
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=tu_contraseña_segura_aqui
+POSTGRES_PASSWORD=CHANGE_ME_IN_DOT_ENV
 POSTGRES_DB=a4co_dev
 
 # JWT Secret
-JWT_SECRET=tu_jwt_secret_minimo_32_caracteres_aqui
+JWT_SECRET=CHANGE_ME_IN_DOT_ENV_MIN_32_CHARS
 
 # Grafana Admin
 GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=tu_grafana_password_aqui
+GRAFANA_ADMIN_PASSWORD=CHANGE_ME_IN_DOT_ENV
 ```
 
 **Nota**: Los archivos `.env` nunca deben ser commiteados al repositorio (están en `.gitignore`).
@@ -72,7 +87,7 @@ Para configurar secretos de Docker Swarm, usa el script `setup-docker-secrets.sh
 
 ```bash
 # Configurar las credenciales como variables de entorno
-DB_USER="readonly_user" DB_PASSWORD="tu_password_seguro" ./setup-docker-secrets.sh
+DB_USER="readonly_user" DB_PASSWORD="CHANGE_ME_IN_DOT_ENV" ./setup-docker-secrets.sh
 ```
 
 **Importante**: Este script valida que las variables de entorno estén definidas antes de ejecutarse.
