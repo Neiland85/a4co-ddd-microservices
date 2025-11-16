@@ -349,9 +349,8 @@ pnpm test:coverage
 2. Hacer cambios en el Design System
 3. Verificar en Storybook local
 4. Crear PR con descripción clara
-5. Esperar preview de Vercel
-6. Pasar tests visuales
-7. Merge a `develop`
+5. Pasar tests visuales
+6. Merge a `develop`
 
 ### Convenciones
 
