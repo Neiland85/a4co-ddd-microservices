@@ -1,7 +1,12 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -14,14 +19,20 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "rootDir": "../..",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@dashboard/*": ["./*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
-      "@a4co/design-system": ["../../packages/design-system/src"]
+      "@/*": [
+        "./*"
+      ],
+      "@a4co/shared-utils": [
+        "../../packages/shared-utils/src"
+      ],
+      "@a4co/shared-utils/*": [
+        "../../packages/shared-utils/src/*"
+      ],
+      "@a4co/design-system": [
+        "../../packages/design-system/src"
+      ]
     },
     "plugins": [
       {
@@ -31,16 +42,13 @@
   },
   "include": [
     "next-env.d.ts",
-    "app/**/*.ts",
-    "app/**/*.tsx",
-    "components/**/*.ts",
-    "components/**/*.tsx",
-    "lib/**/*.ts",
-    "lib/**/*.tsx",
-    "*.ts",
-    "*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist", "coverage"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage"
+  ]
 }

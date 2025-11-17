@@ -87,9 +87,7 @@ class BracesSecurityScanner {
             const relativePath = (0, path_1.relative)(process.cwd(), filePath);
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
-                if (line !== undefined) {
-                    await this.analyzeLine(relativePath, line, i + 1);
-                }
+                await this.analyzeLine(relativePath, line, i + 1);
             }
         }
         catch (error) {
@@ -125,7 +123,7 @@ class BracesSecurityScanner {
                     }
                     else if (validation.issues.length > 0) {
                         severity = 'MEDIUM';
-                        issue = validation.issues[0] || 'Unknown issue';
+                        issue = validation.issues[0];
                     }
                     this.issues.push({
                         file: filePath,
@@ -168,10 +166,9 @@ class BracesSecurityScanner {
         }
         let report = '[!] Dangerous Brace Expressions Found:\n\n';
         const groupedIssues = issues.reduce((groups, issue) => {
-            const severity = issue.severity ?? 'MEDIUM';
-            if (!groups[severity])
-                groups[severity] = [];
-            groups[severity].push(issue);
+            if (!groups[issue.severity])
+                groups[issue.severity] = [];
+            groups[issue.severity].push(issue);
             return groups;
         }, {});
         const severityOrder = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
@@ -214,7 +211,7 @@ async function main() {
     let scanPath = process.cwd();
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--path' && i + 1 < args.length) {
-            scanPath = args[i + 1] || scanPath;
+            scanPath = args[i + 1];
             i++;
         }
     }

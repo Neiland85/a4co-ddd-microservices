@@ -104,7 +104,7 @@ describe('Product Value Objects', () => {
 });
 
 // Mock para BaseService
-jest.mock('@a4co/shared-utils/src/base', () => ({
+jest.mock('../../../packages/shared-utils/src/base', () => ({
   BaseService: jest.fn().mockImplementation(() => ({
     validateRequired: jest.fn((value, field) => {
       if (value === undefined || value === null || value === '') {
