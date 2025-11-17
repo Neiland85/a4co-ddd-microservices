@@ -1,4 +1,8 @@
-import { Card } from '@dashboard/components/ui/card';
+import type { ReactNode } from 'react';
+
+function Card({ className = '', children }: { className?: string; children?: ReactNode }) {
+  return <div className={`bg-white dark:bg-slate-900 rounded-md shadow-sm ${className}`}>{children}</div>;
+}
 
 export default function SettingsPage() {
   return (

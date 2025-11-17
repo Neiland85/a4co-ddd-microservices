@@ -1,4 +1,19 @@
-import { Card } from '@dashboard/components/ui/card';
+import React from 'react';
+
+function Card({
+  children,
+  className = '',
+  ...props
+}: { children?: React.ReactNode; className?: string } & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={`bg-white dark:bg-slate-800 rounded-md shadow-sm ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function OrdersPage() {
   return (
