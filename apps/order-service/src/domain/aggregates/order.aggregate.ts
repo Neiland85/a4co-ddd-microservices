@@ -139,16 +139,6 @@ export class Order extends AggregateRoot {
         this.touch();
     }
 
-    // Helper method to get domain events
-    getDomainEvents(): DomainEvent[] {
-        return this.domainEvents || [];
-    }
-
-    // Helper method to clear domain events
-    clearDomainEvents(): void {
-        this.domainEvents = [];
-    }
-
     // Saga-related methods
     confirmPayment(): void {
         if (this._status !== OrderStatus.PENDING) {

@@ -4,6 +4,8 @@ import {
   ProductId,
   ProductName,
 } from '../src/domain/value-objects/product-value-objects';
+import { ProductService } from '../service';
+import { ProductController } from '../controller';
 
 describe('Product Value Objects', () => {
   describe('ProductId', () => {
@@ -97,11 +99,12 @@ describe('Product Value Objects', () => {
       expect(() => new Price(100, 'EURO')).toThrow('Currency must be a valid 3-letter code');
       expect(() => new Price(100, 'EU')).toThrow('Currency must be a valid 3-letter code');
       expect(() => new Price(100, '')).toThrow('Currency must be a valid 3-letter code');
-import { ProductService } from '../service';
-import { ProductController } from '../controller';
+    });
+  });
+});
 
 // Mock para BaseService
-jest.mock('../../packages/shared-utils/src/base', () => ({
+jest.mock('@a4co/shared-utils/src/base', () => ({
   BaseService: jest.fn().mockImplementation(() => ({
     validateRequired: jest.fn((value, field) => {
       if (value === undefined || value === null || value === '') {

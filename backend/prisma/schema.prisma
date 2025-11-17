@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
 }
 
 datasource db {
@@ -7,6 +8,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Extensiones PostgreSQL requeridas por autenticación (uuid, hashing)
+extension pgcrypto;
+extension "uuid-ossp";
+
+/// Usuario principal del sistema (combina Auth + User Service)
 model User {
   id            String          @id @default(uuid())
   email         String          @unique
@@ -19,6 +25,7 @@ model User {
   refreshTokens RefreshToken[]
 }
 
+/// Sesiones activas (JWT/cookie)
 model Session {
   id        String   @id @default(uuid())
   userId    String
@@ -27,6 +34,7 @@ model Session {
   expiresAt DateTime
 }
 
+/// Tokens de refresco persistentes
 model RefreshToken {
   id        String   @id @default(uuid())
   token     String   @unique
@@ -36,6 +44,7 @@ model RefreshToken {
   expiresAt DateTime
 }
 
+/// Catálogo básico de productos (Product Service)
 model Product {
   id        String      @id @default(uuid())
   name      String
@@ -45,7 +54,16 @@ model Product {
   updatedAt DateTime    @updatedAt
 }
 
+/// Tipos de producto admitidos
 enum ProductType {
   MADE_TO_ORDER
   SEASONAL
 }
+
+/// Vista ignorada utilizada en el servicio de auth original
+view _UserCount {
+  count Int
+  @@ignore
+}
+
+

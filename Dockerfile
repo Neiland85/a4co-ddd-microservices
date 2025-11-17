@@ -1,71 +1,46 @@
-# Optimized multi-stage build for CI/CD
-FROM node:20-alpine3.19 AS base
+# Build stage
+FROM node:18-alpine AS builder
 
-# Install pnpm and turbo globally
-RUN npm install -g pnpm@8 turbo
-
-# Set working directory
 WORKDIR /app
 
-# Copy workspace config and package files for dependency caching
-COPY pnpm-workspace.yaml turbo.json package.json pnpm-lock.yaml ./
-COPY apps/*/package.json ./apps/
-COPY packages/*/package.json ./packages/
+# Copy package files
+COPY package*.json ./
 
-# Install all dependencies (including dev dependencies for building) with force to handle lockfile issues
-RUN pnpm install --frozen-lockfile --force
+# Install dependencies
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
 
-# Build all packages
-RUN pnpm run build
+# Build the application
+RUN npm run build
 
-# Development stage - with hot reload support
-FROM node:20-alpine3.19 AS development
+# Production stage
+FROM node:18-alpine AS production
 
-# Install pnpm and turbo globally
-RUN npm install -g pnpm@8 turbo
-
-# Set working directory
 WORKDIR /app
 
-# Copy workspace config and package files
-COPY pnpm-workspace.yaml turbo.json package.json pnpm-lock.yaml ./
-COPY apps/*/package.json ./apps/
-COPY packages/*/package.json ./packages/
-
-# Install all dependencies (including dev dependencies) with force
-RUN pnpm install --frozen-lockfile --force
-
-# Copy source code
-COPY . .
-
-# Expose port (default for development)
-EXPOSE 3000
-
-# Default command for development
-CMD ["pnpm", "run", "dev"]
-
-# Production stage - minimal runtime
-FROM node:20-alpine3.19 AS production
-
-# Install pnpm globally
-RUN npm install -g pnpm@8
-
-# Set working directory
-WORKDIR /app
-
-# Copy built artifacts and package files
-COPY --from=base /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
-COPY --from=base /app/apps/*/dist ./apps/
-COPY --from=base /app/packages/*/dist ./packages/
+# Copy package files
+COPY package*.json ./
 
 # Install production dependencies only
-RUN pnpm install --frozen-lockfile --prod
+RUN npm ci --only=production && npm cache clean --force
 
-# Expose port (default for production)
+# Copy built application
+COPY --from=builder /app/dist ./dist
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nestjs -u 1001
+
+USER nestjs
+
+# Expose port
 EXPOSE 3000
 
-# Default command for production (override in docker-compose for specific services)
-CMD ["pnpm", "run", "start"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+# Start the application
+CMD ["npm", "run", "start:prod"]

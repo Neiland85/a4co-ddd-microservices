@@ -14,9 +14,37 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./dto"), exports);
-__exportStar(require("./security/braces-web-middleware"), exports);
-__exportStar(require("./types"), exports);
-__exportStar(require("./utils/validation-utils"), exports);
+exports.NatsEventBus = void 0;
+const nats_1 = require("nats");
+const common_1 = require("@nestjs/common");
 __exportStar(require("./domain"), exports);
+__exportStar(require("./security"), exports);
+__exportStar(require("./types"), exports);
+class NatsEventBus {
+    constructor() {
+        this.logger = new common_1.Logger('NatsEventBus');
+        this.codec = (0, nats_1.JSONCodec)();
+    }
+    async connect(url = 'nats://localhost:4222') {
+        this.nc = await (0, nats_1.connect)({ servers: url });
+        this.logger.log(`✅ Conectado a NATS en ${url}`);
+    }
+    async publish(subject, data) {
+        if (!this.nc)
+            await this.connect();
+        this.nc.publish(subject, this.codec.encode(data));
+        this.logger.log(`📤 Evento publicado → ${subject}`);
+    }
+    async subscribe(subject, handler) {
+        if (!this.nc)
+            await this.connect();
+        const sub = this.nc.subscribe(subject);
+        for await (const msg of sub) {
+            const decoded = this.codec.decode(msg.data);
+            this.logger.log(`📥 Evento recibido → ${subject}`);
+            await handler(decoded);
+        }
+    }
+}
+exports.NatsEventBus = NatsEventBus;
 //# sourceMappingURL=index.js.map

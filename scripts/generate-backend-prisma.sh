@@ -3,7 +3,7 @@
 set -euo pipefail
 
 print_help() {
-  cat <<'EOT'
+  cat <<'EOF'
 Uso: generate-backend-prisma.sh [opciones]
 
 Opciones:
@@ -23,7 +23,7 @@ Ejemplos:
   ./scripts/generate-backend-prisma.sh
   ./scripts/generate-backend-prisma.sh -u "postgresql://user:pwd@localhost:5432/db?schema=public"
   ./scripts/generate-backend-prisma.sh -s custom/schema.prisma --skip-install
-EOT
+EOF
 }
 
 resolve_path() {
@@ -36,6 +36,7 @@ PY
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKEND_DIR_DEFAULT="${ROOT_DIR}/backend"
+SCHEMA_DEFAULT=""
 FORCE_INSTALL=false
 SKIP_INSTALL=false
 EXTRA_PRISMA_ARGS=()
@@ -92,7 +93,8 @@ if [[ -z "${SCHEMA_PATH}" ]]; then
 fi
 
 if [[ -z "${SCHEMA_PATH}" ]]; then
-  SCHEMA_PATH="${BACKEND_DIR}/prisma/schema.prisma"
+  SCHEMA_DEFAULT="${BACKEND_DIR}/prisma/schema.prisma"
+  SCHEMA_PATH="${SCHEMA_DEFAULT}"
 fi
 
 if [[ ! -f "${SCHEMA_PATH}" ]]; then
@@ -107,9 +109,9 @@ else
   export DATABASE_URL="${DATABASE_URL:-$DEFAULT_DB_URL}"
 fi
 
-printf '📦 Backend: %s\n' "${BACKEND_DIR}"
-printf '📄 Schema:  %s\n' "${SCHEMA_PATH}"
-printf '🔗 DATABASE_URL=%s\n' "${DATABASE_URL}"
+echo "📦 Backend: ${BACKEND_DIR}"
+echo "📄 Schema:  ${SCHEMA_PATH}"
+echo "🔗 DATABASE_URL=${DATABASE_URL}"
 
 cd "${BACKEND_DIR}"
 
@@ -126,10 +128,10 @@ else
 fi
 
 echo "⚙️  Generando Prisma Client..."
-if [[ ${#EXTRA_PRISMA_ARGS[@]} -gt 0 ]]; then
-  pnpm exec prisma generate --schema "${SCHEMA_PATH}" "${EXTRA_PRISMA_ARGS[@]}"
-else
-  pnpm exec prisma generate --schema "${SCHEMA_PATH}"
-fi
+pnpm exec prisma generate --schema "${SCHEMA_PATH}" "${EXTRA_PRISMA_ARGS[@]}" || {
+  echo "❌ prisma generate falló" >&2
+  exit 1
+}
 
 echo "✅ Prisma Client generado correctamente."
+

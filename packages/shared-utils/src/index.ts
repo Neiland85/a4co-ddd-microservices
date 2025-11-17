@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 
 export * from './domain';
 export * from './security';
+export * from './types';
 export class NatsEventBus {
   private nc: NatsConnection;
   private logger = new Logger('NatsEventBus');

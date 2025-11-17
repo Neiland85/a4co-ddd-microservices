@@ -21,7 +21,7 @@ async function bootstrap() {
   const port = process.env['PORT'] || 3000;
   await app.listen(port);
 
-  logger.info(`�� Backend monolito iniciado en http://localhost:${port}`);
+  logger.info(`🚀 Backend monolito iniciado en http://localhost:${port}`);
   logger.info(`📚 API Docs: http://localhost:${port}/api/docs`);
 }
 
@@ -29,3 +29,4 @@ bootstrap().catch(error => {
   logger.error('Error al iniciar el backend monolito', { error });
   process.exit(1);
 });
+

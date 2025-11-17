@@ -157,7 +157,7 @@ describe('RegisterUserUseCase - Unit Test', () => {
 
     const expectedUser = createUser({
       email: registerDto.email,
-      name: registerDto.name,
+      name: registerDto.name ?? 'Test User',
       hashedPassword,
     });
 

@@ -1,223 +1,84 @@
 import js from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
-export default [
-  js.configs.recommended,
-  // Configuración global - excluir completamente directorios de build
-  {
-    ignores: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/.next/**',
-      '**/coverage/**',
-      '**/*.d.ts',
-      '**/packages/observability/dist/**',
-      '**/packages/shared-utils/dist/**',
-      '**/packages/design-system/dist/**',
-      '**/apps/*/dist/**',
-      '**/apps/*/.next/**',
-      '**/packages/*/dist/**',
-      '**/packages/*/.next/**',
-      '**/packages/*/.turbo/**',
-      '**/.turbo/**',
-      '**/turbo/**',
-      '**/jest.config.js',
-      '**/*.jest.ts',
-      '**/packages/shared-utils/src/**',
-      '**/packages/observability/src/**',
-      // Excluir archivos con errores de sintaxis graves
-      '**/f-modern-backoffice/**',
-      '**/h-modern-dashboard/**',
-      '**/feature-flags/**',
-      '**/tests/visual/**',
-      '**/eslint-rules/dev-server-rules.js',
-      '**/src/components/v0/V0ComponentTemplate.js',
-      '**/jest.coverage.config.js',
-      '**/packages/design-system/.eslintrc.js',
-      '**/packages/design-system/.storybook/**',
-      '**/packages/design-system/d-user-registration/**',
-      '**/packages/design-system/e-gamified-dashboard/**',
-      '**/apps/user-service/tests/**',
-      '**/apps/product-service/tests/**',
-      '**/apps/user-service/src/__tests__/**',
-      '**/apps/user-service/src/application/**',
-      '**/apps/user-service/src/contracts/**',
-      '**/apps/user-service/src/domain/**',
-      '**/apps/user-service/src/infrastructure/**',
-      '**/apps/user-service/src/presentation/**',
-      '**/apps/user-service/src/user.module.ts',
-      '**/apps/user-service/src/main.ts',
-      '**/apps/user-service/service.ts',
-      '**/apps/user-service/service.test.ts',
-      // EXCLUIR SOLO ARCHIVOS DE SERVICIOS CON ERRORES DE PARSING GRAVES
-      '**/apps/user-service/**', // Excluir por errores de sintaxis
-      '**/apps/product-service/tests/**', // Excluir tests con errores
-      '**/apps/product-service/src/__tests__/**', // Excluir tests con errores
-      '**/apps/auth-service/src/__tests__/**', // Excluir tests con errores
-      '**/apps/order-service/src/__tests__/**', // Excluir tests con errores
-      '**/apps/inventory-service/src/__tests__/**', // Excluir tests con errores
-      '**/apps/notification-service/src/__tests__/**', // Excluir tests con errores
-      '**/apps/payment-service/src/__tests__/**', // Excluir tests con errores
-      '**/apps/transportista-service/src/__tests__/**', // Excluir tests con errores
-      '**/packages/design-system/src/**/*.ts',
-      '**/packages/design-system/src/**/*.tsx',
-      '**/packages/design-system/src/**/*.js',
-      '**/packages/copilot-dashboard/**',
-      '**/packages/design-system/src/**/*.jsx',
-      '**/packages/design-system/*.config.ts',
-      '**/packages/design-system/*.config.js',
-      '**/eslint-rules/**',
-    ],
-  },
-  // Configuración permisiva para scripts y herramientas
-  {
-    files: [
-      'scripts/**',
-      'tools/**',
-      'validate-braces.js',
-      '**/*.config.js',
-      '**/*.config.ts',
-      'jest.config.js',
-      'next.config.js',
-      'postcss.config.js',
-      'tailwind.config.js',
-      'setupTests.js',
-      'test/**/*.js',
-      'src/**/*.js',
-      'src/**/*.spec.js',
-      'src/**/*.test.js',
-      '**/*.js', // Archivos JS que usan CommonJS
-      'packages/shared-utils/**/*.js',
-      'packages/design-system/**/*.js',
-      'packages/observability/**/*.js',
-      'run-devops-simple.js',
-    ],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      globals: {
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        localStorage: 'readonly',
-        sessionStorage: 'readonly',
-        console: 'readonly',
-        alert: 'readonly',
-        confirm: 'readonly',
-        prompt: 'readonly',
-        fetch: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        setImmediate: 'readonly',
-        clearImmediate: 'readonly',
-        React: 'readonly',
-        JSX: 'readonly',
-        jest: 'readonly',
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-        process: 'readonly',
-        Buffer: 'readonly',
-        global: 'readonly',
-        module: 'readonly',
-        exports: 'readonly',
-        require: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        // Globals adicionales para CommonJS
-        TextEncoder: 'readonly',
-        TextDecoder: 'readonly',
-        crypto: 'readonly',
-        btoa: 'readonly',
-        atob: 'readonly',
-        setBusinessUsers: 'readonly',
-        setCustomerUsers: 'readonly',
-        actionTypes: 'readonly',
-        error: 'readonly',
-      },
-    },
-    rules: {
-      // CONFIGURACIÓN MUY PERMISIVA PARA SCRIPTS Y HERRAMIENTAS
-      'no-unused-vars': 'off',
-      'no-undef': 'off', // Desactivado para permitir CommonJS
-      'no-console': 'off',
-      'no-debugger': 'off',
-      semi: 'off',
-      quotes: 'off',
-      indent: 'off',
-      'comma-dangle': 'off',
-      'object-curly-spacing': 'off',
-      'array-bracket-spacing': 'off',
-      'space-before-function-paren': 'off',
-      'eol-last': 'off',
-      'no-dupe-else-if': 'off',
-      'no-useless-escape': 'off',
-      'no-case-declarations': 'off',
-    },
-  },
-  // Configuración específica para servicios NestJS - configuración temporal permisiva
-  // TODO: Mejorar configuración TypeScript ESLint cuando se actualice a ESLint v9
-  {
-    files: [
-      'apps/notification-service/src/**/*.ts',
-      'apps/auth-service/src/**/*.ts',
-      'apps/order-service/src/**/*.ts',
-      'apps/inventory-service/src/**/*.ts',
-      'apps/payment-service/src/**/*.ts',
-      'apps/transportista-service/src/**/*.ts',
-    ],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      globals: {
-        console: 'readonly',
-        process: 'readonly',
-        Buffer: 'readonly',
-        global: 'readonly',
-        module: 'readonly',
-        exports: 'readonly',
-        require: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        // Globals de testing
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-        jest: 'readonly',
-      },
-    },
-    rules: {
-      // Configuración permisiva para evitar bloqueos en CI/CD
-      'no-unused-vars': 'off', // Temporalmente desactivado
-      'no-console': 'off',
-      'no-debugger': 'off',
-      'no-undef': 'off', // Temporalmente desactivado para TypeScript
-      semi: 'off',
-      quotes: 'off',
-      'comma-dangle': 'off',
-      'object-curly-spacing': 'off',
-      'array-bracket-spacing': 'off',
-      'space-before-function-paren': 'off',
-      'eol-last': 'off',
-      'no-dupe-else-if': 'off',
-      'no-useless-escape': 'off',
-      'no-case-declarations': 'off',
-    },
-  },
+const buildArtifactPatterns = [
+  '**/node_modules/**',
+  '**/dist/**',
+  '**/build/**',
+  '**/.next/**',
+  '**/coverage/**',
+  '**/.turbo/**',
+  '**/turbo/**',
+  '**/*.d.ts',
 ];
+
+const transitionalIgnores = [
+  '**/packages/observability/src/**',
+  '**/packages/design-system/.storybook/**',
+  '**/packages/design-system/d-user-registration/**',
+  '**/packages/design-system/e-gamified-dashboard/**',
+  '**/tests/visual/**',
+  '**/f-modern-backoffice/**',
+  '**/h-modern-dashboard/**',
+  '**/feature-flags/**',
+  '**/eslint-rules/**',
+];
+
+export default tseslint.config(
+  {
+    ignores: [...buildArtifactPatterns, ...transitionalIgnores],
+  },
+  {
+    files: ['**/*.{ts,tsx,js,jsx}'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-console': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/require-await': 'off',
+    },
+  },
+  {
+    files: [
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/*.spec.{ts,tsx,js,jsx}',
+      '**/__tests__/**/*.{ts,tsx,js,jsx}',
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
+    files: [
+      '**/*.config.{ts,js,mjs,cjs}',
+      'scripts/**/*.{ts,js}',
+      'tools/**/*.{ts,js}',
+      'test/**/*.{ts,js}',
+    ],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+    },
+  },
+);

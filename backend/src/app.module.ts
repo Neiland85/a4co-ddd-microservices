@@ -13,6 +13,9 @@ import { ProductModule } from './modules/product/product.module';
     AuthModule,
     UserModule,
     ProductModule,
+    // ArtisanModule, // TODO: implementar
+    // GeoModule, // TODO: implementar
   ],
 })
 export class AppModule {}
+

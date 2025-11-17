@@ -15,21 +15,20 @@ catch {
     });
 }
 class BracesSecurityMonitor extends events_1.EventEmitter {
-    serviceName;
-    logger = getGlobalLogger();
-    metrics = {
-        totalRequests: 0,
-        blockedRequests: 0,
-        averageProcessingTime: 0,
-        peakMemoryUsage: 0,
-        alertsTriggered: 0,
-        topBlockedPatterns: [],
-    };
-    alerts = [];
-    patternStats = new Map();
     constructor(serviceName) {
         super();
         this.serviceName = serviceName;
+        this.logger = getGlobalLogger();
+        this.metrics = {
+            totalRequests: 0,
+            blockedRequests: 0,
+            averageProcessingTime: 0,
+            peakMemoryUsage: 0,
+            alertsTriggered: 0,
+            topBlockedPatterns: [],
+        };
+        this.alerts = [];
+        this.patternStats = new Map();
         this.setupEventHandlers();
     }
     recordRequest(processingTime, memoryUsage, blocked = false) {
@@ -141,7 +140,7 @@ class BracesSecurityMonitor extends events_1.EventEmitter {
 exports.BracesSecurityMonitor = BracesSecurityMonitor;
 exports.globalBracesMonitor = new BracesSecurityMonitor('global');
 class BracesSecurityMonitorFactory {
-    static monitors = new Map();
+    static { this.monitors = new Map(); }
     static getMonitor(serviceName) {
         if (!this.monitors.has(serviceName)) {
             this.monitors.set(serviceName, new BracesSecurityMonitor(serviceName));
@@ -153,7 +152,11 @@ class BracesSecurityMonitorFactory {
     }
     static getGlobalMetrics() {
         const allMetrics = Array.from(this.monitors.values()).map(m => m.getMetrics());
-        return {
+        const lastAlert = allMetrics
+            .map(m => m.lastAlertTime)
+            .filter((t) => t !== undefined)
+            .sort((a, b) => b.getTime() - a.getTime())[0];
+        const metrics = {
             totalRequests: allMetrics.reduce((sum, m) => sum + m.totalRequests, 0),
             blockedRequests: allMetrics.reduce((sum, m) => sum + m.blockedRequests, 0),
             averageProcessingTime: allMetrics.length > 0
@@ -161,12 +164,12 @@ class BracesSecurityMonitorFactory {
                 : 0,
             peakMemoryUsage: Math.max(...allMetrics.map(m => m.peakMemoryUsage), 0),
             alertsTriggered: allMetrics.reduce((sum, m) => sum + m.alertsTriggered, 0),
-            lastAlertTime: allMetrics
-                .map(m => m.lastAlertTime)
-                .filter(t => t !== undefined)
-                .sort((a, b) => b.getTime() - a.getTime())[0],
             topBlockedPatterns: [],
         };
+        if (lastAlert !== undefined) {
+            metrics.lastAlertTime = lastAlert;
+        }
+        return metrics;
     }
 }
 exports.BracesSecurityMonitorFactory = BracesSecurityMonitorFactory;

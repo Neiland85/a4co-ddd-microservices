@@ -1,18 +1,13 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient, Product as PrismaProduct } from '@prisma/client';
 import { Product, ProductProps } from '../../domain/entities/product.entity';
 import { ProductRepository } from './product.repository';
 
 export class PrismaProductRepository implements ProductRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   async findById(id: string): Promise<Product | null> {
-    const productData = await this.prisma.product.findUnique({
-      where: { id },
-    });
-
-    if (!productData) return null;
-
-    return this.toDomain(productData);
+    const productData = await this.prisma.product.findUnique({ where: { id } });
+    return productData ? this.toDomain(productData) : null;
   }
 
   async findByIds(ids: string[]): Promise<Product[]> {
@@ -24,7 +19,7 @@ export class PrismaProductRepository implements ProductRepository {
       },
     });
 
-    return productsData.map(data => this.toDomain(data));
+    return productsData.map((data) => this.toDomain(data));
   }
 
   async save(product: Product): Promise<void> {
@@ -32,115 +27,65 @@ export class PrismaProductRepository implements ProductRepository {
 
     await this.prisma.product.upsert({
       where: { id: data.id },
-      update: {
-        name: data.name,
-        description: data.description,
-        sku: data.sku,
-        category: data.category,
-        brand: data.brand,
-        unitPrice: data.unitPrice,
-        currency: data.currency,
-        currentStock: data.currentStock,
-        reservedStock: data.reservedStock,
-        minimumStock: data.minimumStock,
-        maximumStock: data.maximumStock,
-        isActive: data.isActive,
-        artisanId: data.artisanId,
-        updatedAt: data.updatedAt,
-      },
-      create: {
-        id: data.id,
-        name: data.name,
-        description: data.description,
-        sku: data.sku,
-        category: data.category,
-        brand: data.brand,
-        unitPrice: data.unitPrice,
-        currency: data.currency,
-        currentStock: data.currentStock,
-        reservedStock: data.reservedStock,
-        minimumStock: data.minimumStock,
-        maximumStock: data.maximumStock,
-        isActive: data.isActive,
-        artisanId: data.artisanId,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-      },
+      update: this.buildUpdatePayload(data),
+      create: this.buildCreatePayload(data),
     });
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.product.delete({
-      where: { id },
-    });
+    await this.prisma.product.delete({ where: { id } });
   }
 
   async findAll(): Promise<Product[]> {
     const productsData = await this.prisma.product.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     });
 
-    return productsData.map(data => this.toDomain(data));
+    return productsData.map((data) => this.toDomain(data));
   }
 
   async findByCategory(category: string): Promise<Product[]> {
     const productsData = await this.prisma.product.findMany({
       where: { category },
-      orderBy: {
-        name: 'asc',
-      },
+      orderBy: { name: 'asc' },
     });
 
-    return productsData.map(data => this.toDomain(data));
+    return productsData.map((data) => this.toDomain(data));
   }
 
   async findByArtisan(artisanId: string): Promise<Product[]> {
     const productsData = await this.prisma.product.findMany({
       where: { artisanId },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     });
 
-    return productsData.map(data => this.toDomain(data));
+    return productsData.map((data) => this.toDomain(data));
   }
 
   async findLowStock(): Promise<Product[]> {
-    // Find products where (currentStock - reservedStock) <= minimumStock
     const productsData = await this.prisma.product.findMany({
-      where: {
-        isActive: true,
-      },
+      where: { isActive: true },
     });
 
-    // Filter in application layer (Prisma doesn't support computed fields in WHERE)
-    const products = productsData.map(data => this.toDomain(data));
-    return products.filter(product => product.needsRestock);
+    const products = productsData.map((data) => this.toDomain(data));
+    return products.filter((product) => product.needsRestock);
   }
 
   async findOutOfStock(): Promise<Product[]> {
-    // Find products where (currentStock - reservedStock) <= 0
     const productsData = await this.prisma.product.findMany({
-      where: {
-        isActive: true,
-      },
+      where: { isActive: true },
     });
 
-    // Filter in application layer
-    const products = productsData.map(data => this.toDomain(data));
-    return products.filter(product => product.stockStatus === 'out_of_stock');
+    const products = productsData.map((data) => this.toDomain(data));
+    return products.filter((product) => product.stockStatus === 'out_of_stock');
   }
 
-  private toDomain(data: any): Product {
+  private toDomain(data: PrismaProduct): Product {
     const props: ProductProps = {
       id: data.id,
       name: data.name,
-      description: data.description,
       sku: data.sku,
       category: data.category,
-      brand: data.brand,
       unitPrice: data.unitPrice,
       currency: data.currency,
       currentStock: data.currentStock,
@@ -153,7 +98,71 @@ export class PrismaProductRepository implements ProductRepository {
       updatedAt: data.updatedAt,
     };
 
+    if (data.description !== null && data.description !== undefined) {
+      props.description = data.description;
+    }
+
+    if (data.brand !== null && data.brand !== undefined) {
+      props.brand = data.brand;
+    }
+
     return Product.reconstruct(props);
+  }
+
+  private buildUpdatePayload(data: ProductProps): Prisma.ProductUpdateInput {
+    const updateData: Prisma.ProductUpdateInput = {
+      name: data.name,
+      sku: data.sku,
+      category: data.category,
+      unitPrice: data.unitPrice,
+      currency: data.currency,
+      currentStock: data.currentStock,
+      reservedStock: data.reservedStock,
+      minimumStock: data.minimumStock,
+      maximumStock: data.maximumStock,
+      isActive: data.isActive,
+      artisanId: data.artisanId,
+      updatedAt: data.updatedAt,
+    };
+
+    if (data.description !== undefined) {
+      updateData.description = data.description;
+    }
+
+    if (data.brand !== undefined) {
+      updateData.brand = data.brand;
+    }
+
+    return updateData;
+  }
+
+  private buildCreatePayload(data: ProductProps): Prisma.ProductCreateInput {
+    const createData: Prisma.ProductCreateInput = {
+      id: data.id,
+      name: data.name,
+      sku: data.sku,
+      category: data.category,
+      unitPrice: data.unitPrice,
+      currency: data.currency,
+      currentStock: data.currentStock,
+      reservedStock: data.reservedStock,
+      minimumStock: data.minimumStock,
+      maximumStock: data.maximumStock,
+      isActive: data.isActive,
+      artisanId: data.artisanId,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
+
+    if (data.description !== undefined) {
+      createData.description = data.description;
+    }
+
+    if (data.brand !== undefined) {
+      createData.brand = data.brand;
+    }
+
+    return createData;
   }
 }
 
