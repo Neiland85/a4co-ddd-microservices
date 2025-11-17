@@ -1,4 +1,4 @@
-import { Card } from '@dashboard/components/ui/card';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 import { Users, Package, ShoppingCart, TrendingUp } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -35,6 +35,18 @@ export default function DashboardPage() {
   );
 }
 
+type CardProps = HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+};
+
+function Card({ children, className = '', ...props }: CardProps) {
+  return (
+    <div className={`rounded-md border bg-white/50 shadow-sm ${className}`} {...props}>
+      {children}
+    </div>
+  );
+}
+
 function StatsCard({
   title,
   value,
@@ -43,7 +55,7 @@ function StatsCard({
 }: {
   title: string;
   value: string;
-  icon: React.ElementType;
+  icon: ElementType;
   trend: string;
 }) {
   return (

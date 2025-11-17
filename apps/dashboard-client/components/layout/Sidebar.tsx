@@ -1,12 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Home, Users, Package, ShoppingCart, Settings, LogOut } from 'lucide-react';
 import clsx from 'clsx';
+import { useAuth } from '@dashboard/lib/auth-context';
+import AnimatedButton from '@/components/AnimatedButton';
 
 export function Sidebar() {
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
   return (
     <aside className="flex w-64 flex-col justify-between border-r border-slate-800 bg-slate-900 text-slate-100">
       {/* 🔹 Logo + título */}
@@ -36,16 +46,14 @@ export function Sidebar() {
       {/* 🔹 Footer con logout */}
       <div>
         <nav className="px-3 pb-3">
-          <button
-            onClick={() => {
-              // TODO: Implement logout
-              console.log('Logout');
-            }}
+          <AnimatedButton
+            animationIntensity="medium"
+            onClick={handleLogout}
             className="flex w-full items-center gap-2 rounded-md p-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
           >
             <LogOut size={18} />
             <span>Cerrar Sesión</span>
-          </button>
+          </AnimatedButton>
         </nav>
         <footer className="border-t border-slate-800 p-4 text-center text-xs text-slate-500">
           © {new Date().getFullYear()} A4CO DevOps

@@ -8,59 +8,11 @@ on:
   push:
     branches:
       - main
-      - develop
-    paths:
-      - 'packages/design-system/**'
-
-env:
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-
-jobs:
-  build-and-preview:
-    name: Build and Deploy Preview
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
-      pull-requests: write
-    
-    steps:
-      - name: Checkout code
-        run: 
-        with:
-          fetch-depth: 2
-
-      - name: Setup Node.js
-        run: 
-        with:
-          node-version: '20'
-
-      - name: Install pnpm
-        run: 
-        with:
-          version: 8
-          run_install: false
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build Design System
-        run: pnpm --filter @a4co/design-system build
-
+      # Vercel deployment step removed. Historically we deployed Storybook previews
+      # to Vercel here; the Vercel integration was deprecated for this repo.
+      # If you need automatic previews, replace this step with your preferred
+      # deployment action (Netlify, GitHub Pages, self-hosted, or another provider)
+      # and update the comment step below accordingly.
       - name: Build Storybook
         run: pnpm --filter @a4co/design-system build-storybook
 
@@ -85,23 +37,23 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
             })
-            
+
             const botComment = comments.find(comment => {
               return comment.user.type === 'Bot' && comment.body.includes('Design System Preview')
             })
-            
+
             const output = `### 🎨 Design System Preview
-            
+
             Preview URL: ${{ steps.deploy.outputs.preview-url }}
-            
+
             **Changed components:**
             \`\`\`
             ${{ steps.changed-files.outputs.all }}
             \`\`\`
-            
+
             ---
             *This preview will be updated automatically with new commits.*`
-            
+
             if (botComment) {
               github.rest.issues.updateComment({
                 owner: context.repo.owner,
@@ -122,20 +74,20 @@ jobs:
     name: Visual Testing
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
       - name: Checkout code
-        run: 
+        run:
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        run: 
+        run:
         with:
           node-version: '20'
 
       - name: Install pnpm
-        run: 
+        run:
         with:
           version: 8
 

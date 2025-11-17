@@ -1,6 +1,6 @@
-import { Card } from '@dashboard/components/ui/card';
-import { Button } from '@dashboard/components/ui/button';
 import { Plus } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@a4co/design-system';
+import AnimatedButton from '@/components/AnimatedButton';
 
 export default function ProductsPage() {
   return (
@@ -12,17 +12,22 @@ export default function ProductsPage() {
             Gestiona el catálogo de productos
           </p>
         </div>
-        <Button>
+        <AnimatedButton animationIntensity="intense">
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Producto
-        </Button>
+        </AnimatedButton>
       </div>
 
-      <Card className="p-6">
-        <div className="text-center text-slate-500 dark:text-slate-400 py-12">
-          <p className="text-lg font-medium mb-2">No hay productos registrados</p>
-          <p className="text-sm">Comienza añadiendo productos a tu catálogo</p>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Productos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center text-slate-500 dark:text-slate-400 py-12">
+            <p className="text-lg font-medium mb-2">No hay productos registrados</p>
+            <p className="text-sm">Comienza añadiendo productos a tu catálogo</p>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

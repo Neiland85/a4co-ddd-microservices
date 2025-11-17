@@ -1,12 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -16,24 +11,17 @@
     "incremental": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-      "skipLibCheck": true,
-      "strict": true,
-      "noEmit": true,
-      "rootDir": ".",
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "rootDir": "../..",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@a4co/shared-utils": [
-        "../../packages/shared-utils/src"
-      ],
-      "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/src/*"
-      ],
-      "@a4co/design-system": [
-        "../../packages/design-system/src"
-      ]
+      "@/*": ["./*"],
+      "@dashboard/*": ["./*"],
+      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
+      "@a4co/design-system": ["../../packages/design-system/src"]
     },
     "plugins": [
       {
@@ -51,11 +39,8 @@
     "lib/**/*.tsx",
     "*.ts",
     "*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "coverage"
-  ]
+  "exclude": ["node_modules", "dist", "coverage"]
 }

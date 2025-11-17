@@ -1,18 +1,47 @@
 'use client';
 
-import { useState } from 'react';
-import { Card } from '@dashboard/components/ui/card';
-import { Button } from '@dashboard/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@dashboard/components/ui/table';
+import { useState, type ChangeEvent, type ReactNode } from 'react';
+// Fallback local Card component when shared UI module is unavailable.
+// Replace with the shared Card component import when '@dashboard/components/ui/card' exists.
+const Card = ({ className = '', children }: { className?: string; children?: ReactNode }) => {
+  return (
+    <div className={`rounded-md bg-white dark:bg-slate-800 shadow-sm ${className}`}>{children}</div>
+  );
+};
+import AnimatedButton from '@/components/AnimatedButton';
 import { Plus, Search, MoreVertical } from 'lucide-react';
-import { Input } from '@dashboard/components/ui/input';
+
+// Fallback local Table components when shared UI module is unavailable.
+// Replace with the shared Table component import when '@dashboard/components/ui/table' exists.
+const Table = ({ children }: { children?: ReactNode }) => (
+  <div className="overflow-hidden rounded-md border">
+    <table className="min-w-full divide-y">{children}</table>
+  </div>
+);
+const TableHeader = ({ children }: { children?: ReactNode }) => <thead>{children}</thead>;
+const TableBody = ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>;
+const TableRow = ({ children, className = '' }: { children?: ReactNode; className?: string }) => (
+  <tr className={className}>{children}</tr>
+);
+const TableHead = ({ children, className = '' }: { children?: ReactNode; className?: string }) => (
+  <th scope="col" className={`px-4 py-2 text-left text-sm font-semibold ${className}`}>
+    {children}
+  </th>
+);
+const TableCell = ({
+  children,
+  className = '',
+  colSpan,
+}: {
+  children?: ReactNode;
+  className?: string;
+  colSpan?: number;
+}) => (
+  <td className={`px-4 py-2 text-sm ${className}`} colSpan={colSpan}>
+    {children}
+  </td>
+);
+// Using native <input> element instead of missing @dashboard/components/ui/input
 
 export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,21 +67,23 @@ export default function UsersPage() {
             Gestiona los usuarios de la plataforma
           </p>
         </div>
-        <Button>
+        <AnimatedButton animationIntensity="intense">
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Usuario
-        </Button>
+        </AnimatedButton>
       </div>
 
       {/* Search Bar */}
       <Card className="p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <Input
+          <input
+            type="text"
             placeholder="Buscar usuarios..."
-            className="pl-10"
+            className="pl-10 bg-transparent border-none focus:outline-none w-full"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+            aria-label="Buscar usuarios"
           />
         </div>
       </Card>
@@ -94,9 +125,9 @@ export default function UsersPage() {
                   </TableCell>
                   <TableCell>{new Date(user.createdAt).toLocaleDateString('es-ES')}</TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon">
+                    <AnimatedButton animationIntensity="subtle" variant="ghost" size="icon">
                       <MoreVertical className="h-4 w-4" />
-                    </Button>
+                    </AnimatedButton>
                   </TableCell>
                 </TableRow>
               ))

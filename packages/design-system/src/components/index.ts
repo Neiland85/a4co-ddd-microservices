@@ -3,7 +3,8 @@ export { Button } from './Button/Button';
 export type { ButtonProps } from './Button/Button';
 
 // Aquí se agregarán más componentes conforme se desarrollen
-// export { Card } from './Card/Card'
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './Card/Card';
+export type { CardProps } from './Card/Card';
 // export { Input } from './Input/Input'
 // export { Select } from './Select/Select'
 // export { Modal } from './Modal/Modal'

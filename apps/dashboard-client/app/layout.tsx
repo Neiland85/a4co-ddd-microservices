@@ -1,5 +1,6 @@
 import '@/app/globals.css';
 import { Header, Sidebar } from '@/components/layout';
+import { AuthProvider } from '@dashboard/lib/auth-context';
 import clsx from 'clsx';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -35,14 +36,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         className={clsx(
           geistSans.variable,
           geistMono.variable,
-          'bg-background text-foreground flex min-h-screen antialiased'
+          'bg-background text-foreground flex min-h-screen antialiased',
         )}
       >
-        <Sidebar />
-        <main className="flex flex-1 flex-col overflow-y-auto">
-          <Header />
-          <div className="p-8">{children}</div>
-        </main>
+        <AuthProvider>
+          <Sidebar />
+          <main className="flex flex-1 flex-col overflow-y-auto">
+            <Header />
+            <div className="p-8">{children}</div>
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );
