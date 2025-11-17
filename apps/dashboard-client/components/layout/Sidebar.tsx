@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { Home, Factory, FileBarChart2, Leaf, Settings } from 'lucide-react';
+import { Home, Users, Package, ShoppingCart, Settings, LogOut } from 'lucide-react';
+import clsx from 'clsx';
 
 export function Sidebar() {
   return (
@@ -18,23 +20,37 @@ export function Sidebar() {
             className="rounded-md object-contain"
             priority
           />
-          <h1 className="text-lg font-semibold tracking-wide select-none">A4CO PYME</h1>
+          <h1 className="text-lg font-semibold tracking-wide select-none">A4CO Admin</h1>
         </div>
 
         {/* 🔹 Navegación principal */}
         <nav className="mt-4 flex flex-col space-y-1 px-3">
-          <SidebarLink href="/dashboard" icon={Home} label="Inicio" />
-          <SidebarLink href="/clients" icon={Factory} label="Clientes" />
-          <SidebarLink href="/emissions" icon={Leaf} label="Emisiones" />
-          <SidebarLink href="/reports" icon={FileBarChart2} label="Informes" />
-          <SidebarLink href="/settings" icon={Settings} label="Configuración" />
+          <SidebarLink href="/dashboard" icon={Home} label="Dashboard" />
+          <SidebarLink href="/dashboard/users" icon={Users} label="Usuarios" />
+          <SidebarLink href="/dashboard/products" icon={Package} label="Productos" />
+          <SidebarLink href="/dashboard/orders" icon={ShoppingCart} label="Pedidos" />
+          <SidebarLink href="/dashboard/settings" icon={Settings} label="Configuración" />
         </nav>
       </div>
 
-      {/* 🔹 Footer */}
-      <footer className="border-t border-slate-800 p-4 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} A4CO DevOps
-      </footer>
+      {/* 🔹 Footer con logout */}
+      <div>
+        <nav className="px-3 pb-3">
+          <button
+            onClick={() => {
+              // TODO: Implement logout
+              console.log('Logout');
+            }}
+            className="flex w-full items-center gap-2 rounded-md p-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+          >
+            <LogOut size={18} />
+            <span>Cerrar Sesión</span>
+          </button>
+        </nav>
+        <footer className="border-t border-slate-800 p-4 text-center text-xs text-slate-500">
+          © {new Date().getFullYear()} A4CO DevOps
+        </footer>
+      </div>
     </aside>
   );
 }
@@ -49,10 +65,18 @@ function SidebarLink({
   icon: React.ElementType;
   label: string;
 }) {
+  const pathname = usePathname();
+  const isActive = pathname === href || pathname?.startsWith(href + '/');
+
   return (
     <Link
       href={href}
-      className="flex items-center gap-2 rounded-md p-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+      className={clsx(
+        'flex items-center gap-2 rounded-md p-2 transition-colors',
+        isActive
+          ? 'bg-slate-800 text-white font-medium'
+          : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+      )}
     >
       <Icon size={18} />
       <span>{label}</span>
