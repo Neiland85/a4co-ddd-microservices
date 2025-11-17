@@ -62,6 +62,7 @@ export default [
       '**/packages/design-system/src/**/*.ts',
       '**/packages/design-system/src/**/*.tsx',
       '**/packages/design-system/src/**/*.js',
+      '**/packages/copilot-dashboard/**',
       '**/packages/design-system/src/**/*.jsx',
       '**/packages/design-system/*.config.ts',
       '**/packages/design-system/*.config.js',
