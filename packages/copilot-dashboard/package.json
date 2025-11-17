@@ -13,7 +13,6 @@
     "vscode": "^1.85.0"
   },
   "activationEvents": [
-    "onCommand:a4co.copilot.showDashboard",
     "onStartupFinished"
   ],
   "contributes": {
@@ -31,6 +30,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "animejs": "^4.2.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
