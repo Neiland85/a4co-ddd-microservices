@@ -81,7 +81,7 @@ class TestTransportistaService:
             rut="12345678-9",
             telefono="+56912345678",
             email="same@example.com",
-            direccion="Calle 1",
+            direccion="Calle Principal 123",
             tipo_vehiculo="furgon",
             capacidad_kg=1000.0
         )
@@ -91,7 +91,7 @@ class TestTransportistaService:
             rut="98765432-1",
             telefono="+56987654321",
             email="same@example.com",
-            direccion="Calle 2",
+            direccion="Avenida Industrial 456",
             tipo_vehiculo="camion",
             capacidad_kg=2000.0
         )
@@ -137,7 +137,7 @@ class TestTransportistaService:
             rut="11111111-1",
             telefono="+56911111111",
             email="activo@test.com",
-            direccion="Calle 1",
+            direccion="Calle Principal 123",
             tipo_vehiculo="furgon",
             capacidad_kg=1000.0,
             activo=True
@@ -148,7 +148,7 @@ class TestTransportistaService:
             rut="22222222-2",
             telefono="+56922222222",
             email="inactivo@test.com",
-            direccion="Calle 2",
+            direccion="Avenida Industrial 456",
             tipo_vehiculo="camion",
             capacidad_kg=2000.0,
             activo=False
@@ -286,7 +286,7 @@ class TestShipmentService:
 
         assert updated.status == "in_transit"
         assert len(updated.history) == 2
-        assert updated.history[1]["location"] == "Centro de distribución Madrid"
+        assert updated.history[1].location == "Centro de distribución Madrid"
 
     @pytest.mark.asyncio
     async def test_actualizar_estado_delivered(self, service, sample_transportista, sample_locations):
@@ -349,7 +349,7 @@ class TestShipmentService:
                 rut="11111111-1",
                 telefono="+56911111111",
                 email="t1@test.com",
-                direccion="Calle 1",
+                direccion="Calle Principal 123",
                 tipo_vehiculo="furgon",
                 capacidad_kg=1000.0
             )
@@ -361,7 +361,7 @@ class TestShipmentService:
                 rut="22222222-2",
                 telefono="+56922222222",
                 email="t2@test.com",
-                direccion="Calle 2",
+                direccion="Avenida Industrial 456",
                 tipo_vehiculo="camion",
                 capacidad_kg=2000.0
             )
