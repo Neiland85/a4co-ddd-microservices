@@ -16,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Clean submodule state
+        run: |
+          git submodule deinit --all -f || true
+          rm -rf .git/modules || true
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -25,13 +30,12 @@ jobs:
       - name: GitGuardian scan
         uses: gitguardian/ggshield-action@v1.1.0
         with:
-          args: secret scan --mode diff
+          args: secret scan diff --ref HEAD~1
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
+          scan-type: 'repo'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
