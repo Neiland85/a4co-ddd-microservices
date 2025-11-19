@@ -1,17 +1,52 @@
 # Diccionario del Proyecto
 
-Última sincronización: 19/11/2025, 15:26:14
+Última sincronización: 19/11/2025, 16:57:11
 
 ---
-### User (global VSCode) (1)
-- maintained
+### User (global VSCode) (17)
+- adapter
+- configure
+- connections
+- datasource
+- deprecated
+- deprecation
+- fields
+- folder
+- migration
+- multi
+- pattern
+- prismaclient
+- property
+- related
+- requirements
+- schema
+- warnings
 
-### Workspace (proyecto local) (1)
-- maintained
+### Workspace (proyecto local) (19)
+- adapter
+- configure
+- connections
+- datasource
+- deprecated
+- deprecation
+- fields
+- folder
+- migration
+- multi
+- pattern
+- prismaclient
+- property
+- related
+- requirements
+- schema
+- type
+- warnings
+- workspace
 
-### Commits recientes detectados (104)
+### Commits recientes detectados (134)
 - across
 - actualizar
+- adapter
 - address
 - after
 - agregar
@@ -21,36 +56,45 @@
 - branch
 - changes
 - clean
+- client
 - code
 - command
 - compilation
 - complexity
 - compose
 - configuration
+- configure
 - conflict
 - conflicted
 - conflicts
+- connections
 - critical
 - cspell
 - dashboard
+- datasource
 - dependencies
 - dependency
-- design
+- deprecated
+- deprecation
 - development
 - diccionario
 - dictionary
 - dicts
 - docker
 - eliminar
+- ensures
 - entradas
 - environment
 - errors
 - execution
 - experience
+- explicit
 - feature
+- fields
 - filenames
 - files
 - fixes
+- folder
 - from
 - generated
 - glob
@@ -60,6 +104,7 @@
 - improves
 - injection
 - into
+- inventory
 - issues
 - json
 - local
@@ -71,11 +116,13 @@
 - metacharacters
 - middleware
 - migrate
+- migration
 - missing
 - module
 - monitoring
 - monolith
 - monorepo
+- multi
 - nuevas
 - obsoletas
 - option
@@ -83,35 +130,52 @@
 - package
 - packages
 - palabras
+- pattern
 - pnpm
+- postgresql
 - prevents
+- prisma
+- prismaclient
+- proper
+- property
+- references
 - regenerate
+- related
+- remove
+- requirements
 - resolution
 - resolve
 - resolved
 - resolves
+- schema
 - script
 - scripts
 - secure
 - security
+- service
+- services
 - settings
+- setup
 - shell
 - source
 - support
 - taking
+- target
 - tests
 - this
 - tsconfig
+- type
 - types
 - typescript
 - updated
-- updates
 - upgrade
 - validation
 - versions
 - vscode
 - vulnerability
+- warnings
 - with
 - work
+- workspace
 - yaml
 

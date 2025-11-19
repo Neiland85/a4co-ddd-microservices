@@ -118,7 +118,7 @@ cd "${BACKEND_DIR}"
 if [[ "${SKIP_INSTALL}" == false ]]; then
   if [[ "${FORCE_INSTALL}" == true || ! -d "node_modules" ]]; then
     echo "📥 Instalando dependencias locales del backend..."
-    pnpm install --ignore-workspace --frozen-lockfile || {
+    pnpm install --ignore-workspace-root-check --frozen-lockfile || {
       echo "❌ Falló la instalación de dependencias" >&2
       exit 1
     }
