@@ -1,73 +1,43 @@
 # Diccionario del Proyecto
 
-Última sincronización: 19/11/2025, 16:57:11
+Última sincronización: 19/11/2025, 17:10:51
 
 ---
-### User (global VSCode) (17)
-- adapter
-- configure
-- connections
-- datasource
-- deprecated
-- deprecation
-- fields
-- folder
-- migration
-- multi
-- pattern
-- prismaclient
-- property
-- related
-- requirements
-- schema
-- warnings
+### User (global VSCode)
+Sin nuevas palabras.
 
-### Workspace (proyecto local) (19)
-- adapter
-- configure
-- connections
-- datasource
-- deprecated
-- deprecation
-- fields
-- folder
-- migration
-- multi
-- pattern
-- prismaclient
-- property
-- related
-- requirements
-- schema
-- type
-- warnings
-- workspace
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (134)
+### Commits recientes detectados (149)
 - across
 - actualizar
 - adapter
 - address
-- after
+- addresses
 - agregar
+- allowing
 - analysis
 - arbitrary
+- auth
 - better
 - branch
-- changes
+- check
 - clean
 - client
 - code
 - command
+- commit
 - compilation
 - complexity
-- compose
 - configuration
 - configure
 - conflict
-- conflicted
 - conflicts
 - connections
+- content
+- copilot
+- cors
 - critical
 - cspell
 - dashboard
@@ -79,8 +49,7 @@
 - development
 - diccionario
 - dictionary
-- dicts
-- docker
+- duplicate
 - eliminar
 - ensures
 - entradas
@@ -90,20 +59,26 @@
 - experience
 - explicit
 - feature
+- feedback
 - fields
 - filenames
 - files
 - fixes
+- flag
 - folder
 - from
-- generated
 - glob
 - hotspots
+- identified
+- ignore
 - import
 - improved
+- improvements
 - improves
 - injection
+- instead
 - into
+- invalid
 - inventory
 - issues
 - json
@@ -114,7 +89,6 @@
 - maintained
 - malicious
 - metacharacters
-- middleware
 - migrate
 - migration
 - missing
@@ -126,6 +100,8 @@
 - nuevas
 - obsoletas
 - option
+- origin
+- original
 - overall
 - package
 - packages
@@ -138,6 +114,8 @@
 - prismaclient
 - proper
 - property
+- quality
+- readme
 - references
 - regenerate
 - related
@@ -147,9 +125,11 @@
 - resolve
 - resolved
 - resolves
+- review
+- root
 - schema
-- script
 - scripts
+- secret
 - secure
 - security
 - service
@@ -157,18 +137,19 @@
 - settings
 - setup
 - shell
-- source
+- specific
 - support
 - taking
 - target
-- tests
 - this
 - tsconfig
 - type
 - types
 - typescript
 - updated
+- updates
 - upgrade
+- uvicorn
 - validation
 - versions
 - vscode

@@ -13,7 +13,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
 
   app.enableCors({
@@ -27,8 +27,7 @@ async function bootstrap() {
   logger.info(`📚 API Docs: http://localhost:${port}/api/docs`);
 }
 
-bootstrap().catch(error => {
+bootstrap().catch((error) => {
   logger.error('Error al iniciar el backend monolito', { error });
   process.exit(1);
 });
-
