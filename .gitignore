@@ -19,6 +19,25 @@ build/
 .env.production
 .env.staging
 .env.compose
+.envrc
+
+# Private keys and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Secrets directories
+secrets/
+.secrets/
+
+# SSH keys
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
 
 # IDE
 .vscode/*

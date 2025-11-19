@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 19/11/2025, 17:11:33
+Última sincronización: 19/11/2025, 17:13:15
 
 ---
 ### User (global VSCode)
@@ -9,13 +9,11 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (138)
+### Commits recientes detectados (129)
 - across
-- actualizar
 - adapter
 - address
 - addresses
-- agregar
 - allowing
 - analysis
 - arbitrary
@@ -36,18 +34,14 @@ Sin nuevas palabras.
 - copilot
 - cors
 - critical
-- cspell
 - datasource
 - dependencies
 - dependency
 - deprecated
 - deprecation
 - development
-- diccionario
 - duplicate
-- eliminar
 - ensures
-- entradas
 - environment
 - errors
 - execution
@@ -88,15 +82,12 @@ Sin nuevas palabras.
 - module
 - monorepo
 - multi
-- nuevas
-- obsoletas
 - option
 - origin
 - original
 - overall
 - package
 - packages
-- palabras
 - pattern
 - pnpm
 - postgresql

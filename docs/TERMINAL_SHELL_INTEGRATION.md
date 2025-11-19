@@ -86,13 +86,13 @@ La integración de shell de terminal de VS Code ha sido **habilitada y configura
 
 ## 🔍 Solución de Problemas
 
-### Si la integración no funciona:
+### Si la integración no funciona
 
 1. Reiniciar VS Code
 2. Verificar que el path en `~/.zshrc` sea correcto
 3. Comprobar que `terminal.integrated.shellIntegration.enabled` esté en `true`
 
-### Para verificar el path de integración:
+### Para verificar el path de integración
 
 ```bash
 ls -la "/Applications/VSCode-darwin-universal/Visual Studio Code.app/Contents/Resources/app/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-rc.zsh"

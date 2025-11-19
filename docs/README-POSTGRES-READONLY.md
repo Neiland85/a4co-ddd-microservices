@@ -9,13 +9,13 @@ postgres://<usuario>:<contraseña>@<host>:<puerto>/<basedatos>?sslmode=require
 ## 2) URL lista para usar con el usuario readonly creado
 
 ```
-postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=require
+postgres://readonly_user:${READONLY_PASSWORD}@localhost:5432/a4co_db?sslmode=require
 ```
 
-### Desglose de la URL:
+### Desglose de la URL
 
 - **Usuario**: readonly_user
-- **Contraseña**: X9v$7kP#b2Q!r8Zt (URL-encoded: X9v%247kP%23b2Q%21r8Zt)
+- **Contraseña**: ${READONLY_PASSWORD} (reemplaza con la contraseña real)
 - **Host**: localhost (cambiar por tu host real)
 - **Puerto**: 5432
 - **Base de datos**: a4co_db
@@ -23,45 +23,45 @@ postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=r
 
 ## 3) Ejemplos para diferentes entornos
 
-### Desarrollo local:
+### Desarrollo local
 
 ```
-postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=require
+postgres://readonly_user:${READONLY_PASSWORD}@localhost:5432/a4co_db?sslmode=require
 ```
 
-### AWS RDS:
+### AWS RDS
 
 ```
-postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@a4co-db-prod.eu-west-1.rds.amazonaws.com:5432/a4co_db?sslmode=require
+postgres://readonly_user:${READONLY_PASSWORD}@a4co-db-prod.eu-west-1.rds.amazonaws.com:5432/a4co_db?sslmode=require
 ```
 
-### Con IPv6:
+### Con IPv6
 
 ```
-postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@[2001:0db8:85a3::8a2e:0370:7334]:5432/a4co_db?sslmode=require
+postgres://readonly_user:${READONLY_PASSWORD}@[2001:0db8:85a3::8a2e:0370:7334]:5432/a4co_db?sslmode=require
 ```
 
-### Con verificación SSL completa (si tienes CA):
+### Con verificación SSL completa (si tienes CA)
 
 ```
-postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@db.example.com:5432/a4co_db?sslmode=verify-full&sslrootcert=/path/to/ca.pem
+postgres://readonly_user:${READONLY_PASSWORD}@db.example.com:5432/a4co_db?sslmode=verify-full&sslrootcert=/path/to/ca.pem
 ```
 
 ## 4) Cómo probar la conexión
 
-### Con psql:
+### Con psql
 
 ```bash
-PGSSLMODE=require psql "postgres://readonly_user:X9v\$7kP#b2Q!r8Zt@localhost:5432/a4co_db" -c "SELECT now();"
+PGSSLMODE=require psql "postgres://readonly_user:${READONLY_PASSWORD}@localhost:5432/a4co_db" -c "SELECT now();"
 ```
 
-### Con Node.js (para verificar):
+### Con Node.js (para verificar)
 
 ```javascript
 const { Client } = require('pg');
 const client = new Client({
   connectionString:
-    'postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=require',
+    'postgres://readonly_user:${READONLY_PASSWORD}@localhost:5432/a4co_db?sslmode=require',
 });
 await client.connect();
 const result = await client.query('SELECT count(*) FROM products LIMIT 1');
@@ -70,21 +70,21 @@ console.log('Conexión exitosa:', result.rows);
 
 ## 5) Comandos para ejecutar el script SQL
 
-### Si PostgreSQL está corriendo en Docker:
+### Si PostgreSQL está corriendo en Docker
 
 ```bash
 # Ejecutar el script
 docker exec -i a4co-postgres psql -U postgres -d postgres < scripts/create-readonly-user.sql
 ```
 
-### Si PostgreSQL está corriendo localmente:
+### Si PostgreSQL está corriendo localmente
 
 ```bash
 # Ejecutar el script
 psql -U postgres -h localhost -d postgres < scripts/create-readonly-user.sql
 ```
 
-### Manualmente en psql:
+### Manualmente en psql
 
 ```bash
 psql -U postgres -h localhost -d postgres
@@ -97,7 +97,7 @@ Después de crear el usuario, verifica los permisos:
 
 ```sql
 -- Conectar como readonly_user
-psql "postgres://readonly_user:X9v\$7kP#b2Q!r8Zt@localhost:5432/a4co_db"
+psql "postgres://readonly_user:${READONLY_PASSWORD}@localhost:5432/a4co_db"
 
 -- Verificar permisos
 SELECT schemaname, tablename, privilege_type
@@ -124,8 +124,8 @@ Para usar en aplicaciones:
 
 ```bash
 # En .env
-DATABASE_READONLY_URL="postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=require"
+DATABASE_READONLY_URL="postgres://readonly_user:${READONLY_PASSWORD}@localhost:5432/a4co_db?sslmode=require"
 
 # En GitHub Secrets (producción)
-POSTGRES_READONLY_URL="postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@db-prod.example.com:5432/a4co_db?sslmode=require"
+POSTGRES_READONLY_URL="postgres://readonly_user:${READONLY_PASSWORD}@db-prod.example.com:5432/a4co_db?sslmode=require"
 ```

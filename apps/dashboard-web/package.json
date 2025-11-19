@@ -1,0 +1,29 @@
+{
+  "name": "@a4co/dashboard-web",
+  "version": "1.0.0",
+  "description": "Dashboard web application for A4CO DDD microservices",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "pg": "^8.16.3",
+    "@types/pg": "^8.15.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3",
+    "eslint": "^9.36.0",
+    "eslint-config-next": "^15.0.0"
+  }
+}
