@@ -128,7 +128,6 @@ Sin nuevas palabras.
 - types
 - typescript
 - updated
-- updates
 - upgrade
 - uvicorn
 - validation
