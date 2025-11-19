@@ -1,7 +1,9 @@
 {
   "json.schemas": [
     {
-      "fileMatch": ["**/package.json"]
+      "fileMatch": [
+        "**/package.json"
+      ]
     }
   ],
   "json.schemaDownload.enable": false,
@@ -26,6 +28,7 @@
     "accidental",
     "accidentally",
     "across",
+    "action",
     "actions",
     "active",
     "actual",
@@ -56,9 +59,11 @@
     "apps",
     "arbitrary",
     "audit",
+    "audits",
     "auth",
     "authored",
     "auto",
+    "automate",
     "automated",
     "automatic",
     "avoid",
@@ -81,7 +86,9 @@
     "changed",
     "changes",
     "check",
+    "checking",
     "checklist",
+    "checkout",
     "checks",
     "clarity",
     "clean",
@@ -130,6 +137,7 @@
     "cors",
     "coverage",
     "create",
+    "created",
     "credential",
     "credentials",
     "critical",
@@ -157,6 +165,7 @@
     "detailed",
     "devcontainer",
     "develop",
+    "developed",
     "development",
     "diccionario",
     "dictionary",
@@ -187,6 +196,7 @@
     "entries",
     "environment",
     "environments",
+    "error",
     "errors",
     "esbuild",
     "esquema",
@@ -225,10 +235,12 @@
     "folder",
     "force",
     "formatting",
+    "found",
     "from",
     "frontend",
     "future",
     "generated",
+    "generating",
     "generation",
     "gitguardian",
     "github",
@@ -246,6 +258,7 @@
     "hooks",
     "hotspots",
     "http",
+    "https",
     "idempotent",
     "identified",
     "ignore",
@@ -262,6 +275,7 @@
     "improves",
     "include",
     "includes",
+    "including",
     "incorrect",
     "infra",
     "inicial",
@@ -279,6 +293,7 @@
     "interactions",
     "interactive",
     "into",
+    "introduced",
     "invalid",
     "inventory",
     "irregular",
@@ -382,6 +397,9 @@
     "pattern",
     "patterns",
     "payment",
+    "perform",
+    "periodic",
+    "permissions",
     "phase",
     "pipeline",
     "placeholder",
@@ -452,11 +470,14 @@
     "rollout",
     "root",
     "rotate",
+    "rotating",
+    "rotation",
     "running",
     "safety",
     "scan",
     "scanners",
     "schedule",
+    "scheduled",
     "schema",
     "schematics",
     "script",
@@ -466,6 +487,7 @@
     "section",
     "secure",
     "security",
+    "sensitive",
     "server",
     "service",
     "services",
@@ -483,6 +505,7 @@
     "sonarcloud",
     "source",
     "specific",
+    "stability",
     "stack",
     "standards",
     "start",
@@ -493,6 +516,8 @@
     "strategy",
     "structure",
     "styling",
+    "submodule",
+    "submodules",
     "summary",
     "support",
     "sync",
@@ -515,6 +540,7 @@
     "transportista",
     "triggering",
     "triggers",
+    "trivy",
     "tsconfig",
     "twice",
     "type",
@@ -563,7 +589,11 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.validate": ["typescript", "javascript", "json"],
+  "eslint.validate": [
+    "typescript",
+    "javascript",
+    "json"
+  ],
   "editor.codeActionsOnSave": {
     "editor.formatOnSave": "explicit",
     "prettier.useEditorConfig": "explicit",
@@ -575,13 +605,33 @@
     "typescriptreact": "javascript"
   },
   "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ],
+    [
+      "cx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "cn\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "clsx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "tv\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ]
   ],
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "classList"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "classList"
+  ],
   "files.associations": {
     "*.css": "tailwindcss"
   },

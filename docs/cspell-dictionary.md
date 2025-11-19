@@ -1,25 +1,49 @@
 # Diccionario del Proyecto
 
-Última sincronización: 19/11/2025, 17:13:15
+Última sincronización: 19/11/2025, 22:44:18
 
 ---
-### User (global VSCode)
-Sin nuevas palabras.
+### User (global VSCode) (6)
+- action
+- checkout
+- https
+- submodule
+- submodules
+- trivy
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (9)
+- action
+- checkout
+- error
+- found
+- https
+- stability
+- submodule
+- submodules
+- trivy
 
-### Commits recientes detectados (129)
+### Commits recientes detectados (175)
 - across
+- action
+- actions
 - adapter
+- added
 - address
 - addresses
 - allowing
 - analysis
 - arbitrary
+- audit
+- audits
 - auth
+- automate
+- backup
 - better
+- branch
 - check
+- checking
+- checkout
+- checks
 - client
 - code
 - command
@@ -27,26 +51,34 @@ Sin nuevas palabras.
 - compilation
 - complexity
 - configuration
+- configurations
 - configure
 - conflicts
 - connections
 - content
 - copilot
 - cors
+- created
 - critical
+- database
 - datasource
 - dependencies
 - dependency
 - deprecated
 - deprecation
+- detailed
+- developed
 - development
+- docker
 - duplicate
 - ensures
 - environment
+- error
 - errors
 - execution
 - experience
 - explicit
+- false
 - feedback
 - fields
 - file
@@ -55,42 +87,57 @@ Sin nuevas palabras.
 - fixes
 - flag
 - folder
+- found
 - from
+- generating
+- gitguardian
+- github
 - glob
+- hardcoded
 - hotspots
+- https
 - identified
 - ignore
+- implement
 - import
 - improved
 - improvements
 - improves
+- including
 - injection
 - instead
+- integration
 - into
+- introduced
 - invalid
 - inventory
 - issues
 - json
 - lock
-- lockfile
 - main
-- maintained
 - malicious
 - metacharacters
+- microservices
 - migration
 - missing
 - module
 - monorepo
 - multi
+- neiland
 - option
 - origin
 - original
 - overall
-- package
 - packages
+- password
+- passwords
 - pattern
+- perform
+- periodic
+- permissions
 - pnpm
 - postgresql
+- prevent
 - prevents
 - prisma
 - prismaclient
@@ -105,38 +152,50 @@ Sin nuevas palabras.
 - requirements
 - resolution
 - resolve
-- resolved
 - resolves
 - review
 - root
+- rotate
+- rotating
+- rotation
+- running
+- scheduled
 - schema
 - scripts
 - secret
-- secure
+- secrets
 - security
+- sensitive
 - service
 - services
 - settings
 - setup
 - shell
 - specific
+- stability
+- submodule
+- submodules
 - support
 - target
 - this
+- trivy
 - tsconfig
 - type
 - types
 - typescript
 - updated
 - updates
+- updating
 - upgrade
 - uvicorn
 - validation
+- versions
 - vscode
 - vulnerability
 - warnings
 - with
 - work
+- workflow
 - workspace
 - yaml
 
