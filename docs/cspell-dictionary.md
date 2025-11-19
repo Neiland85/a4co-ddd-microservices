@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 19/11/2025, 17:11:01
+Última sincronización: 19/11/2025, 17:11:33
 
 ---
 ### User (global VSCode)
@@ -9,7 +9,7 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (145)
+### Commits recientes detectados (138)
 - across
 - actualizar
 - adapter
@@ -21,9 +21,7 @@ Sin nuevas palabras.
 - arbitrary
 - auth
 - better
-- branch
 - check
-- clean
 - client
 - code
 - command
@@ -32,7 +30,6 @@ Sin nuevas palabras.
 - complexity
 - configuration
 - configure
-- conflict
 - conflicts
 - connections
 - content
@@ -40,7 +37,6 @@ Sin nuevas palabras.
 - cors
 - critical
 - cspell
-- dashboard
 - datasource
 - dependencies
 - dependency
@@ -57,7 +53,6 @@ Sin nuevas palabras.
 - execution
 - experience
 - explicit
-- feature
 - feedback
 - fields
 - file
@@ -91,7 +86,6 @@ Sin nuevas palabras.
 - migration
 - missing
 - module
-- monitoring
 - monorepo
 - multi
 - nuevas
@@ -136,7 +130,6 @@ Sin nuevas palabras.
 - shell
 - specific
 - support
-- taking
 - target
 - this
 - tsconfig
