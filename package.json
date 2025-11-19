@@ -54,7 +54,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "express": "^5.1.0",
-    "glob": "^11.0.3",
+    "glob": "^11.1.0",
     "jest-environment-jsdom": "^30.2.0",
     "jsdom": "^27.1.0",
     "json5": "^2.2.3",
