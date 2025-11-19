@@ -3,7 +3,9 @@
 Última sincronización: 19/11/2025, 16:57:11
 
 ---
+
 ### User (global VSCode) (17)
+
 - adapter
 - configure
 - connections
@@ -23,6 +25,7 @@
 - warnings
 
 ### Workspace (proyecto local) (19)
+
 - adapter
 - configure
 - connections
@@ -44,6 +47,7 @@
 - workspace
 
 ### Commits recientes detectados (134)
+
 - across
 - actualizar
 - adapter

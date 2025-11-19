@@ -3,6 +3,7 @@
 ## 📋 Contexto
 
 Este agente implementa un **Service Mesh completo** usando **Istio** para proporcionar:
+
 - Tráfico seguro (mTLS automático)
 - Observabilidad avanzada (traces, metrics, logs)
 - Traffic management (circuit breakers, retries, timeouts)
@@ -98,6 +99,7 @@ echo "  • Prometheus: istioctl dashboard prometheus"
 ```
 
 **Ejecutar**:
+
 ```bash
 chmod +x scripts/install-istio.sh
 ./scripts/install-istio.sh
@@ -127,6 +129,7 @@ metadata:
 ```
 
 **Aplicar**:
+
 ```bash
 kubectl apply -f infra/istio/00-namespace.yaml
 ```
@@ -341,6 +344,7 @@ spec:
 ```
 
 **Verificar mTLS**:
+
 ```bash
 istioctl authn tls-check payment-service.a4co.svc.cluster.local
 ```
@@ -513,6 +517,7 @@ metadata:
 ```
 
 **Aplicar**:
+
 ```bash
 kubectl apply -f apps/order-service/k8s/serviceaccount.yaml
 ```
@@ -575,11 +580,13 @@ echo "  • Jaeger:  istioctl dashboard jaeger"
 ## 📊 PASO 12: Dashboards de Kiali
 
 **Abrir Kiali**:
+
 ```bash
 istioctl dashboard kiali
 ```
 
 En Kiali podrás ver:
+
 - ✅ **Service Graph**: Visualización del mesh
 - ✅ **Traffic Flow**: Flujo de requests entre servicios
 - ✅ **Health Status**: Estado de salud de cada servicio
@@ -648,21 +655,25 @@ Después de completar este agente:
 ## 🎓 Conceptos Clave
 
 ### Service Mesh
+
 - **Sidecar Pattern**: Proxy Envoy inyectado en cada pod
 - **Control Plane**: Istio Pilot, Citadel, Galley
 - **Data Plane**: Envoy proxies manejando todo el tráfico
 
 ### Traffic Management
+
 - **Virtual Services**: Routing inteligente
 - **Destination Rules**: Políticas de tráfico (circuit breakers, retries)
 - **Gateways**: Entrada/salida del mesh
 
 ### Security
+
 - **mTLS**: Encriptación automática entre servicios
 - **AuthorizationPolicy**: Control de acceso basado en identidad
 - **ServiceAccount**: Identidad de cada servicio
 
 ### Observability
+
 - **Distributed Tracing**: Jaeger traces de requests distribuidos
 - **Metrics**: Prometheus + Grafana dashboards
 - **Logs**: Envoy access logs

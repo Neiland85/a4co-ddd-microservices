@@ -70,11 +70,13 @@ enum SagaState {
 ### Compensación
 
 La compensación se activa cuando:
+
 - Inventory no tiene stock suficiente → `inventory.out_of_stock`
 - Payment falla → `payment.failed`
 - Timeout de saga (30 segundos)
 
 **Proceso de compensación:**
+
 1. Liberar reservas de stock (si existen)
 2. Cancelar PaymentIntent (si existe)
 3. Actualizar estado de orden a CANCELLED
@@ -149,6 +151,7 @@ Cada servicio tiene su propio consumer group para garantizar procesamiento:
 ### Tests E2E
 
 Los tests E2E validan:
+
 1. ✅ Flujo completo exitoso
 2. ✅ Compensación por stock insuficiente
 3. ✅ Compensación por pago fallido

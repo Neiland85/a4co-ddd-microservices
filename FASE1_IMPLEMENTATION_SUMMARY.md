@@ -6,6 +6,7 @@
 ## 📋 Objetivo
 
 Consolidar el flujo de negocio principal **Order → Payment → Inventory** con:
+
 - ✅ Comunicación asíncrona mediante NATS JetStream
 - ✅ Persistencia independiente por microservicio
 - ✅ Implementación de Saga Pattern para transacciones distribuidas
@@ -17,6 +18,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 ### Agente 1: Order Service + Infraestructura
 
 #### ✅ Configuración NATS JetStream
+
 - **Archivo:** `infra/nats-jetstream-config.js`
 - **Streams creados:**
   - `ORDERS` (subjects: `order.*`)
@@ -26,6 +28,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 - **Retención:** 24 horas, workqueue retention policy
 
 #### ✅ Saga Orchestrator Completo
+
 - **Archivo:** `apps/order-service/src/application/sagas/order.saga.ts`
 - **Estados implementados:**
   - `STARTED` → `STOCK_RESERVED` → `PAYMENT_PENDING` → `COMPLETED`
@@ -42,6 +45,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
   - `payment.failed` → Compensación
 
 #### ✅ Eventos de Dominio
+
 - `OrderCreatedEvent`
 - `OrderStatusChangedEvent`
 - `OrderCancelledEvent`
@@ -50,6 +54,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 ### Agente 2: Payment Service + Inventory Service
 
 #### ✅ Webhook de Stripe
+
 - **Archivo:** `apps/payment-service/src/presentation/payment.controller.ts`
 - **Endpoint:** `POST /payments/webhook`
 - **Validación de signature** implementada
@@ -60,6 +65,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 - **Integración con eventos de dominio** para notificar a Order Service
 
 #### ✅ Sistema de Reservas en Inventory
+
 - **Archivo:** `apps/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts`
 - **Funcionalidades:**
   - Crear reservas con TTL (15 minutos)
@@ -73,6 +79,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
   - `inventory.release` → Libera reserva específica
 
 #### ✅ Eventos de Dominio en Inventory
+
 - `InventoryReservedEvent`
 - `InventoryOutOfStockEvent`
 - `InventoryReleasedEvent`
@@ -81,6 +88,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 ### Agente 3: Testing + Documentación
 
 #### ✅ Tests E2E
+
 - **Archivo:** `apps/order-service/tests/e2e/order-saga.e2e.spec.ts`
 - **Tests implementados:**
   1. Flujo completo exitoso (Order → Inventory → Payment)
@@ -89,6 +97,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
   4. Timeout de saga (preparado)
 
 #### ✅ Documentación
+
 - **Archivo:** `docs/FASE1_SAGA_ARCHITECTURE.md`
 - **Contenido:**
   - Arquitectura general del sistema
@@ -145,6 +154,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 ## 📝 Archivos Creados/Modificados
 
 ### Nuevos Archivos
+
 - `infra/nats-jetstream-config.js` - Configuración JetStream
 - `apps/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts` - Repositorio de reservas
 - `apps/inventory-service/src/domain/events/index.ts` - Eventos de dominio
@@ -153,6 +163,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 - `FASE1_IMPLEMENTATION_SUMMARY.md` - Este archivo
 
 ### Archivos Modificados
+
 - `apps/order-service/src/application/sagas/order.saga.ts` - Saga completa
 - `apps/payment-service/src/presentation/payment.controller.ts` - Webhook Stripe
 - `apps/payment-service/src/payment.module.ts` - Módulo completo
@@ -162,6 +173,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 ## 🚀 Próximos Pasos
 
 ### Pendientes (Opcionales)
+
 - [ ] Implementar métricas Prometheus en Order Service
 - [ ] Tests de integración entre servicios
 - [ ] Tests de carga (100 órdenes concurrentes)
@@ -171,11 +183,13 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
 ### Para Ejecutar
 
 1. **Configurar NATS JetStream:**
+
    ```bash
    node infra/nats-jetstream-config.js
    ```
 
 2. **Iniciar servicios:**
+
    ```bash
    docker compose -f compose.dev.yaml up -d
    pnpm dev:order
@@ -184,6 +198,7 @@ Consolidar el flujo de negocio principal **Order → Payment → Inventory** con
    ```
 
 3. **Ejecutar tests:**
+
    ```bash
    pnpm test:e2e
    ```

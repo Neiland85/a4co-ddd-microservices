@@ -14,6 +14,7 @@ FastAPI microservice para la gestión de transportistas en el ecosistema A4CO DD
 ## 📋 Modelo de Datos
 
 ### Transportista
+
 - **nombre**: Nombre completo (2-100 caracteres)
 - **rut**: RUT chileno válido (formato: 12345678-9)
 - **telefono**: Teléfono chileno válido
@@ -26,21 +27,25 @@ FastAPI microservice para la gestión de transportistas en el ecosistema A4CO DD
 ## 🛠️ Instalación y Ejecución
 
 ### Requisitos
+
 - Python 3.11+
 - pip
 
 ### Instalación
+
 ```bash
 cd apps/transportista-service
 pip install -r requirements.txt
 ```
 
 ### Ejecución en desarrollo
+
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Ejecución con Docker
+
 ```bash
 docker build -t transportista-service .
 docker run -p 8000:8000 transportista-service
@@ -49,9 +54,11 @@ docker run -p 8000:8000 transportista-service
 ## 📚 API Endpoints
 
 ### `POST /transportistas`
+
 Crear un nuevo transportista
 
 **Request Body:**
+
 ```json
 {
   "nombre": "Juan Pérez",
@@ -66,25 +73,31 @@ Crear un nuevo transportista
 ```
 
 **Responses:**
+
 - `201`: Transportista creado exitosamente
 - `400`: Error de lógica de negocio (RUT o email duplicado)
 - `422`: Datos de entrada inválidos
 - `500`: Error interno del servidor
 
 ### `GET /transportistas/{id}`
+
 Obtener transportista por ID
 
 **Responses:**
+
 - `200`: Transportista encontrado
 - `404`: Transportista no encontrado
 
 ### `GET /transportistas`
+
 Listar transportistas
 
 **Query Parameters:**
+
 - `activo` (opcional): Filtrar por estado activo
 
 ### `GET /health`
+
 Health check del servicio
 
 ## 🧪 Testing
@@ -102,11 +115,13 @@ pytest tests/ --cov=. --cov-report=html
 El servicio incluye un Dockerfile multi-stage optimizado para desarrollo y producción.
 
 ### Desarrollo
+
 ```bash
 docker build --target development -t transportista-service:dev .
 ```
 
 ### Producción
+
 ```bash
 docker build --target production -t transportista-service:prod .
 ```
@@ -121,6 +136,7 @@ docker build --target production -t transportista-service:prod .
 ## 🏗️ Arquitectura
 
 El servicio sigue los patrones establecidos en el proyecto:
+
 - Separación clara entre modelos, servicios y controladores
 - Validación usando Pydantic
 - Manejo de errores consistente

@@ -326,7 +326,7 @@ export class AuthModule {}
 
 ## 🚀 Próximos Pasos
 
-### Para Integrar en el Monolito:
+### Para Integrar en el Monolito
 
 1. **Actualizar app.module.ts**:
 
@@ -344,7 +344,7 @@ import { AuthModule } from '@modules/auth';
 export class AppModule {}
 ```
 
-2. **Actualizar Prisma Schema** (si es necesario):
+1. **Actualizar Prisma Schema** (si es necesario):
 
 ```prisma
 model User {
@@ -364,7 +364,7 @@ enum Role {
 }
 ```
 
-3. **Probar endpoints**:
+1. **Probar endpoints**:
 
 ```bash
 # Registro
@@ -427,4 +427,4 @@ DATABASE_URL=postgresql://postgres@localhost:5432/artisan_portal
 
 ---
 
-## NEXT_MODULE: ¿Deseas que migre ahora **user-service** o **product-service**?
+## NEXT_MODULE: ¿Deseas que migre ahora **user-service** o **product-service**

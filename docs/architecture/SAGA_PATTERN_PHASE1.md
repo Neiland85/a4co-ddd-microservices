@@ -181,12 +181,12 @@ enum SagaStatus {
 ### Transiciones de Estado
 
 \`\`\`
-STARTED 
+STARTED
   └─> INVENTORY_RESERVED
        └─> PAYMENT_PROCESSING
             └─> PAYMENT_SUCCEEDED
                  └─> COMPLETED ✅
-                 
+
 STARTED
   └─> FAILED ❌ (stock insuficiente)
 
@@ -232,7 +232,9 @@ INVENTORY_RESERVED
 ### Streams Configurados
 
 \`\`\`bash
+
 # Stream para Orders
+
 STREAM: ORDERS
   Subjects: orders.*
   Storage: file
@@ -240,6 +242,7 @@ STREAM: ORDERS
   Max Messages: unlimited
 
 # Stream para Payments
+
 STREAM: PAYMENTS
   Subjects: payments.*
   Storage: file
@@ -247,6 +250,7 @@ STREAM: PAYMENTS
   Max Messages: unlimited
 
 # Stream para Inventory
+
 STREAM: INVENTORY
   Subjects: inventory.*
   Storage: file
@@ -257,7 +261,9 @@ STREAM: INVENTORY
 ### Consumers Configurados
 
 \`\`\`bash
+
 # Payment Service escucha orders.created
+
 CONSUMER: payment-service
   Stream: ORDERS
   Filter: orders.created
@@ -265,6 +271,7 @@ CONSUMER: payment-service
   Max Deliver: 3
 
 # Inventory Service escucha orders.created
+
 CONSUMER: inventory-service
   Stream: ORDERS
   Filter: orders.created
@@ -272,6 +279,7 @@ CONSUMER: inventory-service
   Max Deliver: 3
 
 # Order Service escucha eventos de Payment
+
 CONSUMER: order-service-payment
   Stream: PAYMENTS
   Filter: payments.*
@@ -279,6 +287,7 @@ CONSUMER: order-service-payment
   Max Deliver: 3
 
 # Order Service escucha eventos de Inventory
+
 CONSUMER: order-service-inventory
   Stream: INVENTORY
   Filter: inventory.*
@@ -304,6 +313,7 @@ CONSUMER: order-service-inventory
 ### Idempotencia
 
 Todos los handlers de eventos son idempotentes:
+
 - Verifican si el evento ya fue procesado
 - Usan \`orderId\` como clave de idempotencia
 - Previenen procesamiento duplicado
@@ -315,25 +325,33 @@ Todos los handlers de eventos son idempotentes:
 ### Métricas Expuestas
 
 \`\`\`prometheus
+
 # Tasa de éxito de sagas
+
 saga_success_rate
 
 # Duración de sagas (p50, p95, p99)
+
 saga_duration_seconds
 
 # Total de compensaciones
+
 saga_compensation_total
 
 # Tasa de éxito de compensaciones
+
 saga_compensation_success_rate
 
 # Estados de órdenes
+
 order_status_count{status="CONFIRMED|CANCELLED|FAILED"}
 
 # Reservas activas
+
 inventory_reservations_active
 
 # Pagos procesados
+
 payments_processed_total{status="succeeded|failed"}
 \`\`\`
 
@@ -348,13 +366,17 @@ Ver: \`/infra/grafana/dashboards/saga-monitoring.json\`
 ### Tests E2E
 
 \`\`\`bash
+
 # Test flujo completo exitoso
+
 npm run test:e2e order-saga-flow
 
 # Test compensaciones
+
 npm run test:e2e order-saga-compensation
 
 # Test carga concurrente
+
 npm run test:e2e:load
 \`\`\`
 
@@ -376,17 +398,22 @@ npm run test:e2e:load
 ### Setup NATS
 
 \`\`\`bash
+
 # Ejecutar script de configuración
+
 ./infra/nats/jetstream-setup.sh
 \`\`\`
 
 ### Iniciar Servicios
 
 \`\`\`bash
+
 # Docker Compose
+
 docker compose -f compose.dev.yaml up -d
 
 # O servicios individuales
+
 pnpm --filter @a4co/order-service start:dev
 pnpm --filter @a4co/payment-service start:dev
 pnpm --filter @a4co/inventory-service start:dev

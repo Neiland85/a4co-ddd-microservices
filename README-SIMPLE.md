@@ -142,6 +142,7 @@ artisan-portal/
 ## 📜 Scripts Disponibles
 
 ### Desarrollo
+
 ```bash
 npm run start:dev      # Iniciar en modo desarrollo (watch)
 npm run start:debug    # Iniciar con debugger
@@ -150,6 +151,7 @@ npm run start:prod     # Iniciar versión compilada
 ```
 
 ### Base de Datos
+
 ```bash
 npm run db:generate    # Generar cliente Prisma
 npm run db:migrate     # Ejecutar migraciones
@@ -158,6 +160,7 @@ npm run db:studio      # Abrir Prisma Studio (GUI)
 ```
 
 ### Calidad de Código
+
 ```bash
 npm run lint           # Ejecutar ESLint
 npm run format         # Formatear con Prettier
@@ -263,7 +266,7 @@ Este proyecto es privado y no tiene licencia pública.
 
 ## 👥 Autores
 
-- **A4CO Team** - *Desarrollo inicial*
+- **A4CO Team** - _Desarrollo inicial_
 
 ## 🙏 Agradecimientos
 

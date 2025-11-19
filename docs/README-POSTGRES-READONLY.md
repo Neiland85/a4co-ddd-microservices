@@ -12,7 +12,7 @@ postgres://<usuario>:<contraseña>@<host>:<puerto>/<basedatos>?sslmode=require
 postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=require
 ```
 
-### Desglose de la URL:
+### Desglose de la URL
 
 - **Usuario**: readonly_user
 - **Contraseña**: X9v$7kP#b2Q!r8Zt (URL-encoded: X9v%247kP%23b2Q%21r8Zt)
@@ -23,25 +23,25 @@ postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=r
 
 ## 3) Ejemplos para diferentes entornos
 
-### Desarrollo local:
+### Desarrollo local
 
 ```
 postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@localhost:5432/a4co_db?sslmode=require
 ```
 
-### AWS RDS:
+### AWS RDS
 
 ```
 postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@a4co-db-prod.eu-west-1.rds.amazonaws.com:5432/a4co_db?sslmode=require
 ```
 
-### Con IPv6:
+### Con IPv6
 
 ```
 postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@[2001:0db8:85a3::8a2e:0370:7334]:5432/a4co_db?sslmode=require
 ```
 
-### Con verificación SSL completa (si tienes CA):
+### Con verificación SSL completa (si tienes CA)
 
 ```
 postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@db.example.com:5432/a4co_db?sslmode=verify-full&sslrootcert=/path/to/ca.pem
@@ -49,13 +49,13 @@ postgres://readonly_user:X9v%247kP%23b2Q%21r8Zt@db.example.com:5432/a4co_db?sslm
 
 ## 4) Cómo probar la conexión
 
-### Con psql:
+### Con psql
 
 ```bash
 PGSSLMODE=require psql "postgres://readonly_user:X9v\$7kP#b2Q!r8Zt@localhost:5432/a4co_db" -c "SELECT now();"
 ```
 
-### Con Node.js (para verificar):
+### Con Node.js (para verificar)
 
 ```javascript
 const { Client } = require('pg');
@@ -70,21 +70,21 @@ console.log('Conexión exitosa:', result.rows);
 
 ## 5) Comandos para ejecutar el script SQL
 
-### Si PostgreSQL está corriendo en Docker:
+### Si PostgreSQL está corriendo en Docker
 
 ```bash
 # Ejecutar el script
 docker exec -i a4co-postgres psql -U postgres -d postgres < scripts/create-readonly-user.sql
 ```
 
-### Si PostgreSQL está corriendo localmente:
+### Si PostgreSQL está corriendo localmente
 
 ```bash
 # Ejecutar el script
 psql -U postgres -h localhost -d postgres < scripts/create-readonly-user.sql
 ```
 
-### Manualmente en psql:
+### Manualmente en psql
 
 ```bash
 psql -U postgres -h localhost -d postgres

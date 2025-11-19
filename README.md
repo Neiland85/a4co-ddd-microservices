@@ -5,6 +5,7 @@ Un monolito simple construido con **NestJS** y **Next.js** para conectar artesan
 ## 🚀 Inicio Rápido
 
 ### Prerrequisitos
+
 - Node.js 18+
 - PostgreSQL
 - npm o yarn
@@ -55,11 +56,13 @@ src/
 ## 🗄️ Base de Datos
 
 ### Prisma ORM
+
 - Schema: `prisma/schema.prisma`
 - Migraciones: `npm run prisma:migrate`
 - Studio: `npm run prisma:studio`
 
 ### Variables de Entorno
+
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/artisan_portal"
 JWT_SECRET="your-secret-key"

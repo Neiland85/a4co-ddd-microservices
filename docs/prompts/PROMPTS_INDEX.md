@@ -9,6 +9,7 @@ Este documento organiza todos los prompts creados para llevar el proyecto **a4co
 ## 📋 Estado del Proyecto
 
 ### ✅ Quick Wins Completados
+
 - [x] NestJS v11.x estandarizado
 - [x] OrderModule completo con DDD
 - [x] NATS JetStream corriendo
@@ -25,11 +26,13 @@ Este documento organiza todos los prompts creados para llevar el proyecto **a4co
 Estos prompts desbloquean el flujo Saga completo y preparan el proyecto para producción.
 
 ### 🟢 AGENTE #1: Order Service - Saga Orchestration
+
 **Archivo**: [`AGENT_1_ORDER_SAGA.md`](./AGENT_1_ORDER_SAGA.md)
 
 **Objetivo**: Completar Order Service como orquestador de la Saga Order→Payment→Inventory
 
 **Entregables**:
+
 - ✅ OrderSaga con compensaciones completas
 - ✅ Event handlers para PaymentConfirmed, PaymentFailed
 - ✅ OrderRepository con persistencia real (TypeORM/Prisma)
@@ -42,11 +45,13 @@ Estos prompts desbloquean el flujo Saga completo y preparan el proyecto para pro
 ---
 
 ### 🟡 AGENTE #2: Payment Service - DDD Complete
+
 **Archivo**: [`AGENT_2_PAYMENT_DDD.md`](./AGENT_2_PAYMENT_DDD.md)
 
 **Objetivo**: Implementar capa de dominio completa en Payment Service
 
 **Entregables**:
+
 - ✅ Payment Aggregate con estados y transiciones
 - ✅ PaymentRepository (interface + implementación)
 - ✅ Value Objects: Money, PaymentMethod, TransactionId
@@ -61,11 +66,13 @@ Estos prompts desbloquean el flujo Saga completo y preparan el proyecto para pro
 ---
 
 ### 🟡 AGENTE #3: Inventory Service - Event-Driven
+
 **Archivo**: [`AGENT_3_INVENTORY_EVENTS.md`](./AGENT_3_INVENTORY_EVENTS.md)
 
 **Objetivo**: Transformar Inventory Service en servicio event-driven
 
 **Entregables**:
+
 - ✅ InventoryItem Aggregate con reservas
 - ✅ ReservationSaga para manejar expiración de reservas
 - ✅ Event handlers: PaymentConfirmedEvent, OrderCancelledEvent
@@ -78,11 +85,13 @@ Estos prompts desbloquean el flujo Saga completo y preparan el proyecto para pro
 ---
 
 ### 🔵 AGENTE #4: Production Dockerfiles
+
 **Archivo**: [`AGENT_4_PRODUCTION_DOCKER.md`](./AGENT_4_PRODUCTION_DOCKER.md)
 
 **Objetivo**: Dockerfiles optimizados para producción
 
 **Entregables**:
+
 - ✅ Multi-stage builds (builder + runner)
 - ✅ Non-root users (uid 1001)
 - ✅ .dockerignore completo
@@ -96,11 +105,13 @@ Estos prompts desbloquean el flujo Saga completo y preparan el proyecto para pro
 ---
 
 ### 🔵 AGENTE #5: CI/CD Complete
+
 **Archivo**: [`AGENT_5_CICD_COMPLETE.md`](./AGENT_5_CICD_COMPLETE.md)
 
 **Objetivo**: Pipeline CI/CD completo con GitHub Actions
 
 **Entregables**:
+
 - ✅ Workflow de build + test + lint
 - ✅ Build y push de imágenes Docker a GHCR
 - ✅ Scan de seguridad (Trivy, GitGuardian)
@@ -114,11 +125,13 @@ Estos prompts desbloquean el flujo Saga completo y preparan el proyecto para pro
 ---
 
 ### 🟣 AGENTE #6: Event Bus Centralizado
+
 **Archivo**: [`AGENT_6_EVENT_BUS.md`](./AGENT_6_EVENT_BUS.md)
 
 **Objetivo**: Event Bus centralizado con NATS JetStream
 
 **Entregables**:
+
 - ✅ EventBus abstraction (IEventBus interface)
 - ✅ NatsEventBus implementation
 - ✅ Retry logic con exponential backoff
@@ -136,11 +149,13 @@ Estos prompts desbloquean el flujo Saga completo y preparan el proyecto para pro
 Estos prompts llevan el proyecto a nivel empresarial con Kubernetes, observabilidad y escalabilidad.
 
 ### 🟢 AGENTE #7: Kubernetes + Helm
+
 **Archivo**: [`AGENT_7_KUBERNETES_HELM.md`](./AGENT_7_KUBERNETES_HELM.md)
 
 **Objetivo**: Despliegue Kubernetes con Helm charts
 
 **Entregables**:
+
 - ✅ Helm charts para cada microservicio
 - ✅ ConfigMaps y Secrets
 - ✅ HorizontalPodAutoscaler (HPA)
@@ -155,11 +170,13 @@ Estos prompts llevan el proyecto a nivel empresarial con Kubernetes, observabili
 ---
 
 ### 🔵 AGENTE #8: Testing Avanzado
+
 **Archivo**: [`AGENT_8_TESTING_ADVANCED.md`](./AGENT_8_TESTING_ADVANCED.md)
 
 **Objetivo**: Suite de testing completa
 
 **Entregables**:
+
 - ✅ Unit tests con >80% coverage
 - ✅ Integration tests con Testcontainers
 - ✅ E2E tests de saga completa
@@ -174,11 +191,13 @@ Estos prompts llevan el proyecto a nivel empresarial con Kubernetes, observabili
 ---
 
 ### 🟣 AGENTE #9: Observability Stack
+
 **Archivo**: [`AGENT_9_OBSERVABILITY.md`](./AGENT_9_OBSERVABILITY.md)
 
 **Objetivo**: Observabilidad completa (Metrics, Logs, Traces)
 
 **Entregables**:
+
 - ✅ Prometheus + Grafana dashboards
 - ✅ Loki para logs centralizados
 - ✅ Jaeger para distributed tracing
@@ -192,11 +211,13 @@ Estos prompts llevan el proyecto a nivel empresarial con Kubernetes, observabili
 ---
 
 ### 🟡 AGENTE #10: Event Sourcing
+
 **Archivo**: [`AGENT_10_EVENT_SOURCING.md`](./AGENT_10_EVENT_SOURCING.md)
 
 **Objetivo**: Implementar Event Sourcing con EventStoreDB
 
 **Entregables**:
+
 - ✅ EventStoreDB integration
 - ✅ EventSourcedRepository
 - ✅ Aggregate rehydration
@@ -210,11 +231,13 @@ Estos prompts llevan el proyecto a nivel empresarial con Kubernetes, observabili
 ---
 
 ### 🔵 AGENTE #11: Service Mesh (Istio)
+
 **Archivo**: [`AGENT_11_SERVICE_MESH.md`](./AGENT_11_SERVICE_MESH.md)
 
 **Objetivo**: Service Mesh con Istio
 
 **Entregables**:
+
 - ✅ Istio installation
 - ✅ Sidecar injection automático
 - ✅ mTLS estricto
@@ -229,11 +252,13 @@ Estos prompts llevan el proyecto a nivel empresarial con Kubernetes, observabili
 ---
 
 ### 🟣 AGENTE #12: API Gateway (Kong)
+
 **Archivo**: [`AGENT_12_API_GATEWAY.md`](./AGENT_12_API_GATEWAY.md)
 
 **Objetivo**: API Gateway con Kong
 
 **Entregables**:
+
 - ✅ Kong deployment en Kubernetes
 - ✅ JWT authentication
 - ✅ Rate limiting por consumer
@@ -250,6 +275,7 @@ Estos prompts llevan el proyecto a nivel empresarial con Kubernetes, observabili
 ## 📊 Roadmap de Ejecución Recomendado
 
 ### 🚀 Fase 1: Core Functionality (Semana 1)
+
 **Objetivo**: Saga Order→Payment→Inventory funcionando E2E
 
 ```bash
@@ -270,6 +296,7 @@ pnpm test:e2e tests/e2e/order-saga-flow.e2e.spec.ts
 ---
 
 ### 🏗️ Fase 2: Production Ready (Semana 2)
+
 **Objetivo**: Proyecto desplegable en producción
 
 ```bash
@@ -289,6 +316,7 @@ pnpm test:e2e tests/e2e/order-saga-flow.e2e.spec.ts
 ---
 
 ### 🌟 Fase 3: Enterprise Grade (Semana 3)
+
 **Objetivo**: Nivel empresarial con observabilidad y escalabilidad
 
 ```bash
@@ -312,6 +340,7 @@ pnpm test:e2e tests/e2e/order-saga-flow.e2e.spec.ts
 ## 🎯 Métricas de Éxito por Fase
 
 ### Fase 1: Core Functionality
+
 - [ ] Saga Order→Payment→Inventory con compensaciones
 - [ ] Tests E2E pasando (100%)
 - [ ] Métricas de Prometheus expuestas
@@ -319,6 +348,7 @@ pnpm test:e2e tests/e2e/order-saga-flow.e2e.spec.ts
 - [ ] Latencia P95 < 500ms
 
 ### Fase 2: Production Ready
+
 - [ ] Imágenes Docker < 100MB
 - [ ] CI/CD pipeline verde
 - [ ] Deploy a Kubernetes funcionando
@@ -326,6 +356,7 @@ pnpm test:e2e tests/e2e/order-saga-flow.e2e.spec.ts
 - [ ] Zero downtime deployments
 
 ### Fase 3: Enterprise Grade
+
 - [ ] SLOs definidos y monitoreados
 - [ ] Distributed tracing end-to-end
 - [ ] mTLS entre todos los servicios
@@ -337,6 +368,7 @@ pnpm test:e2e tests/e2e/order-saga-flow.e2e.spec.ts
 ## 🛠️ Herramientas Necesarias
 
 ### Locales
+
 ```bash
 node --version       # v24.10.0+
 pnpm --version       # 10.14.0+
@@ -346,11 +378,13 @@ helm version         # v3.15+
 ```
 
 ### Cluster Kubernetes
+
 - **Opción 1**: Minikube (local)
 - **Opción 2**: Kind (local)
 - **Opción 3**: GKE/EKS/AKS (cloud)
 
 ### Servicios Externos
+
 - **NATS**: JetStream habilitado
 - **PostgreSQL**: v16+
 - **Redis**: v7+
@@ -361,11 +395,13 @@ helm version         # v3.15+
 ## 📚 Recursos Adicionales
 
 ### Documentación de Referencia
+
 - [Quick Wins README](../../QUICK_WINS_README.md)
 - [Auditoría Manual](../AUDIT_MANUAL.md)
 - [Auth Service](../../apps/auth-service/README.md) - Referencia DDD completa
 
 ### Conceptos DDD
+
 - **Aggregates**: Raíz de consistencia
 - **Value Objects**: Inmutables, sin identidad
 - **Domain Events**: Hechos del pasado
@@ -373,6 +409,7 @@ helm version         # v3.15+
 - **Use Cases**: Orquestación de lógica de aplicación
 
 ### Patrones de Arquitectura
+
 - **Saga Pattern**: Transacciones distribuidas
 - **CQRS**: Separación Command/Query
 - **Event Sourcing**: Estado derivado de eventos
@@ -418,24 +455,28 @@ Si quieres añadir más prompts:
 Antes de considerar el proyecto "completo":
 
 ### Core (CRÍTICO)
+
 - [ ] Agent #1: Order Saga ejecutado
 - [ ] Agent #2: Payment DDD ejecutado
 - [ ] Agent #3: Inventory Events ejecutado
 - [ ] Test E2E completo pasando
 
 ### Production (REQUERIDO)
+
 - [ ] Agent #4: Dockerfiles optimizados
 - [ ] Agent #5: CI/CD pipeline verde
 - [ ] Agent #6: Event Bus centralizado
 - [ ] Agent #7: Kubernetes deployment funcionando
 
 ### Enterprise (OPCIONAL pero RECOMENDADO)
+
 - [ ] Agent #8: Suite de tests completa (>80% coverage)
 - [ ] Agent #9: Observability stack desplegado
 - [ ] Agent #11: Service Mesh con mTLS
 - [ ] Agent #12: API Gateway con autenticación
 
 ### Avanzado (NICE TO HAVE)
+
 - [ ] Agent #10: Event Sourcing implementado
 - [ ] Canary deployments configurados
 - [ ] Multi-region setup
