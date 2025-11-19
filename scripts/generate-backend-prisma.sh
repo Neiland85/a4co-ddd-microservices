@@ -10,7 +10,7 @@ Opciones:
   -b, --backend-dir <ruta>     Ruta al directorio del backend (por defecto: ./backend)
   -s, --schema <ruta>          Ruta al schema.prisma (por defecto: <backend>/prisma/schema.prisma)
   -u, --database-url <url>     Cadena completa de DATABASE_URL (sobrescribe valor exportado)
-  -i, --install                Forzar instalación de dependencias (pnpm install --ignore-workspace)
+  -i, --install                Forzar instalación de dependencias (pnpm install --ignore-workspace-root-check)
   --skip-install               Omitir instalación incluso si no existe node_modules
   -p, --pnpm-args <args>       Argumentos adicionales para pnpm exec prisma generate (entre comillas)
   -h, --help                   Mostrar esta ayuda
@@ -118,7 +118,7 @@ cd "${BACKEND_DIR}"
 if [[ "${SKIP_INSTALL}" == false ]]; then
   if [[ "${FORCE_INSTALL}" == true || ! -d "node_modules" ]]; then
     echo "📥 Instalando dependencias locales del backend..."
-    pnpm install --ignore-workspace --frozen-lockfile || {
+    pnpm install --ignore-workspace-root-check --frozen-lockfile || {
       echo "❌ Falló la instalación de dependencias" >&2
       exit 1
     }
