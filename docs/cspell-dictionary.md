@@ -3,7 +3,9 @@
 Última sincronización: 19/11/2025, 22:44:18
 
 ---
+
 ### User (global VSCode) (6)
+
 - action
 - checkout
 - https
@@ -12,6 +14,7 @@
 - trivy
 
 ### Workspace (proyecto local) (9)
+
 - action
 - checkout
 - error
@@ -23,6 +26,7 @@
 - trivy
 
 ### Commits recientes detectados (175)
+
 - across
 - action
 - actions
@@ -198,4 +202,3 @@
 - workflow
 - workspace
 - yaml
-
