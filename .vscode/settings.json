@@ -1,8 +1,9 @@
 {
   "json.schemas": [
     {
-      "fileMatch": ["**/package.json"],
-      "schema": null
+      "fileMatch": [
+        "**/package.json"
+      ]
     }
   ],
   "json.schemaDownload.enable": false,
@@ -32,6 +33,7 @@
     "actual",
     "actualizar",
     "added",
+    "address",
     "addresses",
     "adjust",
     "admin",
@@ -52,6 +54,7 @@
     "applied",
     "apply",
     "apps",
+    "arbitrary",
     "audit",
     "auth",
     "authored",
@@ -92,8 +95,10 @@
     "commit",
     "commits",
     "committed",
+    "compilation",
     "completa",
     "complete",
+    "complexity",
     "component",
     "components",
     "compose",
@@ -137,6 +142,7 @@
     "demo",
     "dependencias",
     "dependencies",
+    "dependency",
     "deploy",
     "deployment",
     "deps",
@@ -174,6 +180,7 @@
     "entries",
     "environment",
     "environments",
+    "errors",
     "esbuild",
     "esquema",
     "event",
@@ -181,10 +188,12 @@
     "examples",
     "exclude",
     "executes",
+    "execution",
     "executive",
     "existe",
     "exists",
     "exitosamente",
+    "experience",
     "explicit",
     "exporter",
     "exposed",
@@ -196,6 +205,7 @@
     "false",
     "feature",
     "file",
+    "filenames",
     "files",
     "finalize",
     "findings",
@@ -213,6 +223,7 @@
     "gitguardian",
     "github",
     "gitignore",
+    "glob",
     "gmail",
     "grafana",
     "guide",
@@ -223,6 +234,7 @@
     "highlighting",
     "hook",
     "hooks",
+    "hotspots",
     "http",
     "idempotent",
     "ignored",
@@ -230,16 +242,19 @@
     "immediate",
     "impact",
     "implement",
+    "import",
     "imports",
     "improve",
     "improved",
     "improvements",
+    "improves",
     "include",
     "includes",
     "incorrect",
     "infra",
     "inicial",
     "init",
+    "injection",
     "inline",
     "input",
     "install",
@@ -276,6 +291,8 @@
     "logout",
     "looking",
     "main",
+    "maintained",
+    "malicious",
     "management",
     "manual",
     "mapping",
@@ -287,6 +304,7 @@
     "measures",
     "merged",
     "merging",
+    "metacharacters",
     "methods",
     "metrics",
     "micro",
@@ -303,6 +321,7 @@
     "modules",
     "monitoring",
     "monolith",
+    "monorepo",
     "movements",
     "multiple",
     "nats",
@@ -322,6 +341,7 @@
     "obsoletas",
     "only",
     "opentelemetry",
+    "option",
     "options",
     "order",
     "ordercontroller",
@@ -330,6 +350,7 @@
     "original",
     "otel",
     "outdated",
+    "overall",
     "overrides",
     "overview",
     "owasp",
@@ -431,6 +452,7 @@
     "setup",
     "shadcn",
     "shared",
+    "shell",
     "should",
     "sidebar",
     "silently",
@@ -472,6 +494,7 @@
     "triggers",
     "tsconfig",
     "twice",
+    "types",
     "typescript",
     "updated",
     "updates",
@@ -506,31 +529,56 @@
     "which",
     "with",
     "without",
+    "work",
     "workflow",
     "workflows",
     "yaml"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.validate": ["typescript", "javascript", "json"],
+  "eslint.validate": [
+    "typescript",
+    "javascript",
+    "json"
+  ],
   "editor.codeActionsOnSave": {
     "editor.formatOnSave": "explicit",
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "prettier.useEditorConfig": "explicit",
     "source.fixAll.eslint": "explicit"
   },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "tailwindCSS.includeLanguages": {
     "typescript": "javascript",
     "typescriptreact": "javascript"
   },
   "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ],
+    [
+      "cx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "cn\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "clsx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "tv\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ]
   ],
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "classList"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "classList"
+  ],
   "files.associations": {
     "*.css": "tailwindcss"
   },
