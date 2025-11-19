@@ -20,14 +20,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch full history for security scanning
+          submodules: false
 
       - name: GitGuardian scan
-        uses: gitguardian/ggshield-action@master
+        uses: gitguardian/ggshield-action@v1.1.0
         with:
-          args: scan --mode diff
+          args: secret scan --mode diff
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.20.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -35,7 +36,7 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
