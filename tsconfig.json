@@ -44,6 +44,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["scripts/**/*.ts", "scripts/**/*.tsx", "tools/**/*.ts", "tools/**/*.tsx"],
   "exclude": ["node_modules", "dist", "test", "**/*.spec.ts", "**/*.test.ts"]
 }

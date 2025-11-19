@@ -1,96 +1,34 @@
 # Diccionario del Proyecto
 
-Última sincronización: 17/11/2025, 8:24:56
+Última sincronización: 17/11/2025, 8:30:23
 
 ---
-### User (global VSCode) (1)
-- conflict
+### User (global VSCode) (7)
+- agregar
+- diccionario
+- eliminar
+- entradas
+- nuevas
+- obsoletas
+- palabras
 
-### Workspace (proyecto local) (77)
-- advanced
-- animatedbutton
-- animation
-- animations
-- anime
-- apply
-- button
-- buttons
-- card
-- cards
-- code
-- component
-- components
-- conflict
-- conflicted
-- controlled
-- controls
-- cors
-- create
-- dashboards
-- demo
-- dicts
-- ensure
-- esbuild
-- force
-- generated
-- highlighting
-- http
-- implement
-- imports
-- improved
-- inline
-- input
-- intensity
-- interactions
-- interactive
-- irregular
-- label
-- layout
-- levels
-- link
-- localhost
-- logout
-- markdownlint
-- micro
-- middleware
-- migrate
-- moderate
-- modules
-- monolith
-- movements
-- navigation
-- orders
-- overrides
-- page
-- pages
-- placeholder
-- pollution
-- products
-- prototype
-- redirect
-- reduced
-- running
-- server
-- shadcn
-- source
-- stats
-- structure
-- styling
-- table
-- taking
-- upgrade
-- usemicroanimations
-- users
-- versions
-- view
-- vulnerability
+### Workspace (proyecto local) (7)
+- agregar
+- diccionario
+- eliminar
+- entradas
+- nuevas
+- obsoletas
+- palabras
 
-### Commits recientes detectados (139)
+### Commits recientes detectados (135)
 - across
 - active
+- actualizar
 - admin
 - advanced
 - after
+- agregar
 - animatedbutton
 - animation
 - animations
@@ -114,7 +52,6 @@
 - conflicts
 - controlled
 - controls
-- cors
 - create
 - cspell
 - dashboard
@@ -122,17 +59,17 @@
 - demo
 - dependencies
 - design
+- diccionario
 - dictionary
 - dicts
 - directory
 - docker
+- eliminar
 - ensure
-- esbuild
+- entradas
 - examples
 - feature
 - files
-- fixes
-- force
 - from
 - frontend
 - generated
@@ -168,32 +105,30 @@
 - micro
 - middleware
 - migrate
-- moderate
 - modules
 - monitoring
 - monolith
 - movements
 - multiple
 - navigation
+- nuevas
+- obsoletas
 - orders
 - overrides
 - package
 - packages
 - page
 - pages
+- palabras
 - placeholder
 - pnpm
-- pollution
 - products
 - proper
-- prototype
 - redirect
-- reduced
 - references
 - remain
 - remove
 - repository
-- resolve
 - resolved
 - root
 - running
@@ -213,15 +148,12 @@
 - tests
 - tsconfig
 - updates
-- upgrade
 - usemicroanimations
 - users
 - vercel
 - versions
 - view
 - vscode
-- vulnerabilities
-- vulnerability
 - with
 - workflows
 - yaml

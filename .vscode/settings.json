@@ -1,9 +1,7 @@
 {
   "json.schemas": [
     {
-      "fileMatch": [
-        "**/package.json"
-      ],
+      "fileMatch": ["**/package.json"],
       "schema": null
     }
   ],
@@ -40,6 +38,7 @@
     "advanced",
     "afectados",
     "after",
+    "agregar",
     "ahora",
     "alert",
     "alerts",
@@ -146,6 +145,7 @@
     "devcontainer",
     "develop",
     "development",
+    "diccionario",
     "dictionary",
     "dicts",
     "directories",
@@ -162,6 +162,7 @@
     "duplication",
     "each",
     "easy",
+    "eliminar",
     "endpoints",
     "enero",
     "enhance",
@@ -169,6 +170,7 @@
     "enrichment",
     "ensure",
     "ensures",
+    "entradas",
     "entries",
     "environment",
     "environments",
@@ -313,9 +315,11 @@
     "node",
     "notification",
     "noviembre",
+    "nuevas",
     "object",
     "observabilidad",
     "observability",
+    "obsoletas",
     "only",
     "opentelemetry",
     "options",
@@ -333,6 +337,7 @@
     "packages",
     "page",
     "pages",
+    "palabras",
     "password",
     "passwords",
     "path",
@@ -507,15 +512,29 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.validate": [
-    "typescript",
-    "javascript",
-    "json"
-  ],
+  "eslint.validate": ["typescript", "javascript", "json"],
   "editor.codeActionsOnSave": {
     "editor.formatOnSave": "explicit",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "prettier.useEditorConfig": "explicit",
     "source.fixAll.eslint": "explicit"
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
+  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "classList"],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "emmet.includeLanguages": {
+    "postcss": "css"
   }
 }
