@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-import * as morgan from 'morgan';
+import morgan from 'morgan';
 import { InventoryModule } from './inventory.module';
 
 async function bootstrap() {
@@ -31,25 +31,25 @@ async function bootstrap() {
     }),
   );
 
-  // API prefix
-  app.setGlobalPrefix('api/inventory');
+    // API prefix
+    app.setGlobalPrefix('api/inventory');
 
-  // Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('Inventory Service API')
-    .setDescription('Gestión de inventario para a4co-ddd-microservices')
-    .setVersion('1.0')
-    .addTag('inventory')
-    .addTag('products')
-    .addTag('reservations')
-    .addBearerAuth()
-    .build();
+    // Swagger documentation
+    const config = new DocumentBuilder()
+      .setTitle('Inventory Service API')
+      .setDescription('Gestión de inventario para a4co-ddd-microservices')
+      .setVersion('1.0')
+      .addTag('inventory')
+      .addTag('products')
+      .addTag('reservations')
+      .addBearerAuth()
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/inventory/docs', app, document);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/inventory/docs', app, document);
 
-  const port = process.env.PORT || 3006;
-  await app.listen(port);
+    const port = Number(process.env['PORT']) || 3006;
+    await app.listen(port);
 
   console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -60,8 +60,8 @@ async function bootstrap() {
 📚 Swagger:    http://localhost:${port}/api/inventory/docs
 🔍 Health:     http://localhost:${port}/api/inventory/health
 
-Environment:  ${process.env.NODE_ENV || 'development'}
-Database:     ${process.env.DATABASE_URL ? '✅ Connected' : '⚠️  Not configured'}
+  Environment:  ${process.env['NODE_ENV'] || 'development'}
+  Database:     ${process.env['DATABASE_URL'] ? '✅ Connected' : '⚠️  Not configured'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `);

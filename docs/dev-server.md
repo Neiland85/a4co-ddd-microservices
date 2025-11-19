@@ -1,11 +1,13 @@
-# 🚀 Servidor de Desarrollo Unificado A4CO
+# 🚀 Servidor de Desarrollo A4CO
 
 ## Visión General
 
-El servidor de desarrollo unificado de A4CO proporciona un entorno completo donde el diseño fluye instantáneamente a través de todo el stack tecnológico. Este documento guía a desarrolladores y diseñadores en el uso del sistema.
+El servidor de desarrollo unificado de A4CO proporciona un entorno completo donde el diseño fluye
+instantáneamente a través de todo el stack tecnológico.
+
+Este documento guía a desarrolladores y diseñadores en el uso del sistema.
 
 ## 🏗️ Arquitectura
-
 
 ```mermaid
 graph TB
@@ -46,7 +48,6 @@ graph TB
 
 ```
 
-
 ## 🚦 Inicio Rápido
 
 ### Prerrequisitos
@@ -57,7 +58,6 @@ graph TB
 - Git
 
 ### Instalación
-
 
 ```bash
 # Clonar el repositorio
@@ -73,9 +73,7 @@ cp .env.example .env.local
 
 ```
 
-
 ### Comandos Principales
-
 
 ```bash
 # 🚀 Iniciar todo el entorno de desarrollo
@@ -96,11 +94,9 @@ pnpm build:all
 
 ```
 
-
 ## 🎨 Design System
 
 ### Estructura
-
 
 ```
 
@@ -119,9 +115,7 @@ packages/design-system/
 
 ```
 
-
 ### Uso en Aplicaciones
-
 
 ```typescript
 // En tu aplicación Next.js
@@ -135,9 +129,7 @@ export default {
   presets: [a4coPreset],
   // ... configuración adicional
 };
-
 ```
-
 
 ### Hot Reload
 
@@ -164,7 +156,6 @@ Los cambios en el Design System se reflejan automáticamente en todas las aplica
 
 ### Comandos Docker
 
-
 ```bash
 # Iniciar servicios
 docker-compose -f docker-compose.dev.yml up -d
@@ -184,34 +175,26 @@ docker-compose -f docker-compose.dev.yml down -v
 
 ```
 
-
 ## 🔄 CI/CD
 
 ### GitHub Actions
 
 Los workflows automatizados incluyen:
 
-1. **Design System Preview**: Se ejecuta en cada PR
+1. **Design System Preview**: Se ejecuta en cada PR (nota: despliegues a Vercel fueron retirados)
 2. **Visual Testing**: Chromatic para regresión visual
-3. **Build & Deploy**: Despliegue a Vercel
+3. **Build & Deploy**: Despliegue a la plataforma configurada (reemplazar según su infra)
 
 ### Secretos Requeridos
 
-
 ```yaml
-VERCEL_TOKEN: Token de Vercel
-VERCEL_ORG_ID: ID de la organización
-VERCEL_PROJECT_ID: ID del proyecto
 CHROMATIC_PROJECT_TOKEN: Token de Chromatic
 TURBO_TOKEN: Token de Turborepo
-
 ```
-
 
 ## 🧪 Testing
 
 ### Tests Visuales con Playwright
-
 
 ```bash
 # Ejecutar todos los tests visuales
@@ -226,9 +209,7 @@ pnpm test:visual:report
 
 ```
 
-
 ### Tests de Componentes
-
 
 ```bash
 # Tests unitarios con Vitest
@@ -243,11 +224,9 @@ pnpm test:coverage
 
 ```
 
-
 ## 📚 Recursos Adicionales
 
 ### Scripts Útiles
-
 
 ```json
 {
@@ -261,12 +240,9 @@ pnpm test:coverage
     "reinstall": "pnpm clean:all && pnpm install"
   }
 }
-
 ```
 
-
 ### Alias de TypeScript
-
 
 ```json
 // tsconfig.json
@@ -278,12 +254,9 @@ pnpm test:coverage
     }
   }
 }
-
 ```
 
-
 ### Configuración VSCode
-
 
 ```json
 // .vscode/settings.json
@@ -296,9 +269,7 @@ pnpm test:coverage
     "typescriptreact": "javascript"
   }
 }
-
 ```
-
 
 ## 🐛 Troubleshooting
 
@@ -349,7 +320,7 @@ pnpm test:coverage
 2. Hacer cambios en el Design System
 3. Verificar en Storybook local
 4. Crear PR con descripción clara
-5. Esperar preview de Vercel
+5. Esperar el preview de despliegue (configurado en el workflow/CI)
 6. Pasar tests visuales
 7. Merge a `develop`
 
@@ -367,4 +338,4 @@ pnpm test:coverage
 
 ---
 
-_Última actualización: Diciembre 2024_
+Última actualización: Diciembre 2024

@@ -6,3 +6,4 @@ export declare abstract class BaseEntity {
     equals(entity: BaseEntity): boolean;
     protected touch(): void;
 }
+//# sourceMappingURL=base-entity.d.ts.map

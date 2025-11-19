@@ -160,15 +160,15 @@ cd .devcontainer
 cat > .env << 'EOF'
 # PostgreSQL
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=tu_contraseña_segura_aqui
+POSTGRES_PASSWORD=CHANGE_ME_IN_DOT_ENV
 POSTGRES_DB=a4co_dev
 
 # JWT Secret (mínimo 32 caracteres)
-JWT_SECRET=tu_jwt_secret_muy_largo_y_seguro_aqui_minimo_32_chars
+JWT_SECRET=CHANGE_ME_IN_DOT_ENV_MIN_32_CHARS
 
 # Grafana Admin
 GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=tu_grafana_password_aqui
+GRAFANA_ADMIN_PASSWORD=CHANGE_ME_IN_DOT_ENV
 EOF
 ```
 
@@ -180,11 +180,11 @@ El archivo `.env` será leído automáticamente por Docker Compose cuando inicie
 
 ```bash
 # Opción 1: Variables inline
-DB_USER="readonly_user" DB_PASSWORD="SecureP@ssw0rd!" ./setup-docker-secrets.sh
+DB_USER="readonly_user" DB_PASSWORD="CHANGE_ME_IN_DOT_ENV" ./setup-docker-secrets.sh
 
 # Opción 2: Exportar variables primero
 export DB_USER="readonly_user"
-export DB_PASSWORD="SecureP@ssw0rd!"
+export DB_PASSWORD="CHANGE_ME_IN_DOT_ENV"
 ./setup-docker-secrets.sh
 ```
 

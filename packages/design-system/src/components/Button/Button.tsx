@@ -1,3 +1,4 @@
+import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -24,7 +25,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const baseStyles =
       'btn-a4co inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
@@ -58,8 +59,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               'cursor-not-allowed opacity-50': isDisabled,
               'w-full': fullWidth,
             },
-            className
-          )
+            className,
+          ),
         )}
         disabled={isDisabled}
         {...props}
@@ -91,7 +92,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';

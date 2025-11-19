@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Order, OrderItem } from '../../domain/aggregates/order.aggregate';
-import { IOrderRepository } from '../../domain/repositories/order.repository';
+import { IOrderRepository } from '../../domain';
 import { CreateOrderCommand } from '../commands/create-order.command';
 import { ClientProxy } from '@nestjs/microservices';
 
