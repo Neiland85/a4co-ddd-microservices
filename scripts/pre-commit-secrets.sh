@@ -28,8 +28,8 @@ for file in $STAGED_FILES; do
     fi
 done
 
-# Ejecutar gitleaks en el archivo temporal
-if cat "$TEMP_FILE" | gitleaks detect --pipe --verbose --redact; then
+# Ejecutar gitleaks en el archivo temporal con configuración personalizada
+if cat "$TEMP_FILE" | gitleaks detect --pipe --verbose --redact --config .gitleaks.toml; then
     echo "✅ No se encontraron secretos en los archivos staged"
     rm "$TEMP_FILE"
 else

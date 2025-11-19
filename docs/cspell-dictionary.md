@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 19/11/2025, 17:10:51
+Última sincronización: 19/11/2025, 17:11:01
 
 ---
 ### User (global VSCode)
@@ -9,7 +9,7 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (149)
+### Commits recientes detectados (145)
 - across
 - actualizar
 - adapter
@@ -48,7 +48,6 @@ Sin nuevas palabras.
 - deprecation
 - development
 - diccionario
-- dictionary
 - duplicate
 - eliminar
 - ensures
@@ -61,6 +60,7 @@ Sin nuevas palabras.
 - feature
 - feedback
 - fields
+- file
 - filenames
 - files
 - fixes
@@ -82,19 +82,16 @@ Sin nuevas palabras.
 - inventory
 - issues
 - json
-- local
 - lock
 - lockfile
 - main
 - maintained
 - malicious
 - metacharacters
-- migrate
 - migration
 - missing
 - module
 - monitoring
-- monolith
 - monorepo
 - multi
 - nuevas
@@ -151,7 +148,6 @@ Sin nuevas palabras.
 - upgrade
 - uvicorn
 - validation
-- versions
 - vscode
 - vulnerability
 - warnings
