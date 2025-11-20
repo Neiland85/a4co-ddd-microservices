@@ -1,22 +1,14 @@
-import { BracesSecurityMiddleware } from '@a4co/shared-utils';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as process from 'process';
-import { getLogger, initializeTracing } from '../../../packages/observability/dist';
-import { OrderModule } from './order.module';
+import { OrderModule } from './order.module.js';
+
+const bootstrapLogger = new Logger('OrderServiceBootstrap');
 
 async function bootstrap() {
-  // Initialize observability
-  initializeTracing({
-    serviceName: 'order-service',
-    serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
-  });
-
-  // Get logger instance
-  const logger = getLogger();
+  const logger = bootstrapLogger;
 
   const app = await NestFactory.create(OrderModule, {
     logger: false, // Disable default NestJS logger for now
@@ -33,7 +25,7 @@ async function bootstrap() {
           imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
-    })
+    }),
   );
 
   // CORS
@@ -48,20 +40,8 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
-
-  // Braces security middleware
-  const bracesMiddleware = new BracesSecurityMiddleware(
-    {
-      maxExpansionSize: 50,
-      maxRangeSize: 10,
-      monitoringEnabled: true,
-    },
-    'order-service'
-  );
-  app.use(bracesMiddleware.validateRequestBody());
-  app.use(bracesMiddleware.validateQueryParams());
 
   // Swagger documentation
   const config = new DocumentBuilder()
@@ -75,18 +55,17 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const port = process.env['PORT'] || 3004;
-  logger.info(`🚀 Order Service iniciado en puerto ${port}`);
-  logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
+  const port = Number(process.env['PORT']) || 3004;
+  logger.log(`🚀 Order Service iniciado en puerto ${port}`);
+  logger.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
   console.log(`🚀 Order Service iniciado en puerto ${port}`);
   console.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
 
   await app.listen(port);
 }
 
-bootstrap().catch(err => {
-  const logger = getLogger();
-  logger.error('Error al iniciar el servicio:', err);
+bootstrap().catch((err) => {
+  bootstrapLogger.error('Error al iniciar el servicio:', err);
   console.error('Error al iniciar el servicio:', err);
   process.exit(1);
 });

@@ -1,0 +1,9 @@
+export declare const formatDate: (date: Date) => string;
+export declare const parseDate: (dateString: string) => Date;
+export declare const isValidDate: (date: any) => boolean;
+export declare const addDays: (date: Date, days: number) => Date;
+export declare const addHours: (date: Date, hours: number) => Date;
+export declare const isExpired: (date: Date) => boolean;
+export declare const getDaysDifference: (date1: Date, date2: Date) => number;
+export declare const formatRelativeTime: (date: Date) => string;
+//# sourceMappingURL=date-utils.d.ts.map

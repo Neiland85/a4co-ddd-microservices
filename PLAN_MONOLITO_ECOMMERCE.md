@@ -79,16 +79,19 @@
 ### 📦 CORE (5 módulos base)
 
 #### 1. Auth Module ✅ (95% - 0h adicionales)
+
 ```
 Ya funciona - Solo migrar
 ```
 
 #### 2. User Module ✅ (90% - 0h adicionales)
+
 ```
 Ya funciona - Solo migrar
 ```
 
 #### 3. **Artisan Module** 🆕 (0% - 50h)
+
 ```
 CREAR desde cero (ver PLAN_MONOLITO_SIMPLE.md)
 - Domain: Artisan entity, Specialty, Location, Gallery, Rating
@@ -98,6 +101,7 @@ CREAR desde cero (ver PLAN_MONOLITO_SIMPLE.md)
 ```
 
 #### 4. Product Module ✅ (85% - 10h integración)
+
 ```
 Ya funciona - Ajustar para:
 - Vincular a artesanos (artisanId)
@@ -106,6 +110,7 @@ Ya funciona - Ajustar para:
 ```
 
 #### 5. Geo Module 🆕 (30% - 25h)
+
 ```
 Completar:
 - Provincias de Andalucía
@@ -116,6 +121,7 @@ Completar:
 ### 🛒 E-COMMERCE (5 módulos adicionales)
 
 #### 6. Order Module ✅ (88% - 15h integración)
+
 ```
 Ya tiene:
 - Create order use case
@@ -132,6 +138,7 @@ Ajustar:
 ```
 
 #### 7. Payment Module ✅ (90% - 10h integración)
+
 ```
 Ya tiene:
 - Stripe integration completa
@@ -146,6 +153,7 @@ Ajustar:
 ```
 
 #### 8. Inventory Module ✅ (80% - 15h completar)
+
 ```
 Ya tiene:
 - Stock tracking
@@ -160,6 +168,7 @@ Ajustar:
 ```
 
 #### 9. Shipping Module ✅ (70% - 20h completar)
+
 ```
 Ya tiene (Python FastAPI):
 - Transportistas CRUD
@@ -176,6 +185,7 @@ Migrar a TypeScript/NestJS:
 ```
 
 #### 10. Notification Module ✅ (75% - 10h integración)
+
 ```
 Ya tiene:
 - Multi-channel (Email, SMS, Push)
@@ -194,6 +204,7 @@ Ajustar:
 ## FLUJO E-COMMERCE COMPLETO
 
 ### 1. Usuario Navega y Busca
+
 ```
 Frontend → Artisan Module → Devuelve listado
 Frontend → Product Module → Devuelve productos por artesano
@@ -201,12 +212,14 @@ Frontend → Geo Module → Filtra por ubicación
 ```
 
 ### 2. Usuario Agrega al Carrito (Frontend)
+
 ```
 Frontend mantiene carrito en localStorage
 Al checkout, envía todos los items
 ```
 
 ### 3. Usuario Hace Checkout
+
 ```
 POST /orders
   ↓
@@ -220,6 +233,7 @@ Order Module:
 ```
 
 ### 4. Usuario Paga
+
 ```
 POST /payments/intent { orderId }
   ↓
@@ -249,6 +263,7 @@ Notification Module (listener):
 ```
 
 ### 5. Artesano Prepara Pedido
+
 ```
 PATCH /orders/:id/status { status: PREPARING }
   ↓
@@ -261,6 +276,7 @@ Notification Module:
 ```
 
 ### 6. Se Crea Envío
+
 ```
 POST /shipments { orderId, transportistId }
   ↓
@@ -279,6 +295,7 @@ Notification Module:
 ```
 
 ### 7. Usuario Rastrea Pedido
+
 ```
 GET /orders/:id
   ↓
@@ -290,6 +307,7 @@ Incluye:
 ```
 
 ### 8. Pedido Entregado
+
 ```
 PATCH /shipments/:id/status { status: DELIVERED }
   ↓
@@ -799,6 +817,7 @@ enum NotificationStatus {
 ### FASE 3: E-COMMERCE MODULES (70 horas)
 
 #### 3.1 Migrar Order Module (15h)
+
 ```typescript
 // backend/src/modules/order/
 
@@ -811,6 +830,7 @@ Ajustes necesarios:
 ```
 
 #### 3.2 Migrar Payment Module (10h)
+
 ```typescript
 // backend/src/modules/payment/
 
@@ -822,6 +842,7 @@ Ajustes:
 ```
 
 #### 3.3 Completar Inventory Module (15h)
+
 ```typescript
 // backend/src/modules/inventory/
 
@@ -834,6 +855,7 @@ Completar:
 ```
 
 #### 3.4 Migrar Shipping Module (20h)
+
 ```typescript
 // backend/src/modules/shipping/
 
@@ -844,6 +866,7 @@ Recomendación: Opción A para simplicidad
 ```
 
 #### 3.5 Migrar Notification Module (10h)
+
 ```typescript
 // backend/src/modules/notification/
 
@@ -856,6 +879,7 @@ Ajustes:
 ### FASE 4: FRONTEND E-COMMERCE (60 horas)
 
 #### 4.1 Catálogo y Búsqueda (15h)
+
 ```typescript
 // frontend/src/pages/
 - Home.tsx (listado artesanos)
@@ -866,6 +890,7 @@ Ajustes:
 ```
 
 #### 4.2 Carrito y Checkout (20h)
+
 ```typescript
 // frontend/src/features/cart/
 - Cart.tsx (ver carrito)
@@ -878,6 +903,7 @@ Ajustes:
 ```
 
 #### 4.3 Dashboard Usuario (10h)
+
 ```typescript
 // frontend/src/pages/user/
 - Orders.tsx (mis pedidos)
@@ -887,6 +913,7 @@ Ajustes:
 ```
 
 #### 4.4 Dashboard Artesano (15h)
+
 ```typescript
 // frontend/src/pages/artisan/
 - Dashboard.tsx (resumen)
@@ -941,7 +968,7 @@ Ajustes:
 
 ## TIMELINE REALISTA
 
-### Full-Time (40h/semana):
+### Full-Time (40h/semana)
 
 ```
 Semana 1:  Setup + Migración + Artisan (inicio)       [45h]
@@ -955,7 +982,7 @@ Semana 7:  Testing + Deploy                           [40h]
 TOTAL:     7 semanas                                  [290h]
 ```
 
-### Part-Time (20h/semana):
+### Part-Time (20h/semana)
 
 ```
 Semanas 1-2:   Setup + Artisan                    [45h]
@@ -972,7 +999,7 @@ TOTAL:         14 semanas                         [290h]
 
 ## SERVICIOS QUE MANTIENES (E-commerce)
 
-### ✅ REUTILIZAS (ya funcionan):
+### ✅ REUTILIZAS (ya funcionan)
 
 | Servicio | Estado | Horas adicionales | Uso |
 |----------|--------|-------------------|-----|
@@ -988,7 +1015,7 @@ TOTAL:         14 semanas                         [290h]
 
 ## SERVICIOS QUE ELIMINAS
 
-### ❌ NO NECESARIOS (incluso con e-commerce):
+### ❌ NO NECESARIOS (incluso con e-commerce)
 
 1. **admin-service** → Frontend con roles
 2. **analytics-service** → Google Analytics
@@ -1003,7 +1030,7 @@ TOTAL:         14 semanas                         [290h]
 
 ## INFRAESTRUCTURA SIMPLIFICADA
 
-### Docker Compose E-commerce:
+### Docker Compose E-commerce
 
 ```yaml
 # docker-compose.ecommerce.yml
@@ -1060,7 +1087,7 @@ volumes:
 
 ## MONITOREO (E-commerce)
 
-### Simple pero efectivo:
+### Simple pero efectivo
 
 ```typescript
 // backend/src/common/logger.service.ts
@@ -1086,7 +1113,8 @@ export function logPayment(event: string, paymentId: string, data: any) {
 }
 ```
 
-### Opcional (si creces):
+### Opcional (si creces)
+
 - Sentry.io para errores ($0-29/mes)
 - LogRocket para session replay ($99/mes)
 - Uptime monitoring: UptimeRobot (gratis)
@@ -1097,7 +1125,7 @@ export function logPayment(event: string, paymentId: string, data: any) {
 
 ## COSTOS ESTIMADOS (E-commerce)
 
-### Desarrollo:
+### Desarrollo
 
 | Concepto | Horas | Rate €50/h | Rate €100/h |
 |----------|-------|-----------|-------------|
@@ -1105,7 +1133,7 @@ export function logPayment(event: string, paymentId: string, data: any) {
 | Microservicios original | 770h | €38,500 | €77,000 |
 | **AHORRO** | **480h** | **€24,000** | **€48,000** |
 
-### Infraestructura Mensual:
+### Infraestructura Mensual
 
 | Servicio | Costo |
 |----------|-------|
@@ -1123,7 +1151,8 @@ export function logPayment(event: string, paymentId: string, data: any) {
 
 ## INTEGRACIONES EXTERNAS
 
-### Stripe (Pagos):
+### Stripe (Pagos)
+
 ```bash
 # Test keys (desarrollo)
 STRIPE_PUBLIC_KEY=pk_test_...
@@ -1135,13 +1164,15 @@ STRIPE_PUBLIC_KEY=pk_live_...
 STRIPE_SECRET_KEY=sk_live_...
 ```
 
-### SendGrid (Emails):
+### SendGrid (Emails)
+
 ```bash
 SENDGRID_API_KEY=SG...
 FROM_EMAIL=noreply@artesanosjaen.com
 ```
 
-### Twilio (SMS):
+### Twilio (SMS)
+
 ```bash
 TWILIO_ACCOUNT_SID=AC...
 TWILIO_AUTH_TOKEN=...
@@ -1152,7 +1183,8 @@ TWILIO_PHONE_NUMBER=+34...
 
 ## PRÓXIMOS PASOS INMEDIATOS
 
-### HOY (1 hora):
+### HOY (1 hora)
+
 ```bash
 1. Revisar este plan completo
 2. Confirmar que quieres e-commerce completo
@@ -1163,14 +1195,16 @@ TWILIO_PHONE_NUMBER=+34...
 4. Crear rama: git checkout -b feature/monolith-ecommerce
 ```
 
-### ESTA SEMANA (40 horas):
+### ESTA SEMANA (40 horas)
+
 ```bash
 1. Setup monolito (5h)
 2. Migrar módulos core (10h)
 3. Comenzar Artisan Module (25h)
 ```
 
-### PRÓXIMAS 2 SEMANAS (80 horas):
+### PRÓXIMAS 2 SEMANAS (80 horas)
+
 ```bash
 1. Completar Artisan Module (25h)
 2. Crear Geo Module (25h)
@@ -1178,7 +1212,8 @@ TWILIO_PHONE_NUMBER=+34...
 4. Migrar Payment Module (10h)
 ```
 
-### SEMANAS 3-4 (80 horas):
+### SEMANAS 3-4 (80 horas)
+
 ```bash
 1. Inventory Module (15h)
 2. Shipping Module (20h)
@@ -1187,7 +1222,8 @@ TWILIO_PHONE_NUMBER=+34...
 5. Frontend carrito (15h)
 ```
 
-### SEMANAS 5-6 (80 horas):
+### SEMANAS 5-6 (80 horas)
+
 ```bash
 1. Frontend checkout (20h)
 2. Dashboard usuario (10h)
@@ -1200,9 +1236,10 @@ TWILIO_PHONE_NUMBER=+34...
 
 ## CRITERIOS DE ÉXITO (E-commerce)
 
-### MVP E-commerce listo cuando:
+### MVP E-commerce listo cuando
 
-#### Funcionalidades Usuario:
+#### Funcionalidades Usuario
+
 - [ ] Buscar artesanos por ubicación/especialidad
 - [ ] Ver catálogo de productos
 - [ ] Agregar productos al carrito
@@ -1212,14 +1249,16 @@ TWILIO_PHONE_NUMBER=+34...
 - [ ] Ver estado de pedido
 - [ ] Tracking de envío
 
-#### Funcionalidades Artesano:
+#### Funcionalidades Artesano
+
 - [ ] Ver pedidos recibidos
 - [ ] Actualizar estado de pedido
 - [ ] Gestionar productos (CRUD)
 - [ ] Gestionar inventario
 - [ ] Ver pagos recibidos
 
-#### Técnicas:
+#### Técnicas
+
 - [ ] Order flow completo funciona
 - [ ] Stripe webhooks configurados
 - [ ] Notifications se envían
@@ -1232,7 +1271,8 @@ TWILIO_PHONE_NUMBER=+34...
 
 ## SIMPLIFICACIONES vs Microservicios
 
-### ✅ MANTIENES:
+### ✅ MANTIENES
+
 - Toda la funcionalidad e-commerce
 - Stripe integration
 - Order management
@@ -1240,14 +1280,16 @@ TWILIO_PHONE_NUMBER=+34...
 - Shipping
 - Notifications
 
-### ❌ ELIMINAS:
+### ❌ ELIMINAS
+
 - NATS message broker → Eventos in-memory
 - Saga distribuido → Saga local simplificado
 - Jaeger/OpenTelemetry → Winston logs
 - 16 servicios → 1 monolito
 - Docker orchestration complejo → docker-compose simple
 
-### 📉 RESULTADO:
+### 📉 RESULTADO
+
 - **Mismo features, 62% menos código**
 - **Mismo features, 70% menos tiempo**
 - **Mismo features, 80% menos costo infraestructura**
@@ -1256,15 +1298,17 @@ TWILIO_PHONE_NUMBER=+34...
 
 ## MIGRACIÓN FUTURA A MICROSERVICIOS
 
-### Cuándo considerar:
+### Cuándo considerar
 
-#### Señales técnicas:
+#### Señales técnicas
+
 - [ ] >50,000 pedidos/mes
 - [ ] >100,000 usuarios activos
 - [ ] Latencia consistente >500ms
 - [ ] Need to scale Order module independently
 
-#### Estrategia de migración:
+#### Estrategia de migración
+
 ```
 1. Extraer Payment Module primero (más crítico)
 2. Extraer Order Module
@@ -1283,6 +1327,7 @@ Total tiempo migración: ~80-100 horas
 ### Decisión: E-commerce Completo ✅
 
 **Incluye:**
+
 - Portal de artesanos
 - Catálogo de productos
 - Carrito de compra

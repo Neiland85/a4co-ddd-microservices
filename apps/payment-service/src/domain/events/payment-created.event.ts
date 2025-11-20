@@ -24,8 +24,9 @@ export class PaymentCreatedEvent extends PaymentDomainEvent<PaymentCreatedEventP
         orderId: params.orderId,
         customerId: params.customerId,
         amount: params.amount,
+        currency: params.amount.currency,
         metadata: params.metadata ?? {},
-        stripePaymentIntentId: params.stripePaymentIntentId,
+        stripePaymentIntentId: params.stripePaymentIntentId ?? null,
         status: PaymentStatusValue.PENDING,
         timestamp: params.timestamp ?? new Date(),
       },
@@ -34,4 +35,3 @@ export class PaymentCreatedEvent extends PaymentDomainEvent<PaymentCreatedEventP
     );
   }
 }
-

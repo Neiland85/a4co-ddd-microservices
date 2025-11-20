@@ -1,91 +1,22 @@
 {
   "$schema": "https://turbo.build/schema.json",
-
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "src/**",
-        "public/**",
-        "next.config.js",
-        "tsconfig.json",
-        "package.json"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**",
-        "!.next/cache/**",
-        "build/**",
-        "lib/**"
-      ],
-      "env": ["NODE_ENV", "NEXT_PUBLIC_*", "VERCEL_*"]
+      "dependsOn": ["^build", "generate"],
+      "outputs": ["dist/**"]
     },
-
+    "generate": {
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    },
     "dev": {
       "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "env": ["NODE_ENV"]
-    },
-
-    "start": {
-      "dependsOn": ["build"],
-      "cache": false,
-      "persistent": true,
-      "env": ["NODE_ENV"]
-    },
-
-    "lint": {
-      "inputs": [
-        "src/**",
-        "*.js",
-        "*.ts",
-        "*.tsx",
-        ".eslintrc*",
-        "package.json"
-      ],
-      "outputs": [".eslintcache"]
-    },
-
-    "test": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "src/**",
-        "test/**",
-        "jest.config.*",
-        "package.json"
-      ],
-      "outputs": ["coverage/**", "test-results/**"],
-      "env": ["NODE_ENV"]
-    },
-
-    "clean": {
-      "cache": false,
-      "outputs": []
-    },
-
-    "db:generate": {
-      "cache": false,
-      "inputs": ["prisma/schema.prisma"],
-      "outputs": ["prisma/generated/**"]
-    },
-
-    "db:push": {
-      "cache": false,
-      "dependsOn": ["db:generate"]
-    },
-
-    "db:migrate": {
-      "cache": false,
-      "dependsOn": ["db:generate"]
-    },
-
-    "deploy": {
-      "dependsOn": ["build", "test", "lint"],
-      "cache": false,
-      "env": ["NODE_ENV", "VERCEL_*"]
+      "persistent": true
     }
   }
 }
-

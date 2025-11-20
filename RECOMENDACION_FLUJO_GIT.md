@@ -3,6 +3,7 @@
 ## 📊 Análisis de Cambios
 
 ### Tipos de cambios pendientes
+
 1. **Configuración (ya en main):**
    - `.github/workflows/ci.yml` - Ya commiteado (`54f1c98`)
    - `sonar-project.properties` - Ya commiteado (`54f1c98`)
@@ -42,6 +43,7 @@
 ## ❌ **NO crear rama develop ahora**
 
 **Razones:**
+
 - Ya existe una rama `develop` en el repo (origin/develop)
 - Los cambios críticos ya están en main
 - Solo queda agregar documentación
@@ -112,6 +114,7 @@ gh pr create --title "docs: Add comprehensive session documentation" --body "Doc
 **IR DIRECTAMENTE A MAIN** ✅
 
 Los cambios ya están separados lógicamente:
+
 - Configuración técnica → Ya en main (commits anteriores)
 - Documentación → Esta sesión (solo agregar archivos .md)
 

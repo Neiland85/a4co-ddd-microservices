@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Payment as PrismaPaymentModel } from '@prisma/client';
+import { Prisma, Payment as PrismaPaymentModel } from '../../../prisma/generated';
 import { PaymentRepository } from '../../domain/repositories/payment.repository';
 import { Payment } from '../../domain/entities/payment.entity';
 import { PaymentId } from '../../domain/value-objects/payment-id.vo';
@@ -8,23 +8,23 @@ import { PaymentStatusValue } from '../../domain/value-objects/payment-status.vo
 
 @Injectable()
 export class PrismaPaymentRepository implements PaymentRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   public async save(payment: Payment): Promise<void> {
     const data = this.mapToPersistence(payment);
 
     await this.prisma.payment.upsert({
-      where: { id: data.id },
+      where: { id: data.id! },
       create: data,
       update: {
-        orderId: data.orderId,
-        amount: data.amount,
-        currency: data.currency,
-        status: data.status,
-        stripePaymentIntentId: data.stripePaymentIntentId,
-        customerId: data.customerId,
-        metadata: data.metadata,
-        updatedAt: data.updatedAt,
+        orderId: data.orderId!,
+        amount: data.amount!,
+        currency: data.currency!,
+        status: data.status!,
+        stripePaymentIntentId: data.stripePaymentIntentId ?? null,
+        customerId: data.customerId!,
+        metadata: data.metadata ?? {},
+        updatedAt: data.updatedAt!,
       },
     });
   }
@@ -40,7 +40,9 @@ export class PrismaPaymentRepository implements PaymentRepository {
   }
 
   public async findByStripeIntentId(intentId: string): Promise<Payment | null> {
-    const record = await this.prisma.payment.findUnique({ where: { stripePaymentIntentId: intentId } });
+    const record = await this.prisma.payment.findUnique({
+      where: { stripePaymentIntentId: intentId },
+    });
     return record ? this.mapToDomain(record) : null;
   }
 
@@ -78,4 +80,3 @@ export class PrismaPaymentRepository implements PaymentRepository {
     });
   }
 }
-

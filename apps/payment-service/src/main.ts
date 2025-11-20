@@ -1,9 +1,10 @@
 /// <reference types="node" />
 
 import { getLogger, initializeTracing } from '@a4co/observability';
-import { BracesSecurityMiddleware } from '@a4co/shared-utils'; // Agregar importación para resolver el error de clase no definida
+import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as process from 'process';
@@ -22,6 +23,15 @@ async function bootstrap() {
 
   const app = await NestFactory.create(PaymentModule, {
     logger: false, // Disable default NestJS logger
+  });
+
+  // Configure NATS microservice
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
+      queue: 'payment_queue',
+    },
   });
 
   // Security middleware
@@ -78,10 +88,15 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env['PORT'] ? Number(process.env['PORT']) : 3006;
+
+  // Start all microservices
+  await app.startAllMicroservices();
+  logger.info('🔌 NATS microservice conectado');
+
+  // Start HTTP server
+  await app.listen(port);
   logger.info(`🚀 Payment Service iniciado en puerto ${port}`);
   logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
-
-  await app.listen(port);
 }
 
 bootstrap().catch(err => {

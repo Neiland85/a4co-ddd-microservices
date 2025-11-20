@@ -79,6 +79,7 @@ FRONTEND & GATEWAY:
 ## PROBLEMAS ESPECÍFICOS ENCONTRADOS
 
 ### Archivos Confusos
+
 ```
 ❌ docker-compose.yml (línea 5): Apunta a ./gateway (incorrecto)
 ❌ jest.config.js: 2 archivos con mismo nombre
@@ -87,12 +88,14 @@ FRONTEND & GATEWAY:
 ```
 
 ### Dependencias
+
 ```
 ❌ 9 instancias de workspace:* requieren compilación previa
 ❌ Compilación con --force (potencialmente problemático)
 ```
 
 ### Testing & CI/CD
+
 ```
 ❌ 85+ archivos test sin ejecución en CI/CD
 ❌ Reporte de coverage desactualizado (29 Sept)
@@ -105,31 +108,37 @@ FRONTEND & GATEWAY:
 ## ROADMAP DE HORAS (Estimación)
 
 ### FASE 1: CRÍTICA (Semanas 1-3)
+
 - Quick Wins Setup: 10 horas
 - Gateway Implementation: 30 horas
 - Frontend Integration: 50 horas
 - **Subtotal: 90 horas (11-14 días)**
 
 ### FASE 2: IMPORTANTE (Semanas 4-8)
+
 - Testing Coverage 50%: 80 horas
 - Servicios Parciales: 45 horas
 - Documentación Base: 40 horas
 - **Subtotal: 165 horas (20-25 días)**
 
 ### FASE 3: IMPORTANTE (Semanas 9-12)
+
 - Servicios Stub (6): 210 horas
 - Testing Coverage 70%: 175 horas
 - CI/CD Automatizado: 30 horas
 - **Subtotal: 415 horas (50-65 días)**
 
 ### FASE 4: MEJORAS (Semanas 13+)
+
 - Performance Optimization: 30 horas
 - Security Hardening: 30 horas
 - Advanced Observability: 40 horas
 - **Subtotal: 100 horas (12-15 días)**
 
 ### TOTAL ESTIMADO: 770 horas
+
 **Timeline Realista:**
+
 - 1 dev: 4-6 meses
 - 2 devs: 2-3 meses
 - **3 devs: 1.5-2 meses ✅ RECOMENDADO**
@@ -140,6 +149,7 @@ FRONTEND & GATEWAY:
 ## ACCIONES INMEDIATAS (Próximas 48 Horas)
 
 ### HOY (4-6 horas)
+
 1. [ ] Ejecutar `./scripts/quick-wins-all.sh` (15 min)
 2. [ ] Corregir docker-compose.yml línea 5 (5 min)
 3. [ ] Eliminar jest.config.js duplicado (5 min)
@@ -149,11 +159,13 @@ FRONTEND & GATEWAY:
 7. [ ] Re-habilitar workflows de CI/CD (15 min)
 
 ### MAÑANA (6-8 horas)
+
 1. [ ] Comenzar Gateway Implementation (4-5 horas)
 2. [ ] Setup Frontend API Client (2-3 horas)
 3. [ ] Crear OpenAPI Specs Básicas (1-2 horas)
 
 ### ESTA SEMANA (3-4 horas)
+
 1. [ ] Team Meeting - Revisar auditoría (1 hora)
 2. [ ] Crear GitHub Issues para items críticos (1 hora)
 3. [ ] Establecer métricas de tracking (30 min)
@@ -173,6 +185,7 @@ FRONTEND & GATEWAY:
 ## CONCLUSIÓN
 
 ### Fortalezas
+
 ✅ Arquitectura DDD sólida  
 ✅ Infraestructura lista  
 ✅ 8 servicios funcionales  
@@ -180,6 +193,7 @@ FRONTEND & GATEWAY:
 ✅ System observabilidad en marcha  
 
 ### Debilidades
+
 ❌ 6 servicios vacíos (34% del código)  
 ❌ Testing muy incompleto  
 ❌ Frontend sin integración real  
@@ -187,12 +201,15 @@ FRONTEND & GATEWAY:
 ❌ Gateway sin implementación  
 
 ### Recomendación Inmediata
+
 **Ejecutar Quick Wins y comenzar con 3 items paralelos:**
+
 1. **Desarrollador A:** Gateway Implementation (5-7 días)
 2. **Desarrollador B:** Frontend Integration (5-7 días)
 3. **Desarrollador C:** Testing + Documentation (ongoing)
 
 ### Viabilidad
+
 - Proyecto **es viable** pero necesita 1.5-2 meses más
 - Equipo mínimo recomendado: **3 desarrolladores**
 - Production-ready: Realista en **2 meses**

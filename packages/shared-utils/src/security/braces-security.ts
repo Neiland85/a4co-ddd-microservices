@@ -193,10 +193,11 @@ export class BracesSecurityValidator {
     while ((match = braceRegex.exec(expression)) !== null) {
       braceCount++;
       const content = match[1];
+      if (!content) continue;
 
       // Detectar rangos {start..end}
       const rangeMatch = content.match(/^(\d+)\.\.(\d+)$/);
-      if (rangeMatch) {
+      if (rangeMatch && rangeMatch[1] && rangeMatch[2]) {
         rangeCount++;
         const start = parseInt(rangeMatch[1]);
         const end = parseInt(rangeMatch[2]);

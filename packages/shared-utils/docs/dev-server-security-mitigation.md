@@ -1,21 +1,25 @@
 # Mitigación de Vulnerabilidades en Dev Servers
 
 ## Resumen
+
 Este documento describe las mitigaciones implementadas para la vulnerabilidad **esbuild — Dev server accepts arbitrary requests and leaks responses (Moderate)**.
 
 ## Arquitectura de Seguridad
 
 ### 1. Validadores de Seguridad
+
 - `DevServerValidator`: Valida configuraciones de host, puerto y CORS
 - `DevServerSecurityUtils`: Utilidades para generar configuraciones seguras
 - `DevServerProtector`: Middleware de protección para diferentes frameworks
 
 ### 2. Configuraciones Seguras Generadas
+
 - **Vite**: Configuración con host 127.0.0.1 y CORS restrictivo
 - **Next.js**: Headers de seguridad y configuración de desarrollo segura
 - **esbuild**: Servidor con logging de requests externos
 
 ### 3. Middleware de Protección
+
 - Bloqueo automático de requests desde IPs externas en desarrollo
 - Headers de seguridad aplicados automáticamente
 - Logging de eventos de seguridad
@@ -23,16 +27,20 @@ Este documento describe las mitigaciones implementadas para la vulnerabilidad **
 ## Configuraciones Inseguras Detectadas
 
 ### Host Configuration
+
 - `host: '0.0.0.0'`: Permite conexiones desde cualquier interfaz
 - Host no especificado: Puede usar configuración por defecto insegura
 - IPs públicas: Accesibles desde internet
 
 ### CORS Configuration
+
 - `origin: '*'`: Permite requests desde cualquier dominio
 - `credentials: true`: Permite envío de cookies/autenticación
 
 ### Puertos de Desarrollo
+
 Puertos comunes que representan alto riesgo si son accesibles externamente:
+
 - 3000, 3001 (Next.js, Vite)
 - 4000, 5000 (Create React App)
 - 8000, 8080 (Django, otros)
@@ -41,6 +49,7 @@ Puertos comunes que representan alto riesgo si son accesibles externamente:
 ## Uso en Código
 
 ### Vite Configuration
+
 ```typescript
 // vite.config.ts
 import { defineConfig } from 'vite';
@@ -57,6 +66,7 @@ export default defineConfig({
 ```
 
 ### Next.js Configuration
+
 ```typescript
 // next.config.js
 import { generateSecureNextConfig } from '@a4co/shared-utils';
@@ -68,6 +78,7 @@ export default nextConfig;
 ```
 
 ### Express.js Middleware
+
 ```typescript
 import express from 'express';
 import { DevServerProtector } from '@a4co/shared-utils';
@@ -81,6 +92,7 @@ app.listen(3000, '127.0.0.1'); // ✅ Solo localhost
 ```
 
 ### esbuild Configuration
+
 ```typescript
 import * as esbuild from 'esbuild';
 import { generateSecureEsbuildConfig } from '@a4co/shared-utils';
@@ -92,16 +104,19 @@ await esbuild.build(config);
 ## Verificación de Seguridad
 
 ### Ejecutar Verificación Automática
+
 ```bash
 pnpm run check:dev-security
 ```
 
 ### Ejecutar Tests de Seguridad
+
 ```bash
 pnpm run test:dev-security
 ```
 
 ### Verificación Manual
+
 ```bash
 # Verificar procesos en puertos de desarrollo
 netstat -tulpn | grep -E ':(3000|3001|4000|5000|8000|8080|9000|9090) '
@@ -114,6 +129,7 @@ grep -r "origin.*\*" .
 ## Detección y Monitoreo
 
 ### Logs de Seguridad
+
 Los eventos de seguridad se registran automáticamente:
 
 ```json
@@ -136,6 +152,7 @@ Los eventos de seguridad se registran automáticamente:
 ```
 
 ### Métricas a Monitorear
+
 - Número de requests bloqueados desde IPs externas
 - IPs de origen de requests no autorizados
 - URLs más accedidas por requests externos
@@ -144,22 +161,26 @@ Los eventos de seguridad se registran automáticamente:
 ## Mejores Prácticas
 
 ### 1. Configuración de Desarrollo
+
 - **Host**: Siempre usar `127.0.0.1` o `localhost`
 - **Puerto**: Usar puertos no estándar para desarrollo
 - **CORS**: Deshabilitar o configurar restrictivamente
 - **HTTPS**: Considerar HTTPS local para desarrollo
 
 ### 2. Arquitectura de Red
+
 - **Firewall**: Bloquear puertos de desarrollo en nivel de red
 - **VPN/Túnel**: Usar SSH port forwarding para acceso remoto
 - **Contenedores**: Aislar dev servers en contenedores con networking restringido
 
 ### 3. Gestión de Secrets
+
 - **Variables de entorno**: Nunca hardcodear secrets
 - **Archivos .env**: No commitear archivos con secrets reales
 - **Separación**: Entornos de desarrollo sin acceso a secrets de producción
 
 ### 4. Monitoreo Continuo
+
 - **Logs**: Monitorear requests a dev servers
 - **Alertas**: Notificaciones automáticas para acceso no autorizado
 - **Auditoría**: Revisión periódica de configuraciones
@@ -167,6 +188,7 @@ Los eventos de seguridad se registran automáticamente:
 ## Casos de Uso Comunes
 
 ### Desarrollo Local Seguro
+
 ```typescript
 // ✅ SEGURO: Configuración recomendada
 export default defineConfig({
@@ -181,6 +203,7 @@ export default defineConfig({
 ```
 
 ### Acceso Remoto Seguro (SSH Tunnel)
+
 ```bash
 # En máquina local
 ssh -L 3000:localhost:3000 user@remote-server
@@ -190,6 +213,7 @@ npm run dev -- --host 127.0.0.1 --port 3000
 ```
 
 ### Contenedores de Desarrollo
+
 ```dockerfile
 # Dockerfile.dev
 FROM node:18
@@ -215,17 +239,19 @@ networks:
 
 ## Respuesta a Incidentes
 
-### Si se detecta acceso no autorizado:
+### Si se detecta acceso no autorizado
+
 1. **Bloquear**: Agregar IP a lista negra temporal
 2. **Investigar**: Revisar logs para entender el vector de ataque
 3. **Mitigar**: Cambiar configuración a modo seguro
 4. **Notificar**: Alertar al equipo de desarrollo
 
 ### Contactos de Emergencia
+
 - Security Team: security@company.com
 - DevOps: devops@company.com
 - Platform Team: platform@company.com
 
 ---
 
-*Esta documentación se actualiza automáticamente con cada cambio en el sistema de seguridad de dev servers.*
+_Esta documentación se actualiza automáticamente con cada cambio en el sistema de seguridad de dev servers._

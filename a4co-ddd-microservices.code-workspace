@@ -1,22 +1,4 @@
 {
-  "editor.formatOnSave": true,
-  "eslint.enable": true,
-  "files.exclude": {
-    "**/.git": true,
-    "**/node_modules": true,
-    "**/.DS_Store": true,
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.disableAutomaticTypeAcquisition": false,
-  "typescript.enablePromptUseWorkspaceTsdk": false,
-  "typescript.experimental.useTsgo": false,
-  "typescript.experimental.enableProjectDiagnostics": false,
-  "typescript.tsserver.log": "off",
-  "typescript.tsserver.useSyntaxServer": "auto",
-  "github.copilot.enable": {
-    "*": true,
-    "plaintext": false,
-  },
   "folders": [
     {
       "name": "🏠 Root",
@@ -51,6 +33,10 @@
       "path": "apps/user-service",
     },
     {
+      "name": "📊 Dashboard Client",
+      "path": "apps/dashboard-client",
+    },
+    {
       "name": "🎨 Design System",
       "path": "packages/design-system",
     },
@@ -63,8 +49,8 @@
       "path": "packages/shared-utils",
     },
     {
-      "name": "🚩 Feature Flags",
-      "path": "packages/feature-flags",
+      "name": "🤖 Copilot Dashboard",
+      "path": "packages/copilot-dashboard",
     },
   ],
   "settings": {
@@ -79,9 +65,10 @@
     "typescript.disableAutomaticTypeAcquisition": false,
     "typescript.enablePromptUseWorkspaceTsdk": false,
     "typescript.experimental.useTsgo": false,
-    "typescript.experimental.enableProjectDiagnostics": false,
-    "typescript.tsserver.log": "off",
+    "typescript.experimental.enableProjectDiagnostics": true,
+    "typescript.tsserver.log": "terse",
     "typescript.tsserver.useSyntaxServer": "auto",
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
     "github.copilot.enable": {
       "*": true,
       "plaintext": false,
@@ -89,11 +76,9 @@
     "diffEditor.codeLens": true,
     "json.schemas": [
       {
-        "fileMatch": [
-          "**/package.json"
-        ],
-        "schema": null
-      }
+        "fileMatch": ["**/package.json"],
+        "schema": null,
+      },
     ],
     "json.schemaDownload.enable": false,
   },

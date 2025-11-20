@@ -1,3 +1,3 @@
 // DTO exports
-export * from './base-dto';
-export * from './pagination-dto';
+export * from './base-dto.js';
+export * from './pagination-dto.js';

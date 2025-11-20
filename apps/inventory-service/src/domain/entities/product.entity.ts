@@ -35,24 +35,30 @@ export class Product {
   private _createdAt: Date;
   private _updatedAt: Date;
 
-  constructor(props: ProductProps) {
-    this._id = props.id;
-    this._name = props.name;
-    this._description = props.description;
-    this._sku = props.sku;
-    this._category = props.category;
-    this._brand = props.brand;
-    this._unitPrice = props.unitPrice;
-    this._currency = props.currency;
-    this._currentStock = props.currentStock;
-    this._reservedStock = props.reservedStock;
-    this._minimumStock = props.minimumStock;
-    this._maximumStock = props.maximumStock;
-    this._isActive = props.isActive;
-    this._artisanId = props.artisanId;
-    this._createdAt = props.createdAt;
-    this._updatedAt = props.updatedAt;
-  }
+    constructor(props: ProductProps) {
+      this._id = props.id;
+      this._name = props.name;
+      this._sku = props.sku;
+      this._category = props.category;
+      this._unitPrice = props.unitPrice;
+      this._currency = props.currency;
+      this._currentStock = props.currentStock;
+      this._reservedStock = props.reservedStock;
+      this._minimumStock = props.minimumStock;
+      this._maximumStock = props.maximumStock;
+      this._isActive = props.isActive;
+      this._artisanId = props.artisanId;
+      this._createdAt = props.createdAt;
+      this._updatedAt = props.updatedAt;
+
+      if (props.description !== undefined) {
+        this._description = props.description;
+      }
+
+      if (props.brand !== undefined) {
+        this._brand = props.brand;
+      }
+    }
 
   // Getters
   get id(): string {
@@ -196,13 +202,11 @@ export class Product {
 
   // Serialization
   toJSON(): ProductProps {
-    return {
+    const base: ProductProps = {
       id: this._id,
       name: this._name,
-      description: this._description,
       sku: this._sku,
       category: this._category,
-      brand: this._brand,
       unitPrice: this._unitPrice,
       currency: this._currency,
       currentStock: this._currentStock,
@@ -214,5 +218,15 @@ export class Product {
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
     };
+
+    if (this._description !== undefined) {
+      base.description = this._description;
+    }
+
+    if (this._brand !== undefined) {
+      base.brand = this._brand;
+    }
+
+    return base;
   }
 }

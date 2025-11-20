@@ -4,9 +4,8 @@ exports.bracesSecurityFactory = exports.BracesSecurityFactory = exports.SecureSh
 const child_process_1 = require("child_process");
 const events_1 = require("events");
 class BracesSecurityValidator {
-    config;
-    eventEmitter = new events_1.EventEmitter();
     constructor(config = {}) {
+        this.eventEmitter = new events_1.EventEmitter();
         this.config = {
             maxExpansionSize: 1000,
             maxRangeSize: 100,
@@ -108,8 +107,10 @@ class BracesSecurityValidator {
         while ((match = braceRegex.exec(expression)) !== null) {
             braceCount++;
             const content = match[1];
+            if (!content)
+                continue;
             const rangeMatch = content.match(/^(\d+)\.\.(\d+)$/);
-            if (rangeMatch) {
+            if (rangeMatch && rangeMatch[1] && rangeMatch[2]) {
                 rangeCount++;
                 const start = parseInt(rangeMatch[1]);
                 const end = parseInt(rangeMatch[2]);
@@ -183,9 +184,8 @@ class BracesSecurityValidator {
 }
 exports.BracesSecurityValidator = BracesSecurityValidator;
 class SecureShellExecutor {
-    validator;
-    activeProcesses = new Map();
     constructor(securityConfig) {
+        this.activeProcesses = new Map();
         this.validator = new BracesSecurityValidator(securityConfig);
     }
     async executeSecure(command, options) {

@@ -15,9 +15,10 @@ Se han resuelto **todos los problemas de seguridad** detectados por GitGuardian 
 **Archivo**: `.devcontainer/docker-compose.dev.yml`
 **Commit**: fc59e70c4782a76d08658ddcf39f3df9c04ca37c
 
-#### ❌ Antes (INSEGURO):
+#### ❌ Antes (INSEGURO)
 
 **PostgreSQL** (líneas 44-46):
+
 ```yaml
 environment:
   POSTGRES_USER: postgres
@@ -26,24 +27,28 @@ environment:
 ```
 
 **DATABASE_URL** (línea 32):
+
 ```yaml
 DATABASE_URL: postgresql://postgres:postgres@postgres:5432/a4co_dev
 # ⚠️ Contraseña en URL hardcodeada
 ```
 
 **JWT Secret** (línea 34):
+
 ```yaml
 JWT_SECRET: dev-secret-key  # ⚠️ Secret hardcodeado
 ```
 
 **Grafana** (línea 87):
+
 ```yaml
 - GF_SECURITY_ADMIN_PASSWORD=admin  # ⚠️ Contraseña admin hardcodeada
 ```
 
-#### ✅ Después (SEGURO):
+#### ✅ Después (SEGURO)
 
 **PostgreSQL**:
+
 ```yaml
 environment:
   POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -52,16 +57,19 @@ environment:
 ```
 
 **DATABASE_URL**:
+
 ```yaml
 DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/${POSTGRES_DB:-a4co_dev}
 ```
 
 **JWT Secret**:
+
 ```yaml
 JWT_SECRET: ${JWT_SECRET:-dev-secret-key-CHANGE_IN_PRODUCTION}
 ```
 
 **Grafana**:
+
 ```yaml
 - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
 - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-CHANGE_ME}
@@ -73,7 +81,8 @@ JWT_SECRET: ${JWT_SECRET:-dev-secret-key-CHANGE_IN_PRODUCTION}
 
 **Archivo**: `setup-docker-secrets.sh`
 
-#### ❌ Antes (INSEGURO):
+#### ❌ Antes (INSEGURO)
+
 ```bash
 # Línea 12
 echo -n "readonly_user" | docker secret create db_user -
@@ -83,7 +92,8 @@ echo -n "X9v\$7kP#b2Q!r8Zt" | docker secret create db_pass -
 # ⚠️ Contraseña real expuesta en código
 ```
 
-#### ✅ Después (SEGURO):
+#### ✅ Después (SEGURO)
+
 ```bash
 # Validación de variables requeridas
 if [ -z "${DB_USER}" ]; then
@@ -104,6 +114,7 @@ echo -n "${DB_PASSWORD}" | docker secret create db_pass -
 ```
 
 **Uso correcto del script**:
+
 ```bash
 DB_USER="readonly_user" DB_PASSWORD="tu_password_seguro" ./setup-docker-secrets.sh
 ```
@@ -138,7 +149,8 @@ Se añadieron las siguientes secciones:
 **Antes**: 🔴 1 secreto detectado (ID: 17476554)
 **Después**: 🟢 0 secretos detectados
 
-### Secretos Remediados:
+### Secretos Remediados
+
 1. ✅ **PostgreSQL password** en `.devcontainer/docker-compose.dev.yml`
 2. ✅ **JWT Secret** en `.devcontainer/docker-compose.dev.yml`
 3. ✅ **Grafana admin password** en `.devcontainer/docker-compose.dev.yml`
@@ -160,19 +172,19 @@ cd .devcontainer
 cat > .env << 'EOF'
 # PostgreSQL
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=tu_contraseña_segura_aqui
+POSTGRES_PASSWORD=CHANGE_ME_IN_DOT_ENV
 POSTGRES_DB=a4co_dev
 
 # JWT Secret (mínimo 32 caracteres)
-JWT_SECRET=tu_jwt_secret_muy_largo_y_seguro_aqui_minimo_32_chars
+JWT_SECRET=CHANGE_ME_IN_DOT_ENV_MIN_32_CHARS
 
 # Grafana Admin
 GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=tu_grafana_password_aqui
+GRAFANA_ADMIN_PASSWORD=CHANGE_ME_IN_DOT_ENV
 EOF
 ```
 
-2. **Iniciar DevContainer**:
+1. **Iniciar DevContainer**:
 
 El archivo `.env` será leído automáticamente por Docker Compose cuando inicies el DevContainer desde VS Code.
 
@@ -180,11 +192,11 @@ El archivo `.env` será leído automáticamente por Docker Compose cuando inicie
 
 ```bash
 # Opción 1: Variables inline
-DB_USER="readonly_user" DB_PASSWORD="SecureP@ssw0rd!" ./setup-docker-secrets.sh
+DB_USER="readonly_user" DB_PASSWORD="CHANGE_ME_IN_DOT_ENV" ./setup-docker-secrets.sh
 
 # Opción 2: Exportar variables primero
 export DB_USER="readonly_user"
-export DB_PASSWORD="SecureP@ssw0rd!"
+export DB_PASSWORD="CHANGE_ME_IN_DOT_ENV"
 ./setup-docker-secrets.sh
 ```
 
@@ -239,13 +251,15 @@ Estos valores **NO** funcionarán correctamente sin ser configurados, forzando a
 
 ## 📊 Impacto
 
-### Antes (Inseguro):
+### Antes (Inseguro)
+
 - 🔴 4 tipos de credenciales hardcodeadas
 - 🔴 Contraseñas en texto plano en repositorio
 - 🔴 Mismo secret para todos los desarrolladores
 - 🔴 Historial de Git contiene credenciales reales
 
-### Después (Seguro):
+### Después (Seguro)
+
 - 🟢 0 credenciales hardcodeadas
 - 🟢 Todas las credenciales vía variables de entorno
 - 🟢 Cada desarrollador usa sus propias credenciales

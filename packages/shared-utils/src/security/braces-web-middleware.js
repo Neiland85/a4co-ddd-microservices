@@ -7,8 +7,6 @@ exports.createBracesMonitoringService = createBracesMonitoringService;
 const braces_monitor_1 = require("./braces-monitor");
 const braces_security_1 = require("./braces-security");
 class BracesSecurityMiddleware {
-    validator;
-    monitor;
     constructor(config, serviceName = 'unknown-service') {
         this.validator = braces_security_1.BracesSecurityFactory.createValidator({
             maxExpansionSize: 50,
@@ -30,7 +28,7 @@ class BracesSecurityMiddleware {
                         const validation = await this.validator.validateExpression(value);
                         if (!validation.isSafe) {
                             blocked = true;
-                            this.monitor.recordAttack('EXPANSION_ATTACK', validation.issues.some(issue => issue.includes('CRITICAL') || issue.includes('CRITICAL'))
+                            this.monitor.recordAttack('EXPANSION_ATTACK', validation.issues.some((issue) => issue.includes('CRITICAL') || issue.includes('CRITICAL'))
                                 ? 'CRITICAL'
                                 : 'HIGH', {
                                 expression: value.substring(0, 200),
@@ -137,7 +135,6 @@ class BracesSecurityMiddleware {
 }
 exports.BracesSecurityMiddleware = BracesSecurityMiddleware;
 class BracesSanitizer {
-    validator;
     constructor() {
         this.validator = braces_security_1.BracesSecurityFactory.createValidator({
             maxExpansionSize: 100,
@@ -181,16 +178,15 @@ class BracesSanitizer {
 }
 exports.BracesSanitizer = BracesSanitizer;
 class BracesMonitoringService {
-    validator;
-    alerts = [];
-    stats = {
-        totalValidations: 0,
-        blockedExpressions: 0,
-        alertsTriggered: 0,
-    };
     constructor() {
+        this.alerts = [];
+        this.stats = {
+            totalValidations: 0,
+            blockedExpressions: 0,
+            alertsTriggered: 0,
+        };
         this.validator = braces_security_1.BracesSecurityFactory.createValidator();
-        this.validator.on('securityAlert', alert => {
+        this.validator.on('securityAlert', (alert) => {
             this.alerts.push({
                 ...alert,
                 timestamp: new Date().toISOString(),
@@ -215,7 +211,7 @@ class BracesMonitoringService {
     }
     clearOldAlerts(maxAgeMs = 3600000) {
         const cutoff = Date.now() - maxAgeMs;
-        this.alerts = this.alerts.filter(alert => new Date(alert.timestamp).getTime() > cutoff);
+        this.alerts = this.alerts.filter((alert) => new Date(alert.timestamp).getTime() > cutoff);
     }
 }
 exports.BracesMonitoringService = BracesMonitoringService;

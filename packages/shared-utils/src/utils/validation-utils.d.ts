@@ -19,3 +19,4 @@ export declare const min: (min: number, message?: string) => ValidationRule<numb
 export declare const max: (max: number, message?: string) => ValidationRule<number>;
 export declare const pattern: (regex: RegExp, message: string) => ValidationRule<string>;
 export declare const custom: <T>(validator: (value: T) => boolean, message: string) => ValidationRule<T>;
+//# sourceMappingURL=validation-utils.d.ts.map

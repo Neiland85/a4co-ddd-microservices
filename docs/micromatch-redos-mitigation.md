@@ -7,12 +7,14 @@ This document outlines comprehensive security mitigations for the **micromatch â
 ## Risk Assessment
 
 ### Vulnerability Details
+
 - **CVE**: Moderate severity ReDoS in micromatch
 - **Impact**: CPU exhaustion through malicious regex patterns
 - **Attack Vector**: Complex glob patterns with excessive wildcards, alternations, and nested groups
 - **Affected Operations**: `match()`, `isMatch()`, `makeRe()`, and other pattern matching functions
 
 ### Risk Levels
+
 - **Low**: Simple patterns like `*.js`
 - **Medium**: Patterns with moderate complexity (score 50-74)
 - **High**: Complex patterns with multiple wildcards/alternations (score 75-89)
@@ -37,6 +39,7 @@ const results = MicromatchPatternValidator.validatePatterns(['*.js', '**/*']);
 ```
 
 #### Key Features
+
 - **Complexity Analysis**: Calculates pattern complexity scores
 - **Risk Assessment**: Categorizes patterns as low/medium/high/critical risk
 - **Issue Detection**: Identifies specific dangerous pattern elements
@@ -66,6 +69,7 @@ if (result.success) {
 ```
 
 #### Key Features
+
 - **Timeout Protection**: Prevents long-running operations
 - **Circuit Breaker**: Stops operations after repeated failures
 - **Pattern Validation**: Integrates with pattern validator
@@ -88,6 +92,7 @@ const isMatch = await safeIsMatch('file.js', '*.js');
 ```
 
 #### Key Features
+
 - **Drop-in Replacement**: Same API as micromatch
 - **Automatic Protection**: All operations are automatically protected
 - **Error Handling**: Graceful degradation on failures
@@ -115,6 +120,7 @@ module.exports = {
 ### Detected Issues
 
 The ESLint rule detects:
+
 - **Excessive wildcards**: Patterns with >15 asterisks
 - **Nested groups**: Patterns with deeply nested parentheses
 - **Multiple alternations**: Patterns with >5 pipe characters
@@ -240,11 +246,13 @@ const result = await safe.isMatch(filename, pattern);
 ## Performance Considerations
 
 ### Timeout Settings
+
 - **Fast operations** (< 100ms): 500-1000ms timeout
 - **Complex operations**: 2000-5000ms timeout
 - **Batch operations**: 10000ms timeout
 
 ### Circuit Breaker Configuration
+
 - **Failure threshold**: 5 consecutive failures
 - **Recovery timeout**: 60 seconds
 - **Monitoring**: Track failure rates > 10%
@@ -296,4 +304,4 @@ logger.level = 'debug';
 
 ---
 
-*This mitigation framework provides comprehensive protection against micromatch ReDoS vulnerabilities while maintaining compatibility with existing code.*
+_This mitigation framework provides comprehensive protection against micromatch ReDoS vulnerabilities while maintaining compatibility with existing code._

@@ -263,27 +263,27 @@ jobs:
 
 ### ⚠️ IMPORTANTES
 
-4. **Inconsistencias en versiones de NestJS**
+1. **Inconsistencias en versiones de NestJS**
    - `product-service`: NestJS 11.x
    - Otros servicios: NestJS 10.x
    - Impacto: Posibles incompatibilidades
    - Urgencia: MEDIA
 
-5. **Frontend no integrado**
+2. **Frontend no integrado**
    - Sin configuración de API
    - Sin autenticación conectada
    - Urgencia: MEDIA
 
-6. **product-service sin observabilidad completa**
+3. **product-service sin observabilidad completa**
    - Usa logger manual en lugar de `@a4co/observability`
    - Impacto: Falta de métricas
    - Urgencia: BAJA
 
 ### 📝 MENORES
 
-7. Algunos servicios tienen archivos `.d.ts` y `.js.map` compilados (deben ir a .gitignore)
-8. Falta `compose.dev.yaml` para desarrollo local
-9. No hay documentación de setup en README principal
+1. Algunos servicios tienen archivos `.d.ts` y `.js.map` compilados (deben ir a .gitignore)
+2. Falta `compose.dev.yaml` para desarrollo local
+3. No hay documentación de setup en README principal
 
 ---
 

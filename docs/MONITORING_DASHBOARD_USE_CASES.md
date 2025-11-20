@@ -3,14 +3,17 @@
 ## 📋 Caso de Uso 1: Monitoreo de Rollout en Tiempo Real
 
 ### **Descripción**
+
 Como **ingeniero de DevOps**, quiero monitorear el progreso del rollout del 25% external beta en tiempo real para poder identificar y resolver problemas rápidamente.
 
 ### **Precondiciones**
+
 - Dashboard está ejecutándose en http://localhost:3003
 - Archivos JSON de métricas están actualizados
 - Usuario tiene acceso al navegador web
 
 ### **Flujo Principal**
+
 1. **Acceso al Dashboard**
    - Usuario abre navegador y navega a http://localhost:3003
    - Sistema carga la página principal con datos actuales
@@ -43,17 +46,20 @@ Como **ingeniero de DevOps**, quiero monitorear el progreso del rollout del 25% 
 ### **Flujos Alternativos**
 
 #### **A1: Dashboard No Carga**
+
 1. Usuario verifica que el servidor esté ejecutándose
 2. Revisa logs del servidor en la terminal
 3. Reinicia el servidor si es necesario
 4. Vuelve al flujo principal en el paso 1
 
 #### **A2: Datos Desactualizados**
+
 1. Usuario verifica que los archivos JSON estén actualizados
 2. Fuerza refresh manual de la página (F5)
 3. Contacta al equipo de datos si persiste el problema
 
 ### **Postcondiciones**
+
 - Usuario tiene visibilidad completa del estado del rollout
 - Alertas críticas han sido identificadas y abordadas
 - Métricas se actualizan automáticamente cada 30 segundos
@@ -63,14 +69,17 @@ Como **ingeniero de DevOps**, quiero monitorear el progreso del rollout del 25% 
 ## 📊 Caso de Uso 2: Análisis de Métricas Detalladas
 
 ### **Descripción**
+
 Como **analista de datos**, quiero profundizar en las métricas del rollout para identificar tendencias y generar insights accionables.
 
 ### **Precondiciones**
+
 - Dashboard está operativo
 - Usuario tiene conocimientos de análisis de métricas
 - Datos históricos están disponibles en archivos JSON
 
 ### **Flujo Principal**
+
 1. **Acceso a Métricas Detalladas**
    - Usuario hace clic en "Métricas Detalladas" desde el dashboard principal
    - Sistema carga página `/metrics` con datos completos
@@ -100,11 +109,13 @@ Como **analista de datos**, quiero profundizar en las métricas del rollout para
 ### **Flujos Alternativos**
 
 #### **A1: Datos Incompletos**
+
 1. Usuario verifica integridad de archivos JSON
 2. Contacta al equipo de ingeniería para completar datos
 3. Usa datos disponibles para análisis preliminar
 
 ### **Postcondiciones**
+
 - Usuario tiene insights accionables sobre el rendimiento del rollout
 - Reportes están disponibles para stakeholders
 - Recomendaciones de mejora han sido identificadas
@@ -114,14 +125,17 @@ Como **analista de datos**, quiero profundizar en las métricas del rollout para
 ## 🎯 Caso de Uso 3: Evaluación de Resultados de Phase 1
 
 ### **Descripción**
+
 Como **product manager**, quiero evaluar los resultados del rollout interno antes de aprobar el paso a Phase 2.
 
 ### **Precondiciones**
+
 - Phase 1 ha sido completada (3 días de monitoreo)
 - Reportes finales están disponibles
 - KPIs de éxito han sido definidos previamente
 
 ### **Flujo Principal**
+
 1. **Acceso a Phase 1**
    - Usuario navega a la sección "Phase 1 - Internal Beta"
    - Sistema carga datos históricos y resultados
@@ -151,11 +165,13 @@ Como **product manager**, quiero evaluar los resultados del rollout interno ante
 ### **Flujos Alternativos**
 
 #### **A1: KPIs No Cumplidos**
+
 1. Usuario identifica causas raíz
 2. Define plan de mitigación
 3. Puede requerir ajustes antes de Phase 2
 
 ### **Postcondiciones**
+
 - Decisión sobre Phase 2 está tomada
 - Lecciones aprendidas están documentadas
 - Plan de Phase 2 está ajustado según resultados
@@ -165,14 +181,17 @@ Como **product manager**, quiero evaluar los resultados del rollout interno ante
 ## 🚀 Caso de Uso 4: Planificación y Monitoreo de Phase 2
 
 ### **Descripción**
+
 Como **release manager**, quiero planificar y monitorear el rollout del 25% external beta de manera controlada.
 
 ### **Precondiciones**
+
 - Phase 1 ha sido exitosa
 - Infraestructura de Phase 2 está preparada
 - Plan de comunicación está definido
 
 ### **Flujo Principal**
+
 1. **Acceso a Phase 2**
    - Usuario navega a "Phase 2 - External Beta"
    - Sistema muestra plan y estado actual
@@ -205,12 +224,14 @@ Como **release manager**, quiero planificar y monitorear el rollout del 25% exte
 ### **Flujos Alternativos**
 
 #### **A1: Problemas Detectados**
+
 1. Sistema activa alertas automáticas
 2. Usuario evalúa severidad del problema
 3. Decide entre rollback parcial o completo
 4. Implementa solución y reanuda rollout
 
 ### **Postcondiciones**
+
 - Rollout de Phase 2 se completa exitosamente
 - Usuarios externos tienen acceso controlado
 - Sistema de monitoreo continúa operativo
@@ -220,14 +241,17 @@ Como **release manager**, quiero planificar y monitorear el rollout del 25% exte
 ## 🔧 Caso de Uso 5: Mantenimiento del Dashboard
 
 ### **Descripción**
+
 Como **ingeniero de plataforma**, quiero mantener y actualizar el dashboard de monitoreo para asegurar su funcionamiento continuo.
 
 ### **Precondiciones**
+
 - Acceso administrativo al servidor
 - Conocimientos de Node.js y Express.js
 - Acceso a archivos de configuración
 
 ### **Flujo Principal**
+
 1. **Verificación de Salud del Sistema**
    - Usuario verifica que el servidor esté ejecutándose
    - Revisa logs por errores o advertencias
@@ -251,11 +275,13 @@ Como **ingeniero de plataforma**, quiero mantener y actualizar el dashboard de m
 ### **Flujos Alternativos**
 
 #### **A1: Problemas de Rendimiento**
+
 1. Usuario identifica cuellos de botella
 2. Optimiza consultas a archivos JSON
 3. Implementa caching si es necesario
 
 ### **Postcondiciones**
+
 - Dashboard está funcionando óptimamente
 - Datos están actualizados y precisos
 - Sistema está preparado para uso continuo
@@ -265,14 +291,17 @@ Como **ingeniero de plataforma**, quiero mantener y actualizar el dashboard de m
 ## 📱 Caso de Uso 6: Acceso Móvil al Dashboard
 
 ### **Descripción**
+
 Como **usuario móvil**, quiero acceder al dashboard desde dispositivos móviles para monitoreo remoto.
 
 ### **Precondiciones**
+
 - Dashboard es responsive
 - Usuario tiene dispositivo móvil con navegador
 - Conexión a internet disponible
 
 ### **Flujo Principal**
+
 1. **Acceso desde Móvil**
    - Usuario abre navegador móvil
    - Navega a http://localhost:3003
@@ -291,11 +320,13 @@ Como **usuario móvil**, quiero acceder al dashboard desde dispositivos móviles
 ### **Flujos Alternativos**
 
 #### **A1: Pantalla Pequeña**
+
 1. Dashboard se adapta automáticamente
 2. Elementos se reorganizan para mejor usabilidad
 3. Funcionalidad completa se mantiene
 
 ### **Postcondiciones**
+
 - Usuario puede monitorear desde cualquier dispositivo
 - Experiencia móvil es fluida y completa
 - Acceso remoto está disponible
@@ -305,14 +336,17 @@ Como **usuario móvil**, quiero acceder al dashboard desde dispositivos móviles
 ## 🔐 Caso de Uso 7: Configuración de Seguridad
 
 ### **Descripción**
+
 Como **administrador de seguridad**, quiero configurar medidas de seguridad para proteger el acceso al dashboard.
 
 ### **Precondiciones**
+
 - Acceso administrativo al sistema
 - Conocimientos de seguridad web
 - Políticas de seguridad definidas
 
 ### **Flujo Principal**
+
 1. **Configuración de Autenticación**
    - Usuario configura JWT o OAuth
    - Define roles y permisos
@@ -336,11 +370,13 @@ Como **administrador de seguridad**, quiero configurar medidas de seguridad para
 ### **Flujos Alternativos**
 
 #### **A1: Amenaza Detectada**
+
 1. Sistema bloquea acceso automáticamente
 2. Administra recibe alerta inmediata
 3. Se activa protocolo de respuesta
 
 ### **Postcondiciones**
+
 - Dashboard está protegido contra amenazas comunes
 - Acceso está controlado y auditado
 - Políticas de seguridad están enforced
@@ -350,14 +386,17 @@ Como **administrador de seguridad**, quiero configurar medidas de seguridad para
 ## 📊 Caso de Uso 8: Generación de Reportes Ejecutivos
 
 ### **Descripción**
+
 Como **ejecutivo**, quiero recibir reportes automáticos del estado del rollout para toma de decisiones estratégicas.
 
 ### **Precondiciones**
+
 - Dashboard tiene datos históricos
 - Sistema de reportes está configurado
 - Stakeholders están definidos
 
 ### **Flujo Principal**
+
 1. **Configuración de Reportes**
    - Usuario define frecuencia de reportes (diaria/semanal)
    - Selecciona métricas clave a incluir
@@ -381,11 +420,13 @@ Como **ejecutivo**, quiero recibir reportes automáticos del estado del rollout 
 ### **Flujos Alternativos**
 
 #### **A1: Métricas Críticas**
+
 1. Reporte incluye alertas especiales
 2. Se activa protocolo de escalamiento
 3. Se convoca reunión de crisis si es necesario
 
 ### **Postcondiciones**
+
 - Stakeholders tienen información actualizada
 - Decisiones se toman basadas en datos
 - Estrategia se ajusta según resultados
@@ -395,14 +436,17 @@ Como **ejecutivo**, quiero recibir reportes automáticos del estado del rollout 
 ## 🔄 Caso de Uso 9: Integración con Herramientas Externas
 
 ### **Descripción**
+
 Como **arquitecto de sistemas**, quiero integrar el dashboard con herramientas existentes de monitoreo y alerting.
 
 ### **Precondiciones**
+
 - APIs de herramientas externas disponibles
 - Permisos de integración configurados
 - Conocimientos de APIs y webhooks
 
 ### **Flujo Principal**
+
 1. **Identificación de Integraciones**
    - Usuario identifica herramientas a integrar:
      - Slack para notificaciones
@@ -427,11 +471,13 @@ Como **arquitecto de sistemas**, quiero integrar el dashboard con herramientas e
 ### **Flujos Alternativos**
 
 #### **A1: API Incompatible**
+
 1. Usuario desarrolla adaptador personalizado
 2. Implementa transformación de datos
 3. Documenta solución para futuro
 
 ### **Postcondiciones**
+
 - Dashboard está integrado con ecosistema existente
 - Datos fluyen automáticamente entre sistemas
 - Monitoreo unificado está disponible
@@ -441,14 +487,17 @@ Como **arquitecto de sistemas**, quiero integrar el dashboard con herramientas e
 ## 🎯 Caso de Uso 10: Optimización de Performance
 
 ### **Descripción**
+
 Como **ingeniero de performance**, quiero optimizar el dashboard para manejar alta carga durante rollouts críticos.
 
 ### **Precondiciones**
+
 - Dashboard está funcionando
 - Herramientas de profiling disponibles
 - Conocimientos de optimización web
 
 ### **Flujo Principal**
+
 1. **Análisis de Performance Actual**
    - Usuario mide tiempos de respuesta
    - Identifica cuellos de botella
@@ -477,16 +526,18 @@ Como **ingeniero de performance**, quiero optimizar el dashboard para manejar al
 ### **Flujos Alternativos**
 
 #### **A1: Degradación Detectada**
+
 1. Sistema escala automáticamente
 2. Usuario investiga causa raíz
 3. Implementa solución permanente
 
 ### **Postcondiciones**
+
 - Dashboard maneja alta carga eficientemente
 - Tiempos de respuesta son óptimos
 - Sistema es escalable y resilient
 
 ---
 
-*Documentación de Casos de Uso - A4CO Monitoring Dashboard v1.0*</content>
+_Documentación de Casos de Uso - A4CO Monitoring Dashboard v1.0_</content>
 <parameter name="filePath">/Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices/docs/MONITORING_DASHBOARD_USE_CASES.md

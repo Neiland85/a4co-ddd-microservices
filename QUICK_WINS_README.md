@@ -14,13 +14,14 @@ docker --version  # 28.5.1+
 
 ## 🎯 Opción 1: Ejecutar TODO Automáticamente (Recomendado)
 
-### Ejecutar el master script:
+### Ejecutar el master script
 
 ```bash
 ./scripts/quick-wins-all.sh
 ```
 
 Este script ejecutará los 4 Quick Wins en orden:
+
 1. ✅ Estandarizar versiones de NestJS
 2. ✅ Completar OrderModule
 3. ✅ Arrancar NATS + crear .env
@@ -39,6 +40,7 @@ Este script ejecutará los 4 Quick Wins en orden:
 ```
 
 **Qué hace**:
+
 - Actualiza `@nestjs/common`, `@nestjs/core`, `@nestjs/microservices` a v11.x
 - Sincroniza versiones en todos los microservicios
 - Resuelve conflictos de dependencias
@@ -79,12 +81,14 @@ Este script ejecutará los 4 Quick Wins en orden:
 ```
 
 **Qué hace**:
+
 - Crea archivos `.env` y `.env.local` con variables necesarias
 - Arranca NATS JetStream en Docker
 - Verifica PostgreSQL y Redis
 - Genera Prisma clients
 
 **Resultado**:
+
 ```
 ✅ NATS:       nats://localhost:4222
 ✅ NATS UI:    http://localhost:8222
@@ -135,6 +139,7 @@ pnpm dev:order
 ```
 
 **Esperado**:
+
 ```
 [Nest] 12345 - 01/01/2024, 10:00:00 AM   LOG [NestFactory] Starting Nest application...
 [Nest] 12345 - 01/01/2024, 10:00:00 AM   LOG [InstanceLoader] OrderModule dependencies initialized
@@ -146,12 +151,14 @@ pnpm dev:order
 
 ### 3. Probar Endpoints
 
-#### Health Check:
+#### Health Check
+
 ```bash
 curl http://localhost:3004/orders
 ```
 
 **Esperado**:
+
 ```json
 {
   "status": "ok",
@@ -160,7 +167,8 @@ curl http://localhost:3004/orders
 }
 ```
 
-#### Crear Order:
+#### Crear Order
+
 ```bash
 curl -X POST http://localhost:3004/orders \
   -H 'Content-Type: application/json' \
@@ -177,6 +185,7 @@ curl -X POST http://localhost:3004/orders \
 ```
 
 **Esperado**:
+
 ```json
 {
   "orderId": "order-1704096000000-abc123",
@@ -185,12 +194,14 @@ curl -X POST http://localhost:3004/orders \
 }
 ```
 
-#### Ver Métricas:
+#### Ver Métricas
+
 ```bash
 curl http://localhost:3004/orders/metrics
 ```
 
 **Esperado**:
+
 ```
 # HELP orders_created_total Total number of orders created
 # TYPE orders_created_total counter
@@ -202,12 +213,14 @@ orders_created_total{customer_type="standard"} 1
 
 ### 4. Verificar NATS
 
-#### Ver UI de NATS:
+#### Ver UI de NATS
+
 ```bash
 open http://localhost:8222
 ```
 
-#### Ver logs:
+#### Ver logs
+
 ```bash
 docker logs nats
 ```
@@ -221,6 +234,7 @@ docker logs nats
 ### Error: "Cannot find module '@nestjs/microservices'"
 
 **Solución**:
+
 ```bash
 pnpm install
 pnpm --filter @a4co/order-service add @nestjs/microservices@^11.1.8
@@ -231,11 +245,13 @@ pnpm --filter @a4co/order-service add @nestjs/microservices@^11.1.8
 ### Error: "Port 4222 already in use"
 
 **Ver qué está usando el puerto**:
+
 ```bash
 lsof -i :4222
 ```
 
 **Solución**:
+
 ```bash
 docker stop nats
 docker rm nats
@@ -247,11 +263,13 @@ docker rm nats
 ### Error: "ECONNREFUSED postgresql://..."
 
 **Verificar PostgreSQL**:
+
 ```bash
 docker ps | grep postgres
 ```
 
 **Si no está corriendo**:
+
 ```bash
 docker compose -f .devcontainer/docker-compose.dev.yml up -d postgres
 ```
@@ -261,6 +279,7 @@ docker compose -f .devcontainer/docker-compose.dev.yml up -d postgres
 ### Error de compilación TypeScript
 
 **Limpiar y reinstalar**:
+
 ```bash
 rm -rf node_modules apps/*/node_modules
 pnpm install
@@ -272,6 +291,7 @@ pnpm build:all
 ### NATS no recibe eventos
 
 **Verificar conexión**:
+
 ```bash
 # Ver logs del servicio
 pnpm dev:order
@@ -287,7 +307,7 @@ docker logs -f nats
 
 ## 📊 Estado del Proyecto Después de Quick Wins
 
-### ✅ Lo que funciona:
+### ✅ Lo que funciona
 
 - [x] Order Service compila sin errores
 - [x] Endpoints REST funcionando
@@ -297,7 +317,7 @@ docker logs -f nats
 - [x] DDD patterns implementados
 - [x] Dependency Injection configurado
 
-### ⚠️ Lo que falta (ver prompts de agentes):
+### ⚠️ Lo que falta (ver prompts de agentes)
 
 - [ ] Payment Service DDD completo
 - [ ] Inventory Service con eventos
@@ -311,34 +331,37 @@ docker logs -f nats
 
 ## 🚀 Next Steps
 
-### Inmediato (próximas horas):
+### Inmediato (próximas horas)
 
 1. **Ejecutar Agente #2**: Completar Payment Service
+
    ```
    Ver: PROMPTS_AGENTES.md → Agente #2
    ```
 
 2. **Ejecutar Agente #3**: Completar Inventory Service
+
    ```
    Ver: PROMPTS_AGENTES.md → Agente #3
    ```
 
 3. **Test E2E completo**: Order → Payment → Inventory
+
    ```bash
    pnpm test:e2e tests/e2e/order-saga-flow.e2e.spec.ts
    ```
 
-### Corto plazo (próximos días):
+### Corto plazo (próximos días)
 
-4. **Ejecutar Agente #4**: Dockerfiles de producción
-5. **Ejecutar Agente #5**: CI/CD completo
-6. **Ejecutar Agente #6**: Event Bus centralizado
+1. **Ejecutar Agente #4**: Dockerfiles de producción
+2. **Ejecutar Agente #5**: CI/CD completo
+3. **Ejecutar Agente #6**: Event Bus centralizado
 
-### Mediano plazo (próximas semanas):
+### Mediano plazo (próximas semanas)
 
-7. **Ejecutar Agente #7**: Kubernetes + Helm
-8. **Ejecutar Agente #8**: Testing avanzado
-9. **Ejecutar Agente #9**: Observability completa
+1. **Ejecutar Agente #7**: Kubernetes + Helm
+2. **Ejecutar Agente #8**: Testing avanzado
+3. **Ejecutar Agente #9**: Observability completa
 
 ---
 
@@ -354,6 +377,7 @@ docker logs -f nats
 ## 🎓 Conceptos Clave Implementados
 
 ### Domain-Driven Design (DDD)
+
 - ✅ **Aggregates**: Order (con AggregateRoot)
 - ✅ **Value Objects**: OrderId, OrderItem, Money
 - ✅ **Domain Events**: OrderCreatedEvent, OrderStatusChangedEvent
@@ -361,11 +385,13 @@ docker logs -f nats
 - ✅ **Use Cases**: CreateOrderUseCase
 
 ### Event-Driven Architecture
+
 - ✅ **Event Bus**: NATS JetStream
 - ✅ **Event Publishing**: Desde aggregates
 - ✅ **Event Subscription**: @EventPattern decorators (próximamente)
 
 ### Observability
+
 - ✅ **Metrics**: Prometheus (orders_created_total, etc.)
 - ✅ **Health Checks**: /orders endpoint
 - ✅ **Structured Logging**: Pino (heredado de main.ts)
@@ -390,6 +416,7 @@ Antes de continuar con los agentes, asegúrate de que:
 **¿Listo para el siguiente paso?**
 
 Ejecuta:
+
 ```bash
 ./scripts/quick-wins-all.sh
 ```

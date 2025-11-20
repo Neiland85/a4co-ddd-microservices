@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { NatsEventBus, EventMessage } from '@a4co/shared-utils/events/nats-event-bus';
+import { Injectable, Logger, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { EventSubjects } from '@a4co/shared-utils/events/subjects';
 import { DomainEvent } from '@a4co/shared-utils/domain/domain-event';
 import { Payment } from '../../domain/entities/payment.entity';
@@ -25,7 +25,10 @@ const PAYMENT_EVENT_SUBJECT_MAP = new Map<Function, string>([
 export class PaymentEventPublisher {
   private readonly logger = new Logger(PaymentEventPublisher.name);
 
-  constructor(private readonly eventBus: NatsEventBus) { }
+  constructor(
+    @Inject('NATS_CLIENT')
+    private readonly natsClient: ClientProxy,
+  ) {}
 
   public async publishPaymentEvents(payment: Payment): Promise<void> {
     const events = payment.getUncommittedEvents();
@@ -45,30 +48,31 @@ export class PaymentEventPublisher {
       return;
     }
 
-    if (!this.eventBus.getConnectionStatus()) {
-      await this.eventBus.connect();
-    }
-
     const domainEvent = event as PaymentDomainEvent<PaymentEventPayload>;
     const payload = domainEvent.payload ?? (event.eventData as PaymentEventPayload);
 
-    const message: EventMessage = {
+    const message = {
       eventId: event.eventId,
       eventType: event.eventType,
-      timestamp: payload.timestamp,
+      aggregateId: event.aggregateId,
+      timestamp: event.occurredOn.toISOString(),
       data: {
-        ...payload,
+        paymentId: payload.paymentId,
+        orderId: payload.orderId,
+        amount: payload.amount,
+        currency: payload.currency,
+        status: payload.status,
+        customerId: payload.customerId,
+        stripePaymentIntentId: payload.stripePaymentIntentId,
         timestamp: payload.timestamp.toISOString(),
       },
       metadata: {
-        aggregateId: event.aggregateId,
         eventVersion: event.eventVersion,
-        occurredOn: event.occurredOn,
         sagaId: event.sagaId,
       },
     };
 
-    await this.eventBus.publish(subject, message);
+    this.natsClient.emit(subject, message);
     this.logger.log(`Published ${event.eventType} to ${subject}`);
   }
 
@@ -82,4 +86,3 @@ export class PaymentEventPublisher {
     return undefined;
   }
 }
-

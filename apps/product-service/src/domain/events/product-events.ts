@@ -1,9 +1,9 @@
-import { DomainEvent } from '../base-classes';
+import { DomainEvent } from '@a4co/shared-utils';
 
 export class ProductCreatedEvent extends DomainEvent {
   constructor(
-    public aggregateId: string,
-    public data: {
+    aggregateId: string,
+    data: {
       productId: string;
       name: string;
       description: string;
@@ -17,18 +17,14 @@ export class ProductCreatedEvent extends DomainEvent {
       createdAt: Date;
     },
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductCreatedEvent';
+    super(aggregateId, data);
   }
 }
 
 export class ProductUpdatedEvent extends DomainEvent {
   constructor(
-    public aggregateId: string,
-    public data: {
+    aggregateId: string,
+    data: {
       productId: string;
       changedFields: string[];
       oldValues: Record<string, any>;
@@ -36,18 +32,14 @@ export class ProductUpdatedEvent extends DomainEvent {
       updatedAt: Date;
     },
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductUpdatedEvent';
+    super(aggregateId, data);
   }
 }
 
 export class ProductVariantAddedEvent extends DomainEvent {
   constructor(
-    public aggregateId: string,
-    public data: {
+    aggregateId: string,
+    data: {
       productId: string;
       variantId: string;
       variantName: string;
@@ -56,27 +48,19 @@ export class ProductVariantAddedEvent extends DomainEvent {
       addedAt: Date;
     },
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductVariantAddedEvent';
+    super(aggregateId, data);
   }
 }
 
 export class ProductDeactivatedEvent extends DomainEvent {
   constructor(
-    public aggregateId: string,
-    public data: {
+    aggregateId: string,
+    data: {
       productId: string;
       reason: string;
       deactivatedAt: Date;
     },
   ) {
-    super();
-  }
-
-  eventType(): string {
-    return 'ProductDeactivatedEvent';
+    super(aggregateId, data);
   }
 }

@@ -701,7 +701,7 @@ import { Button } from '@/components/ui/button';
 ```
 
 
-2. **Conflictos de tipos TypeScript**
+1. **Conflictos de tipos TypeScript**
 
 
 ```typescript
@@ -713,7 +713,7 @@ interface AdaptedProps extends Omit<OriginalV0Props, 'conflictingProp'> {
 ```
 
 
-3. **Estilos no aplicados correctamente**
+1. **Estilos no aplicados correctamente**
 
 
 ```typescript
@@ -728,7 +728,7 @@ import styles from './V0StyleFix.module.css';
 ```
 
 
-4. **Rendimiento lento con múltiples componentes v0**
+1. **Rendimiento lento con múltiples componentes v0**
 
 
 ```typescript

@@ -24,8 +24,9 @@ export class PaymentProcessingEvent extends PaymentDomainEvent<PaymentProcessing
         orderId: params.orderId,
         customerId: params.customerId,
         amount: params.amount,
+        currency: params.amount.currency,
         metadata: params.metadata ?? {},
-        stripePaymentIntentId: params.stripePaymentIntentId,
+        stripePaymentIntentId: params.stripePaymentIntentId ?? null,
         status: PaymentStatusValue.PROCESSING,
         timestamp: params.timestamp ?? new Date(),
       },
@@ -34,4 +35,3 @@ export class PaymentProcessingEvent extends PaymentDomainEvent<PaymentProcessing
     );
   }
 }
-

@@ -6,14 +6,16 @@ import helmet from 'helmet';
 import { ProductModule } from './product.module';
 
 // Simple logger for now until observability package is fixed
+import type { Request, Response, NextFunction } from 'express';
+
 const logger = {
   log: (message: string) => console.log(`[LOG] ${message}`),
   info: (message: string) => console.log(`[INFO] ${message}`),
   warn: (message: string) => console.warn(`[WARN] ${message}`),
-  error: (message: string, err?: any) => console.error(`[ERROR] ${message}`, err),
+  error: (message: string, err?: unknown) => console.error(`[ERROR] ${message}`, err),
   debug: (message: string) => console.debug(`[DEBUG] ${message}`),
   verbose: (message: string) => console.log(`[VERBOSE] ${message}`),
-  pinoHttpMiddleware: () => (req: any, res: any, next: any) => next(),
+  pinoHttpMiddleware: () => (req: Request, res: Response, next: NextFunction) => next(),
 };
 
 async function bootstrap() {

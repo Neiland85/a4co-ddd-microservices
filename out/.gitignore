@@ -1,0 +1,125 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+package-lock.json
+
+# Testing
+coverage
+*.lcov
+.nyc_output
+
+<<<<<<< HEAD
+# Next.js
+=======
+# TypeScript / TSBuild
+*.tsbuildinfo
+
+# ESLint / Stylelint
+.eslintcache
+.stylelintcache
+
+# Node / Package managers
+node_modules/
+jspm_packages/
+.pnpm-store/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Node.js binaries and large files
+**/node
+**/*.node
+node-v*/**
+*.tar.xz
+*.tar.gz
+
+# pnpm lock
+pnpm-lock.yaml
+
+# Cache
+.cache
+.parcel-cache
+.vitepress/
+.temp
+.vuepress/dist
+.web_modules/
+.svelte-kit/
+
+# Framework outputs
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+.next/
+out/
+build/
+dist/
+
+# Production
+*.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+
+<<<<<<< HEAD
+# Archivos .env en servicios
+apps/*/.env
+apps/*/.env.local
+apps/*/.env.production
+apps/*/.env.staging
+
+# Otros comunes
+node_modules/
+*.log
+
+# Turbo
+.turbo/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Prisma generated
+/src/generated/prisma
+=======
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+/src/generated/prisma
+.turbo/
+>>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md

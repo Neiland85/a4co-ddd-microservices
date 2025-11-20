@@ -7,7 +7,8 @@
 
 ## TU SITUACIÓN ACTUAL vs OBJETIVO
 
-### ANTES (Actual - Sobredimensionado):
+### ANTES (Actual - Sobredimensionado)
+
 ```
 ❌ 16 microservicios (8 completos + 2 parciales + 6 vacíos)
 ❌ Jaeger + OpenTelemetry + Prometheus + Grafana
@@ -16,7 +17,8 @@
 ❌ Complejidad innecesaria
 ```
 
-### DESPUÉS (Objetivo - Simplificado):
+### DESPUÉS (Objetivo - Simplificado)
+
 ```
 ✅ 1 monolito NestJS con 5 módulos
 ✅ Logs simples (Winston)
@@ -32,6 +34,7 @@
 Has elegido: **Opción 1 - Monolito Simple**
 
 Escalarás a microservicios solo si:
+
 - Tienes >10,000 artesanos
 - Tienes >100,000 usuarios/mes
 - El cliente lo pide y paga
@@ -41,6 +44,7 @@ Escalarás a microservicios solo si:
 ## PASO 1: PREPARACIÓN (HOY - 30 minutos)
 
 ### 1.1 Crear rama nueva
+
 ```bash
 cd /Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices
 
@@ -52,6 +56,7 @@ git branch
 ```
 
 ### 1.2 Backup de seguridad
+
 ```bash
 # Por si acaso
 git tag backup-before-monolith
@@ -59,6 +64,7 @@ git push origin backup-before-monolith
 ```
 
 ### 1.3 Leer documentos
+
 ```bash
 # Revisar estos 3 archivos:
 cat PLAN_MONOLITO_SIMPLE.md          # Plan completo (6000 líneas)
@@ -71,6 +77,7 @@ cat INICIO_RAPIDO.md                 # Este archivo
 ## PASO 2: CREAR ESTRUCTURA (HOY - 1 hora)
 
 ### 2.1 Crear directorios
+
 ```bash
 # Backend monolito
 mkdir -p backend/src/modules/{auth,user,product,artisan,geo}
@@ -86,6 +93,7 @@ tree -L 3 backend/
 ```
 
 ### 2.2 Crear package.json base
+
 ```bash
 cd backend
 
@@ -132,6 +140,7 @@ EOF
 ```
 
 ### 2.3 Instalar dependencias
+
 ```bash
 pnpm install
 ```
@@ -141,6 +150,7 @@ pnpm install
 ## PASO 3: COPIAR CÓDIGO EXISTENTE (HOY - 2 horas)
 
 ### 3.1 Copiar Auth Module
+
 ```bash
 # Copiar estructura completa
 cp -r ../apps/auth-service/src/domain backend/src/modules/auth/
@@ -153,6 +163,7 @@ ls -la backend/src/modules/auth/
 ```
 
 ### 3.2 Copiar User Module
+
 ```bash
 cp -r ../apps/user-service/src/domain backend/src/modules/user/
 cp -r ../apps/user-service/src/application backend/src/modules/user/
@@ -161,6 +172,7 @@ cp -r ../apps/user-service/src/presentation backend/src/modules/user/
 ```
 
 ### 3.3 Copiar Product Module
+
 ```bash
 cp -r ../apps/product-service/src/domain backend/src/modules/product/
 cp -r ../apps/product-service/src/application backend/src/modules/product/
@@ -169,6 +181,7 @@ cp -r ../apps/product-service/src/presentation backend/src/modules/product/
 ```
 
 ### 3.4 Ajustar imports (IMPORTANTE)
+
 ```bash
 # Cambiar imports de @a4co/shared-utils a rutas relativas
 find backend/src/modules -type f -name "*.ts" -exec sed -i.bak 's/@a4co\/shared-utils/..\/..\/..\/shared/g' {} \;
@@ -182,6 +195,7 @@ grep -r "@a4co" backend/src/modules/ || echo "✅ Imports limpios"
 ## PASO 4: CREAR APP.MODULE (HOY - 30 minutos)
 
 ### 4.1 Crear main.ts
+
 ```typescript
 // backend/src/main.ts
 import { NestFactory } from '@nestjs/core';
@@ -208,6 +222,7 @@ bootstrap();
 ```
 
 ### 4.2 Crear app.module.ts
+
 ```typescript
 // backend/src/app.module.ts
 import { Module } from '@nestjs/common';
@@ -235,6 +250,7 @@ export class AppModule {}
 ```
 
 ### 4.3 Crear logger simple
+
 ```typescript
 // backend/src/common/logger.service.ts
 import * as winston from 'winston';
@@ -259,20 +275,24 @@ export const logger = winston.createLogger({
 ## PASO 5: CONSOLIDAR PRISMA SCHEMA (HOY - 1 hora)
 
 ### 5.1 Crear schema base
+
 ```bash
 cd backend
 pnpx prisma init
 ```
 
 ### 5.2 Copiar schema completo
+
 Copiar el contenido de [PLAN_MONOLITO_SIMPLE.md](PLAN_MONOLITO_SIMPLE.md) sección "Consolidar Prisma Schema" a `backend/prisma/schema.prisma`
 
 ### 5.3 Generar cliente
+
 ```bash
 pnpx prisma generate
 ```
 
 ### 5.4 Crear migración
+
 ```bash
 pnpx prisma migrate dev --name init
 ```
@@ -282,23 +302,28 @@ pnpx prisma migrate dev --name init
 ## PASO 6: VERIFICAR QUE COMPILA (HOY - 30 minutos)
 
 ### 6.1 Compilar backend
+
 ```bash
 cd backend
 pnpm run build
 ```
 
 ### 6.2 Resolver errores de imports
+
 Si hay errores, ajustar:
+
 - Paths relativos (`../../../`)
 - Módulos faltantes (crear stubs vacíos)
 - Dependencias de shared-utils
 
 ### 6.3 Iniciar en dev
+
 ```bash
 pnpm run start:dev
 ```
 
 Deberías ver:
+
 ```
 🚀 Backend monolito iniciado en http://localhost:3000
 ```
@@ -308,6 +333,7 @@ Deberías ver:
 ## PASO 7: PRÓXIMOS DÍAS (Esta semana)
 
 ### Día 2-3: Crear Artisan Module (20 horas)
+
 ```bash
 # Ver PLAN_MONOLITO_SIMPLE.md Fase 3
 # Crear:
@@ -318,12 +344,14 @@ Deberías ver:
 ```
 
 ### Día 4: Crear Geo Module (8 horas)
+
 ```bash
 # Ver PLAN_MONOLITO_SIMPLE.md Fase 4
 # Seed data de provincias de Andalucía
 ```
 
 ### Día 5: Testing básico (8 horas)
+
 ```bash
 # Tests e2e para artisan module
 ```
@@ -333,12 +361,14 @@ Deberías ver:
 ## PASO 8: PRÓXIMAS 2 SEMANAS
 
 ### Semana 2: Frontend (30 horas)
+
 - Setup Vite + React
 - API client con Axios
 - Páginas: Home, ArtisanDetail, Search
 - Componentes: ArtisanCard, SearchFilters, Map
 
 ### Semana 3: Deploy (15 horas)
+
 - Docker Compose simplificado
 - Deploy a VPS o Railway
 - SSL + Nginx
@@ -359,7 +389,8 @@ Deberías ver:
 
 ## CHECKLIST DIARIO
 
-### ✅ HOY (Día 1):
+### ✅ HOY (Día 1)
+
 - [ ] Crear rama `feature/migrate-to-monolith`
 - [ ] Crear estructura de carpetas
 - [ ] Copiar módulos existentes (auth, user, product)
@@ -369,22 +400,26 @@ Deberías ver:
 - [ ] Compilar y verificar que arranca
 - [ ] Commit: "feat: setup monolith structure"
 
-### Mañana (Día 2):
+### Mañana (Día 2)
+
 - [ ] Crear Artisan Domain Layer
 - [ ] Crear Artisan Application Layer (use cases)
 - [ ] Commit: "feat: artisan domain and application"
 
-### Día 3:
+### Día 3
+
 - [ ] Crear Artisan Infrastructure Layer
 - [ ] Crear Artisan Presentation Layer (controller)
 - [ ] Commit: "feat: artisan infrastructure and API"
 
-### Día 4:
+### Día 4
+
 - [ ] Crear Geo Module completo
 - [ ] Seed data provincias Andalucía
 - [ ] Commit: "feat: geo module with Andalusia data"
 
-### Día 5:
+### Día 5
+
 - [ ] Tests e2e artisan module
 - [ ] Commit: "test: artisan e2e tests"
 
@@ -393,6 +428,7 @@ Deberías ver:
 ## COMANDOS ÚTILES
 
 ### Desarrollo
+
 ```bash
 # Backend
 cd backend
@@ -408,6 +444,7 @@ pnpm run build              # Build producción
 ```
 
 ### Database
+
 ```bash
 # Ver DB
 pnpx prisma studio
@@ -420,6 +457,7 @@ pnpm run seed
 ```
 
 ### Git
+
 ```bash
 # Commits frecuentes
 git add .
@@ -431,29 +469,34 @@ git push origin feature/migrate-to-monolith
 
 ## MÉTRICAS DE PROGRESO
 
-### ¿Cómo saber que vas bien?
+### ¿Cómo saber que vas bien
 
-#### Día 1 (HOY):
+#### Día 1 (HOY)
+
 - [ ] Backend compila sin errores
 - [ ] Backend arranca en `http://localhost:3000`
 - [ ] Endpoints existentes funcionan: `/auth/login`, `/products`
 
-#### Día 3:
+#### Día 3
+
 - [ ] Endpoint `/artisans` devuelve 200
 - [ ] POST `/artisans` crea artesano
 - [ ] GET `/artisans?provinceId=1` filtra correctamente
 
-#### Semana 1:
+#### Semana 1
+
 - [ ] Artisan Module 100% funcional
 - [ ] Tests e2e passing
 - [ ] Swagger docs disponible en `/api`
 
-#### Semana 2:
+#### Semana 2
+
 - [ ] Frontend muestra listado de artesanos
 - [ ] Búsqueda por ubicación funciona
 - [ ] Detalle de artesano se renderiza
 
-#### Semana 3:
+#### Semana 3
+
 - [ ] Deploy en staging
 - [ ] URL pública accesible
 - [ ] Tests e2e en staging passing
@@ -463,12 +506,14 @@ git push origin feature/migrate-to-monolith
 ## PROBLEMAS COMUNES Y SOLUCIONES
 
 ### Error: "Cannot find module '@a4co/shared-utils'"
+
 ```bash
 # Solución: Ajustar imports
 find backend/src -name "*.ts" -exec sed -i 's/@a4co\/shared-utils/..\/..\/..\/shared/g' {} \;
 ```
 
 ### Error: "Module not found: AuthModule"
+
 ```bash
 # Solución: Verificar que copiaste correctamente
 ls -la backend/src/modules/auth/
@@ -476,6 +521,7 @@ ls -la backend/src/modules/auth/
 ```
 
 ### Error: Prisma client not generated
+
 ```bash
 # Solución: Regenerar
 cd backend
@@ -483,6 +529,7 @@ pnpx prisma generate
 ```
 
 ### Backend no arranca
+
 ```bash
 # Solución: Verificar logs
 cd backend
@@ -497,12 +544,14 @@ pnpm run build
 
 ## SOPORTE Y AYUDA
 
-### Archivos de referencia:
+### Archivos de referencia
+
 1. [PLAN_MONOLITO_SIMPLE.md](PLAN_MONOLITO_SIMPLE.md) - Plan completo detallado
 2. [ANALISIS_SIMPLIFICACION.md](ANALISIS_SIMPLIFICACION.md) - Por qué simplificar
 3. Este archivo - Guía paso a paso
 
-### Próximos pasos cuando termines:
+### Próximos pasos cuando termines
+
 1. Crear PR: `feature/migrate-to-monolith` → `main`
 2. Review y merge
 3. Deploy a staging
@@ -513,14 +562,16 @@ pnpm run build
 
 ## MOTIVACIÓN 💪
 
-### Recuerda:
+### Recuerda
+
 - ✅ Estás simplificando de 770h → 145h (80% menos!)
 - ✅ Monolito es MÁS RÁPIDO de desarrollar
 - ✅ Monolito es MÁS FÁCIL de mantener
 - ✅ Puedes escalar cuando el negocio lo justifique
 - ✅ KISS: Keep It Simple, Stupid
 
-### Portal de artesanos NO necesita:
+### Portal de artesanos NO necesita
+
 - ❌ Jaeger (tracing distribuido)
 - ❌ Prometheus + Grafana (métricas enterprise)
 - ❌ NATS (message broker)
@@ -528,7 +579,8 @@ pnpm run build
 - ❌ Saga pattern
 - ❌ Event sourcing
 
-### Portal de artesanos SÍ necesita:
+### Portal de artesanos SÍ necesita
+
 - ✅ Listado de artesanos con filtros
 - ✅ Búsqueda por ubicación (Jaén/Andalucía)
 - ✅ Perfiles completos con galería
@@ -542,6 +594,7 @@ pnpm run build
 **Siguiente paso:** Ejecutar "PASO 1" de este documento.
 
 Abre una terminal y empieza:
+
 ```bash
 cd /Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices
 git checkout -b feature/migrate-to-monolith

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+export declare const getGlobalLogger: any;
 export interface BracesSecurityAlert {
     id: string;
     timestamp: Date;
@@ -55,3 +56,4 @@ export declare class BracesSecurityMonitorFactory {
     static getAllMonitors(): Map<string, BracesSecurityMonitor>;
     static getGlobalMetrics(): BracesSecurityMetrics;
 }
+//# sourceMappingURL=braces-monitor.d.ts.map

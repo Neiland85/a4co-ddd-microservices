@@ -6,7 +6,7 @@ Este documento resume el **sistema completo de 12 agentes** diseñados para llev
 
 ---
 
-## 🎯 ¿Qué es este sistema?
+## 🎯 ¿Qué es este sistema
 
 Un conjunto de **12 prompts especializados** que puedes ejecutar con **Claude Code** (o cualquier asistente de IA) para:
 
@@ -53,6 +53,7 @@ open docs/prompts/PROMPTS_INDEX.md
 ```
 
 Este archivo contiene:
+
 - ✅ Descripción de cada agente
 - ✅ Roadmap de ejecución recomendado
 - ✅ Métricas de éxito
@@ -69,12 +70,14 @@ Esto desbloquea el proyecto y deja todo listo para empezar con los agentes.
 ### 3. Comienza con Agent #1
 
 **Opción A: Manualmente**
+
 ```bash
 open docs/prompts/AGENT_1_ORDER_SAGA.md
 # Copia el contenido y pégalo en Claude Code
 ```
 
 **Opción B: Con script**
+
 ```bash
 # Crear script helper (opcional)
 cat > execute-agent.sh <<'EOF'
@@ -139,15 +142,17 @@ chmod +x execute-agent.sh
 
 ---
 
-## 🎓 ¿Qué aprenderás implementando cada agente?
+## 🎓 ¿Qué aprenderás implementando cada agente
 
 ### Agent #1: Order Saga
+
 - ✅ Saga Pattern (orchestration vs choreography)
 - ✅ Compensating transactions
 - ✅ Event handlers en NestJS
 - ✅ Métricas de saga lifecycle
 
 ### Agent #2: Payment DDD
+
 - ✅ Domain-Driven Design patterns
 - ✅ Aggregates, Value Objects, Domain Events
 - ✅ Repository pattern
@@ -155,18 +160,21 @@ chmod +x execute-agent.sh
 - ✅ Integración con Stripe API
 
 ### Agent #3: Inventory Events
+
 - ✅ Event-driven architecture
 - ✅ Stock reservation pattern
 - ✅ Concurrency handling (race conditions)
 - ✅ Event expiration (TTL)
 
 ### Agent #4: Production Docker
+
 - ✅ Multi-stage builds
 - ✅ Security hardening (non-root users)
 - ✅ Image optimization (<100MB)
 - ✅ Vulnerability scanning
 
 ### Agent #5: CI/CD
+
 - ✅ GitHub Actions workflows
 - ✅ Automated testing en CI
 - ✅ Docker image build + push
@@ -174,6 +182,7 @@ chmod +x execute-agent.sh
 - ✅ Rollback strategies
 
 ### Agent #6: Event Bus
+
 - ✅ Event Bus abstraction
 - ✅ NATS JetStream advanced features
 - ✅ Retry logic + exponential backoff
@@ -181,6 +190,7 @@ chmod +x execute-agent.sh
 - ✅ Event schema registry
 
 ### Agent #7: Kubernetes + Helm
+
 - ✅ Helm charts
 - ✅ ConfigMaps, Secrets
 - ✅ HorizontalPodAutoscaler (HPA)
@@ -188,6 +198,7 @@ chmod +x execute-agent.sh
 - ✅ Ingress controllers
 
 ### Agent #8: Testing Avanzado
+
 - ✅ Unit tests (>80% coverage)
 - ✅ Integration tests con Testcontainers
 - ✅ E2E tests
@@ -196,6 +207,7 @@ chmod +x execute-agent.sh
 - ✅ Chaos engineering (Litmus)
 
 ### Agent #9: Observability
+
 - ✅ Prometheus metrics
 - ✅ Grafana dashboards
 - ✅ Distributed tracing (Jaeger)
@@ -204,6 +216,7 @@ chmod +x execute-agent.sh
 - ✅ SLIs/SLOs
 
 ### Agent #10: Event Sourcing
+
 - ✅ EventStoreDB
 - ✅ Aggregate rehydration
 - ✅ Projections
@@ -211,6 +224,7 @@ chmod +x execute-agent.sh
 - ✅ Event versioning
 
 ### Agent #11: Service Mesh
+
 - ✅ Istio installation
 - ✅ mTLS automático
 - ✅ Circuit breakers
@@ -218,6 +232,7 @@ chmod +x execute-agent.sh
 - ✅ Authorization policies
 
 ### Agent #12: API Gateway
+
 - ✅ Kong deployment
 - ✅ JWT authentication
 - ✅ Rate limiting
@@ -229,6 +244,7 @@ chmod +x execute-agent.sh
 ## 📈 Evolución del Proyecto
 
 ### Estado Inicial (Antes de Quick Wins)
+
 ```
 ┌────────────────────────────────────┐
 │ ❌ OrderModule vacío                │
@@ -242,6 +258,7 @@ chmod +x execute-agent.sh
 ```
 
 ### Después de Quick Wins
+
 ```
 ┌────────────────────────────────────┐
 │ ✅ OrderModule completo             │
@@ -255,6 +272,7 @@ chmod +x execute-agent.sh
 ```
 
 ### Después de Fase 1 (Agents #1-3 + #6)
+
 ```
 ┌────────────────────────────────────┐
 │ ✅ Saga completa con compensaciones │
@@ -267,6 +285,7 @@ chmod +x execute-agent.sh
 ```
 
 ### Después de Fase 2 (Agents #4-5 + #7-8)
+
 ```
 ┌────────────────────────────────────┐
 │ ✅ Dockerfiles production-ready     │
@@ -279,6 +298,7 @@ chmod +x execute-agent.sh
 ```
 
 ### Después de Fase 3 (Agents #9-12)
+
 ```
 ┌────────────────────────────────────┐
 │ ✅ Observability completa (3 pilares│
@@ -299,6 +319,7 @@ chmod +x execute-agent.sh
 Usa esto para trackear tu progreso:
 
 ### 🔴 CRÍTICO (Semana 1)
+
 - [ ] Agent #1: Order Saga ejecutado
 - [ ] Agent #2: Payment DDD ejecutado
 - [ ] Agent #3: Inventory Events ejecutado
@@ -306,17 +327,20 @@ Usa esto para trackear tu progreso:
 - [ ] Test E2E completo pasando
 
 ### 🟠 PRODUCCIÓN (Semana 2)
+
 - [ ] Agent #4: Dockerfiles optimizados
 - [ ] Agent #5: CI/CD pipeline verde
 - [ ] Agent #7: Kubernetes deployment
 - [ ] Agent #8: Testing suite >80% coverage
 
 ### 🟡 ENTERPRISE (Semana 3)
+
 - [ ] Agent #9: Observability stack
 - [ ] Agent #11: Service Mesh con Istio
 - [ ] Agent #12: API Gateway con Kong
 
 ### 🟢 AVANZADO (Opcional)
+
 - [ ] Agent #10: Event Sourcing implementado
 
 ---
@@ -324,18 +348,21 @@ Usa esto para trackear tu progreso:
 ## 🎯 Métricas de Éxito
 
 ### Core Functionality
+
 - [ ] Saga Order→Payment→Inventory completa
 - [ ] Compensaciones funcionando (test cancelación)
 - [ ] Latencia P95 < 500ms
 - [ ] 0 errores en logs bajo carga normal
 
 ### Production Readiness
+
 - [ ] Imágenes Docker < 100MB
 - [ ] CI/CD pipeline con <5min build time
 - [ ] Zero downtime deployments
 - [ ] Health checks en todos los servicios
 
 ### Enterprise Grade
+
 - [ ] SLOs definidos y monitoreados
 - [ ] Distributed tracing end-to-end
 - [ ] mTLS entre todos los servicios
@@ -349,6 +376,7 @@ Usa esto para trackear tu progreso:
 ### Opción 1: Ejecución Manual (Recomendada para aprender)
 
 1. Abre el prompt del agente:
+
    ```bash
    open docs/prompts/AGENT_1_ORDER_SAGA.md
    ```
@@ -362,12 +390,14 @@ Usa esto para trackear tu progreso:
 5. Revisa el código generado ANTES de aplicarlo
 
 6. Ejecuta los tests:
+
    ```bash
    pnpm test:unit
    pnpm test:e2e
    ```
 
 7. Commit:
+
    ```bash
    git add .
    git commit -m "feat: implement order saga orchestration (Agent #1)"
@@ -411,7 +441,7 @@ EOF
 chmod +x run-agent.sh
 ```
 
-2. Ejecuta agentes:
+1. Ejecuta agentes:
 
 ```bash
 ./run-agent.sh 1   # Agent #1
@@ -454,17 +484,20 @@ EOF
 ## 📚 Recursos Adicionales
 
 ### Documentación del Proyecto
+
 - [Quick Wins README](../QUICK_WINS_README.md)
 - [Prompts Index](./prompts/PROMPTS_INDEX.md)
 - [Auth Service README](../apps/auth-service/README.md) - Referencia DDD
 
 ### Conceptos Técnicos
+
 - **DDD**: Domain-Driven Design (Eric Evans)
 - **Saga Pattern**: Microservices Patterns (Chris Richardson)
 - **Event Sourcing**: Event Sourcing (Martin Fowler)
 - **CQRS**: Command Query Responsibility Segregation
 
 ### Herramientas Utilizadas
+
 - **NestJS**: Framework Node.js (v11.x)
 - **NATS**: Event Bus / Message Broker
 - **Prisma**: ORM para PostgreSQL
@@ -517,6 +550,7 @@ Si ya tienes **experiencia con microservicios**:
 Al completar todo el sistema:
 
 ### Técnicos
+
 - ✅ Arquitectura de microservicios DDD completa
 - ✅ Saga pattern con compensaciones
 - ✅ Event-driven architecture con NATS
@@ -526,6 +560,7 @@ Al completar todo el sistema:
 - ✅ Security hardening (mTLS, JWT, non-root containers)
 
 ### Habilidades Adquiridas
+
 - ✅ Domain-Driven Design patterns
 - ✅ Saga pattern (orchestration + choreography)
 - ✅ Event Sourcing y CQRS
@@ -536,6 +571,7 @@ Al completar todo el sistema:
 - ✅ DevOps best practices
 
 ### Nivel del Proyecto
+
 ```
 ANTES:  30% → POC básico
 DESPUÉS: 95% → Production-ready enterprise-grade

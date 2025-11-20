@@ -27,10 +27,11 @@ pnpm dev --port 3001
 ### 🌐 APIs Backend (4 APIs)
 
 #### 1. **Sales Opportunities API**
+
 - **Endpoint**: `/api/sales-opportunities`
 - **URL Directa**: http://localhost:3001/api/sales-opportunities
 - **Funcionalidad**: Retorna 3 oportunidades de venta con información detallada
-- **Datos incluidos**: 
+- **Datos incluidos**:
   - Eventos de mercado
   - Festivales
   - Cooperativas de consumo
@@ -38,6 +39,7 @@ pnpm dev --port 3001
   - Productos relacionados
 
 #### 2. **Products API**
+
 - **Endpoint**: `/api/products`
 - **URL Directa**: http://localhost:3001/api/products
 - **Funcionalidad**: Retorna 6 productos locales con información completa
@@ -50,6 +52,7 @@ pnpm dev --port 3001
   - Precios
 
 #### 3. **Artisans API**
+
 - **Endpoint**: `/api/artisans`
 - **URL Directa**: http://localhost:3001/api/artisans
 - **Funcionalidad**: Retorna 3 artesanos verificados
@@ -61,6 +64,7 @@ pnpm dev --port 3001
   - Calificaciones y reseñas
 
 #### 4. **Products with Filters API**
+
 - **Endpoint**: `/api/products?category=aceite`
 - **Funcionalidad**: Demuestra capacidades de filtrado
 - **Filtros disponibles**: categoría, ubicación, disponibilidad, búsqueda
@@ -68,21 +72,25 @@ pnpm dev --port 3001
 ### 🎣 Custom Hooks React (4 hooks)
 
 #### 1. **useSalesOpportunities**
+
 - **Funcionalidad**: Gestión de oportunidades de venta
 - **Testing**: Botón "Cargar Oportunidades"
 - **Resultado esperado**: Carga 3 oportunidades, actualiza estado global
 
 #### 2. **useProducts**
+
 - **Funcionalidad**: Gestión de productos con filtros
 - **Testing**: Botones "Cargar Productos" y "Filtrar Aceite"
 - **Resultado esperado**: Carga 6 productos, filtrado funcional
 
 #### 3. **useArtisans**
+
 - **Funcionalidad**: Gestión de artesanos
 - **Testing**: Botón "Cargar Artesanos"
 - **Resultado esperado**: Carga 3 artesanos verificados de 2 ubicaciones
 
 #### 4. **useGeolocation**
+
 - **Funcionalidad**: Servicios de geolocalización
 - **Testing**: Botón "Obtener Ubicación"
 - **Nota**: Requiere permisos del navegador
@@ -90,6 +98,7 @@ pnpm dev --port 3001
 ### 🔍 Búsqueda en Tiempo Real
 
 #### **useProductSearch Hook**
+
 - **Funcionalidad**: Búsqueda con debounce (300ms)
 - **Testing**: Campo de búsqueda "Buscar productos"
 - **Ejemplo de prueba**: Escribe "aceite"
@@ -98,17 +107,20 @@ pnpm dev --port 3001
 ### 🎛️ Filtros Combinados
 
 #### **Filtros Disponibles**
+
 1. **Categoría**: Todas, Aceite, Queso, Miel
 2. **Ubicación**: Todas, Úbeda, Cazorla, Andújar
 3. **Especiales**: Solo Temporada, Solo Disponibles
 
 #### **Testing de Filtros**
+
 - **Ejemplo**: Seleccionar "Aceite" en categoría
 - **Resultado esperado**: Productos se reducen de 6 a 1 en estado global
 
 ### 📊 Estado Global en Tiempo Real
 
 #### **Métricas Monitoreadas**
+
 - **Oportunidades**: Actualización en tiempo real
 - **Productos**: Cambia según filtros aplicados
 - **Artesanos**: Muestra total cargado
@@ -117,6 +129,7 @@ pnpm dev --port 3001
 ## 🧪 Procedimiento de Testing Completo
 
 ### Paso 1: Testing de APIs
+
 1. Acceder a http://localhost:3001/test-integrations
 2. En la sección "Tests de APIs Backend":
    - Hacer clic en "Test API" para cada endpoint
@@ -124,6 +137,7 @@ pnpm dev --port 3001
    - Confirmar que todos muestran "✅ Respuesta exitosa"
 
 ### Paso 2: Testing de Hooks
+
 1. En la sección "Tests de Hooks Personalizados":
    - Hacer clic en "Cargar Oportunidades" → Debe mostrar 3 oportunidades
    - Hacer clic en "Cargar Productos" → Debe mostrar 6 productos
@@ -131,18 +145,21 @@ pnpm dev --port 3001
    - Opcional: "Obtener Ubicación" (requiere permisos)
 
 ### Paso 3: Testing de Búsqueda
+
 1. En la sección "Test de Búsqueda en Tiempo Real":
    - Escribir "aceite" en el campo de búsqueda
    - Verificar que aparece 1 resultado
    - Confirmar información del producto mostrada
 
 ### Paso 4: Testing de Filtros
+
 1. En la sección "Test de Filtros Combinados":
    - Cambiar categoría a "Aceite"
    - Verificar que el estado global se actualiza (6→1 productos)
    - Probar otros filtros según sea necesario
 
 ### Paso 5: Verificar Estado Global
+
 1. En la sección "Resumen de Estado Global":
    - Confirmar números actualizados en tiempo real
    - Verificar que reflejan las acciones realizadas
@@ -167,7 +184,8 @@ http://localhost:3001/api/products?category=aceite
 
 ## ✅ Resultados Esperados
 
-### Estado Final de Testing Exitoso:
+### Estado Final de Testing Exitoso
+
 - **APIs**: 4/4 funcionando con respuestas JSON completas
 - **Hooks**: 4/4 funcionando con actualización de estado
 - **Búsqueda**: Tiempo real con debounce funcional
@@ -175,7 +193,8 @@ http://localhost:3001/api/products?category=aceite
 - **Estado Global**: Actualización en tiempo real
 - **UI**: Todas las interfaces responsive y funcionales
 
-### Números de Verificación:
+### Números de Verificación
+
 - **Oportunidades**: 3 cargadas
 - **Productos**: 6 totales (1 cuando filtrado por "aceite")
 - **Artesanos**: 3 verificados de 2 ubicaciones
@@ -183,7 +202,8 @@ http://localhost:3001/api/products?category=aceite
 
 ## 🚨 Solución de Problemas
 
-### Si el servidor no arranca:
+### Si el servidor no arranca
+
 ```bash
 # Instalar dependencias
 pnpm install
@@ -192,13 +212,15 @@ pnpm install
 pnpm next dev --port 3001
 ```
 
-### Si hay errores de React:
+### Si hay errores de React
+
 ```bash
 # Actualizar React a la misma versión
 pnpm update react react-dom --latest
 ```
 
-### Si hay problemas de CSS:
+### Si hay problemas de CSS
+
 - El servidor usa la versión estándar de Next.js sin Turbopack para mayor compatibilidad
 
 ## 🎯 Conclusión

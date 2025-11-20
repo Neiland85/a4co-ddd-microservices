@@ -1,6 +1,6 @@
 # 🚀 PRÓXIMOS PASOS - PROYECTO A4CO DDD MICROSERVICES
 
-_Guía consolidada de acciones prioritarias para el desarrollo del proyecto_
+## Guía consolidada de acciones prioritarias para el desarrollo del proyecto
 
 **Fecha de actualización:** 20 de septiembre de 2024  
 **Estado del proyecto:** ⚠️ Arquitectura implementada, problemas críticos de build y testing confirmados
@@ -9,15 +9,19 @@ _Guía consolidada de acciones prioritarias para el desarrollo del proyecto_
 
 ## 📋 RESUMEN EJECUTIVO
 
-El proyecto A4CO DDD Microservices tiene una base arquitectónica sólida con **17 microservicios implementados** y código estructurado con principios DDD. Sin embargo, **existen problemas críticos de configuración** que impiden la ejecución normal:
+El proyecto A4CO DDD Microservices tiene una base arquitectónica sólida con **17 microservicios
+implementados** y código estructurado con principios DDD. Sin embargo, **existen problemas críticos
+de configuración** que impiden la ejecución normal:
 
 ### ⚠️ Problemas Críticos Identificados
+
 - **Tests fallan:** `jest-environment-jsdom` no instalado, configuración ESM problemática
 - **Build fallido:** Errores en `inventory-service`, `design-system`, dependencias cruzadas
 - **Dashboard:** Problemas de Google Fonts y componentes UI faltantes
 - **Dependencias:** Conflictos de versiones en NestJS y OpenTelemetry
 
 ### 🎯 Objetivos Principales
+
 1. **🔴 CRÍTICO:** Resolver configuración de testing (Jest + ESM + jsdom)
 2. **🔴 CRÍTICO:** Reparar build pipeline (tsconfig, paths, dependencias)
 3. **🟡 IMPORTANTE:** Estabilizar dashboard web
@@ -27,20 +31,23 @@ El proyecto A4CO DDD Microservices tiene una base arquitectónica sólida con **
 
 ## 🔍 ESTADO ACTUAL VERIFICADO (20 Sept 2024)
 
-### ✅ Lo que SÍ funciona:
+### ✅ Lo que SÍ funciona
+
 - **Arquitectura DDD:** Estructura completa implementada en `packages/shared-utils`
 - **17 Microservicios:** Estructura base creada en `/apps`
 - **Dependencias:** `pnpm install` completa exitosamente
 - **Monorepo:** pnpm workspace configurado correctamente
 - **Documentación:** Extensa documentación del proyecto
 
-### ❌ Lo que NO funciona:
+### ❌ Lo que NO funciona
+
 - **Tests:** Jest requiere `jest-environment-jsdom`
 - **Build:** 3+ servicios fallan por errores TypeScript
 - **Dashboard:** Google Fonts y componentes UI faltantes
 - **CI/CD:** No puede funcionar sin build working
 
-### 🎯 Impacto en el Roadmap:
+### 🎯 Impacto en el Roadmap
+
 **ANTES de cualquier desarrollo UI/UX, se DEBE resolver la infraestructura técnica.**
 
 ---
@@ -52,6 +59,7 @@ El proyecto A4CO DDD Microservices tiene una base arquitectónica sólida con **
 **Problema:** Tests fallan completamente por configuración incorrecta.
 
 **Error específico detectado:**
+
 ```
 Test environment jest-environment-jsdom cannot be found.
 As of Jest 28 "jest-environment-jsdom" is no longer shipped by default
@@ -75,6 +83,7 @@ pnpm test
 ```
 
 **Archivos críticos a revisar:**
+
 - `packages/shared-utils/jest.config.js` ❌ Configuración problemática
 - `jest.config.base.js` ❌ Base configuration
 - `package.json` de cada servicio ❌ TestEnvironment
@@ -86,6 +95,7 @@ pnpm test
 **Problema:** Multiple builds fallan por errores de TypeScript y dependencias.
 
 **Errores específicos detectados:**
+
 ```
 inventory-service: TS2742 - type inferred cannot be named without reference
 design-system: Could not resolve "@/lib/utils"
@@ -110,6 +120,7 @@ cd apps/dashboard-web
 ```
 
 **Archivos críticos a reparar:**
+
 - `apps/inventory-service/src/infrastructure/routes/inventory.routes.ts:4` ❌ Type annotation missing
 - `packages/design-system/tsconfig.json` ❌ Path aliases
 - `apps/dashboard-web/src/app/v0-demo/page.tsx` ❌ Missing UI components
@@ -121,6 +132,7 @@ cd apps/dashboard-web
 **Problema:** Dashboard no puede construirse por Google Fonts y componentes faltantes.
 
 **Errores específicos detectados:**
+
 ```
 getaddrinfo ENOTFOUND fonts.googleapis.com
 Module not found: Can't resolve '@/components/ui/card'
@@ -142,6 +154,7 @@ npm run dev
 ```
 
 **Archivos a modificar:**
+
 - `apps/dashboard-web/src/app/layout.tsx` ❌ Google Fonts imports
 - `apps/dashboard-web/src/app/v0-demo/page.tsx` ❌ Missing components
 
@@ -173,6 +186,7 @@ npm run test
 ```
 
 **Archivos clave:**
+
 - `apps/auth-service/src/`
 - `apps/auth-service/test/`
 - `apps/auth-service/.env`
@@ -212,7 +226,7 @@ npm run dev
 
 - [ ] **Definir paleta de colores de Jaén**
   - Verde olivo (`#6B8E23`)
-  - Dorado (`#DAA520`) 
+  - Dorado (`#DAA520`)
   - Tierra (`#8B4513`)
   - Cremas y beiges
 
@@ -223,6 +237,7 @@ npm run dev
   - `SeasonalBadge` - Badges de temporada
 
 - [ ] **Configurar Storybook**
+
   ```bash
   cd packages/design-system
   npm run storybook
@@ -326,22 +341,26 @@ npm run dev
 ## 📊 CRONOGRAMA SUGERIDO
 
 ### 🗓️ Semana 1-2: Estabilización Técnica
+
 - ✅ Resolver testing
 - ✅ Estabilizar builds
 - ✅ CI/CD básico
 - ✅ Auth service funcionando
 
 ### 🗓️ Semana 3-4: Design System
+
 - 🎨 Componentes base
 - 🎨 Storybook configurado
 - 🎨 Tokens de diseño
 
 ### 🗓️ Semana 5-7: Interfaz Pública
+
 - 🌐 Landing page
 - 🌐 Catálogo
 - 🌐 Perfiles de artesanos
 
 ### 🗓️ Semana 8-10: Mobile y PWA
+
 - 📱 Responsive design
 - 📱 PWA
 - 📱 Geolocalización
@@ -351,18 +370,21 @@ npm run dev
 ## 🎯 MÉTRICAS DE ÉXITO
 
 ### 📈 Técnicas
+
 - [ ] Tests con cobertura > 70%
 - [ ] Build time < 2 minutos
 - [ ] CI/CD ejecutándose sin errores
 - [ ] Performance score > 90 en Lighthouse
 
 ### 🎨 UI/UX
+
 - [ ] Componentes reutilizables > 80%
 - [ ] Tiempo de carga < 3 segundos
 - [ ] Mobile-first responsive
 - [ ] Accesibilidad WCAG AA
 
 ### 🚀 Producto
+
 - [ ] Catálogo funcional de productos locales
 - [ ] Sistema de contacto con artesanos
 - [ ] Geolocalización operativa
@@ -430,12 +452,14 @@ npm run docker:down
 ## 📚 RECURSOS ADICIONALES
 
 ### 📖 Documentación del Proyecto
+
 - `README.md` - Información general
 - `INFORME_PROYECTO_COMPLETO.md` - Estado detallado
 - `RESUMEN_EJECUTIVO.md` - Resumen para stakeholders
 - `GITHUB_ACTIONS_SETUP.md` - Configuración CI/CD
 
 ### 🔗 Enlaces Útiles
+
 - **Repositorio:** https://github.com/Neiland85/a4co-ddd-microservices
 - **Dashboard:** http://localhost:3001
 - **Storybook:** http://localhost:6006 (cuando esté configurado)
@@ -445,23 +469,27 @@ npm run docker:down
 ## ✅ CHECKLIST DE PROGRESO
 
 ### 🔥 Esta Semana (Crítico)
+
 - [ ] Tests funcionando en auth-service
 - [ ] Build pipeline estable
 - [ ] CI/CD básico configurado
 - [ ] Dashboard verificado
 
 ### ⚡ Próxima Semana
+
 - [ ] Auth service completamente funcional
 - [ ] Documentación actualizada
 - [ ] Design system iniciado
 
 ### 🚀 Próximo Mes
+
 - [ ] Interfaz pública del marketplace
 - [ ] Componentes de productos locales
 - [ ] Sistema de contacto con artesanos
 
 ---
 
-**✨ Con esta hoja de ruta, el proyecto A4CO DDD Microservices evolucionará de una base técnica sólida a una plataforma completa para el Mercado Local de Jaén.**
+**✨ Con esta hoja de ruta, el proyecto A4CO DDD Microservices evolucionará de una base
+técnica sólida a una plataforma completa para el Mercado Local de Jaén.**
 
-_Actualizado por GitHub Copilot - 20 de septiembre de 2024_
+## Actualizado por GitHub Copilot - 20 de septiembre de 2024

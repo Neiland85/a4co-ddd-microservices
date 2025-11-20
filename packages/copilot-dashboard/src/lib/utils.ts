@@ -5,10 +5,10 @@ type ClassValue =
   | boolean
   | undefined
   | null
-  | { [key: string]: any }
+  | { [key: string]: boolean | undefined | null }
   | ClassValue[];
 
-function handleObjectInput(input: Record<string, any>, classes: string[]): void {
+function handleObjectInput(input: Record<string, boolean | undefined | null>, classes: string[]): void {
   for (const [key, value] of Object.entries(input)) {
     if (value) classes.push(key);
   }

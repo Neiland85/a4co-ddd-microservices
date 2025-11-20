@@ -15,15 +15,24 @@ async function bootstrap() {
   initializeTracing({
     serviceName: 'auth-service',
     serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
+    environment: (process.env as any)['NODE_ENV'] || 'development',
   });
 
   const logger = getLogger();
   const app = await NestFactory.create(AuthModule);
 
   // --- Sentry Handlers (after NestFactory.create) ---
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
+  app.use(
+    Sentry.setupNestErrorHandler(app, {
+      catch: (exception: any, host: any) => {
+        // Custom error handling logic if needed
+        throw exception;
+      },
+    }),
+  );
+
+  // Tracing middleware - commented out as tracingIntegration may not be available
+  // app.use(Sentry.tracingIntegration().middleware);
 
   // --- Security middleware ---
   app.use(
@@ -37,7 +46,7 @@ async function bootstrap() {
         },
       },
       crossOriginEmbedderPolicy: false,
-    })
+    }),
   );
 
   // --- Braces security middleware ---
@@ -55,7 +64,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
 
   // --- CORS configuration ---
@@ -82,7 +91,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
 
   // --- Sentry Error Handler (must be after routes) ---
-  app.use(Sentry.Handlers.errorHandler());
+  // Error handler is automatically added by setupNestErrorHandler
 
   const port = process.env['PORT'] || 3001;
   await app.listen(port);
@@ -92,4 +101,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-

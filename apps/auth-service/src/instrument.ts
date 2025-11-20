@@ -5,8 +5,8 @@ import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import * as uptrace from '@uptrace/node';
 
-const environment = process.env.NODE_ENV || 'development';
-const serviceName = process.env['SERVICE_NAME'] || 'auth-service';
+const environment = (process.env as any).NODE_ENV || 'development';
+const serviceName = (process.env as any)['SERVICE_NAME'] || 'auth-service';
 
 // --- Initialize Sentry ---
 if (process.env['SENTRY_DSN']) {
@@ -32,4 +32,3 @@ if (process.env['UPTRACE_DSN']) {
 
   console.log(`[Uptrace] tracing active for ${serviceName}`);
 }
-

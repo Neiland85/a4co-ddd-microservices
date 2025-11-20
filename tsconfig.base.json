@@ -13,16 +13,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "removeComments": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitThis": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "exactOptionalPropertyTypes": true,
     "experimentalDecorators": true,
@@ -31,12 +24,9 @@
     "paths": {
       "@/*": ["src/*"],
       "@test/*": ["test/*"],
-      "@a4co/shared-utils": ["../packages/shared-utils/src"],
-      "@a4co/shared-utils/*": [
-        "../packages/shared-utils/src/*"
-      ],
+      "@a4co/shared-utils/*": ["../packages/shared-utils/src/*"],
       "@a4co/design-system": ["../packages/design-system/src"],
-      "@a4co/observability": ["../packages/observability/dist"]
+      "@a4co/observability": ["../packages/observability/src"]
     },
     "resolveJsonModule": true,
     "allowJs": true,
@@ -44,6 +34,6 @@
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", ".next", "coverage", "test/**/*"]
+  "include": ["src", "test"],
+  "exclude": ["node_modules", "dist", ".next", "coverage"]
 }

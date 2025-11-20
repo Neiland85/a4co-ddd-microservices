@@ -50,12 +50,14 @@
 #### 1.1 Fixear Build Errors
 
 **Inventory Service:**
+
 ```bash
 # Corregir error de tipos en inventory.routes.ts
 # Línea 4: Añadir type annotation explícita
 ```
 
 **Design System:**
+
 ```bash
 # Resolver path alias @/lib/utils en tsup config
 # Actualizar tsconfig paths o crear lib/utils.ts
@@ -112,6 +114,7 @@ pnpm run docker:up
 **Prioridad Máxima:**
 
 1. **Crear Design System Completo**
+
    ```bash
    # Configurar Storybook funcional
    # Implementar tokens de diseño de Jaén
@@ -123,6 +126,7 @@ pnpm run docker:up
    ```
 
 2. **Layout Principal**
+
    ```bash
    # Header con navegación del mercado local
    # Footer con información de Jaén
@@ -133,6 +137,7 @@ pnpm run docker:up
 #### 3.2 Páginas Principales (Semana 2-3)
 
 **Landing Page Completa:**
+
 - Hero section con productos destacados de Jaén
 - Galería de artesanos locales
 - Mapa interactivo de productores
@@ -140,6 +145,7 @@ pnpm run docker:up
 - Call-to-actions estratégicos
 
 **Catálogo de Productos:**
+
 - Grid responsive de productos locales
 - Sistema de filtros avanzado (temporada, ubicación)
 - Páginas detalle de producto con historia del artesano
@@ -148,12 +154,14 @@ pnpm run docker:up
 #### 3.3 Funcionalidades Avanzadas (Semana 4)
 
 **Perfiles de Artesanos:**
+
 - Historias de productores
 - Talleres y ubicaciones en Jaén
 - Calendario de eventos locales
 - Sistema de contacto directo
 
 **Experiencia Mobile:**
+
 - PWA (Progressive Web App)
 - Geolocalización nativa
 - Notificaciones push para eventos
@@ -227,24 +235,28 @@ pnpm run docker:up
 ### 🎨 UI/UX (Próximas 2-4 Semanas)
 
 **Semana 1: Fundamentos**
+
 - [ ] Design system con tokens de Jaén
 - [ ] Componentes base (ProductCard, ArtisanProfile)
 - [ ] Layout principal responsivo
 - [ ] Storybook funcional para desarrollo
 
 **Semana 2: Páginas Core**
+
 - [ ] Landing page completa
 - [ ] Catálogo de productos
 - [ ] Sistema de filtros
 - [ ] Mapa interactivo de Jaén
 
 **Semana 3: Perfiles y Contenido**
+
 - [ ] Perfiles de artesanos
 - [ ] Sistema de reservas
 - [ ] Calendario de eventos
 - [ ] Reviews y testimonios
 
 **Semana 4: Mobile y Optimización**
+
 - [ ] PWA implementation
 - [ ] Mobile-first optimization
 - [ ] Performance optimization
@@ -285,18 +297,21 @@ pnpm run docker:logs          # Monitorear servicios
 ## 🎯 OBJETIVOS MEDIBLES
 
 ### Corto Plazo (1-2 Semanas)
+
 - ✅ Build sin errores en todas las apps
 - ✅ Storybook funcional
 - ✅ 5 componentes base implementados
 - ✅ Landing page MVP operativa
 
 ### Medio Plazo (1 Mes)
+
 - ✅ Catálogo completo de productos
 - ✅ Sistema de filtros avanzado
 - ✅ 10+ perfiles de artesanos
 - ✅ Mapa interactivo funcional
 
 ### Largo Plazo (2-3 Meses)
+
 - ✅ PWA completamente funcional
 - ✅ Sistema de reservas integrado
 - ✅ 50+ productos catalogados

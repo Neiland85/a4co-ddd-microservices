@@ -40,7 +40,7 @@ export class SecurityMiddleware implements NestMiddleware {
       legacyHeaders: false,
       skipSuccessfulRequests: false,
       skipFailedRequests: false,
-      keyGenerator: req => {
+      keyGenerator: (req) => {
         // Usar IP + User ID si está autenticado
         return req.user?.id ? `${req.ip || 'unknown'}-${req.user.id}` : req.ip || 'unknown';
       },
@@ -84,8 +84,8 @@ export class SecurityMiddleware implements NestMiddleware {
 
     // Verificar si la ruta está protegida
     return (
-      protectedRoutes.some(route => path.startsWith(route)) ||
-      !publicRoutes.some(route => path.startsWith(route))
+      protectedRoutes.some((route) => path.startsWith(route)) ||
+      !publicRoutes.some((route) => path.startsWith(route))
     );
   }
 
@@ -105,7 +105,7 @@ export class SecurityMiddleware implements NestMiddleware {
 
       // Verificar y decodificar JWT
       const payload = this.jwtService.verify(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: this.configService.get<string>('JWT_SECRET') || 'default-secret-key',
         algorithms: ['HS256'],
       });
 
@@ -154,7 +154,7 @@ export class LoginRateLimitMiddleware implements NestMiddleware {
       standardHeaders: true,
       legacyHeaders: false,
       skipSuccessfulRequests: true, // No contar logins exitosos
-      keyGenerator: req => req.ip || 'unknown',
+      keyGenerator: (req) => req.ip || 'unknown',
       handler: (req, res) => {
         res.status(429).json({
           error: 'Too many login attempts',
@@ -222,7 +222,7 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
 
     // Log de request
     console.log(
-      `[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`
+      `[SECURITY] ${req.method} ${req.path} - IP: ${req.ip} - User-Agent: ${req.headers['user-agent']}`,
     );
 
     // Log de autenticación
@@ -235,7 +235,7 @@ export class SecurityLoggingMiddleware implements NestMiddleware {
     res.send = function (data) {
       const duration = Date.now() - startTime;
       console.log(
-        `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`
+        `[SECURITY] ${req.method} ${req.path} - Status: ${res.statusCode} - Duration: ${duration}ms`,
       );
 
       // Log de errores de seguridad

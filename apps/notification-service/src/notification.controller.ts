@@ -35,7 +35,9 @@ export class NotificationController {
   @ApiOperation({ summary: 'Send notification' })
   @ApiResponse({ status: 200, description: 'Notification sent successfully' })
   @ApiResponse({ status: 400, description: 'Invalid request' })
-  async sendNotification(@Body() request: NotificationRequestDTO): Promise<NotificationResponseDTO> {
+  async sendNotification(
+    @Body() request: NotificationRequestDTO,
+  ): Promise<NotificationResponseDTO> {
     try {
       // Send via appropriate channels
       const promises: Promise<void>[] = [];
@@ -69,7 +71,7 @@ export class NotificationController {
               token: recipient,
               title: request.title,
               body: request.message,
-              data: request.data,
+              data: request.data || {},
             }),
           );
         }
@@ -111,4 +113,3 @@ export class NotificationController {
     return this.notificationService.getNotificationStats();
   }
 }
-

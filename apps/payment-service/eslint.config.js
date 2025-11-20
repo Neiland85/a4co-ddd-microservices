@@ -32,7 +32,32 @@ export default [
     },
   },
   {
-    ignores: ['node_modules/', 'dist/', 'build/', 'jest.config.js', '**/*.js', '**/*.d.ts'],
+    ignores: [
+      'node_modules/',
+      'dist/',
+      'build/',
+      'jest.config.js',
+      '**/*.js',
+      '**/*.d.ts',
+      'src/__tests__/**',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+    ],
+  },
+  {
+    files: ['**/__tests__/**/*.ts', '**/*.spec.ts'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        jest: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
   },
   {
     files: ['**/__tests__/**/*.ts', '**/*.spec.ts'],

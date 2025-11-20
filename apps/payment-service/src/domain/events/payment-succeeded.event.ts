@@ -29,6 +29,7 @@ export class PaymentSucceededEvent extends PaymentDomainEvent<PaymentSucceededEv
         orderId: params.orderId,
         customerId: params.customerId,
         amount: params.amount,
+        currency: params.amount.currency,
         metadata: params.metadata ?? {},
         stripePaymentIntentId: params.stripePaymentIntentId,
         status: PaymentStatusValue.SUCCEEDED,
@@ -39,4 +40,3 @@ export class PaymentSucceededEvent extends PaymentDomainEvent<PaymentSucceededEv
     );
   }
 }
-

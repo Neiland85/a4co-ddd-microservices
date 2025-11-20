@@ -63,10 +63,12 @@ http://localhost:3001/api/docs
 
 1. Abre http://localhost:5173
 2. Intenta hacer login con:
+
    ```
    Email: cliente@a4co.es
    Password: password123
    ```
+
 3. El frontend intentará conectarse al auth-service
 4. Si el auth-service no está corriendo, usará datos mock
 

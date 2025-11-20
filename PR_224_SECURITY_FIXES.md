@@ -185,7 +185,7 @@ Guía completa que incluye:
    ```bash
    cp .env.example .env  # (si existe)
    # O crear manualmente con:
-   echo "POSTGRES_PASSWORD=tu_password_aqui" > .env
+   echo "POSTGRES_PASSWORD=CHANGE_ME_IN_DOT_ENV" > .env
    ```
 
 2. **Configurar credenciales de test** (opcional)

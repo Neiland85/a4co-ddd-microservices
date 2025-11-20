@@ -1,9 +1,11 @@
 # PROMPT PARA AGENTE CURSOR #10 - Event Sourcing Completo
 
 ## ROL
+
 Eres un experto en Event Sourcing, CQRS avanzado, y Event Store. Tu tarea es implementar Event Sourcing completo con persistencia de eventos, proyecciones, y replay capability.
 
 ## CONTEXTO DEL PROYECTO
+
 - Eventos de dominio se crean pero NO se persisten
 - No hay Event Store
 - No hay proyecciones
@@ -11,12 +13,15 @@ Eres un experto en Event Sourcing, CQRS avanzado, y Event Store. Tu tarea es imp
 - Referencia: Order Service tiene eventos definidos
 
 ## ESTADO ACTUAL
+
 ✅ **Existente**:
+
 - Domain Events: OrderCreatedEvent, PaymentSucceededEvent, etc.
 - Event publishing a NATS
 - Aggregates emiten eventos
 
 ❌ **Falta**:
+
 - Persistir eventos en Event Store
 - Proyecciones para read models
 - Snapshot strategy
@@ -27,6 +32,7 @@ Eres un experto en Event Sourcing, CQRS avanzado, y Event Store. Tu tarea es imp
 ## TECNOLOGÍAS A USAR
 
 ### Opción A: EventStoreDB (Recomendado)
+
 ```bash
 docker run -d --name eventstoredb \
   -p 2113:2113 -p 1113:1113 \
@@ -35,14 +41,17 @@ docker run -d --name eventstoredb \
 ```
 
 ### Opción B: PostgreSQL + Outbox Pattern
+
 Tabla de eventos en PostgreSQL con outbox para publicación garantizada
 
 ## TAREAS A REALIZAR
 
 ### 1. Crear Event Store Adapter
+
 **Directorio**: `packages/event-sourcing/`
 
 **Estructura**:
+
 ```
 packages/event-sourcing/
 ├── src/
@@ -126,6 +135,7 @@ export interface DomainEvent {
 ```
 
 ### 2. Implementar EventStoreDB Adapter
+
 **Archivo**: `packages/event-sourcing/src/adapters/event-store-db.adapter.ts`
 
 ```typescript
@@ -288,6 +298,7 @@ export class EventStoreDBAdapter implements IEventStore {
 ```
 
 ### 3. Implementar Repository con Event Sourcing
+
 **Archivo**: `apps/order-service/src/infrastructure/repositories/event-sourced-order.repository.ts`
 
 ```typescript
@@ -431,6 +442,7 @@ export class EventSourcedOrderRepository implements IOrderRepository {
 ```
 
 ### 4. Implementar Projection Manager
+
 **Archivo**: `packages/event-sourcing/src/projections/projection-manager.ts`
 
 ```typescript
@@ -555,6 +567,7 @@ export class ProjectionManager {
 ```
 
 ### 5. Crear Projection para Order List
+
 **Archivo**: `apps/order-service/src/application/projections/order-list.projection.ts`
 
 ```typescript
@@ -648,6 +661,7 @@ export class OrderListProjection implements IProjection {
 ```
 
 ### 6. Implementar Snapshot Strategy
+
 **Archivo**: `packages/event-sourcing/src/snapshots/snapshot-manager.ts`
 
 ```typescript
@@ -708,6 +722,7 @@ export class SnapshotManager {
 ```
 
 ### 7. Actualizar Order Module
+
 **Archivo**: `apps/order-service/src/order.module.ts`
 
 ```typescript
@@ -756,6 +771,7 @@ export class OrderModule {
 ```
 
 ## CRITERIOS DE ACEPTACIÓN
+
 - [ ] EventStoreDB integrado y corriendo
 - [ ] Event Store adapter implementado
 - [ ] Repository basado en Event Sourcing
@@ -768,6 +784,7 @@ export class OrderModule {
 - [ ] Documentación de Event Sourcing
 
 ## VALIDACIÓN
+
 ```bash
 # Arrancar EventStoreDB
 docker run -d --name eventstoredb \
@@ -785,6 +802,7 @@ curl http://localhost:3004/orders?page=1&limit=10
 ```
 
 ## BENEFICIOS
+
 1. **Audit Trail Completo**: Histórico de todos los cambios
 2. **Time Travel**: Consultar estado en cualquier momento
 3. **Event Replay**: Reconstruir estado desde eventos
@@ -793,11 +811,13 @@ curl http://localhost:3004/orders?page=1&limit=10
 6. **CQRS Completo**: Separación read/write optimizada
 
 ## REFERENCIAS
+
 - EventStoreDB: https://www.eventstore.com/
 - Event Sourcing Patterns: https://martinfowler.com/eaaDev/EventSourcing.html
 - CQRS: https://martinfowler.com/bliki/CQRS.html
 
 ## ENTREGABLES
+
 1. Package @a4co/event-sourcing completo
 2. EventStoreDB adapter
 3. Repository con Event Sourcing

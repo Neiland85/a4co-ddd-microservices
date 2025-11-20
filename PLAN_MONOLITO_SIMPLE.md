@@ -1,4 +1,5 @@
 # PLAN: MIGRACIÓN A MONOLITO SIMPLE
+
 ## Portal Artesanos Jaén/Andalucía
 
 **Fecha:** 8 Noviembre 2025
@@ -51,7 +52,8 @@
 
 ## ESTRATEGIA: Reutilizar código existente
 
-### ✅ LO QUE REUTILIZAMOS (Ya existe y funciona):
+### ✅ LO QUE REUTILIZAMOS (Ya existe y funciona)
+
 ```
 FROM microservicios actuales:
 ├── apps/auth-service/src/**        → backend/src/modules/auth/
@@ -62,7 +64,8 @@ FROM microservicios actuales:
 Ahorro: ~150 horas de desarrollo
 ```
 
-### 🆕 LO QUE CREAMOS DESDE CERO:
+### 🆕 LO QUE CREAMOS DESDE CERO
+
 ```
 1. backend/src/modules/artisan/     (50 horas)
 2. backend/src/modules/geo/         (25 horas)
@@ -72,7 +75,8 @@ Ahorro: ~150 horas de desarrollo
 6. Deploy                            (10 horas)
 ```
 
-### ❌ LO QUE ELIMINAMOS:
+### ❌ LO QUE ELIMINAMOS
+
 ```
 - Jaeger / OpenTelemetry completo
 - Prometheus / Grafana
@@ -183,6 +187,7 @@ a4co-portal-artesanos/
 ### FASE 1: SETUP INICIAL (5 horas)
 
 #### 1.1 Crear estructura base (2h)
+
 ```bash
 # Crear nueva rama
 git checkout -b feature/migrate-to-monolith
@@ -196,6 +201,7 @@ cp apps/auth-service/package.json backend/package.json
 ```
 
 #### 1.2 Configurar backend monolito (2h)
+
 ```bash
 cd backend
 
@@ -211,6 +217,7 @@ pnpx prisma init
 ```
 
 #### 1.3 Crear app.module.ts (1h)
+
 ```typescript
 // backend/src/app.module.ts
 import { Module } from '@nestjs/common';
@@ -239,6 +246,7 @@ export class AppModule {}
 ### FASE 2: MIGRAR MÓDULOS EXISTENTES (10 horas)
 
 #### 2.1 Migrar Auth Module (3h)
+
 ```bash
 # Copiar código
 cp -r apps/auth-service/src/domain backend/src/modules/auth/
@@ -252,18 +260,21 @@ cp -r apps/auth-service/src/presentation backend/src/modules/auth/
 ```
 
 #### 2.2 Migrar User Module (2h)
+
 ```bash
 cp -r apps/user-service/src/* backend/src/modules/user/
 # Ajustar imports y paths
 ```
 
 #### 2.3 Migrar Product Module (3h)
+
 ```bash
 cp -r apps/product-service/src/* backend/src/modules/product/
 # Ajustar imports y paths
 ```
 
 #### 2.4 Consolidar Prisma Schema (2h)
+
 ```prisma
 // backend/prisma/schema.prisma
 datasource db {
@@ -776,6 +787,7 @@ const ANDALUSIA_PROVINCES = [
 ### FASE 5: FRONTEND (30 horas)
 
 #### 5.1 Setup (5h)
+
 ```bash
 cd frontend-monolith
 pnpm create vite . --template react-ts
@@ -786,6 +798,7 @@ pnpm install lucide-react
 ```
 
 #### 5.2 API Client (5h)
+
 ```typescript
 // frontend/src/services/api.ts
 import axios from 'axios';
@@ -816,6 +829,7 @@ export const geoApi = {
 ```
 
 #### 5.3 Pages (15h)
+
 ```typescript
 // frontend/src/pages/Home.tsx - Listado de artesanos
 // frontend/src/pages/ArtisanDetail.tsx - Perfil completo
@@ -826,6 +840,7 @@ export const geoApi = {
 ```
 
 #### 5.4 Integración (5h)
+
 ```typescript
 // React Query para data fetching
 // React Router para navegación
@@ -943,6 +958,7 @@ volumes:
 ### FASE 9: DEPLOYMENT (10 horas)
 
 #### Opción 1: VPS Simple (Hetzner/DigitalOcean)
+
 ```bash
 # 1. Provisionar servidor ($5-10/mes)
 # 2. Instalar Docker + Docker Compose
@@ -952,6 +968,7 @@ volumes:
 ```
 
 #### Opción 2: Railway/Render (PaaS)
+
 ```bash
 # 1. Conectar repo GitHub
 # 2. Configurar variables de entorno
@@ -1076,18 +1093,21 @@ main()
 
 ## PRÓXIMOS PASOS INMEDIATOS
 
-### HOY (2-3 horas):
+### HOY (2-3 horas)
+
 1. [ ] Revisar este plan completo
 2. [ ] Crear rama `feature/migrate-to-monolith`
 3. [ ] Ejecutar `scripts/migrate-to-monolith.sh`
 4. [ ] Validar que código copiado compila
 
-### ESTA SEMANA (20-30 horas):
+### ESTA SEMANA (20-30 horas)
+
 1. [ ] Completar Fase 1: Setup (5h)
 2. [ ] Completar Fase 2: Migración (10h)
 3. [ ] Comenzar Fase 3: Artisan Module (15h)
 
-### PRÓXIMAS 2 SEMANAS (60-80 horas):
+### PRÓXIMAS 2 SEMANAS (60-80 horas)
+
 1. [ ] Completar Artisan Module (35h restantes)
 2. [ ] Completar Geo Module (25h)
 3. [ ] Comenzar Frontend (15h)
@@ -1096,7 +1116,8 @@ main()
 
 ## MÉTRICAS DE ÉXITO
 
-### Definición de "LISTO":
+### Definición de "LISTO"
+
 - [ ] Backend monolito con 5 módulos funcionando
 - [ ] Artisan Module 100% implementado
 - [ ] Frontend con listado + búsqueda + detalle
@@ -1108,7 +1129,8 @@ main()
 - [ ] Logs simples con Winston
 - [ ] Health checks funcionando
 
-### KPIs:
+### KPIs
+
 - Tiempo de respuesta API: <200ms (p95)
 - Uptime: >99%
 - Bugs críticos: 0
@@ -1118,7 +1140,8 @@ main()
 
 ## ESCALADO FUTURO
 
-### Cuándo migrar a microservicios:
+### Cuándo migrar a microservicios
+
 - [ ] >10,000 artesanos registrados
 - [ ] >100,000 usuarios/mes
 - [ ] Equipo >5 desarrolladores
@@ -1126,6 +1149,7 @@ main()
 - [ ] SLA requirements >99.9%
 
 ### Por ahora: KISS (Keep It Simple, Stupid)
+
 - Monolito es suficiente para 90% casos de uso
 - Más rápido de desarrollar
 - Más fácil de mantener

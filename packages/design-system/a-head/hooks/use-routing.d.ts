@@ -1,6 +1,6 @@
-import type { RoutePoint, RoutingOptions } from '@/types/routing-types';
+import type { Route, RoutePoint, RoutingOptions } from '@/types/routing-types';
 export declare function useRouting(): {
-    currentRoute: any;
+    currentRoute: Route | null;
     isCalculating: boolean;
     error: string | null;
     calculateRoute: (start: RoutePoint, end: RoutePoint, waypoints: RoutePoint[] | undefined, options: RoutingOptions) => Promise<void>;

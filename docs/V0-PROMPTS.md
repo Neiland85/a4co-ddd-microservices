@@ -133,7 +133,6 @@ const suggestions = [
 ```
 
 
-
 ```
 
 
@@ -211,7 +210,6 @@ const sampleArtisans = [
 ];
 
 ```
-
 
 
 ```
@@ -292,7 +290,6 @@ const sampleOpportunities = [
 ```
 
 
-
 ```
 
 
@@ -359,7 +356,6 @@ const sampleStats = {
 };
 
 ```
-
 
 
 ```
