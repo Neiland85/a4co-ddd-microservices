@@ -8,7 +8,7 @@ The `@a4co/observability` package has **91 TypeScript compilation errors** that 
 
 ## Error Summary
 
-### Files with Errors:
+### Files with Errors
 
 - `src/ddd-tracing.ts`: 42 errors (mostly 'span' is of type 'unknown')
 - `src/instrumentation/index.ts`: 29 errors (missing exports, undefined variables)
@@ -20,7 +20,7 @@ The `@a4co/observability` package has **91 TypeScript compilation errors** that 
 - `src/middleware.ts`: 1 error (argument type mismatch)
 - `src/design-system/observable-button.tsx`: 1 error (property type mismatch)
 
-### Main Error Categories:
+### Main Error Categories
 
 1. **OpenTelemetry Span Types**: Many errors where `span` is typed as `unknown` instead of proper OpenTelemetry span types
 2. **Missing Exports**: `recordEvent` not exported from metrics module
@@ -46,14 +46,14 @@ The errors suggest:
 
 ## Proposed Solutions
 
-### Immediate Actions:
+### Immediate Actions
 
 1. **Update OpenTelemetry Dependencies**: Check for version compatibility issues
 2. **Fix Missing Exports**: Implement or import missing `recordEvent` function
 3. **Add Missing Client References**: Properly import or mock NATS/Redis clients
 4. **Update Function Signatures**: Align tracking function calls with current API
 
-### Long-term Actions:
+### Long-term Actions
 
 1. **Type Safety Audit**: Review all type definitions for accuracy
 2. **API Contract Review**: Ensure all external dependencies are properly typed

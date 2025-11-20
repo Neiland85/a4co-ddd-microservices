@@ -70,7 +70,7 @@ Los siguientes servicios quedan en backlog hasta que los servicios core estén c
 
 ## Criterios de Priorización
 
-### Servicios Core Seleccionados Por:
+### Servicios Core Seleccionados Por
 
 1. **Valor de Negocio**: Servicios críticos para el flujo principal de comercio
 2. **Dependencias**: Servicios con menos dependencias externas
@@ -99,14 +99,14 @@ Los siguientes servicios quedan en backlog hasta que los servicios core estén c
 
 ## Impacto en el Desarrollo
 
-### Lo Que Cambia:
+### Lo Que Cambia
 
 - **Enfoque**: Desarrollo concentrado en servicios core
 - **Recursos**: Equipo enfocado en 5 servicios principales
 - **Testing**: Pruebas prioritarias en servicios core
 - **CI/CD**: Pipelines optimizados para servicios core
 
-### Lo Que No Cambia:
+### Lo Que No Cambia
 
 - **Arquitectura**: Patrón DDD y hexagonal architecture se mantiene
 - **Tecnologías**: Stack tecnológico permanece igual
@@ -121,13 +121,13 @@ Los siguientes servicios quedan en backlog hasta que los servicios core estén c
 
 ## Riesgos y Mitigaciones
 
-### Riesgos:
+### Riesgos
 
 - **Alcance Creep**: Servicios no core intentando entrar al desarrollo
 - **Dependencias**: Servicios core necesitando funcionalidad de backlog
 - **Complejidad**: Integración futura de servicios backlog
 
-### Mitigaciones:
+### Mitigaciones
 
 - **Revisión Semanal**: Evaluación de alcance con stakeholders
 - **Interfaces Limpias**: Diseño de contratos entre servicios

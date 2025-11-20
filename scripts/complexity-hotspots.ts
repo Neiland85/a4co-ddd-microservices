@@ -73,8 +73,8 @@ export async function analyzeComplexity(): Promise<ComplexityReport> {
     totalFiles: files.length,
     totalFunctions: totalFunctions,
     averageComplexity: totalFunctions > 0 ? totalComplexity / totalFunctions : 0,
-    criticalCount: hotspots.filter(h => h.severity === 'CRITICAL').length,
-    highCount: hotspots.filter(h => h.severity === 'HIGH').length,
+    criticalCount: hotspots.filter((h) => h.severity === 'CRITICAL').length,
+    highCount: hotspots.filter((h) => h.severity === 'HIGH').length,
   };
 
   displayResults({ hotspots, summary, byLayer });
@@ -218,7 +218,7 @@ function getThresholdForLayer(layer: string): { max: number; warning: number } {
 
 function getSeverity(
   complexity: number,
-  threshold: { max: number; warning: number }
+  threshold: { max: number; warning: number },
 ): 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' {
   if (complexity > threshold.max * 2) return 'CRITICAL';
   if (complexity > threshold.max) return 'HIGH';
@@ -285,9 +285,9 @@ function detectNestedIfs(node: ts.Node): number {
   function visit(n: ts.Node, depth: number) {
     if (ts.isIfStatement(n)) {
       maxDepth = Math.max(maxDepth, depth);
-      ts.forEachChild(n, child => visit(child, depth + 1));
+      ts.forEachChild(n, (child) => visit(child, depth + 1));
     } else {
-      ts.forEachChild(n, child => visit(child, depth));
+      ts.forEachChild(n, (child) => visit(child, depth));
     }
   }
 
@@ -330,11 +330,7 @@ function displayResults(report: ComplexityReport): void {
       hotspot.severity === 'CRITICAL' ? '🚨' : hotspot.severity === 'HIGH' ? '⚠️' : '📌';
 
     console.log(
-<<<<<<< HEAD
       `\n${index + 1}. ${severity} ${hotspot.function} (Complejidad: ${hotspot.complexity})`,
-=======
-      `\n${index + 1}. ${severity} ${hotspot.function} (Complejidad: ${hotspot.complexity})`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
     console.log(`   📁 ${hotspot.file}`);
     console.log(`   📏 Líneas de código: ${hotspot.loc}`);

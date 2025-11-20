@@ -29,7 +29,7 @@ const result = await secureTarHandler.extractSecurely('archivo.tar', '/tmp/safe'
 });
 ```
 
-#### Características de Seguridad:
+#### Características de Seguridad
 
 - ✅ **Validación de extensiones**: Solo archivos `.tar`, `.tar.gz`, `.tgz`, etc.
 - ✅ **Límite de tamaño**: Máximo 100MB por defecto
@@ -52,7 +52,7 @@ await tarSecurityMiddleware.afterExtract(extractedFiles);
 
 ### 3. **Scripts de Línea de Comandos**
 
-#### Validación de archivos tar:
+#### Validación de archivos tar
 
 ```bash
 # Validar archivo tar
@@ -64,7 +64,7 @@ node scripts/validate-tar.js archivo.tar
 ✅ Archivo tar VALIDADO - Seguro para extraer
 ```
 
-#### Extracción segura:
+#### Extracción segura
 
 ```bash
 # Extraer con sandbox
@@ -82,14 +82,14 @@ node scripts/extract-tar-secure.js archivo.tar /tmp/destino --sandbox
 
 ## 🔧 Configuración del Sistema
 
-### Variables de Entorno para Monitoreo:
+### Variables de Entorno para Monitoreo
 
 ```bash
 # Archivos a monitorear después de extracción
 export TAR_SECURITY_WATCH_PATHS="/etc/passwd,/app/.env,/app/config"
 ```
 
-### Configuración de Límites:
+### Configuración de Límites
 
 ```typescript
 const secureHandler = new SecureTarHandler();
@@ -100,20 +100,20 @@ secureHandler.maxPathLength = 200; // Paths más cortos
 
 ## 📋 Checklist de Seguridad
 
-### Antes de Extraer:
+### Antes de Extraer
 
 - [ ] Validar con `secureTarHandler.validateTarFile()`
 - [ ] Verificar checksum si disponible
 - [ ] Usar sandbox para extracciones no confiables
 - [ ] Monitorear cambios en archivos sensibles
 
-### Durante Extracción:
+### Durante Extracción
 
 - [ ] Usar opciones de seguridad de tar (`--no-same-owner`, `--no-overwrite-dir`)
 - [ ] Ejecutar con usuario no privilegiado
 - [ ] Extraer en directorio temporal primero
 
-### Después de Extracción:
+### Después de Extracción
 
 - [ ] Verificar integridad de archivos críticos
 - [ ] Escanear por malware/backdoors
@@ -131,7 +131,7 @@ secureHandler.maxPathLength = 200; // Paths más cortos
 
 ## 🔍 Detección y Monitoreo
 
-### Logs a Monitorear:
+### Logs a Monitorear
 
 ```
 # Symlinks peligrosos detectados
@@ -140,7 +140,7 @@ secureHandler.maxPathLength = 200; // Paths más cortos
 # Cambios en archivos sensibles post-extracción
 ```
 
-### Métricas a Recopilar:
+### Métricas a Recopilar
 
 - Número de archivos tar procesados
 - Tasa de archivos bloqueados por seguridad
@@ -149,7 +149,7 @@ secureHandler.maxPathLength = 200; // Paths más cortos
 
 ## 🧪 Testing
 
-### Tests Unitarios:
+### Tests Unitarios
 
 ```typescript
 describe('SecureTarHandler', () => {
@@ -163,7 +163,7 @@ describe('SecureTarHandler', () => {
 });
 ```
 
-### Tests de Integración:
+### Tests de Integración
 
 ```bash
 # Crear tar malicioso para testing

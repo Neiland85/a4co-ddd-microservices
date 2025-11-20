@@ -15,10 +15,10 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy requirements
-COPY requirements.txt .
+# Copy dependency manifests
+COPY requirements.txt requirements-dev.txt ./
 
-# Install Python dependencies
+# Install runtime dependencies
 RUN pip install -r requirements.txt
 
 # Development stage with hot reload support
@@ -26,6 +26,9 @@ FROM base AS development
 
 # Copy source code
 COPY . .
+
+# Install development dependencies
+RUN pip install -r requirements-dev.txt
 
 # Expose port
 EXPOSE 8000
@@ -45,9 +48,6 @@ COPY --chown=appuser:appgroup . .
 
 # Switch to non-root user
 USER appuser
-
-# Install only production dependencies
-RUN pip install --no-dev -r requirements.txt
 
 # Expose port
 EXPOSE 8000

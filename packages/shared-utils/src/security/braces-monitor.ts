@@ -8,17 +8,18 @@
 import { EventEmitter } from 'events';
 
 // Import opcional para observabilidad (fallback a console si no está disponible)
-let getGlobalLogger: () => any;
-try {
-  const observability = require('@a4co/observability');
-  getGlobalLogger = observability.getGlobalLogger;
-} catch {
-  getGlobalLogger = () => ({
-    info: console.info,
-    warn: console.warn,
-    error: console.error,
-  });
-}
+export const getGlobalLogger = (() => {
+  try {
+    const observability = require('@a4co/observability');
+    return observability.getGlobalLogger;
+  } catch {
+    return () => ({
+      info: console.info,
+      warn: console.warn,
+      error: console.error,
+    });
+  }
+})();
 
 export interface BracesSecurityAlert {
   id: string;
@@ -98,7 +99,7 @@ export class BracesSecurityMonitor extends EventEmitter {
     type: BracesSecurityAlert['type'],
     severity: BracesSecurityAlert['severity'],
     details: BracesSecurityAlert['details'],
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): void {
     const alert: BracesSecurityAlert = {
       id: this.generateAlertId(),
@@ -173,7 +174,7 @@ export class BracesSecurityMonitor extends EventEmitter {
         stats[alert.severity] = (stats[alert.severity] || 0) + 1;
         return stats;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 
@@ -277,22 +278,29 @@ export class BracesSecurityMonitorFactory {
   }
 
   static getGlobalMetrics(): BracesSecurityMetrics {
-    const allMetrics = Array.from(this.monitors.values()).map(m => m.getMetrics());
+    const allMetrics = Array.from(this.monitors.values()).map((m) => m.getMetrics());
 
-    return {
+    const lastAlert = allMetrics
+      .map((m) => m.lastAlertTime)
+      .filter((t): t is Date => t !== undefined)
+      .sort((a, b) => b.getTime() - a.getTime())[0];
+
+    const metrics: BracesSecurityMetrics = {
       totalRequests: allMetrics.reduce((sum, m) => sum + m.totalRequests, 0),
       blockedRequests: allMetrics.reduce((sum, m) => sum + m.blockedRequests, 0),
       averageProcessingTime:
         allMetrics.length > 0
           ? allMetrics.reduce((sum, m) => sum + m.averageProcessingTime, 0) / allMetrics.length
           : 0,
-      peakMemoryUsage: Math.max(...allMetrics.map(m => m.peakMemoryUsage), 0),
+      peakMemoryUsage: Math.max(...allMetrics.map((m) => m.peakMemoryUsage), 0),
       alertsTriggered: allMetrics.reduce((sum, m) => sum + m.alertsTriggered, 0),
-      lastAlertTime: allMetrics
-        .map(m => m.lastAlertTime)
-        .filter(t => t !== undefined)
-        .sort((a, b) => b!.getTime() - a!.getTime())[0],
       topBlockedPatterns: [], // TODO: Agregar agregación global
     };
+
+    if (lastAlert !== undefined) {
+      metrics.lastAlertTime = lastAlert;
+    }
+
+    return metrics;
   }
 }

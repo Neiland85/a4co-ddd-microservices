@@ -12,7 +12,10 @@ export interface EmailProvider {
 }
 
 export class SendGridEmailProvider implements EmailProvider {
-  constructor(private apiKey: string, private fromEmail: string) {
+  constructor(
+    private apiKey: string,
+    private fromEmail: string,
+  ) {
     sgMail.setApiKey(apiKey);
   }
 
@@ -38,8 +41,8 @@ export class MockEmailProvider implements EmailProvider {
 }
 
 export function createEmailProvider(): EmailProvider {
-  const apiKey = process.env.SENDGRID_API_KEY;
-  const fromEmail = process.env.NOTIFICATION_EMAIL || 'noreply@a4co.com';
+  const apiKey = process.env['SENDGRID_API_KEY'];
+  const fromEmail = process.env['NOTIFICATION_EMAIL'] || 'noreply@a4co.com';
 
   if (apiKey) {
     console.log('✅ Using SendGrid email provider');
@@ -49,4 +52,3 @@ export function createEmailProvider(): EmailProvider {
   console.log('⚠️  SendGrid not configured, using mock email provider');
   return new MockEmailProvider();
 }
-

@@ -12,6 +12,7 @@
     "eamodio.gitlens", // GitLens para historia de commits y blame avanzado
     "rangav.vscode-thunder-client", // Thunder Client para testing de APIs (alternativa a Postman)
     "christian-kohler.npm-intellisense", // Autocompletado para imports npm/pnpm
-    "mikestead.dotenv" // Soporte para archivos .env (highlighting y autocompletado)
+    "mikestead.dotenv",
+    "anthropic.claude-code" // Soporte para archivos .env (highlighting y autocompletado)
   ]
 }

@@ -33,6 +33,7 @@ if (!result.isValid) {
 ```
 
 **Features:**
+
 - Path validation against allowed temp directories
 - Symlink detection and blocking
 - Parent directory validation
@@ -64,6 +65,7 @@ const tempFile = await protector.createProtectedTempFile('upload-', '.txt');
 ```
 
 **Features:**
+
 - Operation protection with validation
 - Secure temp directory/file creation using fs.mkdtemp()
 - Statistics tracking
@@ -97,6 +99,7 @@ await manager.cleanup();
 ```
 
 **Features:**
+
 - Automatic cleanup on process exit
 - Size limits enforcement
 - Secure random file names
@@ -118,6 +121,7 @@ module.exports = {
 ```
 
 **Rules:**
+
 - `no-insecure-temp-file-creation`: Detects insecure temp file creation patterns
 - `no-symlink-temp-operations`: Detects operations on potentially symlinked temp files
 
@@ -207,6 +211,7 @@ npm test -- temp-file-security.test.ts
 ```
 
 Tests cover:
+
 - Path validation scenarios
 - Symlink detection and blocking
 - Secure temp file/directory creation

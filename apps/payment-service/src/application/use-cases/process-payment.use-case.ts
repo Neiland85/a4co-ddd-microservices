@@ -10,8 +10,10 @@ import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
 
 export interface ProcessPaymentCommand {
   orderId: string;
-  amount: Money;
+  amount: number;
+  currency: string;
   customerId: string;
+  description?: string;
   metadata?: Record<string, any>;
   paymentMethodId?: string;
   idempotencyKey?: string;
@@ -28,55 +30,72 @@ export class ProcessPaymentUseCase {
     private readonly paymentDomainService: PaymentDomainService,
     private readonly stripeGateway: StripeGateway,
     private readonly eventPublisher: PaymentEventPublisher,
-  ) { }
+  ) {}
 
   public async execute(command: ProcessPaymentCommand): Promise<Payment> {
-    this.paymentDomainService.validatePaymentLimits(command.amount);
+    const money = Money.create(command.amount / 100, command.currency);
+    this.paymentDomainService.validatePaymentLimits(money);
 
     const existingPayment = await this.paymentRepository.findByOrderId(command.orderId);
 
     if (existingPayment) {
       // Idempotent behavior: if already succeeded or refunded, return existing state
-      if ([PaymentStatusValue.SUCCEEDED, PaymentStatusValue.REFUNDED].includes(existingPayment.status.value)) {
-        this.logger.log(`Payment for order ${command.orderId} already processed with status ${existingPayment.status.value}`);
+      const statusValue = existingPayment.status.value;
+      if ([PaymentStatusValue.SUCCEEDED, PaymentStatusValue.REFUNDED].includes(statusValue)) {
+        this.logger.log(
+          `Payment for order ${command.orderId} already processed with status ${statusValue}`,
+        );
         return existingPayment;
       }
 
-      if (existingPayment.status.value === PaymentStatusValue.PROCESSING) {
+      if (statusValue === PaymentStatusValue.PROCESSING) {
         this.logger.log(`Payment for order ${command.orderId} is already processing`);
         return existingPayment;
       }
     }
 
-    const payment = existingPayment ??
+    const payment =
+      existingPayment ??
       Payment.create({
         orderId: command.orderId,
-        amount: command.amount,
+        amount: money,
         customerId: command.customerId,
-        metadata: command.metadata,
+        metadata: command.metadata ?? {},
       });
 
     if (!this.paymentDomainService.canProcessPayment(payment)) {
-      throw new Error(`Payment ${payment.paymentId.value} cannot be processed from status ${payment.status.value}`);
+      throw new Error(
+        `Payment ${payment.paymentId.value} cannot be processed from status ${payment.status.value}`,
+      );
     }
 
     payment.process();
     await this.persist(payment);
 
     try {
-      const intent = await this.stripeGateway.createPaymentIntent({
-        amount: command.amount,
+      const stripeParams: any = {
+        amount: money,
         orderId: command.orderId,
         customerId: command.customerId,
-        metadata: command.metadata,
-        paymentMethodId: command.paymentMethodId,
-        idempotencyKey: command.idempotencyKey,
-      });
+        metadata: command.metadata ?? {},
+      };
+
+      if (command.paymentMethodId) {
+        stripeParams.paymentMethodId = command.paymentMethodId;
+      }
+
+      if (command.idempotencyKey) {
+        stripeParams.idempotencyKey = command.idempotencyKey;
+      }
+
+      const intent = await this.stripeGateway.createPaymentIntent(stripeParams);
 
       if (intent.status === 'succeeded') {
         payment.markAsSucceeded(intent.id);
       } else if (intent.status === 'processing') {
-        this.logger.log(`Stripe payment intent ${intent.id} is processing for order ${command.orderId}`);
+        this.logger.log(
+          `Stripe payment intent ${intent.id} is processing for order ${command.orderId}`,
+        );
       } else {
         payment.markAsFailed(`Stripe payment intent status: ${intent.status}`);
       }
@@ -96,4 +115,3 @@ export class ProcessPaymentUseCase {
     await this.eventPublisher.publishPaymentEvents(payment);
   }
 }
-

@@ -9,6 +9,7 @@
 ### ✅ Checklist - Hoy (4-6 horas)
 
 #### 1. Ejecutar Quick Wins Script (15 min)
+
 ```bash
 cd /Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices
 
@@ -22,6 +23,7 @@ cd /Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices
 ```
 
 **Validar:**
+
 ```bash
 pnpm --version      # Debe ser 10.14.0+
 node --version      # Debe ser 22+
@@ -29,6 +31,7 @@ docker ps           # Verifica servicios levantados
 ```
 
 #### 2. Corregir docker-compose.yml (5 min)
+
 ```bash
 # ANTES (Línea 5):
 # context: ./gateway
@@ -40,6 +43,7 @@ nano docker-compose.yml  # o tu editor favorito
 ```
 
 **Cambio específico:**
+
 ```yaml
 # Línea 4-5, cambiar:
 auth-service:
@@ -48,6 +52,7 @@ auth-service:
 ```
 
 #### 3. Limpiar jest.config.js Duplicado (5 min)
+
 ```bash
 # Identificar archivo confuso:
 ls -la jest.config.js*
@@ -64,6 +69,7 @@ ls -la jest.config.js
 ```
 
 #### 4. Ejecutar Test Coverage Report (10 min)
+
 ```bash
 # Ver cobertura actual (mostrará qué tan bajo es)
 pnpm test:coverage
@@ -76,6 +82,7 @@ pnpm test:coverage
 **Acción:** Documentar el % en la wiki/repo
 
 #### 5. Compilar Shared Packages (10 min)
+
 ```bash
 # Asegurar que packages compartidos están compilados
 pnpm install
@@ -88,6 +95,7 @@ ls apps/auth-service/node_modules/@a4co/shared-utils/dist/
 ```
 
 #### 6. Crear README para Servicios Principales (2 horas)
+
 ```bash
 # Template: Crear 3 README files
 
@@ -97,6 +105,7 @@ ls apps/auth-service/node_modules/@a4co/shared-utils/dist/
 ```
 
 **Contenido mínimo para cada:**
+
 ```markdown
 # {Service Name}
 
@@ -113,6 +122,7 @@ pnpm start:dev
 ```
 
 ## API Endpoints
+
 - POST /api/v1/{resource}
 - GET /api/v1/{resource}
 - GET /api/v1/{resource}/:id
@@ -120,16 +130,19 @@ pnpm start:dev
 - DELETE /api/v1/{resource}/:id
 
 ## Testing
+
 ```bash
 pnpm test
 pnpm test:coverage
 ```
 
 ## Architecture
+
 - Domain layer: `src/domain/`
 - Application layer: `src/application/`
 - Infrastructure: `src/infrastructure/`
 - Presentation: `src/presentation/`
+
 ```
 
 #### 7. Re-habilitar Workflows de CI/CD (15 min)
@@ -156,6 +169,7 @@ mv .workflows-disabled-develop.txt .workflows-disabled-develop.txt.archive
 #### 1. Comenzar Gateway Implementation (4-5 horas)
 
 **Crear estructura base:**
+
 ```bash
 # 1. Crear directorio src
 mkdir -p apps/gateway/src
@@ -210,6 +224,7 @@ MODULE
 ```
 
 **Compilar y probar:**
+
 ```bash
 cd apps/gateway
 pnpm install
@@ -223,6 +238,7 @@ curl http://localhost:3000/api/docs
 #### 2. Setup Frontend API Client (2-3 horas)
 
 **Crear axios instance:**
+
 ```bash
 # Editar apps/frontend/src/api.ts
 cat > apps/frontend/src/api.ts << 'API'
@@ -266,6 +282,7 @@ API
 ```
 
 **Crear Auth Context:**
+
 ```bash
 mkdir -p apps/frontend/src/contexts
 cat > apps/frontend/src/contexts/AuthContext.tsx << 'CONTEXT'
@@ -331,6 +348,7 @@ CONTEXT
 #### 3. Crear OpenAPI Specs Básicas (1-2 horas)
 
 **Para auth-service:**
+
 ```bash
 mkdir -p apps/auth-service/contracts
 cat > apps/auth-service/contracts/openapi.yaml << 'OPENAPI'
@@ -406,6 +424,7 @@ OPENAPI
 ### 📅 Checklist - Esta Semana (Análisis y Planificación)
 
 #### 1. Team Meeting - Revisar Auditoría (1 hora)
+
 ```
 Agenda:
 - Presentar estado general (63% completitud)
@@ -415,6 +434,7 @@ Agenda:
 ```
 
 #### 2. Crear Issues en GitHub (1 hora)
+
 ```bash
 # Crear issue para cada item crítico:
 
@@ -444,6 +464,7 @@ Agenda:
 ```
 
 #### 3. Establecer Métricas de Seguimiento (30 min)
+
 ```bash
 # Crear archivo para tracking:
 cat > METRICS_TRACKING.md << 'METRICS'
@@ -473,12 +494,14 @@ METRICS
 ## ARCHIVOS GENERADOS
 
 ✅ **AUDITORIA_EXHAUSTIVA_2025.md** (26 KB)
+
 - Análisis completo de 80,000 líneas de proyecto
 - 8 secciones principales
 - Recomendaciones detalladas
 - Timeline estimado
 
 ✅ **ACCIONES_INMEDIATAS.md** (Este archivo)
+
 - Pasos específicos para próximas 24-48h
 - Comandos listos para copiar-pegar
 - Checklist ejecutable
@@ -488,6 +511,7 @@ METRICS
 ## CONTACTO & SOPORTE
 
 **Para preguntas sobre esta auditoría:**
+
 - Archivo principal: AUDITORIA_EXHAUSTIVA_2025.md
 - Revisar sección: [Trabajo Pendiente Detallado]
 - Timeline detallado en: [Roadmap de Horas]

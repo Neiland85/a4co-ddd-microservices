@@ -69,7 +69,7 @@ export class BracesSecurityMiddleware {
               this.monitor.recordAttack(
                 'EXPANSION_ATTACK',
                 validation.issues.some(
-                  issue => issue.includes('CRITICAL') || issue.includes('CRITICAL')
+                  (issue) => issue.includes('CRITICAL') || issue.includes('CRITICAL'),
                 )
                   ? 'CRITICAL'
                   : 'HIGH',
@@ -85,7 +85,7 @@ export class BracesSecurityMiddleware {
                   field,
                   validationIssues: validation.issues,
                   requestId: (req as any).id || 'unknown',
-                }
+                },
               );
 
               res.status(400).json({
@@ -119,7 +119,7 @@ export class BracesSecurityMiddleware {
           {
             error: error instanceof Error ? error.message : String(error),
             requestId: (req as any).id || 'unknown',
-          }
+          },
         );
 
         throw error;
@@ -166,7 +166,7 @@ export class BracesSecurityMiddleware {
                   param,
                   validationIssues: validation.issues,
                   requestId: (req as any).id || 'unknown',
-                }
+                },
               );
 
               res.status(400).json({
@@ -193,7 +193,7 @@ export class BracesSecurityMiddleware {
           {
             error: error instanceof Error ? error.message : String(error),
             requestId: (req as any).id || 'unknown',
-          }
+          },
         );
 
         throw error;
@@ -299,7 +299,7 @@ export class BracesMonitoringService {
     this.validator = BracesSecurityFactory.createValidator();
 
     // Configurar alertas
-    this.validator.on('securityAlert', alert => {
+    this.validator.on('securityAlert', (alert) => {
       this.alerts.push({
         ...alert,
         timestamp: new Date().toISOString(),
@@ -322,7 +322,7 @@ export class BracesMonitoringService {
 
     // Log para análisis posterior
     console.log(
-      `🔍 Braces validation [${source}]: safe=${validation.isSafe}, ratio=${validation.stats.expansionRatio}`
+      `🔍 Braces validation [${source}]: safe=${validation.isSafe}, ratio=${validation.stats.expansionRatio}`,
     );
   }
 
@@ -343,7 +343,7 @@ export class BracesMonitoringService {
   clearOldAlerts(maxAgeMs: number = 3600000) {
     // 1 hora por defecto
     const cutoff = Date.now() - maxAgeMs;
-    this.alerts = this.alerts.filter(alert => new Date(alert.timestamp).getTime() > cutoff);
+    this.alerts = this.alerts.filter((alert) => new Date(alert.timestamp).getTime() > cutoff);
   }
 }
 

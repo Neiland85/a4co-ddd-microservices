@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/payment-service",
+    "types": ["node"],
+    "rootDirs": ["src", "../../packages"], 
+    "baseUrl": ".",
+    "paths": {
+      "@a4co/shared-utils": ["../../packages/shared-utils/src/index.ts"],
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
+    }
+  },
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "test/**/*"],
+  "include": ["src/**/*.ts"]
+}
