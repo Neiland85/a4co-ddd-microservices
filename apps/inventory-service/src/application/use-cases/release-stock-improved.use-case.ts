@@ -19,11 +19,15 @@ export class ReleaseStockUseCase {
   ) {}
 
   async execute(command: ReleaseStockCommand): Promise<void> {
-    this.logger.log(`🔄 Liberando stock para orden ${command.orderId}, reserva ${command.reservationId}`);
+    this.logger.log(
+      `🔄 Liberando stock para orden ${command.orderId}, reserva ${command.reservationId}`,
+    );
 
     try {
       // Paso 1: Obtener la reserva
-      const reservation = await this.reservationRepository.findByReservationId(command.reservationId);
+      const reservation = await this.reservationRepository.findByReservationId(
+        command.reservationId,
+      );
 
       if (!reservation) {
         this.logger.warn(`⚠️ Reserva ${command.reservationId} no encontrada`);
@@ -31,7 +35,9 @@ export class ReleaseStockUseCase {
       }
 
       if (reservation.status !== ReservationStatus.ACTIVE) {
-        this.logger.warn(`⚠️ Reserva ${command.reservationId} ya está en estado ${reservation.status}`);
+        this.logger.warn(
+          `⚠️ Reserva ${command.reservationId} ya está en estado ${reservation.status}`,
+        );
         return;
       }
 

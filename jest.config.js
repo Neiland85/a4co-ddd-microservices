@@ -11,7 +11,7 @@ module.exports = {
     '!**/node_modules/**',
     '!**/dist/**',
   ],
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@a4co/(.*)$': '<rootDir>/packages/$1/src',
   },
 };

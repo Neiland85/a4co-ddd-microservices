@@ -19,6 +19,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "type-check": "tsc --noEmit",
     "db:generate": "prisma generate",
+    "prisma:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "clean": "rm -rf dist"

@@ -1,3 +1,5 @@
+'use client';
+
 import { Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@a4co/design-system';
 import AnimatedButton from '@/components/AnimatedButton';

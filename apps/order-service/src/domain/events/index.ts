@@ -12,7 +12,7 @@ export interface OrderCreatedEventPayload {
 
 export class OrderCreatedEvent {
   public readonly eventType = 'orders.created';
-  
+
   constructor(
     public readonly orderId: string,
     public readonly customerId: string,
@@ -40,7 +40,7 @@ export interface OrderCancelledEventPayload {
 
 export class OrderCancelledEvent {
   public readonly eventType = 'orders.cancelled';
-  
+
   constructor(
     public readonly orderId: string,
     public readonly reason: string,
@@ -56,6 +56,6 @@ export class OrderCancelledEvent {
   }
 }
 
-export * from './order-confirmed.event';
-export * from './order-failed.event';
-export * from './order-status-changed.event';
+export * from './order-confirmed.event.js';
+export * from './order-failed.event.js';
+export * from './order-status-changed.event.js';

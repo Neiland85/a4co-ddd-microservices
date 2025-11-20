@@ -238,7 +238,7 @@ class BracesSecurityScanner {
         groups[severity]!.push(issue);
         return groups;
       },
-      {} as Record<string, BracesSecurityIssue[]>
+      {} as Record<string, BracesSecurityIssue[]>,
     );
 
     const severityOrder = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
@@ -281,7 +281,7 @@ class BracesSecurityScanner {
           acc[issue.severity] = (acc[issue.severity] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ),
     };
   }
@@ -313,7 +313,7 @@ async function main() {
 
   // Exit code basado en severidad
   const hasCriticalOrHigh = issues.some(
-    issue => issue.severity === 'CRITICAL' || issue.severity === 'HIGH'
+    (issue) => issue.severity === 'CRITICAL' || issue.severity === 'HIGH',
   );
   process.exit(hasCriticalOrHigh ? 1 : 0);
 }

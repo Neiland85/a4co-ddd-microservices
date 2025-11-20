@@ -224,7 +224,7 @@ async function main() {
     console.log(report);
     const stats = scanner.getScanStats();
     console.log('📈 Scan Statistics:', stats);
-    const hasCriticalOrHigh = issues.some(issue => issue.severity === 'CRITICAL' || issue.severity === 'HIGH');
+    const hasCriticalOrHigh = issues.some((issue) => issue.severity === 'CRITICAL' || issue.severity === 'HIGH');
     process.exit(hasCriticalOrHigh ? 1 : 0);
 }
 const isCliExecution = Boolean(process?.argv?.[1]?.includes('validate-braces-security'));

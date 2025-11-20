@@ -26,9 +26,10 @@ export class PaymentRefundedEvent extends PaymentDomainEvent<PaymentRefundedEven
         orderId: params.orderId,
         customerId: params.customerId,
         amount: params.amount,
+        currency: params.amount.currency,
         refundAmount: params.refundAmount,
         metadata: params.metadata ?? {},
-        stripePaymentIntentId: params.stripePaymentIntentId,
+        stripePaymentIntentId: params.stripePaymentIntentId ?? null,
         status: PaymentStatusValue.REFUNDED,
         timestamp: params.timestamp ?? new Date(),
       },
@@ -37,4 +38,3 @@ export class PaymentRefundedEvent extends PaymentDomainEvent<PaymentRefundedEven
     );
   }
 }
-

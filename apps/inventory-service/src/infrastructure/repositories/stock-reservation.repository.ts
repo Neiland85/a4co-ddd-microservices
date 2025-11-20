@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { PrismaClient, StockReservation as PrismaReservation } from '@prisma/client';
+import { PrismaClient, StockReservation as PrismaReservation } from '../../../prisma/generated';
 import { StockReservation } from '../../domain/entities/stock-reservation.entity';
 
 // Definimos la interfaz aquí o la importamos si ya existe en domain
@@ -31,7 +31,7 @@ export class PrismaStockReservationRepository implements IStockReservationReposi
     const records = await this.prisma.stockReservation.findMany({
       where: { productId },
     });
-    return records.map(r => this.toDomain(r));
+    return records.map((r) => this.toDomain(r));
   }
 
   async updateStatus(reservationId: string, status: string): Promise<void> {
@@ -55,7 +55,7 @@ export class PrismaStockReservationRepository implements IStockReservationReposi
         status: 'RESERVED', // Asumiendo que solo buscamos las activas
       },
     });
-    return records.map(r => this.toDomain(r));
+    return records.map((r) => this.toDomain(r));
   }
 
   async releaseByOrderId(orderId: string): Promise<void> {
@@ -68,13 +68,17 @@ export class PrismaStockReservationRepository implements IStockReservationReposi
 
   async save(reservation: StockReservation): Promise<void> {
     const data = reservation.toJSON();
+    // Para simplificar, tomamos el primer item de la reserva
+    const firstItem = data.items[0];
+
     await this.prisma.stockReservation.upsert({
-      where: { id: data.id },
+      where: { id: data.reservationId },
       create: {
-        id: data.id,
+        id: data.reservationId,
         orderId: data.orderId,
-        productId: data.productId,
-        quantity: data.quantity,
+        customerId: data.customerId,
+        productId: firstItem.productId,
+        quantity: firstItem.quantity,
         status: data.status,
         expiresAt: data.expiresAt,
         createdAt: data.createdAt,
@@ -89,13 +93,18 @@ export class PrismaStockReservationRepository implements IStockReservationReposi
   // Mapper privado para convertir de Prisma a Dominio
   private toDomain(record: PrismaReservation): StockReservation {
     return new StockReservation({
-      id: record.id,
+      reservationId: record.id,
       orderId: record.orderId,
-      productId: record.productId,
-      quantity: record.quantity,
+      customerId: record.customerId,
+      items: [
+        {
+          productId: record.productId,
+          quantity: record.quantity,
+        },
+      ],
       status: record.status as any, // Cast simple si los enums coinciden
-      expiresAt: record.expiresAt,
       createdAt: record.createdAt,
+      ttlMinutes: 0, // No necesitamos TTL adicional, expiresAt viene de DB
     });
   }
 }

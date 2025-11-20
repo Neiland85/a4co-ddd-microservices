@@ -15,6 +15,7 @@ export interface ReservationItem {
 export class StockReservation {
   public readonly reservationId: string;
   public readonly orderId: string;
+  public readonly customerId: string;
   public readonly items: ReservationItem[];
   public readonly createdAt: Date;
   public readonly expiresAt: Date;
@@ -25,6 +26,7 @@ export class StockReservation {
   constructor(params: {
     reservationId?: string;
     orderId: string;
+    customerId: string;
     items: ReservationItem[];
     ttlMinutes?: number;
     status?: ReservationStatus;
@@ -32,6 +34,7 @@ export class StockReservation {
   }) {
     this.reservationId = params.reservationId || `res-${randomUUID()}`;
     this.orderId = params.orderId;
+    this.customerId = params.customerId;
     this.items = params.items;
     this.status = params.status || ReservationStatus.ACTIVE;
     this.createdAt = params.createdAt || new Date();
@@ -56,12 +59,17 @@ export class StockReservation {
   /**
    * Libera la reserva
    */
-  release(reason: 'order_cancelled' | 'order_expired' | 'payment_failed' | 'manual_correction'): void {
+  release(
+    reason: 'order_cancelled' | 'order_expired' | 'payment_failed' | 'manual_correction',
+  ): void {
     if (this.status !== ReservationStatus.ACTIVE) {
-      // Permitimos liberar si ya está expirada para asegurar consistencia, 
+      // Permitimos liberar si ya está expirada para asegurar consistencia,
       // pero lanzamos error si ya estaba liberada o confirmada.
-      if (this.status === ReservationStatus.RELEASED || this.status === ReservationStatus.CONFIRMED) {
-         return; // Idempotencia: si ya está liberada, no hacemos nada
+      if (
+        this.status === ReservationStatus.RELEASED ||
+        this.status === ReservationStatus.CONFIRMED
+      ) {
+        return; // Idempotencia: si ya está liberada, no hacemos nada
       }
     }
 
@@ -110,6 +118,7 @@ export class StockReservation {
       id: this.reservationId,
       reservationId: this.reservationId,
       orderId: this.orderId,
+      customerId: this.customerId,
       items: this.items,
       status: this.status,
       createdAt: this.createdAt,

@@ -14,12 +14,34 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NatsEventBus = void 0;
+exports.NatsEventBus = exports.BaseService = void 0;
 const nats_1 = require("nats");
 const common_1 = require("@nestjs/common");
-__exportStar(require("./domain"), exports);
-__exportStar(require("./security"), exports);
-__exportStar(require("./types"), exports);
+__exportStar(require("./domain/index"), exports);
+__exportStar(require("./security/index"), exports);
+class BaseService {
+    constructor(serviceName) {
+        this.logger = new common_1.Logger(serviceName);
+    }
+    validateRequired(value, fieldName) {
+        if (!value || (typeof value === 'string' && value.trim() === '')) {
+            throw new Error(`${fieldName} is required`);
+        }
+        return value;
+    }
+    log(message, context) {
+        this.logger.log(message, context);
+    }
+    createSuccessMessage(entity, action, identifier) {
+        return `${entity} ${action} successfully: ${identifier}`;
+    }
+    handleServiceError(error, operation) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        this.logger.error(`Error in ${operation}: ${message}`, error);
+        return `Error in ${operation}: ${message}`;
+    }
+}
+exports.BaseService = BaseService;
 class NatsEventBus {
     constructor() {
         this.logger = new common_1.Logger('NatsEventBus');

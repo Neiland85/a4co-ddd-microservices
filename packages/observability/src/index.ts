@@ -65,7 +65,7 @@ const messagePropagator = new CustomMessagePropagator();
 // Enhanced tracer with context support
 function createEnhancedTracer(
   baseTracer: Tracer,
-  defaultContext?: ObservabilityContext
+  defaultContext?: ObservabilityContext,
 ): ObservabilityTracer {
   const enhancedTracer = Object.create(baseTracer) as ObservabilityTracer;
 
@@ -89,7 +89,7 @@ function createEnhancedTracer(
   enhancedTracer.startSpan = function (
     name: string,
     options?: SpanOptions,
-    context?: Context
+    context?: Context,
   ): Span {
     const attributes = {
       ...options?.attributes,
@@ -118,7 +118,7 @@ function createEnhancedTracer(
     enhancedTracer.startActiveSpan = function (
       name: string,
       options?: SpanOptions,
-      fn?: (span: Span) => any
+      fn?: (span: Span) => any,
     ): any {
       const attributes = {
         ...options?.attributes,
@@ -150,7 +150,7 @@ function createEnhancedTracer(
 
 // Initialize tracing
 export function initializeTracing(
-  config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string }
+  config: TracingConfig & { serviceName: string; serviceVersion?: string; environment?: string },
 ): NodeSDK {
   const logger = getLogger();
 
@@ -244,7 +244,7 @@ export function initializeTracing(
     logger.info(`Tracing initialized with exporters: ${exporters.join(', ')}`);
   } catch (error: unknown) {
     logger.error(
-      `Error initializing tracing: ${error instanceof Error ? error.message : String(error)}`
+      `Error initializing tracing: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
 
@@ -279,11 +279,11 @@ export function startActiveSpan<T>(name: string, fn: (span: Span) => T, options?
 export function withSpan<T>(
   name: string,
   fn: () => T | Promise<T>,
-  options?: SpanOptions
+  options?: SpanOptions,
 ): Promise<T> {
   return startActiveSpan(
     name,
-    async span => {
+    async (span) => {
       try {
         const result = await fn();
         span.setStatus({ code: SpanStatusCode.OK });
@@ -299,7 +299,7 @@ export function withSpan<T>(
         span.end();
       }
     },
-    options
+    options,
   );
 }
 
@@ -335,3 +335,4 @@ export function createDDDSpan(name: string, metadata: DDDMetadata, options?: Spa
 
 // Export logger utilities
 export { createHttpLogger, createLogger, getLogger, initializeLogger } from './logger';
+export type { ObservabilityLogger } from './ObservabilityLogger';

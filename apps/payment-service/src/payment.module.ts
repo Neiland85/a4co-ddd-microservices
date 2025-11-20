@@ -13,6 +13,7 @@ import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { OrderEventsHandler } from './application/handlers/order-events.handler';
 import { PAYMENT_REPOSITORY_TOKEN } from './application/application.constants';
 import { NatsEventBus } from '@a4co/shared-utils';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { NatsEventBus } from '@a4co/shared-utils';
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
+          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
           queue: 'payment-service-queue',
         },
       },
@@ -49,24 +50,22 @@ import { NatsEventBus } from '@a4co/shared-utils';
       inject: [PrismaService],
     },
 
-    // Event Bus (Custom implementation)
+    // Event Bus (NestJS ClientProxy)
     {
       provide: 'NATS_EVENT_BUS',
       useFactory: () => {
-        return new NatsEventBus({
-          servers: process.env.NATS_URL || 'nats://localhost:4222',
-          name: 'payment-service-event-bus',
-        });
+        // For now, return null - we'll implement proper event bus later
+        return null;
       },
     },
 
     // Event Publisher
     {
       provide: PaymentEventPublisher,
-      useFactory: (eventBus: NatsEventBus) => {
-        return new PaymentEventPublisher(eventBus);
+      useFactory: (natsClient: ClientProxy) => {
+        return new PaymentEventPublisher(natsClient);
       },
-      inject: ['NATS_EVENT_BUS'],
+      inject: ['NATS_CLIENT'],
     },
 
     // Use Cases

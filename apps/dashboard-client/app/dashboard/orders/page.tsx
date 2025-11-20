@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 function Card({
@@ -6,10 +8,7 @@ function Card({
   ...props
 }: { children?: React.ReactNode; className?: string } & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={`bg-white dark:bg-slate-800 rounded-md shadow-sm ${className}`}
-      {...props}
-    >
+    <div className={`bg-white dark:bg-slate-800 rounded-md shadow-sm ${className}`} {...props}>
       {children}
     </div>
   );

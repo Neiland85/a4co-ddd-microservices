@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+      
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      
+      - name: Verify json5
+        run: node -e "require('json5'); console.log('OK')"
+      
+      - name: Lint
+        run: pnpm run lint
+      
+      - name: Test
+        run: pnpm run test
+      
+      - name: Build
+        run: pnpm run build
+      
+      - name: Success
+        run: echo "✅ CI passed!"

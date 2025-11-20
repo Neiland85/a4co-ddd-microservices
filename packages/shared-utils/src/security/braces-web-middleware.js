@@ -28,7 +28,7 @@ class BracesSecurityMiddleware {
                         const validation = await this.validator.validateExpression(value);
                         if (!validation.isSafe) {
                             blocked = true;
-                            this.monitor.recordAttack('EXPANSION_ATTACK', validation.issues.some(issue => issue.includes('CRITICAL') || issue.includes('CRITICAL'))
+                            this.monitor.recordAttack('EXPANSION_ATTACK', validation.issues.some((issue) => issue.includes('CRITICAL') || issue.includes('CRITICAL'))
                                 ? 'CRITICAL'
                                 : 'HIGH', {
                                 expression: value.substring(0, 200),
@@ -186,7 +186,7 @@ class BracesMonitoringService {
             alertsTriggered: 0,
         };
         this.validator = braces_security_1.BracesSecurityFactory.createValidator();
-        this.validator.on('securityAlert', alert => {
+        this.validator.on('securityAlert', (alert) => {
             this.alerts.push({
                 ...alert,
                 timestamp: new Date().toISOString(),
@@ -211,7 +211,7 @@ class BracesMonitoringService {
     }
     clearOldAlerts(maxAgeMs = 3600000) {
         const cutoff = Date.now() - maxAgeMs;
-        this.alerts = this.alerts.filter(alert => new Date(alert.timestamp).getTime() > cutoff);
+        this.alerts = this.alerts.filter((alert) => new Date(alert.timestamp).getTime() > cutoff);
     }
 }
 exports.BracesMonitoringService = BracesMonitoringService;

@@ -23,7 +23,14 @@
     "ci:prepare": "pnpm -w run clean && pnpm install && pnpm build",
     "ci:test": "pnpm run test && pnpm run lint",
     "update:dicts": "ts-node scripts/update-cspell-dicts.ts",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "db:generate": "turbo run prisma:generate",
+    "db:push": "turbo run prisma:push",
+    "db:migrate": "turbo run prisma:migrate",
+    "dev:all": "turbo run dev --parallel",
+    "dev:frontend": "turbo run dev --filter=dashboard-web",
+    "dev:backend": "turbo run dev --filter=inventory-service --filter=order-service --filter=payment-service",
+    "lint": "turbo run lint"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.2",

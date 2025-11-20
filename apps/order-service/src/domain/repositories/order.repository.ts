@@ -1,4 +1,4 @@
-import { Order } from '../aggregates/order.aggregate';
+import { Order } from '../aggregates/order.aggregate.js';
 
 export interface IOrderRepository {
   save(order: Order): Promise<void>;
