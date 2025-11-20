@@ -1,15 +1,29 @@
 # Diccionario del Proyecto
 
-Última sincronización: 10/11/2025, 9:34:09
+Última sincronización: 20/11/2025, 13:03:32
 
 ---
-### User (global VSCode)
-Sin nuevas palabras.
+### User (global VSCode) (9)
+- adds
+- adjusts
+- checkpoint
+- follow
+- message
+- refresh
+- snapshot
+- theia
+- words
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (7)
+- been
+- failing
+- needs
+- problematic
+- rename
+- stop
+- temporarily
 
-### Commits recientes detectados (145)
+### Commits recientes detectados (157)
 - able
 - across
 - added
@@ -25,6 +39,7 @@ Sin nuevas palabras.
 - authored
 - autoprefixer
 - avoids
+- been
 - before
 - better
 - builds
@@ -34,6 +49,7 @@ Sin nuevas palabras.
 - classes
 - commit
 - compatibility
+- complete
 - compose
 - config
 - configurations
@@ -47,6 +63,8 @@ Sin nuevas palabras.
 - dependencies
 - dependency
 - dictionary
+- disable
+- disabled
 - distribution
 - docker
 - domain
@@ -63,6 +81,7 @@ Sin nuevas palabras.
 - exactoptionalpropertytypes
 - explicit
 - explicitly
+- failing
 - failure
 - feature
 - files
@@ -94,6 +113,7 @@ Sin nuevas palabras.
 - monolith
 - multiple
 - necessary
+- needs
 - neiland
 - nestjs
 - only
@@ -103,6 +123,7 @@ Sin nuevas palabras.
 - packages
 - paths
 - pnpm
+- problematic
 - project
 - read
 - refactored
@@ -112,7 +133,9 @@ Sin nuevas palabras.
 - refresh
 - remove
 - removing
+- rename
 - resolution
+- review
 - running
 - safety
 - sagaid
@@ -127,7 +150,9 @@ Sin nuevas palabras.
 - snapshot
 - spec
 - start
+- stop
 - suggest
+- temporarily
 - tests
 - that
 - theia
@@ -152,6 +177,7 @@ Sin nuevas palabras.
 - with
 - without
 - words
+- workflow
 - workspace
 - yaml
 - your
