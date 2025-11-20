@@ -9,16 +9,19 @@ Se ha completado la integración del frontend (React + Vite) con 5 microservicio
 ### ✅ 1. Auth-Service (Puerto 3001)
 
 **Endpoints:**
+
 - `POST /auth/login` - Autenticación de usuarios
 - `POST /auth/register` - Registro de usuarios
 
 **Funciones Frontend:**
+
 - `loginUser(email, password, role)` - Login con fallback a mocks
 - `registerUser(name, email, password)` - Registro con fallback
 - `AuthContext` - Gestión global de autenticación
 - `useAuth()` - Hook personalizado
 
 **Características:**
+
 - JWT storage en localStorage
 - Session persistence automática
 - Logout functionality
@@ -31,18 +34,21 @@ Se ha completado la integración del frontend (React + Vite) con 5 microservicio
 ### ✅ 2. Product-Service (Puerto 3003)
 
 **Endpoints:**
+
 - `GET /` - Lista de productos con filtros
 - `GET /categories` - Lista de categorías
 - `GET /{productId}` - Detalle de producto
 - `GET /search` - Búsqueda avanzada
 
 **Funciones Frontend:**
+
 - `getProducts()` - Lista completa de productos
 - `getCategories()` - Categorías dinámicas
 - `getProductById(id)` - Detalle de producto específico
 - `searchProducts(query, filters)` - Búsqueda con filtros
 
 **Características:**
+
 - Paginación soportada
 - Filtros: category, artisan, precio, rating
 - Ordenamiento personalizado
@@ -53,18 +59,21 @@ Se ha completado la integración del frontend (React + Vite) con 5 microservicio
 ### ✅ 3. User-Service (Puerto 3002)
 
 **Endpoints:**
+
 - `GET /profile` - Perfil del usuario actual
 - `PUT /profile` - Actualizar perfil
 - `GET /?role=artisan` - Lista de artesanos/productores
 - `POST /{userId}/favorites/{productId}` - Toggle favoritos
 
 **Funciones Frontend:**
+
 - `getUserProfile(token)` - Obtener perfil con JWT
 - `updateUserProfile(token, data)` - Actualizar perfil
 - `getProducers()` - Lista de artesanos desde API
 - `toggleFavorite(userId, productId, token)` - Gestión de favoritos
 
 **Características:**
+
 - Autenticación JWT en todas las llamadas
 - Transformación de datos artisan → producer
 - Gestión de preferencias
@@ -75,6 +84,7 @@ Se ha completado la integración del frontend (React + Vite) con 5 microservicio
 ### ✅ 4. Order-Service (Puerto 3004)
 
 **Endpoints:**
+
 - `GET /` - Órdenes del usuario autenticado
 - `POST /` - Crear nueva orden
 - `GET /{orderId}` - Detalle de orden
@@ -82,12 +92,14 @@ Se ha completado la integración del frontend (React + Vite) con 5 microservicio
 - `GET /admin?artisanId={id}` - Órdenes de productor
 
 **Funciones Frontend:**
+
 - `getOrdersByUser(userId, token)` - Historial de órdenes
 - `addOrder(payload, userId, token)` - Crear orden con JWT
 - `getOrdersByProducer(producerId, token)` - Órdenes de artisan
 - `updateOrderStatus(orderId, status, token)` - Actualizar estado
 
 **Características:**
+
 - Transformación de OrderPayload frontend → backend
 - Gestión completa del ciclo de orden
 - Producer dashboard integration
@@ -98,16 +110,19 @@ Se ha completado la integración del frontend (React + Vite) con 5 microservicio
 ### ✅ 5. Payment-Service (Puerto 3005)
 
 **Endpoints:**
+
 - `GET /methods` - Métodos de pago del usuario
 - `POST /intent` - Crear payment intent
 - `POST /confirm` - Confirmar pago
 
 **Funciones Frontend:**
+
 - `getPaymentMethods(token)` - Lista métodos de pago
 - `createPaymentIntent(orderId, amount, currency, token)` - Iniciar pago
 - `confirmPayment(paymentIntentId, methodId, token)` - Confirmar pago
 
 **Características:**
+
 - Payment intent flow (Stripe-compatible)
 - Secure payment processing con JWT
 - Mock fallback para desarrollo
@@ -193,6 +208,7 @@ VITE_PAYMENT_SERVICE_URL=http://localhost:3005/api/v1/payments
 ### Headers de Autenticación
 
 Todas las llamadas autenticadas usan:
+
 ```typescript
 headers: {
     'Authorization': `Bearer ${token}`,
@@ -228,6 +244,7 @@ pnpm dev  # puerto 5173
 ### 3. Probar funcionalidades
 
 **Test de Autenticación:**
+
 1. Click en "Acceder"
 2. Email: `cliente@a4co.es` / Password: `password123`
 3. Verificar que aparece el nombre en el header
@@ -235,17 +252,20 @@ pnpm dev  # puerto 5173
 5. Verificar que se limpia la sesión
 
 **Test de Productos:**
+
 1. Verificar que carga el catálogo
 2. Probar búsqueda de productos
 3. Filtrar por categoría
 4. Ver detalle de un producto
 
 **Test de Favoritos:**
+
 1. Iniciar sesión
 2. Click en ❤️ de un producto
 3. Verificar console logs de API call
 
 **Test de Órdenes:**
+
 1. Agregar producto al carrito
 2. Ir a checkout
 3. Completar formulario
@@ -253,6 +273,7 @@ pnpm dev  # puerto 5173
 5. Ver orden en dashboard de usuario
 
 **Test de Producer Dashboard:**
+
 1. Email: `productor@a4co.es` / Password: `password123`
 2. Verificar redirección a dashboard
 3. Ver órdenes del productor
@@ -263,11 +284,13 @@ pnpm dev  # puerto 5173
 ## Logs y Debugging
 
 Todas las funciones incluyen console.warn cuando:
+
 - El servicio no está disponible
 - Hay error en la API call
 - Se usa fallback a mocks
 
 Ejemplo de logs esperados en desarrollo:
+
 ```
 ⚠️ Product service not available, using mock data
 ⚠️ Order service error, using mock orders: TypeError: Failed to fetch

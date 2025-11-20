@@ -504,6 +504,7 @@ graph TD
 ## 📚 Leyenda de Diagramas
 
 ### **Colores Utilizados**
+
 - 🔵 **Azul Claro**: Componentes del cliente/UI
 - 🟣 **Morado**: Servidor y lógica de negocio
 - 🟢 **Verde**: Datos y almacenamiento
@@ -513,6 +514,7 @@ graph TD
 - 🔵 **Azul**: Estados informativos
 
 ### **Tipos de Diagramas**
+
 1. **Graph TB/TD/LR**: Arquitectura y flujos de datos
 2. **Sequence**: Interacciones temporales
 3. **Class**: Estructuras de código
@@ -520,6 +522,7 @@ graph TD
 5. **Pie/Gantt**: Métricas y timelines
 
 ### **Convenciones**
+
 - **Rectángulos**: Componentes del sistema
 - **Círculos**: Estados o condiciones
 - **Flechas**: Flujos de datos o control
@@ -527,5 +530,5 @@ graph TD
 
 ---
 
-*Documentación generada automáticamente - A4CO Monitoring Dashboard v1.0*</content>
+_Documentación generada automáticamente - A4CO Monitoring Dashboard v1.0_</content>
 <parameter name="filePath">/Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices/docs/MONITORING_DASHBOARD_DIAGRAMS.md

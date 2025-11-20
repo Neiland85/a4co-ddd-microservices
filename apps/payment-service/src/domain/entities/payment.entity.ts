@@ -204,7 +204,7 @@ export class Payment extends AggregateRoot {
     );
   }
 
-  public refund(refundAmount?: Money): void {
+  public refund(refundAmount?: Money, reason?: string): void {
     if (this._status.value === PaymentStatusValue.REFUNDED) {
       return; // Idempotent refund
     }
@@ -229,7 +229,7 @@ export class Payment extends AggregateRoot {
         customerId: this.customerId,
         amount: this.amount.toPrimitives(),
         refundAmount: amountToRefund.toPrimitives(),
-        metadata: this.metadata,
+        metadata: { ...this.metadata, refundReason: reason },
         stripePaymentIntentId: this.stripePaymentIntentId,
       }),
     );

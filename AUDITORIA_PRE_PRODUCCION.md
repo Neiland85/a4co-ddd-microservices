@@ -12,6 +12,7 @@
 **Total de servicios encontrados:** 18 (16 backend + 1 gateway + 1 frontend)
 
 **Estado:**
+
 - ✅ **8 Servicios CORE:** 100% Production-Ready
 - ⚠️ **8 Servicios ADICIONALES:** Solo esqueletos (para futuro)
 - ✅ **Frontend:** 100% Integrado
@@ -26,6 +27,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ NestJS + TypeScript
 - ✅ main.ts completo con observability
 - ✅ JWT authentication
@@ -36,6 +38,7 @@
 - ✅ OpenAPI contracts
 
 **Endpoints:**
+
 - POST `/api/v1/auth/register`
 - POST `/api/v1/auth/login`
 - POST `/api/v1/auth/refresh`
@@ -52,6 +55,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ NestJS + TypeScript
 - ✅ main.ts completo con observability
 - ✅ Prisma ORM + PostgreSQL
@@ -62,6 +66,7 @@
 - ✅ OpenAPI contracts
 
 **Endpoints:**
+
 - GET `/api/v1/users/profile`
 - PUT `/api/v1/users/profile`
 - POST `/api/v1/users/:userId/favorites/:productId`
@@ -79,6 +84,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ NestJS + TypeScript
 - ✅ main.ts completo
 - ✅ Prisma ORM + PostgreSQL
@@ -89,6 +95,7 @@
 - ✅ OpenAPI contracts
 
 **Endpoints:**
+
 - GET `/api/v1/products`
 - GET `/api/v1/products/:id`
 - GET `/api/v1/products/search`
@@ -108,6 +115,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ NestJS + TypeScript
 - ✅ main.ts completo con observability
 - ✅ Prisma ORM + PostgreSQL
@@ -118,6 +126,7 @@
 - ✅ OpenAPI contracts
 
 **Endpoints:**
+
 - POST `/api/v1/orders`
 - GET `/api/v1/orders/user/:userId`
 - GET `/api/v1/orders/admin?artisanId=:id`
@@ -135,6 +144,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ NestJS + TypeScript
 - ✅ main.ts completo con observability
 - ✅ Prisma ORM + PostgreSQL
@@ -145,6 +155,7 @@
 - ✅ OpenAPI contracts
 
 **Endpoints:**
+
 - GET `/api/v1/payments/methods`
 - POST `/api/v1/payments/intent`
 - POST `/api/v1/payments/:id/confirm`
@@ -162,6 +173,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ NestJS + TypeScript
 - ✅ main.ts completo
 - ✅ Prisma ORM + PostgreSQL
@@ -172,6 +184,7 @@
 - ✅ **Tests unitarios completos (510 líneas)**
 
 **Endpoints:**
+
 - POST `/api/inventory/check`
 - POST `/api/inventory/check-bulk`
 - POST `/api/inventory/reserve`
@@ -189,6 +202,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ NestJS + TypeScript
 - ✅ main.ts completo
 - ✅ Prisma ORM + PostgreSQL
@@ -200,6 +214,7 @@
 - ✅ **Tests unitarios completos (217 líneas)**
 
 **Endpoints:**
+
 - POST `/api/notifications/send`
 - GET `/api/notifications/stats`
 - GET `/health`
@@ -215,6 +230,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ Python + FastAPI
 - ✅ main.py completo
 - ✅ Prisma ORM + PostgreSQL
@@ -224,6 +240,7 @@
 - ✅ **Tests unitarios completos (569 líneas)**
 
 **Endpoints:**
+
 - POST `/transportistas`
 - GET `/transportistas`
 - GET `/transportistas/:id`
@@ -243,39 +260,47 @@
 **Estos servicios NO están implementados, solo tienen archivos básicos de placeholder:**
 
 ### 9. admin-service ⚠️ **ESQUELETO**
+
 - Solo tiene `service.ts` con funciones mock
 - Sin main.ts, sin NestJS bootstrap
 - **NO listo para producción**
 
 ### 10. analytics-service ⚠️ **ESQUELETO**
+
 - Solo tiene `service.ts` con funciones mock
 - Sin main.ts, sin NestJS bootstrap
 - **NO listo para producción**
 
 ### 11. artisan-service ⚠️ **ESQUELETO**
+
 - Solo archivos básicos
 - **NO listo para producción**
 - **NOTA:** Funcionalidad de artesanos manejada por user-service (role: artisan)
 
 ### 12. chat-service ⚠️ **ESQUELETO**
+
 - Solo archivos básicos
 - **NO listo para producción**
 
 ### 13. cms-service ⚠️ **ESQUELETO**
+
 - Solo archivos básicos
 - **NO listo para producción**
 
 ### 14. event-service ⚠️ **ESQUELETO**
+
 - Solo archivos básicos
 - **NO listo para producción**
 
 ### 15. geo-service ⚠️ **PARCIAL**
+
 - Tiene Prisma schema
 - Tiene service.ts con funciones básicas
 - Sin main.ts completo
 - **NO listo para producción**
 
 ### 16. loyalty-service ⚠️ **PARCIAL**
+
 - Tiene Prisma schema
 - Tiene service.ts con funciones básicas
 - Sin main.ts completo
@@ -288,6 +313,7 @@
 **Estado:** 🟢 Production-Ready
 
 **Implementación:**
+
 - ✅ React + Vite
 - ✅ TypeScript
 - ✅ Tailwind CSS
@@ -299,6 +325,7 @@
 - ✅ Fallback a mocks si API no disponible
 
 **Servicios Integrados:**
+
 1. ✅ auth-service (login, register, logout)
 2. ✅ user-service (profile, favorites)
 3. ✅ product-service (catalog, search, categories)
@@ -309,6 +336,7 @@
 8. ✅ transportista-service (tracking, carriers)
 
 **Rutas Frontend:**
+
 - `/` - Home/Catalog
 - `/product/:id` - Product detail
 - `/producer` - Producer auth
@@ -325,6 +353,7 @@
 **Estado:** 🟢 Implementado
 
 **Implementación:**
+
 - ✅ Express.js
 - ✅ Proxy reverso
 - ✅ Rate limiting
@@ -365,6 +394,7 @@
 ## 🎯 Funcionalidades Implementadas
 
 ### Autenticación & Usuarios
+
 - ✅ Registro de usuarios (customer & producer)
 - ✅ Login con JWT
 - ✅ Refresh tokens
@@ -374,6 +404,7 @@
 - ✅ Logout
 
 ### Productos & Catálogo
+
 - ✅ Lista de productos con paginación
 - ✅ Búsqueda de productos
 - ✅ Filtros por categoría
@@ -383,6 +414,7 @@
 - ✅ Categories management
 
 ### Pedidos & Checkout
+
 - ✅ Crear pedido
 - ✅ Listar pedidos por usuario
 - ✅ Listar pedidos por productor
@@ -391,6 +423,7 @@
 - ✅ Order details
 
 ### Pagos
+
 - ✅ Métodos de pago
 - ✅ Crear payment intent (Stripe)
 - ✅ Confirmar pago
@@ -398,6 +431,7 @@
 - ✅ Stripe integration
 
 ### Inventario
+
 - ✅ Verificar disponibilidad
 - ✅ Verificar múltiples productos
 - ✅ Reservar stock
@@ -406,6 +440,7 @@
 - ✅ Stock management
 
 ### Notificaciones
+
 - ✅ Email notifications (SendGrid)
 - ✅ SMS notifications (Twilio)
 - ✅ Push notifications (mock)
@@ -414,6 +449,7 @@
 - ✅ Statistics
 
 ### Logística & Envíos
+
 - ✅ Crear envío
 - ✅ Tracking de envío
 - ✅ Actualizar estado de envío
@@ -429,44 +465,52 @@
 **Estos servicios existen como esqueletos pero NO están implementados:**
 
 ### Admin Panel (admin-service)
+
 - ❌ Dashboard administrativo
 - ❌ User management
 - ❌ System configuration
 - **Estado:** Solo mock functions
 
 ### Analytics (analytics-service)
+
 - ❌ Business intelligence
 - ❌ Reportes
 - ❌ Métricas de negocio
 - **Estado:** Solo mock functions
 
 ### Artisan (artisan-service)
+
 - ❌ Perfil de artesano extendido
 - **NOTA:** Actualmente manejado por user-service con role='artisan'
 - **Estado:** Funcionalidad cubierta por user-service
 
 ### Chat (chat-service)
+
 - ❌ Chat en tiempo real
 - ❌ Mensajería entre usuarios
 - **Estado:** Solo esqueleto
 
 ### CMS (cms-service)
+
 - ❌ Content management
 - ❌ Blog/Pages
 - **Estado:** Solo esqueleto
 
 ### Events (event-service)
+
 - ❌ Event sourcing
 - ❌ Event-driven architecture
 - **Estado:** Solo esqueleto
 
 ### Geolocation (geo-service)
+
 - ❌ Geocoding
 - ❌ Distance calculation
 - ❌ Maps integration
 - **Estado:** Funciones básicas mock
 
 ### Loyalty (loyalty-service)
+
 - ❌ Programa de puntos
 - ❌ Rewards
 - ❌ Gamification
@@ -623,6 +667,7 @@ RATE_LIMIT_MAX=100
 **Archivo:** `compose.dev.yaml`
 
 **Servicios Infrastructura:**
+
 - ✅ PostgreSQL (port 5432)
 - ✅ NATS (port 4222)
 - ✅ Redis (port 6379)
@@ -708,6 +753,7 @@ RATE_LIMIT_MAX=100
 **Servicios Core (8/8):** ✅ 100% Production-Ready
 
 **Funcionalidades MVP:**
+
 - ✅ Autenticación completa
 - ✅ Gestión de usuarios
 - ✅ Catálogo de productos
@@ -747,6 +793,7 @@ RATE_LIMIT_MAX=100
 ## 📋 CHECKLIST PRE-DEPLOY
 
 ### Código ✅
+
 - [x] 8 servicios core implementados
 - [x] Frontend integrado
 - [x] Gateway configurado
@@ -754,12 +801,14 @@ RATE_LIMIT_MAX=100
 - [x] Tests críticos pasando
 
 ### Configuración ✅
+
 - [x] Variables de entorno documentadas
 - [x] Secrets configurados en GitHub
 - [x] Docker compose preparado
 - [x] CI/CD pipeline funcional
 
 ### Security ✅
+
 - [x] Helmet middleware
 - [x] CORS configurado
 - [x] JWT implementado
@@ -767,6 +816,7 @@ RATE_LIMIT_MAX=100
 - [x] Password hashing
 
 ### Deployment ⏳
+
 - [ ] Configurar infrastructure cloud
 - [ ] Variables de entorno en producción
 - [ ] Certificates SSL/TLS
@@ -780,6 +830,7 @@ RATE_LIMIT_MAX=100
 ### Fase 1: MVP (AHORA)
 
 **Deployar SOLO los 8 servicios core:**
+
 1. auth-service
 2. user-service
 3. product-service
@@ -792,6 +843,7 @@ RATE_LIMIT_MAX=100
 10. frontend
 
 **Comando:**
+
 ```bash
 # Deploy solo servicios core
 ./scripts/deploy-production.sh staging --services=core
@@ -800,6 +852,7 @@ RATE_LIMIT_MAX=100
 ### Fase 2: Servicios Adicionales (FUTURO)
 
 Implementar y deployar en releases posteriores:
+
 - v1.1.0: admin-service + analytics-service
 - v1.2.0: chat-service + cms-service
 - v1.3.0: geo-service + loyalty-service
@@ -811,7 +864,8 @@ Implementar y deployar en releases posteriores:
 
 **EL PROYECTO ESTÁ 100% LISTO PARA PRODUCCIÓN CON LOS 8 SERVICIOS CORE.**
 
-### Lo Que Está Listo:
+### Lo Que Está Listo
+
 ✅ MVP completo y funcional  
 ✅ Todas las funcionalidades críticas implementadas  
 ✅ Testing adecuado  
@@ -819,7 +873,8 @@ Implementar y deployar en releases posteriores:
 ✅ CI/CD operativo  
 ✅ Documentación exhaustiva  
 
-### Lo Que Falta (para futuras versiones):
+### Lo Que Falta (para futuras versiones)
+
 ⏳ 8 servicios adicionales  
 ⏳ Tests adicionales  
 ⏳ Monitoring en producción  

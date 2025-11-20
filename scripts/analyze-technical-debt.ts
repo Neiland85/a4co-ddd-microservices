@@ -71,8 +71,8 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
       cwd: process.cwd(),
     });
 
-    const deadCodeLines = tsPruneOutput.split('\n').filter(line => line.includes(' - '));
-    deadCodeLines.forEach(line => {
+    const deadCodeLines = tsPruneOutput.split('\n').filter((line) => line.includes(' - '));
+    deadCodeLines.forEach((line) => {
       const match = line.match(/(.+):(\d+) - (.+)/);
       if (match) {
         report.deadCode.push({
@@ -99,7 +99,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
         encoding: 'utf8',
         maxBuffer: 1024 * 1024 * 10,
         cwd: path.join(process.cwd(), 'apps/auth-service'),
-      }
+      },
     );
 
     if (authComplexity && authComplexity.trim() !== '') {
@@ -155,8 +155,8 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
           });
 
           // Actualizar hotspots con info de duplicación
-          [dup.firstFile.name, dup.secondFile.name].forEach(file => {
-            const hotspot = report.hotspots.find(h => h.file === file);
+          [dup.firstFile.name, dup.secondFile.name].forEach((file) => {
+            const hotspot = report.hotspots.find((h) => h.file === file);
             if (hotspot) {
               hotspot.duplications += dup.lines;
             } else {
@@ -193,8 +193,8 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
     'apps/inventory-service',
   ];
 
-  servicesToAnalyze.forEach(servicePath => {
-    ['controller.ts', 'service.ts'].forEach(file => {
+  servicesToAnalyze.forEach((servicePath) => {
+    ['controller.ts', 'service.ts'].forEach((file) => {
       const filePath = path.join(servicePath, file);
       if (fs.existsSync(filePath)) {
         const content = fs.readFileSync(filePath, 'utf8');
@@ -210,7 +210,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
         const complexity =
           functionMatches.length + ifMatches.length + forMatches.length + whileMatches.length;
 
-        const existingHotspot = report.hotspots.find(h => h.file === filePath);
+        const existingHotspot = report.hotspots.find((h) => h.file === filePath);
         if (existingHotspot) {
           existingHotspot.complexity = Math.max(existingHotspot.complexity, complexity);
           existingHotspot.loc = lines;
@@ -230,9 +230,9 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   // 6. Calcular métricas generales
   console.log('📈 Calculando métricas generales...');
   const allFiles = new Set([
-    ...report.hotspots.map(h => h.file),
-    ...report.deadCode.map(d => d.file),
-    ...report.duplications.flatMap(d => d.files),
+    ...report.hotspots.map((h) => h.file),
+    ...report.deadCode.map((d) => d.file),
+    ...report.duplications.flatMap((d) => d.files),
   ]);
 
   report.metrics.totalFiles = allFiles.size;
@@ -263,11 +263,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
   console.log(`Líneas de código: ${report.metrics.totalLOC}`);
   console.log(`Complejidad promedio: ${report.metrics.avgComplexity.toFixed(2)}`);
   console.log(
-<<<<<<< HEAD
     `Líneas duplicadas: ${report.metrics.duplicatedLines} (${report.metrics.duplicatedPercentage.toFixed(2)}%)`,
-=======
-    `Líneas duplicadas: ${report.metrics.duplicatedLines} (${report.metrics.duplicatedPercentage.toFixed(2)}%)`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
   console.log(`Dependencias circulares: ${report.circularDependencies.length}`);
   console.log(`Código muerto: ${report.deadCode.length} exports`);
@@ -279,11 +275,7 @@ async function analyzeComplexity(): Promise<ComplexityReport> {
       const score = hotspot.complexity * 2 + hotspot.duplications + hotspot.dependencies;
       console.log(`${index + 1}. ${hotspot.file}`);
       console.log(
-<<<<<<< HEAD
         `   Complejidad: ${hotspot.complexity} | Duplicaciones: ${hotspot.duplications} líneas | Score: ${score}`,
-=======
-        `   Complejidad: ${hotspot.complexity} | Duplicaciones: ${hotspot.duplications} líneas | Score: ${score}`
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
       );
     });
   }

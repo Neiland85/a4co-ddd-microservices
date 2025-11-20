@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.custom = exports.pattern = exports.max = exports.min = exports.email = exports.maxLength = exports.minLength = exports.required = exports.Validator = void 0;
 class Validator {
-    rules = [];
+    constructor() {
+        this.rules = [];
+    }
     addRule(rule) {
         this.rules.push(rule);
         return this;

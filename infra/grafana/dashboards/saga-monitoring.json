@@ -1,0 +1,243 @@
+{
+  "dashboard": {
+    "title": "A4CO - Order Saga Monitoring",
+    "tags": ["saga", "orders", "phase1"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Saga Success Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(saga_success_total[5m]) / rate(saga_started_total[5m]) * 100",
+            "legendFormat": "Success Rate %"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "red" },
+                { "value": 90, "color": "yellow" },
+                { "value": 95, "color": "green" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Saga Duration (p95)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(saga_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95 Duration"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 6,
+          "y": 0
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "green" },
+                { "value": 3, "color": "yellow" },
+                { "value": 5, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Active Sagas",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "saga_active_count",
+            "legendFormat": "Active"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Compensation Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(saga_compensation_total[5m]) / rate(saga_started_total[5m]) * 100",
+            "legendFormat": "Compensation %"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": 0, "color": "green" },
+                { "value": 5, "color": "yellow" },
+                { "value": 10, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Order Status Distribution",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "order_status_count",
+            "legendFormat": "{{status}}"
+          }
+        ],
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 6,
+        "title": "Saga States Over Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "saga_status_count",
+            "legendFormat": "{{status}}"
+          }
+        ],
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 7,
+        "title": "Inventory Reservations",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "inventory_reservations_active",
+            "legendFormat": "Active Reservations"
+          },
+          {
+            "expr": "rate(inventory_reservations_expired_total[5m])",
+            "legendFormat": "Expired/min"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 18
+        }
+      },
+      {
+        "id": 8,
+        "title": "Payment Processing",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(payments_processed_total{status=\"succeeded\"}[5m])",
+            "legendFormat": "Succeeded"
+          },
+          {
+            "expr": "rate(payments_processed_total{status=\"failed\"}[5m])",
+            "legendFormat": "Failed"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 18
+        }
+      },
+      {
+        "id": 9,
+        "title": "Saga Error Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(saga_errors_total[5m])",
+            "legendFormat": "Errors/sec"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 26
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" }
+          }
+        }
+      },
+      {
+        "id": 10,
+        "title": "NATS Message Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(nats_messages_published_total[5m])",
+            "legendFormat": "Published"
+          },
+          {
+            "expr": "rate(nats_messages_consumed_total[5m])",
+            "legendFormat": "Consumed"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 26
+        }
+      }
+    ]
+  }
+}

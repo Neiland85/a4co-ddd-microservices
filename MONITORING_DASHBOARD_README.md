@@ -26,24 +26,28 @@ El A4CO Monitoring Dashboard es una aplicación web ligera que proporciona visib
 ### Instalación
 
 1. **Clonar el repositorio**
+
    ```bash
    git clone https://github.com/a4co/a4co-ddd-microservices.git
    cd a4co-ddd-microservices
    ```
 
 2. **Instalar dependencias**
+
    ```bash
    cd scripts
    npm install
    ```
 
 3. **Preparar datos**
+
    ```bash
    # Asegurarse de que existan los archivos de datos
    ls -la ../data/phase1-metrics.json ../data/phase2-metrics.json
    ```
 
 4. **Iniciar el servidor**
+
    ```bash
    node simple-monitoring-server.js
    ```
@@ -336,18 +340,21 @@ artillery quick --count 10 --num 50 http://localhost:3003/
 ## 📝 Changelog
 
 ### [v1.2.0] - 2024-01-25
+
 - ✅ Agregado soporte móvil completo
 - ✅ Sistema de alertas avanzado
 - ✅ Integración con Slack y PagerDuty
 - ✅ Documentación completa con 12 diagramas
 
 ### [v1.1.0] - 2024-01-20
+
 - ✅ Auto-refresh cada 30 segundos
 - ✅ Métricas detalladas por fase
 - ✅ UI responsive con Tailwind CSS
 - ✅ API REST completa
 
 ### [v1.0.0] - 2024-01-15
+
 - ✅ Dashboard básico funcional
 - ✅ Monitoreo de métricas principales
 - ✅ Estados de servicios

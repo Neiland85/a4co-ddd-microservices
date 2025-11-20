@@ -13,8 +13,10 @@ exports.PaginatedResponse = exports.PaginationDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 class PaginationDto {
-    page = 1;
-    limit = 10;
+    constructor() {
+        this.page = 1;
+        this.limit = 10;
+    }
     get skip() {
         return ((this.page || 1) - 1) * (this.limit || 10);
     }
@@ -36,11 +38,6 @@ __decorate([
     __metadata("design:type", Number)
 ], PaginationDto.prototype, "limit", void 0);
 class PaginatedResponse {
-    data;
-    total;
-    page;
-    limit;
-    totalPages;
     constructor(data, total, page, limit) {
         this.data = data;
         this.total = total;

@@ -9,7 +9,8 @@
 
 El proyecto está **sobredimensionado** para las necesidades reales de un portal de artesanos:
 
-### Herramientas Innecesarias Actuales:
+### Herramientas Innecesarias Actuales
+
 1. ❌ **Jaeger** - Sistema de tracing distribuido (overkill)
 2. ❌ **OpenTelemetry** completo - Observabilidad enterprise-grade
 3. ❌ **Prometheus + Grafana** - Métricas avanzadas
@@ -17,7 +18,8 @@ El proyecto está **sobredimensionado** para las necesidades reales de un portal
 5. ❌ **Patrón Saga** - Transacciones distribuidas complejas
 6. ❌ **Event Sourcing** - Complejidad innecesaria
 
-### Servicios Innecesarios:
+### Servicios Innecesarios
+
 1. ❌ **admin-service** - Puede ser frontend con roles
 2. ❌ **analytics-service** - Google Analytics es suficiente
 3. ❌ **cms-service** - No necesario para MVP
@@ -32,6 +34,7 @@ El proyecto está **sobredimensionado** para las necesidades reales de un portal
 ### CORE - Servicios Esenciales (MVP)
 
 #### 1. **artisan-service** 🎯 CRÍTICO
+
 ```
 Estado actual: ❌ VACÍO (0%)
 Prioridad: MÁXIMA
@@ -47,6 +50,7 @@ Estimado: 40-50 horas
 ```
 
 #### 2. **product-service** ✅
+
 ```
 Estado actual: ✅ 85% completo
 Para qué: Catálogo de productos artesanos
@@ -59,6 +63,7 @@ Estimado: 5-10 horas (integración)
 ```
 
 #### 3. **geo-service** ⚠️
+
 ```
 Estado actual: ⚠️ 30% (solo schema)
 Para qué: Filtrar por ubicación (Jaén, provincias Andalucía)
@@ -71,6 +76,7 @@ Estimado: 20-25 horas
 ```
 
 #### 4. **auth-service** ✅
+
 ```
 Estado actual: ✅ 95% completo
 Para qué: Autenticación de usuarios y artesanos
@@ -78,6 +84,7 @@ OK - Mantener
 ```
 
 #### 5. **user-service** ✅
+
 ```
 Estado actual: ✅ 90% completo
 Para qué: Perfiles de usuarios compradores
@@ -87,6 +94,7 @@ OK - Mantener
 ### COMPLEMENTARIOS - Si hay E-commerce
 
 #### 6. **order-service** ✅ (solo si vendes online)
+
 ```
 Estado actual: ✅ 88% completo
 Para qué: Gestión de pedidos
@@ -94,6 +102,7 @@ Decisión: ¿Quieres vender online o solo mostrar catálogo?
 ```
 
 #### 7. **payment-service** ✅ (solo si vendes online)
+
 ```
 Estado actual: ✅ 90% completo
 Para qué: Procesar pagos con Stripe
@@ -101,6 +110,7 @@ Decisión: ¿Ventas online o contacto directo?
 ```
 
 #### 8. **inventory-service** ⚠️ (opcional)
+
 ```
 Estado actual: ✅ 80% completo
 Para qué: Control de stock
@@ -110,6 +120,7 @@ Decisión: ¿Los artesanos necesitan control de inventario?
 ### OPCIONALES - Versión 2
 
 #### 9. **notification-service** ⚠️
+
 ```
 Estado actual: ✅ 75% completo
 Para qué: Notificar a artesanos de pedidos/contactos
@@ -117,6 +128,7 @@ Decisión: Puede ser email simple inicialmente
 ```
 
 #### 10. **transportista-service** ⚠️
+
 ```
 Estado actual: ✅ 70% completo
 Para qué: Gestión de envíos
@@ -136,9 +148,10 @@ Decisión: ¿Necesario desde día 1?
 
 ## SIMPLIFICACIÓN DE INFRAESTRUCTURA
 
-### ELIMINAR/SIMPLIFICAR:
+### ELIMINAR/SIMPLIFICAR
 
 #### 1. Observabilidad Enterprise → Logs Simples
+
 ```diff
 - Jaeger (distributed tracing)
 - OpenTelemetry completo
@@ -149,6 +162,7 @@ Decisión: ¿Necesario desde día 1?
 ```
 
 #### 2. Message Queue → Requests HTTP Directos
+
 ```diff
 - NATS message broker
 + HTTP REST calls directos
@@ -156,6 +170,7 @@ Decisión: ¿Necesario desde día 1?
 ```
 
 #### 3. Patrón Saga → Transacciones Simples
+
 ```diff
 - Saga pattern con compensaciones
 + Transacciones de base de datos simples
@@ -163,13 +178,14 @@ Decisión: ¿Necesario desde día 1?
 ```
 
 #### 4. Event Sourcing → CRUD Normal
+
 ```diff
 - Event sourcing completo
 + CRUD tradicional
 + Auditoría simple si necesario
 ```
 
-### MANTENER:
+### MANTENER
 
 - ✅ **PostgreSQL** - Base de datos relacional
 - ✅ **Docker** - Contenedores
@@ -183,6 +199,7 @@ Decisión: ¿Necesario desde día 1?
 ## ARQUITECTURA SIMPLIFICADA PROPUESTA
 
 ### Opción A: MONOLITO MODULAR (Recomendado para MVP)
+
 ```
 ┌─────────────────────────────────────┐
 │         Frontend (React)            │
@@ -209,23 +226,27 @@ Decisión: ¿Necesario desde día 1?
 ```
 
 **Ventajas:**
+
 - Desarrollo más rápido (40-60 horas vs 770 horas)
 - Más fácil de debugear
 - Menos complejidad operacional
 - Suficiente para 90% de casos de uso
 
 **Cuándo migrar a microservicios:**
+
 - Cuando tengas >10,000 artesanos
 - Cuando necesites escalar partes específicas
 - Cuando tengas equipo >5 desarrolladores
 
 ### Opción B: MICROSERVICIOS SIMPLIFICADOS (Actual pero limpio)
+
 ```
 Frontend → Gateway → [Auth, Artisan*, Product, Geo, User] → PostgreSQL
                        (*CORE - debe implementarse YA)
 ```
 
 **Solo 5-6 servicios esenciales:**
+
 1. auth-service ✅
 2. **artisan-service** ❌ (VACÍO - URGENTE)
 3. product-service ✅
@@ -237,9 +258,10 @@ Frontend → Gateway → [Auth, Artisan*, Product, Geo, User] → PostgreSQL
 
 ## MONITOREO SIMPLIFICADO
 
-### En lugar de Jaeger + OpenTelemetry + Prometheus + Grafana:
+### En lugar de Jaeger + OpenTelemetry + Prometheus + Grafana
 
 #### Opción 1: GRATUITA (MVP)
+
 ```
 - Console.log estructurado
 - Winston/Pino para logs a archivo
@@ -249,6 +271,7 @@ Frontend → Gateway → [Auth, Artisan*, Product, Geo, User] → PostgreSQL
 ```
 
 #### Opción 2: BÁSICA (~$20/mes)
+
 ```
 - Sentry.io para error tracking (10k eventos/mes gratis)
 - LogRocket para session replay
@@ -257,6 +280,7 @@ Frontend → Gateway → [Auth, Artisan*, Product, Geo, User] → PostgreSQL
 ```
 
 #### Opción 3: PROFESIONAL (~$50/mes)
+
 ```
 - Sentry Pro
 - DataDog básico (APM simple)
@@ -302,6 +326,7 @@ Frontend → Gateway → [Auth, Artisan*, Product, Geo, User] → PostgreSQL
 Responde estas preguntas para definir alcance:
 
 ### 1. Modelo de Negocio
+
 ```
 [ ] Solo catálogo/directorio (sin ventas)
 [ ] E-commerce completo (ventas online)
@@ -309,6 +334,7 @@ Responde estas preguntas para definir alcance:
 ```
 
 ### 2. Funcionalidades Esenciales
+
 ```
 [ ] Listado de artesanos por ubicación
 [ ] Búsqueda y filtros
@@ -323,6 +349,7 @@ Responde estas preguntas para definir alcance:
 ```
 
 ### 3. Escala Esperada (Primer Año)
+
 ```
 [ ] <100 artesanos
 [ ] 100-500 artesanos
@@ -334,6 +361,7 @@ Responde estas preguntas para definir alcance:
 ```
 
 ### 4. Equipo de Desarrollo
+
 ```
 [ ] 1 desarrollador
 [ ] 2-3 desarrolladores
@@ -344,9 +372,10 @@ Responde estas preguntas para definir alcance:
 
 ## RECOMENDACIÓN FINAL
 
-### Para Portal de Artesanos Jaén/Andalucía:
+### Para Portal de Artesanos Jaén/Andalucía
 
-#### ✅ HACER (PRIORIDAD MÁXIMA):
+#### ✅ HACER (PRIORIDAD MÁXIMA)
+
 1. **Implementar artisan-service** (50h) - CORE DEL NEGOCIO
 2. **Completar geo-service** (25h) - Filtros por ubicación
 3. **Simplificar monitoreo** (10h) - Eliminar Jaeger/OpenTelemetry
@@ -355,11 +384,13 @@ Responde estas preguntas para definir alcance:
 
 **TOTAL: 155 horas = 4-5 semanas (1 dev)**
 
-#### ⚠️ DECIDIR:
+#### ⚠️ DECIDIR
+
 - ¿Necesitas ventas online? → Mantener order/payment services
 - ¿Solo catálogo? → Eliminar order/payment services
 
-#### ❌ NO HACER (Eliminar):
+#### ❌ NO HACER (Eliminar)
+
 - admin-service (usar frontend)
 - analytics-service (Google Analytics)
 - cms-service (no necesario)
@@ -371,7 +402,8 @@ Responde estas preguntas para definir alcance:
 - Patrón Saga (simplificar)
 - Event Sourcing (CRUD normal)
 
-#### 📉 AHORRO ESTIMADO:
+#### 📉 AHORRO ESTIMADO
+
 ```
 Horas originales:     770h
 Horas simplificadas:  155h
@@ -382,13 +414,15 @@ AHORRO:              615h (80% menos trabajo!)
 
 ## PRÓXIMO PASO INMEDIATO
 
-### Decide AHORA:
+### Decide AHORA
 
 **Pregunta 1:** ¿Quieres vender online o solo mostrar catálogo?
+
 - Si SOLO CATÁLOGO → **155 horas** (1 mes)
 - Si E-COMMERCE → **+80 horas** (1.5 meses)
 
 **Pregunta 2:** ¿Prefieres monolito o microservicios?
+
 - MONOLITO → **140 horas** (más rápido)
 - MICROSERVICIOS → **205 horas** (actual pero limpio)
 

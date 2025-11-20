@@ -1,29 +1,91 @@
-# A4CO DDD Microservices (Monorepo)
+# 🛍️ Portal de Artesanos
 
-This repository contains multiple microservices following DDD patterns. Below is a short developer guide and notes about CI/CD workflows.
+Un monolito simple construido con **NestJS** y **Next.js** para conectar artesanos con clientes.
 
-## CI/CD Workflows
+## 🚀 Inicio Rápido
 
-### SQL Script Validation
+### Prerrequisitos
 
-The repository includes `ci-sql-validate.yml` which validates SQL scripts under `scripts/**` on pull requests and pushes to `develop`.
+- Node.js 18+
+- PostgreSQL
+- npm o yarn
 
-- It runs a disposable PostgreSQL 15 container, preprocesses `scripts/init-db.sql` with `envsubst`, and executes the processed SQL.
-- Optional secrets used by the workflow (can be set in GitHub repository secrets):
-  - `CI_POSTGRES_PASSWORD` (defaults to `postgres` for disposable CI DB)
-  - `APP_DB_PASSWORD` (defaults to `secure_ci_test_password` for CI user)
-
-Example usage:
+### Instalación
 
 ```bash
-# Locally preprocess and run against a local postgres instance
-envsubst < scripts/init-db.sql > /tmp/init-db-processed.sql
-psql -h localhost -U postgres -d a4co_platform -f /tmp/init-db-processed.sql
+# Instalar dependencias
+npm install
+
+# Configurar base de datos
+cp .env.example .env
+# Editar .env con tus credenciales de BD
+
+# Ejecutar migraciones de Prisma
+npm run prisma:migrate
+
+# Generar cliente de Prisma
+npm run prisma:generate
+
+# Iniciar en modo desarrollo
+npm run start:dev
 ```
 
-### Notes
+## 📁 Estructura del Proyecto
 
-- SQL files that require variable expansion MUST be preprocessed with `envsubst` or equivalent.
-- Secrets must never be committed into the repository. Use GitHub secrets for CI and deployment workflows.
-- See `docs/security-guidelines.md` for more details and the PR template for required checks.
+```
+src/
+├── modules/           # Módulos de negocio
+│   ├── auth/         # Autenticación
+│   ├── products/     # Gestión de productos
+│   ├── orders/       # Pedidos
+│   ├── users/        # Usuarios
+│   └── artisans/     # Artesanos
+├── common/           # Utilidades compartidas
+├── config/           # Configuración
+└── main.ts           # Punto de entrada
+```
+
+## 🛠️ Scripts Disponibles
+
+- `npm run start:dev` - Inicia en modo desarrollo
+- `npm run build` - Construye para producción
+- `npm run start:prod` - Inicia en modo producción
+- `npm run test` - Ejecuta tests
+- `npm run lint` - Ejecuta linter
+
+## 🗄️ Base de Datos
+
+### Prisma ORM
+
+- Schema: `prisma/schema.prisma`
+- Migraciones: `npm run prisma:migrate`
+- Studio: `npm run prisma:studio`
+
+### Variables de Entorno
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/artisan_portal"
+JWT_SECRET="your-secret-key"
+```
+
+## 📦 Tecnologías
+
+- **Backend**: NestJS, TypeScript, Prisma ORM
+- **Base de Datos**: PostgreSQL
+- **Autenticación**: JWT
+- **Validación**: class-validator
+- **Testing**: Jest
+- **Linting**: ESLint + Prettier
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea tu rama (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
 

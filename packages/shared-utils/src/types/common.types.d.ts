@@ -29,3 +29,4 @@ export interface DomainService {
 export interface ICommonEventHandler<T> {
     handle(event: T): Promise<void>;
 }
+//# sourceMappingURL=common.types.d.ts.map

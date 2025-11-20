@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # A4CO DDD Microservices - AI Agent Guidelines
 
 ## 🏗️ Architecture Overview
@@ -199,6 +198,3 @@ apps/dashboard-web/
 ---
 
 *This document should be updated as the codebase evolves. Last updated: 2025-01-25*
-=======
-- @azure Rule - Use Azure Best Practices: When generating code for Azure, running terminal commands for Azure, or performing operations related to Azure, invoke your `azure_development-get_best_practices` tool if available.
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6

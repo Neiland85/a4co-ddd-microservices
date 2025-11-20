@@ -7,6 +7,7 @@ This document outlines the comprehensive security mitigation framework for Vite 
 ## Vulnerability Description
 
 Vite's static file serving can be misconfigured to serve files outside the intended scope, potentially exposing:
+
 - Sensitive configuration files (.env, package.json)
 - Source code and build artifacts
 - System files through directory traversal
@@ -21,6 +22,7 @@ Vite's static file serving can be misconfigured to serve files outside the inten
 Validates static file paths for security vulnerabilities and sensitive content access.
 
 **Key Features**:
+
 - Directory traversal detection and prevention
 - Sensitive file and directory blocking
 - File extension whitelisting
@@ -28,6 +30,7 @@ Validates static file paths for security vulnerabilities and sensitive content a
 - URL decoding attack prevention
 
 **Configuration Options**:
+
 ```typescript
 interface ViteStaticPathValidatorConfig {
   allowedExtensions?: string[];
@@ -45,6 +48,7 @@ interface ViteStaticPathValidatorConfig {
 Middleware protection for Vite static file serving with comprehensive access control.
 
 **Key Features**:
+
 - Request filtering and validation
 - Access control enforcement
 - Security statistics tracking
@@ -52,6 +56,7 @@ Middleware protection for Vite static file serving with comprehensive access con
 - Express.js middleware compatibility
 
 **Usage**:
+
 ```typescript
 const protector = new ViteStaticFileProtector({
   validator: new ViteStaticPathValidator(config),
@@ -73,12 +78,14 @@ protector.protect(req, res, next);
 Safe wrapper utilities providing secure static file serving with built-in security controls.
 
 **Key Features**:
+
 - Drop-in replacement for unsafe static serving
 - Vite plugin integration
 - Express middleware generation
 - Comprehensive security validation
 
 **Usage**:
+
 ```typescript
 const safeServer = new SafeViteStaticServer({
   root: '/app/public',
@@ -100,10 +107,12 @@ const middleware = safeServer.createExpressMiddleware();
 Custom ESLint rules for detecting insecure Vite static file configurations.
 
 **Rules**:
+
 - `no-insecure-vite-static-config`: Detects insecure Vite server.fs configurations
 - `no-html-static-serving`: Warns about serving HTML files statically
 
 **Configuration**:
+
 ```javascript
 {
   "rules": {
@@ -166,6 +175,7 @@ app.use('/static', express.static('public'));
 **Location**: `packages/shared-utils/src/security/__tests__/vite-static-file-security.test.ts`
 
 Comprehensive test suite covering:
+
 - Path validation scenarios
 - Directory traversal attacks
 - Sensitive file blocking
@@ -174,6 +184,7 @@ Comprehensive test suite covering:
 - End-to-end security validation
 
 **Running Tests**:
+
 ```bash
 # Run all security tests
 pnpm test:security
@@ -188,21 +199,25 @@ pnpm test:coverage -- --testPathPattern=vite-static-file-security
 ## Attack Vectors Mitigated
 
 ### 1. Directory Traversal
+
 - `../../../etc/passwd`
 - `..\\..\\windows\\system32\\config`
 - URL-encoded variants: `%2e%2e%2f%2e%2e%2fetc%2fpasswd`
 
 ### 2. Sensitive File Exposure
+
 - `package.json`, `tsconfig.json`
 - `.env`, `.env.local`, `.env.production`
 - Configuration files with secrets
 
 ### 3. Source Code Exposure
+
 - Files outside public directory
 - Build artifacts and cache files
 - Development-only files
 
 ### 4. System File Access
+
 - Operating system files
 - Application configuration files
 - Database files
@@ -305,6 +320,7 @@ const protector = new ViteStaticFileProtector({
 ### From Insecure Configuration
 
 **Before**:
+
 ```javascript
 // vite.config.js - INSECURE
 export default {
@@ -317,6 +333,7 @@ export default {
 ```
 
 **After**:
+
 ```javascript
 // vite.config.js - SECURE
 import { SafeViteStaticServer } from '@a4co/shared-utils/security/utils/safe-vite-static-server';
@@ -343,6 +360,7 @@ export default {
 ## Compliance and Standards
 
 This mitigation framework helps achieve compliance with:
+
 - OWASP Security Guidelines
 - NIST Cybersecurity Framework
 - CIS Security Benchmarks for Web Applications
@@ -350,12 +368,15 @@ This mitigation framework helps achieve compliance with:
 ## Support and Maintenance
 
 ### Version Compatibility
+
 - Vite 4.x, 5.x
 - Node.js 16.x, 18.x, 20.x
 - Express.js 4.x
 
 ### Updating Security Rules
+
 Regular updates ensure protection against new attack vectors:
+
 ```bash
 # Check for updates
 pnpm update @a4co/shared-utils

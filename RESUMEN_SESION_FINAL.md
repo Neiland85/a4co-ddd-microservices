@@ -51,9 +51,9 @@ fcc4456 chore: add start-services.sh script for easy service startup
 
 ### Nuevos (PR #211 - Esta Sesión)
 
-6. ✅ **inventory-service** (3006) - Check stock, Reservas, Low stock
-7. ✅ **notification-service** (3007) - Email, SMS, Push
-8. ✅ **transportista-service** (3008) - Tracking, Carriers
+1. ✅ **inventory-service** (3006) - Check stock, Reservas, Low stock
+2. ✅ **notification-service** (3007) - Email, SMS, Push
+3. ✅ **transportista-service** (3008) - Tracking, Carriers
 
 ### **Progreso Total: 8/8 servicios (100%)**
 
@@ -219,16 +219,16 @@ cd apps/frontend && pnpm run dev
 
 ### Corto Plazo
 
-4. ⏳ Implementar completamente inventory-service (Prisma + DB)
-5. ⏳ Implementar completamente notification-service (SendGrid, Twilio)
-6. ⏳ Agregar más funcionalidad a transportista-service
+1. ⏳ Implementar completamente inventory-service (Prisma + DB)
+2. ⏳ Implementar completamente notification-service (SendGrid, Twilio)
+3. ⏳ Agregar más funcionalidad a transportista-service
 
 ### Mediano Plazo
 
-7. ⏳ Testing E2E automatizado
-8. ⏳ Deploy a staging
-9. ⏳ Monitoring y observability
-10. ⏳ Implementar servicios adicionales (analytics, geo, loyalty, etc.)
+1. ⏳ Testing E2E automatizado
+2. ⏳ Deploy a staging
+3. ⏳ Monitoring y observability
+4. ⏳ Implementar servicios adicionales (analytics, geo, loyalty, etc.)
 
 ---
 
