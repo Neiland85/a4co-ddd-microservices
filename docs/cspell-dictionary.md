@@ -1,85 +1,29 @@
 # Diccionario del Proyecto
 
-Última sincronización: 20/11/2025, 5:42:25
+Última sincronización: 20/11/2025, 11:58:54
 
 ---
-### User (global VSCode) (28)
-- commands
-- constraints
-- creation
-- databases
-- debugging
-- established
-- functions
-- generate
-- indexes
-- initial
-- initialize
-- initialized
-- maps
-- migrations
-- names
-- optimize
-- output
-- payments
-- queries
-- queue
-- regular
-- reservations
-- retry
-- stock
-- subject
-- subjects
-- tables
-- unique
+### User (global VSCode) (4)
+- could
+- find
+- task
+- turbo
 
-### Workspace (proyecto local) (37)
-- authentication
-- commands
-- constraints
-- created
-- creation
-- databases
-- debugging
-- define
-- established
-- functions
-- generate
-- handling
-- implemented
-- including
-- indexes
-- initial
-- initialize
-- initialized
-- maps
-- messaging
-- migrations
-- names
-- necessary
-- optimize
-- output
-- payments
-- queries
-- queue
-- regular
-- reservations
-- retry
-- stock
-- subject
-- subjects
-- tables
-- unique
-- utility
+### Workspace (proyecto local) (5)
+- could
+- find
+- reference
+- task
+- turbo
 
-### Commits recientes detectados (231)
+### Commits recientes detectados (246)
 - across
+- actual
 - actualizar
 - adapter
 - added
 - address
 - addresses
-- after
 - agregar
 - allowing
 - analysis
@@ -89,7 +33,6 @@
 - better
 - branch
 - build
-- changes
 - check
 - clarified
 - clean
@@ -99,12 +42,10 @@
 - commands
 - compilation
 - complexity
-- compose
 - configuration
 - configure
 - configured
 - conflict
-- conflicted
 - conflicts
 - connections
 - consistent
@@ -112,7 +53,9 @@
 - content
 - control
 - copilot
+- correct
 - cors
+- could
 - coverage
 - create
 - created
@@ -128,29 +71,33 @@
 - define
 - dependencies
 - dependency
+- deploy
 - deprecated
 - deprecation
 - details
+- detection
 - development
 - diccionario
 - dictionary
-- dicts
 - directory
-- docker
 - documentation
 - duplicate
 - eliminar
 - enhance
+- ensure
 - ensured
 - ensures
 - entradas
 - environment
+- error
 - errors
 - established
 - event
 - execution
 - experience
 - explicit
+- failure
+- fallbacks
 - feature
 - features
 - feedback
@@ -158,6 +105,7 @@
 - file
 - filenames
 - files
+- find
 - fixes
 - flag
 - folder
@@ -166,6 +114,7 @@
 - functions
 - generate
 - generated
+- github
 - glob
 - handling
 - hotspots
@@ -173,6 +122,7 @@
 - ignore
 - implemented
 - import
+- improve
 - improved
 - improvements
 - improves
@@ -198,7 +148,6 @@
 - markdown
 - messaging
 - metacharacters
-- middleware
 - migrate
 - migration
 - migrations
@@ -212,6 +161,7 @@
 - multi
 - names
 - necessary
+- node
 - nuevas
 - obsoletas
 - optimize
@@ -221,19 +171,21 @@
 - original
 - output
 - overall
-- package
 - packages
 - palabras
+- path
 - paths
 - pattern
 - patterns
 - payment
 - payments
+- pipeline
 - pnpm
 - postgresql
 - prevents
 - prisma
 - prismaclient
+- production
 - products
 - proper
 - property
@@ -242,7 +194,9 @@
 - queue
 - readability
 - readme
+- reference
 - references
+- reflect
 - regenerate
 - regular
 - related
@@ -268,6 +222,7 @@
 - setup
 - shared
 - shell
+- should
 - source
 - spacing
 - specific
@@ -280,11 +235,13 @@
 - tables
 - taking
 - target
+- task
 - temp
-- tests
 - this
 - throughout
+- true
 - tsconfig
+- turbo
 - type
 - types
 - typescript
@@ -302,6 +259,8 @@
 - warnings
 - with
 - work
+- workflow
+- workflows
 - workspace
 - yaml
 

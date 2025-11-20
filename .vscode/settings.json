@@ -1,7 +1,9 @@
 {
   "json.schemas": [
     {
-      "fileMatch": ["**/package.json"]
+      "fileMatch": [
+        "**/package.json"
+      ]
     }
   ],
   "json.schemaDownload.enable": false,
@@ -133,6 +135,7 @@
     "corregidos",
     "corregir",
     "cors",
+    "could",
     "coverage",
     "create",
     "created",
@@ -166,6 +169,7 @@
     "design",
     "detailed",
     "details",
+    "detection",
     "devcontainer",
     "develop",
     "development",
@@ -199,6 +203,7 @@
     "entries",
     "environment",
     "environments",
+    "error",
     "errors",
     "esbuild",
     "esquema",
@@ -220,8 +225,10 @@
     "exposure",
     "external",
     "factor",
+    "failure",
     "fake",
     "fallback",
+    "fallbacks",
     "false",
     "feature",
     "features",
@@ -231,6 +238,7 @@
     "filenames",
     "files",
     "finalize",
+    "find",
     "findings",
     "first",
     "fixes",
@@ -460,8 +468,10 @@
     "redirect",
     "reduced",
     "redundant",
+    "reference",
     "references",
     "refine",
+    "reflect",
     "regenerate",
     "regular",
     "related",
@@ -549,6 +559,7 @@
     "tailwind",
     "taking",
     "target",
+    "task",
     "temp",
     "template",
     "temporary",
@@ -564,7 +575,9 @@
     "transportista",
     "triggering",
     "triggers",
+    "true",
     "tsconfig",
+    "turbo",
     "twice",
     "type",
     "types",
@@ -614,7 +627,11 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.validate": ["typescript", "javascript", "json"],
+  "eslint.validate": [
+    "typescript",
+    "javascript",
+    "json"
+  ],
   "editor.codeActionsOnSave": {
     "editor.formatOnSave": "explicit",
     "prettier.useEditorConfig": "explicit",
@@ -626,13 +643,33 @@
     "typescriptreact": "javascript"
   },
   "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ],
+    [
+      "cx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "cn\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "clsx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "tv\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ]
   ],
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "classList"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "classList"
+  ],
   "files.associations": {
     "*.css": "tailwindcss"
   },
