@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Headers, RawBodyRequest, Req, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Headers, RawBodyRequest, Req, Logger, Body } from '@nestjs/common';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import { PaymentService } from '../application/services/payment.service';
 import { StripeGateway } from '../infrastructure/stripe.gateway';
 import { PaymentEventPublisher } from '../application/services/payment-event.publisher';
 import { PaymentRepository } from '../domain/repositories/payment.repository';
+import { ProcessPaymentUseCase } from '../application/use-cases/process-payment.use-case';
 
 @Controller('payments')
 export class PaymentController {
@@ -13,6 +15,7 @@ export class PaymentController {
     private readonly stripeGateway: StripeGateway,
     private readonly eventPublisher: PaymentEventPublisher,
     private readonly paymentRepository: PaymentRepository,
+    private readonly processPaymentUseCase: ProcessPaymentUseCase, // Inyectamos el caso de uso
   ) {}
 
   @Get('health')
@@ -20,6 +23,25 @@ export class PaymentController {
     return this.paymentService.getHealth();
   }
 
+  // --- NUEVO: Escuchar comando de la Saga para iniciar pago ---
+  @EventPattern('payment.initiate')
+  async handlePaymentInitiate(@Payload() data: any) {
+    this.logger.log(`🚀 Iniciando proceso de pago para orden: ${data.orderId}`);
+    try {
+      // Aquí llamamos al caso de uso que crea el PaymentIntent
+      await this.processPaymentUseCase.execute({
+        orderId: data.orderId,
+        amount: data.amount,
+        currency: 'usd', // O dinámico según data
+        customerId: data.customerId,
+      });
+    } catch (error) {
+      this.logger.error(`❌ Error iniciando pago para orden ${data.orderId}`, error);
+      // El manejo de errores debería publicar un evento PaymentFailedEvent
+    }
+  }
+
+  // --- WEBHOOK STRIPE ---
   @Post('webhook')
   async handleStripeWebhook(
     @Req() req: RawBodyRequest<Request>,
@@ -33,10 +55,7 @@ export class PaymentController {
     }
 
     try {
-      const event = this.stripeGateway.constructWebhookEvent({
-        payload: req.rawBody as Buffer,
-        signature,
-      });
+      const event = this.stripeGateway.constructWebhookEvent(req.rawBody as Buffer, signature);
 
       this.logger.log(`📨 Evento de Stripe recibido: ${event.type}`);
 
@@ -76,15 +95,11 @@ export class PaymentController {
     this.logger.log(`✅ Pago exitoso para orden ${orderId}, PaymentIntent: ${paymentIntent.id}`);
 
     try {
-      // Buscar payment en la base de datos
       const payment = await this.paymentRepository.findByOrderId(orderId);
-      
+
       if (payment) {
-        // Actualizar estado del pago
         payment.markAsSucceeded(paymentIntent.id);
         await this.paymentRepository.save(payment);
-        
-        // Publicar eventos de dominio
         await this.eventPublisher.publishPaymentEvents(payment);
       } else {
         this.logger.warn(`⚠️  Payment no encontrado para orden ${orderId}`);
@@ -109,11 +124,10 @@ export class PaymentController {
 
     try {
       const payment = await this.paymentRepository.findByOrderId(orderId);
-      
+
       if (payment) {
         payment.markAsFailed(failureReason);
         await this.paymentRepository.save(payment);
-        
         await this.eventPublisher.publishPaymentEvents(payment);
       } else {
         this.logger.warn(`⚠️  Payment no encontrado para orden ${orderId}`);
@@ -137,11 +151,10 @@ export class PaymentController {
 
     try {
       const payment = await this.paymentRepository.findByOrderId(orderId);
-      
+
       if (payment) {
-        payment.cancel('Cancelado desde Stripe');
+        payment.markAsFailed('Cancelado desde Stripe');
         await this.paymentRepository.save(payment);
-        
         await this.eventPublisher.publishPaymentEvents(payment);
       }
     } catch (error) {

@@ -3,7 +3,6 @@ import { ClientProxy } from '@nestjs/microservices';
 import { EventSubjects } from '@a4co/shared-utils/events/subjects';
 import { DomainEvent } from '@a4co/shared-utils/domain/domain-event';
 import { Payment } from '../../domain/entities/payment.entity';
-import { NATS_EVENT_BUS_TOKEN } from '../application.constants';
 import {
   PaymentCreatedEvent,
   PaymentDomainEvent,
@@ -27,9 +26,9 @@ export class PaymentEventPublisher {
   private readonly logger = new Logger(PaymentEventPublisher.name);
 
   constructor(
-    @Inject(NATS_EVENT_BUS_TOKEN)
+    @Inject('NATS_CLIENT')
     private readonly natsClient: ClientProxy,
-  ) { }
+  ) {}
 
   public async publishPaymentEvents(payment: Payment): Promise<void> {
     const events = payment.getUncommittedEvents();
@@ -87,4 +86,3 @@ export class PaymentEventPublisher {
     return undefined;
   }
 }
-

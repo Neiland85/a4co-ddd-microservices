@@ -1,10 +1,14 @@
 import { Controller, Post, Get, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { OrderService } from '../../application/services/service';
-import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case';
-import { OrderMetricsService } from '../../infrastructure/metrics/order-metrics.service';
-import { CreateOrderRequestV1, GetOrderRequestV1, OrderResponseV1 } from '../../contracts/api/v1/dto';
-import { OrderItem } from '../../domain/aggregates/order.aggregate';
+import { OrderService } from '../../application/services/service.js';
+import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case.js';
+import { OrderMetricsService } from '../../infrastructure/metrics/order-metrics.service.js';
+import {
+  CreateOrderRequestV1,
+  GetOrderRequestV1,
+  OrderResponseV1,
+} from '../../contracts/api/v1/dto.js';
+import { OrderItem } from '../../domain/aggregates/order.aggregate.js';
 
 @ApiTags('orders')
 @Controller('orders')

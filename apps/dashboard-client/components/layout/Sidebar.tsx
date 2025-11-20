@@ -3,10 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Home, Users, Package, ShoppingCart, Settings, LogOut } from 'lucide-react';
-import clsx from 'clsx';
-import { useAuth } from '@dashboard/lib/auth-context';
-import AnimatedButton from '@/components/AnimatedButton';
+import { Home, Factory, FileBarChart2, Leaf, Settings } from 'lucide-react';
 
 export function Sidebar() {
   const router = useRouter();

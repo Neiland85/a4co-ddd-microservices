@@ -14,7 +14,7 @@
 - **Ubicación**: `/src/main.ts` (raíz del proyecto)
 - **Base de datos**: PostgreSQL - `artisan_portal` en localhost:5432
 
-#### Endpoints Disponibles:
+#### Endpoints Disponibles
 
 ##### **Autenticación** (`/auth`)
 
@@ -31,6 +31,7 @@
   ```
 
 - `POST /auth/login` - Iniciar sesión
+
   ```bash
   curl -X POST http://localhost:3000/auth/login \
     -H "Content-Type: application/json" \
@@ -64,7 +65,7 @@
 - `PUT /orders/:id` - Actualizar orden
 - `DELETE /orders/:id` - Eliminar orden
 
-#### Documentación:
+#### Documentación
 
 - **Swagger UI**: http://localhost:3000/api
 - **Health Check**: http://localhost:3000/health (si está configurado)
@@ -149,10 +150,12 @@ El proyecto está diseñado con los siguientes microservicios independientes:
 - **Ruta**: `apps/frontend/`
 - **Tecnologías**: React 19, Vite 6, Tailwind CSS
 - **Comando**:
+
   ```bash
   cd apps/frontend
   pnpm run dev
   ```
+
 - **URL**: http://localhost:5173 (cuando esté corriendo)
 
 ---
@@ -241,6 +244,7 @@ Para levantar los microservicios independientes, necesitas:
    ```
 
 5. **Levantar todos con Turbo**:
+
    ```bash
    pnpm turbo run dev --concurrency=10
    ```
@@ -263,7 +267,7 @@ curl -X POST http://localhost:3000/auth/register \
   }'
 ```
 
-2. **Hacer login y obtener token**:
+1. **Hacer login y obtener token**:
 
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:3000/auth/login \
@@ -274,7 +278,7 @@ TOKEN=$(curl -s -X POST http://localhost:3000/auth/login \
   }' | jq -r '.access_token')
 ```
 
-3. **Crear un producto** (requiere token):
+1. **Crear un producto** (requiere token):
 
 ```bash
 curl -X POST http://localhost:3000/products \
@@ -288,7 +292,7 @@ curl -X POST http://localhost:3000/products \
   }'
 ```
 
-4. **Listar productos**:
+1. **Listar productos**:
 
 ```bash
 curl http://localhost:3000/products

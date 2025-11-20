@@ -3,11 +3,13 @@
 ## Servicios Requeridos
 
 ### Infraestructura
+
 ```bash
 docker-compose -f compose.dev.yaml up -d
 ```
 
 Esto inicia:
+
 - PostgreSQL (puerto 5432)
 - NATS (puerto 4222)
 - Redis (puerto 6379)
@@ -53,6 +55,7 @@ pnpm run dev  # puerto 5173
 ### 1. Test de Autenticación (Auth-Service)
 
 #### Login de Customer
+
 ```
 1. Ir a http://localhost:5173
 2. Click en "Acceder"
@@ -68,6 +71,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Login de Producer
+
 ```
 1. Click en "Zona Productores"
 2. Tab "Acceder"
@@ -83,6 +87,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Logout
+
 ```
 1. Click en nombre de usuario (header)
 2. Click "Cerrar sesión"
@@ -95,6 +100,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Session Persistence
+
 ```
 1. Iniciar sesión
 2. Refrescar página (F5)
@@ -110,6 +116,7 @@ pnpm run dev  # puerto 5173
 ### 2. Test de Productos (Product-Service)
 
 #### Lista de Productos
+
 ```
 1. Abrir consola del navegador (F12)
 2. Ir a home
@@ -122,6 +129,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Búsqueda
+
 ```
 1. En el buscador, escribir "aceite"
 2. Ver resultados filtrados
@@ -132,6 +140,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Detalle de Producto
+
 ```
 1. Click en un producto
 2. Ver página de detalle
@@ -147,6 +156,7 @@ pnpm run dev  # puerto 5173
 ### 3. Test de Usuarios (User-Service)
 
 #### Favoritos
+
 ```
 1. Iniciar sesión
 2. Click en ❤️ de un producto
@@ -158,6 +168,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Producers List
+
 ```
 1. Scroll down en home
 2. Ver sección de productores
@@ -172,6 +183,7 @@ pnpm run dev  # puerto 5173
 ### 4. Test de Órdenes (Order-Service)
 
 #### Crear Orden
+
 ```
 1. Iniciar sesión como customer
 2. Agregar producto al carrito
@@ -194,6 +206,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Ver Historial de Órdenes
+
 ```
 1. Iniciar sesión
 2. Click en nombre → "Mi cuenta"
@@ -205,6 +218,7 @@ pnpm run dev  # puerto 5173
 ```
 
 #### Producer Orders
+
 ```
 1. Iniciar sesión como productor
 2. Ver Dashboard → "Pedidos"
@@ -220,6 +234,7 @@ pnpm run dev  # puerto 5173
 ### 5. Test de Pagos (Payment-Service)
 
 #### Payment Methods
+
 ```
 Actualmente la integración está preparada pero el frontend
 usa flujo simplificado. Los métodos de pago se pueden 
@@ -227,6 +242,7 @@ listar llamando a getPaymentMethods(token).
 ```
 
 #### Payment Intent
+
 ```
 El flujo de pago está preparado para:
 1. Crear intent al hacer checkout
@@ -241,6 +257,7 @@ Actualmente funciona con mocks para desarrollo.
 ## Checklist de Testing
 
 ### Autenticación
+
 - [ ] Login customer funciona
 - [ ] Login producer funciona
 - [ ] Register funciona
@@ -251,6 +268,7 @@ Actualmente funciona con mocks para desarrollo.
 - [ ] Token se pasa en headers
 
 ### Productos
+
 - [ ] Lista de productos carga
 - [ ] Categorías cargan
 - [ ] Búsqueda funciona
@@ -258,17 +276,20 @@ Actualmente funciona con mocks para desarrollo.
 - [ ] Filtros funcionan
 
 ### Usuarios
+
 - [ ] Favoritos se pueden toggle
 - [ ] Producers list carga
 - [ ] Perfil de usuario accesible
 
 ### Órdenes
+
 - [ ] Crear orden funciona
 - [ ] Ver historial de órdenes
 - [ ] Producer ve sus órdenes
 - [ ] Actualizar estado de orden
 
 ### Pagos
+
 - [ ] Payment methods preparado
 - [ ] Payment intent flow preparado
 
@@ -277,6 +298,7 @@ Actualmente funciona con mocks para desarrollo.
 ## Troubleshooting
 
 ### Servicio no responde
+
 ```
 ⚠️ Síntoma: Console muestra "using mock data"
 ✅ Solución: 
@@ -286,6 +308,7 @@ Actualmente funciona con mocks para desarrollo.
 ```
 
 ### Token inválido/expirado
+
 ```
 ⚠️ Síntoma: API devuelve 401
 ✅ Solución:
@@ -295,6 +318,7 @@ Actualmente funciona con mocks para desarrollo.
 ```
 
 ### CORS errors
+
 ```
 ⚠️ Síntoma: CORS policy error en console
 ✅ Solución:
@@ -310,6 +334,7 @@ Actualmente funciona con mocks para desarrollo.
 ### Logs Esperados en Console
 
 **✅ Exitoso (con API):**
+
 ```
 Login successful
 Favorite toggled successfully
@@ -317,6 +342,7 @@ Order created successfully
 ```
 
 **⚠️ Fallback (sin API):**
+
 ```
 Product service not available, using mock data
 Order service error, using mock orders
@@ -324,6 +350,7 @@ Payment service not available, simulating payment
 ```
 
 **❌ Error:**
+
 ```
 Failed to fetch
 Network error

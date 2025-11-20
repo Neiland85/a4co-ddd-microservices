@@ -30,6 +30,27 @@ export const metadata: Metadata = {
 
 // 🌍 Layout principal
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Skip AuthProvider during static generation/prerendering
+  const isPrerendering = typeof window === 'undefined';
+
+  if (isPrerendering) {
+    return (
+      <html lang="es" suppressHydrationWarning>
+        <body
+          className={clsx(
+            geistSans.variable,
+            geistMono.variable,
+            'bg-background text-foreground flex min-h-screen antialiased',
+          )}
+        >
+          <main className="flex flex-1 flex-col overflow-y-auto">
+            <div className="p-8">{children}</div>
+          </main>
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="es" suppressHydrationWarning>
       <body

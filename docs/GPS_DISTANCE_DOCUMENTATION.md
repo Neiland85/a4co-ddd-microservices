@@ -24,13 +24,16 @@ Este módulo Python implementa el cálculo de distancia aproximada entre dos pun
 Función principal que calcula la distancia entre dos puntos GPS.
 
 **Parámetros:**
+
 - `lat1, lon1` (float): Latitud y longitud del primer punto en grados decimales
 - `lat2, lon2` (float): Latitud y longitud del segundo punto en grados decimales
 
 **Retorna:**
+
 - `float`: Distancia en kilómetros
 
 **Ejemplo:**
+
 ```python
 from utils.gps_distance import haversine_distance
 
@@ -47,6 +50,7 @@ print(f"Distancia: {distancia:.2f} km")  # Resultado: ~505.44 km
 Variante que retorna la distancia en metros.
 
 **Ejemplo:**
+
 ```python
 distancia_m = haversine_distance_meters(madrid_lat, madrid_lon, barcelona_lat, barcelona_lon)
 print(f"Distancia: {distancia_m:.0f} m")  # Resultado: ~505443 m
@@ -57,9 +61,11 @@ print(f"Distancia: {distancia_m:.0f} m")  # Resultado: ~505443 m
 Interfaz alternativa que acepta puntos como tuplas.
 
 **Parámetros:**
+
 - `point1, point2` (Tuple[float, float]): Puntos como tuplas (latitud, longitud)
 
 **Ejemplo:**
+
 ```python
 madrid = (40.4168, -3.7038)
 barcelona = (41.3851, 2.1734)
@@ -79,6 +85,7 @@ d = R ⋅ c
 ```
 
 Donde:
+
 - φ es la latitud
 - λ es la longitud
 - R es el radio de la Tierra (6371 km)
@@ -220,18 +227,21 @@ def analizar_cobertura_servicio(centro, puntos_servicio, radio_km):
 ## 🛠️ Extensiones Posibles
 
 1. **Soporte para múltiples unidades**:
+
    ```python
    def haversine_distance_units(lat1, lon1, lat2, lon2, unit='km'):
        # km, miles, nautical_miles, etc.
    ```
 
 2. **Cálculo de rumbo (bearing)**:
+
    ```python
    def calculate_bearing(lat1, lon1, lat2, lon2):
        # Retorna el rumbo inicial en grados
    ```
 
 3. **Punto intermedio**:
+
    ```python
    def intermediate_point(lat1, lon1, lat2, lon2, fraction):
        # Punto intermedio en la ruta

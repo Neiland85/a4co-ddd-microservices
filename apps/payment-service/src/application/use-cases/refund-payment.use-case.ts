@@ -19,13 +19,9 @@ export class RefundPaymentUseCase {
     private readonly paymentDomainService: PaymentDomainService,
     private readonly stripeGateway: StripeGateway,
     private readonly eventPublisher: PaymentEventPublisher,
-  ) { }
+  ) {}
 
-  public async execute(
-    paymentId: string,
-    amount?: number,
-    reason?: string
-  ): Promise<Payment> {
+  public async execute(paymentId: string, amount?: number, reason?: string): Promise<Payment> {
     const id = PaymentId.create(paymentId);
     const payment = await this.paymentRepository.findById(id);
 
@@ -35,11 +31,13 @@ export class RefundPaymentUseCase {
 
     const stripeIntentId = payment.stripePaymentIntentId;
     if (!stripeIntentId) {
-      throw new Error(`Payment ${payment.paymentId.getValue()} has no Stripe payment intent associated`);
+      throw new Error(`Payment ${payment.paymentId.value} has no Stripe payment intent associated`);
     }
 
-    if (payment.status.getValue() !== PaymentStatusValue.SUCCEEDED) {
-      throw new Error(`Only succeeded payments can be refunded. Current status: ${payment.status.getValue()}`);
+    if (payment.status.value !== PaymentStatusValue.SUCCEEDED) {
+      throw new Error(
+        `Only succeeded payments can be refunded. Current status: ${payment.status.value}`,
+      );
     }
 
     // Si se proporciona un monto, usarlo, sino calcular el reembolso completo
@@ -54,15 +52,14 @@ export class RefundPaymentUseCase {
       refundAmount = this.paymentDomainService.calculateRefundAmount(payment);
     }
 
-    await this.stripeGateway.refundPayment(
-      stripeIntentId,
-      refundAmount
-    );
+    await this.stripeGateway.refundPayment(stripeIntentId, refundAmount);
 
     payment.refund(refundAmount, reason);
     await this.persist(payment);
 
-    this.logger.log(`Refund processed for payment ${paymentId} - Amount: ${refundAmount.amount} ${refundAmount.currency}`);
+    this.logger.log(
+      `Refund processed for payment ${paymentId} - Amount: ${refundAmount.amount} ${refundAmount.currency}`,
+    );
     return payment;
   }
 
@@ -71,4 +68,3 @@ export class RefundPaymentUseCase {
     await this.eventPublisher.publishPaymentEvents(payment);
   }
 }
-

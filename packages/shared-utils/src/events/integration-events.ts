@@ -13,7 +13,7 @@ export class ProductInformationRequestedIntegrationEvent extends DomainEvent {
       orderId: string;
       productIds: string[]; // Solo IDs, no datos completos
       requestedAt: Date;
-    }
+    },
   ) {
     super(requestId, data);
   }
@@ -39,7 +39,7 @@ export class ProductInformationProvidedEvent extends DomainEvent {
         stockQuantity: number;
       }>;
       providedAt: Date;
-    }
+    },
   ) {
     super(responseId, data);
   }
@@ -58,7 +58,7 @@ export class StockValidationRequestedIntegrationEvent extends DomainEvent {
         quantity: number;
       }>;
       requestedAt: Date;
-    }
+    },
   ) {
     super(requestId, data);
   }
@@ -81,7 +81,7 @@ export class StockValidationResponseEvent extends DomainEvent {
       }>;
       allItemsAvailable: boolean;
       respondedAt: Date;
-    }
+    },
   ) {
     super(responseId, data);
   }
@@ -97,7 +97,7 @@ export class UserInformationRequestedIntegrationEvent extends DomainEvent {
       userId: string;
       requestedFields: string[]; // ['email', 'address', 'preferences']
       requestedAt: Date;
-    }
+    },
   ) {
     super(requestId, data);
   }
@@ -133,7 +133,7 @@ export class UserInformationProvidedEvent extends DomainEvent {
         };
       };
       providedAt: Date;
-    }
+    },
   ) {
     super(responseId, data);
   }

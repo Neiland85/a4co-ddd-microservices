@@ -32,6 +32,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Parcial - Falta implementación en `src/`
 
 **Tareas:**
+
 - [ ] Crear estructura `apps/gateway/src/` con:
   - [ ] `main.ts` - Bootstrap de NestJS
   - [ ] `gateway.module.ts` - Módulo principal
@@ -59,6 +60,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Parcial - Frontend no conectado a APIs
 
 **Tareas:**
+
 - [ ] Configurar API client en `apps/frontend/api.ts`:
   - [ ] Base URL apuntando a gateway (puerto 3000)
   - [ ] Interceptores para JWT tokens
@@ -87,6 +89,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Parcial - NATS corriendo pero no configurado en servicios
 
 **Tareas:**
+
 - [ ] Verificar conexión NATS en servicios:
   - [ ] `order-service` - Configurar cliente NATS
   - [ ] `payment-service` - Configurar cliente NATS
@@ -112,6 +115,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Parcial - Schemas definidos pero migraciones pendientes
 
 **Tareas:**
+
 - [ ] Verificar schemas en servicios críticos:
   - [ ] `order-service/prisma/schema.prisma`
   - [ ] `payment-service/prisma/schema.prisma`
@@ -141,6 +145,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Tests escritos pero cobertura baja
 
 **Tareas:**
+
 - [ ] Ejecutar suite de tests completa:
   - [ ] `pnpm test:all`
   - [ ] Identificar tests fallando
@@ -162,6 +167,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Parcial - Algunos servicios tienen Swagger
 
 **Tareas:**
+
 - [ ] Swagger/OpenAPI en todos los servicios:
   - [ ] `auth-service` - Verificar `/api/docs`
   - [ ] `order-service` - Agregar Swagger
@@ -185,6 +191,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Parcial - OpenTelemetry configurado pero no completo
 
 **Tareas:**
+
 - [ ] Verificar instrumentación en servicios FASE1:
   - [ ] `order-service` - Métricas Prometheus
   - [ ] `payment-service` - Traces Jaeger
@@ -205,6 +212,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 **Estado:** ⚠️ Parcial - Workflows configurados pero algunos fallan
 
 **Tareas:**
+
 - [ ] Resolver workflows fallando:
   - [ ] Verificar `.github/workflows/ci.yml`
   - [ ] Corregir tests en CI
@@ -226,6 +234,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 ### 9. Variables de Entorno - Documentación
 
 **Tareas:**
+
 - [ ] Crear `.env.example` completo en raíz
 - [ ] Documentar todas las variables requeridas
 - [ ] Script de validación de variables
@@ -238,6 +247,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 ### 10. Scripts de Desarrollo
 
 **Tareas:**
+
 - [ ] Script para levantar todo el stack:
   - [ ] `scripts/dev-start.sh` - Docker + servicios
 - [ ] Script de verificación:
@@ -252,6 +262,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 ## 📊 CHECKLIST DE COMPLETITUD FASE0
 
 ### Infraestructura Base
+
 - [x] Monorepo configurado
 - [x] Docker Compose con servicios base
 - [x] Packages compartidos compilados
@@ -260,6 +271,7 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 - [ ] Prisma schemas y migraciones
 
 ### Servicios Core
+
 - [x] auth-service implementado
 - [x] user-service implementado
 - [x] product-service implementado
@@ -269,16 +281,19 @@ FASE0 es la fase de **preparación e infraestructura base** que debe completarse
 - [ ] Gateway routing configurado
 
 ### Comunicación
+
 - [ ] Frontend conectado a backend
 - [ ] NATS eventos configurados
 - [ ] Contratos de eventos documentados
 
 ### Testing y Calidad
+
 - [ ] Tests básicos pasando
 - [ ] Smoke tests E2E
 - [ ] Coverage mínimo alcanzado
 
 ### Documentación
+
 - [ ] APIs documentadas (Swagger)
 - [ ] READMEs actualizados
 - [ ] Guía de inicio rápido
@@ -303,12 +318,14 @@ FASE0 se considera **completada** cuando:
 Una vez completada FASE0, FASE1 requiere:
 
 ### Prerequisitos de FASE1 (deben estar listos)
+
 - ✅ Gateway funcionando (para routing)
 - ✅ NATS JetStream configurado (para sagas)
 - ✅ Schemas Prisma aplicados (para persistencia)
 - ✅ Observabilidad básica (para debugging)
 
 ### Objetivos de FASE1
+
 - Implementar saga Order → Payment → Inventory
 - Comunicación asíncrona completa entre servicios
 - Trazabilidad de eventos
@@ -319,6 +336,7 @@ Una vez completada FASE0, FASE1 requiere:
 ## ⏱️ ESTIMACIÓN DE TIEMPO
 
 ### Tareas Críticas (Bloqueantes)
+
 - Gateway API: **4-6 horas**
 - Integración Frontend: **3-4 horas**
 - NATS Configuración: **4-5 horas**
@@ -327,6 +345,7 @@ Una vez completada FASE0, FASE1 requiere:
 **Total Crítico:** ~13-18 horas (2-3 días de trabajo)
 
 ### Tareas Importantes
+
 - Testing: **3-4 horas**
 - Documentación APIs: **2-3 horas**
 - Observabilidad: **2-3 horas**
@@ -335,6 +354,7 @@ Una vez completada FASE0, FASE1 requiere:
 **Total Importante:** ~9-13 horas (1-2 días adicionales)
 
 ### Tareas Opcionales
+
 - Variables de entorno: **1 hora**
 - Scripts de desarrollo: **1-2 horas**
 
@@ -345,18 +365,22 @@ Una vez completada FASE0, FASE1 requiere:
 ## 📝 PLAN DE EJECUCIÓN RECOMENDADO
 
 ### Día 1: Infraestructura Crítica
+
 1. Gateway API (mañana) - 4-6h
 2. NATS Configuración (tarde) - 4-5h
 
 ### Día 2: Integración y Datos
+
 1. Prisma Migraciones (mañana) - 2-3h
 2. Frontend-Backend (tarde) - 3-4h
 
 ### Día 3: Validación y Documentación
+
 1. Testing básico (mañana) - 3-4h
 2. Documentación APIs (tarde) - 2-3h
 
 ### Día 4: Pulido (Opcional)
+
 1. Observabilidad - 2-3h
 2. CI/CD fixes - 2-3h
 3. Scripts de desarrollo - 1-2h

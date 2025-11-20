@@ -17,6 +17,8 @@
     "prisma:studio": "prisma studio --schema=./prisma/schema.prisma",
     "lint": "pnpm -r run lint",
     "lint:fix": "pnpm -r run lint:fix",
+    "lint:md": "markdownlint '**/*.md' --ignore node_modules --ignore .git",
+    "lint:md:fix": "markdownlint --fix '**/*.md' --ignore node_modules --ignore .git",
     "metrics": "curl http://localhost:3004/orders/metrics | grep saga || true",
     "ci:prepare": "pnpm -w run clean && pnpm install && pnpm build",
     "ci:test": "pnpm run test && pnpm run lint",
@@ -26,7 +28,14 @@
     "security:rotate-db": "./scripts/rotate-db-password.sh",
     "security:scheduled-audit": "./scripts/scheduled-security-audit.sh",
     "update:dicts": "ts-node scripts/update-cspell-dicts.ts",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "db:generate": "turbo run prisma:generate",
+    "db:push": "turbo run prisma:push",
+    "db:migrate": "turbo run prisma:migrate",
+    "dev:all": "turbo run dev --parallel",
+    "dev:frontend": "turbo run dev --filter=dashboard-web",
+    "dev:backend": "turbo run dev --filter=inventory-service --filter=order-service --filter=payment-service",
+    "lint": "turbo run lint"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.2",
@@ -58,6 +67,7 @@
     "@types/react-dom": "^19.2.2",
     "@types/uuid": "^10.0.0",
     "@types/vscode": "^1.105.0",
+    "@eslint/js": "^9.14.0",
     "autoprefixer": "^10.4.21",
     "axios": "^1.13.2",
     "class-transformer": "^0.5.1",
@@ -67,6 +77,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "jsdom": "^27.1.0",
     "json5": "^2.2.3",
+    "markdownlint-cli": "^0.46.0",
     "micromatch": "^4.0.8",
     "prettier": "^3.6.2",
     "react": "^19.2.0",
@@ -74,7 +85,8 @@
     "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^3.4.18",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "nx": "22.1.0"
   },
   "simple-git-hooks": {
     "pre-commit": "./scripts/pre-commit-secrets.sh",

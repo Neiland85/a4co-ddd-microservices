@@ -10,6 +10,7 @@
 ## 🎯 OBJETIVO PRINCIPAL
 
 Consolidar el flujo de negocio principal **Order → Payment → Inventory** con:
+
 - ✅ Comunicación asíncrona mediante NATS JetStream
 - ✅ Persistencia independiente por microservicio
 - ✅ Implementación de Saga Pattern para transacciones distribuidas

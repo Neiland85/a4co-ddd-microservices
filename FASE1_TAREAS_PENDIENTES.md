@@ -8,10 +8,11 @@
 ## 📊 RESUMEN EJECUTIVO
 
 ### Estado General
+
 - **Progreso Estimado**: ~40% completado
 - **Servicios Principales**: 3 (Order, Payment, Inventory)
 - **Infraestructura Base**: ✅ NATS JetStream habilitado, PostgreSQL configurado
-- **Bloqueadores Críticos**: 
+- **Bloqueadores Críticos**:
   - ❌ Saga Orchestrator incompleto (falta integración con Inventory)
   - ❌ Webhook Stripe no implementado
   - ❌ NATS client no configurado en Payment e Inventory
@@ -38,12 +39,14 @@
 ### 1️⃣ SETUP INICIAL Y CONFIGURACIÓN
 
 #### 1.1 Rama y Entorno
+
 - [ ] **Crear rama**: `feature/phase1-saga-integration`
 - [ ] **Consolidar variables de entorno**:
   - Verificar `.env` en los 3 servicios
   - Crear `.env.example` completo con documentación
   - Incluir: `NATS_URL`, `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
 - [ ] **Ejecutar migraciones Prisma** en los 3 servicios:
+
   ```bash
   cd apps/order-service && npx prisma migrate deploy
   cd apps/payment-service && npx prisma migrate deploy
@@ -51,6 +54,7 @@
   ```
 
 #### 1.2 Configuración NATS JetStream
+
 - [ ] **Crear configuración de Streams en NATS**:
   - Stream `orders` con subjects: `order.created.v1`, `order.confirmed.v1`, `order.cancelled.v1`
   - Stream `payments` con subjects: `payment.succeeded.v1`, `payment.failed.v1`, `payment.pending.v1`
@@ -65,14 +69,17 @@
 **Archivo Principal**: `apps/order-service/src/application/sagas/order.saga.ts`
 
 #### 2.1 Saga Orchestrator - Flujo Principal
+
 **Estado Actual**: Parcial - Solo maneja eventos de Payment, falta integración con Inventory.
 
 - [ ] **Implementar flujo completo**:
+
   ```
   CreateOrder → ReserveInventory → ProcessPayment → OrderCompleted
   ```
   
 - [ ] **Agregar escucha de eventos de Inventory**:
+
   ```typescript
   // En OrderSaga.execute()
   this.eventBus.subscribe("InventoryReserved", async (e: InventoryReservedEvent) => {
@@ -87,11 +94,13 @@
   ```
 
 #### 2.2 Compensación (Rollback)
+
 - [ ] **Implementar lógica de compensación**:
   - Si Payment falla → Liberar reserva de Inventory
   - Si Inventory falla → Cancelar orden (ya existe parcialmente)
   
 - [ ] **Crear método `compensate()`**:
+
   ```typescript
   async compensate(orderId: string, reason: string) {
     // Publicar InventoryReleaseEvent
@@ -101,20 +110,24 @@
   ```
 
 #### 2.3 Manejo de Estados
+
 - [ ] **Implementar máquina de estados completa**:
   - `PENDING` → `STOCK_RESERVED` → `PAYMENT_PROCESSING` → `COMPLETED`
   - `PENDING` → `CANCELLED` (si falla Inventory)
   - `STOCK_RESERVED` → `CANCELLED` (si falla Payment)
 
 #### 2.4 Timeouts y Errores
+
 - [ ] **Agregar timeouts** para cada paso de la saga (e.g., 30s para Inventory, 60s para Payment)
 - [ ] **Implementar retry logic** con backoff exponencial
 - [ ] **Logging estructurado** con correlation IDs
 
 #### 2.5 Métricas y Observabilidad
+
 **Estado Actual**: Métricas definidas en `order-metrics.service.ts`, pero endpoint no expuesto.
 
 - [ ] **Exponer endpoint `/orders/metrics`** en `order.controller.ts`:
+
   ```typescript
   @Get('metrics')
   async getMetrics() {
@@ -130,6 +143,7 @@
   - `order_saga_duration_seconds`
 
 #### 2.6 Tests
+
 - [ ] **Unit tests** para `OrderSaga`:
   - Test: Flujo exitoso completo
   - Test: Compensación por fallo en Inventory
@@ -141,14 +155,17 @@
 
 ### 3️⃣ PAYMENT-SERVICE
 
-**Archivos Principales**: 
+**Archivos Principales**:
+
 - `apps/payment-service/src/payment.module.ts`
 - `apps/payment-service/src/presentation/payment.controller.ts`
 
 #### 3.1 Configuración NATS
+
 **Estado Actual**: ❌ Cliente NATS no configurado explícitamente.
 
 - [ ] **Agregar configuración NATS en `payment.module.ts`**:
+
   ```typescript
   import { ClientsModule, Transport } from '@nestjs/microservices';
   
@@ -171,9 +188,11 @@
   ```
 
 #### 3.2 Webhook Stripe
+
 **Estado Actual**: ❌ Endpoint `/payments/webhook` no existe.
 
 - [ ] **Crear endpoint POST `/payments/webhook`**:
+
   ```typescript
   @Post('webhook')
   async handleStripeWebhook(
@@ -187,6 +206,7 @@
   ```
 
 - [ ] **Implementar validación de signature**:
+
   ```typescript
   const event = this.stripe.webhooks.constructEvent(
     body,
@@ -201,6 +221,7 @@
   - `payment_intent.processing` → Publicar `PaymentPendingEvent`
 
 #### 3.3 Publicación de Eventos
+
 - [ ] **Crear eventos de dominio faltantes**:
   - `PaymentPendingEvent` (si no existe)
   
@@ -209,11 +230,13 @@
   - Desde webhook → Publicar eventos según resultado
 
 #### 3.4 Manejo de Errores
+
 - [ ] **Implementar retry logic** para llamadas a Stripe API
 - [ ] **Logging estructurado** con IDs de transacción
 - [ ] **Alertas** para pagos fallidos consecutivos
 
 #### 3.5 Tests
+
 - [ ] **Unit tests**:
   - Test: Creación exitosa de Payment Intent
   - Test: Manejo de error de Stripe
@@ -228,14 +251,17 @@
 
 ### 4️⃣ INVENTORY-SERVICE
 
-**Archivos Principales**: 
+**Archivos Principales**:
+
 - `apps/inventory-service/src/inventory.module.ts`
 - `apps/inventory-service/src/application/handlers/reserve-stock.handler.ts`
 
 #### 4.1 Configuración NATS
+
 **Estado Actual**: ❌ Cliente NATS no configurado explícitamente.
 
 - [ ] **Agregar configuración NATS en `inventory.module.ts`**:
+
   ```typescript
   import { ClientsModule, Transport } from '@nestjs/microservices';
   
@@ -258,9 +284,11 @@
   ```
 
 #### 4.2 Event Handlers
+
 **Estado Actual**: `ReserveStockHandler` existe, pero falta handlers para eventos externos.
 
 - [ ] **Crear handler para `OrderCreated`**:
+
   ```typescript
   @EventPattern('order.created.v1')
   async handleOrderCreated(@Payload() data: OrderCreatedEvent) {
@@ -269,6 +297,7 @@
   ```
 
 - [ ] **Crear handler para `OrderCancelled`**:
+
   ```typescript
   @EventPattern('order.cancelled.v1')
   async handleOrderCancelled(@Payload() data: OrderCancelledEvent) {
@@ -277,6 +306,7 @@
   ```
 
 #### 4.3 Sistema de Reservas
+
 **Estado Actual**: Modelo `StockReservation` existe, pero lógica de negocio incompleta.
 
 - [ ] **Implementar `ReserveStockUseCase` completo**:
@@ -296,6 +326,7 @@
   - Publicar evento `InventoryReleasedEvent`
 
 #### 4.4 Alertas de Stock Bajo
+
 - [ ] **Crear configuración de umbrales** por producto (e.g., en base de datos o config)
 - [ ] **Implementar lógica de `LowStockAlert`**:
   - Después de cada reserva, verificar stock disponible
@@ -304,6 +335,7 @@
 - [ ] **Integrar con `notification-service`** (si existe) para enviar alertas
 
 #### 4.5 Tests
+
 - [ ] **Unit tests**:
   - Test: Reserva exitosa con stock suficiente
   - Test: Reserva fallida por stock insuficiente
@@ -321,29 +353,37 @@
 **Estado Actual**: ❌ No se encontraron tests E2E (búsqueda de `*e2e*.spec.ts` retornó 0 archivos).
 
 #### 5.1 E2E Tests - Flujos Principales
+
 - [ ] **Test: Flujo completo exitoso**
+
   ```
   POST /orders → InventoryReserved → PaymentSucceeded → Order COMPLETED
   ```
+
   - Verificar estado final de Order
   - Verificar Payment en Stripe
   - Verificar StockReservation en DB
 
 - [ ] **Test: Fallo en Inventory (stock insuficiente)**
+
   ```
   POST /orders → InventoryOutOfStock → Order CANCELLED
   ```
+
   - Verificar que no se creó Payment Intent
   - Verificar que orden está en estado CANCELLED
 
 - [ ] **Test: Fallo en Payment**
+
   ```
   POST /orders → InventoryReserved → PaymentFailed → ReleaseInventory → Order CANCELLED
   ```
+
   - Verificar compensación: stock liberado
   - Verificar orden en estado CANCELLED
 
 #### 5.2 E2E Tests - Escenarios de Error
+
 - [ ] **Test: Timeout en Inventory**
   - Simular delay en `inventory-service`
   - Verificar timeout de saga
@@ -360,6 +400,7 @@
   - Verificar que eventos se procesan después de reconexión
 
 #### 5.3 Tests de Integración
+
 - [ ] **Order Service ↔ Inventory Service**:
   - Publicar `OrderCreated` → Verificar que Inventory recibe y responde
 
@@ -370,6 +411,7 @@
   - Test de webhook con evento real de Stripe (en test mode)
 
 #### 5.4 Tests de Carga
+
 - [ ] **Simular 100 órdenes concurrentes**:
   - Verificar que no se pierden eventos
   - Verificar tiempos de respuesta < 2s (p95)
@@ -380,8 +422,10 @@
 ### 6️⃣ MÉTRICAS Y MONITOREO
 
 #### 6.1 Configuración Prometheus
+
 - [ ] **Verificar scraping** de métricas en los 3 servicios
 - [ ] **Configurar `prometheus.yml`** con targets:
+
   ```yaml
   scrape_configs:
     - job_name: 'order-service'
@@ -396,6 +440,7 @@
   ```
 
 #### 6.2 Dashboard Grafana (Opcional pero Recomendado)
+
 - [ ] **Crear dashboard básico** con:
   - Tasa de órdenes creadas (órdenes/segundo)
   - Tasa de éxito de sagas (%)
@@ -404,6 +449,7 @@
   - Stock disponible por producto (top 10)
 
 #### 6.3 Health Checks
+
 - [ ] **Implementar `/health` en todos los servicios**:
   - Verificar conexión a DB
   - Verificar conexión a NATS
@@ -414,7 +460,9 @@
 ### 7️⃣ DOCUMENTACIÓN
 
 #### 7.1 Documentación Técnica
+
 - [ ] **Diagrama de secuencia del flujo Saga** (Mermaid o PlantUML):
+
   ```
   Order → Inventory → Payment → Order (success)
   Order → Inventory → Payment (fail) → Inventory (rollback) → Order (cancel)
@@ -434,6 +482,7 @@
   - Retry policies
 
 #### 7.2 Guías Operacionales
+
 - [ ] **Guía de Troubleshooting** (`docs/saga-troubleshooting.md`):
   - Orden atascada en estado PENDING
   - Pago no procesado
@@ -447,6 +496,7 @@
   - Logs y debugging
 
 #### 7.3 API Documentation
+
 - [ ] **Actualizar Swagger/OpenAPI specs** para:
   - `POST /orders` (Order Service)
   - `POST /payments/webhook` (Payment Service)
@@ -457,6 +507,7 @@
 ## ✅ CRITERIOS DE ÉXITO FASE 1
 
 ### Funcionales
+
 - [ ] ✅ `POST /orders` dispara saga completa automáticamente
 - [ ] ✅ Orden se completa cuando Payment es exitoso y Stock reservado
 - [ ] ✅ Orden se cancela automáticamente si falla Inventory o Payment
@@ -464,6 +515,7 @@
 - [ ] ✅ Webhook de Stripe procesa eventos correctamente
 
 ### No Funcionales
+
 - [ ] ✅ 100% de sagas exitosas llegan a estado final (COMPLETED o CANCELLED)
 - [ ] ✅ 0% de pérdida de eventos en NATS
 - [ ] ✅ Latencia p95 de saga < 2 segundos
@@ -471,6 +523,7 @@
 - [ ] ✅ Cobertura de tests > 80% en lógica de saga
 
 ### Observabilidad
+
 - [ ] ✅ Métricas expuestas en Prometheus
 - [ ] ✅ Logs estructurados con correlation IDs
 - [ ] ✅ Health checks funcionando
@@ -492,6 +545,7 @@
 | **TOTAL** | **72 tareas** | **~66 horas** | - |
 
 ### Distribución Sugerida
+
 - **Sprint 1 (Semana 1)**: Setup + Order Service + NATS Config (20h)
 - **Sprint 2 (Semana 2)**: Payment Service + Inventory Service (20h)
 - **Sprint 3 (Semana 3)**: Testing E2E + Métricas (22h)
@@ -502,11 +556,13 @@
 ## 🚨 BLOQUEADORES IDENTIFICADOS
 
 ### Críticos (Bloquean progreso)
+
 1. **NATS Client no configurado en Payment e Inventory**: Sin esto, no pueden consumir/publicar eventos
 2. **Saga Orchestrator incompleto**: No integra con Inventory, no puede completar flujo
 3. **Webhook Stripe faltante**: Payment Service no puede recibir confirmaciones de Stripe
 
 ### Importantes (Reducen calidad)
+
 1. **Tests E2E inexistentes**: No hay validación del flujo completo
 2. **Métricas no expuestas**: Dificulta monitoreo en producción
 3. **Documentación faltante**: Dificulta onboarding y troubleshooting
@@ -516,6 +572,7 @@
 ## 📌 RECOMENDACIONES
 
 ### Orden de Implementación Sugerido
+
 1. **Configurar NATS clients** en Payment e Inventory (BLOQUEADOR)
 2. **Implementar webhook Stripe** (BLOQUEADOR)
 3. **Completar Saga Orchestrator** con integración Inventory (BLOQUEADOR)
@@ -527,6 +584,7 @@
 9. **Documentar** todo lo implementado
 
 ### Buenas Prácticas a Seguir
+
 - **Usar correlation IDs** en todos los logs y eventos
 - **Implementar idempotencia** en handlers de eventos
 - **Usar transacciones de DB** donde sea necesario

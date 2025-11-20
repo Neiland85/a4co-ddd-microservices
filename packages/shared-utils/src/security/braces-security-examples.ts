@@ -93,7 +93,7 @@ export async function secureShellExecutionExample() {
   } catch (error) {
     console.log(
       'Comando bloqueado por seguridad:',
-      error instanceof Error ? error.message : String(error)
+      error instanceof Error ? error.message : String(error),
     );
   }
 }
@@ -105,7 +105,7 @@ export function monitoringExample() {
   const validator = BracesSecurityFactory.createValidator();
 
   // Configurar alertas
-  validator.on('securityAlert', alert => {
+  validator.on('securityAlert', (alert) => {
     console.log('[!] Security Alert:', alert);
 
     // Aquí podrías:

@@ -60,14 +60,16 @@ export class OrderEventsHandler {
         currency: event.amount.currency,
       });
 
-      this.logger.log(`✅ Pago procesado exitosamente para orden ${event.orderId}: ${result.paymentId}`);
+      this.logger.log(
+        `✅ Pago procesado exitosamente para orden ${event.orderId}: ${result.paymentId}`,
+      );
     } catch (error) {
       this.logger.error(`❌ Error procesando pago para orden ${event.orderId}:`, error);
-      
+
       // Publicar evento de pago fallido
       await this.eventBus.publish('payments.failed', {
         orderId: event.orderId,
-        reason: error.message,
+        reason: error instanceof Error ? error.message : String(error),
         timestamp: new Date(),
       });
     }

@@ -34,9 +34,11 @@ FASE0 es la **fase de preparación e infraestructura base** que debe completarse
 ## 🔴 TAREAS CRÍTICAS PENDIENTES (BLOQUEANTES)
 
 ### 1. Gateway API (4-6 horas)
+
 **Estado:** Solo tiene `index.js` básico, necesita implementación NestJS completa
 
 **Acciones:**
+
 - Crear estructura `apps/gateway/src/` con NestJS
 - Implementar routing a todos los microservicios
 - Configurar Swagger en puerto 3000
@@ -47,9 +49,11 @@ FASE0 es la **fase de preparación e infraestructura base** que debe completarse
 ---
 
 ### 2. Integración Frontend-Backend (3-4 horas)
+
 **Estado:** Frontend no conectado a APIs reales
 
 **Acciones:**
+
 - Configurar API client apuntando a gateway
 - Conectar AuthContext a endpoints reales
 - Integrar componentes con APIs
@@ -60,9 +64,11 @@ FASE0 es la **fase de preparación e infraestructura base** que debe completarse
 ---
 
 ### 3. NATS Configuración (4-5 horas)
+
 **Estado:** NATS corriendo pero no configurado en todos los servicios
 
 **Acciones:**
+
 - Verificar clientes NATS en order, payment, inventory
 - Configurar JetStream para eventos
 - Implementar eventos base (OrderCreated, PaymentProcessed, InventoryReserved)
@@ -72,9 +78,11 @@ FASE0 es la **fase de preparación e infraestructura base** que debe completarse
 ---
 
 ### 4. Prisma Migraciones (2-3 horas)
+
 **Estado:** Schemas definidos pero migraciones no ejecutadas
 
 **Acciones:**
+
 - Ejecutar migraciones en order, payment, inventory
 - Verificar conexión a PostgreSQL
 - Seed data básico (opcional)
@@ -96,18 +104,22 @@ FASE0 es la **fase de preparación e infraestructura base** que debe completarse
 ## 🚀 PLAN DE EJECUCIÓN RECOMENDADO
 
 ### Día 1: Infraestructura Crítica
+
 - **Mañana:** Gateway API (4-6h)
 - **Tarde:** NATS Configuración (4-5h)
 
 ### Día 2: Integración y Datos
+
 - **Mañana:** Prisma Migraciones (2-3h)
 - **Tarde:** Frontend-Backend (3-4h)
 
 ### Día 3: Validación
+
 - **Mañana:** Testing básico (3-4h)
 - **Tarde:** Documentación APIs (2-3h)
 
 ### Día 4: Pulido (Opcional)
+
 - Observabilidad, CI/CD, Scripts
 
 ---

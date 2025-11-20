@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as process from 'process';
-import { OrderModule } from './order.module';
+import { OrderModule } from './order.module.js';
 
 const bootstrapLogger = new Logger('OrderServiceBootstrap');
 
@@ -25,7 +25,7 @@ async function bootstrap() {
           imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
-    })
+    }),
   );
 
   // CORS
@@ -40,7 +40,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
 
   // Swagger documentation
@@ -64,7 +64,7 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   bootstrapLogger.error('Error al iniciar el servicio:', err);
   console.error('Error al iniciar el servicio:', err);
   process.exit(1);

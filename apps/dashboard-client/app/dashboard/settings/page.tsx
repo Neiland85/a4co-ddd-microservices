@@ -1,7 +1,11 @@
+'use client';
+
 import type { ReactNode } from 'react';
 
 function Card({ className = '', children }: { className?: string; children?: ReactNode }) {
-  return <div className={`bg-white dark:bg-slate-900 rounded-md shadow-sm ${className}`}>{children}</div>;
+  return (
+    <div className={`bg-white dark:bg-slate-900 rounded-md shadow-sm ${className}`}>{children}</div>
+  );
 }
 
 export default function SettingsPage() {

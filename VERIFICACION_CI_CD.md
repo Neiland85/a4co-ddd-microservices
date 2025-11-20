@@ -15,21 +15,25 @@ Se completó la verificación y configuración del pipeline CI/CD para el monore
 ## ✅ Pasos Completados
 
 ### 1. Resolución de Conflictos
+
 - ✅ Conflicto de merge resuelto en `.github/workflows/ci.yml`
 - ✅ Actualizado referencia de Docker Hub secret: `DOCKERHUB_TOKEN` → `DOCKERHUB_PAT_TOKEN`
 
 ### 2. Compilación de Packages Compartidos
+
 - ✅ `@a4co/shared-utils` - Compilado exitosamente
 - ✅ `@a4co/observability` - Compilado exitosamente
 - ✅ `@a4co/design-system` - Compilado exitosamente
 
 ### 3. Configuración de Entorno
+
 - ✅ Creado `.env.example` con todas las variables necesarias
 - ✅ Creado `compose.dev.yaml` para desarrollo local
 - ✅ Creado script `scripts/dev-setup.sh` para automatización
 - ✅ Script con permisos de ejecución
 
 ### 4. Integración CI/CD
+
 - ✅ Cambios pusheados a `main`
 - ✅ Workflow disparado automáticamente
 - ✅ Pipeline configurado para:
@@ -42,11 +46,12 @@ Se completó la verificación y configuración del pipeline CI/CD para el monore
 
 ## 📊 Estado del Workflow
 
-### Últimos runs:
+### Últimos runs
+
 - **Run #1885354**: Push a `main` - Iniciado
 - Ve al enlace para monitorear: https://github.com/Neiland85/a4co-ddd-microservices/actions
 
-### Etapas del Pipeline:
+### Etapas del Pipeline
 
 1. **Test** ✅
    - Node 20 + pnpm 10.14.0
@@ -71,11 +76,13 @@ Se completó la verificación y configuración del pipeline CI/CD para el monore
 ## 🔍 Cómo Monitorear el CI/CD
 
 ### Opción 1: GitHub Actions Web UI
+
 ```
 https://github.com/Neiland85/a4co-ddd-microservices/actions
 ```
 
 ### Opción 2: GitHub CLI
+
 ```bash
 # Ver workflow runs
 gh run list --limit 5
@@ -92,6 +99,7 @@ gh run watch
 ## 🐛 Problemas Detectados
 
 ### 1. Vulnerabilidad de Dependencias
+
 - **Tipo:** Dependabot alert
 - **Severidad:** High
 - **Detalle:** https://github.com/Neiland85/a4co-ddd-microservices/security/dependabot/55
@@ -118,25 +126,31 @@ gh run watch
 ## 🚀 Próximos Pasos
 
 ### Inmediato
+
 1. [ ] Abrir GitHub Actions y verificar el workflow corriendo
 2. [ ] Esperar a que complete el pipeline (estimado: 10-15 minutos)
 3. [ ] Verificar que el Docker image se haya subido a Docker Hub:
+
    ```bash
    docker pull a4codddmicroservices:latest
    ```
 
 ### Desarrollo Local
+
 1. [ ] Configurar entorno local:
+
    ```bash
    ./scripts/dev-setup.sh
    ```
 
 2. [ ] Levantar servicios de infraestructura:
+
    ```bash
    docker-compose -f compose.dev.yaml up -d
    ```
 
 3. [ ] Iniciar microservicios:
+
    ```bash
    pnpm dev:auth      # Puerto 3001
    pnpm dev:user      # Puerto 3003
@@ -144,7 +158,9 @@ gh run watch
    ```
 
 ### Integración Frontend
+
 1. [ ] Configurar `apps/frontend/.env` con:
+
    ```
    VITE_API_BASE_URL=http://localhost:3000
    ```
@@ -157,16 +173,19 @@ gh run watch
 
 ## 📝 Archivos Modificados/Creados
 
-### Modificados:
+### Modificados
+
 - `.github/workflows/ci.yml` - Corregido conflicto y Docker Hub token
 - `.env.example` - Template de variables de entorno
 
-### Creados:
+### Creados
+
 - `INFORME_ESTADO_MONOREPO.md` - Análisis completo del monorepo
 - `compose.dev.yaml` - Docker Compose para desarrollo local
 - `scripts/dev-setup.sh` - Script de configuración automática
 
-### Compilados:
+### Compilados
+
 - `packages/observability/dist/`
 - `packages/shared-utils/dist/`
 - `packages/design-system/dist/`
@@ -192,4 +211,4 @@ gh run watch
 
 ---
 
-*Generado automáticamente tras verificación de CI/CD*
+_Generado automáticamente tras verificación de CI/CD_

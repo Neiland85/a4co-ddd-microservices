@@ -1,7 +1,10 @@
 import { Controller, Logger, Inject } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import { EventSubjects } from '../../../shared-utils/events/subjects.js';
-import { ProcessPaymentCommand, ProcessPaymentUseCase } from '../use-cases/process-payment.use-case.js';
+import { EventSubjects } from '@a4co/shared-utils/events/subjects';
+import {
+  ProcessPaymentCommand,
+  ProcessPaymentUseCase,
+} from '../use-cases/process-payment.use-case.js';
 import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case.js';
 import { PaymentRepository } from '../../domain/repositories/payment.repository.js';
 import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants.js';
@@ -33,23 +36,32 @@ export class OrderEventsHandler {
     private readonly refundPaymentUseCase: RefundPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_TOKEN)
     private readonly paymentRepository: PaymentRepository,
-  ) { }
+  ) {}
 
   @EventPattern(EventSubjects.ORDER_CREATED)
   public async handleOrderCreated(@Payload() event: OrderCreatedEventPayload): Promise<void> {
     this.logger.log(`Received order.created event for order ${event.orderId}`);
 
     try {
-      const command: ProcessPaymentCommand = {
+      const command: any = {
         orderId: event.orderId,
         amount: event.totalAmount,
         currency: event.currency,
         customerId: event.customerId,
-        metadata: event.metadata,
-        paymentMethodId: event.paymentMethodId,
-        idempotencyKey: event.idempotencyKey,
-        sagaId: event.sagaId,
+        metadata: event.metadata ?? {},
       };
+
+      if (event.paymentMethodId) {
+        command.paymentMethodId = event.paymentMethodId;
+      }
+
+      if (event.idempotencyKey) {
+        command.idempotencyKey = event.idempotencyKey;
+      }
+
+      if (event.sagaId) {
+        command.sagaId = event.sagaId;
+      }
 
       await this.processPaymentUseCase.execute(command);
     } catch (error) {
@@ -75,7 +87,7 @@ export class OrderEventsHandler {
       await this.refundPaymentUseCase.execute(
         payment.paymentId.value,
         undefined,
-        event.reason || 'Order cancelled'
+        event.reason || 'Order cancelled',
       );
     } catch (error) {
       this.logger.error(`Failed to refund payment for order ${event.orderId}:`, error);
@@ -83,4 +95,3 @@ export class OrderEventsHandler {
     }
   }
 }
-

@@ -16,7 +16,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./safe-exec"), exports);
 __exportStar(require("./dom-sanitizer"), exports);
-__exportStar(require("./safe-exec"), exports);
 __exportStar(require("./braces-monitor"), exports);
 __exportStar(require("./braces-security"), exports);
 __exportStar(require("./braces-security-examples"), exports);

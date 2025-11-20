@@ -5,7 +5,6 @@
     "checkJs": true,
     "noEmit": true,
     "outDir": "../dist/backend",
-    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

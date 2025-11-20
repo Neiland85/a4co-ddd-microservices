@@ -1,6 +1,6 @@
 # 🚀 PRÓXIMOS PASOS - PROYECTO A4CO DDD MICROSERVICES
 
-_Guía consolidada de acciones prioritarias para el desarrollo del proyecto_
+## Guía consolidada de acciones prioritarias para el desarrollo del proyecto
 
 **Fecha de actualización:** 20 de septiembre de 2024  
 **Estado del proyecto:** ⚠️ Arquitectura implementada, problemas críticos de build y testing confirmados
@@ -9,7 +9,9 @@ _Guía consolidada de acciones prioritarias para el desarrollo del proyecto_
 
 ## 📋 RESUMEN EJECUTIVO
 
-El proyecto A4CO DDD Microservices tiene una base arquitectónica sólida con **17 microservicios implementados** y código estructurado con principios DDD. Sin embargo, **existen problemas críticos de configuración** que impiden la ejecución normal:
+El proyecto A4CO DDD Microservices tiene una base arquitectónica sólida con **17 microservicios
+implementados** y código estructurado con principios DDD. Sin embargo, **existen problemas críticos
+de configuración** que impiden la ejecución normal:
 
 ### ⚠️ Problemas Críticos Identificados
 
@@ -487,6 +489,7 @@ npm run docker:down
 
 ---
 
-**✨ Con esta hoja de ruta, el proyecto A4CO DDD Microservices evolucionará de una base técnica sólida a una plataforma completa para el Mercado Local de Jaén.**
+**✨ Con esta hoja de ruta, el proyecto A4CO DDD Microservices evolucionará de una base
+técnica sólida a una plataforma completa para el Mercado Local de Jaén.**
 
 _Actualizado por GitHub Copilot - 20 de septiembre de 2024_
