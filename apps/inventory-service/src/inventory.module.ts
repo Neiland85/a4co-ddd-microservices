@@ -19,13 +19,13 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // NATS Client for Event Bus
+    // NATS Client: Habilitado para escuchar eventos de Order
     ClientsModule.register([
       {
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
+          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
           queue: 'inventory-service-queue',
         },
       },
@@ -33,14 +33,14 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
   ],
   controllers: [InventoryController, ReserveStockHandler],
   providers: [
+    // Database Provider (Prisma with PG Adapter)
     {
       provide: 'PRISMA_CLIENT',
       useFactory: () => {
-        const connectionString = process.env['DATABASE_URL'];
+        const connectionString = process.env.DATABASE_URL;
         const pool = new Pool({ connectionString });
         const adapter = new PrismaPg(pool);
-        const prisma = new PrismaClient({ adapter });
-        return prisma;
+        return new PrismaClient({ adapter });
       },
     },
     // Repositories

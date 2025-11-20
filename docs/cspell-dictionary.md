@@ -1,64 +1,66 @@
 # Diccionario del Proyecto
 
-Última sincronización: 19/11/2025, 16:57:11
+Última sincronización: 19/11/2025, 23:59:35
 
 ---
+### User (global VSCode) (12)
+- clarified
+- details
+- ensured
+- markdown
+- mitigation
+- readability
+- rules
+- sections
+- spacing
+- symlink
+- temp
+- throughout
 
-### User (global VSCode) (17)
+### Workspace (proyecto local) (24)
+- allowing
+- clarified
+- consistent
+- content
+- copilot
+- details
+- ensured
+- features
+- feedback
+- identified
+- ignore
+- instead
+- markdown
+- mitigation
+- origin
+- readability
+- rules
+- sections
+- spacing
+- specific
+- symlink
+- temp
+- throughout
+- uvicorn
 
-- adapter
-- configure
-- connections
-- datasource
-- deprecated
-- deprecation
-- fields
-- folder
-- migration
-- multi
-- pattern
-- prismaclient
-- property
-- related
-- requirements
-- schema
-- warnings
-
-### Workspace (proyecto local) (19)
-
-- adapter
-- configure
-- connections
-- datasource
-- deprecated
-- deprecation
-- fields
-- folder
-- migration
-- multi
-- pattern
-- prismaclient
-- property
-- related
-- requirements
-- schema
-- type
-- warnings
-- workspace
-
-### Commits recientes detectados (134)
-
+### Commits recientes detectados (176)
 - across
 - actualizar
 - adapter
+- added
 - address
+- addresses
 - after
 - agregar
+- allowing
 - analysis
 - arbitrary
+- auth
 - better
 - branch
 - changes
+- check
+- clarified
 - clean
 - client
 - code
@@ -72,6 +74,11 @@
 - conflicted
 - conflicts
 - connections
+- consistent
+- content
+- copilot
+- cors
+- coverage
 - critical
 - cspell
 - dashboard
@@ -80,12 +87,18 @@
 - dependency
 - deprecated
 - deprecation
+- design
+- details
 - development
 - diccionario
 - dictionary
 - dicts
 - docker
+- documentation
+- duplicate
 - eliminar
+- enhance
+- ensured
 - ensures
 - entradas
 - environment
@@ -94,34 +107,44 @@
 - experience
 - explicit
 - feature
+- features
+- feedback
 - fields
+- file
 - filenames
 - files
 - fixes
+- flag
 - folder
+- formatting
 - from
 - generated
 - glob
 - hotspots
+- identified
+- ignore
 - import
 - improved
+- improvements
 - improves
 - injection
+- instead
 - into
+- invalid
 - inventory
 - issues
 - json
 - local
 - lock
-- lockfile
 - main
-- maintained
 - malicious
+- markdown
 - metacharacters
 - middleware
 - migrate
 - migration
 - missing
+- mitigation
 - module
 - monitoring
 - monolith
@@ -130,6 +153,8 @@
 - nuevas
 - obsoletas
 - option
+- origin
+- original
 - overall
 - package
 - packages
@@ -142,6 +167,9 @@
 - prismaclient
 - proper
 - property
+- quality
+- readability
+- readme
 - references
 - regenerate
 - related
@@ -151,10 +179,13 @@
 - resolve
 - resolved
 - resolves
+- review
+- root
+- rules
 - schema
 - script
 - scripts
-- secure
+- sections
 - security
 - service
 - services
@@ -162,17 +193,24 @@
 - setup
 - shell
 - source
+- spacing
+- specific
 - support
+- symlink
 - taking
 - target
+- temp
 - tests
 - this
+- throughout
 - tsconfig
 - type
 - types
 - typescript
 - updated
+- updates
 - upgrade
+- uvicorn
 - validation
 - versions
 - vscode

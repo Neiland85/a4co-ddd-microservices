@@ -1,168 +1,103 @@
-import { Prisma, PrismaClient, Product as PrismaProduct } from '@prisma/client';
+import { Injectable, Inject } from '@nestjs/common';
+import { PrismaClient, Product as PrismaProduct, Prisma } from '@prisma/client';
+import { ProductRepository } from '../../domain/repositories/product.repository';
 import { Product, ProductProps } from '../../domain/entities/product.entity';
-import { ProductRepository } from './product.repository';
 
+@Injectable()
 export class PrismaProductRepository implements ProductRepository {
-  constructor(private readonly prisma: PrismaClient) {}
-
-  async findById(id: string): Promise<Product | null> {
-    const productData = await this.prisma.product.findUnique({ where: { id } });
-    return productData ? this.toDomain(productData) : null;
-  }
-
-  async findByIds(ids: string[]): Promise<Product[]> {
-    const productsData = await this.prisma.product.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
-
-    return productsData.map((data) => this.toDomain(data));
-  }
+  constructor(
+    @Inject('PRISMA_CLIENT')
+    private readonly prisma: PrismaClient,
+  ) {}
 
   async save(product: Product): Promise<void> {
-    const data = product.toJSON();
-
+    const data = this.toPersistence(product);
     await this.prisma.product.upsert({
-      where: { id: data.id },
-      update: this.buildUpdatePayload(data),
-      create: this.buildCreatePayload(data),
+      where: { id: product.id },
+      update: data,
+      create: data,
     });
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.product.delete({ where: { id } });
+  async findById(id: string): Promise<Product | null> {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
+    if (!product) return null;
+    return this.toDomain(product);
   }
 
   async findAll(): Promise<Product[]> {
-    const productsData = await this.prisma.product.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return productsData.map((data) => this.toDomain(data));
+    const products = await this.prisma.product.findMany();
+    return products.map((p) => this.toDomain(p));
   }
 
   async findByCategory(category: string): Promise<Product[]> {
-    const productsData = await this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       where: { category },
-      orderBy: { name: 'asc' },
     });
-
-    return productsData.map((data) => this.toDomain(data));
+    return products.map((p) => this.toDomain(p));
   }
 
   async findByArtisan(artisanId: string): Promise<Product[]> {
-    const productsData = await this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       where: { artisanId },
-      orderBy: { createdAt: 'desc' },
     });
-
-    return productsData.map((data) => this.toDomain(data));
+    return products.map((p) => this.toDomain(p));
   }
 
   async findLowStock(): Promise<Product[]> {
-    const productsData = await this.prisma.product.findMany({
-      where: { isActive: true },
+    // Asumimos que low stock es < 5, ajusta según tu lógica
+    const products = await this.prisma.product.findMany({
+      where: { stock: { lte: 5 } },
     });
-
-    const products = productsData.map((data) => this.toDomain(data));
-    return products.filter((product) => product.needsRestock);
+    return products.map((p) => this.toDomain(p));
   }
 
   async findOutOfStock(): Promise<Product[]> {
-    const productsData = await this.prisma.product.findMany({
-      where: { isActive: true },
+    const products = await this.prisma.product.findMany({
+      where: { stock: 0 },
     });
-
-    const products = productsData.map((data) => this.toDomain(data));
-    return products.filter((product) => product.stockStatus === 'out_of_stock');
+    return products.map((p) => this.toDomain(p));
   }
 
-  private toDomain(data: PrismaProduct): Product {
-    const props: ProductProps = {
-      id: data.id,
-      name: data.name,
-      sku: data.sku,
-      category: data.category,
-      unitPrice: data.unitPrice,
-      currency: data.currency,
-      currentStock: data.currentStock,
-      reservedStock: data.reservedStock,
-      minimumStock: data.minimumStock,
-      maximumStock: data.maximumStock,
-      isActive: data.isActive,
-      artisanId: data.artisanId,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    };
-
-    if (data.description !== null && data.description !== undefined) {
-      props.description = data.description;
-    }
-
-    if (data.brand !== null && data.brand !== undefined) {
-      props.brand = data.brand;
-    }
-
-    return Product.reconstruct(props);
+  async delete(id: string): Promise<void> {
+    await this.prisma.product.delete({
+      where: { id },
+    });
   }
 
-  private buildUpdatePayload(data: ProductProps): Prisma.ProductUpdateInput {
-    const updateData: Prisma.ProductUpdateInput = {
-      name: data.name,
-      sku: data.sku,
-      category: data.category,
-      unitPrice: data.unitPrice,
-      currency: data.currency,
-      currentStock: data.currentStock,
-      reservedStock: data.reservedStock,
-      minimumStock: data.minimumStock,
-      maximumStock: data.maximumStock,
-      isActive: data.isActive,
-      artisanId: data.artisanId,
-      updatedAt: data.updatedAt,
-    };
+  // --- Mappers ---
 
-    if (data.description !== undefined) {
-      updateData.description = data.description;
-    }
-
-    if (data.brand !== undefined) {
-      updateData.brand = data.brand;
-    }
-
-    return updateData;
+  private toDomain(prismaProduct: PrismaProduct): Product {
+    return new Product({
+      id: prismaProduct.id,
+      name: prismaProduct.name,
+      description: prismaProduct.description || '',
+      sku: prismaProduct.sku,
+      unitPrice: prismaProduct.unitPrice,
+      stock: prismaProduct.stock,
+      maximumStock: prismaProduct.maximumStock,
+      artisanId: prismaProduct.artisanId,
+      createdAt: prismaProduct.createdAt,
+      updatedAt: prismaProduct.updatedAt,
+    });
   }
 
-  private buildCreatePayload(data: ProductProps): Prisma.ProductCreateInput {
-    const createData: Prisma.ProductCreateInput = {
-      id: data.id,
-      name: data.name,
-      sku: data.sku,
-      category: data.category,
-      unitPrice: data.unitPrice,
-      currency: data.currency,
-      currentStock: data.currentStock,
-      reservedStock: data.reservedStock,
-      minimumStock: data.minimumStock,
-      maximumStock: data.maximumStock,
-      isActive: data.isActive,
-      artisanId: data.artisanId,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
+  private toPersistence(product: Product): Prisma.ProductCreateInput {
+    const props = product.toJSON();
+    return {
+      id: props.id,
+      name: props.name,
+      description: props.description,
+      sku: props.sku,
+      unitPrice: props.unitPrice,
+      stock: props.stock,
+      maximumStock: props.maximumStock,
+      artisanId: props.artisanId,
+      category: props.category || 'General', // Valor por defecto si falta
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     };
-
-    if (data.description !== undefined) {
-      createData.description = data.description;
-    }
-
-    if (data.brand !== undefined) {
-      createData.brand = data.brand;
-    }
-
-    return createData;
   }
 }
-

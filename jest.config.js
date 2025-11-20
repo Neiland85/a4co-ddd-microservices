@@ -1,17 +1,17 @@
 // @ts-nocheck
 module.exports = {
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: 'src',
-  testRegex: '.*\\.spec\\.ts$',
-  transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
-  },
-  collectCoverageFrom: ['**/*.(t|j)s'],
-  coverageDirectory: '../coverage',
+  preset: 'ts-jest',
   testEnvironment: 'node',
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
-    '^@common/(.*)$': '<rootDir>/common/$1',
-    '^@modules/(.*)$': '<rootDir>/modules/$1',
+  roots: ['<rootDir>/apps', '<rootDir>/packages'],
+  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  collectCoverageFrom: [
+    'apps/**/*.ts',
+    'packages/**/*.ts',
+    '!**/*.d.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
+  ],
+  moduleNameMapping: {
+    '^@a4co/(.*)$': '<rootDir>/packages/$1/src',
   },
 };
