@@ -5,19 +5,6 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
     ecmaVersion: 2021,
-🚀 ¡LISTO PARA DESARROLLAR!
-
-   Abre tu navegador en:
-   • Frontend: http://localhost:3001
-   • Backend API Docs: http://localhost:3000/api
-
-estudio@iHack-para-Audio frontend %
-estudio@iHack-para-Audio frontend % pnpm run start:dev
- ERR_PNPM_NO_SCRIPT  Missing script: start:dev
-
-But script matched with start:dev is present in the root of the workspace,
-so you may run "pnpm -w run start:dev"
-estudio@iHack-para-Audio frontend %
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
   extends: [

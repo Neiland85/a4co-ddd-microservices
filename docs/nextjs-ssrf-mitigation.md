@@ -2,8 +2,7 @@
 
 ## Resumen
 
-Este documento describe las mitigaciones implementadas para la vulnerabilidad
-**Improper middleware redirect → SSRF (Moderate)** en aplicaciones Next.js.
+Este documento describe las mitigaciones implementadas para la vulnerabilidad **Improper middleware redirect → SSRF (Moderate)** en aplicaciones Next.js.
 
 ## Arquitectura de Seguridad
 

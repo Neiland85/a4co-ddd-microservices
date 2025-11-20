@@ -2,7 +2,7 @@
 -- Ejecutar como superuser (psql -U postgres -h <host> -d postgres)
 
 -- Crear usuario readonly
-CREATE USER readonly_user WITH PASSWORD 'X9v$7kP#b2Q!r8Zt';
+CREATE USER readonly_user WITH PASSWORD 'w6ZsDsOGjdS9tQjI';
 
 -- Otorgar permisos de conexión a la base de datos
 GRANT CONNECT ON DATABASE a4co_db TO readonly_user;

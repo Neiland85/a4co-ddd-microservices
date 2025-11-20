@@ -9,7 +9,7 @@ This document summarizes the security vulnerabilities that were detected by Depe
 - `apps/web/v0dev/a-head` ✅ Already secure (Next.js ^15.4.5)
 - `apps/web/v0dev/e-gamified-dashboard` ✅ **FIXED** (Updated from 14.2.16 to ^15.4.5)
 - `apps/web/v0dev/g-banner-cookie` ✅ Already secure (Next.js ^15.4.5)
-- `apps/web/v0dev/b-business-registration` ✅ **FIXED** (Updated from 15.2.4 to ^15.4.5)  
+- `apps/web/v0dev/b-business-registration` ✅ **FIXED** (Updated from 15.2.4 to ^15.4.5)
 - `apps/web/v0dev/d-user-registration` ✅ **FIXED** (Updated from 15.2.4 to ^15.4.5)
 - `apps/web/v0dev/c-artisan-dashboard` ✅ Already secure (Next.js ^15.4.5)
 - `apps/web/v0dev/h-modern-dashboard` ✅ Already secure (Next.js ^15.4.5)
@@ -88,7 +88,7 @@ This document summarizes the security vulnerabilities that were detected by Depe
 #### Vulnerability Status Summary
 
 - ✅ **Authorization Bypass in Next.js Middleware (Critical)** - RESOLVED
-- ✅ **Cache Key Confusion for Image Optimization API Routes (Moderate)** - RESOLVED  
+- ✅ **Cache Key Confusion for Image Optimization API Routes (Moderate)** - RESOLVED
 - ✅ **Improper Middleware Redirect Handling Leads to SSRF (Moderate)** - RESOLVED
 - ✅ **Content Injection Vulnerability for Image Optimization (Moderate)** - RESOLVED
 - ✅ **Denial of Service (DoS) with Server Actions (Moderate)** - RESOLVED
@@ -166,7 +166,6 @@ This document summarizes the security vulnerabilities that were detected by Depe
 
 To fully mitigate NextAuth.js vulnerabilities, ensure proper configuration:
 
-
 ```javascript
 // Example secure NextAuth.js configuration
 export const authOptions = {
@@ -184,14 +183,11 @@ export const authOptions = {
   // Enable PKCE for OAuth providers
   useSecureCookies: process.env.NODE_ENV === 'production',
 };
-
 ```
-
 
 ### 2. Nodemailer Security
 
 To fully mitigate Nodemailer vulnerabilities:
-
 
 ```javascript
 // Example secure Nodemailer configuration
@@ -215,14 +211,11 @@ const transporter = nodemailer.createTransporter({
   secure: true,
   // Validate all inputs before sending
 });
-
 ```
-
 
 ### 3. Next.js Security Headers
 
 Add security headers to your Next.js configuration:
-
 
 ```javascript
 // next.config.js
@@ -249,9 +242,7 @@ const nextConfig = {
     ];
   },
 };
-
 ```
-
 
 ## Monitoring
 

@@ -35,4 +35,3 @@ pnpm test:coverage
 - Application layer: `src/application/`
 - Infrastructure: `src/infrastructure/`
 - Presentation: `src/presentation/`
-

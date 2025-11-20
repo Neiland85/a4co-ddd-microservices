@@ -492,4 +492,4 @@ npm run docker:down
 **✨ Con esta hoja de ruta, el proyecto A4CO DDD Microservices evolucionará de una base
 técnica sólida a una plataforma completa para el Mercado Local de Jaén.**
 
-## Actualizado por GitHub Copilot - 20 de septiembre de 2024
+_Actualizado por GitHub Copilot - 20 de septiembre de 2024_
