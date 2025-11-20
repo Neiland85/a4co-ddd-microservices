@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { getLogger, ObservabilityLogger } from '@a4co/observability';
-import { OrderCreatedEvent, OrderConfirmedEvent, OrderCancelledEvent } from '../../domain/events';
+import {
+  OrderCreatedEvent,
+  OrderConfirmedEvent,
+  OrderCancelledEvent,
+} from '../../domain/events/index.js';
 
 // Tipos para el Saga
 export enum SagaStatus {
@@ -56,7 +60,9 @@ export interface PaymentFailedEvent {
 
 @Injectable()
 export class OrderSagaOrchestrator {
-  private readonly logger: ObservabilityLogger = getLogger().withContext({ context: OrderSagaOrchestrator.name });
+  private readonly logger: ObservabilityLogger = getLogger().withContext({
+    context: OrderSagaOrchestrator.name,
+  });
   private readonly sagas = new Map<string, SagaState>();
   private readonly SAGA_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutos
 
@@ -81,7 +87,7 @@ export class OrderSagaOrchestrator {
   }): Promise<void> {
     const sagaId = `saga-${command.orderId}`;
 
-    this.logger.info({ sagaId, orderId: command.orderId }, `🚀 Iniciando saga`);
+    this.logger.info(`🚀 Iniciando saga`, { sagaId, orderId: command.orderId });
 
     // Crear estado inicial de la saga
     const sagaState: SagaState = {
@@ -111,9 +117,9 @@ export class OrderSagaOrchestrator {
 
       await this.eventBus.publish('orders.created', event.toJSON());
 
-      this.logger.info({ orderId: command.orderId }, `✅ Evento orders.created publicado`);
+      this.logger.info(`✅ Evento orders.created publicado`, { orderId: command.orderId });
     } catch (error: unknown) {
-      this.logger.error({ sagaId, error }, `❌ Error iniciando saga`);
+      this.logger.error(`❌ Error iniciando saga`, { sagaId, error });
       const message = error instanceof Error ? error.message : 'Unknown error';
       await this.handleSagaFailure(sagaId, 'initialization', message);
     }
@@ -152,11 +158,17 @@ export class OrderSagaOrchestrator {
     const saga = this.sagas.get(sagaId);
 
     if (!saga) {
-      this.logger.warn({ sagaId, eventName: 'inventory.reserved' }, `Saga no encontrada para evento`);
+      this.logger.warn(`Saga no encontrada para evento`, {
+        sagaId,
+        eventName: 'inventory.reserved',
+      });
       return;
     }
 
-    this.logger.info({ orderId: event.orderId, reservationId: event.reservationId }, `📦 Inventario reservado`);
+    this.logger.info(`📦 Inventario reservado`, {
+      orderId: event.orderId,
+      reservationId: event.reservationId,
+    });
 
     // Actualizar estado de la saga
     saga.status = SagaStatus.INVENTORY_RESERVED;
@@ -174,7 +186,7 @@ export class OrderSagaOrchestrator {
     });
 
     saga.status = SagaStatus.PAYMENT_PROCESSING;
-    this.logger.info({ orderId: event.orderId }, `💳 Iniciando procesamiento de pago`);
+    this.logger.info(`💳 Iniciando procesamiento de pago`, { orderId: event.orderId });
   }
 
   /**
@@ -183,10 +195,16 @@ export class OrderSagaOrchestrator {
   private async handleInventoryOutOfStock(event: InventoryOutOfStockEvent): Promise<void> {
     const sagaId = `saga-${event.orderId}`;
 
-    this.logger.warn({ orderId: event.orderId, unavailableItems: event.unavailableItems }, `⚠️ Stock insuficiente`);
+    this.logger.warn(`⚠️ Stock insuficiente`, {
+      orderId: event.orderId,
+      unavailableItems: event.unavailableItems,
+    });
 
     const reason = `Productos sin stock: ${event.unavailableItems
-      .map(i => `${i.productId} (solicitado: ${i.requestedQuantity}, disponible: ${i.availableQuantity})`)
+      .map(
+        (i) =>
+          `${i.productId} (solicitado: ${i.requestedQuantity}, disponible: ${i.availableQuantity})`,
+      )
       .join(', ')}`;
 
     await this.handleSagaFailure(sagaId, 'stock_reservation', reason);
@@ -200,11 +218,14 @@ export class OrderSagaOrchestrator {
     const saga = this.sagas.get(sagaId);
 
     if (!saga) {
-      this.logger.warn({ sagaId, eventName: 'payments.succeeded' }, `Saga no encontrada para evento`);
+      this.logger.warn(`Saga no encontrada para evento`, {
+        sagaId,
+        eventName: 'payments.succeeded',
+      });
       return;
     }
 
-    this.logger.info({ orderId: event.orderId, paymentId: event.paymentId }, `✅ Pago exitoso`);
+    this.logger.info(`✅ Pago exitoso`, { orderId: event.orderId, paymentId: event.paymentId });
 
     // Actualizar estado de la saga
     saga.status = SagaStatus.PAYMENT_SUCCEEDED;
@@ -229,7 +250,7 @@ export class OrderSagaOrchestrator {
     saga.status = SagaStatus.COMPLETED;
     saga.completedAt = new Date();
 
-    this.logger.info({ sagaId }, `🎉 Saga completada exitosamente`);
+    this.logger.info(`🎉 Saga completada exitosamente`, { sagaId });
 
     // Limpiar saga después de un tiempo
     setTimeout(() => this.sagas.delete(sagaId), 60000); // 1 minuto
@@ -243,11 +264,11 @@ export class OrderSagaOrchestrator {
     const saga = this.sagas.get(sagaId);
 
     if (!saga) {
-      this.logger.warn({ sagaId, eventName: 'payments.failed' }, `Saga no encontrada para evento`);
+      this.logger.warn(`Saga no encontrada para evento`, { sagaId, eventName: 'payments.failed' });
       return;
     }
 
-    this.logger.error({ orderId: event.orderId, reason: event.reason }, `❌ Pago fallido`);
+    this.logger.error(`❌ Pago fallido`, { orderId: event.orderId, reason: event.reason });
 
     // Iniciar compensación
     await this.compensateSaga(saga, event.reason);
@@ -261,7 +282,11 @@ export class OrderSagaOrchestrator {
     if (saga) {
       await this.compensateSaga(saga, reason);
     } else {
-      this.logger.error({ sagaId, stage, reason }, 'Saga falló pero no se encontró contexto para compensar');
+      this.logger.error('Saga falló pero no se encontró contexto para compensar', {
+        sagaId,
+        stage,
+        reason,
+      });
     }
   }
 
@@ -269,7 +294,7 @@ export class OrderSagaOrchestrator {
    * Compensa una saga fallida (rollback)
    */
   private async compensateSaga(saga: SagaState, reason: string): Promise<void> {
-    this.logger.warn({ sagaId: saga.sagaId, reason }, `🔄 Iniciando compensación`);
+    this.logger.warn(`🔄 Iniciando compensación`, { sagaId: saga.sagaId, reason });
 
     saga.status = SagaStatus.COMPENSATING;
     saga.compensationReason = reason;
@@ -277,7 +302,10 @@ export class OrderSagaOrchestrator {
     try {
       // 1. Si hay reserva de inventario, liberarla
       if (saga.reservationId) {
-        this.logger.info({ orderId: saga.orderId, reservationId: saga.reservationId }, 'Liberando inventario...');
+        this.logger.info('Liberando inventario...', {
+          orderId: saga.orderId,
+          reservationId: saga.reservationId,
+        });
         await this.eventBus.publish('inventory.release', {
           orderId: saga.orderId,
           reservationId: saga.reservationId,
@@ -289,19 +317,15 @@ export class OrderSagaOrchestrator {
       await this.orderRepository.updateStatus(saga.orderId, 'CANCELLED');
 
       // 3. Publicar evento de cancelación
-      const cancelledEvent = new OrderCancelledEvent(
-        saga.orderId,
-        reason
-      );
+      const cancelledEvent = new OrderCancelledEvent(saga.orderId, reason);
       await this.eventBus.publish('orders.cancelled', cancelledEvent.toJSON());
 
       saga.status = SagaStatus.COMPENSATED;
       saga.completedAt = new Date();
-      
-      this.logger.info({ sagaId: saga.sagaId }, '🏁 Saga compensada y finalizada');
 
+      this.logger.info('🏁 Saga compensada y finalizada', { sagaId: saga.sagaId });
     } catch (error) {
-      this.logger.error({ sagaId: saga.sagaId, error }, '💀 Error crítico durante la compensación');
+      this.logger.error('💀 Error crítico durante la compensación', { sagaId: saga.sagaId, error });
       saga.status = SagaStatus.FAILED;
       saga.error = error instanceof Error ? error.message : String(error);
     } finally {
@@ -336,7 +360,7 @@ export class OrderSagaOrchestrator {
           saga.status !== SagaStatus.FAILED &&
           now - saga.startedAt.getTime() > this.SAGA_TIMEOUT_MS
         ) {
-          this.logger.warn({ sagaId: key }, '⏰ Saga Timeout - Iniciando compensación');
+          this.logger.warn('⏰ Saga Timeout - Iniciando compensación', { sagaId: key });
           this.compensateSaga(saga, 'Saga Timeout');
         }
       });

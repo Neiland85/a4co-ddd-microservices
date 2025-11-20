@@ -1,3 +1,5 @@
+'use client';
+
 import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 import { Users, Package, ShoppingCart, TrendingUp } from 'lucide-react';
 

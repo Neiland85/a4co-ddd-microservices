@@ -33,7 +33,7 @@ export class PaymentController {
         orderId: data.orderId,
         amount: data.amount,
         currency: 'usd', // O dinámico según data
-        customerId: data.customerId
+        customerId: data.customerId,
       });
     } catch (error) {
       this.logger.error(`❌ Error iniciando pago para orden ${data.orderId}`, error);
@@ -55,10 +55,7 @@ export class PaymentController {
     }
 
     try {
-      const event = this.stripeGateway.constructWebhookEvent({
-        payload: req.rawBody as Buffer,
-        signature,
-      });
+      const event = this.stripeGateway.constructWebhookEvent(req.rawBody as Buffer, signature);
 
       this.logger.log(`📨 Evento de Stripe recibido: ${event.type}`);
 
@@ -156,7 +153,7 @@ export class PaymentController {
       const payment = await this.paymentRepository.findByOrderId(orderId);
 
       if (payment) {
-        payment.cancel('Cancelado desde Stripe');
+        payment.markAsFailed('Cancelado desde Stripe');
         await this.paymentRepository.save(payment);
         await this.eventPublisher.publishPaymentEvents(payment);
       }

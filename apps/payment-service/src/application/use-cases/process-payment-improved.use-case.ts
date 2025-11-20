@@ -34,7 +34,9 @@ export class ProcessPaymentUseCase {
       // 1. Verificar si ya existe un pago para esta orden (Idempotencia)
       const existingPayment = await this.paymentRepository.findByOrderId(command.orderId);
       if (existingPayment) {
-        this.logger.log(`Pago ya existe para orden ${command.orderId}, estado: ${existingPayment.status}`);
+        this.logger.log(
+          `Pago ya existe para orden ${command.orderId}, estado: ${existingPayment.status}`,
+        );
         return;
       }
 
@@ -43,29 +45,40 @@ export class ProcessPaymentUseCase {
         orderId: command.orderId,
         customerId: command.customerId,
         amount: Money.create(command.amount, command.currency),
-        metadata: command.metadata,
+        metadata: command.metadata ?? {},
       });
 
       await this.paymentRepository.save(payment);
 
       // 3. Interactuar con Stripe
-      const paymentIntent = await this.stripeGateway.createPaymentIntent({
-        amount: command.amount,
-        currency: command.currency,
+      const stripeParams: any = {
+        amount: Money.create(command.amount, command.currency),
+        orderId: command.orderId,
         customerId: command.customerId,
         metadata: { ...command.metadata, orderId: command.orderId },
-        paymentMethodId: command.paymentMethodId,
-        idempotencyKey: command.idempotencyKey,
-      });
+      };
+
+      if (command.paymentMethodId) {
+        stripeParams.paymentMethodId = command.paymentMethodId;
+      }
+
+      if (command.idempotencyKey) {
+        stripeParams.idempotencyKey = command.idempotencyKey;
+      }
+
+      const paymentIntent = await this.stripeGateway.createPaymentIntent(stripeParams);
 
       // 4. Actualizar pago con ID de Stripe
-      payment.setStripePaymentIntentId(paymentIntent.id);
-      payment.markAsProcessing();
+      if (paymentIntent.status === 'succeeded') {
+        payment.markAsSucceeded(paymentIntent.id);
+      } else {
+        payment.process();
+      }
       await this.paymentRepository.save(payment);
 
       this.logger.log(`PaymentIntent creado: ${paymentIntent.id}`);
-
-    } catch (error: any) { // <--- CORRECCIÓN AQUÍ: Añadido ': any'
+    } catch (error: any) {
+      // <--- CORRECCIÓN AQUÍ: Añadido ': any'
       this.logger.error(`Error procesando pago para orden ${command.orderId}`, error);
 
       // Intentar registrar el fallo si es posible
@@ -74,18 +87,14 @@ export class ProcessPaymentUseCase {
         if (failedPayment) {
           failedPayment.markAsFailed(error.message || 'Unknown error');
           await this.paymentRepository.save(failedPayment);
-          
+
           // Publicar evento de fallo
-          await this.eventPublisher.publishPaymentFailed({
-            orderId: command.orderId,
-            reason: error.message || 'Unknown error',
-            paymentId: failedPayment.id.getValue(),
-          });
+          await this.eventPublisher.publishPaymentEvents(failedPayment);
         }
       } catch (innerError) {
         this.logger.error('Error crítico al registrar fallo de pago', innerError);
       }
-      
+
       throw error;
     }
   }

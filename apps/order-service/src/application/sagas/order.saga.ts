@@ -1,7 +1,7 @@
 import { Injectable, Logger, Inject, OnModuleInit } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { CreateOrderCommand } from '../commands/create-order.command';
-import { OrderRepository } from '../../domain/repositories/order.repository';
+import { CreateOrderCommand } from '../commands/create-order.command.js';
+import { OrderRepository } from '../../domain/repositories/order.repository.js';
 
 export interface EventMessage<T = any> {
   data: T;
@@ -68,7 +68,7 @@ export class OrderSaga implements OnModuleInit {
       // 1. Verificar orden
       // CORRECCIÓN: Pasamos el string directo, no 'new OrderId(orderId)'
       const order = await this.orderRepository.findById(orderId);
-      
+
       if (!order) {
         throw new Error(`Order ${orderId} not found`);
       }
@@ -148,7 +148,7 @@ export class OrderSaga implements OnModuleInit {
     try {
       // CORRECCIÓN: Pasamos el string directo
       const order = await this.orderRepository.findById(orderId);
-      
+
       if (order) {
         order.confirmPayment(); // Método de dominio
         await this.orderRepository.save(order);
@@ -163,12 +163,11 @@ export class OrderSaga implements OnModuleInit {
       this.natsClient.emit('order.completed.v1', {
         orderId,
         paymentIntentId,
-        status: 'COMPLETED'
+        status: 'COMPLETED',
       });
 
       // Limpieza
       this.sagaContexts.delete(orderId);
-
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`❌ Error finalizando orden ${orderId}`, errorMessage);
@@ -223,7 +222,7 @@ export class OrderSaga implements OnModuleInit {
       // 3. Marcar orden como cancelada en DB local
       // CORRECCIÓN: Pasamos el string directo
       const order = await this.orderRepository.findById(orderId);
-      
+
       if (order) {
         order.cancel(reason); // Método de dominio
         await this.orderRepository.save(order);
@@ -240,7 +239,6 @@ export class OrderSaga implements OnModuleInit {
 
       // Limpieza final
       this.sagaContexts.delete(orderId);
-
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`�� ERROR CRÍTICO EN COMPENSACIÓN orden ${orderId}`, errorMessage);

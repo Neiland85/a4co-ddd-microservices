@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Order, OrderItem } from '../../domain/aggregates/order.aggregate';
-import { IOrderRepository } from '../../domain';
-import { CreateOrderCommand } from '../commands/create-order.command';
+import { Order, OrderItem } from '../../domain/aggregates/order.aggregate.js';
+import { IOrderRepository } from '../../domain/index.js';
+import { CreateOrderCommand } from '../commands/create-order.command.js';
 import { ClientProxy } from '@nestjs/microservices';
 
 export interface CreateOrderDto {
@@ -47,7 +47,7 @@ export class CreateOrderUseCase {
     await this.orderRepository.save(order);
 
     // 5. Publicar eventos de dominio
-    const events = order.getDomainEvents();
+    const events = order.domainEvents;
     for (const event of events) {
       await this.eventBus.emit(event.eventName, event).toPromise();
     }

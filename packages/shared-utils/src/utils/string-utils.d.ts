@@ -1,0 +1,12 @@
+export declare const capitalize: (str: string) => string;
+export declare const camelCase: (str: string) => string;
+export declare const kebabCase: (str: string) => string;
+export declare const snakeCase: (str: string) => string;
+export declare const truncate: (str: string, length: number, suffix?: string) => string;
+export declare const slugify: (str: string) => string;
+export declare const generateId: (length?: number) => string;
+export declare const isEmail: (email: string) => boolean;
+export declare const isUrl: (url: string) => boolean;
+export declare const removeAccents: (str: string) => string;
+export declare function kebabToCamelCase(str: string): string;
+//# sourceMappingURL=string-utils.d.ts.map

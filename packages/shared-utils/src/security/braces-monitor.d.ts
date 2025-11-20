@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+export declare const getGlobalLogger: any;
 export interface BracesSecurityAlert {
     id: string;
     timestamp: Date;

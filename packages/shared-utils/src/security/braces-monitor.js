@@ -1,24 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BracesSecurityMonitorFactory = exports.globalBracesMonitor = exports.BracesSecurityMonitor = void 0;
+exports.BracesSecurityMonitorFactory = exports.globalBracesMonitor = exports.BracesSecurityMonitor = exports.getGlobalLogger = void 0;
 const events_1 = require("events");
-let getGlobalLogger;
-try {
-    const observability = require('@a4co/observability');
-    getGlobalLogger = observability.getGlobalLogger;
-}
-catch {
-    getGlobalLogger = () => ({
-        info: console.info,
-        warn: console.warn,
-        error: console.error,
-    });
-}
+exports.getGlobalLogger = (() => {
+    try {
+        const observability = require('@a4co/observability');
+        return observability.getGlobalLogger;
+    }
+    catch {
+        return () => ({
+            info: console.info,
+            warn: console.warn,
+            error: console.error,
+        });
+    }
+})();
 class BracesSecurityMonitor extends events_1.EventEmitter {
     constructor(serviceName) {
         super();
         this.serviceName = serviceName;
-        this.logger = getGlobalLogger();
+        this.logger = (0, exports.getGlobalLogger)();
         this.metrics = {
             totalRequests: 0,
             blockedRequests: 0,
@@ -151,9 +152,9 @@ class BracesSecurityMonitorFactory {
         return this.monitors;
     }
     static getGlobalMetrics() {
-        const allMetrics = Array.from(this.monitors.values()).map(m => m.getMetrics());
+        const allMetrics = Array.from(this.monitors.values()).map((m) => m.getMetrics());
         const lastAlert = allMetrics
-            .map(m => m.lastAlertTime)
+            .map((m) => m.lastAlertTime)
             .filter((t) => t !== undefined)
             .sort((a, b) => b.getTime() - a.getTime())[0];
         const metrics = {
@@ -162,7 +163,7 @@ class BracesSecurityMonitorFactory {
             averageProcessingTime: allMetrics.length > 0
                 ? allMetrics.reduce((sum, m) => sum + m.averageProcessingTime, 0) / allMetrics.length
                 : 0,
-            peakMemoryUsage: Math.max(...allMetrics.map(m => m.peakMemoryUsage), 0),
+            peakMemoryUsage: Math.max(...allMetrics.map((m) => m.peakMemoryUsage), 0),
             alertsTriggered: allMetrics.reduce((sum, m) => sum + m.alertsTriggered, 0),
             topBlockedPatterns: [],
         };

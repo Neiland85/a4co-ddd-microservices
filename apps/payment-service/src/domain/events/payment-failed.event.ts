@@ -30,8 +30,9 @@ export class PaymentFailedEvent extends PaymentDomainEvent<PaymentFailedEventPay
         orderId: params.orderId,
         customerId: params.customerId,
         amount: params.amount,
+        currency: params.amount.currency,
         metadata: params.metadata ?? {},
-        stripePaymentIntentId: params.stripePaymentIntentId,
+        stripePaymentIntentId: params.stripePaymentIntentId ?? null,
         status: PaymentStatusValue.FAILED,
         timestamp: params.timestamp ?? new Date(),
         reason: params.reason,
@@ -41,4 +42,3 @@ export class PaymentFailedEvent extends PaymentDomainEvent<PaymentFailedEventPay
     );
   }
 }
-

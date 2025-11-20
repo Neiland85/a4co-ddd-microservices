@@ -65,7 +65,7 @@ async function secureShellExecutionExample() {
 }
 function monitoringExample() {
     const validator = braces_security_1.BracesSecurityFactory.createValidator();
-    validator.on('securityAlert', alert => {
+    validator.on('securityAlert', (alert) => {
         console.log('[!] Security Alert:', alert);
     });
     return validator;

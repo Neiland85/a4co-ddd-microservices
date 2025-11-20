@@ -4,6 +4,10 @@ import { ReserveStockUseCase } from '../use-cases/reserve-stock.use-case';
 import { ReleaseStockUseCase } from '../use-cases/release-stock.use-case';
 import { IStockReservationRepository } from '../../infrastructure/repositories/stock-reservation.repository';
 import { ProductRepository } from '../../infrastructure/repositories/product.repository';
+import {
+  StockReservation,
+  ReservationStatus,
+} from '../../domain/entities/stock-reservation.entity';
 
 export interface OrderCreatedEventPayload {
   orderId: string;
@@ -62,13 +66,14 @@ export class ReserveStockHandler {
 
         if (result.success) {
           // Crear registro de reserva en base de datos
-          const reservation = await this.reservationRepository.create({
-            productId: item.productId,
-            quantity: item.quantity,
+          const reservation = new StockReservation({
             orderId: event.orderId,
             customerId: event.customerId,
-            expiresAt,
+            items: [{ productId: item.productId, quantity: item.quantity }],
+            ttlMinutes: this.RESERVATION_TTL_MINUTES,
           });
+
+          await this.reservationRepository.save(reservation);
 
           reservationResults.push({
             reservationId: reservation.id,
@@ -90,13 +95,15 @@ export class ReserveStockHandler {
 
       if (allReserved) {
         // Publicar evento de stock reservado
-        await this.natsClient.emit('inventory.reserved', {
-          orderId: event.orderId,
-          customerId: event.customerId,
-          reservations: reservationResults,
-          totalAmount: event.totalAmount,
-          timestamp: new Date().toISOString(),
-        }).toPromise();
+        await this.natsClient
+          .emit('inventory.reserved', {
+            orderId: event.orderId,
+            customerId: event.customerId,
+            reservations: reservationResults,
+            totalAmount: event.totalAmount,
+            timestamp: new Date().toISOString(),
+          })
+          .toPromise();
 
         this.logger.log(`✅ Stock reservado exitosamente para orden ${event.orderId}`);
       } else {
@@ -111,11 +118,13 @@ export class ReserveStockHandler {
         }
 
         // Publicar evento de stock insuficiente
-        await this.natsClient.emit('inventory.out_of_stock', {
-          orderId: event.orderId,
-          reason: 'Stock insuficiente para uno o más productos',
-          timestamp: new Date().toISOString(),
-        }).toPromise();
+        await this.natsClient
+          .emit('inventory.out_of_stock', {
+            orderId: event.orderId,
+            reason: 'Stock insuficiente para uno o más productos',
+            timestamp: new Date().toISOString(),
+          })
+          .toPromise();
 
         this.logger.error(`❌ Stock insuficiente para orden ${event.orderId}`);
       }
@@ -123,11 +132,13 @@ export class ReserveStockHandler {
       this.logger.error(`❌ Error procesando reserva de stock para orden ${event.orderId}:`, error);
 
       // Publicar evento de error
-      await this.natsClient.emit('inventory.reservation_failed', {
-        orderId: event.orderId,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-      }).toPromise();
+      await this.natsClient
+        .emit('inventory.reservation_failed', {
+          orderId: event.orderId,
+          error: error instanceof Error ? error.message : 'Unknown error',
+          timestamp: new Date().toISOString(),
+        })
+        .toPromise();
     }
   }
 
@@ -140,13 +151,15 @@ export class ReserveStockHandler {
       const reservation = await this.reservationRepository.findByOrderId(event.orderId);
 
       if (reservation) {
-        // Liberar stock
-        await this.releaseStockUseCase.execute({
-          productId: reservation.productId,
-          quantity: reservation.quantity,
-          reservationId: reservation.id,
-          reason: event.reason || 'Orden cancelada',
-        });
+        // Liberar stock para todos los items de la reserva
+        for (const item of reservation.items) {
+          await this.releaseStockUseCase.execute({
+            productId: item.productId,
+            quantity: item.quantity,
+            reservationId: reservation.id,
+            reason: event.reason || 'Orden cancelada',
+          });
+        }
 
         // Actualizar estado de reserva
         await this.reservationRepository.updateStatus(reservation.id, 'released');
@@ -161,7 +174,9 @@ export class ReserveStockHandler {
   }
 
   @EventPattern('inventory.release')
-  async handleReleaseRequest(@Payload() event: { orderId: string; reservationId?: string; reason: string }): Promise<void> {
+  async handleReleaseRequest(
+    @Payload() event: { orderId: string; reservationId?: string; reason: string },
+  ): Promise<void> {
     this.logger.log(`🔄 Liberando reserva por solicitud para orden ${event.orderId}`);
 
     try {
@@ -169,13 +184,16 @@ export class ReserveStockHandler {
         ? await this.reservationRepository.findByOrderId(event.orderId)
         : await this.reservationRepository.findByOrderId(event.orderId);
 
-      if (reservation && reservation.status === 'active') {
-        await this.releaseStockUseCase.execute({
-          productId: reservation.productId,
-          quantity: reservation.quantity,
-          reservationId: reservation.id,
-          reason: event.reason,
-        });
+      if (reservation && reservation.status === ReservationStatus.ACTIVE) {
+        // Liberar stock para todos los items
+        for (const item of reservation.items) {
+          await this.releaseStockUseCase.execute({
+            productId: item.productId,
+            quantity: item.quantity,
+            reservationId: reservation.id,
+            reason: event.reason,
+          });
+        }
 
         await this.reservationRepository.updateStatus(reservation.id, 'released');
         this.logger.log(`✅ Reserva ${reservation.id} liberada`);

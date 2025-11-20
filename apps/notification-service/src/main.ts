@@ -14,7 +14,7 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: process.env['CORS_ORIGIN'] || '*',
     credentials: true,
   });
 
@@ -42,7 +42,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/notifications/docs', app, document);
 
-  const port = process.env.PORT || 3007;
+  const port = process.env['PORT'] || 3007;
   await app.listen(port);
 
   console.log(`
@@ -56,15 +56,14 @@ async function bootstrap() {
 📊 Stats:      http://localhost:${port}/api/notifications/stats
 
 Channels:
-  📧 Email:    ${process.env.SENDGRID_API_KEY ? '✅ SendGrid' : '⚠️  Mock'}
-  📱 SMS:      ${process.env.TWILIO_ACCOUNT_SID ? '✅ Twilio' : '⚠️  Mock'}
+  📧 Email:    ${process.env['SENDGRID_API_KEY'] ? '✅ SendGrid' : '⚠️  Mock'}
+  📱 SMS:      ${process.env['TWILIO_ACCOUNT_SID'] ? '✅ Twilio' : '⚠️  Mock'}
   🔔 Push:     ⚠️  Mock (Firebase not configured)
 
-Environment:  ${process.env.NODE_ENV || 'development'}
+Environment:  ${process.env['NODE_ENV'] || 'development'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `);
 }
 
 bootstrap();
-

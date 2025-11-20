@@ -1,0 +1,1 @@
+{"version":3,"file":"safe-object.utils.d.ts","sourceRoot":"","sources":["safe-object.utils.ts"],"names":[],"mappings":"AAEA,qBAAa,eAAe;IAC1B,MAAM,CAAC,SAAS,CAAC,MAAM,EAAE,GAAG,EAAE,MAAM,EAAE,GAAG,GAAG,GAAG;IAW/C,MAAM,CAAC,kBAAkB,IAAI,GAAG;IAIhC,MAAM,CAAC,WAAW,CAAC,GAAG,EAAE,GAAG,GAAG,GAAG;CAOlC;AAED,eAAe,eAAe,CAAC"}

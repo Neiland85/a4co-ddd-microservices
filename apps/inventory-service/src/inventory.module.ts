@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../prisma/generated';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { InventoryController } from './inventory.controller';
@@ -25,7 +25,7 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [process.env.NATS_URL || 'nats://localhost:4222'],
+          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
           queue: 'inventory-service-queue',
         },
       },
@@ -37,10 +37,10 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
     {
       provide: 'PRISMA_CLIENT',
       useFactory: () => {
-        const connectionString = process.env.DATABASE_URL;
+        const connectionString = process.env['DATABASE_URL'];
         const pool = new Pool({ connectionString });
         const adapter = new PrismaPg(pool);
-        return new PrismaClient({ adapter });
+        return new PrismaClient();
       },
     },
     // Repositories

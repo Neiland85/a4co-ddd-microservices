@@ -1,6 +1,8 @@
 import { context, trace } from '@opentelemetry/api';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
+import type { ObservabilityLogger } from './ObservabilityLogger';
+import type { LogContext } from './types';
 
 export interface LoggerConfig {
   serviceName: string;
@@ -38,8 +40,8 @@ export function createLogger(config: LoggerConfig): pino.Logger {
     level: config.level || (isProduction ? 'info' : 'debug'),
     // Formateo estructurado en JSON
     formatters: {
-      level: label => ({ level: label }),
-      bindings: bindings => ({
+      level: (label) => ({ level: label }),
+      bindings: (bindings) => ({
         service: bindings['name'] || config.serviceName,
         pid: bindings['pid'],
         hostname: bindings['hostname'],
@@ -170,7 +172,7 @@ export function createHttpLogger(logger?: pino.Logger): ReturnType<typeof pinoHt
 }
 
 // Utilidades para logging estructurado
-export class StructuredLogger {
+export class StructuredLogger implements ObservabilityLogger {
   private logger: pino.Logger;
 
   constructor(logger: pino.Logger) {
@@ -185,7 +187,7 @@ export class StructuredLogger {
   logWithContext(
     level: string,
     messageOrContext: string | Record<string, unknown>,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ): void {
     let message: string;
     let finalContext: Record<string, unknown>;
@@ -213,7 +215,7 @@ export class StructuredLogger {
     // eslint-disable-next-line no-unused-vars
     (this.logger[level as keyof pino.Logger] as (obj: unknown, msg?: string) => void)(
       finalContext,
-      message || undefined
+      message || undefined,
     );
   }
 
@@ -225,7 +227,7 @@ export class StructuredLogger {
   error(
     message: string,
     errorOrContext?: Error | Record<string, unknown>,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ): void {
     if (errorOrContext instanceof Error) {
       this.logWithContext('error', message, {
@@ -281,11 +283,17 @@ export class StructuredLogger {
     this.logWithContext('fatal', message, context || {});
   }
 
-  withContext(context: Record<string, unknown>): StructuredLogger {
+  withContext(context: LogContext): ObservabilityLogger {
     // Crear un logger con contexto adicional
     const enhancedLogger = Object.create(this);
     enhancedLogger.defaultContext = { ...this.defaultContext, ...context };
     return enhancedLogger;
+  }
+
+  startSpan(name: string, attributes?: Record<string, unknown>): unknown {
+    // Para compatibilidad con la interfaz, retornamos undefined
+    // En una implementación completa, esto debería iniciar un span real
+    return undefined;
   }
 
   withDDD(metadata: {
@@ -293,7 +301,7 @@ export class StructuredLogger {
     aggregateId?: string;
     commandName?: string;
     eventName?: string;
-  }): StructuredLogger {
+  }): ObservabilityLogger {
     // Crear un logger con contexto DDD
     return this.withContext({
       aggregate: metadata.aggregateName,
@@ -308,17 +316,17 @@ export class StructuredLogger {
 }
 
 // Global logger instance
-let globalLogger: StructuredLogger | null = null;
+let globalLogger: ObservabilityLogger | null = null;
 
 // Initialize logger
-export function initializeLogger(config: LoggerConfig): StructuredLogger {
+export function initializeLogger(config: LoggerConfig): ObservabilityLogger {
   const pinoLogger = createLogger(config);
   globalLogger = new StructuredLogger(pinoLogger);
   return globalLogger;
 }
 
 // Get logger instance
-export function getLogger(): StructuredLogger {
+export function getLogger(): ObservabilityLogger {
   if (!globalLogger) {
     // Create default logger if not initialized
     const defaultConfig: LoggerConfig = {
