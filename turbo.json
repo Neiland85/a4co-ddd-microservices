@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "generate", "...//<rootDir>/tsconfig.json"],
+      "dependsOn": ["^build", "generate"],
       "outputs": ["dist/**"]
     },
     "generate": {
