@@ -38,10 +38,11 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copy standalone output (includes server.js and minimal node_modules)
+# The standalone output mirrors the monorepo structure from outputFileTracingRoot
 COPY --from=build /app/apps/dashboard-client/.next/standalone ./
-# Copy static files
+# Copy static files to the location where the app expects them
 COPY --from=build /app/apps/dashboard-client/.next/static ./apps/dashboard-client/.next/static
-# Copy public folder
+# Copy public folder to the location where the app expects them
 COPY --from=build /app/apps/dashboard-client/public ./apps/dashboard-client/public
 
 EXPOSE 3000
@@ -49,4 +50,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+# The server.js is at the app location within the standalone structure
 CMD ["node", "apps/dashboard-client/server.js"]
