@@ -10,14 +10,6 @@ RUN apk add --no-cache libc6-compat \
     && corepack enable \
     && corepack prepare pnpm@10.14.0 --activate
 
-FROM base AS deps
-
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/dashboard-client/package.json apps/dashboard-client/package.json
-
-RUN --mount=type=cache,id=dashboard-pnpm-store,target=/root/.pnpm-store,sharing=locked \
-    pnpm store path && pnpm fetch --filter ./apps/dashboard-client...
-
 FROM base AS build
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
