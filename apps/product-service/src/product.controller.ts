@@ -1,15 +1,30 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiOperation, ApiResponse, ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import {
   CreateProductDTO,
   ProductService,
   UpdateProductDTO,
 } from './application/services/product.service';
+import { ImageUploadService, UploadResult } from './infrastructure/services/image-upload.service';
 
 @ApiTags('Products')
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly imageUploadService: ImageUploadService,
+  ) {}
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener producto por ID' })
@@ -49,7 +64,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async updateProduct(
     @Param('id') id: string,
-    @Body() productData: UpdateProductDTO
+    @Body() productData: UpdateProductDTO,
   ): Promise<any> {
     return await this.productService.updateProduct({ ...productData, id });
   }
@@ -85,7 +100,7 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Información de stock obtenida' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async getProductStock(
-    @Param('id') id: string
+    @Param('id') id: string,
   ): Promise<{ stock: number; isInStock: boolean; isLowStock: boolean }> {
     return await this.productService.getProductStock(id);
   }
@@ -102,5 +117,39 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Producto archivado exitosamente' })
   async archiveProduct(@Param('id') id: string): Promise<any> {
     return await this.productService.archiveProduct(id);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Subir imagen de producto' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Imagen del producto',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Archivo de imagen (PNG, JPEG, WebP) - máximo 10MB',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Imagen subida exitosamente',
+    schema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string', example: '/uploads/1234567890-abc123.jpg' },
+        fileName: { type: 'string', example: '1234567890-abc123.jpg' },
+        size: { type: 'number', example: 2048576 },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Archivo inválido o demasiado grande' })
+  async uploadImage(@UploadedFile() file: any): Promise<UploadResult> {
+    return await this.imageUploadService.uploadImage(file);
   }
 }

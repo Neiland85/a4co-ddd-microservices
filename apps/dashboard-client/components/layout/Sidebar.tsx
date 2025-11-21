@@ -18,16 +18,15 @@ export function Sidebar() {
             className="rounded-md object-contain"
             priority
           />
-          <h1 className="text-lg font-semibold tracking-wide select-none">A4CO PYME</h1>
+          <h1 className="text-lg font-semibold tracking-wide select-none">A4CO Artesanos</h1>
         </div>
 
         {/* 🔹 Navegación principal */}
         <nav className="mt-4 flex flex-col space-y-1 px-3">
-          <SidebarLink href="/dashboard" icon={Home} label="Inicio" />
-          <SidebarLink href="/clients" icon={Factory} label="Clientes" />
-          <SidebarLink href="/emissions" icon={Leaf} label="Emisiones" />
-          <SidebarLink href="/reports" icon={FileBarChart2} label="Informes" />
-          <SidebarLink href="/settings" icon={Settings} label="Configuración" />
+          <SidebarLink href="/" icon={Home} label="Inicio" />
+          <SidebarLink href="/productos" icon={Factory} label="Productos" />
+          <SidebarLink href="/pedidos" icon={Leaf} label="Pedidos" />
+          <SidebarLink href="/perfil" icon={FileBarChart2} label="Perfil" />
         </nav>
       </div>
 

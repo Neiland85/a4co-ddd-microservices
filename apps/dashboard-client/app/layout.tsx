@@ -1,5 +1,6 @@
 import '@/app/globals.css';
 import { Header, Sidebar } from '@/components/layout';
+import { PageTransition } from '@/components/PageTransition';
 import clsx from 'clsx';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -19,9 +20,9 @@ const geistMono = Geist_Mono({
 
 // 🧾 Metadatos para SEO / PWA
 export const metadata: Metadata = {
-  title: 'A4CO Dashboard PYME',
+  title: 'Dashboard Artesanos A4CO',
   description:
-    'Panel de gestión de emisiones, clientes y trazabilidad para pymes integradas en el ecosistema A4CO.',
+    'Panel de gestión para artesanos: productos, pedidos y perfil en el ecosistema A4CO.',
   icons: {
     icon: '/logo.webp', // ✅ Logo oficial
   },
@@ -35,13 +36,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         className={clsx(
           geistSans.variable,
           geistMono.variable,
-          'bg-background text-foreground flex min-h-screen antialiased'
+          'bg-background text-foreground flex min-h-screen antialiased',
         )}
       >
         <Sidebar />
         <main className="flex flex-1 flex-col overflow-y-auto">
           <Header />
-          <div className="p-8">{children}</div>
+          <PageTransition>
+            <div className="p-8">{children}</div>
+          </PageTransition>
         </main>
       </body>
     </html>
