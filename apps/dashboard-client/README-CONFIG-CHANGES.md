@@ -6,8 +6,8 @@ This document summarizes the configuration changes made to fix Docker production
 ## Configuration Changes Overview
 
 ### 1. Tailwind CSS Version Strategy
-- **Current State:** Using Tailwind CSS v3 syntax with v4 package installed
-- **Reason:** Tailwind v4 is still in beta; v3 syntax ensures production stability
+- **Current State:** Using Tailwind CSS v4.1.16 package with v3-compatible configuration syntax
+- **Reason:** v4 package supports backward-compatible v3 syntax while allowing gradual adoption of v4 features
 - **Impact:** No breaking changes to existing styles
 
 ### 2. PostCSS Plugin Migration
@@ -15,7 +15,8 @@ This document summarizes the configuration changes made to fix Docker production
 - "@tailwindcss/postcss": {}
 + tailwindcss: {}
 ```
-- Switched from v4-specific PostCSS plugin to standard v3 plugin
+- Switched from v4's new PostCSS architecture to standard plugin
+- Maintains compatibility with v3 configuration syntax
 - Improves Docker build reliability
 
 ### 3. Build Script Simplification

@@ -29,9 +29,9 @@ module.exports = {
 ```
 
 **Rationale:**
-- The `@tailwindcss/postcss` package is specific to Tailwind CSS v4 (still in beta)
-- Changed to standard `tailwindcss` plugin for v3.x for production stability
-- Ensures consistent builds in Docker environments where v4 beta features may cause compatibility issues
+- The `@tailwindcss/postcss` package is specific to Tailwind CSS v4's new architecture
+- Changed to standard `tailwindcss` plugin for compatibility with v3 configuration syntax
+- Ensures consistent builds in Docker environments where the new v4 PostCSS plugin may cause compatibility issues with existing tooling
 
 ### 2. Build Script Simplification
 
@@ -115,9 +115,10 @@ theme: {
 ## Migration Impact
 
 ### Tailwind Version
-- **Current:** Tailwind CSS v3.x (via `tailwindcss: ^4.1.16` in devDependencies)
-- **Note:** Despite the package version number, the configuration uses v3 syntax
-- **Future:** Can migrate to v4 stable when released and tested
+- **Package Version:** Tailwind CSS v4.1.16 (installed via `tailwindcss: ^4.1.16`)
+- **Configuration Syntax:** Using v3-compatible configuration syntax
+- **Rationale:** v4 package supports backward-compatible v3 syntax, providing flexibility to migrate to v4 features gradually
+- **Future:** Can adopt v4-specific features (CSS-first configuration, etc.) when needed
 
 ### Visual Changes
 - **No visual changes expected** - Theme customizations match existing brand colors
@@ -148,7 +149,7 @@ theme: {
 
 3. **Docker Build:**
    ```bash
-   docker build -f apps/dashboard-client/Dockerfile.prod -t dashboard-client:test .
+   docker build -f apps/dashboard-client/Dockerfile.prod -t dashboard:test .
    ```
    - Confirmed Docker build completes successfully
    - Resolved previous Tailwind CSS Docker build errors
@@ -189,10 +190,10 @@ theme: {
 
 ## Future Considerations
 
-1. **Tailwind v4 Migration:**
-   - Monitor Tailwind CSS v4 stable release
-   - Evaluate new features and performance improvements
-   - Plan migration when production-ready
+1. **Tailwind v4 Features:**
+   - Evaluate v4-specific features (CSS-first configuration, improved performance)
+   - Consider migrating to v4 native syntax when team is ready
+   - Current v3 syntax remains fully supported in v4 package
 
 2. **Shared Configuration:**
    - Consider extracting common theme values to shared package
