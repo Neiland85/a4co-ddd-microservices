@@ -37,18 +37,16 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-# Copy standalone output
+# Copy standalone output (includes server.js and minimal node_modules)
 COPY --from=build /app/apps/dashboard-client/.next/standalone ./
 # Copy static files
 COPY --from=build /app/apps/dashboard-client/.next/static ./apps/dashboard-client/.next/static
-# Copy public folder if it exists
+# Copy public folder
 COPY --from=build /app/apps/dashboard-client/public ./apps/dashboard-client/public
-
-WORKDIR /app/apps/dashboard-client
 
 EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["node", "apps/dashboard-client/server.js"]
