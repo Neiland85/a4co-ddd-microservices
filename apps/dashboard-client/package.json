@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "TAILWIND_MODE=build TAILWIND_CONFIG=./tailwind.config.js next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
