@@ -2,7 +2,6 @@
   "name": "@a4co/payment-service",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",

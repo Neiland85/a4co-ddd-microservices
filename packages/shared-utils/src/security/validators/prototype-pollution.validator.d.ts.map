@@ -1,1 +1,0 @@
-{"version":3,"file":"prototype-pollution.validator.d.ts","sourceRoot":"","sources":["prototype-pollution.validator.ts"],"names":[],"mappings":"AAAA,qBAAa,2BAA2B;IACtC,MAAM,CAAC,cAAc,CAAC,GAAG,EAAE,GAAG,GAAG;QAAE,OAAO,EAAE,OAAO,CAAC;QAAC,UAAU,EAAE,MAAM,EAAE,CAAA;KAAE;IA6B3E,MAAM,CAAC,cAAc,CAAC,GAAG,EAAE,GAAG,GAAG,GAAG;CAcrC;AAED,eAAe,2BAA2B,CAAC"}
