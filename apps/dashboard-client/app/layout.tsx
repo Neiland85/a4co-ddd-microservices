@@ -3,20 +3,6 @@ import { Header, Sidebar } from '@/components/layout';
 import { AuthProvider } from '@dashboard/lib/auth-context';
 import clsx from 'clsx';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-
-// 🧠 Carga de fuentes corporativas
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-  display: 'swap',
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-  display: 'swap',
-});
 
 // 🧾 Metadatos para SEO / PWA
 export const metadata: Metadata = {
@@ -38,8 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <html lang="es" suppressHydrationWarning>
         <body
           className={clsx(
-            geistSans.variable,
-            geistMono.variable,
+            'font-sans',
             'bg-background text-foreground flex min-h-screen antialiased',
           )}
         >
@@ -55,8 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="es" suppressHydrationWarning>
       <body
         className={clsx(
-          geistSans.variable,
-          geistMono.variable,
+          'font-sans',
           'bg-background text-foreground flex min-h-screen antialiased',
         )}
       >
