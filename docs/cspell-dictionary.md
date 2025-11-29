@@ -1,17 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 29/11/2025, 3:32:42
+Última sincronización: 29/11/2025, 3:38:04
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (3)
-- artifacts
-- compiled
-- fonts
+### Workspace (proyecto local) (1)
+- commonjs
 
-### Commits recientes detectados (36)
+### Commits recientes detectados (42)
 - alpine
 - analysis
 - artifacts
@@ -21,6 +19,7 @@ Sin nuevas palabras.
 - changes
 - clean
 - code
+- commonjs
 - compiled
 - dashboard
 - dependabot
@@ -35,16 +34,21 @@ Sin nuevas palabras.
 - imports
 - initial
 - lint
+- module
 - name
 - neiland
 - node
 - noreply
+- payment
 - plan
 - production
+- resolution
 - script
+- service
 - sidebar
 - signed
 - support
+- tsconfig
 - type
 - updated
 - users
