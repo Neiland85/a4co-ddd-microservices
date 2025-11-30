@@ -16,11 +16,7 @@ const buildArtifactPatterns = [
 const transitionalIgnores = [
   '**/packages/observability/src/**',
   '**/packages/design-system/.storybook/**',
-  '**/packages/design-system/d-user-registration/**',
-  '**/packages/design-system/e-gamified-dashboard/**',
   '**/tests/visual/**',
-  '**/f-modern-backoffice/**',
-  '**/h-modern-dashboard/**',
   '**/feature-flags/**',
   '**/eslint-rules/**',
 ];
@@ -35,7 +31,7 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: process.cwd(),
         ecmaVersion: 2022,
         sourceType: 'module',
       },
@@ -54,11 +50,7 @@ export default tseslint.config(
     },
   },
   {
-    files: [
-      '**/*.test.{ts,tsx,js,jsx}',
-      '**/*.spec.{ts,tsx,js,jsx}',
-      '**/__tests__/**/*.{ts,tsx,js,jsx}',
-    ],
+    files: ['**/*.{test,spec}.{ts,tsx,js,jsx}', '**/__tests__/**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
       globals: {
         ...globals.jest,

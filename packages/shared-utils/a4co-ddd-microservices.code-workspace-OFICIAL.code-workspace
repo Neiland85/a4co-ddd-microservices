@@ -1,0 +1,46 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"json.schemaDownload.enable": false,
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"tailwindCSS.includeLanguages": {
+			"typescript": "javascript",
+			"typescriptreact": "javascript"
+		},
+		"tailwindCSS.classAttributes": [
+			"class",
+			"className",
+			"ngClass",
+			"classList"
+		],
+		"files.associations": {
+			"*.css": "tailwindcss"
+		},
+		"emmet.includeLanguages": {
+			"postcss": "css"
+		},
+		"traycer.languagePreference": "Español",
+		"traycer.outputLevel": "error",
+		"terminal.integrated.accessibleViewFocusOnCommandExecution": true,
+		"remote.downloadExtensionsLocally": true,
+		"inlineChat.notebookAgent": true,
+		"telemetry.editStats.details.enabled": true,
+		"github.copilot.chat.codesearch.enabled": true,
+		"github.copilot.chat.alternateGptPrompt.enabled": true,
+		"github.copilot.chat.edits.temporalContext.enabled": true,
+		"github.copilot.chat.generateTests.codeLens": true,
+		"github.copilot.chat.newWorkspace.useContext7": true,
+		"github.copilot.chat.notebook.followCellExecution.enabled": true,
+		"github-actions.workflows.pinned.refresh.enabled": true,
+		"github-actions.workflows.pinned.refresh.interval": 50,
+		"maven.pomfile.autoUpdateEffectivePOM": true,
+		"maven.terminal.useJavaHome": false,
+		"mediaPreview.video.autoPlay": false,
+		"mediaPreview.video.loop": false,
+		"java.dependency.showMembers": true
+	}
+}
