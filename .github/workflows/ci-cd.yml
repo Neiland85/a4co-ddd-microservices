@@ -24,7 +24,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  NODE_VERSION: '22'
+  NODE_VERSION: '20'
   PNPM_VERSION: '10.14.0'
 
 jobs:
@@ -116,7 +116,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 🧪 Run tests with coverage
-        run: pnpm run test -- --coverage --passWithNoTests
+        run: pnpm run test -- --coverage
         env:
           CI: true
 
@@ -148,22 +148,27 @@ jobs:
             context: ./apps/order-service
             dockerfile: ./apps/order-service/Dockerfile
             target: prod
+            port: 3004
           - name: payment-service
             context: ./apps/payment-service
             dockerfile: ./apps/payment-service/Dockerfile
             target: prod
+            port: 3006
           - name: inventory-service
             context: ./apps/inventory-service
             dockerfile: ./apps/inventory-service/Dockerfile
             target: prod
+            port: 3005
           - name: gateway
             context: ./apps/gateway
             dockerfile: ./apps/gateway/Dockerfile
             target: prod
+            port: 3000
           - name: frontend
             context: ./apps/frontend
             dockerfile: ./apps/frontend/Dockerfile
             target: prod
+            port: 3000
 
     steps:
       - name: 🧾 Checkout code
@@ -201,7 +206,7 @@ jobs:
             org.opencontainers.image.title=${{ matrix.service.name }}
             org.opencontainers.image.description=A4CO ${{ matrix.service.name }} microservice
             prometheus.io/scrape=true
-            prometheus.io/port=3000
+            prometheus.io/port=${{ matrix.service.port }}
             prometheus.io/path=/metrics
             a4co.region=andalucia
             a4co.service=${{ matrix.service.name }}

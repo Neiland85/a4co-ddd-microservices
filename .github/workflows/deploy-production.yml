@@ -35,10 +35,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: ⚙️ Setup Node.js 22
+      - name: ⚙️ Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "20"
 
       - name: ⚙️ Setup pnpm
         uses: pnpm/action-setup@v4
@@ -55,7 +55,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 🧪 Run tests
-        run: pnpm run test -- --passWithNoTests
+        run: pnpm run test
 
       - name: 🧹 Lint
         run: pnpm run lint
