@@ -11,6 +11,7 @@ import {
   DynamicModule,
   OnModuleInit,
   OnModuleDestroy,
+  type InjectionToken,
 } from '@nestjs/common';
 import type { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -204,8 +205,8 @@ export class MetricsModule {
   }
 
   static forRootAsync(options: {
-    useFactory: (...args: any[]) => MetricsModuleOptions | Promise<MetricsModuleOptions>;
-    inject?: any[];
+    useFactory: (...args: unknown[]) => MetricsModuleOptions | Promise<MetricsModuleOptions>;
+    inject?: InjectionToken[];
     isGlobal?: boolean;
   }): DynamicModule {
     return {
@@ -219,7 +220,7 @@ export class MetricsModule {
         },
         {
           provide: MetricsService,
-          useFactory: async (...args: any[]) => {
+          useFactory: async (...args: unknown[]) => {
             const config = await options.useFactory(...args);
             const service = new MetricsService();
             service.setConfig(config);

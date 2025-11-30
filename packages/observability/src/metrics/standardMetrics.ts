@@ -71,8 +71,10 @@ export function initializeStandardMetrics(config: StandardMetricsConfig): Promet
     }
   );
 
-  // Create meter provider
-  globalMeterProvider = new MeterProvider({});
+  // Create meter provider with Prometheus exporter as metric reader
+  globalMeterProvider = new MeterProvider({
+    readers: [prometheusExporter],
+  });
 
   // Register as global provider
   metrics.setGlobalMeterProvider(globalMeterProvider);
