@@ -1,13 +1,23 @@
 # A4CO Alertmanager Configuration
 # Configure receivers and routes for alert notifications
+#
+# TODO: SMTP configuration must use secrets/environment variables in production.
+# Configure via environment variables or external secrets management:
+# - ALERTMANAGER_SMTP_HOST
+# - ALERTMANAGER_SMTP_FROM
+# - ALERTMANAGER_SMTP_USERNAME
+# - ALERTMANAGER_SMTP_PASSWORD (use GitHub secrets or vault)
+#
+# Example production setup:
+# smtp_smarthost: '${ALERTMANAGER_SMTP_HOST}'
+# smtp_from: '${ALERTMANAGER_SMTP_FROM}'
+# smtp_auth_username: '${ALERTMANAGER_SMTP_USERNAME}'
+# smtp_auth_password: '${ALERTMANAGER_SMTP_PASSWORD}'
 
 global:
   resolve_timeout: 5m
-  # SMTP configuration for email notifications (configure as needed)
-  # smtp_smarthost: 'smtp.example.com:587'
-  # smtp_from: 'alertmanager@a4co.com'
-  # smtp_auth_username: 'alertmanager'
-  # smtp_auth_password: 'password'
+  # SMTP configuration DISABLED - requires secrets configuration
+  # See TODO above for production setup instructions
 
 # Route tree
 route:
