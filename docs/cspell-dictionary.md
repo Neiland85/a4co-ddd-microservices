@@ -1,16 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 30/11/2025, 14:43:13
+Última sincronización: 30/11/2025, 15:56:26
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (2)
-- comment
-- existent
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (56)
+### Commits recientes detectados (61)
 - address
 - agent
 - alerting
@@ -31,7 +30,10 @@ Sin nuevas palabras.
 - copilot
 - dashboard
 - dashboards
+- design
 - duplicate
+- errors
+- eslint
 - existent
 - export
 - feedback
@@ -53,6 +55,7 @@ Sin nuevas palabras.
 - plan
 - remove
 - resolution
+- resolve
 - review
 - rules
 - safety
@@ -62,6 +65,7 @@ Sin nuevas palabras.
 - services
 - sidebar
 - standard
+- system
 - tests
 - tsconfig
 - turbo
