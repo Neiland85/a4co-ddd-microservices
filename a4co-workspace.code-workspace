@@ -5,36 +5,91 @@
       "path": "."
     },
     {
-      "name": "🔧 Backend Services",
-      "path": "apps"
+      "name": "🔧 Backend - Order Service",
+      "path": "apps/order-service"
+    },
+    {
+      "name": "🔧 Backend - Payment Service",
+      "path": "apps/payment-service"
+    },
+    {
+      "name": "🔧 Backend - Inventory Service",
+      "path": "apps/inventory-service"
+    },
+    {
+      "name": "🚪 API Gateway",
+      "path": "apps/gateway"
+    },
+    {
+      "name": "🎨 Frontend",
+      "path": "apps/frontend"
+    },
+    {
+      "name": "📡 Observability / Shared",
+      "path": "packages"
     }
   ],
+
   "settings": {
+    // Avoid GPU meltdown
     "files.exclude": {
       "**/node_modules": true,
       "**/.turbo": true,
       "**/.next": true,
+      "**/.DS_Store": true,
       "**/dist": true,
-      "**/.DS_Store": true
+      "**/.cache": true,
+      "**/.pnpm-store": true
     },
+
+    // Better TS experience for monorepo
     "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+
+    // Format + Fix + Lint automatic
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
     },
+
+    // JSON sanity
+    "json.schemaDownload.enable": false,
     "json.schemas": [
       {
-        "fileMatch": [
-          "**/package.json"
-        ],
+        "fileMatch": ["**/package.json"],
         "schema": null
       }
     ],
-    "json.schemaDownload.enable": false
+
+    // Telemetry and perf
+    "telemetry.telemetryLevel": "off",
+    "editor.largeFileOptimizations": true,
+    "terminal.integrated.inheritEnv": true,
+
+    // ESLint multi-root
+    "eslint.workingDirectories": [
+      { "directory": "apps/order-service", "changeProcessCWD": true },
+      { "directory": "apps/payment-service", "changeProcessCWD": true },
+      { "directory": "apps/inventory-service", "changeProcessCWD": true },
+      { "directory": "apps/gateway", "changeProcessCWD": true },
+      { "directory": "apps/frontend", "changeProcessCWD": true },
+      { "directory": "packages", "changeProcessCWD": true }
+    ]
   },
+
   "extensions": {
     "recommendations": [
-      "ms-ossdata.vscode-pgsql"
+      "dbaeumer.vscode-eslint",
+      "ms-ossdata.vscode-pgsql",
+      "esbenp.prettier-vscode",
+      "rangav.vscode-thunder-client",
+      "bierner.markdown-mermaid",
+      "prisma.prisma",
+      "ms-kubernetes-tools.vscode-kubernetes-tools",
+      "humao.rest-client",
+      "oderwat.indent-rainbow"
     ]
   }
 }

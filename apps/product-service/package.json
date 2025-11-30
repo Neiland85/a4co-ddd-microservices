@@ -4,7 +4,7 @@
   "description": "Servicio de productos para a4co-ddd-microservices",
   "main": "dist/main.js",
   "scripts": {
-    "build": "nest build",
+    "build": "tsc -p tsconfig.json",
     "dev": "nest start --watch",
     "start": "nest start",
     "start:dev": "nest start --watch",
