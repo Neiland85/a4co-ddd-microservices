@@ -11,7 +11,7 @@ export class InMemoryEventBusAdapter implements EventBusPort {
   private readonly publishedEvents: any[] = [];
 
   async publish(event: any): Promise<void> {
-    const eventType = event.constructor.name;
+    const eventType = event.type || event.constructor.name;
 
     // Almacenar evento para testing/debugging
     this.publishedEvents.push({

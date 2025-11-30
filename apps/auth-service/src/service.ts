@@ -7,12 +7,8 @@ export class AuthService extends BaseService {
 
   login(username: string, password: string): string {
     try {
-      const validatedUsername = this.validateRequired(username, 'username');
-      this.validateRequired(password, 'password');
-
-      this.log('User authenticated', { username: validatedUsername });
-
-      return this.createSuccessMessage('User', 'authenticated', validatedUsername);
+      this.log('User authenticated', { username });
+      return `Usuario ${username} autenticado.`;
     } catch (error) {
       return this.handleServiceError(error, 'login');
     }
@@ -20,12 +16,8 @@ export class AuthService extends BaseService {
 
   register(username: string, password: string): string {
     try {
-      const validatedUsername = this.validateRequired(username, 'username');
-      this.validateRequired(password, 'password');
-
-      this.log('User registration', { username: validatedUsername });
-
-      return this.createSuccessMessage('User', 'registered', validatedUsername);
+      this.log('User registration', { username });
+      return `Usuario ${username} registrado.`;
     } catch (error) {
       return this.handleServiceError(error, 'register');
     }
