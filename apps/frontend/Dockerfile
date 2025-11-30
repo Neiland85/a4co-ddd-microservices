@@ -15,7 +15,7 @@ RUN pnpm install --frozen-lockfile
 FROM deps AS build
 COPY apps/frontend/ ./apps/frontend/
 WORKDIR /app/apps/frontend
-RUN pnpm run build || true
+RUN pnpm run build
 
 # -------- DEV --------
 FROM deps AS dev
@@ -26,12 +26,18 @@ EXPOSE 3000
 CMD ["pnpm", "run", "dev"]
 
 # -------- PROD --------
-FROM node:22-alpine AS prod
-WORKDIR /app
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nodejs
-COPY --from=build --chown=nodejs:nodejs /app/apps/frontend/ ./
-USER nodejs
-ENV NODE_ENV=production
+FROM nginx:alpine AS prod
+# Copy built static files to nginx
+COPY --from=build /app/apps/frontend/dist /usr/share/nginx/html
+# Custom nginx config for SPA
+RUN echo 'server { \
+    listen 3000; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 EXPOSE 3000
 # Prometheus labels for service discovery
 LABEL prometheus.io/scrape="true" \
@@ -41,4 +47,4 @@ LABEL prometheus.io/scrape="true" \
       a4co.service="frontend"
 HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=5 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
-CMD ["pnpm", "run", "start"]
+CMD ["nginx", "-g", "daemon off;"]

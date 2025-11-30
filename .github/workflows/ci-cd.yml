@@ -147,18 +147,23 @@ jobs:
           - name: order-service
             context: ./apps/order-service
             dockerfile: ./apps/order-service/Dockerfile
+            target: prod
           - name: payment-service
             context: ./apps/payment-service
             dockerfile: ./apps/payment-service/Dockerfile
+            target: prod
           - name: inventory-service
             context: ./apps/inventory-service
             dockerfile: ./apps/inventory-service/Dockerfile
+            target: prod
           - name: gateway
             context: ./apps/gateway
             dockerfile: ./apps/gateway/Dockerfile
+            target: prod
           - name: frontend
             context: ./apps/frontend
             dockerfile: ./apps/frontend/Dockerfile
+            target: prod
 
     steps:
       - name: 🧾 Checkout code
@@ -202,7 +207,7 @@ jobs:
             a4co.service=${{ matrix.service.name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          target: prod
+          target: ${{ matrix.service.target }}
           build-args: |
             SERVICE_NAME=${{ matrix.service.name }}
             REGION=andalucia

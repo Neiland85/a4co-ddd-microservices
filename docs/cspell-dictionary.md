@@ -1,55 +1,85 @@
 # Diccionario del Proyecto
 
-Última sincronización: 29/11/2025, 3:38:04
+Última sincronización: 30/11/2025, 13:47:36
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (1)
-- commonjs
+### Workspace (proyecto local) (15)
+- agent
+- behavior
+- caching
+- codebase
+- dockerfiles
+- fail
+- fast
+- format
+- labels
+- multi
+- optimize
+- reports
+- stage
+- trigger
+- turbo
 
-### Commits recientes detectados (42)
-- alpine
+### Commits recientes detectados (58)
+- agent
 - analysis
 - artifacts
 - authored
-- bump
-- bumps
+- behavior
+- build
+- builds
+- caching
 - changes
+- checks
 - clean
 - code
+- codebase
 - commonjs
 - compiled
+- comprehensive
+- copilot
+- coverage
 - dashboard
-- dependabot
-- dependencies
-- dependency
-- deps
-- direct
+- deploy
+- docker
+- dockerfiles
 - duplicate
+- fail
+- fast
 - fonts
-- from
+- format
 - github
 - imports
+- improve
 - initial
+- issues
+- labels
 - lint
 - module
-- name
+- multi
 - neiland
-- node
 - noreply
+- optimize
 - payment
 - plan
 - production
+- prometheus
+- remove
+- reports
 - resolution
 - script
+- security
 - service
 - sidebar
-- signed
-- support
+- stage
+- tests
+- trigger
 - tsconfig
-- type
-- updated
+- turbo
 - users
+- with
+- workflow
 

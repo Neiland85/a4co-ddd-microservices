@@ -15,7 +15,8 @@ RUN pnpm install --frozen-lockfile
 FROM deps AS build
 COPY apps/gateway/ ./apps/gateway/
 WORKDIR /app/apps/gateway
-RUN pnpm run build || true
+# Gateway is a simple Express app without build step
+RUN echo "No build step required for gateway"
 
 # -------- DEV --------
 FROM deps AS dev
@@ -23,13 +24,15 @@ COPY apps/gateway/ ./apps/gateway/
 WORKDIR /app/apps/gateway
 ENV NODE_ENV=development
 EXPOSE 3000
-CMD ["pnpm", "run", "start:dev"]
+CMD ["node", "index.js"]
 
 # -------- PROD --------
 FROM node:22-alpine AS prod
 WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nodejs
-COPY --from=build --chown=nodejs:nodejs /app/apps/gateway/ ./
+COPY --from=deps /app/apps/gateway/package.json ./
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build --chown=nodejs:nodejs /app/apps/gateway/index.js ./
 USER nodejs
 ENV NODE_ENV=production
 EXPOSE 3000
