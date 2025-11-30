@@ -1,21 +1,16 @@
 # Diccionario del Proyecto
 
-Última sincronización: 30/11/2025, 13:49:50
+Última sincronización: 30/11/2025, 13:51:21
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (7)
-- copy
-- index
-- matrix
-- properly
-- serving
-- static
-- targets
+### Workspace (proyecto local) (2)
+- final
+- ready
 
-### Commits recientes detectados (74)
+### Commits recientes detectados (77)
 - agent
 - analysis
 - artifacts
@@ -45,6 +40,7 @@ Sin nuevas palabras.
 - fail
 - fast
 - files
+- final
 - fonts
 - format
 - frontend
@@ -52,6 +48,7 @@ Sin nuevas palabras.
 - github
 - imports
 - improve
+- improvements
 - index
 - initial
 - issues
@@ -71,6 +68,7 @@ Sin nuevas palabras.
 - production
 - prometheus
 - properly
+- ready
 - remove
 - reports
 - resolution
