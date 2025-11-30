@@ -13,6 +13,23 @@ dist/
 build/
 *.tsbuildinfo
 
+# TypeScript compiled output in source directories
+# These should only be in dist/ directories
+**/src/**/*.js
+**/src/**/*.js.map
+**/src/**/*.d.ts
+**/src/**/*.d.ts.map
+!**/src/**/generated/**
+!**/src/**/*.config.js
+!**/src/**/*.setup.js
+
+# Compiled files at package roots (should be in dist/)
+packages/**/index.js
+packages/**/index.d.ts
+packages/**/index.js.map
+packages/**/index.d.ts.map
+!packages/**/dist/**
+
 # Environment variables
 .env
 .env.local

@@ -3,20 +3,34 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build", "generate"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "inputs": ["src/**", "package.json", "tsconfig.json", "tsconfig.*.json"]
     },
     "generate": {
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["src/**", "*.ts", "*.tsx", "*.js", "*.jsx", ".eslintrc*", "eslint.config.*"]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**", "test/**", "tests/**", "__tests__/**", "*.test.*", "*.spec.*", "jest.config.*"]
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "prisma:generate": {
+      "cache": false
+    },
+    "prisma:push": {
+      "cache": false
+    },
+    "prisma:migrate": {
+      "cache": false
     }
   }
 }

@@ -1,121 +1,55 @@
 # Diccionario del Proyecto
 
-Última sincronización: 20/11/2025, 13:06:43
+Última sincronización: 29/11/2025, 3:38:04
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (1)
+- commonjs
 
-### Commits recientes detectados (108)
-- across
-- added
-- adds
-- adjust
-- adjusted
-- adjusts
-- aggregate
+### Commits recientes detectados (42)
+- alpine
+- analysis
+- artifacts
 - authored
-- autoprefixer
-- been
-- before
-- better
-- builds
-- chaining
+- bump
+- bumps
 - changes
-- checkpoint
-- classes
-- commit
-- compatibility
-- complete
-- config
-- configurations
-- consistent
-- cors
-- cspell
-- data
+- clean
+- code
+- commonjs
+- compiled
+- dashboard
+- dependabot
 - dependencies
 - dependency
-- dictionary
-- disable
-- disabled
-- distribution
-- enhanced
-- enhancing
-- ensure
-- environment
-- environments
-- eslint
-- explicit
-- failing
-- feature
-- files
-- follow
-- formatting
-- gmail
-- helmet
-- impact
-- improved
-- include
-- installations
-- jest
-- json
-- local
-- lock
-- lockfile
-- message
-- middleware
-- migrate
-- modifying
+- deps
+- direct
+- duplicate
+- fonts
+- from
+- github
+- imports
+- initial
+- lint
 - module
-- monolith
-- multiple
-- needs
+- name
 - neiland
-- nestjs
-- optional
-- options
-- package
-- paths
-- pnpm
-- problematic
-- project
-- refactored
-- refine
-- reflect
-- refresh
-- remove
-- rename
+- node
+- noreply
+- payment
+- plan
+- production
 - resolution
-- review
-- safety
-- security
-- sensitive
-- services
-- settings
-- shared
-- snapshot
-- spec
-- stop
-- temporarily
-- theia
-- this
+- script
+- service
+- sidebar
+- signed
+- support
 - tsconfig
 - type
-- typescript
-- unused
 - updated
-- updates
-- updating
-- user
-- utils
-- variables
-- vscode
-- with
-- words
-- workflow
-- workspace
-- yaml
+- users
 
