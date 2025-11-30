@@ -1,18 +1,20 @@
 # Diccionario del Proyecto
 
-Última sincronización: 30/11/2025, 13:57:49
+Última sincronización: 30/11/2025, 14:43:13
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (1)
-- export
+### Workspace (proyecto local) (2)
+- comment
+- existent
 
-### Commits recientes detectados (49)
+### Commits recientes detectados (56)
 - address
 - agent
 - alerting
+- alerts
 - analysis
 - artifacts
 - authored
@@ -22,12 +24,15 @@ Sin nuevas palabras.
 - clean
 - code
 - codebase
+- comment
 - commonjs
 - compiled
+- config
 - copilot
 - dashboard
 - dashboards
 - duplicate
+- existent
 - export
 - feedback
 - fonts
@@ -52,9 +57,12 @@ Sin nuevas palabras.
 - rules
 - safety
 - script
+- secure
 - service
+- services
 - sidebar
 - standard
+- tests
 - tsconfig
 - turbo
 - type
