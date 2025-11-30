@@ -1,5 +1,6 @@
 # Diccionario del Proyecto
 
+Última sincronización: 30/11/2025, 13:51:21
 Última sincronización: 30/11/2025, 18:12:29
 
 ---
@@ -8,6 +9,11 @@
 - ortografía
 
 ### Workspace (proyecto local) (2)
+- final
+- ready
+
+### Commits recientes detectados (77)
+- agent
 - configuración
 - ortografía
 
@@ -32,6 +38,12 @@
 - auth
 - authentication
 - authored
+- behavior
+- build
+- builds
+- caching
+- changes
+- checks
 - authservice
 - avoid
 - añade
@@ -60,6 +72,27 @@
 - cleaned
 - code
 - codebase
+- commonjs
+- compiled
+- comprehensive
+- copilot
+- copy
+- coverage
+- dashboard
+- defined
+- deploy
+- docker
+- dockerfile
+- dockerfiles
+- duplicate
+- fail
+- fast
+- files
+- final
+- fonts
+- format
+- frontend
+- gateway
 - commands
 - commit
 - commonjs
@@ -156,6 +189,16 @@
 - import
 - imports
 - improve
+- improvements
+- index
+- initial
+- issues
+- labels
+- lint
+- matrix
+- module
+- modules
+- multi
 - improved
 - including
 - indexes
@@ -201,8 +244,10 @@
 - necessary
 - needs
 - neiland
+- nginx
 - node
 - noreply
+- optimize
 - objetos
 - optimize
 - order
@@ -228,6 +273,11 @@
 - principales
 - problematic
 - production
+- prometheus
+- properly
+- ready
+- remove
+- reports
 - products
 - project
 - proper
@@ -258,6 +308,21 @@
 - rules
 - schema
 - script
+- security
+- service
+- services
+- serving
+- sidebar
+- stage
+- static
+- targets
+- tests
+- trigger
+- tsconfig
+- turbo
+- users
+- with
+- workflow
 - sections
 - service
 - servicios
