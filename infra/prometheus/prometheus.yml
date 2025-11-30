@@ -5,10 +5,39 @@ global:
     cluster: 'a4co-dev'
     environment: 'development'
 
+# Alert manager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Rule files
+rule_files:
+  - "alert-rules.yml"
+
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+
+  - job_name: 'auth-service'
+    static_configs:
+      - targets: ['host.docker.internal:3001']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['host.docker.internal:3002']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  - job_name: 'product-service'
+    static_configs:
+      - targets: ['host.docker.internal:3003']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
 
   - job_name: 'order-service'
     static_configs:
@@ -28,21 +57,27 @@ scrape_configs:
     metrics_path: '/metrics'
     scrape_interval: 10s
 
-  - job_name: 'auth-service'
+  - job_name: 'geo-service'
     static_configs:
-      - targets: ['host.docker.internal:3001']
+      - targets: ['host.docker.internal:3010']
     metrics_path: '/metrics'
     scrape_interval: 10s
 
-  - job_name: 'user-service'
+  - job_name: 'notification-service'
     static_configs:
-      - targets: ['host.docker.internal:3002']
+      - targets: ['host.docker.internal:3008']
     metrics_path: '/metrics'
     scrape_interval: 10s
 
-  - job_name: 'product-service'
+  - job_name: 'loyalty-service'
     static_configs:
-      - targets: ['host.docker.internal:3003']
+      - targets: ['host.docker.internal:3009']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  - job_name: 'gateway'
+    static_configs:
+      - targets: ['host.docker.internal:3000']
     metrics_path: '/metrics'
     scrape_interval: 10s
 

@@ -5,6 +5,28 @@ import { MeterProvider } from '@opentelemetry/sdk-metrics';
 import { getLogger } from '../logger';
 import type { MetricsConfig } from '../types';
 
+// Re-export standard metrics
+export {
+  initializeStandardMetrics,
+  getStandardMetrics,
+  recordHttpRequest as recordStandardHttpRequest,
+  recordDbQuery,
+  recordCommerceListed,
+  recordPromoNearbyRequest,
+  httpMetricsMiddleware,
+  shutdownStandardMetrics,
+  type StandardMetrics,
+  type StandardMetricsConfig,
+} from './standardMetrics';
+
+// Re-export NestJS metrics module
+export {
+  MetricsModule,
+  MetricsService,
+  MetricsInterceptor,
+  type MetricsModuleOptions,
+} from './nestjs';
+
 // Global metrics provider
 let globalMeterProvider: MeterProvider | null = null;
 let prometheusExporter: PrometheusExporter | null = null;

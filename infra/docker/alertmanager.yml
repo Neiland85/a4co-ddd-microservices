@@ -1,0 +1,84 @@
+# A4CO Alertmanager Configuration
+# Configure receivers and routes for alert notifications
+
+global:
+  resolve_timeout: 5m
+  # SMTP configuration for email notifications (configure as needed)
+  # smtp_smarthost: 'smtp.example.com:587'
+  # smtp_from: 'alertmanager@a4co.com'
+  # smtp_auth_username: 'alertmanager'
+  # smtp_auth_password: 'password'
+
+# Route tree
+route:
+  # Default receiver
+  receiver: 'default-receiver'
+  # Group alerts by job and severity
+  group_by: ['alertname', 'job', 'severity']
+  # Wait before sending first notification
+  group_wait: 30s
+  # Wait before sending updated notification
+  group_interval: 5m
+  # Wait before sending notification for resolved alert
+  repeat_interval: 4h
+
+  # Child routes for specific alert handling
+  routes:
+    # Critical alerts should be sent immediately
+    - match:
+        severity: critical
+      receiver: 'critical-receiver'
+      group_wait: 10s
+      group_interval: 1m
+      repeat_interval: 1h
+
+    # Warning alerts
+    - match:
+        severity: warning
+      receiver: 'warning-receiver'
+      group_wait: 1m
+      group_interval: 5m
+      repeat_interval: 4h
+
+# Receivers
+receivers:
+  - name: 'default-receiver'
+    # Webhook receiver for integrations
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook'
+        send_resolved: true
+        # max_alerts: 10
+
+  - name: 'critical-receiver'
+    # Configure critical notifications
+    # Example: PagerDuty, Slack, or email
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/critical'
+        send_resolved: true
+    # Example Slack configuration:
+    # slack_configs:
+    #   - api_url: 'https://hooks.slack.com/services/...'
+    #     channel: '#alerts-critical'
+    #     send_resolved: true
+    #     title: '{{ .GroupLabels.alertname }}'
+    #     text: '{{ .CommonAnnotations.description }}'
+
+  - name: 'warning-receiver'
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/warning'
+        send_resolved: true
+    # Example Slack configuration:
+    # slack_configs:
+    #   - api_url: 'https://hooks.slack.com/services/...'
+    #     channel: '#alerts-warning'
+    #     send_resolved: true
+
+# Inhibition rules
+# Prevent warning alerts when critical is already firing
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    # Inhibit if same job
+    equal: ['job']
