@@ -1,6 +1,7 @@
 # Diccionario del Proyecto
 
 Última sincronización: 30/11/2025, 15:56:26
+Última sincronización: 30/11/2025, 13:51:21
 Última sincronización: 30/11/2025, 18:12:29
 
 ---
@@ -17,6 +18,11 @@ Sin nuevas palabras.
 - alerting
 - alerts
 ### Workspace (proyecto local) (2)
+- final
+- ready
+
+### Commits recientes detectados (77)
+- agent
 - configuración
 - ortografía
 
@@ -43,6 +49,12 @@ Sin nuevas palabras.
 - authored
 - build
 - caching
+- behavior
+- build
+- builds
+- caching
+- changes
+- checks
 - authservice
 - avoid
 - añade
@@ -95,6 +107,27 @@ Sin nuevas palabras.
 - lint
 - metrics
 - module
+- commonjs
+- compiled
+- comprehensive
+- copilot
+- copy
+- coverage
+- dashboard
+- defined
+- deploy
+- docker
+- dockerfile
+- dockerfiles
+- duplicate
+- fail
+- fast
+- files
+- final
+- fonts
+- format
+- frontend
+- gateway
 - commands
 - commit
 - commonjs
@@ -191,6 +224,16 @@ Sin nuevas palabras.
 - import
 - imports
 - improve
+- improvements
+- index
+- initial
+- issues
+- labels
+- lint
+- matrix
+- module
+- modules
+- multi
 - improved
 - including
 - indexes
@@ -238,6 +281,9 @@ Sin nuevas palabras.
 - neiland
 - noreply
 - observability
+- nginx
+- node
+- noreply
 - optimize
 - objetos
 - optimize
@@ -281,6 +327,11 @@ Sin nuevas palabras.
 - principales
 - problematic
 - production
+- prometheus
+- properly
+- ready
+- remove
+- reports
 - products
 - project
 - proper
@@ -311,6 +362,21 @@ Sin nuevas palabras.
 - rules
 - schema
 - script
+- security
+- service
+- services
+- serving
+- sidebar
+- stage
+- static
+- targets
+- tests
+- trigger
+- tsconfig
+- turbo
+- users
+- with
+- workflow
 - sections
 - service
 - servicios
