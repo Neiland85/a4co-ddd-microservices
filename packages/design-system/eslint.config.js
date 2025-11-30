@@ -18,51 +18,40 @@ export default [
       },
       ecmaVersion: 2022,
       globals: {
-        ...globals.node,
         ...globals.browser,
+        ...globals.node,
         ...globals.jest,
-        // Additional Node.js globals
-        NodeJS: 'readonly',
       },
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
     },
     rules: {
-      // TypeScript específicas para observabilidad
-      '@typescript-eslint/explicit-function-return-type': 'error',
-      '@typescript-eslint/explicit-module-boundary-types': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
+      // TypeScript específicas para design system
+      '@typescript-eslint/explicit-function-return-type': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/consistent-type-exports': 'error',
-      '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 
-      // Calidad de código para observabilidad
+      // Calidad de código
       'prefer-const': 'error',
       'no-var': 'error',
       'object-shorthand': 'error',
-      'prefer-template': 'error',
-      'no-console': 'off', // Permitido en librerías de logging
+      'no-console': 'warn',
     },
   },
   {
-    files: ['src/**/*.{test,spec}.ts'],
+    files: ['**/*.stories.tsx', '**/*.stories.ts'],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.tsx', '**/*.test.ts', '**/*.spec.tsx', '**/*.spec.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
-      'no-console': 'off',
-    },
-  },
-  {
-    files: ['src/index.ts'],
-    rules: {
-      // Permitir default export en index
-    },
-  },
-  {
-    files: ['src/logger/**/*.ts', 'src/metrics/**/*.ts'],
-    rules: {
-      'no-console': 'off', // Permitido en módulos de logging
     },
   },
 ];
