@@ -1,6 +1,6 @@
-import { AuthService } from '../src/service';
 import { AuthController } from '../src/controller';
-import { testConfig, generateTestCredentials } from './test.config';
+import { AuthService } from '../src/service';
+import { testConfig } from './test.config';
 
 // Mock para simular dependencias externas
 const mockLogger = {
@@ -161,7 +161,7 @@ describe('AuthService - Casos de Uso Principales', () => {
 
       const result = authService.login(username, password);
 
-      expect(result).toBe(`Usuario ${username} registrado.`);
+      expect(result).toBe(`Usuario ${username} autenticado.`);
     });
   });
 });
