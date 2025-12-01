@@ -1,17 +1,17 @@
 # Diccionario del Proyecto
 
-Última sincronización: 1/12/2025, 8:01:23
+Última sincronización: 1/12/2025, 8:02:12
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (2)
-- clarify
-- globals
+### Workspace (proyecto local) (1)
+- addressed
 
-### Commits recientes detectados (94)
+### Commits recientes detectados (99)
 - added
+- addressed
 - already
 - auth
 - authored
@@ -21,6 +21,7 @@ Sin nuevas palabras.
 - change
 - changes
 - clarify
+- code
 - comments
 - compatible
 - compose
@@ -40,6 +41,7 @@ Sin nuevas palabras.
 - existing
 - explicit
 - exports
+- feedback
 - final
 - fixed
 - from
@@ -83,6 +85,7 @@ Sin nuevas palabras.
 - requires
 - resolve
 - resolved
+- review
 - safe
 - scan
 - scope
@@ -97,6 +100,7 @@ Sin nuevas palabras.
 - status
 - triggers
 - typescript
+- updates
 - urls
 - usage
 - users
