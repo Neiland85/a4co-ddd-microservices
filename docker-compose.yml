@@ -56,7 +56,8 @@ services:
       - "4000:4000"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/auth_db?schema=public
+      # Use env vars: export AUTH_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${AUTH_DB_PASSWORD:-CHANGE_ME}@postgres:5432/auth_db?schema=public
       - NATS_URL=nats://nats:4222
     depends_on:
       postgres:
@@ -75,7 +76,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/order_db?schema=public
+      # Use env vars: export ORDER_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${ORDER_DB_PASSWORD:-CHANGE_ME}@postgres:5432/order_db?schema=public
       - NATS_URL=nats://nats:4222
     depends_on:
       postgres:
@@ -94,7 +96,8 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/payment_db?schema=public
+      # Use env vars: export PAYMENT_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${PAYMENT_DB_PASSWORD:-CHANGE_ME}@postgres:5432/payment_db?schema=public
       - NATS_URL=nats://nats:4222
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_mock}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_mock}
@@ -115,7 +118,8 @@ services:
       - "3002:3002"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/inventory_db?schema=public
+      # Use env vars: export INVENTORY_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${INVENTORY_DB_PASSWORD:-CHANGE_ME}@postgres:5432/inventory_db?schema=public
       - NATS_URL=nats://nats:4222
     depends_on:
       postgres:
