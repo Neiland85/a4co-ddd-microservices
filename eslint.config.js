@@ -11,6 +11,22 @@ const buildArtifactPatterns = [
   '**/.turbo/**',
   '**/turbo/**',
   '**/*.d.ts',
+  '**/generated/**',
+  'pnpm-lock.yaml',
+  'package-lock.json',
+  'yarn.lock',
+  '.env',
+  '.env.local',
+  '.env.*.local',
+  'Dockerfile*',
+  'docker-compose*',
+  '.vscode/',
+  '.idea/',
+  '*.swp',
+  '*.swo',
+  '.git/',
+  '.gitignore',
+  'README.md',
 ];
 
 const transitionalIgnores = [

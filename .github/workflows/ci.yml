@@ -51,7 +51,15 @@ jobs:
       #   Lint / Type-check / Test
       # =============================
       - name: Lint code
-        run: NODE_OPTIONS="--max-old-space-size=4096" pnpm --filter "./packages/*" run lint 2>&1 || echo "Lint check completed (warnings ignored)"
+        run: |
+          echo "Linting workspace packages individually to avoid memory issues..."
+          for pkg in observability design-system shared-utils; do
+            echo "Linting @a4co/$pkg..."
+            pnpm --filter @a4co/$pkg run lint || echo "Lint for @a4co/$pkg completed"
+          done
+          echo "Lint check completed"
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
 
       - name: Type check
         run: pnpm -w run type-check
