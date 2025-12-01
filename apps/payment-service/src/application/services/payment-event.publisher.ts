@@ -1,7 +1,6 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { DomainEvent } from '@a4co/shared-utils';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { EventSubjects } from '@a4co/shared-utils/events/subjects';
-import { DomainEvent } from '@a4co/shared-utils/domain/domain-event';
 import { Payment } from '../../domain/entities/payment.entity';
 import {
   PaymentCreatedEvent,
@@ -14,11 +13,11 @@ import {
 } from '../../domain/events';
 
 const PAYMENT_EVENT_SUBJECT_MAP = new Map<Function, string>([
-  [PaymentCreatedEvent, EventSubjects.PAYMENT_INITIATED],
+  [PaymentCreatedEvent, 'payment.initiated.v1'],
   [PaymentProcessingEvent, 'payment.processing.v1'],
-  [PaymentSucceededEvent, EventSubjects.PAYMENT_SUCCEEDED],
-  [PaymentFailedEvent, EventSubjects.PAYMENT_FAILED],
-  [PaymentRefundedEvent, EventSubjects.REFUND_PROCESSED],
+  [PaymentSucceededEvent, 'payment.succeeded.v1'],
+  [PaymentFailedEvent, 'payment.failed.v1'],
+  [PaymentRefundedEvent, 'refund.processed.v1'],
 ]);
 
 @Injectable()
@@ -28,7 +27,7 @@ export class PaymentEventPublisher {
   constructor(
     @Inject('NATS_CLIENT')
     private readonly natsClient: ClientProxy,
-  ) {}
+  ) { }
 
   public async publishPaymentEvents(payment: Payment): Promise<void> {
     const events = payment.getUncommittedEvents();
