@@ -1,13 +1,11 @@
-import { Controller, Logger, Inject } from '@nestjs/common';
+import { Controller, Inject, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import { EventSubjects } from '@a4co/shared-utils/events/subjects';
+import { PaymentRepository } from '../../domain/repositories/payment.repository.js';
+import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants.js';
 import {
-  ProcessPaymentCommand,
   ProcessPaymentUseCase,
 } from '../use-cases/process-payment.use-case.js';
 import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case.js';
-import { PaymentRepository } from '../../domain/repositories/payment.repository.js';
-import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants.js';
 
 export interface OrderCreatedEventPayload {
   orderId: string;
@@ -36,9 +34,9 @@ export class OrderEventsHandler {
     private readonly refundPaymentUseCase: RefundPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_TOKEN)
     private readonly paymentRepository: PaymentRepository,
-  ) {}
+  ) { }
 
-  @EventPattern(EventSubjects.ORDER_CREATED)
+  @EventPattern('order.created.v1')
   public async handleOrderCreated(@Payload() event: OrderCreatedEventPayload): Promise<void> {
     this.logger.log(`Received order.created event for order ${event.orderId}`);
 
@@ -70,7 +68,7 @@ export class OrderEventsHandler {
     }
   }
 
-  @EventPattern(EventSubjects.ORDER_CANCELLED)
+  @EventPattern('order.cancelled.v1')
   public async handleOrderCancelled(@Payload() event: OrderCancelledEventPayload): Promise<void> {
     this.logger.log(`Received order.cancelled event for order ${event.orderId}`);
 
