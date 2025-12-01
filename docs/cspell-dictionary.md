@@ -1,16 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 1/12/2025, 9:22:38
+Última sincronización: 1/12/2025, 9:27:40
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (2)
-- cache
-- cached
+### Workspace (proyecto local) (1)
+- properly
 
-### Commits recientes detectados (72)
+### Commits recientes detectados (75)
 - actual
 - alias
 - align
@@ -26,6 +25,7 @@ Sin nuevas palabras.
 - correct
 - created
 - decorator
+- directory
 - domain
 - empty
 - error
@@ -34,6 +34,7 @@ Sin nuevas palabras.
 - event
 - events
 - eventsubjects
+- exclude
 - excluded
 - exports
 - file
@@ -61,6 +62,7 @@ Sin nuevas palabras.
 - payment
 - plan
 - proper
+- properly
 - record
 - remove
 - replace
