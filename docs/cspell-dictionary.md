@@ -1,36 +1,23 @@
 # Diccionario del Proyecto
 
-Última sincronización: 1/12/2025, 9:21:57
+Última sincronización: 1/12/2025, 9:22:38
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (17)
-- alias
-- bracessecuritymiddleware
-- common
-- constructor
-- controller
-- decorator
-- empty
-- events
-- eventsubjects
-- excluded
-- inject
-- legacy
-- record
-- rewrote
-- rule
-- string
-- unknown
+### Workspace (proyecto local) (2)
+- cache
+- cached
 
-### Commits recientes detectados (66)
+### Commits recientes detectados (72)
 - actual
 - alias
 - align
 - authored
 - bracessecuritymiddleware
+- cache
+- cached
 - change
 - common
 - compilation
@@ -50,11 +37,13 @@ Sin nuevas palabras.
 - excluded
 - exports
 - file
+- files
 - fixed
 - fixes
 - folder
 - from
 - github
+- gitignore
 - import
 - initial
 - inject
@@ -73,6 +62,7 @@ Sin nuevas palabras.
 - plan
 - proper
 - record
+- remove
 - replace
 - repository
 - resolve
@@ -84,6 +74,7 @@ Sin nuevas palabras.
 - string
 - subjects
 - tests
+- turbo
 - type
 - types
 - typescript
