@@ -29,7 +29,7 @@ export default [
         ...globals.node,
         ...globals.browser,
         ...globals.jest,
-        // Additional Node.js and TypeScript globals
+        // TypeScript-specific Node.js globals (not included in globals.node)
         NodeJS: 'readonly',
         BufferEncoding: 'readonly',
       },
