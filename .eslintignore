@@ -1,0 +1,33 @@
+# Build artifacts
+**/dist/**
+**/build/**
+**/.next/**
+**/coverage/**
+**/node_modules/**
+**/.turbo/**
+**/generated/**
+
+# Dependencies
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile*
+docker-compose*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Misc
+.git/
+.gitignore
+README.md
