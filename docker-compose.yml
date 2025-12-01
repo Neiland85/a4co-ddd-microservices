@@ -8,7 +8,7 @@ services:
   # ----------------------------------------------------------------
   # INFRAESTRUCTURA (Base de Datos y Mensajería)
   # ----------------------------------------------------------------
-  
+
   # NATS Server con JetStream habilitado (CRÍTICO para Sagas)
   nats:
     image: nats:2.10-alpine
@@ -25,9 +25,11 @@ services:
     container_name: microservices-postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      # Database password - use environment variables in production
+      # Set via: export POSTGRES_PASSWORD="your-secure-password"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME_IN_PRODUCTION}
       # La DB por defecto. Las otras se crean con el script init.sql
-      POSTGRES_DB: microservices_db 
+      POSTGRES_DB: microservices_db
     ports:
       - "5432:5432"
     volumes:
