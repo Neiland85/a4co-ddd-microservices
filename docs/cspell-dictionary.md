@@ -1,35 +1,16 @@
 # Diccionario del Proyecto
 
-Última sincronización: 1/12/2025, 7:57:05
+Última sincronización: 1/12/2025, 8:01:23
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (21)
-- backward
-- comments
-- compatible
-- directing
-- enforced
-- existing
-- final
-- functional
-- gzip
-- installed
-- noisy
-- passes
-- ready
-- requires
-- safe
-- scope
-- size
-- space
-- stabilize
-- urls
-- verified
+### Workspace (proyecto local) (2)
+- clarify
+- globals
 
-### Commits recientes detectados (88)
+### Commits recientes detectados (94)
 - added
 - already
 - auth
@@ -39,9 +20,11 @@ Sin nuevas palabras.
 - call
 - change
 - changes
+- clarify
 - comments
 - compatible
 - compose
+- config
 - configured
 - database
 - defaults
@@ -53,6 +36,7 @@ Sin nuevas palabras.
 - docker
 - enforced
 - environment
+- eslint
 - existing
 - explicit
 - exports
@@ -62,6 +46,7 @@ Sin nuevas palabras.
 - functional
 - gitguardian
 - github
+- globals
 - gzip
 - hardcoded
 - ignore
@@ -107,9 +92,11 @@ Sin nuevas palabras.
 - service
 - size
 - space
+- specific
 - stabilize
 - status
 - triggers
+- typescript
 - urls
 - usage
 - users
