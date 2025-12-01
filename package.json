@@ -15,7 +15,7 @@
     "build:all": "turbo run build",
     "test": "pnpm -r --ignore=backend run test",
     "test:all": "turbo run test",
-    "lint": "eslint --no-error-on-unmatched-pattern .",
+    "lint": "pnpm -r --parallel --filter \"./packages/*\" run lint",
     "lint:fix": "pnpm -r run lint:fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules --ignore .git",
     "lint:md:fix": "markdownlint --fix \"**/*.md\" --ignore node_modules --ignore .git",

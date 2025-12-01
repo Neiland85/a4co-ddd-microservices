@@ -53,11 +53,7 @@ jobs:
       - name: Lint workspace packages individually to avoid OOM
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
-        run: |
-          pnpm -w list --depth -1 \
-          | grep "@a4co" \
-          | awk '{print $1}' \
-          | xargs -I {} pnpm --filter {} run lint || echo "Lint finished with warnings"
+        run: pnpm -r --parallel --filter "./packages/*" run lint || echo "Lint finished with warnings"
 
       - name: Type check
         run: pnpm -w run type-check
