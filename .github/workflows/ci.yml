@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: development
-      NODE_VERSION: "22"
+      NODE_VERSION: "20"
       PNPM_HOME: ~/.pnpm
       PATH: ~/.pnpm:$PATH
 
@@ -24,7 +24,7 @@ jobs:
       # =============================
       #       Setup Node & PNPM
       # =============================
-      - name: Setup Node.js 22.x
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -112,10 +112,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js 22.x
+      - name: ⚙️ Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
           cache: 'pnpm'
 
       - name: ⚙️ Setup pnpm

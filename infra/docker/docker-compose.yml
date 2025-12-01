@@ -89,7 +89,8 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NATS_URL=${NATS_URL}
       - REDIS_URL=${REDIS_URL}
-      - JWT_SECRET=a4co_dev_jwt_secret_key_change_in_production
+      # Placeholder only. Managed via environment variables in deployment.
+      - JWT_SECRET=${JWT_SECRET:-dev_placeholder_change_in_production}
       - JWT_EXPIRES_IN=24h
       - JWT_REFRESH_EXPIRES_IN=7d
     depends_on:
@@ -246,8 +247,9 @@ services:
       - AUTH_SERVICE_URL=http://auth-service:3001
       - ORDER_SERVICE_URL=http://order-service:3004
       - USER_SERVICE_URL=http://user-service:3003
-      - STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-      - STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+      # Placeholder only. Managed via environment variables in deployment.
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
     depends_on:
       postgres:
         condition: service_healthy
