@@ -1,25 +1,13 @@
 # Diccionario del Proyecto
 
-Última sincronización: 1/12/2025, 8:03:27
+Última sincronización: 1/12/2025, 10:23:59
 
 ---
-### User (global VSCode) (8)
-- common
-- constructor
-- line
-- record
-- replace
-- rule
-- string
-- unknown
+### User (global VSCode)
+Sin nuevas palabras.
 
-### Workspace (proyecto local) (6)
-- common
-- constructor
-- record
-- rule
-- string
-- unknown
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
 ### Commits recientes detectados (280)
 - action
