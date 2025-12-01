@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Headers, RawBodyRequest, Req, Logger, Body } from '@nestjs/common';
+import { Controller, Get, Post, Headers, RawBodyRequest, Req, Logger, Body, Inject } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { PaymentService } from '../application/services/payment.service';
 import { StripeGateway } from '../infrastructure/stripe.gateway';
@@ -14,6 +14,7 @@ export class PaymentController {
     private readonly paymentService: PaymentService,
     private readonly stripeGateway: StripeGateway,
     private readonly eventPublisher: PaymentEventPublisher,
+    @Inject('PaymentRepository')
     private readonly paymentRepository: PaymentRepository,
     private readonly processPaymentUseCase: ProcessPaymentUseCase, // Inyectamos el caso de uso
   ) {}

@@ -1,1 +1,2 @@
-// Domain exports (vacío por ahora)
+// Domain exports
+export { DomainEvent, IDomainEvent } from './domain-event';
