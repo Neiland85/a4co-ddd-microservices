@@ -24,17 +24,18 @@ jobs:
       # =============================
       #       Setup Node & PNPM
       # =============================
-      - name: Setup Node.js 22.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
+      # Note: pnpm must be set up BEFORE node when using cache: 'pnpm'
       - name: Setup pnpm v10.14.0
         uses: pnpm/action-setup@v2
         with:
           version: '10.14.0'
           run_install: false
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
       # =============================
       #     Install dependencies
@@ -112,17 +113,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Note: pnpm must be set up BEFORE node when using cache: 'pnpm'
+      - name: ⚙️ Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '10.14.0'
+          run_install: false
+
       - name: ⚙️ Setup Node.js 22.x
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'pnpm'
 
-      - name: ⚙️ Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: '10.14.0'
-          run_install: true
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build auth-service
         run: pnpm --filter @a4co/auth-service build

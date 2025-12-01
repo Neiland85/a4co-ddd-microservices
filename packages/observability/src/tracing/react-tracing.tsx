@@ -166,7 +166,6 @@ export function withTracing<P extends object>(
           });
         }
         // Build dependencies safely
-        // eslint-disable-next-line react-hooks/exhaustive-deps
       },
       (() => {
         const deps: unknown[] = [span];
