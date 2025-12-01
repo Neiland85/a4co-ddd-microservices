@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Headers, RawBodyRequest, Req, Logger, Body } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
-import { PaymentService } from '../application/services/payment.service';
-import { StripeGateway } from '../infrastructure/stripe.gateway';
+import { Body, Controller, Get, Headers, Inject, Logger, NotFoundException, Param, Post } from '@nestjs/common';
+import { PAYMENT_REPOSITORY_TOKEN } from '../application/application.constants';
 import { PaymentEventPublisher } from '../application/services/payment-event.publisher';
-import { PaymentRepository } from '../domain/repositories/payment.repository';
+import { PaymentService } from '../application/services/payment.service';
 import { ProcessPaymentUseCase } from '../application/use-cases/process-payment.use-case';
+import { PaymentRepository } from '../domain/repositories/payment.repository';
+import { StripeGateway } from '../infrastructure/stripe.gateway';
 
 @Controller('payments')
 export class PaymentController {
@@ -14,37 +14,20 @@ export class PaymentController {
     private readonly paymentService: PaymentService,
     private readonly stripeGateway: StripeGateway,
     private readonly eventPublisher: PaymentEventPublisher,
+    @Inject(PAYMENT_REPOSITORY_TOKEN)
     private readonly paymentRepository: PaymentRepository,
     private readonly processPaymentUseCase: ProcessPaymentUseCase, // Inyectamos el caso de uso
-  ) {}
+  ) { }
 
   @Get('health')
   getHealth() {
     return this.paymentService.getHealth();
   }
 
-  // --- NUEVO: Escuchar comando de la Saga para iniciar pago ---
-  @EventPattern('payment.initiate')
-  async handlePaymentInitiate(@Payload() data: any) {
-    this.logger.log(`🚀 Iniciando proceso de pago para orden: ${data.orderId}`);
-    try {
-      // Aquí llamamos al caso de uso que crea el PaymentIntent
-      await this.processPaymentUseCase.execute({
-        orderId: data.orderId,
-        amount: data.amount,
-        currency: 'usd', // O dinámico según data
-        customerId: data.customerId,
-      });
-    } catch (error) {
-      this.logger.error(`❌ Error iniciando pago para orden ${data.orderId}`, error);
-      // El manejo de errores debería publicar un evento PaymentFailedEvent
-    }
-  }
-
-  // --- WEBHOOK STRIPE ---
+  // --- REST API: Handle Webhook ---
   @Post('webhook')
-  async handleStripeWebhook(
-    @Req() req: RawBodyRequest<Request>,
+  async handleWebhook(
+    @Body() body: any,
     @Headers('stripe-signature') signature: string,
   ) {
     this.logger.log('📥 Recibiendo webhook de Stripe');
@@ -55,7 +38,7 @@ export class PaymentController {
     }
 
     try {
-      const event = this.stripeGateway.constructWebhookEvent(req.rawBody as Buffer, signature);
+      const event = this.stripeGateway.constructWebhookEvent(body, signature);
 
       this.logger.log(`📨 Evento de Stripe recibido: ${event.type}`);
 
@@ -81,6 +64,55 @@ export class PaymentController {
       this.logger.error('❌ Error procesando webhook de Stripe:', error);
       throw error;
     }
+  }
+
+  // --- REST API: Create Payment ---
+  @Post()
+  async createPayment(@Body() dto: any) {
+    this.logger.log(`💳 Creating payment for order ${dto.orderId}`);
+    const payment = await this.paymentService.processPayment({
+      orderId: dto.orderId,
+      amount: dto.amount,
+      currency: dto.currency,
+      customerId: dto.customerId,
+      description: dto.description,
+      metadata: dto.metadata,
+    });
+    return payment.toPrimitives();
+  }
+
+  // --- REST API: Get Payment by Order ID ---
+  @Get('order/:orderId')
+  async getPaymentByOrder(@Param('orderId') orderId: string) {
+    this.logger.log(`🔍 Fetching payment for order ${orderId}`);
+    const payment = await this.paymentService.getPaymentByOrderId(orderId);
+    if (!payment) {
+      throw new NotFoundException('Pago no encontrado para esta orden');
+    }
+    return payment.toPrimitives();
+  }
+
+  // --- REST API: Refund Payment ---
+  @Post(':paymentId/refund')
+  async refundPayment(@Param('paymentId') paymentId: string, @Body() dto: any) {
+    this.logger.log(`💰 Processing refund for payment ${paymentId}`);
+    const refunded = await this.paymentService.refundPayment(
+      paymentId,
+      dto.amount,
+      dto.reason,
+    );
+    return refunded;
+  }
+
+  // --- REST API: Get Payment by ID ---
+  @Get(':paymentId')
+  async getPayment(@Param('paymentId') paymentId: string) {
+    this.logger.log(`🔍 Fetching payment ${paymentId}`);
+    const payment = await this.paymentService.getPaymentById(paymentId);
+    if (!payment) {
+      throw new NotFoundException('Pago no encontrado');
+    }
+    return payment.toPrimitives();
   }
 
   private async handlePaymentIntentSucceeded(event: any): Promise<void> {

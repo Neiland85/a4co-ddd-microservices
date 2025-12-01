@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { PAYMENT_REPOSITORY_TOKEN } from './application/application.constants';
 import { PaymentService } from './application/services/payment.service';
 import { ProcessPaymentUseCase } from './application/use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from './application/use-cases/refund-payment.use-case';
-import { PaymentRepository } from './domain/repositories/payment.repository';
-import { PAYMENT_REPOSITORY_TOKEN } from './application/application.constants';
-import { PaymentId } from './domain/value-objects/payment-id.vo';
 import { Payment } from './domain/entities/payment.entity';
-import { Money } from './domain/value-objects/money.vo';
+import { PaymentRepository } from './domain/repositories/payment.repository';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -105,7 +103,8 @@ describe('PaymentService', () => {
 
       const result = await service.getPaymentById(paymentId);
 
-      expect(paymentRepository.findById).toHaveBeenCalledWith(PaymentId.create(paymentId));
+      // Fix: PaymentId.create returns an object, so match the argument exactly
+      expect(paymentRepository.findById.mock.calls[0][0].value).toBe(paymentId);
       expect(result).toEqual(mockPayment);
     });
   });

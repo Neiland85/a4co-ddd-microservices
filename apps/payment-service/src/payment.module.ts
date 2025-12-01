@@ -1,19 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PaymentController } from './presentation/payment.controller';
-import { PaymentService } from './application/services/payment.service';
+import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
+import { PAYMENT_REPOSITORY_TOKEN } from './application/application.constants';
+import { OrderEventsHandler } from './application/handlers/order-events.handler';
 import { PaymentEventPublisher } from './application/services/payment-event.publisher';
+import { PaymentService } from './application/services/payment.service';
 import { ProcessPaymentUseCase } from './application/use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from './application/use-cases/refund-payment.use-case';
 import { PaymentDomainService } from './domain/services/payment-domain.service';
+import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
 import { StripeGateway } from './infrastructure/stripe.gateway';
-import { PrismaService } from './infrastructure/prisma/prisma.service';
-import { OrderEventsHandler } from './application/handlers/order-events.handler';
-import { PAYMENT_REPOSITORY_TOKEN } from './application/application.constants';
-import { NatsEventBus } from '@a4co/shared-utils';
-import { ClientProxy } from '@nestjs/microservices';
+import { PaymentController } from './presentation/payment.controller';
 
 @Module({
   imports: [
@@ -74,4 +72,4 @@ import { ClientProxy } from '@nestjs/microservices';
   ],
   exports: [PaymentService, ProcessPaymentUseCase, RefundPaymentUseCase, ClientsModule],
 })
-export class PaymentModule {}
+export class PaymentModule { }
