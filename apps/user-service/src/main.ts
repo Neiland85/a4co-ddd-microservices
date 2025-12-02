@@ -1,69 +1,62 @@
+// apps/user-service/src/main.ts
+
 import { getLogger, initializeTracing } from '@a4co/observability';
-import { BracesSecurityMiddleware } from '@a4co/shared-utils';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
-import * as process from 'process';
 import { UserModule } from './user.module';
 
 async function bootstrap() {
-  // Initialize observability
+  // === OBSERVABILIDAD ===
   initializeTracing({
     serviceName: 'user-service',
     serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
+    environment: process.env.NODE_ENV ?? 'development',
   });
 
-  // Get logger instance
   const logger = getLogger();
 
-  const app = await NestFactory.create(UserModule, {
-    logger: false, // Disable default NestJS logger
-  });
+  // === APP ===
+  const app = await NestFactory.create(UserModule, { logger: false });
 
-  // Security middleware
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-        },
+  // === SEGURIDAD ===
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
       },
-      crossOriginEmbedderPolicy: false,
-    })
-  );
+    },
+    crossOriginEmbedderPolicy: false,
+  }));
 
-  // Global validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    })
-  );
+  // === VALIDACIÓN ===
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  }));
 
-  // Braces security middleware
-  const bracesMiddleware = new BracesSecurityMiddleware({
-    maxExpansionSize: 50,
-    maxRangeSize: 10,
-    monitoringEnabled: true,
-  });
-  app.use(bracesMiddleware.validateRequestBody());
-  app.use(bracesMiddleware.validateQueryParams());
+  // === CORS ===
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+    : ['http://localhost:3000', 'http://localhost:3001'];
 
-  // CORS configuration
   app.enableCors({
-    origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      if (!origin || allowedOrigins.some(o => origin.startsWith(o))) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
-  // Swagger documentation
+  // === SWAGGER ===
   const config = new DocumentBuilder()
     .setTitle('A4CO User Service')
     .setDescription('Servicio de gestión de usuarios para la plataforma A4CO')
@@ -75,15 +68,16 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const port = process.env['PORT'] || 3005;
-  logger.info(`🚀 User Service iniciado en puerto ${port}`);
-  logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
-
+  // === ARRANQUE ===
+  const port = process.env.PORT ? Number(process.env.PORT) : 3005;
   await app.listen(port);
+
+  logger.info(`User Service corriendo en http://localhost:${port}`);
+  logger.info(`Documentación: http://localhost:${port}/api`);
 }
 
 bootstrap().catch(err => {
   const logger = getLogger();
-  logger.error('Error al iniciar el servicio:', err);
+  logger.error('Error al iniciar User Service:', err);
   process.exit(1);
 });

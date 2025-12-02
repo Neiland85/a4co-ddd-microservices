@@ -1,51 +1,20 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "outDir": "dist",
-    "types": [
-      "node",
-      "reflect-metadata"
-    ],
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@a4co/shared-utils": [
-        "../../packages/shared-utils/src"
-      ],
-      "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/src/*"
-      ]
-    }
+    "sourceMap": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*",
+    "src/@types/**/*"
   ],
   "exclude": [
-    "**/__tests__/**",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "dist",
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

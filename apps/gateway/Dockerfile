@@ -1,46 +1,26 @@
-############################
-#        BUILDER
-############################
 FROM node:20-alpine AS builder
-
-# Instalamos pnpm y Nest CLI de forma global,
-# igual que lo tienes en tu máquina local
-RUN npm install -g pnpm@8 @nestjs/cli
-
+RUN npm install -g pnpm@8 turbo @nestjs/cli
 WORKDIR /app
 
-# Copiamos SOLO el package.json del gateway
-COPY package.json ./
+# Copiamos TODO lo necesario del monorepo
+COPY pnpm-lock.yaml pnpm-workspace.yaml turbo.json package.json ./
+COPY apps/gateway ./apps/gateway
+COPY packages/shared-utils ./packages/shared-utils
 
-# Instalamos dependencias del servicio
+# Instalamos dependencias del workspace
 RUN pnpm install --force
 
-# Copiamos el código del gateway
-COPY . .
+# Build solo del gateway
+RUN pnpm run build --filter @a4co/gateway
 
-# Build del backend (usa "nest build")
-RUN pnpm run build
-
-
-############################
-#        RUNTIME
-############################
+# Stage producción
 FROM node:20-alpine
-
-# Solo pnpm global para ejecutar scripts
 RUN npm install -g pnpm@8
-
 WORKDIR /app
 
-# Copiamos package.json para poder instalar deps en runtime
-COPY package.json ./
-
-# Instalamos SOLO deps de producción
-RUN pnpm install --prod --force
-
-# Copiamos el build del stage anterior
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/apps/gateway/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
 
 EXPOSE 3000
-
-CMD ["pnpm", "start"]
+CMD ["node", "dist/main"]

@@ -10,7 +10,7 @@ FROM base AS deps
 COPY ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
 COPY ../../package.json ./
 COPY ../../apps/order-service/package.json ./apps/order-service/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # -------- BUILD --------
 FROM deps AS build
