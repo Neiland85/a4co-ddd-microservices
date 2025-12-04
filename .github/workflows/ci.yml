@@ -19,12 +19,13 @@ jobs:
 
     steps:
       # =============================
-      #       Instalar tar/gzip requeridos
+      #       Setup Node ANTES de checkout
       # =============================
-      - name: Install tar and gzip
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y tar gzip
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
       # =============================
       #       Checkout Repo (with Git)
@@ -35,14 +36,8 @@ jobs:
           fetch-depth: 1
 
       # =============================
-      #       Setup Node & pnpm
+      #       Setup pnpm
       # =============================
-      - name: Setup Node.js 22.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
       - name: Setup pnpm v10.14.0
         uses: pnpm/action-setup@v2
         with:
