@@ -7,14 +7,14 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@a4co/*": ["../../packages/*/dist"],
-      "@/*": ["../../*"]
-    }
+    "sourceMap": true
   },
-  "include": ["src/**/*", "src/@types/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../../packages/observability", "composite": true }]
+  "include": [
+    "src/**/*",
+    "src/@types/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
