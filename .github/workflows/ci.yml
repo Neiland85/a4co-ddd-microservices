@@ -10,9 +10,7 @@ on:
 jobs:
   build_and_analyze:
     name: Build & Quality Check
-    runs-on: ubuntu-22.04
-    container:
-      image: debian:bookworm-slim
+    runs-on: ubuntu-latest
     env:
       NODE_ENV: development
       NODE_VERSION: "22"
@@ -21,12 +19,12 @@ jobs:
 
     steps:
       # =============================
-      #       Instalar dependencias del sistema
+      #       Instalar tar/gzip requeridos
       # =============================
-      - name: Install system dependencies
+      - name: Install tar and gzip
         run: |
-          apt-get update
-          apt-get install -y tar gzip git curl ca-certificates
+          sudo apt-get update
+          sudo apt-get install -y tar gzip
 
       # =============================
       #       Checkout Repo (with Git)
