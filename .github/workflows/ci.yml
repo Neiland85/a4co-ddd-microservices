@@ -19,6 +19,16 @@ jobs:
 
     steps:
       # =============================
+      #       Install tar (required by checkout)
+      # =============================
+      - name: Install tar
+        shell: bash
+        run: |
+          apt-get update -qq 2>/dev/null || true
+          apt-get install -qq -y tar gzip 2>/dev/null || echo "tar/gzip may already be installed"
+          which tar || echo "tar not found after install attempt"
+
+      # =============================
       #       Checkout Repo
       # =============================
       - name: Checkout repository
