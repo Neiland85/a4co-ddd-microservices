@@ -19,14 +19,6 @@ jobs:
 
     steps:
       # =============================
-      #   Fix: Missing tar/gzip
-      # =============================
-      - name: Ensure tar & gzip are installed
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y tar gzip
-
-      # =============================
       #       Checkout Repo
       # =============================
       - name: Checkout repository
