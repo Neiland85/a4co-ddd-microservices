@@ -9,7 +9,7 @@ import { AuthModule } from './auth.module';
 initializeTracing({
   serviceName: 'auth-service',
   serviceVersion: '1.0.0',
-  environment: process.env.NODE_ENV ?? 'development',
+  environment: process.env['NODE_ENV'] ?? 'development',
 });
 
 const logger = getLogger();
@@ -18,12 +18,19 @@ async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
 
   app.use(helmet());
-  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }),
+  );
 
-  const allowed = (process.env.ALLOWED_ORIGINS ?? 'http://localhost:3000').split(',').map(o => o.trim());
+  const allowed = (process.env['ALLOWED_ORIGINS'] ?? 'http://localhost:3000')
+    .split(',')
+    .map((o) => o.trim());
   app.enableCors({
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      if (!origin || allowed.some(a => origin.startsWith(a))) callback(null, true);
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      if (!origin || allowed.some((a) => origin.startsWith(a))) callback(null, true);
       else callback(new Error('CORS not allowed'));
     },
     credentials: true,
@@ -39,13 +46,13 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
 
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
+  const port = process.env['PORT'] ? parseInt(process.env['PORT'], 10) : 3001;
   await app.listen(port);
   logger.info(`Auth Service corriendo en http://localhost:${port}`);
   logger.info(`Docs: http://localhost:${port}/api/docs`);
 }
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   logger.error('Error al iniciar', err);
   process.exit(1);
 });

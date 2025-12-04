@@ -1,18 +1,128 @@
+networks:
+  microservices-net:
+    driver: bridge
+
 services:
-  gateway:
+  # ----------------------------------------------------------------
+  # INFRAESTRUCTURA (Base de Datos y Mensajería)
+  # ----------------------------------------------------------------
+
+  # NATS Server con JetStream habilitado (CRÍTICO para Sagas)
+  nats:
+    image: nats:2.10-alpine
+    container_name: nats-server
+    command: '-js -m 8222' # -js habilita JetStream, -m habilita monitoreo HTTP
+    ports:
+      - '4222:4222' # Puerto cliente
+      - '8222:8222' # Puerto monitoreo (http://localhost:8222)
+    networks:
+      - microservices-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: microservices-postgres
+    environment:
+      POSTGRES_USER: postgres
+      # Database password - use environment variables in production
+      # Set via: export POSTGRES_PASSWORD="your-secure-password"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME_IN_PRODUCTION}
+      # La DB por defecto. Las otras se crean con el script init.sql
+      POSTGRES_DB: microservices_db
+    ports:
+      - '5432:5432'
+    volumes:
+      # Script para crear las DBs de cada microservicio al iniciar
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------
+  # MICROSERVICIOS
+  # ----------------------------------------------------------------
+
+  auth-service:
     build:
       context: .
-      dockerfile: apps/gateway/Dockerfile
+      dockerfile: apps/auth-service/Dockerfile
+    container_name: auth-service
     ports:
-      - "3000:3000"
+      - '4000:4000'
     environment:
       - NODE_ENV=development
+      # Use env vars: export AUTH_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${AUTH_DB_PASSWORD:-CHANGE_ME}@postgres:5432/auth_db?schema=public
       - NATS_URL=nats://nats:4222
     depends_on:
-      - nats
-      - auth-service
-      - user-service
-      - payment-service
-      - order-service
-      - product-service
-    restart: unless-stopped
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  order-service:
+    build:
+      context: .
+      dockerfile: apps/order-service/Dockerfile
+    container_name: order-service
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      # Use env vars: export ORDER_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${ORDER_DB_PASSWORD:-CHANGE_ME}@postgres:5432/order_db?schema=public
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: apps/payment-service/Dockerfile
+    container_name: payment-service
+    ports:
+      - '3001:3001'
+    environment:
+      - NODE_ENV=development
+      # Use env vars: export PAYMENT_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${PAYMENT_DB_PASSWORD:-CHANGE_ME}@postgres:5432/payment_db?schema=public
+      - NATS_URL=nats://nats:4222
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_mock}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_mock}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  inventory-service:
+    build:
+      context: .
+      dockerfile: apps/inventory-service/Dockerfile
+    container_name: inventory-service
+    ports:
+      - '3002:3002'
+    environment:
+      - NODE_ENV=development
+      # Use env vars: export INVENTORY_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${INVENTORY_DB_PASSWORD:-CHANGE_ME}@postgres:5432/inventory_db?schema=public
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
