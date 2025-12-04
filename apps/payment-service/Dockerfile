@@ -1,29 +1,31 @@
+# -------- BASE --------
 FROM node:22-alpine AS base
-WORKDIR /usr/src/app
+WORKDIR /app
 ENV PNPM_HOME="/usr/local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && apk add --no-cache libc6-compat
 
+# -------- INSTALL --------
 FROM base AS deps
-COPY ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
-COPY ../../package.json ./
-COPY ../../apps/payment-service/package.json ./apps/payment-service/
-RUN pnpm install
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY packages ./packages
+COPY apps/payment-service/package.json ./apps/payment-service/
+RUN pnpm install --frozen-lockfile
 
+# -------- BUILD --------
 FROM deps AS build
-WORKDIR /usr/src/app/apps/payment-service
-COPY . .
+COPY apps/payment-service ./apps/payment-service
+WORKDIR /app/apps/payment-service
 RUN pnpm run build
 
-FROM deps AS dev
-WORKDIR /usr/src/app/apps/payment-service
-ENV NODE_ENV=development
-EXPOSE 3000
-CMD ["pnpm", "run", "start:dev"]
-
+# -------- PROD --------
 FROM node:22-alpine AS prod
-WORKDIR /usr/src/app
-COPY --from=build /usr/src/app/apps/payment-service/dist ./dist
+WORKDIR /app
+RUN corepack enable && apk add --no-cache libc6-compat
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages ./packages
+COPY --from=build /app/apps/payment-service/dist ./apps/payment-service/dist
+COPY --from=build /app/apps/payment-service/node_modules ./apps/payment-service/node_modules
 ENV NODE_ENV=production
-EXPOSE 3000
-CMD ["node", "dist/main.js"]
+EXPOSE 3001
+CMD ["node", "apps/payment-service/dist/main.js"]
