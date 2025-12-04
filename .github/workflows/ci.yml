@@ -11,6 +11,8 @@ jobs:
   build_and_analyze:
     name: Build & Quality Check
     runs-on: ubuntu-latest
+    container:
+      image: node:22-alpine
     env:
       NODE_ENV: development
       NODE_VERSION: "22"
@@ -18,14 +20,6 @@ jobs:
       PATH: ~/.pnpm:$PATH
 
     steps:
-      # =============================
-      #       Cache APT packages (installs tar if needed)
-      # =============================
-      - uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: tar gzip git
-          version: 1.0
-
       # =============================
       #       Checkout Repo
       # =============================
