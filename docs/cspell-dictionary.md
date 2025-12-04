@@ -1,101 +1,75 @@
 # Diccionario del Proyecto
 
-Última sincronización: 4/12/2025, 5:21:57
+Última sincronización: 4/12/2025, 5:54:34
 
 ---
+### User (global VSCode) (2)
+- necesario
+- paso
 
-### User (global VSCode)
+### Workspace (proyecto local) (2)
+- necesario
+- paso
 
-Sin nuevas palabras.
-
-### Workspace (proyecto local) (1)
-
-- instalar
-
-### Commits recientes detectados (84)
-
+### Commits recientes detectados (60)
 - actions
 - actualizar
 - antes
-- archivo
-- atributo
-- auth
-- build
-- cambios
+- builds
+- cambiar
 - checkout
-- client
 - como
-- compiló
-- completada
-- completion
-- compose
-- config
-- configuración
-- consolidar
-- contextos
-- crear
-- cspell
-- código
-- dashboard
-- defecto
-- detalle
-- dictionary
-- docker
-- dockerfile
-- dockerignore
-- documentacion
-- documentación
-- duplicado
-- ejecucion
-- errores
-- evita
-- exitosamente
-- fallos
-- fase
-- final
-- flight
+- compartidos
+- confiar
+- container
+- contexto
+- copiar
+- debian
+- dependencias
+- dockerfiles
+- exacto
+- frozen
+- funciona
+- garantizado
 - github
-- guía
-- gzip
-- incluye
-- indice
+- herramientas
+- incorrectas
 - innecesaria
-- innecesarios
 - instalación
 - instalar
-- jest
+- install
+- inventory
 - latest
-- limpiar
-- modern
-- navegación
-- next
-- obsoleto
-- organizar
+- lockfile
+- main
+- multi
+- necesario
+- node
+- normalizar
+- order
+- packages
 - para
-- pasos
-- permissions
-- principal
-- protocol
-- proximos
-- proyectos
-- react
+- paso
+- payment
+- pnpm
+- producción
+- raíz
+- relativas
 - remover
-- report
-- reporte
+- reproducibilidad
 - resolver
-- resuelve
-- resumen
-- seguras
+- runner
+- rutas
 - service
-- sincronizar
-- summary
-- tareas
-- typescript
-- técnico
+- setup
+- simplificar
+- stage
+- sudo
+- todas
+- tools
 - ubuntu
-- versiones
-- vscode
-- vulnerabilidad
+- usar
+- verificación
+- volver
 - workflow
-- yaml
 
