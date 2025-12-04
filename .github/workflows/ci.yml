@@ -19,14 +19,12 @@ jobs:
 
     steps:
       # =============================
-      #       Install tar (required by checkout)
+      #       Cache APT packages (installs tar if needed)
       # =============================
-      - name: Install tar
-        shell: bash
-        run: |
-          apt-get update -qq 2>/dev/null || true
-          apt-get install -qq -y tar gzip 2>/dev/null || echo "tar/gzip may already be installed"
-          which tar || echo "tar not found after install attempt"
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: tar gzip git
+          version: 1.0
 
       # =============================
       #       Checkout Repo
