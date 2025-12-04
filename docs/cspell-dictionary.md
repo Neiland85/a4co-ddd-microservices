@@ -1,23 +1,21 @@
 # Diccionario del Proyecto
 
-Última sincronización: 4/12/2025, 5:16:16
+Última sincronización: 4/12/2025, 5:16:26
 
 ---
 ### User (global VSCode) (4)
-- evita
-- incluye
-- innecesarios
-- permissions
+- detalle
+- documentacion
+- indice
+- técnico
 
-### Workspace (proyecto local) (6)
-- evita
-- incluye
-- innecesarios
-- instalación
-- permissions
-- ubuntu
+### Workspace (proyecto local) (4)
+- detalle
+- documentacion
+- indice
+- técnico
 
-### Commits recientes detectados (73)
+### Commits recientes detectados (87)
 - actions
 - actualizar
 - archivo
@@ -27,6 +25,8 @@
 - client
 - como
 - compiló
+- completada
+- completion
 - compose
 - config
 - configuración
@@ -38,31 +38,37 @@
 - dashboard
 - defecto
 - deps
+- detalle
 - dictionary
 - docker
 - dockerfile
 - dockerignore
-- documentation
+- documentacion
+- documentación
 - duplicado
+- ejecucion
 - errores
 - evita
 - exitosamente
 - fallos
+- fase
 - final
 - flight
 - forever
 - github
 - golden
+- guía
 - gzip
 - incluye
+- indice
 - innecesaria
 - innecesarios
 - instalación
 - jest
 - latest
 - limpiar
-- lists
 - modern
+- navegación
 - next
 - obsoleto
 - optimizado
@@ -72,23 +78,29 @@
 - permissions
 - principal
 - protocol
+- proximos
 - proyectos
 - react
 - ready
-- reflect
 - remover
+- report
+- reporte
 - resolver
 - resuelve
+- resumen
 - seguras
 - service
-- synchronization
+- sincronizar
+- summary
+- tareas
 - tests
 - typescript
+- técnico
 - ubuntu
 - verde
 - versiones
+- vscode
 - vulnerabilidad
-- word
 - workflow
 - yaml
 

@@ -1,7 +1,31 @@
+import { PaymentService } from './payment.service';
+
 describe('PaymentService', () => {
+  let service: PaymentService;
+  let mockProcessPaymentUseCase: any;
+  let mockRefundPaymentUseCase: any;
+  let mockPaymentRepository: any;
+
+  beforeEach(() => {
+    mockProcessPaymentUseCase = {
+      execute: jest.fn(),
+    };
+    mockRefundPaymentUseCase = {
+      execute: jest.fn(),
+    };
+    mockPaymentRepository = {
+      findById: jest.fn(),
+      save: jest.fn(),
+    };
+    service = new PaymentService(
+      mockProcessPaymentUseCase,
+      mockRefundPaymentUseCase,
+      mockPaymentRepository,
+    );
+  });
+
   describe('getPaymentById', () => {
     it('should return payment by id', async () => {
-      // ✅ Usar un UUID válido en lugar de 'pay_123'
       const validPaymentId = '550e8400-e29b-41d4-a716-446655440000';
 
       const mockPayment = {
@@ -27,7 +51,6 @@ describe('PaymentService', () => {
 
       mockPaymentRepository.findById.mockResolvedValue(mockPayment);
 
-      // ✅ Pasar el UUID válido
       const result = await service.getPaymentById(validPaymentId);
 
       expect(result).toEqual(mockPayment);
