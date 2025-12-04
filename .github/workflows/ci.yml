@@ -19,6 +19,12 @@ jobs:
 
     steps:
       # =============================
+      #       Instalar tar (requerido por actions/checkout)
+      # =============================
+      - name: Install tar
+        run: apt-get update && apt-get install -y tar gzip
+
+      # =============================
       #       Checkout Repo (with Git)
       # =============================
       - name: Checkout repository
