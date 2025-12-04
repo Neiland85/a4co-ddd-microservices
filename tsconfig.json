@@ -45,5 +45,19 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["scripts/**/*.ts", "scripts/**/*.tsx", "tools/**/*.ts", "tools/**/*.tsx"],
-  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts", "**/*.test.ts"],
+  "references": [
+    { "path": "./packages/observability" },
+    { "path": "./packages/shared-utils" },
+    { "path": "./packages/design-system" },
+    { "path": "./apps/auth-service" },
+    { "path": "./apps/gateway" },
+    { "path": "./apps/backend" },
+    { "path": "./apps/order-service" },
+    { "path": "./apps/payment-service" },
+    { "path": "./apps/inventory-service" },
+    { "path": "./apps/notification-service" },
+    { "path": "./apps/product-service" },
+    { "path": "./apps/dashboard-client" }
+  ]
 }
