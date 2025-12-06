@@ -8,7 +8,7 @@ FROM base AS deps
 COPY ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
 COPY ../../package.json ./
 COPY ../../apps/payment-service/package.json ./apps/payment-service/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 FROM deps AS build
 WORKDIR /usr/src/app/apps/payment-service

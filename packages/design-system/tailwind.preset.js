@@ -1,106 +1,93 @@
+/**  A4CO DESIGN SYSTEM — Tailwind Preset (Avanzado)
+ *   Ruta: packages/design-system/tailwind.preset.js
+ */
+
 const plugin = require('tailwindcss/plugin');
 
 module.exports = {
   theme: {
     extend: {
+      /* ---------------------------
+         TOKENS DE COLOR OKLCH
+      --------------------------- */
       colors: {
-        // Tokens de color de marca A4CO
-        a4co: {
-          olive: {
-            50: '#f7f8f3',
-            100: '#eef0e6',
-            200: '#dde2cd',
-            300: '#c6cfa8',
-            400: '#adb985',
-            500: '#94a366',
-            600: '#7a8a4f',
-            700: '#606b40',
-            800: '#4f5736',
-            900: '#434a30',
-            950: '#2a2f1c',
-          },
-          clay: {
-            50: '#faf8f5',
-            100: '#f4f0e8',
-            200: '#e8ddd0',
-            300: '#d9c5b0',
-            400: '#c8a88d',
-            500: '#b8906f',
-            600: '#a67c5e',
-            700: '#8a6650',
-            800: '#705446',
-            900: '#5c463a',
-            950: '#3a2b24',
-          },
-          cream: {
-            50: '#fefcf8',
-            100: '#fdf8f0',
-            200: '#faf0de',
-            300: '#f6e4c4',
-            400: '#f0d49f',
-            500: '#e9c178',
-            600: '#dfa94d',
-            700: '#c8903a',
-            800: '#a37332',
-            900: '#855e2d',
-            950: '#543a1a',
-          },
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: 'var(--card)',
+        'card-foreground': 'var(--card-foreground)',
+        popover: 'var(--popover)',
+        'popover-foreground': 'var(--popover-foreground)',
+        primary: 'var(--primary)',
+        'primary-foreground': 'var(--primary-foreground)',
+        secondary: 'var(--secondary)',
+        'secondary-foreground': 'var(--secondary-foreground)',
+        muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+        accent: 'var(--accent)',
+        'accent-foreground': 'var(--accent-foreground)',
+        destructive: 'var(--destructive)',
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+
+        /* Charts */
+        chart: {
+          1: 'var(--chart-1)',
+          2: 'var(--chart-2)',
+          3: 'var(--chart-3)',
+          4: 'var(--chart-4)',
+          5: 'var(--chart-5)',
         },
-        // Colores semánticos
-        primary: 'var(--a4co-primary)',
-        secondary: 'var(--a4co-secondary)',
-        accent: 'var(--a4co-accent)',
-        success: 'var(--a4co-success)',
-        warning: 'var(--a4co-warning)',
-        danger: 'var(--a4co-danger)',
-        info: 'var(--a4co-info)',
+
+        /* Sidebar */
+        sidebar: {
+          DEFAULT: 'var(--sidebar)',
+          foreground: 'var(--sidebar-foreground)',
+          primary: 'var(--sidebar-primary)',
+          'primary-foreground': 'var(--sidebar-primary-foreground)',
+          accent: 'var(--sidebar-accent)',
+          'accent-foreground': 'var(--sidebar-accent-foreground)',
+          border: 'var(--sidebar-border)',
+          ring: 'var(--sidebar-ring)',
+        },
       },
-      fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
-        serif: ['var(--font-serif)', 'Georgia', 'serif'],
-        mono: ['var(--font-mono)', 'Menlo', 'monospace'],
+
+      /* ---------------------------
+         RADIO & SPACING
+      --------------------------- */
+      borderRadius: {
+        DEFAULT: 'var(--radius)',
+        sm: 'calc(var(--radius) - 2px)',
+        lg: 'calc(var(--radius) + 2px)',
+        xl: 'calc(var(--radius) + 6px)',
       },
-      fontSize: {
-        xs: ['0.75rem', { lineHeight: '1rem' }],
-        sm: ['0.875rem', { lineHeight: '1.25rem' }],
-        base: ['1rem', { lineHeight: '1.5rem' }],
-        lg: ['1.125rem', { lineHeight: '1.75rem' }],
-        xl: ['1.25rem', { lineHeight: '1.75rem' }],
-        '2xl': ['1.5rem', { lineHeight: '2rem' }],
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-        '5xl': ['3rem', { lineHeight: '1' }],
-      },
+
       spacing: {
         18: '4.5rem',
         88: '22rem',
         128: '32rem',
       },
-      borderRadius: {
-        xs: '0.125rem',
-        sm: '0.25rem',
-        md: '0.375rem',
-        lg: '0.5rem',
-        xl: '0.75rem',
-        '2xl': '1rem',
-        '3xl': '1.5rem',
+
+      /* ---------------------------
+         TIPOGRAFÍA
+      --------------------------- */
+      fontFamily: {
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'serif'],
+        mono: ['var(--font-mono)', 'monospace'],
       },
-      boxShadow: {
-        soft: '0 2px 4px 0 rgba(0, 0, 0, 0.05)',
-        base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-      },
+
+      /* ---------------------------
+         ANIMACIONES BASE
+      --------------------------- */
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'fade-out': 'fadeOut 0.5s ease-in-out',
+        'fade-in': 'fadeIn 0.4s ease',
+        'fade-out': 'fadeOut 0.4s ease',
         'slide-in': 'slideIn 0.3s ease-out',
-        'slide-out': 'slideOut 0.3s ease-out',
-        'bounce-in': 'bounceIn 0.5s ease-out',
+        'slide-out': 'slideOut 0.3s ease-in',
         'spin-slow': 'spin 2s linear infinite',
       },
+
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
@@ -111,74 +98,196 @@ module.exports = {
           '100%': { opacity: '0' },
         },
         slideIn: {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(0)' },
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
         },
         slideOut: {
-          '0%': { transform: 'translateY(0)' },
-          '100%': { transform: 'translateY(-100%)' },
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '100%': { transform: 'translateY(-10px)', opacity: '0' },
         },
-        bounceIn: {
-          '0%': { transform: 'scale(0.9)', opacity: '0' },
-          '50%': { transform: 'scale(1.05)' },
-          '100%': { transform: 'scale(1)', opacity: '1' },
+        spinner: {
+          to: { transform: 'rotate(360deg)' },
         },
-      },
-      screens: {
-        xs: '475px',
-        '3xl': '1920px',
       },
     },
   },
+
+  /* ---------------------------
+     PLUGINS PERSONALIZADOS
+  --------------------------- */
   plugins: [
-    // Plugin personalizado para componentes A4CO
-    plugin(function ({ addBase, addComponents, addUtilities, theme }) {
-      // CSS Variables base
+    plugin(function ({ addBase, addComponents, addUtilities }) {
+      /* VARIABLES BASE (ROOT YA EN globals.css) */
       addBase({
+        '*': {
+          'border-color': 'var(--border)',
+        },
         ':root': {
-          '--a4co-primary': theme('colors.a4co.olive.600'),
-          '--a4co-secondary': theme('colors.a4co.clay.600'),
-          '--a4co-accent': theme('colors.a4co.cream.500'),
-          '--a4co-success': '#10b981',
-          '--a4co-warning': '#f59e0b',
-          '--a4co-danger': '#ef4444',
-          '--a4co-info': '#3b82f6',
-          '--font-sans': 'Inter',
-          '--font-serif': 'Merriweather',
-          '--font-mono': 'Fira Code',
+          /* Component Variables */
+          '--btn-padding-y': '0.5rem',
+          '--btn-padding-x': '1rem',
+          '--btn-radius': 'var(--radius)',
+          '--btn-hover-opacity': '0.9',
+          '--btn-active-scale': '0.97',
+
+          '--card-padding': '1.5rem',
+          '--card-radius': 'calc(var(--radius) + 6px)' /* Corresponds to rounded-xl */,
+          '--card-shadow':
+            '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)' /* Corresponds to shadow-sm */,
+
+          '--input-padding-y': '0.5rem',
+          '--input-padding-x': '1rem',
+          '--input-radius': 'calc(var(--radius) - 2px)' /* Corresponds to rounded-md */,
+          '--input-ring-width': '2px',
+
+          /* Input Sizes */
+          '--input-h': '2.5rem' /* h-10 */,
+          '--input-sm-h': '2.25rem' /* h-9 */,
+          '--input-lg-h': '3rem' /* h-12 */,
+
+          /* Button Sizes */
+          '--btn-h': '2.5rem' /* h-10 */,
+          '--btn-sm-h': '2.25rem' /* h-9 */,
+          '--btn-lg-h': '3rem' /* h-12 */,
         },
       });
 
-      // Componentes base
+      /* COMPONENTES REUSABLES */
       addComponents({
         '.btn-a4co': {
-          '@apply px-4 py-2 rounded-lg font-medium transition-all duration-200': {},
-          '@apply hover:shadow-md active:scale-95': {},
+          /* Base styles for all buttons */
+          '@apply inline-flex items-center justify-center font-medium transition-all duration-150':
+            {},
+          height: 'var(--btn-h)',
+          'padding-block': 'var(--btn-padding-y)',
+          'padding-inline': 'var(--btn-padding-x)',
+          'border-radius': 'var(--btn-radius)',
+          '&:hover': {
+            opacity: 'var(--btn-hover-opacity)',
+          },
+          '&:active': {
+            transform: 'scale(var(--btn-active-scale))',
+          },
+          '&:disabled': {
+            '@apply pointer-events-none': {},
+            opacity: '0.65',
+          },
+          /* Default to primary variant */
+          '@apply bg-primary text-primary-foreground': {},
         },
+
+        /* Color Variants */
+        '.btn-secondary': {
+          '@apply bg-secondary text-secondary-foreground': {},
+        },
+        '.btn-destructive': {
+          '@apply bg-destructive text-destructive-foreground': {},
+        },
+        '.btn-warning': {
+          '@apply bg-warning text-warning-foreground': {},
+        },
+
+        /* Size Variants */
+        '.btn-sm': {
+          '@apply text-sm': {},
+          height: 'var(--btn-sm-h)',
+          '--btn-padding-x': '0.75rem' /* px-3 */,
+        },
+        '.btn-lg': {
+          '@apply text-lg': {},
+          height: 'var(--btn-lg-h)',
+          '--btn-padding-x': '2rem' /* px-8 */,
+        },
+        '.btn-icon': {
+          width: 'var(--btn-h)',
+          '--btn-padding-x': '0',
+        },
+
+        /* Style Variants */
+        '.btn-outline': {
+          '@apply border bg-transparent': {},
+          '--btn-bg-color': 'var(--background)',
+          '--btn-text-color': 'var(--foreground)',
+          'background-color': 'var(--btn-bg-color)',
+          color: 'var(--btn-text-color)',
+          '&:hover': {
+            '@apply bg-accent text-accent-foreground': {},
+            opacity: '1' /* Override base hover opacity for a fill effect */,
+          },
+        },
+        '.btn-ghost': {
+          '@apply bg-transparent': {},
+          '&:hover': {
+            '@apply bg-accent text-accent-foreground': {},
+            opacity: '1',
+          },
+        },
+
         '.card-a4co': {
-          '@apply bg-white rounded-xl shadow-base p-6': {},
-          '@apply border border-gray-100': {},
+          '@apply border': {},
+          'background-color': 'var(--card)',
+          color: 'var(--card-foreground)',
+          padding: 'var(--card-padding)',
+          'border-radius': 'var(--card-radius)',
+          'box-shadow': 'var(--card-shadow)',
         },
+
         '.input-a4co': {
-          '@apply w-full px-4 py-2 rounded-lg border border-gray-300': {},
-          '@apply focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent': {},
+          '@apply w-full border bg-background focus:outline-none': {},
+          height: 'var(--input-h)',
+          'padding-block': 'var(--input-padding-y)',
+          'padding-inline': 'var(--input-padding-x)',
+          'border-radius': 'var(--input-radius)',
+          '&:focus': {
+            'box-shadow': '0 0 0 var(--input-ring-width) var(--ring)',
+          },
+        },
+        '.input-sm': {
+          '@apply text-sm': {},
+          height: 'var(--input-sm-h)',
+        },
+        '.input-lg': {
+          '@apply text-base': {},
+          height: 'var(--input-lg-h)',
+          /* Increase horizontal padding for larger inputs */
+          '--input-padding-x': '1.25rem',
+        },
+
+        /* CHECKBOX COMPONENT */
+        '.checkbox-a4co': {
+          '@apply peer h-4 w-4 shrink-0 rounded-sm border border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50':
+            {},
+          '&[data-state="checked"]': {
+            '@apply bg-primary text-primary-foreground': {},
+          },
+        },
+
+        /* TOOLTIP COMPONENT */
+        '.tooltip-a4co': {
+          '@apply z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md':
+            {},
+          '&[data-state="open"]': {
+            '@apply animate-fade-in animate-slide-in': {},
+          },
+          '&[data-state="closed"]': {
+            '@apply animate-fade-out animate-slide-out': {},
+          },
         },
       });
 
-      // Utilidades personalizadas
+      /* UTILIDADES EXTRAS */
       addUtilities({
         '.text-balance': {
           'text-wrap': 'balance',
         },
-        '.animate-delay-100': {
-          'animation-delay': '100ms',
+        '.center-flex': {
+          display: 'flex',
+          'align-items': 'center',
+          'justify-content': 'center',
         },
-        '.animate-delay-200': {
-          'animation-delay': '200ms',
-        },
-        '.animate-delay-300': {
-          'animation-delay': '300ms',
-        },
+        '.animate-delay-100': { 'animation-delay': '100ms' },
+        '.animate-delay-200': { 'animation-delay': '200ms' },
+        '.animate-delay-300': { 'animation-delay': '300ms' },
       });
     }),
   ],

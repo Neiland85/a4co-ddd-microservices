@@ -48,14 +48,10 @@ async function bootstrap() {
     })
   );
 
-  // Braces security middleware
-  const bracesMiddleware = new BracesSecurityMiddleware({
-    maxExpansionSize: 50,
-    maxRangeSize: 10,
-    monitoringEnabled: true,
-  });
-  app.use(bracesMiddleware.validateRequestBody());
-  app.use(bracesMiddleware.validateQueryParams());
+// --- Braces middleware eliminado (ya no existe en shared-utils) ---
+// const bracesMiddleware = new BracesSecurityMiddleware({ ... });
+// app.use(bracesMiddleware.validateRequestBody());
+// app.use(bracesMiddleware.validateQueryParams());
 
   // CORS configuration
   app.enableCors({

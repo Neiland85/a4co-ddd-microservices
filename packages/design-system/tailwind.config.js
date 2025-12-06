@@ -8,6 +8,7 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx}',
     './index.html',
   ],
+  darkMode: 'class',
   presets: [require('./tailwind.preset.js')],
   theme: {
     extend: {},
