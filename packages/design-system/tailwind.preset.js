@@ -29,6 +29,9 @@ module.exports = {
         border: 'var(--border)',
         input: 'var(--input)',
         ring: 'var(--ring)',
+        
+        /* Fix for ring-border compatibility (used in some components) */
+        'ring-border': 'var(--border)',
 
         /* Charts */
         chart: {
