@@ -9,9 +9,6 @@ on:
 
 jobs:
   # =============================================================
-  # BUILD + LINT + TYPECHECK (DENTRO DEL CONTENEDOR)
-  # =============================================================
-  # =============================================================
   # BUILD + LINT + TYPECHECK
   # =============================================================
   build_and_analyze:
@@ -35,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
 
       # ---------------------------------------------------------
-      # Setup Node + pnpm en host (sin contenedor aquí)
+      # Setup Node + PNPM EN HOST
       # ---------------------------------------------------------
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -50,40 +47,32 @@ jobs:
           run_install: false
 
       # ---------------------------------------------------------
-      # Ejecutar TODO dentro del contenedor Alpine
+      # Install deps workspace
       # ---------------------------------------------------------
-      - name: Run build tasks inside container
-        uses: addnab/docker-run-action@v3
-        with:
-          image: node:22-alpine
-          options: -v ${{ github.workspace }}:/workspace -w /workspace
-          run: |
-            echo "Node version inside container:"
-            node -v
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-            # Habilitar corepack
-            corepack enable
+      - name: Generate Prisma clients
+        run: pnpm -w exec prisma generate
 
-            # Instalar pnpm DENTRO del contenedor
-            echo "Installing pnpm inside container..."
-            npm install -g pnpm@10.14.0
+      # ---------------------------------------------------------
+      # LINT
+      # ---------------------------------------------------------
+      - name: Lint
+        run: pnpm -w run lint
 
-            pnpm --version
+      # ---------------------------------------------------------
+      # TYPECHECK
+      # ---------------------------------------------------------
+      - name: Type-check
+        run: pnpm -w run type-check
 
-            # Instalar dependencias
-            pnpm install --no-frozen-lockfile || true
-
-            # Prisma
-            pnpm -w exec prisma generate || true
-
-            # Lint
-            pnpm -w run lint || echo "Lint warnings"
-
-            # Type-check
-            pnpm -w run type-check || echo "TS warnings"
-
-            # Build all except auth-service
-            pnpm -r --filter '!@a4co/auth-service' run build || echo "Build warnings"
+      # ---------------------------------------------------------
+      # BUILD TODO EXCEPTO AUTH-SERVICE
+      # pnpm v10 → reemplaza "--ignore" por "--filter '!package'"
+      # ---------------------------------------------------------
+      - name: Build all services except auth
+        run: pnpm -r --filter '!@a4co/auth-service' run build
 
 
   # =============================================================
