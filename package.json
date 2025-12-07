@@ -16,6 +16,7 @@
     "test:all": "NODE_OPTIONS='--max-old-space-size=4096' turbo run test -- --runInBand",
     "lint": "turbo run lint",
     "lint:fix": "pnpm -r run lint:fix",
+    "type-check": "turbo run type-check",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules --ignore .git",
     "lint:md:fix": "markdownlint --fix \"**/*.md\" --ignore node_modules --ignore .git",
     "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
