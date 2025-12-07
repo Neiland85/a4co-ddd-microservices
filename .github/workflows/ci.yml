@@ -83,7 +83,7 @@ jobs:
             pnpm -w run type-check || echo "TS warnings"
 
             # Build all except auth-service
-            pnpm -r --ignore @a4co/auth-service run build || echo "Build warnings"
+            pnpm -r --filter '!@a4co/auth-service' run build || echo "Build warnings"
 
 
   # =============================================================
