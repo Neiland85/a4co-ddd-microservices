@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # ---------------------------------------------------------
+      # Prisma generate por servicio
+      # ---------------------------------------------------------
       - name: Generate Prisma clients
         run: |
           pnpm --filter @a4co/auth-service exec prisma generate || true
@@ -73,7 +76,6 @@ jobs:
 
       # ---------------------------------------------------------
       # BUILD TODO EXCEPTO AUTH-SERVICE
-      # pnpm v10 → reemplaza "--ignore" por "--filter '!package'"
       # ---------------------------------------------------------
       - name: Build all services except auth
         run: pnpm -r --filter '!@a4co/auth-service' run build
@@ -96,12 +98,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # PNPM primero
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
         with:
           version: 10.14.0
           run_install: false
 
+      # Node después (cache funciona aquí)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
