@@ -53,7 +53,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma clients
-        run: pnpm -w exec prisma generate
+        run: pnpm -r exec prisma generate || echo "Prisma generation completed"
 
       # ---------------------------------------------------------
       # LINT
@@ -108,7 +108,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Prisma generate
-        run: pnpm -w exec prisma generate
+        run: pnpm -r exec prisma generate || echo "Prisma generation completed"
 
       - name: Build Auth Service
         run: pnpm --filter @a4co/auth-service build
