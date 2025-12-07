@@ -14,6 +14,10 @@
       "outputs": [],
       "inputs": ["src/**", "*.ts", "*.tsx", "*.js", "*.jsx", ".eslintrc*", "eslint.config.*"]
     },
+    "type-check": {
+      "outputs": [],
+      "inputs": ["src/**", "*.ts", "*.tsx", "tsconfig.json", "tsconfig.*.json"]
+    },
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"],
