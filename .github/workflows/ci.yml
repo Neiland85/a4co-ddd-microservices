@@ -53,13 +53,17 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma clients
-        run: pnpm -r exec prisma generate || echo "Prisma generation completed"
+        run: |
+          pnpm --filter @a4co/auth-service exec prisma generate || true
+          pnpm --filter @a4co/order-service exec prisma generate || true
+          pnpm --filter @a4co/payment-service exec prisma generate || true
+          pnpm --filter @a4co/inventory-service exec prisma generate || true
 
       # ---------------------------------------------------------
       # LINT
       # ---------------------------------------------------------
       - name: Lint
-        run: pnpm -w run lint
+        run: NODE_OPTIONS='--max-old-space-size=4096' pnpm -w run lint
 
       # ---------------------------------------------------------
       # TYPECHECK

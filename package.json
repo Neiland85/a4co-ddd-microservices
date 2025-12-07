@@ -14,7 +14,7 @@
     "build:all": "turbo run build",
     "test": "NODE_OPTIONS='--max-old-space-size=4096' pnpm -r --ignore=backend run test -- --runInBand",
     "test:all": "NODE_OPTIONS='--max-old-space-size=4096' turbo run test -- --runInBand",
-    "lint": "turbo run lint -- --max-old-space-size=4096",
+    "lint": "turbo run lint",
     "lint:fix": "pnpm -r run lint:fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules --ignore .git",
     "lint:md:fix": "markdownlint --fix \"**/*.md\" --ignore node_modules --ignore .git",
