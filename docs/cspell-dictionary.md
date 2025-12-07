@@ -1,16 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 7/12/2025, 9:26:33
+Última sincronización: 7/12/2025, 9:27:17
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (1)
+- implementation
 
-### Commits recientes detectados (109)
-- added
+### Commits recientes detectados (90)
 - analyze
 - applies
 - auth
@@ -21,17 +20,10 @@ Sin nuevas palabras.
 - cache
 - change
 - check
-- checking
 - command
-- commit
 - complete
-- coverage
-- cspell
-- date
 - deploy
 - deprecated
-- dictionary
-- documentation
 - echo
 - enable
 - error
@@ -41,6 +33,7 @@ Sin nuevas palabras.
 - executable
 - failure
 - fallback
+- feedback
 - file
 - filter
 - final
@@ -51,7 +44,7 @@ Sin nuevas palabras.
 - generate
 - github
 - ignore
-- improves
+- implementation
 - incompatible
 - initial
 - install
@@ -60,11 +53,7 @@ Sin nuevas palabras.
 - inventory
 - jobs
 - json
-- keeps
-- latest
 - lint
-- list
-- lists
 - locate
 - mark
 - memory
@@ -87,11 +76,10 @@ Sin nuevas palabras.
 - prevent
 - prisma
 - properly
-- recent
 - recommended
-- reflect
 - remove
 - replace
+- review
 - root
 - schema
 - script
@@ -101,22 +89,15 @@ Sin nuevas palabras.
 - setup
 - size
 - space
-- spell
 - stable
-- synchronized
 - syntax
-- terms
-- this
 - turbo
 - type
 - unable
 - users
 - uses
 - verification
-- vocabulary
-- vscode
 - with
-- word
 - workspaces
 - yaml
 
