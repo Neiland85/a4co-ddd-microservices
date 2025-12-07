@@ -1,30 +1,13 @@
 # Diccionario del Proyecto
 
-Última sincronización: 7/12/2025, 9:26:21
+Última sincronización: 7/12/2025, 9:26:33
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (18)
-- analyze
-- applies
-- echo
-- excludes
-- exec
-- executable
-- incompatible
-- jobs
-- keeps
-- list
-- locate
-- negation
-- parsing
-- recommended
-- synchronized
-- syntax
-- unable
-- workspaces
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
 ### Commits recientes detectados (109)
 - added
@@ -39,9 +22,9 @@ Sin nuevas palabras.
 - change
 - check
 - checking
-- clean
 - command
 - commit
+- complete
 - coverage
 - cspell
 - date
@@ -65,7 +48,6 @@ Sin nuevas palabras.
 - flag
 - found
 - from
-- functional
 - generate
 - github
 - ignore
@@ -84,6 +66,7 @@ Sin nuevas palabras.
 - list
 - lists
 - locate
+- mark
 - memory
 - monorepo
 - negation
@@ -109,7 +92,6 @@ Sin nuevas palabras.
 - reflect
 - remove
 - replace
-- restore
 - root
 - schema
 - script
@@ -130,6 +112,7 @@ Sin nuevas palabras.
 - unable
 - users
 - uses
+- verification
 - vocabulary
 - vscode
 - with
