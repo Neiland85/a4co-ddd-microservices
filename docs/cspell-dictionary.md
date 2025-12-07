@@ -1,32 +1,38 @@
 # Diccionario del Proyecto
 
-Última sincronización: 7/12/2025, 20:11:07
+Última sincronización: 7/12/2025, 20:13:33
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (15)
-- alias
-- border
-- color
-- destructive
-- foreground
-- incomplete
-- layer
-- note
-- other
-- palette
-- preset
-- ring
-- still
-- tokens
-- warning
+### Workspace (proyecto local) (17)
+- acceptance
+- analyzed
+- architectural
+- completes
+- criteria
+- days
+- decision
+- devs
+- estimation
+- execute
+- investment
+- matrix
+- maturity
+- points
+- solid
+- violations
+- weeks
 
-### Commits recientes detectados (74)
+### Commits recientes detectados (103)
+- acceptance
+- action
 - actionable
 - additional
 - alias
+- analyzed
+- architectural
 - architecture
 - audit
 - authored
@@ -37,18 +43,29 @@ Sin nuevas palabras.
 - color
 - compatibility
 - complete
+- completes
+- comprehensive
 - config
+- criteria
+- critical
 - dashboard
+- days
+- decision
 - design
 - destructive
+- devs
 - document
 - enhanced
 - eslint
 - eslintignore
+- estimation
 - exclude
+- execute
+- executive
 - favor
 - file
 - files
+- findings
 - foreground
 - full
 - github
@@ -61,20 +78,26 @@ Sin nuevas palabras.
 - incomplete
 - initial
 - invalid
+- investment
 - json
 - layer
+- matrix
+- maturity
 - missing
 - more
 - namespace
 - neiland
+- next
 - noreply
 - note
 - other
 - palette
 - paths
 - patterns
+- phase
 - phases
 - plan
+- points
 - preset
 - prioritized
 - project
@@ -83,11 +106,17 @@ Sin nuevas palabras.
 - removed
 - requires
 - ring
+- service
+- services
+- solid
 - spinner
+- steps
 - still
 - structured
+- summary
 - system
 - tailwind
+- this
 - tokens
 - tsconfig
 - typescript
@@ -95,7 +124,9 @@ Sin nuevas palabras.
 - usage
 - users
 - variables
+- violations
 - warning
+- weeks
 - which
 - with
 
