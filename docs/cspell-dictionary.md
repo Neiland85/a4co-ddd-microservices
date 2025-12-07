@@ -1,26 +1,18 @@
 # Diccionario del Proyecto
 
-Última sincronización: 7/12/2025, 20:01:30
+Última sincronización: 7/12/2025, 20:04:51
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (12)
-- additional
-- architecture
-- blocks
-- document
-- favor
-- full
-- ignores
-- more
-- namespace
-- react
-- spinner
-- structured
+### Workspace (proyecto local) (3)
+- actionable
+- phases
+- prioritized
 
-### Commits recientes detectados (45)
+### Commits recientes detectados (48)
+- actionable
 - additional
 - architecture
 - audit
@@ -51,7 +43,9 @@ Sin nuevas palabras.
 - noreply
 - paths
 - patterns
+- phases
 - plan
+- prioritized
 - project
 - react
 - references
