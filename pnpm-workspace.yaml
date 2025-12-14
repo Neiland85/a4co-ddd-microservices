@@ -1,10 +1,6 @@
 packages:
   - apps/*
   - packages/*
-  - infra
-  - frontend
-  - backend
-  - frontend-monolith
 
 onlyBuiltDependencies:
   - '@firebase/util'
