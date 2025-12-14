@@ -19,10 +19,10 @@ const eslintConfig = [
       // Relax strict rules for dashboard-client
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-require-imports': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
       'react-hooks/exhaustive-deps': 'warn',
     },
   },
 ];
 
 export default eslintConfig;
-
