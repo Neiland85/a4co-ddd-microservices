@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 14/12/2025, 21:52:12
+Última sincronización: 14/12/2025, 21:53:15
 
 ---
 ### User (global VSCode)
@@ -9,7 +9,7 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (209)
+### Commits recientes detectados (212)
 - added
 - address
 - admin
@@ -21,6 +21,7 @@ Sin nuevas palabras.
 - assistant
 - auth
 - authored
+- automated
 - avoid
 - before
 - build
@@ -50,11 +51,13 @@ Sin nuevas palabras.
 - correctly
 - created
 - critical
+- cspell
 - defined
 - dependency
 - deploy
 - deps
 - description
+- dictionary
 - directly
 - documentation
 - each
