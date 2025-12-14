@@ -11,6 +11,7 @@ coverage/
 # Build outputs
 dist/
 build/
+.next/
 *.tsbuildinfo
 
 # TypeScript compiled output in source directories
