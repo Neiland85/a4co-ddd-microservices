@@ -1,42 +1,16 @@
 # Diccionario del Proyecto
 
-Última sincronización: 14/12/2025, 5:04:12
+Última sincronización: 14/12/2025, 5:08:09
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (28)
-- agents
-- assistant
-- caret
-- claude
-- controllers
-- echo
-- flow
-- guidelines
-- ignoring
-- included
-- isolatedmodules
-- jobs
-- kubernetes
-- legacy
-- logger
-- mocks
-- port
-- probes
-- propagation
-- restructured
-- server
-- swagger
-- tracing
-- transformignorepatterns
-- unification
-- unified
-- userid
-- uuid
+### Workspace (proyecto local) (2)
+- completion
+- description
 
-### Commits recientes detectados (103)
+### Commits recientes detectados (106)
 - added
 - address
 - agents
@@ -52,12 +26,14 @@ Sin nuevas palabras.
 - color
 - comments
 - compatibility
+- completion
 - config
 - configuration
 - context
 - controllers
 - created
 - deploy
+- description
 - documentation
 - echo
 - endpoints
@@ -120,6 +96,7 @@ Sin nuevas palabras.
 - services
 - shared
 - spec
+- status
 - swagger
 - sync
 - that
