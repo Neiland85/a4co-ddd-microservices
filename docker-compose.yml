@@ -99,6 +99,10 @@ services:
       # Use env vars: export PAYMENT_DB_PASSWORD="secure-password"
       - DATABASE_URL=postgresql://postgres:${PAYMENT_DB_PASSWORD:-CHANGE_ME}@postgres:5432/payment_db?schema=public
       - NATS_URL=nats://nats:4222
+      # Simulated payment for testing (90% success rate)
+      - USE_SIMULATED_PAYMENT=${USE_SIMULATED_PAYMENT:-true}
+      - PAYMENT_SUCCESS_RATE=${PAYMENT_SUCCESS_RATE:-0.9}
+      # Real Stripe credentials (when USE_SIMULATED_PAYMENT=false)
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_mock}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_mock}
     depends_on:

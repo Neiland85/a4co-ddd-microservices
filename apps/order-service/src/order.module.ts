@@ -10,6 +10,7 @@ import { OrderService } from './application/services/service.js';
 // Infrastructure Layer
 import { InMemoryOrderRepository } from './infrastructure/repositories/order.repository.js';
 import { OrderController } from './presentation/controllers/controller.js';
+import { PaymentEventsHandler } from './infrastructure/event-handlers/payment-events.handler.js';
 
 // Metrics & Observability
 import { OrderMetricsService } from './infrastructure/metrics/order-metrics.service.js';
@@ -35,7 +36,7 @@ import { OrderMetricsService } from './infrastructure/metrics/order-metrics.serv
     ]),
   ],
 
-  controllers: [OrderController],
+  controllers: [OrderController, PaymentEventsHandler],
 
   providers: [
     // Application Services

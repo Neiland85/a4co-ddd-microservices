@@ -1,0 +1,23 @@
+{
+  "name": "@a4co/shared-events",
+  "version": "1.0.0",
+  "description": "Shared event definitions for A4CO microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "events",
+    "microservices",
+    "ddd",
+    "nats"
+  ],
+  "author": "A4CO Team",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
