@@ -75,6 +75,7 @@ jobs:
         run: |
           if find . -name "schema.prisma" | grep -q .; then
             pnpm -w exec prisma generate
+            pnpm --filter "@a4co/*" exec prisma generate || true
           else
             echo "No Prisma schema found, skipping generate."
           fi
@@ -116,6 +117,7 @@ jobs:
         run: |
           if find . -name "schema.prisma" | grep -q .; then
             pnpm -w exec prisma generate
+            pnpm --filter "@a4co/*" exec prisma generate || true
           else
             echo "No Prisma schema found, skipping generate."
           fi
