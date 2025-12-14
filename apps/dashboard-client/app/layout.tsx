@@ -3,6 +3,13 @@ import { Header, Sidebar } from '@/components/layout';
 import { AuthProvider } from '@dashboard/lib/auth-context';
 import clsx from 'clsx';
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
 
 // 🧾 Metadatos para SEO / PWA
 export const metadata: Metadata = {
@@ -24,6 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <html lang="es" suppressHydrationWarning>
         <body
           className={clsx(
+            inter.variable,
             'font-sans',
             'bg-background text-foreground flex min-h-screen antialiased',
           )}
@@ -40,6 +48,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="es" suppressHydrationWarning>
       <body
         className={clsx(
+          inter.variable,
           'font-sans',
           'bg-background text-foreground flex min-h-screen antialiased',
         )}

@@ -35,7 +35,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/swagger": "^11.2.1",
     "@prisma/adapter-pg": "^7.0.0",
-    "@prisma/client": "^6.19.0",
+    "@prisma/client": "6.19.0",
     "@sentry/node": "8.31.0",
     "@sentry/profiling-node": "8.31.0",
     "cors": "^2.8.5",
