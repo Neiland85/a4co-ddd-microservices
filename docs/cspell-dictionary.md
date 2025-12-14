@@ -1,103 +1,58 @@
 # Diccionario del Proyecto
 
-Última sincronización: 7/12/2025, 9:27:17
+Última sincronización: 14/12/2025, 21:11:52
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (1)
-- implementation
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (90)
-- analyze
-- applies
+### Commits recientes detectados (45)
 - auth
-- authored
-- before
-- both
-- build
-- cache
-- change
-- check
+- bridge
+- client
 - command
-- complete
-- deploy
-- deprecated
-- echo
-- enable
-- error
+- comment
+- config
+- dashboard
+- deps
+- designed
+- disable
 - eslint
-- excludes
-- exec
-- executable
-- failure
-- fallback
-- feedback
-- file
-- filter
-- final
-- fixes
-- flag
-- found
+- eslintrc
+- flat
+- flatcompat
+- format
 - from
-- generate
-- github
-- ignore
-- implementation
-- incompatible
-- initial
-- install
-- instead
-- invalid
-- inventory
-- jobs
-- json
+- globals
+- hooks
+- imports
 - lint
-- locate
-- mark
-- memory
-- monorepo
-- negation
-- neiland
+- lock
+- missing
+- next
 - node
-- noreply
-- only
-- option
-- options
-- order
-- package
-- parsing
-- pattern
-- payment
-- pipeline
-- plan
+- observability
+- plugin
 - pnpm
-- prevent
-- prisma
-- properly
-- recommended
+- proper
+- react
+- relax
+- relaxation
 - remove
-- replace
-- review
-- root
-- schema
-- script
+- require
+- rules
 - service
-- services
-- settings
-- setup
-- size
-- space
-- stable
-- syntax
-- turbo
-- type
-- unable
-- users
-- uses
-- verification
+- typescript
+- undefined
+- unused
+- user
+- using
+- vars
+- warnings
 - with
-- workspaces
+- wrapper
 - yaml
 
