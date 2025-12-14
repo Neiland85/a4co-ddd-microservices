@@ -165,8 +165,7 @@ export function withTracing<P extends object>(
             timestamp: new Date().toISOString(),
           });
         }
-        // Build dependencies safely
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // Build dependencies safely - originally used react-hooks/exhaustive-deps
       },
       (() => {
         const deps: unknown[] = [span];

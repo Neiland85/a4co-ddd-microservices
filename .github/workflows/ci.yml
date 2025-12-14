@@ -40,7 +40,7 @@ jobs:
         run: pnpm --filter "./packages/*" run lint
 
       - name: Run ESLint on apps
-        run: pnpm --filter "./apps/*" run lint --if-present
+        run: pnpm --filter "./apps/*" --if-present run lint
 
   # =============================================================
   #  Test - Ejecuta pruebas unitarias
