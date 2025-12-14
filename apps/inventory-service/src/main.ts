@@ -1,55 +1,39 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import helmet from 'helmet';
-import morgan from 'morgan';
+import { Logger } from '@nestjs/common';
+import {
+  createApp,
+  getPort,
+  setupSwagger,
+  createStandardSwaggerConfig,
+} from '@a4co/shared-utils';
 import { InventoryModule } from './inventory.module';
 
+const logger = new Logger('InventoryService');
+
 async function bootstrap() {
-  const app = await NestFactory.create(InventoryModule, {
-    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+  // === APP (usando shared-utils) ===
+  const app = await createApp(InventoryModule, {
+    serviceName: 'Inventory Service',
+    port: 3006,
+    globalPrefix: 'api/inventory',
+    enableSwagger: true,
   });
 
-  // Security
-  app.use(helmet());
-
-  // Logging
-  app.use(morgan('combined'));
-
-  // CORS
-  app.enableCors({
-    origin: process.env['CORS_ORIGIN'] || '*',
-    credentials: true,
-  });
-
-  // Validation
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
+  // === SWAGGER ===
+  setupSwagger(
+    app,
+    {
+      ...createStandardSwaggerConfig(
+        'Inventory Service',
+        'Gestión de inventario para a4co-ddd-microservices',
+        '1.0',
+        ['inventory', 'products', 'reservations']
+      ),
+      path: 'api/inventory/docs',
+    }
   );
 
-    // API prefix
-    app.setGlobalPrefix('api/inventory');
-
-    // Swagger documentation
-    const config = new DocumentBuilder()
-      .setTitle('Inventory Service API')
-      .setDescription('Gestión de inventario para a4co-ddd-microservices')
-      .setVersion('1.0')
-      .addTag('inventory')
-      .addTag('products')
-      .addTag('reservations')
-      .addBearerAuth()
-      .build();
-
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/inventory/docs', app, document);
-
-    const port = Number(process.env['PORT']) || 3006;
-    await app.listen(port);
+  const port = getPort({ serviceName: 'Inventory Service', port: 3006 });
+  await app.listen(port);
 
   console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -67,5 +51,8 @@ async function bootstrap() {
   `);
 }
 
-bootstrap();
+bootstrap().catch((err) => {
+  logger.error('Error al iniciar Inventory Service:', err);
+  process.exit(1);
+});
 

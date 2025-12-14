@@ -8,6 +8,24 @@ export { DomainEvent } from "./domain-event";
 export { AbstractUseCase, UseCase } from "./use-case";
 export { ValueObject } from "./value-object";
 
+// Base patterns (new consolidated base classes)
+export * from "./base";
+
+// Configuration utilities
+export * from "./config";
+
+// Filters
+export * from "./filters";
+
+// Decorators
+export * from "./decorators";
+
+// Validators
+export * from "./validators";
+
+// DTOs
+export * from "./dto";
+
 // Events
 export { NatsEventBus } from "./events/nats-event-bus";
 

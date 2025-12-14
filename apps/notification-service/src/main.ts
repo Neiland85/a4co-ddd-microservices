@@ -1,48 +1,38 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import helmet from 'helmet';
+import { Logger } from '@nestjs/common';
+import {
+  createApp,
+  getPort,
+  setupSwagger,
+  createStandardSwaggerConfig,
+} from '@a4co/shared-utils';
 import { NotificationModule } from './notification.module';
 
+const logger = new Logger('NotificationService');
+
 async function bootstrap() {
-  const app = await NestFactory.create(NotificationModule, {
-    logger: ['log', 'error', 'warn', 'debug'],
+  // === APP (usando shared-utils) ===
+  const app = await createApp(NotificationModule, {
+    serviceName: 'Notification Service',
+    port: 3007,
+    globalPrefix: 'api/notifications',
+    enableSwagger: true,
   });
 
-  // Security
-  app.use(helmet());
-
-  // CORS
-  app.enableCors({
-    origin: process.env['CORS_ORIGIN'] || '*',
-    credentials: true,
-  });
-
-  // Validation
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
+  // === SWAGGER ===
+  setupSwagger(
+    app,
+    {
+      ...createStandardSwaggerConfig(
+        'Notification Service',
+        'Multi-channel notification service for a4co-ddd-microservices',
+        '1.0',
+        ['notifications']
+      ),
+      path: 'api/notifications/docs',
+    }
   );
 
-  // API prefix
-  app.setGlobalPrefix('api/notifications');
-
-  // Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('Notification Service API')
-    .setDescription('Multi-channel notification service for a4co-ddd-microservices')
-    .setVersion('1.0')
-    .addTag('notifications')
-    .addBearerAuth()
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/notifications/docs', app, document);
-
-  const port = process.env['PORT'] || 3007;
+  const port = getPort({ serviceName: 'Notification Service', port: 3007 });
   await app.listen(port);
 
   console.log(`
@@ -66,4 +56,7 @@ Environment:  ${process.env['NODE_ENV'] || 'development'}
   `);
 }
 
-bootstrap();
+bootstrap().catch((err) => {
+  logger.error('Error al iniciar Notification Service:', err);
+  process.exit(1);
+});
