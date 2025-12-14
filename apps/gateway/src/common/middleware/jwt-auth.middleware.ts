@@ -33,7 +33,11 @@ export class JwtAuthMiddleware implements NestMiddleware {
     private readonly skipPaths: string[];
 
     constructor(private readonly configService: ConfigService) {
-        this.jwtSecret = this.configService.get<string>('JWT_SECRET', 'your-secret-key');
+        const secret = this.configService.get<string>('JWT_SECRET');
+        if (!secret) {
+            throw new Error('JWT_SECRET environment variable must be set');
+        }
+        this.jwtSecret = secret;
 
         // Paths that don't require authentication
         this.skipPaths = [

@@ -26,7 +26,11 @@ export class JwtAuthGuard implements CanActivate {
         private readonly reflector: Reflector,
         private readonly configService: ConfigService,
     ) {
-        this.jwtSecret = this.configService.get<string>('JWT_SECRET', 'your-secret-key');
+        const secret = this.configService.get<string>('JWT_SECRET');
+        if (!secret) {
+            throw new Error('JWT_SECRET environment variable is not set. The application cannot start without a JWT secret.');
+        }
+        this.jwtSecret = secret;
     }
 
     canActivate(context: ExecutionContext): boolean {

@@ -68,7 +68,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma clients
-        run: pnpm -w exec prisma generate || true
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm -w exec prisma generate
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
 
       - name: Run tests
         run: |
@@ -104,7 +109,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma clients
-        run: pnpm -w exec prisma generate || true
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm -w exec prisma generate
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
 
       - name: Type check
         run: pnpm -w run type-check
