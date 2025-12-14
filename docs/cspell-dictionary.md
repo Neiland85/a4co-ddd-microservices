@@ -1,34 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 14/12/2025, 21:46:28
+Última sincronización: 14/12/2025, 21:51:09
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (20)
-- cjfg
-- clients
-- directly
-- esbuild
-- firebase
-- ghsa
-- high
-- hmac
-- individual
-- issue
-- munoz
-- neil
-- nextjs
-- profiling
-- sentry
-- storybook
-- trying
-- twilio
-- vite
-- vitest
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (203)
+### Commits recientes detectados (206)
 - added
 - address
 - admin
@@ -36,6 +17,7 @@ Sin nuevas palabras.
 - agents
 - allow
 - apps
+- artifacts
 - assistant
 - auth
 - authored
@@ -48,6 +30,7 @@ Sin nuevas palabras.
 - check
 - cjfg
 - claude
+- clean
 - cleanup
 - cleartimeout
 - client
@@ -99,6 +82,7 @@ Sin nuevas palabras.
 - generation
 - ghsa
 - github
+- gitignore
 - glob
 - globals
 - gmail
