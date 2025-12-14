@@ -17,7 +17,7 @@ async function bootstrap() {
     });
 
     const configService = app.get(ConfigService);
-    const port = configService.get<number>('PORT', 4000);
+    const port = configService.get<number>('PORT', 3000);
     const corsOrigins = configService.get<string>('CORS_ORIGIN', 'http://localhost:3000');
 
     // Security middleware
@@ -62,6 +62,8 @@ async function bootstrap() {
         .addTag('products', 'Products service proxy')
         .addTag('orders', 'Orders service proxy')
         .addTag('inventory', 'Inventory service proxy')
+        .addTag('payments', 'Payments service proxy')
+        .addTag('sagas', 'Saga coordinator service proxy')
         .build();
 
     const document = SwaggerModule.createDocument(app, swaggerConfig);

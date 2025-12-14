@@ -9,7 +9,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthProxyController } from './controllers/auth-proxy.controller';
 import { InventoryProxyController } from './controllers/inventory-proxy.controller';
 import { OrdersProxyController } from './controllers/orders-proxy.controller';
+import { PaymentsProxyController } from './controllers/payments-proxy.controller';
 import { ProductsProxyController } from './controllers/products-proxy.controller';
+import { SagasProxyController } from './controllers/sagas-proxy.controller';
 import { ProxyMiddleware } from './proxy.middleware';
 import { ProxyService } from './proxy.service';
 
@@ -30,6 +32,8 @@ import { ProxyService } from './proxy.service';
         ProductsProxyController,
         OrdersProxyController,
         InventoryProxyController,
+        PaymentsProxyController,
+        SagasProxyController,
     ],
     providers: [ProxyService, ProxyMiddleware],
     exports: [ProxyService],
