@@ -11,6 +11,7 @@ import { PaymentDomainService } from './domain/services/payment-domain.service';
 import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
 import { StripeGateway } from './infrastructure/stripe.gateway';
+import { SimulatedPaymentGateway } from './infrastructure/simulated-payment.gateway';
 import { PaymentController } from './presentation/payment.controller';
 
 @Module({
@@ -36,8 +37,19 @@ import { PaymentController } from './presentation/payment.controller';
     // Core Services
     PaymentService,
     PaymentDomainService,
-    StripeGateway,
     PrismaService,
+
+    // Payment Gateway - Use simulated for testing or Stripe for production
+    {
+      provide: StripeGateway,
+      useFactory: () => {
+        const useSimulated = process.env['USE_SIMULATED_PAYMENT'] === 'true';
+        if (useSimulated) {
+          return new SimulatedPaymentGateway() as any;
+        }
+        return new StripeGateway();
+      },
+    },
 
     // Repositories
     {
