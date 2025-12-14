@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 14/12/2025, 21:51:09
+Última sincronización: 14/12/2025, 21:52:12
 
 ---
 ### User (global VSCode)
@@ -9,7 +9,7 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (206)
+### Commits recientes detectados (209)
 - added
 - address
 - admin
@@ -39,6 +39,7 @@ Sin nuevas palabras.
 - command
 - comments
 - compatibility
+- complete
 - completion
 - config
 - configuration
@@ -71,6 +72,7 @@ Sin nuevas palabras.
 - failure
 - files
 - filter
+- final
 - firebase
 - fixed
 - fixes
@@ -180,6 +182,7 @@ Sin nuevas palabras.
 - status
 - storybook
 - strict
+- successful
 - swagger
 - sync
 - tests
