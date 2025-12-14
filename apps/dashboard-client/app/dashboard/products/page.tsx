@@ -5,6 +5,7 @@ import { Search } from 'lucide-react';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { BuyModal } from '@/components/products/BuyModal';
 import { LoadingPage } from '@/components/common/LoadingSpinner';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@dashboard/lib/context/ToastContext';
 import { productsService } from '@dashboard/lib/services';
 import type { Product } from '@dashboard/lib/types';
@@ -80,13 +81,13 @@ export default function ProductsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-          <input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 z-10" />
+          <Input
             type="text"
             placeholder="Buscar productos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-white"
+            className="pl-10"
           />
         </div>
         

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 import { LoadingButton } from '../common/LoadingSpinner';
 import { useAuth } from '@dashboard/lib/auth-context';
 import { useToast } from '@dashboard/lib/context/ToastContext';
@@ -42,13 +43,12 @@ export function LoginForm() {
         <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
           Email
         </label>
-        <input
+        <Input
           id="email"
           type="email"
           required
           value={credentials.email}
           onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-white"
           placeholder="tu@email.com"
           disabled={isLoading}
         />
@@ -58,13 +58,12 @@ export function LoginForm() {
         <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
           Contraseña
         </label>
-        <input
+        <Input
           id="password"
           type="password"
           required
           value={credentials.password}
           onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-600 dark:text-white"
           placeholder="••••••••"
           disabled={isLoading}
         />
