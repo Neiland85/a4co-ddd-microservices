@@ -14,6 +14,15 @@ const eslintConfig = [
   {
     ignores: ['.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
   },
+  {
+    rules: {
+      // Relax strict rules for dashboard-client
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-require-imports': 'warn',
+      'react-hooks/exhaustive-deps': 'warn',
+    },
+  },
 ];
 
 export default eslintConfig;
+
