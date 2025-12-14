@@ -41,7 +41,7 @@ import { ProxyService } from './proxy.service';
 export class ProxyModule implements NestModule {
     constructor(private readonly proxyMiddleware: ProxyMiddleware) { }
 
-    configure(consumer: MiddlewareConsumer) {
+    configure(_consumer: MiddlewareConsumer) {
         // Apply proxy middleware for specific routes
         // This allows raw request forwarding for complex scenarios
     }
