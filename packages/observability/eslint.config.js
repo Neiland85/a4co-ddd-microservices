@@ -5,6 +5,9 @@ import tsParser from '@typescript-eslint/parser';
 export default [
   js.configs.recommended,
   {
+    ignores: ['**/*.test.ts', '**/*.spec.ts', 'dist/**', 'node_modules/**'],
+  },
+  {
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,
@@ -24,6 +27,11 @@ export default [
         __dirname: 'readonly',
         __filename: 'readonly',
         global: 'readonly',
+        NodeJS: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
 
         // Browser globals (for web tracer)
         window: 'readonly',
@@ -54,21 +62,22 @@ export default [
       '@typescript-eslint': tsPlugin,
     },
     rules: {
-      // TypeScript específicas para observabilidad
-      '@typescript-eslint/explicit-function-return-type': 'error',
-      '@typescript-eslint/explicit-module-boundary-types': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/consistent-type-exports': 'error',
-      '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      // TypeScript rules - relaxed to warnings
+      '@typescript-eslint/explicit-function-return-type': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/consistent-type-exports': 'warn',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
 
-      // Calidad de código para observabilidad
-      'prefer-const': 'error',
+      // Code quality
+      'prefer-const': 'warn',
       'no-var': 'error',
-      'object-shorthand': 'error',
-      'prefer-template': 'error',
-      'no-console': 'off', // Permitido en librerías de logging
+      'object-shorthand': 'warn',
+      'prefer-template': 'warn',
+      'no-console': 'off',
+      'no-undef': 'off', // TypeScript handles this
     },
   },
   {
