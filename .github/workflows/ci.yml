@@ -7,71 +7,138 @@ on:
     types: [opened, synchronize, reopened]
   workflow_call:
 
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '10.14.0'
+
 jobs:
-  build_and_analyze:
-    name: Build & Quality Check
+  # =============================================================
+  #  Lint - Verifica errores de estilo
+  # =============================================================
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-
     steps:
-      # =========================================================
-      #  FIX CRÍTICO: instalar tar ANTES del checkout (host)
-      # =========================================================
-      - name: Ensure tar is available before checkout
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y tar
-          tar --version
-
-      # =========================================================
-      #  Checkout del repo (YA sin errores)
-      # =========================================================
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # =========================================================
-      #  Entramos en el contenedor (solo para los steps siguientes)
-      # =========================================================
-      - name: Start container
-        uses: addnab/docker-run-action@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          image: node:22-alpine
-          options: -v ${{ github.workspace }}:/workspace -w /workspace
-          run: |
-            echo "Container ready with Node $(node -v)"
-            corepack enable
+          version: ${{ env.PNPM_VERSION }}
 
-            # =====================================================
-            #  Setup PNPM
-            # =====================================================
-            pnpm --version || npm install -g pnpm@10.14.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
-            # =====================================================
-            #  Install deps
-            # =====================================================
-            pnpm install --no-frozen-lockfile || true
-            pnpm -w exec prisma generate || true
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-            # =====================================================
-            #  Lint
-            # =====================================================
-            pnpm --filter "./packages/*" run lint || echo "Lint warning"
+      - name: Run ESLint on packages
+        run: pnpm --filter "./packages/*" run lint
 
-            # =====================================================
-            #  Typecheck
-            # =====================================================
-            pnpm -w run type-check || echo "TS warnings"
+      - name: Run ESLint on apps (continue on error)
+        run: pnpm exec eslint "apps/**/src/**/*.ts" --no-error-on-unmatched-pattern --max-warnings=500 || true
+        # TODO: Fix eslint in individual apps - running from root for now
 
-            # =====================================================
-            #  Build (except auth)
-            # =====================================================
-            pnpm -r --ignore @a4co/auth-service run build || echo "Build warnings"
+  # =============================================================
+  #  Test - Ejecuta pruebas unitarias
+  # =============================================================
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm --filter "./packages/*" run build
+
+      - name: Generate Prisma clients
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm -w exec prisma generate
+            pnpm --filter "@a4co/*" exec prisma generate || true
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
+        run: pnpm --filter "./apps/*" run db:generate --if-present || true
+
+      - name: Run tests
+        run: |
+          pnpm --filter @a4co/auth-service test --passWithNoTests
+          pnpm --filter @a4co/payment-service test --passWithNoTests
+          pnpm --filter @a4co/order-service test --passWithNoTests
+          pnpm --filter @a4co/inventory-service test --passWithNoTests
+          pnpm --filter @a4co/product-service test --passWithNoTests
+
+  # =============================================================
+  #  Build - Compila todos los servicios
+  # =============================================================
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma clients
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm -w exec prisma generate
+            pnpm --filter "@a4co/*" exec prisma generate || true
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
+        run: pnpm --filter "./apps/*" run db:generate --if-present || true
+
+      - name: Type check
+        run: pnpm -w run type-check
+
+      - name: Build packages
+        run: pnpm --filter "./packages/*" run build
+
+      - name: Build apps
+        run: pnpm -r --ignore @a4co/auth-service run build
 
   # =============================================================
   #  Deploy Auth a Vercel
   # =============================================================
   deploy_auth_service:
     name: Deploy Auth Service
-    needs: [build_and_analyze]
+    needs: [build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     env:
@@ -82,22 +149,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 22
-          cache: "pnpm"
+          version: ${{ env.PNPM_VERSION }}
 
-      - uses: pnpm/action-setup@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          version: "10.14.0"
-          run_install: true
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build auth-service
-        run: pnpm --filter @a4co/auth-service build || echo "Auth build warning"
+        run: pnpm --filter @a4co/auth-service build
 
       - name: Deploy to Vercel
         run: |
           npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
 

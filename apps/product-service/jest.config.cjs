@@ -11,16 +11,9 @@ module.exports = {
     '!src/**/*.dto.ts',
   ],
   moduleNameMapper: {
+    ...baseConfig.moduleNameMapper,
     '^@a4co/shared-utils$': '<rootDir>/../../packages/shared-utils/src/index.ts',
     '^@a4co/shared-utils/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1',
-  },
-  transform: {
-    '^.+\.ts$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.spec.json',
-      },
-    ],
   },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   maxWorkers: 1,
