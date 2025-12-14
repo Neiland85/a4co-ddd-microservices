@@ -1,11 +1,32 @@
 const js = require('@eslint/js');
 const tseslint = require('@typescript-eslint/eslint-plugin');
 const tsparser = require('@typescript-eslint/parser');
+const baseRules = require('../../eslint.base-rules.js');
 
 module.exports = [
   js.configs.recommended,
   {
-    files: ['**/*.ts', '**/*.js'],
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: './tsconfig.json',
+      },
+      globals: {
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        console: 'readonly',
+      },
+    },
+    plugins: { '@typescript-eslint': tseslint },
+    rules: baseRules,
+  },
+  {
     ignores: [
       'node_modules/**',
       'dist/**',
@@ -17,22 +38,8 @@ module.exports = [
       '**/*.bak',
       'jest.config.js',
     ],
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: './tsconfig.json',
-      },
-      globals: {
-        // Node.js globals
-        process: 'readonly',
-        Buffer: 'readonly',
-        global: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        console: 'readonly',
+  },
+];
 
         // Test globals
         jest: 'readonly',
