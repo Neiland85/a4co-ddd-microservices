@@ -1,5 +1,5 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
-import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
+import { ClientProxy, EventPattern, Payload, Controller } from '@nestjs/microservices';
 import { ReserveStockUseCase } from '../use-cases/reserve-stock.use-case';
 import { ReleaseStockUseCase } from '../use-cases/release-stock.use-case';
 import { IStockReservationRepository } from '../../infrastructure/repositories/stock-reservation.repository';
@@ -8,25 +8,22 @@ import {
   StockReservation,
   ReservationStatus,
 } from '../../domain/entities/stock-reservation.entity';
+import {
+  ORDER_CREATED_V1,
+  ORDER_CANCELLED_V1,
+  PAYMENT_CONFIRMED_V1,
+  OrderCreatedV1Payload,
+  OrderCancelledV1Payload,
+  PaymentConfirmedV1Payload,
+  InventoryReservedV1Event,
+  InventoryFailedV1Event,
+  InventoryReleasedV1Event,
+  INVENTORY_RESERVED_V1,
+  INVENTORY_FAILED_V1,
+  INVENTORY_RELEASED_V1,
+} from '@a4co/shared-events';
 
-export interface OrderCreatedEventPayload {
-  orderId: string;
-  customerId: string;
-  items: Array<{
-    productId: string;
-    quantity: number;
-    unitPrice: number;
-  }>;
-  totalAmount: number;
-  timestamp: string;
-}
-
-export interface OrderCancelledEventPayload {
-  orderId: string;
-  reason?: string;
-  timestamp: string;
-}
-
+@Controller()
 @Injectable()
 export class ReserveStockHandler {
   private readonly logger = new Logger(ReserveStockHandler.name);
@@ -43,12 +40,14 @@ export class ReserveStockHandler {
     private readonly natsClient: ClientProxy,
   ) {}
 
-  @EventPattern('order.created')
-  async handleOrderCreated(@Payload() event: OrderCreatedEventPayload): Promise<void> {
-    this.logger.log(`📦 Procesando reserva de stock para orden ${event.orderId}`);
+  @EventPattern(ORDER_CREATED_V1)
+  async handleOrderCreated(@Payload() data: any): Promise<void> {
+    const event = data.payload as OrderCreatedV1Payload;
+    this.logger.log(`📦 Received ${ORDER_CREATED_V1} for order ${event.orderId}`);
 
     try {
       const reservationResults = [];
+      const unavailableItems = [];
       let allReserved = true;
 
       // Reservar stock para cada item
@@ -79,13 +78,19 @@ export class ReserveStockHandler {
             reservationId: reservation.id,
             productId: item.productId,
             quantity: item.quantity,
+            reserved: item.quantity,
           });
 
           this.logger.log(
-            `✅ Stock reservado: ${item.quantity} unidades de producto ${item.productId}, reservationId: ${reservation.id}`,
+            `✅ Stock reservado: ${item.quantity} unidades de producto ${item.productId}`,
           );
         } else {
           allReserved = false;
+          unavailableItems.push({
+            productId: item.productId,
+            requestedQuantity: item.quantity,
+            availableQuantity: result.availableStock || 0,
+          });
           this.logger.error(
             `❌ No se pudo reservar stock para producto ${item.productId}: ${result.message}`,
           );
@@ -94,18 +99,19 @@ export class ReserveStockHandler {
       }
 
       if (allReserved) {
-        // Publicar evento de stock reservado
-        await this.natsClient
-          .emit('inventory.reserved', {
-            orderId: event.orderId,
-            customerId: event.customerId,
-            reservations: reservationResults,
-            totalAmount: event.totalAmount,
-            timestamp: new Date().toISOString(),
-          })
-          .toPromise();
+        // Publicar evento de stock reservado usando shared-events
+        const inventoryReservedEvent = new InventoryReservedV1Event({
+          reservationId: reservationResults[0]?.reservationId || 'unknown',
+          orderId: event.orderId,
+          items: reservationResults,
+          expiresAt: new Date(
+            Date.now() + this.RESERVATION_TTL_MINUTES * 60 * 1000,
+          ).toISOString(),
+          reservedAt: new Date().toISOString(),
+        });
 
-        this.logger.log(`✅ Stock reservado exitosamente para orden ${event.orderId}`);
+        this.natsClient.emit(INVENTORY_RESERVED_V1, inventoryReservedEvent.toJSON());
+        this.logger.log(`📤 Emitted ${INVENTORY_RESERVED_V1} for order ${event.orderId}`);
       } else {
         // Liberar reservas ya creadas
         for (const result of reservationResults) {
@@ -117,34 +123,36 @@ export class ReserveStockHandler {
           await this.reservationRepository.delete(result.reservationId);
         }
 
-        // Publicar evento de stock insuficiente
-        await this.natsClient
-          .emit('inventory.out_of_stock', {
-            orderId: event.orderId,
-            reason: 'Stock insuficiente para uno o más productos',
-            timestamp: new Date().toISOString(),
-          })
-          .toPromise();
+        // Publicar evento de stock insuficiente usando shared-events
+        const inventoryFailedEvent = new InventoryFailedV1Event({
+          orderId: event.orderId,
+          reason: 'Stock insuficiente para uno o más productos',
+          unavailableItems,
+          failedAt: new Date().toISOString(),
+        });
 
-        this.logger.error(`❌ Stock insuficiente para orden ${event.orderId}`);
+        this.natsClient.emit(INVENTORY_FAILED_V1, inventoryFailedEvent.toJSON());
+        this.logger.log(`📤 Emitted ${INVENTORY_FAILED_V1} for order ${event.orderId}`);
       }
     } catch (error) {
       this.logger.error(`❌ Error procesando reserva de stock para orden ${event.orderId}:`, error);
 
       // Publicar evento de error
-      await this.natsClient
-        .emit('inventory.reservation_failed', {
-          orderId: event.orderId,
-          error: error instanceof Error ? error.message : 'Unknown error',
-          timestamp: new Date().toISOString(),
-        })
-        .toPromise();
+      const inventoryFailedEvent = new InventoryFailedV1Event({
+        orderId: event.orderId,
+        reason: error instanceof Error ? error.message : 'Unknown error',
+        unavailableItems: [],
+        failedAt: new Date().toISOString(),
+      });
+
+      this.natsClient.emit(INVENTORY_FAILED_V1, inventoryFailedEvent.toJSON());
     }
   }
 
-  @EventPattern('order.cancelled')
-  async handleOrderCancelled(@Payload() event: OrderCancelledEventPayload): Promise<void> {
-    this.logger.log(`🔄 Liberando reservas para orden cancelada ${event.orderId}`);
+  @EventPattern(ORDER_CANCELLED_V1)
+  async handleOrderCancelled(@Payload() data: any): Promise<void> {
+    const event = data.payload as OrderCancelledV1Payload;
+    this.logger.log(`📥 Received ${ORDER_CANCELLED_V1} for order ${event.orderId}`);
 
     try {
       // Buscar todas las reservas activas para esta orden
@@ -164,12 +172,70 @@ export class ReserveStockHandler {
         // Actualizar estado de reserva
         await this.reservationRepository.updateStatus(reservation.id, 'released');
 
+        // Emit released event
+        const releasedEvent = new InventoryReleasedV1Event({
+          reservationId: reservation.id,
+          orderId: event.orderId,
+          items: reservation.items,
+          reason: event.reason || 'Orden cancelada',
+          releasedAt: new Date().toISOString(),
+        });
+
+        this.natsClient.emit(INVENTORY_RELEASED_V1, releasedEvent.toJSON());
         this.logger.log(`✅ Reservas liberadas para orden ${event.orderId}`);
       } else {
         this.logger.warn(`⚠️  No se encontraron reservas para orden ${event.orderId}`);
       }
     } catch (error) {
       this.logger.error(`❌ Error liberando reservas para orden ${event.orderId}:`, error);
+    }
+  }
+
+  /**
+   * Handle PaymentConfirmed event
+   * Confirms the reservation and decrements actual stock
+   */
+  @EventPattern(PAYMENT_CONFIRMED_V1)
+  async handlePaymentConfirmed(@Payload() data: any): Promise<void> {
+    const event = data.payload as PaymentConfirmedV1Payload;
+    this.logger.log(`📥 Received ${PAYMENT_CONFIRMED_V1} for order ${event.orderId}`);
+
+    try {
+      // Find the reservation
+      const reservation = await this.reservationRepository.findByOrderId(event.orderId);
+
+      if (!reservation) {
+        this.logger.warn(`⚠️  No reservation found for order ${event.orderId}`);
+        return;
+      }
+
+      // Confirm the reservation (convert reserved stock to confirmed)
+      await this.reservationRepository.updateStatus(reservation.id, 'confirmed');
+
+      this.logger.log(
+        `✅ Inventory confirmed for order ${event.orderId}, reservation ${reservation.id}`,
+      );
+
+      // Emit inventory reserved event (confirming the stock is allocated)
+      const inventoryReservedEvent = new InventoryReservedV1Event({
+        reservationId: reservation.id,
+        orderId: event.orderId,
+        items: reservation.items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          reserved: item.quantity,
+        })),
+        expiresAt: reservation.expiresAt.toISOString(),
+        reservedAt: new Date().toISOString(),
+      });
+
+      this.natsClient.emit(INVENTORY_RESERVED_V1, inventoryReservedEvent.toJSON());
+      this.logger.log(`📤 Emitted ${INVENTORY_RESERVED_V1} after payment confirmation`);
+    } catch (error) {
+      this.logger.error(
+        `❌ Error confirming inventory for order ${event.orderId}:`,
+        error,
+      );
     }
   }
 

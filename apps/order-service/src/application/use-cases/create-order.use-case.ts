@@ -1,8 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Order, OrderItem } from '../../domain/aggregates/order.aggregate.js';
 import { IOrderRepository } from '../../domain/index.js';
 import { CreateOrderCommand } from '../commands/create-order.command.js';
 import { ClientProxy } from '@nestjs/microservices';
+import { OrderCreatedV1Event, ORDER_CREATED_V1 } from '@a4co/shared-events';
 
 export interface CreateOrderDto {
   customerId: string;
@@ -15,6 +16,8 @@ export interface CreateOrderDto {
 
 @Injectable()
 export class CreateOrderUseCase {
+  private readonly logger = new Logger(CreateOrderUseCase.name);
+
   constructor(
     @Inject('OrderRepository')
     private readonly orderRepository: IOrderRepository,
@@ -46,13 +49,19 @@ export class CreateOrderUseCase {
     // 4. Guardar en repository
     await this.orderRepository.save(order);
 
-    // 5. Publicar eventos de dominio
-    const events = order.domainEvents;
-    for (const event of events) {
-      await this.eventBus.emit(event.eventName, event).toPromise();
-    }
+    // 5. Publicar OrderCreated event usando shared-events
+    const orderCreatedEvent = new OrderCreatedV1Event({
+      orderId: order.id,
+      customerId: order.customerId,
+      items: dto.items,
+      totalAmount: order.totalAmount,
+      currency: 'EUR',
+    });
 
-    // 6. Limpiar eventos
+    this.eventBus.emit(ORDER_CREATED_V1, orderCreatedEvent.toJSON());
+    this.logger.log(`📤 Emitted ${ORDER_CREATED_V1} for order ${orderId}`);
+
+    // 6. Limpiar eventos de dominio si hay
     order.clearDomainEvents();
 
     return orderId;

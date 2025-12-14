@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import {
   createApp,
   getPort,
@@ -18,6 +19,15 @@ async function bootstrap() {
     enableSwagger: true,
   });
 
+  // === NATS Microservice (for event listening) ===
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
+      queue: 'inventory-service-queue',
+    },
+  });
+
   // === SWAGGER ===
   setupSwagger(
     app,
@@ -31,6 +41,10 @@ async function bootstrap() {
       path: 'api/inventory/docs',
     }
   );
+
+  // Start all microservices
+  await app.startAllMicroservices();
+  logger.log('🔌 NATS microservice connected and listening for events');
 
   const port = getPort({ serviceName: 'Inventory Service', port: 3006 });
   await app.listen(port);

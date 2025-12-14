@@ -6,24 +6,12 @@ import {
   ProcessPaymentUseCase,
 } from '../use-cases/process-payment.use-case.js';
 import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case.js';
-
-export interface OrderCreatedEventPayload {
-  orderId: string;
-  customerId: string;
-  totalAmount: number;
-  currency: string;
-  metadata?: Record<string, any>;
-  paymentMethodId?: string;
-  idempotencyKey?: string;
-  sagaId?: string;
-}
-
-export interface OrderCancelledEventPayload {
-  orderId: string;
-  reason?: string;
-  metadata?: Record<string, any>;
-  sagaId?: string;
-}
+import {
+  ORDER_CREATED_V1,
+  ORDER_CANCELLED_V1,
+  OrderCreatedV1Payload,
+  OrderCancelledV1Payload,
+} from '@a4co/shared-events';
 
 @Controller()
 export class OrderEventsHandler {
@@ -36,9 +24,10 @@ export class OrderEventsHandler {
     private readonly paymentRepository: PaymentRepository,
   ) { }
 
-  @EventPattern('order.created.v1')
-  public async handleOrderCreated(@Payload() event: OrderCreatedEventPayload): Promise<void> {
-    this.logger.log(`Received order.created event for order ${event.orderId}`);
+  @EventPattern(ORDER_CREATED_V1)
+  public async handleOrderCreated(@Payload() data: any): Promise<void> {
+    const event = data.payload as OrderCreatedV1Payload;
+    this.logger.log(`📥 Received ${ORDER_CREATED_V1} for order ${event.orderId}`);
 
     try {
       const command: any = {
@@ -46,20 +35,8 @@ export class OrderEventsHandler {
         amount: event.totalAmount,
         currency: event.currency,
         customerId: event.customerId,
-        metadata: event.metadata ?? {},
+        metadata: {},
       };
-
-      if (event.paymentMethodId) {
-        command.paymentMethodId = event.paymentMethodId;
-      }
-
-      if (event.idempotencyKey) {
-        command.idempotencyKey = event.idempotencyKey;
-      }
-
-      if (event.sagaId) {
-        command.sagaId = event.sagaId;
-      }
 
       await this.processPaymentUseCase.execute(command);
     } catch (error) {
@@ -68,9 +45,10 @@ export class OrderEventsHandler {
     }
   }
 
-  @EventPattern('order.cancelled.v1')
-  public async handleOrderCancelled(@Payload() event: OrderCancelledEventPayload): Promise<void> {
-    this.logger.log(`Received order.cancelled event for order ${event.orderId}`);
+  @EventPattern(ORDER_CANCELLED_V1)
+  public async handleOrderCancelled(@Payload() data: any): Promise<void> {
+    const event = data.payload as OrderCancelledV1Payload;
+    this.logger.log(`📥 Received ${ORDER_CANCELLED_V1} for order ${event.orderId}`);
 
     try {
       // Buscar el pago por orderId
