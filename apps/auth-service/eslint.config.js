@@ -21,6 +21,15 @@ module.exports = [
         __dirname: 'readonly',
         __filename: 'readonly',
         console: 'readonly',
+        jest: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
       },
     },
     plugins: { '@typescript-eslint': tseslint },
@@ -38,49 +47,5 @@ module.exports = [
       '**/*.bak',
       'jest.config.js',
     ],
-  },
-];
-
-        // Test globals
-        jest: 'readonly',
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-      },
-    },
-    plugins: {
-      '@typescript-eslint': tseslint,
-    },
-    rules: {
-      ...tseslint.configs.recommended.rules,
-
-      // Relaxed rules for faster development
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-        },
-      ],
-      '@typescript-eslint/no-unsafe-function-type': 'warn',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-
-      // Disable problematic rules
-      'no-undef': 'off', // TypeScript handles this
-      'no-unused-vars': 'off', // Use TypeScript version instead
-      'no-redeclare': 'off', // TypeScript handles this
-
-      // Custom rules for this project
-      'prefer-const': 'warn',
-      'no-var': 'error',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-    },
   },
 ];
