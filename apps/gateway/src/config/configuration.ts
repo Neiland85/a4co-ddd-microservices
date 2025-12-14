@@ -3,7 +3,7 @@
  */
 
 export const configuration = () => ({
-    port: parseInt(process.env.PORT || '4000', 10),
+    port: parseInt(process.env.PORT || '3000', 10),
     nodeEnv: process.env.NODE_ENV || 'development',
 
     // Service URLs
@@ -12,6 +12,8 @@ export const configuration = () => ({
         products: process.env.PRODUCTS_SERVICE_URL || 'http://localhost:3002',
         orders: process.env.ORDERS_SERVICE_URL || 'http://localhost:3003',
         inventory: process.env.INVENTORY_SERVICE_URL || 'http://localhost:3004',
+        payments: process.env.PAYMENTS_SERVICE_URL || 'http://localhost:3005',
+        sagas: process.env.SAGAS_SERVICE_URL || 'http://localhost:3006',
     },
 
     // Proxy settings

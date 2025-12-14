@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@a4co/observability": "workspace:*",
+    "@a4co/shared-events": "workspace:*",
     "@a4co/shared-utils": "workspace:*",
     "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",

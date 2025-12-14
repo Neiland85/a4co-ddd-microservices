@@ -9,7 +9,7 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
 
-export type ServiceName = 'auth' | 'products' | 'orders' | 'inventory';
+export type ServiceName = 'auth' | 'products' | 'orders' | 'inventory' | 'payments' | 'sagas';
 
 interface ProxyResponse<T = unknown> {
     data: T;
@@ -31,6 +31,8 @@ export class ProxyService {
             products: this.configService.get<string>('services.products', 'http://localhost:3002'),
             orders: this.configService.get<string>('services.orders', 'http://localhost:3003'),
             inventory: this.configService.get<string>('services.inventory', 'http://localhost:3004'),
+            payments: this.configService.get<string>('services.payments', 'http://localhost:3005'),
+            sagas: this.configService.get<string>('services.sagas', 'http://localhost:3006'),
         };
 
         this.logger.log('Proxy service initialized with targets:');

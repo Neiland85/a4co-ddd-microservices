@@ -5,7 +5,9 @@
 import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { JwtAuthMiddleware } from './common/middleware/jwt-auth.middleware';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
@@ -35,11 +37,28 @@ import { ProxyModule } from './proxy/proxy.module';
         // Health checks
         TerminusModule,
 
+        // Rate limiting (100 requests per minute)
+        ThrottlerModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => [
+                {
+                    ttl: config.get<number>('rateLimit.ttl', 60) * 1000, // Convert to ms
+                    limit: config.get<number>('rateLimit.max', 100),
+                },
+            ],
+        }),
+
         // Proxy module
         ProxyModule,
     ],
     controllers: [HealthController],
     providers: [
+        // Global rate limiting guard
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
         // Global JWT Guard (alternative to middleware)
         // Uncomment to use guard-based auth instead of middleware
         // {

@@ -1,0 +1,140 @@
+import { SimulatedPaymentGateway } from '../simulated-payment.gateway';
+import { Money } from '../../domain/value-objects/money.vo';
+
+describe('SimulatedPaymentGateway', () => {
+  let gateway: SimulatedPaymentGateway;
+
+  beforeEach(() => {
+    // Set success rate to 1.0 for predictable tests
+    process.env['PAYMENT_SUCCESS_RATE'] = '1.0';
+    gateway = new SimulatedPaymentGateway();
+  });
+
+  afterEach(() => {
+    delete process.env['PAYMENT_SUCCESS_RATE'];
+  });
+
+  describe('createPaymentIntent', () => {
+    it('should create a successful payment intent when success rate is 100%', async () => {
+      // Arrange
+      const amount = Money.create(20.0, 'EUR');
+      const params = {
+        amount,
+        orderId: 'order-123',
+        customerId: 'customer-456',
+      };
+
+      // Act
+      const result = await gateway.createPaymentIntent(params);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(result.id).toMatch(/^pi_simulated_/);
+      expect(result.status).toBe('succeeded');
+      expect(result.amount).toBe(2000); // 20.00 EUR in cents
+      expect(result.currency).toBe('eur');
+      expect(result.orderId).toBe('order-123');
+      expect(result.customerId).toBe('customer-456');
+    });
+
+    it('should create a failed payment intent when success rate is 0%', async () => {
+      // Arrange
+      process.env['PAYMENT_SUCCESS_RATE'] = '0.0';
+      gateway = new SimulatedPaymentGateway();
+
+      const amount = Money.create(20.0, 'EUR');
+      const params = {
+        amount,
+        orderId: 'order-456',
+        customerId: 'customer-789',
+      };
+
+      // Act
+      const result = await gateway.createPaymentIntent(params);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(result.status).toBe('failed');
+      expect(result.orderId).toBe('order-456');
+    });
+
+    it('should respect configured success rate', async () => {
+      // Arrange - 90% success rate
+      process.env['PAYMENT_SUCCESS_RATE'] = '0.9';
+      gateway = new SimulatedPaymentGateway();
+
+      const amount = Money.create(10.0, 'EUR');
+      const results: string[] = [];
+
+      // Act - Create 100 payments
+      for (let i = 0; i < 100; i++) {
+        const params = {
+          amount,
+          orderId: `order-${i}`,
+          customerId: 'customer-test',
+        };
+        const result = await gateway.createPaymentIntent(params);
+        results.push(result.status);
+      }
+
+      // Assert - Approximately 90% should succeed (with some variance)
+      const successCount = results.filter(s => s === 'succeeded').length;
+      const successRate = successCount / 100;
+
+      // Allow for statistical variance (80-100% success is acceptable)
+      expect(successRate).toBeGreaterThanOrEqual(0.8);
+      expect(successRate).toBeLessThanOrEqual(1.0);
+    });
+
+    it('should simulate processing delay', async () => {
+      // Arrange
+      const amount = Money.create(15.0, 'EUR');
+      const params = {
+        amount,
+        orderId: 'order-timing',
+        customerId: 'customer-timing',
+      };
+
+      // Act
+      const start = Date.now();
+      await gateway.createPaymentIntent(params);
+      const duration = Date.now() - start;
+
+      // Assert - Should take at least 500ms (min delay)
+      expect(duration).toBeGreaterThanOrEqual(450); // Allow small variance
+    });
+  });
+
+  describe('refundPayment', () => {
+    it('should create a refund for a payment', async () => {
+      // Arrange
+      const paymentIntentId = 'pi_simulated_123';
+      const amount = Money.create(10.0, 'EUR');
+
+      // Act
+      const result = await gateway.refundPayment(paymentIntentId, amount);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(result.id).toMatch(/^re_simulated_/);
+      expect(result.payment_intent).toBe(paymentIntentId);
+      expect(result.amount).toBe(1000); // 10.00 EUR in cents
+      expect(result.status).toBe('succeeded');
+    });
+
+    it('should create a full refund when amount is not specified', async () => {
+      // Arrange
+      const paymentIntentId = 'pi_simulated_456';
+
+      // Act
+      const result = await gateway.refundPayment(paymentIntentId);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(result.id).toMatch(/^re_simulated_/);
+      expect(result.payment_intent).toBe(paymentIntentId);
+      expect(result.amount).toBeUndefined();
+      expect(result.status).toBe('succeeded');
+    });
+  });
+});
