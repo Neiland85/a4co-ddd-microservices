@@ -72,7 +72,12 @@ jobs:
         run: pnpm --filter "./packages/*" run build
 
       - name: Generate Prisma clients
-        run: pnpm -w exec prisma generate || true
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm --filter "@a4co/*" exec prisma generate || true
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
 
       - name: Run tests
         run: |
@@ -108,7 +113,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma clients
-        run: pnpm -w exec prisma generate || true
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm --filter "@a4co/*" exec prisma generate || true
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
 
       - name: Type check
         run: pnpm -w run type-check
