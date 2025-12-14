@@ -4,11 +4,16 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
   js.configs.recommended,
+  // Ignore test files globally
+  {
+    ignores: ['**/*.test.ts', '**/*.spec.ts'],
+  },
   {
     ignores: ['**/*.test.ts', '**/*.spec.ts', 'dist/**', 'node_modules/**'],
   },
   {
     files: ['src/**/*.{ts,tsx}'],
+    ignores: ['**/*.test.ts', '**/*.spec.ts'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -82,8 +87,17 @@ export default [
   },
   {
     files: ['src/**/*.{test,spec}.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        // No usar project para archivos de test (están excluidos del tsconfig)
+        sourceType: 'module',
+      },
+    },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
       'no-console': 'off',
     },
   },

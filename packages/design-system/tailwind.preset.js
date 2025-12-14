@@ -26,9 +26,20 @@ module.exports = {
         accent: 'var(--accent)',
         'accent-foreground': 'var(--accent-foreground)',
         destructive: 'var(--destructive)',
+        'destructive-foreground': 'var(--destructive-foreground)',
+        /* Additional semantic color tokens - ensure consuming apps define these CSS variables */
+        warning: 'var(--warning)',
+        'warning-foreground': 'var(--warning-foreground)',
+        success: 'var(--success)',
+        'success-foreground': 'var(--success-foreground)',
+        danger: 'var(--danger)',
+        'danger-foreground': 'var(--danger-foreground)',
         border: 'var(--border)',
         input: 'var(--input)',
         ring: 'var(--ring)',
+
+        /* Fix for ring-border compatibility (used in some components) */
+        'ring-border': 'var(--border)',
 
         /* Charts */
         chart: {
@@ -255,7 +266,7 @@ module.exports = {
 
         /* CHECKBOX COMPONENT */
         '.checkbox-a4co': {
-          '@apply peer h-4 w-4 shrink-0 rounded-sm border border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50':
+          '@apply h-4 w-4 shrink-0 rounded-sm border border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50':
             {},
           '&[data-state="checked"]': {
             '@apply bg-primary text-primary-foreground': {},
