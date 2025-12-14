@@ -1,5 +1,6 @@
 # Diccionario del Proyecto
 
+Última sincronización: 14/12/2025, 5:08:09
 Última sincronización: 14/12/2025, 17:22:35
 
 ---
@@ -8,6 +9,25 @@
 - running
 - tests
 
+### Workspace (proyecto local) (2)
+- completion
+- description
+
+### Commits recientes detectados (106)
+- added
+- address
+- agents
+- assistant
+- auth
+- authored
+- build
+- caret
+- changes
+- check
+- claude
+- client
+- color
+- comments
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
@@ -62,10 +82,36 @@ Sin nuevas palabras.
 - commit
 - compatibilidad
 - compatibility
-- complete
-- completes
-- comprehensive
+- completion
 - config
+- configuration
+- context
+- controllers
+- created
+- deploy
+- description
+- documentation
+- echo
+- endpoints
+- errors
+- failure
+- files
+- fixed
+- fixes
+- flow
+- gateway
+- github
+- guidelines
+- handling
+- header
+- health
+- ignoring
+- imports
+- improvements
+- included
+- infrastructure
+- initial
+- inventory
 - configuración
 - configuration
 - consistente
@@ -173,6 +219,61 @@ Sin nuevas palabras.
 - jobs
 - json
 - kubernetes
+- legacy
+- lint
+- lock
+- logger
+- middleware
+- missing
+- mock
+- mocks
+- module
+- modules
+- neiland
+- nestjs
+- noreply
+- orders
+- plan
+- pnpm
+- port
+- prisma
+- probes
+- products
+- propagation
+- proper
+- proxy
+- removed
+- renamed
+- request
+- resolution
+- restructured
+- review
+- secrets
+- server
+- service
+- services
+- shared
+- spec
+- status
+- swagger
+- sync
+- that
+- tokens
+- tracing
+- transformignorepatterns
+- true
+- tsconfig
+- unification
+- unified
+- user
+- userid
+- users
+- utils
+- uuid
+- versions
+- were
+- with
+- workflow
 - layer
 - limpieza
 - lint

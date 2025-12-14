@@ -31,9 +31,6 @@ module.exports = {
   moduleNameMapper: {
     // Mock uuid with a simple CommonJS implementation
     '^uuid$': '<rootDir>/../../__mocks__/uuid.cjs',
-    // Legacy imports with /src/ in path (should be fixed in source code)
-    '^@a4co/shared-utils/src/base$': '<rootDir>/../../packages/shared-utils/src/base-service.ts',
-    '^@a4co/shared-utils/src/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1.ts',
     // Handle @a4co/shared-utils imports
     '^@a4co/shared-utils$': '<rootDir>/../../packages/shared-utils/src/index.ts',
     '^@a4co/shared-utils/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1',

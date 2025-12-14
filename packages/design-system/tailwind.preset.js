@@ -27,6 +27,7 @@ module.exports = {
         'accent-foreground': 'var(--accent-foreground)',
         destructive: 'var(--destructive)',
         'destructive-foreground': 'var(--destructive-foreground)',
+        /* Additional semantic color tokens - ensure consuming apps define these CSS variables */
         warning: 'var(--warning)',
         'warning-foreground': 'var(--warning-foreground)',
         success: 'var(--success)',
