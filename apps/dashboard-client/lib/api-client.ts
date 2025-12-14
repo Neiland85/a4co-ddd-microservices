@@ -1,4 +1,15 @@
-const API_BASE_URL = process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:3000/api/v1';
+const API_BASE_URL = process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:4000';
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number,
+    public error?: string,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
 
 class ApiClient {
   private baseURL: string;
@@ -22,19 +33,40 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({
-        message: response.statusText,
-      }));
-      throw new Error(error.message || 'API request failed');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          message: response.statusText,
+        }));
+
+        // Handle 401 Unauthorized - redirect to login
+        if (response.status === 401 && typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          throw new ApiError('Sesión expirada, por favor inicia sesión', 401, errorData.error);
+        }
+
+        throw new ApiError(
+          errorData.message || 'API request failed',
+          response.status,
+          errorData.error,
+        );
+      }
+
+      return response.json();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      // Network error
+      throw new ApiError('Error de conexión. Por favor verifica tu conexión a internet.', 0);
     }
-
-    return response.json();
   }
 
   // Auth endpoints

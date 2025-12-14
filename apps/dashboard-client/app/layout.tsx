@@ -1,6 +1,8 @@
 import '@/app/globals.css';
 import { Header, Sidebar } from '@/components/layout';
 import { AuthProvider } from '@dashboard/lib/auth-context';
+import { ToastProvider } from '@dashboard/lib/context/ToastContext';
+import { ToastContainer } from '@/components/common/Toast';
 import clsx from 'clsx';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -53,13 +55,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           'bg-background text-foreground flex min-h-screen antialiased',
         )}
       >
-        <AuthProvider>
-          <Sidebar />
-          <main className="flex flex-1 flex-col overflow-y-auto">
-            <Header />
-            <div className="p-8">{children}</div>
-          </main>
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <Sidebar />
+            <main className="flex flex-1 flex-col overflow-y-auto">
+              <Header />
+              <div className="p-8">{children}</div>
+            </main>
+          </AuthProvider>
+          <ToastContainer />
+        </ToastProvider>
       </body>
     </html>
   );
