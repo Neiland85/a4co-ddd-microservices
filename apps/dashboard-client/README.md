@@ -16,7 +16,8 @@ Panel de administración frontend para el ecosistema A4CO de comercio colaborati
 
 - Node.js 18+ o superior
 - pnpm 8+ (recomendado) o npm
-- Backend API Gateway ejecutándose en `http://localhost:4000`
+- Backend API Gateway ejecutándose (por defecto `http://localhost:4000`)
+  - **Nota**: Si tu gateway usa un puerto diferente (ej: 3000), actualiza `NEXT_PUBLIC_API_URL` en `.env.local`
 
 ## 🛠️ Instalación
 
