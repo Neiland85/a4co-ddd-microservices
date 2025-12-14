@@ -88,6 +88,14 @@ export default [
     },
   },
   {
+    files: ['src/**/*.tsx'],
+    rules: {
+      // Disable react-hooks rules since plugin is not loaded
+      'react-hooks/exhaustive-deps': 'off',
+      'react-hooks/rules-of-hooks': 'off',
+    },
+  },
+  {
     files: ['src/index.ts'],
     rules: {
       // Permitir default export en index
