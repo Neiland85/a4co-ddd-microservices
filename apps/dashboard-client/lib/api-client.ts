@@ -147,8 +147,25 @@ class ApiClient {
     return this.request<any[]>('/orders');
   }
 
+  async getMyOrders() {
+    return this.request<any[]>('/orders/my-orders');
+  }
+
   async getOrder(id: string) {
     return this.request<any>(`/orders/${id}`);
+  }
+
+  async createOrder(orderData: any) {
+    return this.request<any>('/orders', {
+      method: 'POST',
+      body: JSON.stringify(orderData),
+    });
+  }
+
+  async cancelOrder(id: string) {
+    return this.request<void>(`/orders/${id}/cancel`, {
+      method: 'POST',
+    });
   }
 }
 
