@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import {
   createApp,
   getPort,
@@ -22,6 +23,15 @@ async function bootstrap() {
     allowedOrigins: [process.env['CORS_ORIGIN'] || 'http://localhost:3000'],
   });
 
+  // === NATS Microservice (for event listening) ===
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
+      queue: 'order-service-queue',
+    },
+  });
+
   // === SWAGGER ===
   setupSwagger(
     app,
@@ -32,6 +42,10 @@ async function bootstrap() {
       ['orders', 'health']
     )
   );
+
+  // Start all microservices
+  await app.startAllMicroservices();
+  logger.log('🔌 NATS microservice connected and listening for events');
 
   const port = getPort({ serviceName: 'Order Service', port: 3004 });
   logger.log(`🚀 Order Service iniciado en puerto ${port}`);
