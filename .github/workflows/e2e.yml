@@ -38,9 +38,9 @@ jobs:
         image: nats:2.10-alpine
         ports:
           - 4223:4222
-          - 8223:8223
+          - 8222:8222
         options: >-
-          --health-cmd "wget -q --spider http://localhost:8223/healthz || exit 1"
+          --health-cmd "wget -q --spider http://localhost:8222/healthz || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
