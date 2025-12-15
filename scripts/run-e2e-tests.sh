@@ -159,6 +159,12 @@ echo ""
 # Navigate to dashboard-client
 cd "$PROJECT_ROOT/apps/dashboard-client"
 
+# Create Playwright artifact directories if they don't exist
+echo -e "${YELLOW}📁 Ensuring artifact directories exist...${NC}"
+mkdir -p playwright-report
+mkdir -p test-results
+echo -e "${GREEN}✅ Directories ready${NC}"
+
 # Install Playwright browsers if needed
 if [ ! -d "$HOME/.cache/ms-playwright" ]; then
   echo -e "${YELLOW}📥 Installing Playwright browsers...${NC}"

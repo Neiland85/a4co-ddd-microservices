@@ -36,17 +36,17 @@ services:
   nats-test:
     image: nats:2.10-alpine
     container_name: nats-test
-    command: "-js -m 8223"
+    command: "-js -m 8222"
     ports:
       - "4223:4222" # Client port (different from dev)
-      - "8223:8223" # Monitoring port
+      - "8222:8222" # Monitoring port (changed to standard 8222)
     networks:
       - test-net
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8223/healthz"]
-      interval: 3s
+      test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
+      interval: 5s
       timeout: 3s
-      retries: 5
+      retries: 10
 
   # Redis for caching/session management in tests
   redis-test:

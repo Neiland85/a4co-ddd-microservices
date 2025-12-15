@@ -354,6 +354,67 @@ Triggered on:
 
 ## 🐛 Troubleshooting
 
+### Prerequisites and Requirements
+
+**Before running E2E tests**, ensure you have:
+
+1. **Docker and Docker Compose**
+   ```bash
+   docker --version  # Should be 20.10+
+   docker compose version  # Should be v2.0+
+   ```
+
+2. **Required Ports Available**
+   - 8081 (Gateway)
+   - 3001 (Dashboard)
+   - 4223 (NATS client)
+   - 8222 (NATS monitoring)
+   - 5433 (PostgreSQL)
+   - 6380 (Redis)
+
+3. **Node.js and pnpm**
+   ```bash
+   node --version  # Should be 22+
+   pnpm --version  # Should be 10.14.0+
+   ```
+
+4. **docker-compose.test.yml File**
+   - Must be present in project root
+   - Contains all required services (postgres, nats, redis, gateway, services)
+   - Properly configured healthchecks
+
+### Missing Artifact Directories
+
+**Problem**: CI fails with "path not found" for playwright-report or test-results
+
+**Root Cause**: Playwright doesn't create directories if no tests run or if tests fail before completion.
+
+**Solutions**:
+
+**For Local Development**:
+```bash
+# Create directories manually before running tests
+cd apps/dashboard-client
+mkdir -p playwright-report test-results
+pnpm run test:e2e
+```
+
+**For CI/CD**:
+The workflow now automatically creates these directories in the "Prepare test artifact directories" step.
+
+**To Generate Artifacts Locally for Debugging**:
+```bash
+# Run tests and force report generation
+cd apps/dashboard-client
+pnpm exec playwright test --reporter=html
+
+# Open the report
+pnpm exec playwright show-report
+
+# For videos and screenshots (only on failure)
+pnpm exec playwright test --video=on --screenshot=on
+```
+
 ### Services Not Starting
 
 **Problem**: Docker services fail to start
@@ -411,17 +472,47 @@ curl -X POST http://localhost:8081/api/v1/auth/login \
   -d '{"email":"test@a4co.com","password":"TestPassword123!"}'
 ```
 
+### NATS Healthcheck Failures
+
+**Problem**: NATS service fails healthcheck in CI or locally
+
+**Root Cause**: The NATS monitoring endpoint needs to be accessible and the healthcheck command must be compatible with the alpine image.
+
+**Solutions**:
+```bash
+# Verify NATS is running and monitoring port is accessible
+curl http://localhost:8222/healthz
+
+# Check NATS monitoring dashboard
+curl http://localhost:8222/
+
+# View NATS logs
+docker compose -f docker-compose.test.yml logs nats-test
+
+# Restart NATS if needed
+docker compose -f docker-compose.test.yml restart nats-test
+
+# Check if monitoring port is properly mapped (should be 8222)
+docker compose -f docker-compose.test.yml ps | grep nats
+```
+
+**Configuration Notes**:
+- NATS monitoring port is **8222** (standard), not 8223
+- Healthcheck uses `wget -qO-` which works in alpine images
+- Client port is **4223** (mapped from container's 4222)
+- Healthcheck retries increased to 10 for slower CI environments
+
 ### NATS Events Not Captured
 
 **Problem**: Event monitoring not working
 
 **Solutions**:
 ```bash
-# Verify NATS is running
-curl http://localhost:8223/healthz
+# Verify NATS is running (updated port)
+curl http://localhost:8222/healthz
 
 # Check NATS monitoring
-curl http://localhost:8223/varz
+curl http://localhost:8222/varz
 
 # Test NATS connectivity
 docker exec -it nats-test nats-cli stream list

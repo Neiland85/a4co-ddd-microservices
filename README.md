@@ -209,6 +209,12 @@ docker-compose -f docker-compose.observability.yml logs -f
 
 Comprehensive End-to-End tests for the complete order flow using Playwright and Testcontainers.
 
+**Prerequisites:**
+- Docker & Docker Compose v2 installed and running
+- Node.js 22+ and pnpm 10.14.0+
+- Ports available: 8081, 3001, 4223, 8222, 5433, 6380
+- File `docker-compose.test.yml` in project root
+
 **Quick Start:**
 ```bash
 # Run E2E tests (automated setup)
@@ -224,6 +230,11 @@ Comprehensive End-to-End tests for the complete order flow using Playwright and 
 cd apps/dashboard-client
 pnpm run test:e2e:report
 ```
+
+**Common Issues:**
+- **NATS healthcheck fails**: Check port 8222 is accessible, view logs with `docker compose -f docker-compose.test.yml logs nats-test`
+- **Missing artifacts**: Directories are auto-created by the test runner script
+- **Services not starting**: Ensure Docker Compose v2 is installed (`docker compose version`)
 
 **Test Coverage (14 tests):**
 - ✅ User Authentication (JWT)
