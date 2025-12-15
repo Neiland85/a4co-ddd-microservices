@@ -1,56 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 17:53:26
+Última sincronización: 15/12/2025, 17:58:29
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (42)
-- baseevent
-- broker
-- clarify
-- comment
-- compiler
-- compiles
-- composite
-- constants
-- correlationid
-- driven
-- eventid
-- eventpayload
-- extends
-- folders
-- format
-- inlined
-- interfaces
-- inventoryfailedevent
-- inventoryreservedevent
-- library
-- number
-- ordercancelledevent
-- ordercreatedevent
-- organized
-- paymentconfirmedevent
-- paymentfailedevent
-- preventing
-- publishing
-- redundancy
-- restored
-- rootdir
-- saga
-- sagacompensationrequiredevent
-- sagacompletedevent
-- sagafailedevent
-- sagastartedevent
-- serialization
-- serialized
-- simple
-- successfully
-- timestamp
-- typed
+### Workspace (proyecto local) (1)
+- transitions
 
-### Commits recientes detectados (126)
+### Commits recientes detectados (129)
 - about
 - added
 - address
@@ -161,11 +120,14 @@ Sin nuevas palabras.
 - shared
 - should
 - simple
+- status
 - subject
 - successfully
 - support
+- tests
 - that
 - timestamp
+- transitions
 - tsconfig
 - type
 - typed

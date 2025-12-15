@@ -9,9 +9,10 @@ import { z } from 'zod';
  */
 const envSchema = z.object({
   // NATS Configuration
-  NATS_URL: z.string().url().default('nats://localhost:4222').describe(
-    'NATS server URL for event-driven communication'
-  ),
+  NATS_URL: z.string()
+    .regex(/^nats:\/\/.+:\d+$/, 'Must be a valid NATS URL (e.g., nats://localhost:4222)')
+    .default('nats://localhost:4222')
+    .describe('NATS server URL for event-driven communication'),
 
   // Database Configuration
   DATABASE_URL: z.string().url().describe(
