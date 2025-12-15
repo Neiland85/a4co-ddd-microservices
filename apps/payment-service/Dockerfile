@@ -1,29 +1,80 @@
+# ================================================================================
+# Multi-stage Dockerfile for Payment Service (Production-Ready)
+# ================================================================================
+
+# -------- BASE --------
 FROM node:22-alpine AS base
 WORKDIR /usr/src/app
+
+# Install pnpm and basic dependencies
 ENV PNPM_HOME="/usr/local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && apk add --no-cache libc6-compat
+RUN corepack enable && \
+    apk add --no-cache libc6-compat curl && \
+    addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001
 
+# -------- DEPENDENCIES --------
 FROM base AS deps
-COPY ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
-COPY ../../package.json ./
-COPY ../../apps/payment-service/package.json ./apps/payment-service/
-RUN pnpm install
+WORKDIR /usr/src/app
 
-FROM deps AS build
+# Copy workspace configuration
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY apps/payment-service/package.json ./apps/payment-service/
+COPY packages/observability/package.json ./packages/observability/ 2>/dev/null || true
+COPY packages/shared-utils/package.json ./packages/shared-utils/ 2>/dev/null || true
+
+# Install dependencies
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile
+
+# -------- BUILDER --------
+FROM deps AS builder
+WORKDIR /usr/src/app
+
+# Copy source code
+COPY apps/payment-service ./apps/payment-service
+COPY packages ./packages
+
+# Generate Prisma client
 WORKDIR /usr/src/app/apps/payment-service
-COPY . .
+RUN pnpm exec prisma generate 2>/dev/null || true
+
+# Build the application
 RUN pnpm run build
 
-FROM deps AS dev
-WORKDIR /usr/src/app/apps/payment-service
-ENV NODE_ENV=development
-EXPOSE 3000
-CMD ["pnpm", "run", "start:dev"]
-
-FROM node:22-alpine AS prod
+# -------- PRODUCTION --------
+FROM base AS production
 WORKDIR /usr/src/app
-COPY --from=build /usr/src/app/apps/payment-service/dist ./dist
+
+# Copy node_modules from deps stage
+COPY --from=deps --chown=nestjs:nodejs /usr/src/app/node_modules ./node_modules
+COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/payment-service/node_modules ./apps/payment-service/node_modules
+
+# Copy built application
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/payment-service/dist ./apps/payment-service/dist
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/payment-service/package.json ./apps/payment-service/
+
+# Copy Prisma schema and generated client
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/payment-service/prisma ./apps/payment-service/prisma 2>/dev/null || true
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma 2>/dev/null || true
+
+# Set environment variables
 ENV NODE_ENV=production
-EXPOSE 3000
+ENV PORT=3001
+
+# Switch to non-root user
+USER nestjs
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Working directory
+WORKDIR /usr/src/app/apps/payment-service
+
+# Start the application
 CMD ["node", "dist/main.js"]
