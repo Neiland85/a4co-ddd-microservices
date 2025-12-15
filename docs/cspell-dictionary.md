@@ -1,19 +1,19 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 19:25:21
+Última sincronización: 15/12/2025, 19:28:06
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (2)
-- troubleshooting
-- versioned
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (16)
+### Commits recientes detectados (18)
 - authored
 - comprehensive
 - create
+- documentation
 - events
 - github
 - guide
@@ -23,6 +23,7 @@ Sin nuevas palabras.
 - package
 - plan
 - shared
+- tests
 - troubleshooting
 - users
 - versioned
