@@ -1,51 +1,28 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "module": "ESNext",
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "moduleResolution": "node",
     "declaration": true,
-    "declarationMap": true,
+    "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
+    "sourceMap": true,
+    "incremental": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "outDir": "dist",
-    "types": [
-      "node",
-      "reflect-metadata"
-    ],
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@a4co/shared-utils": [
-        "../../packages/shared-utils/src"
-      ],
-      "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/src/*"
-      ]
-    }
+    "esModuleInterop": true,
+    "strict": false,
+    "exactOptionalPropertyTypes": false,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "**/__tests__/**",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
