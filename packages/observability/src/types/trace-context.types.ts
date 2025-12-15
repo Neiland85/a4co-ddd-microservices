@@ -1,20 +1,7 @@
 /**
  * Trace context types for distributed tracing
+ * Note: TraceContext interface is defined in utils/async-context.ts to avoid circular dependencies
  */
-
-/**
- * Standard trace context following W3C Trace Context specification
- */
-export interface TraceContext {
-  /** Unique identifier for the trace across all services */
-  traceId: string;
-  /** Unique identifier for the current span */
-  spanId: string;
-  /** Optional parent span ID for hierarchical tracing */
-  parentSpanId?: string;
-  /** Optional trace flags (e.g., sampled) */
-  traceFlags?: string;
-}
 
 /**
  * Extended request interface with trace context

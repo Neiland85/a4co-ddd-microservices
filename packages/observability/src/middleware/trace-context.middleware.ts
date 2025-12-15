@@ -1,9 +1,8 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { setTraceContext, getTraceContext } from '../utils/async-context';
+import { setTraceContext, getTraceContext, type TraceContext } from '../utils/async-context';
 import { generateTraceId, generateSpanId, extractTraceIdFromHeaders } from '../utils/trace-id.generator';
 import { getLogger } from '../logger';
-import type { TraceContext } from '../types/trace-context.types';
 
 /**
  * NestJS middleware for trace context propagation
@@ -46,7 +45,7 @@ export class TraceContextMiddleware implements NestMiddleware {
     const startTime = Date.now();
 
     // Log request start
-    this.logger.info({
+    this.logger.info('REQUEST_START', {
       traceId,
       spanId,
       method: req.method,
@@ -54,7 +53,7 @@ export class TraceContextMiddleware implements NestMiddleware {
       path: req.path,
       ip: req.ip || req.socket.remoteAddress,
       userAgent: req.headers['user-agent'],
-    }, 'REQUEST_START');
+    });
 
     // Intercept response to log completion
     const originalSend = res.send;
@@ -85,7 +84,7 @@ export class TraceContextMiddleware implements NestMiddleware {
 
       // Log request completion
       const logger = getLogger();
-      logger.info({
+      logger.info('REQUEST_END', {
         traceId,
         spanId,
         statusCode,
@@ -93,7 +92,7 @@ export class TraceContextMiddleware implements NestMiddleware {
         method: req.method,
         url: req.url,
         contentLength: res.getHeader('content-length'),
-      }, 'REQUEST_END');
+      });
 
       return originalJson.call(this, data);
     };

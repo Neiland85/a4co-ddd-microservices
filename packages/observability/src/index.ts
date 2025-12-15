@@ -340,7 +340,8 @@ export type { ObservabilityLogger } from './ObservabilityLogger';
 // Export new trace context utilities and types
 export * from './utils/async-context';
 export * from './utils/trace-id.generator';
-export * from './types/trace-context.types';
+// Re-export specific items from trace-context.types to avoid conflicts
+export { TracedRequest, TRACE_CONTEXT_HEADERS, type TraceContextOptions } from './types/trace-context.types';
 export * from './types/log-payload.types';
 
 // Export NestJS middleware
