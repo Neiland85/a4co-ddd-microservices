@@ -47,7 +47,8 @@ export function validateEnv(env: Record<string, string | undefined>) {
     return envSchema.parse(env);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const formattedErrors = error.errors
+      const zodError = error as z.ZodError;
+      const formattedErrors = zodError.issues
         .map((err) => `  - ${err.path.join('.')}: ${err.message}`)
         .join('\n');
       
