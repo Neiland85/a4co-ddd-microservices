@@ -54,9 +54,38 @@ async function bootstrap() {
     // Swagger documentation
     const swaggerConfig = new DocumentBuilder()
         .setTitle('A4CO API Gateway')
-        .setDescription('API Gateway for A4CO Microservices Platform')
+        .setDescription(`
+            API Gateway for A4CO Microservices Platform
+            
+            This gateway acts as the single entry point for all microservices, providing:
+            - JWT authentication and authorization
+            - Request routing to downstream services
+            - User context propagation
+            - Rate limiting (100 requests per minute)
+            - Structured logging and distributed tracing
+            
+            ## Authentication
+            Most endpoints require a valid JWT token in the Authorization header:
+            \`Authorization: Bearer <your-jwt-token>\`
+            
+            ## Error Codes
+            - **401 Unauthorized**: Missing or invalid JWT token
+            - **403 Forbidden**: Valid token but insufficient permissions
+            - **429 Too Many Requests**: Rate limit exceeded
+            - **502 Bad Gateway**: Downstream service error
+            - **503 Service Unavailable**: Downstream service is down
+            - **504 Gateway Timeout**: Downstream service timeout
+        `)
         .setVersion('1.0')
-        .addBearerAuth()
+        .addBearerAuth(
+            {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+                description: 'Enter your JWT token',
+            },
+            'JWT',
+        )
         .addTag('health', 'Health check endpoints')
         .addTag('auth', 'Authentication service proxy')
         .addTag('products', 'Products service proxy')
@@ -67,7 +96,13 @@ async function bootstrap() {
         .build();
 
     const document = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api/docs', app, document);
+    SwaggerModule.setup('api/docs', app, document, {
+        swaggerOptions: {
+            persistAuthorization: true,
+            tagsSorter: 'alpha',
+            operationsSorter: 'alpha',
+        },
+    });
 
     await app.listen(port);
 
