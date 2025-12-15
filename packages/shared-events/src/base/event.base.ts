@@ -92,6 +92,9 @@ export const EventTypes = {
   INVENTORY_RESERVED_V1: 'inventory.reserved.v1',
   INVENTORY_RELEASED_V1: 'inventory.released.v1',
   INVENTORY_OUT_OF_STOCK_V1: 'inventory.out_of_stock.v1',
+
+  // Shipment events (v1)
+  SHIPMENT_DELIVERED_V1: 'shipment.delivered.v1',
 } as const;
 
 export type EventType = (typeof EventTypes)[keyof typeof EventTypes];
