@@ -21,8 +21,7 @@ WORKDIR /usr/src/app
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/product-service/package.json ./apps/product-service/
-COPY packages/observability/package.json ./packages/observability/ 2>/dev/null || true
-COPY packages/shared-utils/package.json ./packages/shared-utils/ 2>/dev/null || true
+COPY packages ./packages
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.pnpm-store \
@@ -36,9 +35,9 @@ WORKDIR /usr/src/app
 COPY apps/product-service ./apps/product-service
 COPY packages ./packages
 
-# Generate Prisma client
+# Generate Prisma client (if schema exists)
 WORKDIR /usr/src/app/apps/product-service
-RUN pnpm exec prisma generate 2>/dev/null || true
+RUN if [ -f "prisma/schema.prisma" ]; then pnpm exec prisma generate; fi
 
 # Build the application
 RUN pnpm run build
@@ -55,9 +54,9 @@ COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/product-service/node_mo
 COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/product-service/dist ./apps/product-service/dist
 COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/product-service/package.json ./apps/product-service/
 
-# Copy Prisma schema and generated client
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/product-service/prisma ./apps/product-service/prisma 2>/dev/null || true
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma 2>/dev/null || true
+# Copy Prisma schema and generated client (if exists)
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/product-service/prisma ./apps/product-service/prisma
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 # Set environment variables
 ENV NODE_ENV=production

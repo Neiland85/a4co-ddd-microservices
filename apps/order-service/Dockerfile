@@ -21,8 +21,7 @@ WORKDIR /usr/src/app
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/order-service/package.json ./apps/order-service/
-COPY packages/observability/package.json ./packages/observability/ 2>/dev/null || true
-COPY packages/shared-events/package.json ./packages/shared-events/ 2>/dev/null || true
+COPY packages ./packages
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.pnpm-store \
@@ -36,9 +35,9 @@ WORKDIR /usr/src/app
 COPY apps/order-service ./apps/order-service
 COPY packages ./packages
 
-# Generate Prisma client
+# Generate Prisma client (if schema exists)
 WORKDIR /usr/src/app/apps/order-service
-RUN pnpm exec prisma generate 2>/dev/null || true
+RUN if [ -f "prisma/schema.prisma" ]; then pnpm exec prisma generate; fi
 
 # Build the application
 RUN pnpm run build
@@ -55,9 +54,9 @@ COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/order-service/node_modu
 COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/order-service/dist ./apps/order-service/dist
 COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/order-service/package.json ./apps/order-service/
 
-# Copy Prisma schema and generated client
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/order-service/prisma ./apps/order-service/prisma 2>/dev/null || true
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma 2>/dev/null || true
+# Copy Prisma schema and generated client (if exists)
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/order-service/prisma ./apps/order-service/prisma
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 # Set environment variables
 ENV NODE_ENV=production

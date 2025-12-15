@@ -19,7 +19,7 @@ WORKDIR /usr/src/app
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/frontend/package.json ./apps/frontend/
-COPY packages/design-system/package.json ./packages/design-system/ 2>/dev/null || true
+COPY packages ./packages
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.pnpm-store \
@@ -66,9 +66,20 @@ RUN apk add --no-cache curl
 # Copy built assets
 COPY --from=builder /usr/src/app/apps/frontend/dist /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY apps/frontend/nginx.conf /etc/nginx/nginx.conf 2>/dev/null || \
-    echo "events {} http { server { listen 80; root /usr/share/nginx/html; index index.html; location / { try_files \$uri \$uri/ /index.html; } } }" > /etc/nginx/nginx.conf
+# Create simple nginx configuration for SPA
+RUN echo 'events { worker_connections 1024; } \n\
+http { \n\
+  include /etc/nginx/mime.types; \n\
+  default_type application/octet-stream; \n\
+  server { \n\
+    listen 80; \n\
+    root /usr/share/nginx/html; \n\
+    index index.html; \n\
+    location / { \n\
+      try_files $uri $uri/ /index.html; \n\
+    } \n\
+  } \n\
+}' > /etc/nginx/nginx.conf
 
 # Expose port
 EXPOSE 80
