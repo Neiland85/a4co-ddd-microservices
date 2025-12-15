@@ -1,6 +1,9 @@
 import { type Middleware } from 'koa';
 import { trace, context, propagation } from '@opentelemetry/api';
 
+// Export NestJS middleware
+export * from './trace-context.middleware';
+
 export interface MiddlewareOptions {
   ignorePaths?: string[];
 }

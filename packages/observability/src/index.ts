@@ -336,3 +336,15 @@ export function createDDDSpan(name: string, metadata: DDDMetadata, options?: Spa
 // Export logger utilities
 export { createHttpLogger, createLogger, getLogger, initializeLogger } from './logger';
 export type { ObservabilityLogger } from './ObservabilityLogger';
+
+// Export new trace context utilities and types
+export * from './utils/async-context';
+export * from './utils/trace-id.generator';
+export * from './types/trace-context.types';
+export * from './types/log-payload.types';
+
+// Export NestJS middleware
+export { TraceContextMiddleware, createTraceContextMiddleware } from './middleware/trace-context.middleware';
+
+// Export simple logger
+export { SimpleLogger, createSimpleLogger } from './logger/simple-logger';

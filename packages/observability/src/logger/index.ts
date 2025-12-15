@@ -207,3 +207,6 @@ export function createHttpLoggerMiddleware(logger?: ObservabilityLogger) {
 // Export logger utilities
 export { pino };
 export type { Logger, LoggerOptions };
+
+// Export simple logger
+export * from './simple-logger';
