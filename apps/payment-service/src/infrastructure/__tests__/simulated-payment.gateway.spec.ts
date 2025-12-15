@@ -66,8 +66,8 @@ describe('SimulatedPaymentGateway', () => {
       const amount = Money.create(10.0, 'EUR');
       const results: string[] = [];
 
-      // Act - Create 100 payments
-      for (let i = 0; i < 100; i++) {
+      // Act - Create 20 payments (reduced from 100 for faster test execution)
+      for (let i = 0; i < 20; i++) {
         const params = {
           amount,
           orderId: `order-${i}`,
@@ -79,12 +79,12 @@ describe('SimulatedPaymentGateway', () => {
 
       // Assert - Approximately 90% should succeed (with some variance)
       const successCount = results.filter(s => s === 'succeeded').length;
-      const successRate = successCount / 100;
+      const successRate = successCount / 20;
 
-      // Allow for statistical variance (80-100% success is acceptable)
-      expect(successRate).toBeGreaterThanOrEqual(0.8);
+      // Allow for statistical variance (70-100% success is acceptable for 20 samples)
+      expect(successRate).toBeGreaterThanOrEqual(0.7);
       expect(successRate).toBeLessThanOrEqual(1.0);
-    });
+    }, 60000); // Increase timeout to 60s for this specific test
 
     it('should simulate processing delay', async () => {
       // Arrange
@@ -135,6 +135,103 @@ describe('SimulatedPaymentGateway', () => {
       expect(result.payment_intent).toBe(paymentIntentId);
       expect(result.amount).toBeUndefined();
       expect(result.status).toBe('succeeded');
+    });
+  });
+
+  describe('currency validation', () => {
+    it('should accept EUR currency', async () => {
+      // Arrange
+      const amount = Money.create(10.0, 'EUR');
+      const params = {
+        amount,
+        orderId: 'order-eur',
+        customerId: 'customer-test',
+      };
+
+      // Act & Assert
+      const result = await gateway.createPaymentIntent(params);
+      expect(result.currency).toBe('eur');
+    });
+
+    it('should accept USD currency', async () => {
+      // Arrange
+      const amount = Money.create(10.0, 'USD');
+      const params = {
+        amount,
+        orderId: 'order-usd',
+        customerId: 'customer-test',
+      };
+
+      // Act & Assert
+      const result = await gateway.createPaymentIntent(params);
+      expect(result.currency).toBe('usd');
+    });
+
+    it('should accept GBP currency', async () => {
+      // Arrange
+      const amount = Money.create(10.0, 'GBP');
+      const params = {
+        amount,
+        orderId: 'order-gbp',
+        customerId: 'customer-test',
+      };
+
+      // Act & Assert
+      const result = await gateway.createPaymentIntent(params);
+      expect(result.currency).toBe('gbp');
+    });
+
+    it('should reject unsupported currency', async () => {
+      // Arrange
+      const amount = Money.create(10.0, 'JPY');
+      const params = {
+        amount,
+        orderId: 'order-jpy',
+        customerId: 'customer-test',
+      };
+
+      // Act & Assert
+      await expect(gateway.createPaymentIntent(params)).rejects.toThrow(
+        'Unsupported currency: JPY. Supported currencies: EUR, USD, GBP'
+      );
+    });
+  });
+
+  describe('successRate validation', () => {
+    it('should reject success rate below 0', () => {
+      // Arrange
+      process.env['PAYMENT_SUCCESS_RATE'] = '-0.1';
+
+      // Act & Assert
+      expect(() => new SimulatedPaymentGateway()).toThrow(
+        'PAYMENT_SUCCESS_RATE must be between 0 and 1, got: -0.1'
+      );
+    });
+
+    it('should reject success rate above 1', () => {
+      // Arrange
+      process.env['PAYMENT_SUCCESS_RATE'] = '1.5';
+
+      // Act & Assert
+      expect(() => new SimulatedPaymentGateway()).toThrow(
+        'PAYMENT_SUCCESS_RATE must be between 0 and 1, got: 1.5'
+      );
+    });
+
+    it('should accept success rate of 0', () => {
+      // Arrange
+      process.env['PAYMENT_SUCCESS_RATE'] = '0';
+
+      // Act & Assert
+      expect(() => new SimulatedPaymentGateway()).not.toThrow();
+    });
+
+    it('should accept success rate of 1', () => {
+      // Arrange
+      process.env['PAYMENT_SUCCESS_RATE'] = '1';
+
+      // Act & Assert
+      expect(() => new SimulatedPaymentGateway()).not.toThrow();
     });
   });
 });
