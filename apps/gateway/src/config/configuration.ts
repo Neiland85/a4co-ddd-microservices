@@ -13,13 +13,13 @@ export const configuration = () => ({
         refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
     },
 
-    // Service URLs (As per requirements: orders:3002, payments:3003, inventory:3004)
+    // Service URLs (defaults for local development, use env vars in Docker)
     services: {
-        auth: process.env.AUTH_SERVICE_URL || 'http://localhost:3001',
+        auth: process.env.AUTH_SERVICE_URL || 'http://localhost:4000',
         products: process.env.PRODUCTS_SERVICE_URL || 'http://localhost:3002',
-        orders: process.env.ORDERS_SERVICE_URL || 'http://order-service:3002',
-        inventory: process.env.INVENTORY_SERVICE_URL || 'http://inventory-service:3004',
-        payments: process.env.PAYMENTS_SERVICE_URL || 'http://payment-service:3003',
+        orders: process.env.ORDERS_SERVICE_URL || 'http://localhost:3000',
+        inventory: process.env.INVENTORY_SERVICE_URL || 'http://localhost:3002',
+        payments: process.env.PAYMENTS_SERVICE_URL || 'http://localhost:3001',
         sagas: process.env.SAGAS_SERVICE_URL || 'http://localhost:3006',
     },
 
