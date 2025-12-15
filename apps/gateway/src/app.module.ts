@@ -5,14 +5,16 @@
 import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 import { JwtAuthMiddleware } from './common/middleware/jwt-auth.middleware';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { configuration } from './config/configuration';
 import { HealthController } from './health/health.controller';
+import { StructuredLogger } from './logger/structured.logger';
 import { ProxyModule } from './proxy/proxy.module';
 
 @Module({
@@ -54,6 +56,11 @@ import { ProxyModule } from './proxy/proxy.module';
     ],
     controllers: [HealthController],
     providers: [
+        // Global HTTP exception filter
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter,
+        },
         // Global rate limiting guard
         {
             provide: APP_GUARD,
@@ -69,8 +76,11 @@ import { ProxyModule } from './proxy/proxy.module';
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
-        // Apply logging middleware to all routes
-        consumer.apply(LoggerMiddleware).forRoutes('*');
+        // Apply correlation ID middleware first (to all routes)
+        consumer.apply(CorrelationIdMiddleware).forRoutes('*');
+
+        // Apply structured logging middleware (to all routes)
+        consumer.apply(StructuredLogger).forRoutes('*');
 
         // Apply JWT auth middleware to protected routes
         consumer
