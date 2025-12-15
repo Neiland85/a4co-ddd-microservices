@@ -93,8 +93,13 @@ test.describe('Complete Order Flow E2E Tests', () => {
         const submitButton = page.locator('button[type="submit"]').first();
         await submitButton.click();
 
-        // Wait for navigation or error
-        await page.waitForTimeout(2000);
+        // Wait for navigation to dashboard or stay on login page
+        await Promise.race([
+          page.waitForURL('**/dashboard', { timeout: 5000 }),
+          page.waitForTimeout(3000), // Fallback if dashboard route doesn't exist yet
+        ]).catch(() => {
+          // Navigation might not happen if authentication flow is different
+        });
       } else {
         // Login page might not exist yet, use API authentication
         authTokens = await loginViaAPI(credentials, GATEWAY_URL);
@@ -143,7 +148,11 @@ test.describe('Complete Order Flow E2E Tests', () => {
 
       // Act
       await page.goto(`${DASHBOARD_URL}/products`);
-      await page.waitForTimeout(1000);
+      
+      // Wait for page to load - either products appear or empty state shows
+      await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {
+        // Networkidle might not work if page keeps polling
+      });
 
       // Assert - check for product listings or empty state
       const bodyText = await page.textContent('body');
@@ -237,9 +246,7 @@ test.describe('Complete Order Flow E2E Tests', () => {
       const order = await createOrder(orderRequest, authTokens.accessToken);
       console.log(`📦 Order created: ${order.orderId}`);
 
-      // Wait for payment processing (saga takes time)
-      await page.waitForTimeout(3000);
-
+      // Payment processing is handled by waitForPaymentStatus below with polling
       // Try to get payment status
       try {
         const payment = await waitForPaymentStatus(
@@ -325,9 +332,7 @@ test.describe('Complete Order Flow E2E Tests', () => {
       // Act
       const order = await createOrder(orderRequest, authTokens.accessToken);
       
-      // Wait for order processing
-      await page.waitForTimeout(5000);
-
+      // Order processing is handled by waitForOrderStatus below with polling
       try {
         // Try to wait for confirmed status
         const confirmedOrder = await waitForOrderStatus(
@@ -481,9 +486,8 @@ test.describe('Complete Order Flow E2E Tests', () => {
         correlationId: order.orderId,
       });
 
-      // Wait for saga to process
-      await page.waitForTimeout(5000);
-
+      // In a real scenario, we would wait for actual NATS events
+      // For this test, events are recorded synchronously above
       // Assert - Verify compensation events
       const compensationEvents = natsMonitor.findEventsBySubject('saga.compensating');
       const cancelEvents = natsMonitor.findEventsBySubject('order.cancelled');

@@ -10,6 +10,10 @@
 
 import { chromium, FullConfig } from '@playwright/test';
 
+// Configuration constants
+const MAX_RETRY_ATTEMPTS = 30;
+const RETRY_DELAY_MS = 2000;
+
 async function globalSetup(config: FullConfig) {
   console.log('🚀 Starting E2E test global setup...');
 
@@ -22,11 +26,10 @@ async function globalSetup(config: FullConfig) {
   // Wait for services to be ready
   console.log('⏳ Waiting for services to be ready...');
   
-  const maxRetries = 30;
   let retries = 0;
   let servicesReady = false;
 
-  while (retries < maxRetries && !servicesReady) {
+  while (retries < MAX_RETRY_ATTEMPTS && !servicesReady) {
     try {
       // Check if gateway is ready
       const gatewayResponse = await fetch(`${gatewayURL}/health`).catch(() => null);
@@ -39,13 +42,13 @@ async function globalSetup(config: FullConfig) {
         console.log('✅ All services are ready!');
       } else {
         retries++;
-        console.log(`⏳ Services not ready yet (attempt ${retries}/${maxRetries}), waiting...`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log(`⏳ Services not ready yet (attempt ${retries}/${MAX_RETRY_ATTEMPTS}), waiting...`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
       }
     } catch (error) {
       retries++;
-      console.log(`⏳ Services not ready yet (attempt ${retries}/${maxRetries}), waiting...`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log(`⏳ Services not ready yet (attempt ${retries}/${MAX_RETRY_ATTEMPTS}), waiting...`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
     }
   }
 

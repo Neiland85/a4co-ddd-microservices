@@ -117,25 +117,41 @@ else
   echo "Starting services with Docker Compose..."
   docker compose -f docker-compose.test.yml up -d
   
-  echo -e "${YELLOW}⏳ Waiting for services to be healthy (30s)...${NC}"
-  sleep 30
+  echo -e "${YELLOW}⏳ Waiting for services to be healthy (up to 60s)...${NC}"
   
-  # Check service health
-  echo -e "${YELLOW}🔍 Checking service health...${NC}"
+  # Poll health endpoints for up to 60 seconds
+  GATEWAY_URL="http://localhost:8081/health"
+  NATS_URL="http://localhost:8223/healthz"
+  MAX_WAIT=60
+  INTERVAL=2
+  waited=0
   
-  # Check Gateway
-  if curl -sf http://localhost:8081/health >/dev/null 2>&1; then
-    echo -e "${GREEN}✅ Gateway is healthy${NC}"
-  else
-    echo -e "${YELLOW}⚠️  Gateway might not be ready yet${NC}"
-  fi
-  
-  # Check NATS
-  if curl -sf http://localhost:8223/healthz >/dev/null 2>&1; then
-    echo -e "${GREEN}✅ NATS is healthy${NC}"
-  else
-    echo -e "${YELLOW}⚠️  NATS might not be ready yet${NC}"
-  fi
+  while true; do
+    GATEWAY_OK=false
+    NATS_OK=false
+    
+    if curl -sf "$GATEWAY_URL" >/dev/null 2>&1; then
+      GATEWAY_OK=true
+    fi
+    if curl -sf "$NATS_URL" >/dev/null 2>&1; then
+      NATS_OK=true
+    fi
+    
+    if [ "$GATEWAY_OK" = true ] && [ "$NATS_OK" = true ]; then
+      echo -e "${GREEN}✅ All services are healthy!${NC}"
+      break
+    fi
+    
+    if [ "$waited" -ge "$MAX_WAIT" ]; then
+      echo -e "${YELLOW}⚠️  Timed out waiting for services after ${MAX_WAIT}s${NC}"
+      [ "$GATEWAY_OK" = false ] && echo -e "${YELLOW}   - Gateway not healthy${NC}"
+      [ "$NATS_OK" = false ] && echo -e "${YELLOW}   - NATS not healthy${NC}"
+      break
+    fi
+    
+    sleep "$INTERVAL"
+    waited=$((waited + INTERVAL))
+  done
 fi
 
 echo ""

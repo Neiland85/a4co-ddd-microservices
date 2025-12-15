@@ -6,6 +6,10 @@
  * For full NATS integration, consider using @nats-io/nats client
  */
 
+// Configuration constants
+const DEFAULT_EVENT_POLL_INTERVAL_MS = 100;
+const DEFAULT_EVENT_TIMEOUT_MS = 10000;
+
 export interface NATSEvent {
   subject: string;
   data: any;
@@ -16,9 +20,14 @@ export interface NATSEvent {
 export class NATSEventMonitor {
   private events: NATSEvent[] = [];
   private monitoringUrl: string;
+  private pollIntervalMs: number;
 
-  constructor(monitoringUrl: string = 'http://localhost:8223') {
+  constructor(
+    monitoringUrl: string = 'http://localhost:8223',
+    pollIntervalMs: number = DEFAULT_EVENT_POLL_INTERVAL_MS
+  ) {
     this.monitoringUrl = monitoringUrl;
+    this.pollIntervalMs = pollIntervalMs;
   }
 
   /**
@@ -78,7 +87,7 @@ export class NATSEventMonitor {
    */
   async waitForEvent(
     subjectPattern: string,
-    timeoutMs: number = 10000
+    timeoutMs: number = DEFAULT_EVENT_TIMEOUT_MS
   ): Promise<NATSEvent> {
     const startTime = Date.now();
     const regex = new RegExp(subjectPattern);
@@ -88,7 +97,7 @@ export class NATSEventMonitor {
       if (event) {
         return event;
       }
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, this.pollIntervalMs));
     }
 
     throw new Error(

@@ -97,23 +97,43 @@ jobs:
         run: pnpm run build || echo "Build may fail if Next.js app is incomplete"
         continue-on-error: true
 
+      - name: Verify Docker and Docker Compose
+        run: |
+          echo "Checking Docker installation..."
+          docker --version
+          docker compose version
+          echo "Docker Compose is available"
+
       - name: Install Playwright browsers
         working-directory: apps/dashboard-client
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Start test services with Docker Compose
         run: |
-          docker-compose -f docker-compose.test.yml up -d
-          sleep 30
+          docker compose -f docker-compose.test.yml up -d
         timeout-minutes: 5
         continue-on-error: true
 
       - name: Wait for services to be ready
         run: |
           echo "Waiting for services to be healthy..."
-          timeout 120 bash -c 'until curl -f http://localhost:8081/health 2>/dev/null; do sleep 2; done' || echo "Gateway not ready"
-          timeout 120 bash -c 'until curl -f http://localhost:3001 2>/dev/null; do sleep 2; done' || echo "Dashboard not ready"
-          echo "Services check completed"
+          
+          # Wait for Gateway (up to 2 minutes)
+          echo "Checking Gateway at http://localhost:8081/health..."
+          timeout 120 bash -c 'until curl -sf http://localhost:8081/health 2>/dev/null; do echo "Gateway not ready, waiting..."; sleep 3; done' || echo "⚠️ Gateway health check timed out"
+          
+          # Wait for Dashboard (up to 2 minutes)
+          echo "Checking Dashboard at http://localhost:3001..."
+          timeout 120 bash -c 'until curl -sf http://localhost:3001 2>/dev/null; do echo "Dashboard not ready, waiting..."; sleep 3; done' || echo "⚠️ Dashboard health check timed out"
+          
+          # Check NATS
+          echo "Checking NATS at http://localhost:8223/healthz..."
+          curl -sf http://localhost:8223/healthz || echo "⚠️ NATS might not be ready"
+          
+          echo "✅ Service health checks completed"
+          
+          # Show running containers for debugging
+          docker compose -f docker-compose.test.yml ps
         continue-on-error: true
 
       - name: Run E2E tests
@@ -156,18 +176,18 @@ jobs:
         if: failure()
         run: |
           echo "=== Gateway Logs ==="
-          docker-compose -f docker-compose.test.yml logs gateway-test || true
+          docker compose -f docker-compose.test.yml logs gateway-test || true
           echo "=== Order Service Logs ==="
-          docker-compose -f docker-compose.test.yml logs order-service-test || true
+          docker compose -f docker-compose.test.yml logs order-service-test || true
           echo "=== Payment Service Logs ==="
-          docker-compose -f docker-compose.test.yml logs payment-service-test || true
+          docker compose -f docker-compose.test.yml logs payment-service-test || true
           echo "=== Dashboard Client Logs ==="
-          docker-compose -f docker-compose.test.yml logs dashboard-client-test || true
+          docker compose -f docker-compose.test.yml logs dashboard-client-test || true
 
       - name: Cleanup test services
         if: always()
         run: |
-          docker-compose -f docker-compose.test.yml down -v
+          docker compose -f docker-compose.test.yml down -v
           docker system prune -f
 
   # Require E2E tests to pass before allowing merge
