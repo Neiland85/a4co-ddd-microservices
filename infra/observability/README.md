@@ -30,6 +30,8 @@ The observability stack provides comprehensive monitoring, logging, and alerting
 
 | Service | Port | Description |
 |---------|------|-------------|
+| **OpenTelemetry Collector** | 4317, 4318 | OTLP trace/metrics receiver |
+| **Jaeger** | 16686 | Distributed tracing UI |
 | **Grafana** | 3000 | Visualization and dashboards |
 | **Prometheus** | 9090 | Metrics collection and storage |
 | **Loki** | 3100 | Log aggregation |
@@ -43,25 +45,32 @@ The observability stack provides comprehensive monitoring, logging, and alerting
 
 ```bash
 # From repository root
-docker-compose -f docker-compose.observability.yml up -d
+docker compose -f docker-compose.observability.yml up -d
+
+# Or using npm scripts
+pnpm run observability:up
 ```
 
 ### 2. Verify Services
 
 ```bash
 # Check all services are running
-docker-compose -f docker-compose.observability.yml ps
+docker compose -f docker-compose.observability.yml ps
+# Or: pnpm run observability:ps
 
 # Check logs
-docker-compose -f docker-compose.observability.yml logs -f grafana
+docker compose -f docker-compose.observability.yml logs -f
+# Or: pnpm run observability:logs
 ```
 
 ### 3. Access Dashboards
 
 - **Grafana**: http://localhost:3000 (admin/admin)
+- **Jaeger**: http://localhost:16686
 - **Prometheus**: http://localhost:9090
 - **AlertManager**: http://localhost:9093
 - **Loki**: http://localhost:3100/ready
+- **OTLP Collector**: http://localhost:4318 (HTTP), grpc://localhost:4317 (gRPC)
 
 ## 📊 Dashboards
 
