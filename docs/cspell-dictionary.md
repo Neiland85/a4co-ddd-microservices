@@ -1,15 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 18:05:23
+Última sincronización: 15/12/2025, 18:10:05
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (1)
-- paid
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (135)
+### Commits recientes detectados (139)
 - about
 - added
 - address
@@ -31,6 +31,7 @@ Sin nuevas palabras.
 - compilation
 - compiler
 - compiles
+- completion
 - composite
 - comprehensive
 - configuration
@@ -57,6 +58,8 @@ Sin nuevas palabras.
 - features
 - feedback
 - field
+- final
+- fixes
 - flag
 - folder
 - folders
@@ -128,6 +131,7 @@ Sin nuevas palabras.
 - status
 - subject
 - successfully
+- summary
 - support
 - tests
 - that
