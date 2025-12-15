@@ -29,7 +29,12 @@
     "ci:test": "pnpm run test && pnpm run lint",
     "update:dicts": "ts-node scripts/update-cspell-dicts.ts",
     "prepare": "simple-git-hooks",
-    "metrics": "curl http://localhost:3004/orders/metrics | grep saga || true"
+    "metrics": "curl http://localhost:3004/orders/metrics | grep saga || true",
+    "observability:up": "docker-compose -f docker-compose.observability.yml up -d",
+    "observability:down": "docker-compose -f docker-compose.observability.yml down",
+    "observability:logs": "docker-compose -f docker-compose.observability.yml logs -f",
+    "observability:ps": "docker-compose -f docker-compose.observability.yml ps",
+    "observability:restart": "docker-compose -f docker-compose.observability.yml restart"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.2",

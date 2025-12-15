@@ -6,3 +6,11 @@ export function Repository(aggregateName: string): (constructor: unknown) => unk
     return constructor;
   };
 }
+
+// Export tracing decorators
+export { Tracing, TraceDDD } from './tracing.decorator';
+export type { TracingOptions } from './tracing.decorator';
+
+// Export logging decorators
+export { Log, LogDDD } from './logging.decorator';
+export type { LogOptions } from './logging.decorator';

@@ -154,94 +154,83 @@ export function initializeTracing(
 ): NodeSDK {
   const logger = getLogger();
 
-  // Create resource
-  // const resource = Resource.default().merge(
-  //   new Resource({
-  //     [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName,
-  //     [SemanticResourceAttributes.SERVICE_VERSION]: config.serviceVersion || '1.0.0',
-  //     [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
-  //   }),
-  // );
+  // Determine OTLP endpoint (prefer config, fallback to env var)
+  const otlpEndpoint = 
+    config.otlpEndpoint || 
+    process.env['OTEL_EXPORTER_OTLP_ENDPOINT'] || 
+    'http://localhost:4318';
 
-  // Create tracer provider
-  const provider = new NodeTracerProvider({
-    // resource,
-  });
-
-  // Add exporters
+  // Create exporter based on configuration
+  let traceExporter;
   const exporters: string[] = [];
 
-  // Jaeger exporter
-  if (config.jaegerEndpoint) {
-    // const jaegerExporter = new JaegerExporter({
-    //   endpoint: config.jaegerEndpoint,
-    //   // Additional Jaeger configuration can be added here
-    // });
-    // provider.addSpanProcessor(new BatchSpanProcessor(jaegerExporter));
+  if (otlpEndpoint) {
+    try {
+      // Use OTLP HTTP exporter as primary
+      const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
+      traceExporter = new OTLPTraceExporter({
+        url: `${otlpEndpoint}/v1/traces`,
+        headers: {},
+        compression: 'gzip',
+      });
+      exporters.push('otlp-http');
+    } catch (error) {
+      logger.warn('OTLP exporter not available, falling back to Jaeger');
+    }
+  }
+
+  // Fallback to Jaeger if OTLP not configured
+  if (!traceExporter && config.jaegerEndpoint) {
+    traceExporter = new JaegerExporter({
+      endpoint: config.jaegerEndpoint,
+    });
     exporters.push('jaeger');
   }
 
   // Console exporter for development
   if (config.enableConsoleExporter) {
-    // provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
     exporters.push('console');
   }
 
-  // Register the provider
-  provider.register({
-    propagator: new CompositePropagator({
-      propagators: [new W3CTraceContextPropagator(), new W3CBaggagePropagator()],
-    }),
-  });
-
-  globalTracerProvider = provider;
-
-  // Register instrumentations
-  if (config.enableAutoInstrumentation !== false) {
-    registerInstrumentations({
-      instrumentations: [
-        new HttpInstrumentation({
-          requestHook: (span, request) => {
-            span.setAttributes({
-              'http.request.body.size': (request as any).headers?.['content-length'],
-              'http.user_agent': (request as any).headers?.['user-agent'],
-            });
-          },
-          responseHook: (span, response) => {
-            span.setAttributes({
-              'http.response.body.size': (response as any).headers?.['content-length'],
-            });
-          },
-        }),
-        new ExpressInstrumentation({
-          requestHook: (span, info) => {
-            span.setAttributes({
-              'express.route': info.route,
-              'express.layer_type': info.layerType,
-            });
-          },
-        }),
-        new KoaInstrumentation(),
-        // Add more instrumentations as needed
-      ],
-    });
-  }
-
-  // Create SDK
+  // Create SDK with auto-instrumentation
   const sdk = new NodeSDK({
-    // resource,
-    traceExporter: config.jaegerEndpoint
-      ? new JaegerExporter({
-          endpoint: config.jaegerEndpoint,
-        })
-      : undefined,
-    instrumentations: config.enableAutoInstrumentation ? [getNodeAutoInstrumentations()] : [],
+    serviceName: config.serviceName,
+    traceExporter,
+    instrumentations: config.enableAutoInstrumentation !== false ? [getNodeAutoInstrumentations({
+      '@opentelemetry/instrumentation-http': {
+        requestHook: (span: Span, request: any) => {
+          span.setAttributes({
+            'http.request.body.size': request.headers?.['content-length'],
+            'http.user_agent': request.headers?.['user-agent'],
+          });
+        },
+        responseHook: (span: Span, response: any) => {
+          span.setAttributes({
+            'http.response.body.size': response.headers?.['content-length'],
+          });
+        },
+      },
+      '@opentelemetry/instrumentation-express': {
+        requestHook: (span: Span, info: any) => {
+          span.setAttributes({
+            'express.route': info.route,
+            'express.layer_type': info.layerType,
+          });
+        },
+      },
+    })] : [],
   });
 
   // Initialize SDK
   try {
     sdk.start();
-    logger.info(`Tracing initialized with exporters: ${exporters.join(', ')}`);
+    logger.info(`OpenTelemetry tracing initialized`, {
+      serviceName: config.serviceName,
+      serviceVersion: config.serviceVersion || '1.0.0',
+      environment: config.environment || 'development',
+      exporters: exporters.join(', '),
+      otlpEndpoint,
+    });
   } catch (error: unknown) {
     logger.error(
       `Error initializing tracing: ${error instanceof Error ? error.message : String(error)}`,
@@ -349,3 +338,7 @@ export { TraceContextMiddleware, createTraceContextMiddleware } from './middlewa
 
 // Export simple logger
 export { SimpleLogger, createSimpleLogger } from './logger/simple-logger';
+
+// Export decorators
+export { Tracing, TraceDDD, Log, LogDDD } from './decorators';
+export type { TracingOptions, LogOptions } from './decorators';
