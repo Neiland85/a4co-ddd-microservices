@@ -77,6 +77,53 @@ JWT_SECRET="your-secret-key"
 - **Testing**: Jest
 - **Linting**: ESLint + Prettier
 
+## 📊 Observabilidad (PR4)
+
+El proyecto incluye una infraestructura completa de observabilidad para monitoreo, logging y alertas.
+
+### Stack de Observabilidad
+
+- **Grafana**: Dashboards y visualización
+- **Prometheus**: Recolección de métricas
+- **Loki**: Agregación de logs
+- **Promtail**: Recolección de logs
+- **AlertManager**: Gestión de alertas
+- **NATS Exporter**: Métricas de NATS
+
+### Inicio Rápido
+
+```bash
+# Iniciar stack de observabilidad
+./scripts/start-observability.sh
+
+# Acceder a Grafana
+# URL: http://localhost:3000 (admin/admin)
+```
+
+### Dashboards Disponibles
+
+- **Main Dashboard**: Métricas HTTP, latencia, disponibilidad
+- **Events Dashboard**: Eventos publicados/consumidos, errores, latencia
+- **NATS Dashboard**: Clientes, throughput, JetStream, consumer lag
+
+### Documentación
+
+- **Guía Rápida**: `infra/observability/README.md`
+- **Documentación Completa**: `docs/PR4-OBSERVABILITY-SETUP.md` (50KB)
+
+### Comandos Útiles
+
+```bash
+# Ver logs
+docker-compose -f docker-compose.observability.yml logs -f
+
+# Detener stack
+./scripts/stop-observability.sh
+
+# Detener y eliminar datos
+./scripts/stop-observability.sh --remove-volumes
+```
+
 ## 🤝 Contribución
 
 1. Fork el proyecto
