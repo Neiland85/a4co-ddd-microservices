@@ -23,7 +23,7 @@ export class SendGridService {
       sgMail.setApiKey(apiKey);
       this.logger.log('✅ SendGrid configured');
     } else {
-      this.logger.warn('⚠️  SendGrid API key not configured, emails will fail');
+      this.logger.warn('⚠️  SendGrid API key not configured, emails will be mocked');
     }
   }
 

@@ -31,6 +31,7 @@ import { createPushProvider } from './providers/push.provider';
   ],
   controllers: [
     NotificationController,
+    // Event listeners (must be controllers for @EventPattern to work)
     OrderConfirmedListener,
     ShipmentDeliveredListener,
   ],

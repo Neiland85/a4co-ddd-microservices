@@ -8,7 +8,7 @@ import { SendGridService } from '../services/sendgrid.service';
  * OrderConfirmed Event Listener
  * Sends email notification when order is confirmed
  */
-@Controller()
+@Controller() // Required by @EventPattern decorator
 export class OrderConfirmedListener {
   private readonly logger = new Logger(OrderConfirmedListener.name);
 

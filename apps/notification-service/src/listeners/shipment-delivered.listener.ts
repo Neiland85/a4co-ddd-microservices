@@ -8,7 +8,7 @@ import { TwilioService } from '../services/twilio.service';
  * ShipmentDelivered Event Listener
  * Sends SMS notification when shipment is delivered
  */
-@Controller()
+@Controller() // Required by @EventPattern decorator
 export class ShipmentDeliveredListener {
   private readonly logger = new Logger(ShipmentDeliveredListener.name);
 
