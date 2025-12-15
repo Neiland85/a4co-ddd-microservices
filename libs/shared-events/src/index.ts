@@ -1,20 +1,16 @@
 /**
- * Shared Events Library for A4CO Microservices
- * 
- * This library provides typed event definitions for communication
- * between microservices using NATS message broker.
- * 
- * All events are versioned to support backward compatibility.
+ * Central export para toda la librería de eventos compartidos
  */
 
+// Event types
+export * from './events/order.events'
+export * from './events/payment.events'
+export * from './events/inventory.events'
+export * from './events/saga.events'
+
 // Base types
-export * from './base-event';
+export * from './types/event.base'
+export * from './types/payload.types'
 
-// Order events
-export * from './order-events';
-
-// Payment events
-export * from './payment-events';
-
-// Inventory events
-export * from './inventory-events';
+// Constants
+export { EVENT_PATTERNS, type EventPattern } from './constants/event-patterns'

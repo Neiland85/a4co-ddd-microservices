@@ -1,92 +1,115 @@
 # @a4co/shared-events
 
-Shared event definitions for A4CO microservices event-driven architecture.
+Librería compartida de tipos de eventos para la arquitectura event-driven con NATS.
 
-## Overview
+## 📦 Instalación
 
-This library provides typed TypeScript event definitions used across all microservices for event-driven communication via NATS.
+```bash
+npm install @a4co/shared-events
+```
 
-## Features
+## 🎯 Uso
 
-- ✅ Strongly typed event payloads
-- ✅ Versioned events (v1, v2, etc.) for backward compatibility
-- ✅ Base event class with common fields
-- ✅ Event metadata (eventId, timestamp, correlationId)
-
-## Events
-
-### Order Events
-
-- `OrderCreatedV1Event` - New order created
-- `OrderConfirmedV1Event` - Order successfully confirmed
-- `OrderCancelledV1Event` - Order cancelled
-- `OrderFailedV1Event` - Order processing failed
-
-### Payment Events
-
-- `PaymentConfirmedV1Event` - Payment successful
-- `PaymentFailedV1Event` - Payment failed
-- `PaymentRefundedV1Event` - Payment refunded (compensation)
-
-### Inventory Events
-
-- `InventoryReservedV1Event` - Stock reserved for order
-- `InventoryFailedV1Event` - Stock reservation failed
-- `InventoryReleasedV1Event` - Stock released (compensation)
-
-## Usage
+### Importar Eventos
 
 ```typescript
-import { OrderCreatedV1Event, ORDER_CREATED_V1 } from '@a4co/shared-events';
+import {
+  OrderCreatedEvent,
+  PaymentConfirmedEvent,
+  InventoryReservedEvent,
+  SagaCompletedEvent,
+} from '@a4co/shared-events'
+```
 
-// Create event
-const event = new OrderCreatedV1Event({
-  orderId: 'order-123',
-  customerId: 'customer-456',
-  items: [
-    { productId: 'prod-1', quantity: 2, unitPrice: 10.00 }
-  ],
-  totalAmount: 20.00,
-  currency: 'EUR'
-});
+### Usar Constants
 
-// Emit via NATS
-natsClient.emit(ORDER_CREATED_V1, event.toJSON());
+```typescript
+import { EVENT_PATTERNS } from '@a4co/shared-events'
 
-// Listen for events
-@EventPattern(ORDER_CREATED_V1)
-async handleOrderCreated(data: any) {
-  const payload = data.payload;
-  // Process event...
+// En listeners de NATS
+@EventPattern(EVENT_PATTERNS.ORDER_CREATED)
+handleOrderCreated(event: OrderCreatedEvent) {
+  // ...
+}
+
+// En publishers
+await eventPublisher.publish(EVENT_PATTERNS.PAYMENT_CONFIRMED, event)
+```
+
+## 📚 Event Types
+
+### Order Events
+- `OrderCreatedEvent`: Cuando se crea una nueva orden
+- `OrderCancelledEvent`: Cuando se cancela una orden
+
+### Payment Events
+- `PaymentConfirmedEvent`: Cuando el pago se procesa exitosamente
+- `PaymentFailedEvent`: Cuando el pago falla
+
+### Inventory Events
+- `InventoryReservedEvent`: Cuando se reserva stock exitosamente
+- `InventoryFailedEvent`: Cuando falla la reserva de stock
+
+### Saga Events
+- `SagaStartedEvent`: Cuando inicia la orquestación
+- `SagaCompletedEvent`: Cuando se completa exitosamente
+- `SagaFailedEvent`: Cuando falla
+- `SagaCompensationRequiredEvent`: Cuando se requieren compensaciones
+
+## 🔄 Versionado
+
+Todos los eventos incluyen un campo `version` para permitir evolución futura:
+
+```typescript
+interface BaseEvent {
+  eventId: string      // UUID único
+  version: number      // Versión para compatibilidad
+  timestamp: Date      // Timestamp ISO 8601
 }
 ```
 
-## Versioning Strategy
+## 📖 Ejemplo Completo
 
-Events are versioned to allow gradual migration between versions:
+```typescript
+import { v4 as uuid } from 'uuid'
+import { OrderCreatedEvent, EVENT_PATTERNS } from '@a4co/shared-events'
 
-- `v1` - Initial version
-- `v2` - Breaking changes, old consumers still work with v1
-- Old versions maintained for backward compatibility period
+// Crear evento
+const event: OrderCreatedEvent = {
+  eventId: uuid(),
+  orderId: 'order-123',
+  userId: 'user-456',
+  productId: 'prod-789',
+  quantity: 2,
+  totalAmount: 100,
+  timestamp: new Date(),
+  version: 1,
+}
 
-## Development
-
-```bash
-# Build the library
-npm run build
-
-# Watch mode
-npm run watch
+// Publicar
+await publisher.publish(EVENT_PATTERNS.ORDER_CREATED, event)
 ```
 
-## Integration
+## ⚙️ Configuración en Servicios
 
-Add to service's `package.json`:
+En `tsconfig.json` de cada servicio:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@a4co/shared-events": ["../../libs/shared-events/src"]
+    }
+  }
+}
+```
+
+O en `package.json` después de compilar:
 
 ```json
 {
   "dependencies": {
-    "@a4co/shared-events": "workspace:*"
+    "@a4co/shared-events": "file:../../libs/shared-events"
   }
 }
 ```
