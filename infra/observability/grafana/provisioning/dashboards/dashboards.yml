@@ -1,0 +1,55 @@
+# ================================================================
+# Grafana Dashboard Provisioning Configuration for A4CO Microservices
+# PR4: Observability Infrastructure
+# ================================================================
+
+apiVersion: 1
+
+providers:
+  # A4CO Main Dashboards
+  - name: 'A4CO Microservices'
+    orgId: 1
+    folder: 'A4CO'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true
+
+  # Event-Driven Architecture Dashboards
+  - name: 'A4CO Events'
+    orgId: 1
+    folder: 'A4CO Events'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/events
+      foldersFromFilesStructure: false
+
+  # NATS Monitoring Dashboards
+  - name: 'A4CO NATS'
+    orgId: 1
+    folder: 'A4CO NATS'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/nats
+      foldersFromFilesStructure: false
+
+  # Infrastructure Dashboards
+  - name: 'A4CO Infrastructure'
+    orgId: 1
+    folder: 'A4CO Infrastructure'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/infrastructure
+      foldersFromFilesStructure: false

@@ -1,0 +1,310 @@
+# ================================================================
+# Prometheus Alerting Rules for A4CO Microservices
+# PR4: Observability Infrastructure
+# ================================================================
+
+groups:
+  # ================================================================
+  # MICROSERVICES HEALTH ALERTS
+  # ================================================================
+  - name: microservices_health
+    interval: 30s
+    rules:
+      - alert: ServiceDown
+        expr: up{service_type="microservice"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: availability
+        annotations:
+          summary: "Service {{ $labels.service }} is down"
+          description: "{{ $labels.service }} has been down for more than 2 minutes."
+
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(http_requests_total{status=~"5.."}[5m]) 
+            / 
+            rate(http_requests_total[5m])
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          category: errors
+        annotations:
+          summary: "High error rate on {{ $labels.service }}"
+          description: "{{ $labels.service }} has error rate above 5% (current: {{ $value | humanizePercentage }})"
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95, 
+            rate(http_request_duration_seconds_bucket[5m])
+          ) > 1
+        for: 10m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "High latency on {{ $labels.service }}"
+          description: "{{ $labels.service }} p95 latency is above 1s (current: {{ $value }}s)"
+
+  # ================================================================
+  # EVENT-DRIVEN ARCHITECTURE ALERTS
+  # ================================================================
+  - name: event_driven_alerts
+    interval: 30s
+    rules:
+      - alert: HighEventProcessingErrors
+        expr: |
+          rate(event_processing_errors_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: critical
+          category: events
+        annotations:
+          summary: "High event processing error rate"
+          description: "Service {{ $labels.service }} has more than 5 event processing errors per second"
+
+      - alert: EventProcessingLatencyHigh
+        expr: |
+          histogram_quantile(0.95,
+            rate(event_processing_duration_seconds_bucket[5m])
+          ) > 5
+        for: 10m
+        labels:
+          severity: warning
+          category: events
+        annotations:
+          summary: "Event processing latency is high"
+          description: "{{ $labels.service }} event processing p95 latency is above 5s (current: {{ $value }}s)"
+
+      - alert: EventPublishingFailed
+        expr: |
+          rate(event_published_errors_total[5m]) > 1
+        for: 3m
+        labels:
+          severity: critical
+          category: events
+        annotations:
+          summary: "Event publishing failures detected"
+          description: "Service {{ $labels.service }} is failing to publish events (rate: {{ $value }}/s)"
+
+      - alert: EventConsumptionStalled
+        expr: |
+          rate(event_consumed_total[10m]) == 0
+          and
+          rate(event_published_total[10m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: events
+        annotations:
+          summary: "Event consumption has stalled"
+          description: "Consumer {{ $labels.consumer }} is not consuming events while events are being published"
+
+  # ================================================================
+  # NATS MESSAGING ALERTS
+  # ================================================================
+  - name: nats_alerts
+    interval: 30s
+    rules:
+      - alert: NATSServerDown
+        expr: up{service="nats-server"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "NATS server is down"
+          description: "NATS message broker has been down for more than 1 minute"
+
+      - alert: NATSHighMemoryUsage
+        expr: |
+          (gnatsd_varz_mem / gnatsd_varz_max_mem) > 0.80
+        for: 5m
+        labels:
+          severity: warning
+          category: resources
+        annotations:
+          summary: "NATS server high memory usage"
+          description: "NATS is using more than 80% of available memory (current: {{ $value | humanizePercentage }})"
+
+      - alert: NATSSlowConsumers
+        expr: |
+          gnatsd_varz_slow_consumers > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "NATS has slow consumers"
+          description: "NATS server has {{ $value }} slow consumers detected"
+
+      - alert: NATSJetStreamStorageHigh
+        expr: |
+          (
+            sum(gnatsd_jetstream_stream_store_bytes) 
+            / 
+            sum(gnatsd_jetstream_config_max_store)
+          ) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          category: storage
+        annotations:
+          summary: "JetStream storage usage is high"
+          description: "JetStream is using more than 85% of storage (current: {{ $value | humanizePercentage }})"
+
+      - alert: NATSConnectionErrors
+        expr: |
+          rate(gnatsd_varz_total_connections[5m]) - rate(gnatsd_varz_connections[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          category: connectivity
+        annotations:
+          summary: "High NATS connection error rate"
+          description: "NATS is experiencing high connection errors ({{ $value }}/s)"
+
+  # ================================================================
+  # SAGA PATTERN ALERTS
+  # ================================================================
+  - name: saga_alerts
+    interval: 30s
+    rules:
+      - alert: HighSagaFailureRate
+        expr: |
+          (
+            rate(saga_failed_total[5m]) 
+            / 
+            rate(saga_started_total[5m])
+          ) > 0.10
+        for: 5m
+        labels:
+          severity: critical
+          category: saga
+        annotations:
+          summary: "High saga failure rate"
+          description: "More than 10% of sagas are failing (current: {{ $value | humanizePercentage }})"
+
+      - alert: SagaCompensationFailed
+        expr: |
+          rate(saga_compensation_failed_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          category: saga
+        annotations:
+          summary: "Saga compensation failed"
+          description: "Saga compensation has failed for {{ $labels.saga_type }}"
+
+      - alert: SagaDurationHigh
+        expr: |
+          histogram_quantile(0.95,
+            rate(saga_duration_seconds_bucket[5m])
+          ) > 30
+        for: 10m
+        labels:
+          severity: warning
+          category: saga
+        annotations:
+          summary: "Saga duration is very high"
+          description: "Saga {{ $labels.saga_type }} p95 duration is above 30s (current: {{ $value }}s)"
+
+  # ================================================================
+  # INFRASTRUCTURE ALERTS
+  # ================================================================
+  - name: infrastructure_alerts
+    interval: 60s
+    rules:
+      - alert: PostgresDown
+        expr: up{service="postgres"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 2 minutes"
+
+      - alert: RedisDown
+        expr: up{service="redis"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 2 minutes"
+
+      - alert: HighDatabaseConnections
+        expr: |
+          pg_stat_database_numbackends > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "High number of database connections"
+          description: "Database {{ $labels.datname }} has {{ $value }} active connections"
+
+  # ================================================================
+  # OBSERVABILITY STACK ALERTS
+  # ================================================================
+  - name: observability_alerts
+    interval: 60s
+    rules:
+      - alert: PrometheusDown
+        expr: up{service="prometheus"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: observability
+        annotations:
+          summary: "Prometheus is down"
+          description: "Prometheus monitoring has been down for more than 2 minutes"
+
+      - alert: GrafanaDown
+        expr: up{service="grafana"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          category: observability
+        annotations:
+          summary: "Grafana is down"
+          description: "Grafana dashboard has been down for more than 5 minutes"
+
+      - alert: LokiDown
+        expr: up{service="loki"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          category: observability
+        annotations:
+          summary: "Loki is down"
+          description: "Loki log aggregation has been down for more than 5 minutes"
+
+      - alert: PrometheusTSDBCompactionsFailing
+        expr: rate(prometheus_tsdb_compactions_failed_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: observability
+        annotations:
+          summary: "Prometheus TSDB compactions are failing"
+          description: "Prometheus storage compactions are failing ({{ $value }} failures/s)"
+
+      - alert: PrometheusStorageAlmostFull
+        expr: |
+          (
+            prometheus_tsdb_storage_blocks_bytes 
+            / 
+            prometheus_tsdb_retention_limit_bytes
+          ) > 0.90
+        for: 10m
+        labels:
+          severity: warning
+          category: storage
+        annotations:
+          summary: "Prometheus storage is almost full"
+          description: "Prometheus is using more than 90% of storage (current: {{ $value | humanizePercentage }})"
