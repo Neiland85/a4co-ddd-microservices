@@ -82,7 +82,7 @@ export function Log(options: LogOptions = {}): MethodDecorator {
       context = {},
     } = options;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       const startTime = Date.now();
       const fullMethodName = `${className}.${methodName}`;
       const logPrefix = prefix ? `${prefix} ` : '';
@@ -98,22 +98,48 @@ export function Log(options: LogOptions = {}): MethodDecorator {
 
       try {
         // Execute original method
-        const result = await originalMethod.apply(this, args);
+        const result = originalMethod.apply(this, args);
 
-        // Log method success
-        const duration = Date.now() - startTime;
-        const successContext = {
-          ...context,
-          method: fullMethodName,
-          ...(logExecutionTime && { durationMs: duration }),
-          ...(logResult && { result }),
-        };
-
-        logger[level](`${logPrefix}${fullMethodName} completed`, successContext);
-
-        return result;
+        // Handle both sync and async results
+        if (result instanceof Promise) {
+          return result
+            .then((res) => {
+              const duration = Date.now() - startTime;
+              const successContext = {
+                ...context,
+                method: fullMethodName,
+                ...(logExecutionTime && { durationMs: duration }),
+                ...(logResult && { result: res }),
+              };
+              logger[level](`${logPrefix}${fullMethodName} completed`, successContext);
+              return res;
+            })
+            .catch((error) => {
+              const duration = Date.now() - startTime;
+              const errorContext = {
+                ...context,
+                method: fullMethodName,
+                ...(logExecutionTime && { durationMs: duration }),
+                error: error instanceof Error ? error.message : String(error),
+                ...(error instanceof Error && { stack: error.stack }),
+              };
+              logger.error(`${logPrefix}${fullMethodName} failed`, errorContext);
+              throw error;
+            });
+        } else {
+          // Synchronous method
+          const duration = Date.now() - startTime;
+          const successContext = {
+            ...context,
+            method: fullMethodName,
+            ...(logExecutionTime && { durationMs: duration }),
+            ...(logResult && { result }),
+          };
+          logger[level](`${logPrefix}${fullMethodName} completed`, successContext);
+          return result;
+        }
       } catch (error) {
-        // Log method error
+        // Catch synchronous errors
         const duration = Date.now() - startTime;
         const errorContext = {
           ...context,
@@ -122,9 +148,7 @@ export function Log(options: LogOptions = {}): MethodDecorator {
           error: error instanceof Error ? error.message : String(error),
           ...(error instanceof Error && { stack: error.stack }),
         };
-
         logger.error(`${logPrefix}${fullMethodName} failed`, errorContext);
-
         throw error;
       }
     };
@@ -181,7 +205,7 @@ export function LogDDD(options: {
       logResult = false,
     } = options;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       const startTime = Date.now();
 
       // Build DDD context
@@ -199,17 +223,42 @@ export function LogDDD(options: {
       logger[level](`DDD operation started`, dddContext);
 
       try {
-        const result = await originalMethod.apply(this, args);
+        const result = originalMethod.apply(this, args);
 
-        const duration = Date.now() - startTime;
-        logger[level](`DDD operation completed`, {
-          ...dddContext,
-          durationMs: duration,
-          ...(logResult && { result }),
-        });
-
-        return result;
+        // Handle both sync and async results
+        if (result instanceof Promise) {
+          return result
+            .then((res) => {
+              const duration = Date.now() - startTime;
+              logger[level](`DDD operation completed`, {
+                ...dddContext,
+                durationMs: duration,
+                ...(logResult && { result: res }),
+              });
+              return res;
+            })
+            .catch((error) => {
+              const duration = Date.now() - startTime;
+              logger.error(`DDD operation failed`, {
+                ...dddContext,
+                durationMs: duration,
+                error: error instanceof Error ? error.message : String(error),
+                ...(error instanceof Error && { stack: error.stack }),
+              });
+              throw error;
+            });
+        } else {
+          // Synchronous method
+          const duration = Date.now() - startTime;
+          logger[level](`DDD operation completed`, {
+            ...dddContext,
+            durationMs: duration,
+            ...(logResult && { result }),
+          });
+          return result;
+        }
       } catch (error) {
+        // Catch synchronous errors
         const duration = Date.now() - startTime;
         logger.error(`DDD operation failed`, {
           ...dddContext,
@@ -217,7 +266,6 @@ export function LogDDD(options: {
           error: error instanceof Error ? error.message : String(error),
           ...(error instanceof Error && { stack: error.stack }),
         });
-
         throw error;
       }
     };

@@ -59,10 +59,10 @@ export function Tracing(options: TracingOptions = {}): MethodDecorator {
     // Default span name: ClassName.methodName
     const spanName = options.name || `${className}.${methodName}`;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       const tracer = trace.getTracer('@a4co/observability');
 
-      return tracer.startActiveSpan(spanName, async (span: Span) => {
+      return tracer.startActiveSpan(spanName, (span: Span) => {
         try {
           // Add custom attributes
           if (options.attributes) {
@@ -76,28 +76,44 @@ export function Tracing(options: TracingOptions = {}): MethodDecorator {
           });
 
           // Execute original method
-          const result = await originalMethod.apply(this, args);
+          const result = originalMethod.apply(this, args);
 
-          // Mark span as successful
-          span.setStatus({ code: SpanStatusCode.OK });
-
-          return result;
+          // Handle both sync and async results
+          if (result instanceof Promise) {
+            return result
+              .then((res) => {
+                span.setStatus({ code: SpanStatusCode.OK });
+                span.end();
+                return res;
+              })
+              .catch((error) => {
+                if (options.recordException !== false) {
+                  span.recordException(error as Error);
+                }
+                span.setStatus({
+                  code: SpanStatusCode.ERROR,
+                  message: error instanceof Error ? error.message : 'Unknown error',
+                });
+                span.end();
+                throw error;
+              });
+          } else {
+            // Synchronous method
+            span.setStatus({ code: SpanStatusCode.OK });
+            span.end();
+            return result;
+          }
         } catch (error) {
-          // Record exception if enabled (default: true)
+          // Catch synchronous errors
           if (options.recordException !== false) {
             span.recordException(error as Error);
           }
-
-          // Set error status
           span.setStatus({
             code: SpanStatusCode.ERROR,
             message: error instanceof Error ? error.message : 'Unknown error',
           });
-
-          throw error;
-        } finally {
-          // Always end the span
           span.end();
+          throw error;
         }
       });
     };
@@ -142,10 +158,10 @@ export function TraceDDD(options: {
 
     const spanName = `${options.aggregateName || className}.${options.commandName || methodName}`;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       const tracer = trace.getTracer('@a4co/observability');
 
-      return tracer.startActiveSpan(spanName, async (span: Span) => {
+      return tracer.startActiveSpan(spanName, (span: Span) => {
         try {
           // Add DDD attributes
           const attributes: Record<string, string> = {
@@ -174,21 +190,38 @@ export function TraceDDD(options: {
           span.setAttributes(attributes);
 
           // Execute original method
-          const result = await originalMethod.apply(this, args);
+          const result = originalMethod.apply(this, args);
 
-          span.setStatus({ code: SpanStatusCode.OK });
-
-          return result;
+          // Handle both sync and async results
+          if (result instanceof Promise) {
+            return result
+              .then((res) => {
+                span.setStatus({ code: SpanStatusCode.OK });
+                span.end();
+                return res;
+              })
+              .catch((error) => {
+                span.recordException(error as Error);
+                span.setStatus({
+                  code: SpanStatusCode.ERROR,
+                  message: error instanceof Error ? error.message : 'Unknown error',
+                });
+                span.end();
+                throw error;
+              });
+          } else {
+            span.setStatus({ code: SpanStatusCode.OK });
+            span.end();
+            return result;
+          }
         } catch (error) {
           span.recordException(error as Error);
           span.setStatus({
             code: SpanStatusCode.ERROR,
             message: error instanceof Error ? error.message : 'Unknown error',
           });
-
-          throw error;
-        } finally {
           span.end();
+          throw error;
         }
       });
     };
