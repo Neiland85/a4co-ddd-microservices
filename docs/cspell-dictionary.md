@@ -1,29 +1,18 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 22:53:41
+Última sincronización: 15/12/2025, 22:55:12
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (15)
-- async
-- collector
-- decorators
-- distributed
-- handle
-- helpers
-- isolated
-- jaeger
-- otlp
-- playwright
-- quick
-- reporting
-- suite
-- testcontainers
-- testing
+### Workspace (proyecto local) (3)
+- deliverables
+- list
+- success
 
-### Commits recientes detectados (77)
+### Commits recientes detectados (93)
+- across
 - actions
 - agent
 - artifacts
@@ -39,13 +28,16 @@ Sin nuevas palabras.
 - compose
 - comprehensive
 - configuration
+- configurations
 - configure
 - copilot
 - correctly
 - create
+- created
 - dashboard
 - dashboards
 - decorators
+- deliverables
 - distributed
 - docker
 - document
@@ -53,6 +45,7 @@ Sin nuevas palabras.
 - enhance
 - event
 - examples
+- files
 - flow
 - github
 - gmail
@@ -62,16 +55,22 @@ Sin nuevas palabras.
 - helpers
 - impact
 - implement
+- implementation
+- include
 - infrastructure
 - initial
+- instructions
 - isolated
 - jaeger
+- list
 - main
 - methods
+- metrics
 - munoz
 - nats
 - neil
 - neiland
+- next
 - noreply
 - observability
 - opentelemetry
@@ -84,12 +83,17 @@ Sin nuevas palabras.
 - quick
 - readme
 - reporting
+- results
 - runner
 - script
 - section
 - setup
 - start
+- steps
+- success
 - suite
+- suites
+- summary
 - sync
 - testcontainers
 - testing
