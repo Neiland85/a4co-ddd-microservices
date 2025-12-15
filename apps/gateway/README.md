@@ -1,28 +1,73 @@
 # A4CO API Gateway
 
-API Gateway NestJS funcional que orquesta el tráfico hacia todos los microservicios de la plataforma A4CO con autenticación JWT, validación de tokens, CORS, documentación Swagger y logging estructurado.
+**Reverse proxy centralizado** para la plataforma A4CO que actúa como punto de entrada único, proporcionando autenticación JWT, propagación de contexto de usuario, CORS seguro y logging estructurado.
+
+## 🎯 Arquitectura
+
+El API Gateway implementa una arquitectura hexagonal con:
+- **Middleware JWT**: Validación de tokens y propagación de contexto de usuario
+- **Correlation ID**: Trazabilidad distribuida entre microservicios
+- **Structured Logging**: Logs JSON para observabilidad
+- **Error Handling**: Respuestas de error consistentes
+- **Health Checks**: Endpoints para Kubernetes readiness/liveness
+
+```
+                    ┌─────────────────┐
+                    │   Dashboard     │
+                    │   Client        │
+                    └────────┬────────┘
+                             │ HTTPS
+                    ┌────────▼────────┐
+                    │  API Gateway    │
+                    │  (Port 3000)    │
+                    │                 │
+                    │  ┌───────────┐  │
+                    │  │ JWT Auth  │  │
+                    │  │ Middleware│  │
+                    │  └───────────┘  │
+                    │  ┌───────────┐  │
+                    │  │Correlation│  │
+                    │  │    ID     │  │
+                    │  └───────────┘  │
+                    │  ┌───────────┐  │
+                    │  │ Structured│  │
+                    │  │  Logger   │  │
+                    │  └───────────┘  │
+                    └────────┬────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+   ┌────▼───┐         ┌─────▼────┐        ┌─────▼─────┐
+   │ Order  │         │ Payment  │        │ Inventory │
+   │Service │         │ Service  │        │  Service  │
+   │ :3002  │         │  :3003   │        │   :3004   │
+   └────────┘         └──────────┘        └───────────┘
+```
 
 ## 🚀 Características
 
-- ✅ **JWT Authentication**: Validación de tokens JWT con extracción de userId y roles
-- ✅ **Proxy Routing**: Enrutamiento de peticiones a microservicios backend
-- ✅ **Rate Limiting**: 100 requests por minuto por IP
-- ✅ **Health Checks**: Endpoints de health para Kubernetes readiness/liveness probes
-- ✅ **Swagger/OpenAPI**: Documentación automática de API
-- ✅ **Security**: Helmet, CORS configurado
-- ✅ **Logging**: Middleware de logging estructurado para todas las peticiones
-- ✅ **Error Handling**: Manejo de errores con status codes consistentes
+- ✅ **JWT Authentication**: Validación de tokens HS256 con extracción de userId, email y roles
+- ✅ **User Context Propagation**: Headers `X-User-ID`, `X-User-Role` hacia servicios downstream
+- ✅ **Correlation ID**: Trazabilidad distribuida con `X-Correlation-ID`
+- ✅ **Proxy Routing**: Enrutamiento transparente a microservicios backend
+- ✅ **Rate Limiting**: 100 requests por minuto por IP (configurable)
+- ✅ **Health Checks**: `/health`, `/health/ready`, `/health/live`, `/health/services`
+- ✅ **Swagger/OpenAPI**: Documentación interactiva en `/api/docs`
+- ✅ **Security**: Helmet configurado, CORS restrictivo
+- ✅ **Structured Logging**: Logs JSON con timestamp, duration, userId, targetService
+- ✅ **Error Handling**: Respuestas consistentes (401, 403, 502, 503, 504)
 
-## 📋 Servicios Proxy
+## 📋 Rutas Proxy
 
-| Ruta | Servicio Backend | Puerto |
-|------|-----------------|--------|
-| `/api/v1/auth/*` | Auth Service | 3001 |
-| `/api/v1/products/*` | Product Service | 3002 |
-| `/api/v1/orders/*` | Order Service | 3003 |
-| `/api/v1/inventory/*` | Inventory Service | 3004 |
-| `/api/v1/payments/*` | Payment Service | 3005 |
-| `/api/v1/sagas/*` | Saga Coordinator | 3006 |
+| Ruta Gateway | Servicio Backend | Puerto | Autenticación |
+|--------------|------------------|--------|---------------|
+| `GET/POST/PUT/DELETE /api/v1/orders/**` | Order Service | 3002 | ✅ Requerida |
+| `GET/POST/PUT/DELETE /api/v1/payments/**` | Payment Service | 3003 | ✅ Requerida |
+| `GET/POST/PUT/DELETE /api/v1/inventory/**` | Inventory Service | 3004 | ✅ Requerida |
+| `GET /api/v1/products/**` | Product Service | 3002 | ❌ Pública |
+| `POST /api/v1/auth/**` | Auth Service | 3001 | ❌ Pública |
+| `GET /api/v1/health` | Gateway Local | - | ❌ Pública |
+| `GET /api/docs` | Swagger UI | - | ❌ Pública |
 
 ## 🛠️ Instalación
 
@@ -356,3 +401,388 @@ curl http://localhost:3000/api/v1/health
 ## 📄 Licencia
 
 Este proyecto es parte de la plataforma A4CO DDD Microservices.
+
+## 🔐 Flujo de Autenticación JWT
+
+### Diagrama de Flujo
+
+```
+┌──────────┐                  ┌──────────┐                  ┌──────────┐
+│  Client  │                  │ Gateway  │                  │  Order   │
+│          │                  │          │                  │ Service  │
+└─────┬────┘                  └────┬─────┘                  └────┬─────┘
+      │                            │                             │
+      │ 1. POST /auth/login        │                             │
+      ├──────────────────────────► │                             │
+      │    email + password        │                             │
+      │                            │ 2. Proxy to Auth Service    │
+      │                            ├─────────────────────────────┤
+      │                            │                             │
+      │ 3. Return JWT token        │                             │
+      │◄───────────────────────────┤                             │
+      │    { accessToken: "..." }  │                             │
+      │                            │                             │
+      │ 4. GET /orders             │                             │
+      ├──────────────────────────► │                             │
+      │    Authorization: Bearer   │                             │
+      │                            │ 5. Validate JWT             │
+      │                            ├┐                            │
+      │                            ││                            │
+      │                            │├ Extract userId, role       │
+      │                            ││                            │
+      │                            │└                            │
+      │                            │ 6. Forward with context     │
+      │                            ├────────────────────────────►│
+      │                            │    X-User-ID: user-123      │
+      │                            │    X-User-Role: admin       │
+      │                            │    X-Correlation-ID: abc    │
+      │                            │                             │
+      │                            │ 7. Response                 │
+      │                            │◄────────────────────────────┤
+      │ 8. Return to client        │                             │
+      │◄───────────────────────────┤                             │
+      │                            │                             │
+```
+
+### Payload JWT Esperado
+
+```json
+{
+  "sub": "user-123",           // User ID (requerido)
+  "email": "user@example.com", // Email (opcional)
+  "role": "admin",             // Role (opcional)
+  "iat": 1609459200,           // Issued at
+  "exp": 1609545600            // Expiration
+}
+```
+
+### Headers Propagados
+
+El gateway añade automáticamente estos headers a cada request downstream:
+
+| Header | Origen | Ejemplo |
+|--------|--------|---------|
+| `X-User-ID` | JWT payload `sub` | `user-123` |
+| `X-User-Email` | JWT payload `email` | `user@example.com` |
+| `X-User-Role` | JWT payload `role` | `admin` |
+| `X-Correlation-ID` | Generado o heredado | `corr-1234567890-abc` |
+| `X-Request-ID` | Generado | `gw-1234567890-xyz` |
+| `X-Forwarded-By` | Fijo | `a4co-gateway` |
+| `X-Forwarded-Host` | Header `host` | `localhost:3000` |
+| `X-Forwarded-Proto` | Protocol | `http` |
+
+## 📊 Logging Estructurado
+
+Cada request genera un log JSON con el siguiente formato:
+
+```json
+{
+  "timestamp": "2025-12-15T12:00:00.000Z",
+  "correlationId": "corr-1734264000-abc123",
+  "method": "GET",
+  "path": "/api/v1/orders/123",
+  "statusCode": 200,
+  "duration": 45,
+  "userId": "user-456",
+  "roles": "admin",
+  "targetService": "order-service",
+  "message": "Request processed successfully"
+}
+```
+
+### Ejemplo de Logs en Diferentes Escenarios
+
+#### Request Exitoso (200)
+```json
+{
+  "timestamp": "2025-12-15T12:00:00.000Z",
+  "correlationId": "corr-123",
+  "method": "POST",
+  "path": "/api/v1/orders",
+  "statusCode": 201,
+  "duration": 152,
+  "userId": "user-456",
+  "roles": "user",
+  "targetService": "order-service",
+  "message": "Request processed successfully"
+}
+```
+
+#### Error de Autenticación (401)
+```json
+{
+  "timestamp": "2025-12-15T12:00:00.000Z",
+  "correlationId": "corr-124",
+  "method": "GET",
+  "path": "/api/v1/orders",
+  "statusCode": 401,
+  "duration": 2,
+  "message": "Request processed with errors",
+  "userAgent": "curl/7.68.0",
+  "ip": "127.0.0.1"
+}
+```
+
+#### Servicio No Disponible (503)
+```json
+{
+  "timestamp": "2025-12-15T12:00:00.000Z",
+  "correlationId": "corr-125",
+  "method": "GET",
+  "path": "/api/v1/orders/123",
+  "statusCode": 503,
+  "duration": 30002,
+  "userId": "user-456",
+  "targetService": "order-service",
+  "message": "Request processed with errors",
+  "userAgent": "Mozilla/5.0...",
+  "ip": "192.168.1.100"
+}
+```
+
+## 🧪 Ejemplos de Uso Avanzados
+
+### 1. Login y Almacenar Token
+
+```bash
+# Bash
+TOKEN=$(curl -s -X POST http://localhost:3000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@a4co.com", "password": "securepass"}' \
+  | jq -r '.accessToken')
+
+echo "Token: $TOKEN"
+```
+
+### 2. Crear Pedido con Autenticación
+
+```bash
+curl -X POST http://localhost:3000/api/v1/orders \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "X-Correlation-ID: custom-corr-123" \
+  -d '{
+    "items": [
+      {"productId": "prod-1", "quantity": 2},
+      {"productId": "prod-2", "quantity": 1}
+    ],
+    "shippingAddress": {
+      "street": "Calle Mayor 1",
+      "city": "Sevilla",
+      "postalCode": "41001"
+    }
+  }'
+```
+
+### 3. Consultar Estado de Pedido
+
+```bash
+curl -X GET http://localhost:3000/api/v1/orders/order-123 \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 4. Procesar Pago
+
+```bash
+curl -X POST http://localhost:3000/api/v1/payments \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderId": "order-123",
+    "amount": 59.99,
+    "currency": "EUR",
+    "paymentMethod": "card",
+    "cardToken": "tok_visa_4242"
+  }'
+```
+
+### 5. Verificar Inventario
+
+```bash
+curl -X GET "http://localhost:3000/api/v1/inventory?productId=prod-1" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 6. Health Check de Todos los Servicios
+
+```bash
+curl http://localhost:3000/api/v1/health/services | jq
+```
+
+## 🐳 Docker Compose
+
+El gateway está incluido en `docker-compose.yml`:
+
+```yaml
+api-gateway:
+  build:
+    context: ./apps/gateway
+  ports:
+    - "3000:3000"
+  environment:
+    - JWT_SECRET=${JWT_SECRET}
+    - ORDERS_SERVICE_URL=http://order-service:3000
+    - PAYMENTS_SERVICE_URL=http://payment-service:3001
+    - INVENTORY_SERVICE_URL=http://inventory-service:3002
+  depends_on:
+    - order-service
+    - payment-service
+    - inventory-service
+```
+
+### Iniciar con Docker Compose
+
+```bash
+# Iniciar todo el stack
+docker-compose up -d
+
+# Ver logs del gateway
+docker-compose logs -f api-gateway
+
+# Verificar health
+curl http://localhost:3000/api/v1/health
+
+# Parar servicios
+docker-compose down
+```
+
+## 🔒 Seguridad
+
+### Mejores Prácticas
+
+1. **JWT_SECRET**: Usar una clave fuerte (mínimo 256 bits)
+   ```bash
+   # Generar clave segura
+   openssl rand -base64 64
+   ```
+
+2. **CORS**: Restringir orígenes permitidos
+   ```env
+   # Producción
+   CORS_ORIGIN=https://app.a4co.com,https://admin.a4co.com
+   
+   # Desarrollo
+   CORS_ORIGIN=http://localhost:3000,http://localhost:4200
+   ```
+
+3. **Rate Limiting**: Ajustar según capacidad
+   ```env
+   # Producción: más restrictivo
+   RATE_LIMIT_TTL=60
+   RATE_LIMIT_MAX=50
+   
+   # Desarrollo: más permisivo
+   RATE_LIMIT_TTL=60
+   RATE_LIMIT_MAX=1000
+   ```
+
+4. **Timeouts**: Configurar timeouts apropiados
+   ```env
+   # Para operaciones rápidas
+   PROXY_TIMEOUT=5000
+   
+   # Para operaciones lentas (pagos, uploads)
+   PROXY_TIMEOUT=30000
+   ```
+
+### Headers de Seguridad (Helmet)
+
+El gateway aplica automáticamente estos headers:
+
+- `X-Frame-Options: SAMEORIGIN`
+- `X-Content-Type-Options: nosniff`
+- `X-XSS-Protection: 1; mode=block`
+- `Strict-Transport-Security: max-age=31536000`
+
+## 📈 Monitoreo y Observabilidad
+
+### Métricas Disponibles
+
+El gateway expone métricas vía endpoints de health:
+
+```bash
+# Health básico
+curl http://localhost:3000/api/v1/health
+
+# Health de servicios downstream
+curl http://localhost:3000/api/v1/health/services
+
+# Readiness (K8s)
+curl http://localhost:3000/api/v1/health/ready
+
+# Liveness (K8s)
+curl http://localhost:3000/api/v1/health/live
+```
+
+### Integración con Observabilidad
+
+Los logs estructurados JSON son compatibles con:
+- **ELK Stack** (Elasticsearch, Logstash, Kibana)
+- **Grafana Loki**
+- **CloudWatch**
+- **Datadog**
+
+Ejemplo de query en Kibana:
+```
+correlationId:"corr-123" AND statusCode:>=400
+```
+
+## 🧩 Extensibilidad
+
+### Añadir Nuevo Servicio Proxy
+
+1. **Agregar configuración**:
+```typescript
+// src/config/configuration.ts
+services: {
+  // ... existing services
+  notification: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3007',
+}
+```
+
+2. **Crear controller**:
+```typescript
+// src/proxy/controllers/notification-proxy.controller.ts
+@Controller('notifications')
+export class NotificationProxyController {
+  constructor(private readonly proxyService: ProxyService) {}
+
+  @All('*')
+  async proxy(@Req() req: Request, @Res() res: Response) {
+    const response = await this.proxyService.forward('notification', req.path, req);
+    return res.status(response.status).json(response.data);
+  }
+}
+```
+
+3. **Registrar en módulo**:
+```typescript
+// src/proxy/proxy.module.ts
+controllers: [
+  // ... existing controllers
+  NotificationProxyController,
+]
+```
+
+## 🤝 Contribución
+
+Este proyecto sigue arquitectura hexagonal:
+
+```
+src/
+├── auth/              # Estrategias JWT, DTOs
+├── common/            # Decorators, guards, filters
+├── config/            # Configuración centralizada
+├── health/            # Health checks
+├── logger/            # Structured logging
+└── proxy/             # Servicios proxy y controllers
+```
+
+### Convenciones
+
+- **Middleware**: `*.middleware.ts`
+- **Guards**: `*.guard.ts`
+- **Filters**: `*.filter.ts`
+- **DTOs**: `*.dto.ts`
+- **Tests**: `*.spec.ts` (unit), `*.e2e.spec.ts` (integration)
+

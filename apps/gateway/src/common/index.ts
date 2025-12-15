@@ -10,6 +10,6 @@ export { LoggerMiddleware } from './middleware/logger.middleware';
 export { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 // Decorators
-export { CurrentUser, UserId } from './decorators/current-user.decorator';
+export { UserContext } from './decorators/user-context.decorator';
 export { IS_PUBLIC_KEY, Public } from './decorators/public.decorator';
 
