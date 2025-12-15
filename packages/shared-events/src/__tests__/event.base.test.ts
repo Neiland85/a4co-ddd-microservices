@@ -1,4 +1,4 @@
-import { DomainEventBase, EventTypes, IDomainEvent } from '../base/event.base';
+import { DomainEventBase, EventTypes } from '../base/event.base';
 
 class TestEvent extends DomainEventBase<{ message: string }> {
   constructor(message: string, correlationId?: string, metadata?: Record<string, any>) {

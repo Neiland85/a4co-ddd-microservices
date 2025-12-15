@@ -1,152 +1,30 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 18:10:05
+Última sincronización: 15/12/2025, 19:25:21
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (2)
+- troubleshooting
+- versioned
 
-### Commits recientes detectados (139)
-- about
-- added
-- address
-- agent
-- architecture
+### Commits recientes detectados (16)
 - authored
-- avoid
-- backward
-- base
-- baseevent
-- better
-- broker
-- builds
-- clarify
-- classes
-- code
-- comment
-- compatibility
-- compilation
-- compiler
-- compiles
-- completion
-- composite
 - comprehensive
-- configuration
-- conflicts
-- constants
-- copilot
-- correct
-- correctly
-- correlationid
-- created
-- date
-- deprecated
-- directly
-- dist
-- documentation
-- driven
-- enable
-- event
-- eventid
-- eventpayload
+- create
 - events
-- explanatory
-- extends
-- features
-- feedback
-- field
-- final
-- fixes
-- flag
-- folder
-- folders
-- format
-- from
-- generation
 - github
-- implement
-- implemented
-- improve
+- guide
 - initial
-- inlined
-- interface
-- interfaces
-- into
-- inventory
-- inventoryfailedevent
-- inventoryreservedevent
-- json
-- latest
-- library
-- libs
-- mapping
-- message
-- monorepo
-- names
-- nats
-- necessary
 - neiland
 - noreply
-- number
-- object
-- options
-- order
-- ordercancelledevent
-- ordercreatedevent
-- organized
-- output
 - package
-- paid
-- path
-- patterns
-- payment
-- paymentconfirmedevent
-- paymentfailedevent
 - plan
-- pnpm
-- preventing
-- proper
-- publishing
-- readme
-- redundancy
-- remove
-- removed
-- restored
-- review
-- rootdir
-- safety
-- saga
-- sagacompensationrequiredevent
-- sagacompletedevent
-- sagafailedevent
-- sagastartedevent
-- serialization
-- serialized
 - shared
-- should
-- simple
-- status
-- subject
-- successfully
-- summary
-- support
-- tests
-- that
-- timestamp
-- transitions
-- tsconfig
-- type
-- typed
-- types
-- typescript
-- updated
+- troubleshooting
 - users
-- validation
-- when
+- versioned
 - with
-- workspace
-- yaml
 
