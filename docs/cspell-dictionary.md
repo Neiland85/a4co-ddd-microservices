@@ -1,38 +1,16 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 20:52:16
+Última sincronización: 15/12/2025, 20:55:21
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (24)
-- alertmanager
-- application
-- assigned
-- assignshipment
-- cases
-- createshipment
-- dashboards
-- delivered
-- entity
-- failed
-- handlers
-- hexagonal
-- implementation
-- loki
-- machine
-- presentation
-- repositories
-- rest
-- shipment
-- shipmentaggregate
-- stage
-- state
-- transit
-- updatestatus
+### Workspace (proyecto local) (2)
+- prefix
+- python
 
-### Commits recientes detectados (75)
+### Commits recientes detectados (92)
 - agent
 - aggregate
 - alertmanager
@@ -41,9 +19,12 @@ Sin nuevas palabras.
 - assigned
 - assignshipment
 - authored
+- backup
+- build
 - cases
 - complete
 - comprehensive
+- config
 - configs
 - copilot
 - created
@@ -51,12 +32,14 @@ Sin nuevas palabras.
 - dashboards
 - delivered
 - deployment
+- directory
 - docker
 - dockerfile
 - documentation
 - domain
 - driven
 - entity
+- eslint
 - event
 - events
 - example
@@ -71,6 +54,7 @@ Sin nuevas palabras.
 - infrastructure
 - initial
 - layer
+- lint
 - loki
 - machine
 - microservices
@@ -82,14 +66,20 @@ Sin nuevas palabras.
 - nestjs
 - noreply
 - observability
+- passing
 - plan
+- prefix
 - presentation
 - prisma
 - production
 - prometheus
+- proper
+- python
 - readme
+- remove
 - repositories
 - rest
+- rules
 - script
 - scripts
 - service
@@ -97,15 +87,20 @@ Sin nuevas palabras.
 - shipmentaggregate
 - stage
 - state
+- successful
 - summary
 - swagger
 - tests
 - theia
 - transit
 - transportista
+- typescript
 - unit
+- unused
 - updatestatus
 - users
 - validation
+- vars
+- warnings
 - with
 
