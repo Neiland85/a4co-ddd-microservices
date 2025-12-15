@@ -1,0 +1,266 @@
+# ================================================================
+# AlertManager Configuration for A4CO Microservices
+# PR4: Observability Infrastructure
+# ================================================================
+
+global:
+  resolve_timeout: 5m
+  
+  # SMTP configuration (email notifications)
+  # smtp_smarthost: 'smtp.gmail.com:587'
+  # smtp_from: 'alerts@a4co.com'
+  # smtp_auth_username: 'alerts@a4co.com'
+  # smtp_auth_password: '${SMTP_PASSWORD}'
+  # smtp_require_tls: true
+  
+  # Slack webhook URL (uncomment and configure)
+  # slack_api_url: '${SLACK_WEBHOOK_URL}'
+  
+  # PagerDuty integration key (uncomment and configure)
+  # pagerduty_url: 'https://events.pagerduty.com/v2/enqueue'
+
+# Template files for notifications
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# Route configuration
+route:
+  # Default receiver
+  receiver: 'default-receiver'
+  
+  # Group alerts by these labels
+  group_by: ['alertname', 'cluster', 'service']
+  
+  # How long to wait before sending initial notification
+  group_wait: 30s
+  
+  # How long to wait before sending notifications about new alerts
+  group_interval: 5m
+  
+  # How long to wait before re-sending a notification
+  repeat_interval: 4h
+  
+  # Child routes with specific handling
+  routes:
+    # Critical alerts - immediate notification
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+      group_wait: 10s
+      group_interval: 2m
+      repeat_interval: 1h
+      continue: true
+    
+    # Infrastructure alerts
+    - match:
+        category: infrastructure
+      receiver: 'infrastructure-team'
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 2h
+    
+    # Event-driven architecture alerts
+    - match:
+        category: events
+      receiver: 'event-team'
+      group_wait: 1m
+      group_interval: 5m
+      repeat_interval: 2h
+    
+    # Saga pattern alerts
+    - match:
+        category: saga
+      receiver: 'saga-team'
+      group_wait: 30s
+      group_interval: 3m
+      repeat_interval: 1h
+    
+    # Database alerts
+    - match:
+        category: database
+      receiver: 'database-team'
+      group_wait: 2m
+      group_interval: 5m
+      repeat_interval: 3h
+    
+    # Observability stack alerts
+    - match:
+        category: observability
+      receiver: 'observability-team'
+      group_wait: 5m
+      group_interval: 10m
+      repeat_interval: 4h
+
+# Inhibition rules - suppress certain alerts when others are active
+inhibit_rules:
+  # Suppress all warnings if critical alert is firing for same service
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['service', 'alertname']
+  
+  # Suppress event processing errors if NATS is down
+  - source_match:
+      alertname: 'NATSServerDown'
+    target_match:
+      category: 'events'
+    equal: ['cluster']
+  
+  # Suppress microservice alerts if database is down
+  - source_match:
+      alertname: 'PostgresDown'
+    target_match:
+      service_type: 'microservice'
+    equal: ['cluster']
+  
+  # Suppress individual service alerts if entire cluster is down
+  - source_match:
+      alertname: 'ClusterDown'
+    target_match_re:
+      alertname: '.*'
+    equal: ['cluster']
+
+# Receivers configuration
+receivers:
+  # ================================================================
+  # DEFAULT RECEIVER
+  # ================================================================
+  - name: 'default-receiver'
+    # Log to console (for development)
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook'
+        send_resolved: true
+    
+    # Email notifications (commented for production setup)
+    # email_configs:
+    #   - to: 'team@a4co.com'
+    #     headers:
+    #       Subject: '[A4CO Alert] {{ .GroupLabels.alertname }}'
+    #     html: '{{ template "email.default.html" . }}'
+
+  # ================================================================
+  # CRITICAL ALERTS
+  # ================================================================
+  - name: 'critical-alerts'
+    # Slack notifications
+    # slack_configs:
+    #   - channel: '#alerts-critical'
+    #     title: '🚨 Critical Alert: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}'
+    #     send_resolved: true
+    #     color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+    
+    # PagerDuty (on-call rotation)
+    # pagerduty_configs:
+    #   - service_key: '${PAGERDUTY_SERVICE_KEY}'
+    #     description: '{{ .GroupLabels.alertname }}: {{ .CommonAnnotations.summary }}'
+    #     severity: 'critical'
+    
+    # Webhook for custom integrations
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/critical'
+        send_resolved: true
+
+  # ================================================================
+  # INFRASTRUCTURE TEAM
+  # ================================================================
+  - name: 'infrastructure-team'
+    # slack_configs:
+    #   - channel: '#team-infrastructure'
+    #     title: '⚠️ Infrastructure Alert: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}'
+    #     send_resolved: true
+    
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/infrastructure'
+        send_resolved: true
+
+  # ================================================================
+  # EVENT-DRIVEN TEAM
+  # ================================================================
+  - name: 'event-team'
+    # slack_configs:
+    #   - channel: '#team-events'
+    #     title: '📨 Event Alert: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}'
+    #     send_resolved: true
+    
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/events'
+        send_resolved: true
+
+  # ================================================================
+  # SAGA ORCHESTRATION TEAM
+  # ================================================================
+  - name: 'saga-team'
+    # slack_configs:
+    #   - channel: '#team-saga'
+    #     title: '🔄 Saga Alert: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}'
+    #     send_resolved: true
+    
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/saga'
+        send_resolved: true
+
+  # ================================================================
+  # DATABASE TEAM
+  # ================================================================
+  - name: 'database-team'
+    # slack_configs:
+    #   - channel: '#team-database'
+    #     title: '🗄️ Database Alert: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}'
+    #     send_resolved: true
+    
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/database'
+        send_resolved: true
+
+  # ================================================================
+  # OBSERVABILITY TEAM
+  # ================================================================
+  - name: 'observability-team'
+    # slack_configs:
+    #   - channel: '#team-observability'
+    #     title: '📊 Observability Alert: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}'
+    #     send_resolved: true
+    
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/observability'
+        send_resolved: true
+
+# Time intervals for muting alerts
+time_intervals:
+  # Business hours (Monday-Friday, 9am-5pm)
+  - name: business-hours
+    time_intervals:
+      - times:
+          - start_time: '09:00'
+            end_time: '17:00'
+        weekdays: ['monday:friday']
+  
+  # Off-hours (evenings and weekends)
+  - name: off-hours
+    time_intervals:
+      - times:
+          - start_time: '00:00'
+            end_time: '09:00'
+          - start_time: '17:00'
+            end_time: '23:59'
+        weekdays: ['monday:friday']
+      - weekdays: ['saturday', 'sunday']
+  
+  # Maintenance window (example: Sundays 2am-4am)
+  - name: maintenance-window
+    time_intervals:
+      - times:
+          - start_time: '02:00'
+            end_time: '04:00'
+        weekdays: ['sunday']
+
+# Mute time intervals (optional - can be configured via API)
+# mute_time_intervals:
+#   - maintenance-window

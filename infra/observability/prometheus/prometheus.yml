@@ -1,0 +1,270 @@
+# ================================================================
+# Prometheus Configuration for A4CO Microservices
+# PR4: Observability Infrastructure
+# ================================================================
+
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'a4co-prod'
+    environment: '${ENVIRONMENT:-development}'
+    project: 'a4co-ddd-microservices'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'
+      timeout: 10s
+      api_version: v2
+
+# Load alerting rules
+rule_files:
+  - '/etc/prometheus/alerts.yml'
+  - '/etc/prometheus/recording-rules.yml'
+
+# Scrape configurations
+scrape_configs:
+  # ================================================================
+  # PROMETHEUS SELF-MONITORING
+  # ================================================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+  # ================================================================
+  # MICROSERVICES - A4CO DDD
+  # ================================================================
+  
+  - job_name: 'auth-service'
+    static_configs:
+      - targets: ['auth-service:4000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'auth-service'
+      - target_label: service
+        replacement: 'auth-service'
+      - target_label: service_type
+        replacement: 'microservice'
+
+  - job_name: 'order-service'
+    static_configs:
+      - targets: ['order-service:3000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'order-service'
+      - target_label: service
+        replacement: 'order-service'
+      - target_label: service_type
+        replacement: 'microservice'
+
+  - job_name: 'payment-service'
+    static_configs:
+      - targets: ['payment-service:3001']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'payment-service'
+      - target_label: service
+        replacement: 'payment-service'
+      - target_label: service_type
+        replacement: 'microservice'
+
+  - job_name: 'inventory-service'
+    static_configs:
+      - targets: ['inventory-service:3002']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'inventory-service'
+      - target_label: service
+        replacement: 'inventory-service'
+      - target_label: service_type
+        replacement: 'microservice'
+
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['user-service:3003']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'user-service'
+      - target_label: service
+        replacement: 'user-service'
+      - target_label: service_type
+        replacement: 'microservice'
+
+  - job_name: 'product-service'
+    static_configs:
+      - targets: ['product-service:3004']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'product-service'
+      - target_label: service
+        replacement: 'product-service'
+      - target_label: service_type
+        replacement: 'microservice'
+
+  # ================================================================
+  # NATS MESSAGE BROKER MONITORING
+  # ================================================================
+  
+  - job_name: 'nats-server'
+    static_configs:
+      - targets: ['nats:8222']
+    metrics_path: '/varz'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    relabel_configs:
+      - target_label: service
+        replacement: 'nats-server'
+      - target_label: service_type
+        replacement: 'infrastructure'
+
+  - job_name: 'nats-exporter'
+    static_configs:
+      - targets: ['nats-exporter:7777']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    relabel_configs:
+      - target_label: service
+        replacement: 'nats-exporter'
+      - target_label: service_type
+        replacement: 'exporter'
+
+  # ================================================================
+  # INFRASTRUCTURE SERVICES
+  # ================================================================
+  
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    relabel_configs:
+      - target_label: service
+        replacement: 'postgres'
+      - target_label: service_type
+        replacement: 'database'
+    # Optional - uncomment when postgres-exporter is deployed
+
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    relabel_configs:
+      - target_label: service
+        replacement: 'redis'
+      - target_label: service_type
+        replacement: 'cache'
+    # Optional - uncomment when redis-exporter is deployed
+
+  # ================================================================
+  # OBSERVABILITY STACK SELF-MONITORING
+  # ================================================================
+  
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    relabel_configs:
+      - target_label: service
+        replacement: 'grafana'
+      - target_label: service_type
+        replacement: 'observability'
+
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    relabel_configs:
+      - target_label: service
+        replacement: 'loki'
+      - target_label: service_type
+        replacement: 'observability'
+
+  - job_name: 'promtail'
+    static_configs:
+      - targets: ['promtail:9080']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    relabel_configs:
+      - target_label: service
+        replacement: 'promtail'
+      - target_label: service_type
+        replacement: 'observability'
+
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    relabel_configs:
+      - target_label: service
+        replacement: 'alertmanager'
+      - target_label: service_type
+        replacement: 'observability'
+
+  # ================================================================
+  # NODE EXPORTER (Optional - for host metrics)
+  # ================================================================
+  
+  # - job_name: 'node-exporter'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #   metrics_path: '/metrics'
+  #   scrape_interval: 30s
+  #   relabel_configs:
+  #     - target_label: service
+  #       replacement: 'node-exporter'
+  #     - target_label: service_type
+  #       replacement: 'system'
+
+# Remote write configuration (optional - for long-term storage)
+# remote_write:
+#   - url: "http://cortex:9009/api/prom/push"
+#     queue_config:
+#       capacity: 10000
+#       max_shards: 5
+#       min_shards: 1
+#       max_samples_per_send: 5000
+#       batch_send_deadline: 5s
+#       min_backoff: 30ms
+#       max_backoff: 100ms
+
+# Remote read configuration (optional)
+# remote_read:
+#   - url: "http://cortex:9009/api/prom/read"
+#     read_recent: true

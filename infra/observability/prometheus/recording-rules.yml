@@ -1,0 +1,283 @@
+# ================================================================
+# Prometheus Recording Rules for A4CO Microservices
+# PR4: Observability Infrastructure
+# ================================================================
+# Recording rules pre-compute frequently needed or expensive expressions
+# and save their result as a new set of time series
+
+groups:
+  # ================================================================
+  # HTTP METRICS AGGREGATIONS
+  # ================================================================
+  - name: http_metrics
+    interval: 30s
+    rules:
+      # Request rate by service
+      - record: service:http_requests:rate5m
+        expr: |
+          sum(rate(http_requests_total[5m])) by (service)
+
+      # Request rate by service and status
+      - record: service:http_requests:rate5m:status
+        expr: |
+          sum(rate(http_requests_total[5m])) by (service, status)
+
+      # Error rate by service
+      - record: service:http_errors:rate5m
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+
+      # Error percentage by service
+      - record: service:http_error_percentage:rate5m
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+            /
+            sum(rate(http_requests_total[5m])) by (service)
+          ) * 100
+
+      # Request latency p50, p95, p99 by service
+      - record: service:http_request_duration:p50
+        expr: |
+          histogram_quantile(0.50, 
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le)
+          )
+
+      - record: service:http_request_duration:p95
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le)
+          )
+
+      - record: service:http_request_duration:p99
+        expr: |
+          histogram_quantile(0.99, 
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le)
+          )
+
+      # Average request duration by service
+      - record: service:http_request_duration:avg
+        expr: |
+          sum(rate(http_request_duration_seconds_sum[5m])) by (service)
+          /
+          sum(rate(http_request_duration_seconds_count[5m])) by (service)
+
+  # ================================================================
+  # EVENT-DRIVEN METRICS
+  # ================================================================
+  - name: event_metrics
+    interval: 30s
+    rules:
+      # Event publishing rate by type
+      - record: event:published:rate5m:type
+        expr: |
+          sum(rate(event_published_total[5m])) by (event_type)
+
+      # Event consumption rate by consumer
+      - record: event:consumed:rate5m:consumer
+        expr: |
+          sum(rate(event_consumed_total[5m])) by (consumer)
+
+      # Event processing errors by service
+      - record: event:processing_errors:rate5m:service
+        expr: |
+          sum(rate(event_processing_errors_total[5m])) by (service)
+
+      # Event processing duration p95 by event type
+      - record: event:processing_duration:p95:type
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(event_processing_duration_seconds_bucket[5m])) by (event_type, le)
+          )
+
+      # Event processing duration p99 by event type
+      - record: event:processing_duration:p99:type
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(event_processing_duration_seconds_bucket[5m])) by (event_type, le)
+          )
+
+      # Event handler success rate
+      - record: event:handler_success:rate5m
+        expr: |
+          (
+            sum(rate(event_consumed_total[5m])) by (consumer)
+            -
+            sum(rate(event_processing_errors_total[5m])) by (consumer)
+          )
+          /
+          sum(rate(event_consumed_total[5m])) by (consumer)
+
+  # ================================================================
+  # SAGA METRICS
+  # ================================================================
+  - name: saga_metrics
+    interval: 30s
+    rules:
+      # Saga success rate by type
+      - record: saga:success_rate:rate5m:type
+        expr: |
+          (
+            sum(rate(saga_success_total[5m])) by (saga_type)
+            /
+            sum(rate(saga_started_total[5m])) by (saga_type)
+          ) * 100
+
+      # Saga failure rate by type
+      - record: saga:failure_rate:rate5m:type
+        expr: |
+          (
+            sum(rate(saga_failed_total[5m])) by (saga_type)
+            /
+            sum(rate(saga_started_total[5m])) by (saga_type)
+          ) * 100
+
+      # Saga duration p95 by type
+      - record: saga:duration:p95:type
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(saga_duration_seconds_bucket[5m])) by (saga_type, le)
+          )
+
+      # Saga compensation rate
+      - record: saga:compensation:rate5m
+        expr: |
+          sum(rate(saga_compensation_started_total[5m])) by (saga_type)
+
+      # Total active sagas
+      - record: saga:active:count
+        expr: |
+          sum(saga_started_total) - sum(saga_completed_total)
+
+  # ================================================================
+  # NATS METRICS
+  # ================================================================
+  - name: nats_metrics
+    interval: 30s
+    rules:
+      # Message throughput (in/out)
+      - record: nats:messages_in:rate5m
+        expr: |
+          rate(gnatsd_varz_in_msgs[5m])
+
+      - record: nats:messages_out:rate5m
+        expr: |
+          rate(gnatsd_varz_out_msgs[5m])
+
+      # Byte throughput (in/out)
+      - record: nats:bytes_in:rate5m
+        expr: |
+          rate(gnatsd_varz_in_bytes[5m])
+
+      - record: nats:bytes_out:rate5m
+        expr: |
+          rate(gnatsd_varz_out_bytes[5m])
+
+      # Connection count
+      - record: nats:connections:current
+        expr: |
+          gnatsd_varz_connections
+
+      # Memory usage percentage
+      - record: nats:memory_usage:percentage
+        expr: |
+          (gnatsd_varz_mem / gnatsd_varz_max_mem) * 100
+
+      # JetStream stream count
+      - record: nats:jetstream_streams:count
+        expr: |
+          count(gnatsd_jetstream_stream_state) by (stream_name)
+
+      # JetStream consumer lag
+      - record: nats:jetstream_consumer_lag:max
+        expr: |
+          max(gnatsd_jetstream_consumer_num_pending) by (stream_name, consumer_name)
+
+  # ================================================================
+  # SYSTEM RESOURCE METRICS
+  # ================================================================
+  - name: resource_metrics
+    interval: 60s
+    rules:
+      # CPU usage by service
+      - record: service:cpu_usage:avg
+        expr: |
+          avg(rate(process_cpu_seconds_total[5m])) by (service) * 100
+
+      # Memory usage by service (in MB)
+      - record: service:memory_usage:mb
+        expr: |
+          avg(process_resident_memory_bytes) by (service) / 1024 / 1024
+
+      # Goroutine count by service
+      - record: service:goroutines:count
+        expr: |
+          avg(go_goroutines) by (service)
+
+      # GC pause time p95 by service
+      - record: service:gc_pause:p95
+        expr: |
+          histogram_quantile(0.95,
+            rate(go_gc_duration_seconds_bucket[5m])
+          ) by (service)
+
+  # ================================================================
+  # DATABASE METRICS
+  # ================================================================
+  - name: database_metrics
+    interval: 60s
+    rules:
+      # Database connection pool usage
+      - record: database:connections:active
+        expr: |
+          sum(pg_stat_activity_count) by (datname)
+
+      # Query rate by database
+      - record: database:queries:rate5m
+        expr: |
+          rate(pg_stat_database_xact_commit[5m]) by (datname)
+
+      # Database size in GB
+      - record: database:size:gb
+        expr: |
+          pg_database_size_bytes / 1024 / 1024 / 1024
+
+  # ================================================================
+  # AVAILABILITY METRICS (SLI)
+  # ================================================================
+  - name: sli_metrics
+    interval: 30s
+    rules:
+      # Service availability (percentage)
+      - record: sli:availability:percentage
+        expr: |
+          avg_over_time(up{service_type="microservice"}[5m]) * 100
+
+      # Request success rate (2xx, 3xx) 
+      - record: sli:success_rate:percentage
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"[23].."}[5m])) by (service)
+            /
+            sum(rate(http_requests_total[5m])) by (service)
+          ) * 100
+
+      # Request latency SLI (p95 < 500ms)
+      - record: sli:latency:p95_within_slo
+        expr: |
+          (
+            histogram_quantile(0.95,
+              sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le)
+            ) < 0.5
+          )
+
+      # Error budget (100% - error rate)
+      - record: sli:error_budget:percentage
+        expr: |
+          100 - (
+            (
+              sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+              /
+              sum(rate(http_requests_total[5m])) by (service)
+            ) * 100
+          )
