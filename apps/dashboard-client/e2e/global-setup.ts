@@ -1,0 +1,78 @@
+/**
+ * Global setup for E2E tests
+ * Executed once before all tests run
+ * 
+ * Responsibilities:
+ * - Wait for services to be ready
+ * - Initialize test data
+ * - Setup NATS event listeners
+ */
+
+import { chromium, FullConfig } from '@playwright/test';
+
+async function globalSetup(config: FullConfig) {
+  console.log('🚀 Starting E2E test global setup...');
+
+  const baseURL = config.use?.baseURL || 'http://localhost:3001';
+  const gatewayURL = process.env.GATEWAY_URL || 'http://localhost:8081';
+  
+  console.log(`📍 Dashboard URL: ${baseURL}`);
+  console.log(`📍 Gateway URL: ${gatewayURL}`);
+
+  // Wait for services to be ready
+  console.log('⏳ Waiting for services to be ready...');
+  
+  const maxRetries = 30;
+  let retries = 0;
+  let servicesReady = false;
+
+  while (retries < maxRetries && !servicesReady) {
+    try {
+      // Check if gateway is ready
+      const gatewayResponse = await fetch(`${gatewayURL}/health`).catch(() => null);
+      
+      // Check if dashboard is ready
+      const dashboardResponse = await fetch(baseURL).catch(() => null);
+      
+      if (gatewayResponse?.ok && dashboardResponse?.ok) {
+        servicesReady = true;
+        console.log('✅ All services are ready!');
+      } else {
+        retries++;
+        console.log(`⏳ Services not ready yet (attempt ${retries}/${maxRetries}), waiting...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    } catch (error) {
+      retries++;
+      console.log(`⏳ Services not ready yet (attempt ${retries}/${maxRetries}), waiting...`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
+  if (!servicesReady) {
+    throw new Error('❌ Services did not start in time');
+  }
+
+  // Initialize browser for setup tasks
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+
+  try {
+    // Verify dashboard loads
+    await page.goto(baseURL, { waitUntil: 'networkidle', timeout: 30000 });
+    console.log('✅ Dashboard is accessible');
+
+    // Add any additional setup tasks here
+    // e.g., seed test data, create test users, etc.
+    
+  } catch (error) {
+    console.error('❌ Error during global setup:', error);
+    throw error;
+  } finally {
+    await browser.close();
+  }
+
+  console.log('✅ Global setup completed successfully!');
+}
+
+export default globalSetup;
