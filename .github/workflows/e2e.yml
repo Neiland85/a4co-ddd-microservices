@@ -212,8 +212,12 @@ jobs:
       - name: Cleanup test services
         if: always()
         run: |
-          docker compose -f docker-compose.test.yml down -v
-          docker system prune -f
+          echo "🧹 Cleaning up test services..."
+          # Stop and remove containers (ignore errors if already stopped)
+          docker compose -f docker-compose.test.yml down -v 2>/dev/null || echo "⚠️ Some containers already stopped"
+          # Prune system (always runs even if previous commands fail)
+          docker system prune -f || true
+          echo "✅ Cleanup completed"
 
   # Require E2E tests to pass before allowing merge
   e2e-gate:

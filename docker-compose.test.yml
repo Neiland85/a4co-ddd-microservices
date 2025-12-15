@@ -39,14 +39,17 @@ services:
     command: "-js -m 8222"
     ports:
       - "4223:4222" # Client port (different from dev)
-      - "8222:8222" # Monitoring port (changed to standard 8222)
+      - "8222:8222" # Monitoring port (standard NATS monitoring port)
     networks:
       - test-net
     healthcheck:
+      # Using wget (available in alpine) instead of curl
+      # Equivalent to: curl -f http://localhost:8222/healthz
       test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
       interval: 5s
       timeout: 3s
       retries: 10
+      start_period: 10s
 
   # Redis for caching/session management in tests
   redis-test:

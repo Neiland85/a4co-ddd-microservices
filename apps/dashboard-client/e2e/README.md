@@ -18,6 +18,32 @@ e2e/
 └── README.md             # This file
 ```
 
+## Prerequisites
+
+Before running E2E tests locally, ensure you have:
+
+1. **docker-compose.test.yml** in project root (`../../docker-compose.test.yml`)
+2. **Docker & Docker Compose v2** running
+3. **Ports available**: 8081, 3001, 4223, 8222, 5433, 6380
+4. **Node.js 22+** and **pnpm 10.14.0+**
+
+### Local Environment Setup
+
+```bash
+# From project root, start test services
+docker compose -f docker-compose.test.yml up -d
+
+# Wait for services to be healthy (especially NATS)
+sleep 15
+
+# Verify NATS is ready
+curl http://localhost:8222/healthz  # Should return "ok"
+
+# Then run tests from dashboard-client directory
+cd apps/dashboard-client
+pnpm run test:e2e
+```
+
 ## Running Tests
 
 ### Quick Start
@@ -131,15 +157,73 @@ TEST_USER_PASSWORD=TestPassword123!
 
 ## Troubleshooting
 
+### docker-compose.test.yml Issues
+
+**Problem**: `docker-compose.test.yml` not found or services won't start
+
+**Solution**:
+```bash
+# Verify file exists in project root
+ls -la ../../docker-compose.test.yml
+
+# Validate configuration
+docker compose -f ../../docker-compose.test.yml config
+
+# View services status
+docker compose -f ../../docker-compose.test.yml ps
+
+# Restart all services
+docker compose -f ../../docker-compose.test.yml restart
+
+# Full cleanup and restart
+docker compose -f ../../docker-compose.test.yml down -v
+docker compose -f ../../docker-compose.test.yml up -d
+```
+
+### NATS Healthcheck Failures
+
+**Problem**: NATS container not healthy or tests can't connect
+
+**Root Cause**: 
+- Healthcheck timing out (retries: 10, interval: 5s, start_period: 10s)
+- Port 8222 not accessible
+- Using wrong healthcheck URL
+
+**Solution**:
+```bash
+# Check NATS container status
+docker compose -f ../../docker-compose.test.yml ps nats-test
+
+# View NATS logs
+docker compose -f ../../docker-compose.test.yml logs nats-test
+
+# Test NATS monitoring endpoint directly (port 8222, not 8223!)
+curl http://localhost:8222/healthz
+# Should return: ok
+
+# Test NATS client connection (port 4223)
+docker exec nats-test nats-cli server info
+
+# If still failing, restart NATS
+docker compose -f ../../docker-compose.test.yml restart nats-test
+sleep 15
+```
+
+**Note**: NATS uses:
+- Port **8222** for monitoring/healthcheck (standard NATS port)
+- Port **4223** for client connections (mapped from container's 4222)
+- Healthcheck uses `wget` (available in alpine) not `curl`
+
 ### Services Not Ready
 
 ```bash
 # Check service health
-curl http://localhost:8081/health
-curl http://localhost:3001
+curl http://localhost:8081/health  # Gateway
+curl http://localhost:3001         # Dashboard
+curl http://localhost:8222/healthz # NATS
 
-# Restart services
-docker-compose -f ../../docker-compose.test.yml restart
+# Check all services status
+docker compose -f ../../docker-compose.test.yml ps
 ```
 
 ### Test Timeouts
