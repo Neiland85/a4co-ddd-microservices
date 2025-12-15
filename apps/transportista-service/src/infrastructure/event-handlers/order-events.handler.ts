@@ -1,4 +1,4 @@
-import { Controller, Logger, Inject } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload, Ctx, NatsContext } from '@nestjs/microservices';
 import { EventTypes } from '@a4co/shared-events';
 import { CreateShipmentUseCase } from '../../application/use-cases/create-shipment.use-case.js';
@@ -22,7 +22,7 @@ export class OrderEventsHandler {
    * Creates a shipment and assigns a transportista when an order is confirmed
    */
   @EventPattern(EventTypes.ORDER_CONFIRMED_V1)
-  async handleOrderConfirmed(@Payload() payload: any, @Ctx() context: NatsContext): Promise<void> {
+  async handleOrderConfirmed(@Payload() payload: any, @Ctx() _context: NatsContext): Promise<void> {
     const eventData = payload.data || payload;
     
     this.logger.log(`📥 Received ${EventTypes.ORDER_CONFIRMED_V1}`, {

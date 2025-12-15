@@ -8,8 +8,8 @@ export class RandomAssignmentStrategy implements AssignmentStrategy {
 
   async selectTransportista(
     availableTransportistas: Transportista[],
-    pickupAddress: string,
-    deliveryAddress: string,
+    _pickupAddress: string,
+    _deliveryAddress: string,
   ): Promise<Transportista | null> {
     if (availableTransportistas.length === 0) {
       this.logger.warn('No available transportistas for assignment');
