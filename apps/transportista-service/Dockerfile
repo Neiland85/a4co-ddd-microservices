@@ -1,60 +1,63 @@
-# Base stage for dependency installation
-FROM python:3.11-slim AS base
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set working directory
 WORKDIR /app
 
-# Copy dependency manifests
-COPY requirements.txt requirements-dev.txt ./
+# Copy workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/transportista-service/package.json ./apps/transportista-service/
+COPY packages ./packages
 
-# Install runtime dependencies
-RUN pip install -r requirements.txt
+# Install pnpm
+RUN npm install -g pnpm@10.14.0
 
-# Development stage with hot reload support
-FROM base AS development
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
-# Copy source code
-COPY . .
+# Copy service source
+COPY apps/transportista-service ./apps/transportista-service
 
-# Install development dependencies
-RUN pip install -r requirements-dev.txt
+# Generate Prisma client
+WORKDIR /app/apps/transportista-service
+RUN pnpm prisma:generate
+
+# Build the service
+RUN pnpm build
+
+# Stage 2: Production
+FROM node:20-alpine AS production
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm@10.14.0
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/transportista-service/package.json ./apps/transportista-service/
+COPY packages ./packages
+
+# Install production dependencies only
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy built files and prisma
+COPY --from=builder /app/apps/transportista-service/dist ./apps/transportista-service/dist
+COPY --from=builder /app/apps/transportista-service/prisma ./apps/transportista-service/prisma
+
+# Generate Prisma client for production
+WORKDIR /app/apps/transportista-service
+RUN pnpm prisma:generate
+
+# Set environment
+ENV NODE_ENV=production
+ENV PORT=3008
 
 # Expose port
-EXPOSE 8000
-
-# Command for development with hot reload
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-
-# Production stage for minimal runtime
-FROM base AS production
-
-# Create non-root user
-RUN addgroup --system --gid 1001 appgroup \
-    && adduser --system --uid 1001 --gid 1001 appuser
-
-# Copy source code with non-root ownership
-COPY --chown=appuser:appgroup . .
-
-# Switch to non-root user
-USER appuser
-
-# Expose port
-EXPOSE 8000
+EXPOSE 3008
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3008/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Command for production
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+# Start the service
+CMD ["node", "dist/main.js"]
