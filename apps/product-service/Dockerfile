@@ -60,17 +60,17 @@ COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./no
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3002
+ENV PORT=3003
 
 # Switch to non-root user
 USER nestjs
 
 # Expose port
-EXPOSE 3002
+EXPOSE 3003
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3002/health || exit 1
+    CMD curl -f http://localhost:3003/health || exit 1
 
 # Working directory
 WORKDIR /usr/src/app/apps/product-service

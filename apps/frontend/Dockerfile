@@ -66,20 +66,8 @@ RUN apk add --no-cache curl
 # Copy built assets
 COPY --from=builder /usr/src/app/apps/frontend/dist /usr/share/nginx/html
 
-# Create simple nginx configuration for SPA
-RUN echo 'events { worker_connections 1024; } \n\
-http { \n\
-  include /etc/nginx/mime.types; \n\
-  default_type application/octet-stream; \n\
-  server { \n\
-    listen 80; \n\
-    root /usr/share/nginx/html; \n\
-    index index.html; \n\
-    location / { \n\
-      try_files $uri $uri/ /index.html; \n\
-    } \n\
-  } \n\
-}' > /etc/nginx/nginx.conf
+# Copy nginx configuration
+COPY apps/frontend/nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
 EXPOSE 80
