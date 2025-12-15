@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Inject } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { NotificationService } from './service';
+import { Controller, Get, Post, Body, Inject, Param, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { NotificationService as LegacyNotificationService } from './service';
+import { NotificationService } from './services/notification.service';
 import { NotificationRequestDTO, NotificationResponseDTO } from './dto';
+import { GetNotificationQueryDto } from './dto/get-notification.dto';
 import { EmailProvider } from './providers/email.provider';
 import { SMSProvider } from './providers/sms.provider';
 import { PushProvider } from './providers/push.provider';
@@ -10,6 +12,7 @@ import { PushProvider } from './providers/push.provider';
 @Controller()
 export class NotificationController {
   constructor(
+    private readonly legacyNotificationService: LegacyNotificationService,
     private readonly notificationService: NotificationService,
     @Inject('EMAIL_PROVIDER') private emailProvider: EmailProvider,
     @Inject('SMS_PROVIDER') private smsProvider: SMSProvider,
@@ -79,8 +82,8 @@ export class NotificationController {
 
       await Promise.all(promises);
 
-      // Also use the notification service for tracking
-      await this.notificationService.sendNotification({
+      // Also use the legacy notification service for tracking
+      await this.legacyNotificationService.sendNotification({
         type: request.type,
         priority: request.priority,
         title: request.title,
@@ -110,6 +113,26 @@ export class NotificationController {
   @Get('stats')
   @ApiOperation({ summary: 'Get notification statistics' })
   async getStats() {
-    return this.notificationService.getNotificationStats();
+    return this.notificationService.getStats();
+  }
+
+  @Get('notifications/:orderId')
+  @ApiOperation({ summary: 'Get notification history for an order' })
+  @ApiParam({ name: 'orderId', description: 'Order ID' })
+  @ApiQuery({ name: 'channel', required: false, enum: ['email', 'sms'] })
+  @ApiQuery({ name: 'status', required: false, enum: ['pending', 'sent', 'failed'] })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'offset', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Notification history retrieved' })
+  async getNotificationsByOrder(
+    @Param('orderId') orderId: string,
+    @Query() query: GetNotificationQueryDto,
+  ) {
+    return this.notificationService.getNotificationsByOrderId(orderId, {
+      channel: query.channel,
+      status: query.status,
+      limit: query.limit,
+      offset: query.offset,
+    });
   }
 }
