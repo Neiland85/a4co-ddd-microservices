@@ -35,6 +35,4 @@ export class OrderCreatedV1Event extends DomainEventBase<OrderCreatedV1Data> {
   ) {
     super(EventTypes.ORDER_CREATED_V1, data, correlationId, metadata);
   }
-
-
 }

@@ -25,6 +25,4 @@ export class OrderCancelledV1Event extends DomainEventBase<OrderCancelledV1Data>
   ) {
     super(EventTypes.ORDER_CANCELLED_V1, data, correlationId, metadata);
   }
-
-
 }

@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 19:28:06
+Última sincronización: 15/12/2025, 19:29:50
 
 ---
 ### User (global VSCode)
@@ -9,7 +9,7 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (18)
+### Commits recientes detectados (20)
 - authored
 - comprehensive
 - create
@@ -18,10 +18,12 @@ Sin nuevas palabras.
 - github
 - guide
 - initial
+- integration
 - neiland
 - noreply
 - package
 - plan
+- services
 - shared
 - tests
 - troubleshooting

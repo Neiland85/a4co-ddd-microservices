@@ -28,6 +28,4 @@ export class PaymentProcessingV1Event extends DomainEventBase<PaymentProcessingV
   ) {
     super(EventTypes.PAYMENT_PROCESSING_V1, data, correlationId, metadata);
   }
-
-
 }

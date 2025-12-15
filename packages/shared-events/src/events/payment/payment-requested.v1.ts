@@ -27,6 +27,4 @@ export class PaymentRequestedV1Event extends DomainEventBase<PaymentRequestedV1D
   ) {
     super(EventTypes.PAYMENT_REQUESTED_V1, data, correlationId, metadata);
   }
-
-
 }

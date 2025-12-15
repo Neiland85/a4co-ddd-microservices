@@ -30,6 +30,4 @@ export class PaymentFailedV1Event extends DomainEventBase<PaymentFailedV1Data> {
   ) {
     super(EventTypes.PAYMENT_FAILED_V1, data, correlationId, metadata);
   }
-
-
 }

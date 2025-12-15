@@ -27,6 +27,4 @@ export class OrderConfirmedV1Event extends DomainEventBase<OrderConfirmedV1Data>
   ) {
     super(EventTypes.ORDER_CONFIRMED_V1, data, correlationId, metadata);
   }
-
-
 }

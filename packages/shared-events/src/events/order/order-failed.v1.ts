@@ -26,6 +26,4 @@ export class OrderFailedV1Event extends DomainEventBase<OrderFailedV1Data> {
   ) {
     super(EventTypes.ORDER_FAILED_V1, data, correlationId, metadata);
   }
-
-
 }

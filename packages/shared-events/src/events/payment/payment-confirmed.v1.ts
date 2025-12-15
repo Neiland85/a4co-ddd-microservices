@@ -29,6 +29,4 @@ export class PaymentConfirmedV1Event extends DomainEventBase<PaymentConfirmedV1D
   ) {
     super(EventTypes.PAYMENT_CONFIRMED_V1, data, correlationId, metadata);
   }
-
-
 }
