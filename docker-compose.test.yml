@@ -33,23 +33,16 @@ services:
       - /var/lib/postgresql/data # Use tmpfs for faster tests
 
   # NATS Server with JetStream for event-driven testing
+  # Note: No healthcheck used in CI environment - see docs/e2e-ci-known-issues.md
   nats-test:
     image: nats:2.10-alpine
     container_name: nats-test
-    command: "-js -m 8222"
+    command: "-js --http_port 8222"
     ports:
       - "4223:4222" # Client port (different from dev)
-      - "8222:8222" # Monitoring port (standard NATS monitoring port)
+      - "8222:8222" # HTTP monitoring port
     networks:
       - test-net
-    healthcheck:
-      # Using wget (available in alpine) instead of curl
-      # Equivalent to: curl -f http://localhost:8222/healthz
-      test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-      start_period: 10s
 
   # Redis for caching/session management in tests
   redis-test:
@@ -85,10 +78,8 @@ services:
       - JWT_EXPIRES_IN=1h
       - LOG_LEVEL=error # Reduce noise in tests
     depends_on:
-      postgres-test:
-        condition: service_healthy
-      nats-test:
-        condition: service_healthy
+      - postgres-test
+      - nats-test
     networks:
       - test-net
 
@@ -105,10 +96,8 @@ services:
       - NATS_URL=nats://nats-test:4222
       - LOG_LEVEL=error
     depends_on:
-      postgres-test:
-        condition: service_healthy
-      nats-test:
-        condition: service_healthy
+      - postgres-test
+      - nats-test
     networks:
       - test-net
 
@@ -127,10 +116,8 @@ services:
       - PAYMENT_SUCCESS_RATE=0.9
       - LOG_LEVEL=error
     depends_on:
-      postgres-test:
-        condition: service_healthy
-      nats-test:
-        condition: service_healthy
+      - postgres-test
+      - nats-test
     networks:
       - test-net
 
@@ -147,10 +134,8 @@ services:
       - NATS_URL=nats://nats-test:4222
       - LOG_LEVEL=error
     depends_on:
-      postgres-test:
-        condition: service_healthy
-      nats-test:
-        condition: service_healthy
+      - postgres-test
+      - nats-test
     networks:
       - test-net
 
@@ -202,7 +187,6 @@ services:
       - NODE_ENV=test
       - NEXT_PUBLIC_API_URL=http://localhost:8081
     depends_on:
-      gateway-test:
-        condition: service_healthy
+      - gateway-test
     networks:
       - test-net

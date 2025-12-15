@@ -126,7 +126,12 @@ jobs:
 
       - name: Wait for services to be ready
         run: |
-          echo "Waiting for services to be healthy..."
+          echo "Waiting for services to be ready..."
+          
+          # Wait for NATS TCP port (port 4223, up to 30 seconds)
+          # Using TCP check instead of HTTP healthcheck for CI stability
+          echo "Checking NATS TCP port at localhost:4223..."
+          timeout 30 bash -c 'until nc -z localhost 4223 2>/dev/null; do echo "NATS port not ready, waiting..."; sleep 1; done' && echo "✅ NATS TCP port is open" || echo "⚠️ NATS TCP check timed out (continuing anyway)"
           
           # Wait for Gateway (up to 2 minutes)
           echo "Checking Gateway at http://localhost:8081/health..."
@@ -136,16 +141,12 @@ jobs:
           echo "Checking Dashboard at http://localhost:3001..."
           timeout 120 bash -c 'until curl -sf http://localhost:3001 2>/dev/null; do echo "Dashboard not ready, waiting..."; sleep 3; done' || echo "⚠️ Dashboard health check timed out"
           
-          # Check NATS (updated to use port 8222)
-          echo "Checking NATS at http://localhost:8222/healthz..."
-          timeout 60 bash -c 'until curl -sf http://localhost:8222/healthz 2>/dev/null; do echo "NATS not ready, waiting..."; sleep 2; done' || echo "⚠️ NATS health check timed out"
-          
-          echo "✅ Service health checks completed"
+          echo "✅ Service readiness checks completed"
           
           # Show running containers for debugging
           docker compose -f docker-compose.test.yml ps
           
-          # Show NATS logs if healthcheck failed
+          # Show NATS logs for debugging
           echo "📋 NATS container logs:"
           docker compose -f docker-compose.test.yml logs nats-test | tail -20
         continue-on-error: true
