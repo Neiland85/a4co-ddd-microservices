@@ -6,6 +6,7 @@ import {
   setupSwagger,
   createStandardSwaggerConfig,
 } from '@a4co/shared-utils';
+import { TraceContextMiddleware } from '@a4co/observability';
 import { InventoryModule } from './inventory.module';
 
 const logger = new Logger('InventoryService');
@@ -17,6 +18,12 @@ async function bootstrap() {
     port: 3006,
     globalPrefix: 'api/inventory',
     enableSwagger: true,
+  });
+
+  // === OBSERVABILITY: Apply trace context middleware ===
+  app.use((req: any, res: any, next: any) => {
+    const middleware = new TraceContextMiddleware();
+    middleware.use(req, res, next);
   });
 
   // === NATS Microservice (for event listening) ===

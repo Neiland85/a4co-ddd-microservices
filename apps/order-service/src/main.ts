@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import {
   createApp,
@@ -6,6 +6,7 @@ import {
   setupSwagger,
   createStandardSwaggerConfig,
 } from '@a4co/shared-utils';
+import { TraceContextMiddleware } from '@a4co/observability';
 import * as process from 'process';
 import { OrderModule } from './order.module.js';
 
@@ -21,6 +22,12 @@ async function bootstrap() {
     disableLogger: false,
     enableSwagger: true,
     allowedOrigins: [process.env['CORS_ORIGIN'] || 'http://localhost:3000'],
+  });
+
+  // === OBSERVABILITY: Apply trace context middleware ===
+  app.use((req: any, res: any, next: any) => {
+    const middleware = new TraceContextMiddleware();
+    middleware.use(req, res, next);
   });
 
   // === NATS Microservice (for event listening) ===
