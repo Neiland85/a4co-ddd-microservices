@@ -5,6 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { getContext, injectContextToHeaders } from '../config';
 import { getLogger } from '../logger';
 
+// Export new trace context utilities
+export * from './async-context';
+export * from './trace-id.generator';
+
 // Generate correlation ID
 export function generateCorrelationId(): string {
   return uuidv4();
