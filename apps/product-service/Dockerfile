@@ -1,5 +1,5 @@
 # ================================================================================
-# Multi-stage Dockerfile for API Gateway (Production-Ready)
+# Multi-stage Dockerfile for Product Service (Production-Ready)
 # ================================================================================
 
 # -------- BASE --------
@@ -20,7 +20,8 @@ WORKDIR /usr/src/app
 
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY apps/gateway/package.json ./apps/gateway/
+COPY apps/product-service/package.json ./apps/product-service/
+COPY packages ./packages
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.pnpm-store \
@@ -31,10 +32,14 @@ FROM deps AS builder
 WORKDIR /usr/src/app
 
 # Copy source code
-COPY apps/gateway ./apps/gateway
+COPY apps/product-service ./apps/product-service
+COPY packages ./packages
+
+# Generate Prisma client (if schema exists)
+WORKDIR /usr/src/app/apps/product-service
+RUN if [ -f "prisma/schema.prisma" ]; then pnpm exec prisma generate; fi
 
 # Build the application
-WORKDIR /usr/src/app/apps/gateway
 RUN pnpm run build
 
 # -------- PRODUCTION --------
@@ -43,28 +48,32 @@ WORKDIR /usr/src/app
 
 # Copy node_modules from deps stage
 COPY --from=deps --chown=nestjs:nodejs /usr/src/app/node_modules ./node_modules
-COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/gateway/node_modules ./apps/gateway/node_modules
+COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/product-service/node_modules ./apps/product-service/node_modules
 
 # Copy built application
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/gateway/dist ./apps/gateway/dist
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/gateway/package.json ./apps/gateway/
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/product-service/dist ./apps/product-service/dist
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/product-service/package.json ./apps/product-service/
+
+# Copy Prisma schema and generated client (if exists)
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/product-service/prisma ./apps/product-service/prisma
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=3003
 
 # Switch to non-root user
 USER nestjs
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3003
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3000/api/v1/health || exit 1
+    CMD curl -f http://localhost:3003/health || exit 1
 
 # Working directory
-WORKDIR /usr/src/app/apps/gateway
+WORKDIR /usr/src/app/apps/product-service
 
 # Start the application
 CMD ["node", "dist/main.js"]
