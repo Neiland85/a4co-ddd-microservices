@@ -197,7 +197,7 @@ export class SimpleLogger {
     if (typeof first === 'string') {
       return {
         message: first,
-        payload: (typeof second === 'object' ? second : {}) as LogPayload,
+        payload: (typeof second === 'object' && second !== null ? second : {}) as LogPayload,
       };
     }
     

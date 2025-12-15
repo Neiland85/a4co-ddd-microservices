@@ -55,6 +55,9 @@ export class TraceContextMiddleware implements NestMiddleware {
       userAgent: req.headers['user-agent'],
     });
 
+    // Cache logger reference for performance
+    const cachedLogger = this.logger;
+
     // Intercept response to log completion
     const originalSend = res.send;
     const originalJson = res.json;
@@ -64,8 +67,7 @@ export class TraceContextMiddleware implements NestMiddleware {
       const statusCode = res.statusCode;
 
       // Log request completion
-      const logger = getLogger();
-      logger.info({
+      cachedLogger.info('REQUEST_END', {
         traceId,
         spanId,
         statusCode,
@@ -73,7 +75,7 @@ export class TraceContextMiddleware implements NestMiddleware {
         method: req.method,
         url: req.url,
         contentLength: res.getHeader('content-length'),
-      }, 'REQUEST_END');
+      });
 
       return originalSend.call(this, data);
     };
@@ -83,8 +85,7 @@ export class TraceContextMiddleware implements NestMiddleware {
       const statusCode = res.statusCode;
 
       // Log request completion
-      const logger = getLogger();
-      logger.info('REQUEST_END', {
+      cachedLogger.info('REQUEST_END', {
         traceId,
         spanId,
         statusCode,

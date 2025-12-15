@@ -68,5 +68,8 @@ export async function runInTraceContextAsync<T>(
  * Useful for testing or cleanup scenarios
  */
 export function clearTraceContext(): void {
-  traceContextStorage.enterWith(undefined as any);
+  // Exit the storage by entering with an empty context
+  traceContextStorage.exit(() => {
+    // Context is now cleared
+  });
 }
