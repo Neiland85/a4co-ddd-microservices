@@ -20,8 +20,8 @@ export interface JwtPayload {
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
     namespace Express {
+        interface User extends JwtPayload {}
         interface Request {
-            user?: JwtPayload;
             userId?: string;
         }
     }

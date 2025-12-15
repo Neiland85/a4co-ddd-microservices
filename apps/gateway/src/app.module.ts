@@ -6,9 +6,11 @@ import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { PassportModule } from '@nestjs/passport';
 import { TerminusModule } from '@nestjs/terminus';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 import { JwtAuthMiddleware } from './common/middleware/jwt-auth.middleware';
@@ -39,6 +41,9 @@ import { ProxyModule } from './proxy/proxy.module';
         // Health checks
         TerminusModule,
 
+        // Passport for JWT strategy
+        PassportModule.register({ defaultStrategy: 'jwt' }),
+
         // Rate limiting (100 requests per minute)
         ThrottlerModule.forRootAsync({
             imports: [ConfigModule],
@@ -56,6 +61,8 @@ import { ProxyModule } from './proxy/proxy.module';
     ],
     controllers: [HealthController],
     providers: [
+        // JWT Strategy for Passport
+        JwtStrategy,
         // Global HTTP exception filter
         {
             provide: APP_FILTER,
@@ -66,12 +73,6 @@ import { ProxyModule } from './proxy/proxy.module';
             provide: APP_GUARD,
             useClass: ThrottlerGuard,
         },
-        // Global JWT Guard (alternative to middleware)
-        // Uncomment to use guard-based auth instead of middleware
-        // {
-        //     provide: APP_GUARD,
-        //     useClass: JwtAuthGuard,
-        // },
     ],
 })
 export class AppModule implements NestModule {

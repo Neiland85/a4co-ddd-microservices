@@ -81,8 +81,8 @@ export class StructuredLogger implements NestMiddleware {
                 Logger.log(logMessage, 'HTTP');
             }
 
-            // Call original end
-            return res.end.call(res, chunk, encoding, callback);
+            // Call original end to complete the response
+            return originalEnd.call(res, chunk, encoding, callback);
         } as typeof res.end;
 
         next();
