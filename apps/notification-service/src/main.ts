@@ -1,22 +1,46 @@
 import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import {
-  createApp,
-  getPort,
+  applySecurityMiddleware,
+  applyValidationPipe,
+  applyCorsConfiguration,
   setupSwagger,
   createStandardSwaggerConfig,
+  getPort,
 } from '@a4co/shared-utils';
 import { NotificationModule } from './notification.module';
 
 const logger = new Logger('NotificationService');
 
 async function bootstrap() {
-  // === APP (usando shared-utils) ===
-  const app = await createApp(NotificationModule, {
-    serviceName: 'Notification Service',
-    port: 3007,
-    globalPrefix: 'api/notifications',
-    enableSwagger: true,
+  // === APP HÍBRIDA (HTTP + NATS) ===
+  const app = await NestFactory.create(NotificationModule, {
+    logger: ['log', 'error', 'warn', 'debug'],
   });
+
+  // === CONEXIÓN NATS ===
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env['NATS_SERVERS'] || 'nats://localhost:4222'],
+      queue: 'notification-service-queue',
+    },
+  });
+
+  // === SEGURIDAD, VALIDACIÓN Y CORS ===
+  applySecurityMiddleware(app, { serviceName: 'Notification Service' });
+  applyValidationPipe(app);
+  applyCorsConfiguration(app, {
+    serviceName: 'Notification Service',
+    corsConfig: {
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    },
+  });
+
+  // Set global prefix
+  app.setGlobalPrefix('api/notifications');
 
   // === SWAGGER ===
   setupSwagger(
@@ -33,7 +57,12 @@ async function bootstrap() {
   );
 
   const port = getPort({ serviceName: 'Notification Service', port: 3007 });
+
+  // Start all microservices
+  await app.startAllMicroservices();
   await app.listen(port);
+
+  logger.log('NATS microservice connected (notification-service-queue)');
 
   console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
