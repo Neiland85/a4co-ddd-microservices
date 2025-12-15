@@ -13,12 +13,14 @@ import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-pa
 import { StripeGateway } from './infrastructure/stripe.gateway';
 import { SimulatedPaymentGateway } from './infrastructure/simulated-payment.gateway';
 import { PaymentController } from './presentation/payment.controller';
+import { validateEnv } from './config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
+      validate: validateEnv,
     }),
     // NATS Client: Necesario para emitir eventos y responder
     ClientsModule.register([
@@ -42,10 +44,10 @@ import { PaymentController } from './presentation/payment.controller';
     // Payment Gateway - Use simulated for testing or Stripe for production
     {
       provide: StripeGateway,
-      useFactory: () => {
+      useFactory: (): StripeGateway | SimulatedPaymentGateway => {
         const useSimulated = process.env['USE_SIMULATED_PAYMENT'] === 'true';
         if (useSimulated) {
-          return new SimulatedPaymentGateway() as any;
+          return new SimulatedPaymentGateway();
         }
         return new StripeGateway();
       },

@@ -136,11 +136,11 @@ export class Order extends AggregateRoot {
     if (this._status !== OrderStatus.PENDING) {
       throw new Error(`Cannot confirm payment for order in status: ${this._status}`);
     }
-    this.changeStatus(OrderStatus.PAID);
+    this.changeStatus(OrderStatus.CONFIRMED);
   }
 
   markAsShipped(): void {
-    if (this._status !== OrderStatus.PAID) {
+    if (this._status !== OrderStatus.CONFIRMED) {
       throw new Error(`Cannot ship order in status: ${this._status}`);
     }
     this.changeStatus(OrderStatus.SHIPPED);
