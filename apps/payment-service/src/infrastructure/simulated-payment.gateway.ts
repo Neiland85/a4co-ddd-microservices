@@ -54,7 +54,11 @@ export class SimulatedPaymentGateway {
   ): Promise<SimulatedPaymentIntent> {
     // Validate currency is supported
     const currency = params.amount.currency.toUpperCase();
-    if (!SimulatedPaymentGateway.SUPPORTED_CURRENCIES.includes(currency as any)) {
+    const isSupportedCurrency = (curr: string): curr is typeof SimulatedPaymentGateway.SUPPORTED_CURRENCIES[number] => {
+      return SimulatedPaymentGateway.SUPPORTED_CURRENCIES.includes(curr as typeof SimulatedPaymentGateway.SUPPORTED_CURRENCIES[number]);
+    };
+    
+    if (!isSupportedCurrency(currency)) {
       throw new Error(
         `Unsupported currency: ${currency}. Supported currencies: ${SimulatedPaymentGateway.SUPPORTED_CURRENCIES.join(', ')}`
       );

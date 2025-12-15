@@ -119,9 +119,9 @@ describe('Order Saga E2E', () => {
       };
       await (saga as any).handlePaymentSucceeded(paymentSucceededEvent);
 
-      // Verificar que la orden se actualizó a PAID
+      // Verificar que la orden se actualizó a CONFIRMED
       expect(mockOrderRepository.save).toHaveBeenCalled();
-      expect(order.status).toBe(OrderStatus.PAID);
+      expect(order.status).toBe(OrderStatus.CONFIRMED);
 
       // Verificar contexto de saga
       const context = saga.getSagaContext(orderId);

@@ -1,15 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 15/12/2025, 17:58:29
+Última sincronización: 15/12/2025, 18:01:36
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (1)
-- transitions
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (129)
+### Commits recientes detectados (132)
 - about
 - added
 - address
@@ -17,6 +17,7 @@ Sin nuevas palabras.
 - architecture
 - authored
 - avoid
+- backward
 - base
 - baseevent
 - better
@@ -26,6 +27,7 @@ Sin nuevas palabras.
 - classes
 - code
 - comment
+- compatibility
 - compilation
 - compiler
 - compiles
@@ -135,6 +137,7 @@ Sin nuevas palabras.
 - typescript
 - updated
 - users
+- validation
 - when
 - with
 - workspace
