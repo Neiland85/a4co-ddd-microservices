@@ -1,18 +1,17 @@
 # Diccionario del Proyecto
 
-Última sincronización: 16/12/2025, 1:32:58
+Última sincronización: 16/12/2025, 1:34:23
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (4)
-- adopting
-- migrated
-- shouldn
-- what
+### Workspace (proyecto local) (3)
+- core
+- documented
+- refactoring
 
-### Commits recientes detectados (354)
+### Commits recientes detectados (361)
 - access
 - accessible
 - across
@@ -71,6 +70,7 @@ Sin nuevas palabras.
 - compatibility
 - complete
 - completely
+- completion
 - compose
 - comprehensive
 - condition
@@ -85,6 +85,7 @@ Sin nuevas palabras.
 - contexts
 - conversation
 - copilot
+- core
 - correct
 - create
 - created
@@ -106,6 +107,7 @@ Sin nuevas palabras.
 - docker
 - document
 - documentation
+- documented
 - documents
 - doesn
 - domain
@@ -234,6 +236,7 @@ Sin nuevas palabras.
 - ordercreated
 - orderstatus
 - organized
+- overview
 - package
 - packages
 - parameters
@@ -264,6 +267,7 @@ Sin nuevas palabras.
 - read
 - readme
 - redundant
+- refactoring
 - refinements
 - reliability
 - reliable
@@ -277,6 +281,7 @@ Sin nuevas palabras.
 - reporting
 - repository
 - requests
+- requirements
 - resolve
 - resource
 - result
@@ -324,6 +329,7 @@ Sin nuevas palabras.
 - suites
 - summary
 - system
+- technical
 - testcontainers
 - testing
 - tests
