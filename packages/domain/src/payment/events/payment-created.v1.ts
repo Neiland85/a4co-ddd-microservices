@@ -1,5 +1,5 @@
 import { DomainEvent } from '@a4co/shared-utils';
-import { type MoneyPrimitives } from '../../shared/value-objects/money.vo.js';
+import { type MoneyPrimitives } from '../../common/value-objects/money.vo.js';
 
 export const PAYMENT_CREATED_V1 = 'payment.created.v1';
 

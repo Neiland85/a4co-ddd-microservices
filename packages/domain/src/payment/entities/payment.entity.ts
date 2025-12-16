@@ -1,7 +1,7 @@
 import { AggregateRoot } from '@a4co/shared-utils';
+import { Money } from '../../common/value-objects/money.vo.js';
 import { PaymentId } from '../value-objects/payment-id.vo.js';
 import { PaymentStatus, PaymentStatusValue } from '../value-objects/payment-status.vo.js';
-import { Money } from '../../shared/value-objects/money.vo.js';
 
 /**
  * Payment Entity (Aggregate Root)
