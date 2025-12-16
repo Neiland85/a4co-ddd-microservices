@@ -1,127 +1,17 @@
 # Diccionario del Proyecto
 
-Última sincronización: 16/12/2025, 1:25:39
+Última sincronización: 16/12/2025, 1:28:27
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (113)
-- access
-- accessible
-- always
-- automatically
-- benefits
-- block
-- blocked
-- bounded
-- breaking
-- categories
-- cause
-- clarification
-- completely
-- condition
-- consistently
-- contents
-- conversation
-- curl
-- delays
-- depends
-- developers
-- differences
-- display
-- documents
-- doesn
-- down
-- endpoint
-- enhancements
-- even
-- expected
-- explains
-- explanation
-- extract
-- fail
-- failures
-- faster
-- fewer
-- flakiness
-- gate
-- granted
-- healthcheck
-- healthchecks
-- healthy
-- healthz
-- increase
-- indicator
-- interval
-- intervals
-- known
-- lacks
-- latency
-- level
-- logging
-- logic
-- logs
-- magic
-- mergeable
-- money
-- negatives
-- network
-- numbers
-- parameters
-- pass
-- period
-- permissions
-- polling
-- ports
-- prerequisites
-- progress
-- provides
-- prune
-- quickly
-- refinements
-- reliability
-- reliable
-- rely
-- reordered
-- requests
-- resource
-- result
-- retries
-- reviewer
-- robustness
-- runs
-- show
-- shows
-- simpler
-- simplified
-- sleep
-- solutions
-- stability
-- standard
-- starts
-- statements
-- stopped
-- structure
-- sufficient
-- then
-- throttling
-- timing
-- token
-- tolerance
-- tried
-- unhealthy
-- unreliable
-- uploads
-- wait
-- waitfortimeout
-- waits
-- warn
-- wget
-- write
-- wrong
+### Workspace (proyecto local) (3)
+- objects
+- paymentid
+- paymentstatus
 
-### Commits recientes detectados (328)
+### Commits recientes detectados (338)
 - access
 - accessible
 - across
@@ -197,6 +87,7 @@ Sin nuevas palabras.
 - dashboard
 - debugging
 - default
+- define
 - delays
 - deliverables
 - depends
@@ -218,9 +109,11 @@ Sin nuevas palabras.
 - endpoint
 - enhancements
 - ensure
+- entity
 - environment
 - environments
 - error
+- errors
 - even
 - event
 - events
@@ -281,6 +174,7 @@ Sin nuevas palabras.
 - instead
 - instructions
 - integration
+- interface
 - interval
 - intervals
 - inventory
@@ -295,12 +189,14 @@ Sin nuevas palabras.
 - latency
 - level
 - line
+- lints
 - list
 - local
 - localhost
 - logging
 - logic
 - logs
+- machine
 - made
 - magic
 - main
@@ -324,6 +220,7 @@ Sin nuevas palabras.
 - noreply
 - numbers
 - object
+- objects
 - order
 - package
 - parameters
@@ -331,6 +228,8 @@ Sin nuevas palabras.
 - pattern
 - patterns
 - payment
+- paymentid
+- paymentstatus
 - period
 - permissions
 - plan
@@ -398,6 +297,7 @@ Sin nuevas palabras.
 - start
 - starts
 - startup
+- state
 - statements
 - status
 - step
