@@ -1,0 +1,1 @@
+// Shipment value objects placeholder

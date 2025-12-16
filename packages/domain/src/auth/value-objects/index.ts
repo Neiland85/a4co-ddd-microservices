@@ -1,0 +1,1 @@
+// Auth value objects placeholder

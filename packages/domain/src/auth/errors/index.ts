@@ -1,0 +1,1 @@
+// Auth errors placeholder
