@@ -161,6 +161,7 @@ export function initializeTracing(
   if (otlpEndpoint) {
     try {
       // Use OTLP HTTP exporter as primary
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
       const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
       traceExporter = new OTLPTraceExporter({
         url: `${otlpEndpoint}/v1/traces`,
