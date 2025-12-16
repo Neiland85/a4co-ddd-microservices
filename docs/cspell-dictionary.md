@@ -1,17 +1,21 @@
 # Diccionario del Proyecto
 
-Última sincronización: 16/12/2025, 1:28:27
+Última sincronización: 16/12/2025, 1:29:46
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (3)
-- objects
-- paymentid
-- paymentstatus
+### Workspace (proyecto local) (7)
+- business
+- contexts
+- pending
+- planned
+- product
+- readmes
+- remaining
 
-### Commits recientes detectados (338)
+### Commits recientes detectados (351)
 - access
 - accessible
 - across
@@ -42,6 +46,7 @@ Sin nuevas palabras.
 - bounded
 - breaking
 - builds
+- business
 - cases
 - categories
 - cause
@@ -67,6 +72,7 @@ Sin nuevas palabras.
 - compatibility
 - complete
 - completely
+- components
 - compose
 - comprehensive
 - condition
@@ -78,6 +84,7 @@ Sin nuevas palabras.
 - container
 - contents
 - context
+- contexts
 - conversation
 - copilot
 - correct
@@ -201,6 +208,7 @@ Sin nuevas palabras.
 - magic
 - main
 - mapping
+- mark
 - mergeable
 - messages
 - metrics
@@ -230,9 +238,12 @@ Sin nuevas palabras.
 - payment
 - paymentid
 - paymentstatus
+- pending
 - period
 - permissions
+- placeholder
 - plan
+- planned
 - playwright
 - points
 - polling
@@ -240,6 +251,7 @@ Sin nuevas palabras.
 - ports
 - prerequisites
 - prevent
+- product
 - production
 - progress
 - provides
@@ -249,11 +261,13 @@ Sin nuevas palabras.
 - quickly
 - read
 - readme
+- readmes
 - redundant
 - refinements
 - reliability
 - reliable
 - rely
+- remaining
 - remove
 - removed
 - reordered
@@ -273,6 +287,7 @@ Sin nuevas palabras.
 - reviewer
 - robustness
 - root
+- rules
 - runner
 - running
 - runs
@@ -331,6 +346,7 @@ Sin nuevas palabras.
 - uploads
 - usage
 - used
+- user
 - users
 - using
 - validation
@@ -346,6 +362,7 @@ Sin nuevas palabras.
 - which
 - will
 - with
+- work
 - workflow
 - workflows
 - write
