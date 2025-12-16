@@ -125,6 +125,7 @@ JWT_SECRET="your-secret-key"
 - **Authentication**: JWT with refresh tokens
 - **Validation**: class-validator + class-transformer
 - **Testing**: Jest + Supertest
+- **E2E Testing**: Playwright + Testcontainers
 
 ### Frontend
 - **Dashboard**: Next.js 15 + React 19
@@ -200,6 +201,74 @@ docker-compose -f docker-compose.observability.yml logs -f
 
 # Detener y eliminar datos
 ./scripts/stop-observability.sh --remove-volumes
+```
+
+## 🧪 Testing
+
+### E2E Testing Suite
+
+Comprehensive End-to-End tests for the complete order flow using Playwright and Testcontainers.
+
+**Prerequisites:**
+- Docker & Docker Compose v2 installed and running
+- Node.js 22+ and pnpm 10.14.0+
+- Ports available: 8081, 3001, 4223, 8222, 5433, 6380
+- File `docker-compose.test.yml` in project root
+
+**Quick Start:**
+```bash
+# Run E2E tests (automated setup)
+./scripts/run-e2e-tests.sh
+
+# Run with UI mode (interactive)
+./scripts/run-e2e-tests.sh --ui
+
+# Run in headed mode (see browser)
+./scripts/run-e2e-tests.sh --headed
+
+# View test report
+cd apps/dashboard-client
+pnpm run test:e2e:report
+```
+
+**Common Issues:**
+- **NATS healthcheck fails**: Check port 8222 is accessible, view logs with `docker compose -f docker-compose.test.yml logs nats-test`
+- **Missing artifacts**: Directories are auto-created by the test runner script
+- **Services not starting**: Ensure Docker Compose v2 is installed (`docker compose version`)
+
+**Test Coverage (14 tests):**
+- ✅ User Authentication (JWT)
+- ✅ Product Catalog Browsing
+- ✅ Order Creation via Gateway
+- ✅ Payment Processing & NATS Events
+- ✅ Order Confirmation
+- ✅ Happy Path Flow (successful order)
+- ✅ Saga Rollback (payment failure)
+- ✅ Event Traceability & Correlation
+
+**Documentation:**
+- [E2E Testing Guide](docs/e2e-tests.md) - Complete documentation
+- [Quick Start Guide](docs/e2e-quick-start.md) - Get started in 3 steps
+- [Dashboard E2E README](apps/dashboard-client/e2e/README.md) - Test structure
+
+**CI/CD Integration:**
+- Automated tests on every PR to `main`/`develop`
+- Blocks merge on test failures
+- Artifacts: HTML reports, videos, screenshots
+
+### Unit & Integration Tests
+
+```bash
+# Run all tests
+pnpm run test
+
+# Run tests for specific service
+pnpm --filter @a4co/order-service test
+pnpm --filter @a4co/payment-service test
+pnpm --filter @a4co/inventory-service test
+
+# Run with coverage
+pnpm run test:coverage
 ```
 
 ## 🔒 Security

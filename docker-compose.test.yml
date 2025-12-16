@@ -1,0 +1,192 @@
+version: '3.9'
+
+# Docker Compose for E2E Testing
+# This configuration provides isolated test infrastructure with Testcontainers support
+
+networks:
+  test-net:
+    driver: bridge
+
+services:
+  # ----------------------------------------------------------------
+  # TEST INFRASTRUCTURE
+  # ----------------------------------------------------------------
+
+  # PostgreSQL for testing (isolated from dev/prod)
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: postgres-test
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_db
+    ports:
+      - "5433:5432" # Different port to avoid conflicts
+    networks:
+      - test-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+    tmpfs:
+      - /var/lib/postgresql/data # Use tmpfs for faster tests
+
+  # NATS Server with JetStream for event-driven testing
+  # Note: No healthcheck used in CI environment - see docs/e2e-ci-known-issues.md
+  nats-test:
+    image: nats:2.10-alpine
+    container_name: nats-test
+    command: "-js --http_port 8222"
+    ports:
+      - "4223:4222" # Client port (different from dev)
+      - "8222:8222" # HTTP monitoring port
+    networks:
+      - test-net
+
+  # Redis for caching/session management in tests
+  redis-test:
+    image: redis:7-alpine
+    container_name: redis-test
+    ports:
+      - "6380:6379" # Different port to avoid conflicts
+    networks:
+      - test-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+    command: redis-server --save "" --appendonly no # No persistence for tests
+
+  # ----------------------------------------------------------------
+  # MICROSERVICES FOR E2E TESTING
+  # ----------------------------------------------------------------
+
+  auth-service-test:
+    build:
+      context: ./apps/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service-test
+    ports:
+      - "4001:4000"
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://test_user:test_password@postgres-test:5432/auth_test?schema=public
+      - NATS_URL=nats://nats-test:4222
+      - JWT_SECRET=test-jwt-secret-key-for-e2e
+      - JWT_EXPIRES_IN=1h
+      - LOG_LEVEL=error # Reduce noise in tests
+    depends_on:
+      - postgres-test
+      - nats-test
+    networks:
+      - test-net
+
+  order-service-test:
+    build:
+      context: ./apps/order-service
+      dockerfile: Dockerfile
+    container_name: order-service-test
+    ports:
+      - "3100:3000"
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://test_user:test_password@postgres-test:5432/order_test?schema=public
+      - NATS_URL=nats://nats-test:4222
+      - LOG_LEVEL=error
+    depends_on:
+      - postgres-test
+      - nats-test
+    networks:
+      - test-net
+
+  payment-service-test:
+    build:
+      context: ./apps/payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service-test
+    ports:
+      - "3101:3001"
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://test_user:test_password@postgres-test:5432/payment_test?schema=public
+      - NATS_URL=nats://nats-test:4222
+      - USE_SIMULATED_PAYMENT=true
+      - PAYMENT_SUCCESS_RATE=0.9
+      - LOG_LEVEL=error
+    depends_on:
+      - postgres-test
+      - nats-test
+    networks:
+      - test-net
+
+  inventory-service-test:
+    build:
+      context: ./apps/inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service-test
+    ports:
+      - "3102:3002"
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://test_user:test_password@postgres-test:5432/inventory_test?schema=public
+      - NATS_URL=nats://nats-test:4222
+      - LOG_LEVEL=error
+    depends_on:
+      - postgres-test
+      - nats-test
+    networks:
+      - test-net
+
+  gateway-test:
+    build:
+      context: ./apps/gateway
+      dockerfile: Dockerfile
+    container_name: gateway-test
+    ports:
+      - "8081:3000"
+    environment:
+      - NODE_ENV=test
+      - JWT_SECRET=test-jwt-secret-key-for-e2e
+      - JWT_EXPIRES_IN=1h
+      - AUTH_SERVICE_URL=http://auth-service-test:4000
+      - ORDERS_SERVICE_URL=http://order-service-test:3000
+      - PAYMENTS_SERVICE_URL=http://payment-service-test:3001
+      - INVENTORY_SERVICE_URL=http://inventory-service-test:3002
+      - PRODUCTS_SERVICE_URL=http://product-service-test:3002
+      - CORS_ORIGIN=http://localhost:3000,http://localhost:3001
+      - LOG_LEVEL=error
+    depends_on:
+      - auth-service-test
+      - order-service-test
+      - payment-service-test
+      - inventory-service-test
+    networks:
+      - test-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ----------------------------------------------------------------
+  # DASHBOARD CLIENT (Frontend for E2E tests)
+  # ----------------------------------------------------------------
+
+  dashboard-client-test:
+    build:
+      context: ./apps/dashboard-client
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://gateway-test:3000
+    container_name: dashboard-client-test
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=test
+      - NEXT_PUBLIC_API_URL=http://localhost:8081
+    depends_on:
+      - gateway-test
+    networks:
+      - test-net
