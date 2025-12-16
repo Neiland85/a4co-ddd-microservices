@@ -1,9 +1,8 @@
 /**
- * @a4co/domain - Shared domain artifacts organized by bounded contexts
+ * @a4co/domain - Shared Domain Layer
  * 
- * This package provides domain-layer artifacts that are shared across
- * multiple microservices in the A4CO platform. Each bounded context
- * (order, payment, inventory, etc.) contains its own domain model.
+ * Organized by bounded contexts following Domain-Driven Design principles.
+ * All domain primitives, value objects, and aggregates are versioned.
  * 
  * @example
  * ```typescript
@@ -16,14 +15,16 @@
  * ```
  */
 
-// Common domain primitives
+// Shared kernel: Common value objects, errors, and base types
+// Re-exported from ./common for single source of truth
 export * from './common/index.js';
 
-// Bounded contexts
+// Bounded contexts: Organized by business domains
+export * from './auth/index.js';
+export * from './inventory/index.js';
 export * from './order/index.js';
 export * from './payment/index.js';
-export * from './inventory/index.js';
-export * from './user/index.js';
-export * from './auth/index.js';
 export * from './product/index.js';
 export * from './shipment/index.js';
+export * from './user/index.js';
+

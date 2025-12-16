@@ -79,7 +79,7 @@ jobs:
           else
             echo "No Prisma schema found, skipping generate."
           fi
-        run: pnpm --filter "./apps/*" run db:generate --if-present || true
+          pnpm --filter "./apps/*" run db:generate --if-present || true
 
       - name: Run tests
         run: |
@@ -114,7 +114,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma clients
+      - name: Generate Prisma (shared and packages)
         run: |
           if find . -name "schema.prisma" | grep -q .; then
             pnpm -w exec prisma generate
@@ -122,6 +122,8 @@ jobs:
           else
             echo "No Prisma schema found, skipping generate."
           fi
+
+      - name: Generate Prisma (apps)
         run: pnpm --filter "./apps/*" run db:generate --if-present || true
 
       - name: Type check
@@ -142,23 +144,23 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }} 
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -171,5 +173,3 @@ jobs:
           npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-

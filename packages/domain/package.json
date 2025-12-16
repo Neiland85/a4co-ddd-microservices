@@ -7,21 +7,21 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "clean": "rm -rf dist",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix"
+    "lint": "eslint src --ext .ts --fix"
   },
   "keywords": [
-    "domain",
     "ddd",
-    "bounded-context",
+    "domain-driven-design",
+    "bounded-contexts",
     "microservices",
-    "domain-driven-design"
+    "a4co"
   ],
   "dependencies": {
-    "uuid": "^13.0.0"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
