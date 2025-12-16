@@ -5,16 +5,16 @@ export * from './shared/index.js';
 export * from './order/index.js';
 
 // Payment Bounded Context
-// export * from './payment/index.js';
+export * from './payment/index.js';
 
-// Inventory Bounded Context
+// Inventory Bounded Context (pending implementation)
 // export * from './inventory/index.js';
 
-// Auth Bounded Context
+// Auth Bounded Context (pending implementation)
 // export * from './auth/index.js';
 
-// User Bounded Context
+// User Bounded Context (pending implementation)
 // export * from './user/index.js';
 
-// Product Bounded Context
+// Product Bounded Context (pending implementation)
 // export * from './product/index.js';
