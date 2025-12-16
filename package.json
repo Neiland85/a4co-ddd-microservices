@@ -83,6 +83,7 @@
     "micromatch": "^4.0.8",
     "nx": "22.1.0",
     "prettier": "^3.6.2",
+    "prisma": "6.19.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "simple-git-hooks": "^2.13.1",

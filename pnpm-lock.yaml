@@ -141,6 +141,9 @@ importers:
       prettier:
         specifier: ^3.6.2
         version: 3.7.3
+      prisma:
+        specifier: 6.19.0
+        version: 6.19.0(typescript@5.9.3)
       react:
         specifier: ^19.2.0
         version: 19.2.0
