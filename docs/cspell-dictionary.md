@@ -1,22 +1,26 @@
 # Diccionario del Proyecto
 
-Última sincronización: 16/12/2025, 5:40:01
+Última sincronización: 16/12/2025, 5:51:05
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (3)
+- problem
+- separate
+- succeeds
 
-### Commits recientes detectados (99)
+### Commits recientes detectados (115)
 - acceso
 - actualizado
 - agregado
 - ahora
-- aligns
 - archivos
+- authored
+- build
 - bundle
+- causing
 - change
 - code
 - common
@@ -24,8 +28,9 @@ Sin nuevas palabras.
 - completo
 - condicionales
 - config
+- configuration
+- conflicts
 - console
-- consolidated
 - const
 - corregidas
 - corregido
@@ -38,7 +43,6 @@ Sin nuevas palabras.
 - domain
 - duplicate
 - eliminadas
-- entity
 - errores
 - errors
 - eslint
@@ -47,14 +51,18 @@ Sin nuevas palabras.
 - event
 - events
 - fallback
+- file
 - files
 - from
+- github
 - globaltracerprovider
-- import
+- have
 - imports
 - index
 - inexistentes
 - interfaces
+- issue
+- jest
 - json
 - kernel
 - killer
@@ -65,21 +73,21 @@ Sin nuevas palabras.
 - middleware
 - module
 - moduleresolution
-- money
-- moneyprimitives
 - move
+- neiland
 - nestjs
 - never
 - node
 - nodenext
+- noreply
 - objects
 - observability
 - options
 - packages
 - para
 - pathvalidationresult
-- payment
 - pnpm
+- problem
 - propiedades
 - protectores
 - reassigned
@@ -87,26 +95,36 @@ Sin nuevas palabras.
 - referencias
 - remove
 - require
+- required
 - resolve
 - script
 - scripts
+- separate
 - settings
 - shared
 - size
 - space
+- spec
 - spell
 - statement
-- structure
+- still
+- succeeds
+- tests
+- that
 - todos
 - tsconfig
 - types
 - typescript
 - undef
+- users
+- uuid
 - validadores
 - value
+- versions
 - vite
 - webpackchunk
 - webpackmodule
+- when
 - with
 - yaml
 
