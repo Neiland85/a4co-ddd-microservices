@@ -28,6 +28,13 @@ export class OrderItem {
   }
 
   /**
+   * Get currency from unit price
+   */
+  get currency(): string {
+    return this.unitPrice.currency;
+  }
+
+  /**
    * Create an OrderItem
    */
   static create(
@@ -108,5 +115,12 @@ export class OrderItem {
    */
   toString(): string {
     return `${this.quantity}x ${this.productName} @ ${this.unitPrice.toString()}`;
+  }
+
+  /**
+   * Convert to JSON representation
+   */
+  toJSON(): OrderItemPrimitives {
+    return this.toPrimitives();
   }
 }

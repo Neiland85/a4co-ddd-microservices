@@ -1,7 +1,7 @@
 import { AggregateRoot } from '@a4co/shared-utils';
 import { OrderId } from '../value-objects/order-id.vo.js';
 import { OrderItem } from '../value-objects/order-item.vo.js';
-import { OrderStatus, assertValidTransition } from '../value-objects/order-status.vo.js';
+import { OrderStatus, OrderStatusValue } from '../value-objects/order-status.vo.js';
 
 /**
  * Order Aggregate Root
@@ -49,7 +49,7 @@ export class Order extends AggregateRoot {
       throw new Error('Order must have at least one item');
     }
 
-    const id = orderId || OrderId.create();
+    const id = orderId || OrderId.generate();
     const totalAmount = Order.calculateTotal(items);
     const currency = items[0].currency; // Use currency from first item
 
@@ -62,7 +62,7 @@ export class Order extends AggregateRoot {
       id,
       customerId,
       items,
-      OrderStatus.PENDING,
+      OrderStatus.pending(),
       totalAmount,
       currency,
     );
@@ -122,8 +122,8 @@ export class Order extends AggregateRoot {
    * Confirm the order after payment is successful
    */
   public confirm(): void {
-    assertValidTransition(this._status, OrderStatus.CONFIRMED);
-    this._status = OrderStatus.CONFIRMED;
+    const newStatus = OrderStatus.create(OrderStatusValue.CONFIRMED);
+    this._status = this._status.transitionTo(newStatus);
     this.touch();
   }
 
@@ -131,8 +131,8 @@ export class Order extends AggregateRoot {
    * Mark order as shipped
    */
   public markAsShipped(): void {
-    assertValidTransition(this._status, OrderStatus.SHIPPED);
-    this._status = OrderStatus.SHIPPED;
+    const newStatus = OrderStatus.create(OrderStatusValue.SHIPPED);
+    this._status = this._status.transitionTo(newStatus);
     this.touch();
   }
 
@@ -140,8 +140,8 @@ export class Order extends AggregateRoot {
    * Mark order as delivered
    */
   public markAsDelivered(): void {
-    assertValidTransition(this._status, OrderStatus.DELIVERED);
-    this._status = OrderStatus.DELIVERED;
+    const newStatus = OrderStatus.create(OrderStatusValue.DELIVERED);
+    this._status = this._status.transitionTo(newStatus);
     this.touch();
   }
 
@@ -149,8 +149,8 @@ export class Order extends AggregateRoot {
    * Cancel the order
    */
   public cancel(_reason?: string): void {
-    assertValidTransition(this._status, OrderStatus.CANCELLED);
-    this._status = OrderStatus.CANCELLED;
+    const newStatus = OrderStatus.create(OrderStatusValue.CANCELLED);
+    this._status = this._status.transitionTo(newStatus);
     this.touch();
   }
 
@@ -158,8 +158,8 @@ export class Order extends AggregateRoot {
    * Mark order as failed
    */
   public markAsFailed(_reason?: string): void {
-    assertValidTransition(this._status, OrderStatus.FAILED);
-    this._status = OrderStatus.FAILED;
+    const newStatus = OrderStatus.create(OrderStatusValue.FAILED);
+    this._status = this._status.transitionTo(newStatus);
     this.touch();
   }
 
@@ -168,7 +168,7 @@ export class Order extends AggregateRoot {
    * Only allowed in PENDING status
    */
   public addItem(item: OrderItem): void {
-    if (this._status !== OrderStatus.PENDING) {
+    if (this._status.value !== OrderStatusValue.PENDING) {
       throw new Error('Cannot add items to a non-pending order');
     }
 
@@ -186,7 +186,7 @@ export class Order extends AggregateRoot {
    * Only allowed in PENDING status
    */
   public removeItem(productId: string): void {
-    if (this._status !== OrderStatus.PENDING) {
+    if (this._status.value !== OrderStatusValue.PENDING) {
       throw new Error('Cannot remove items from a non-pending order');
     }
 
@@ -209,7 +209,7 @@ export class Order extends AggregateRoot {
    * Calculate total amount from items
    */
   private static calculateTotal(items: OrderItem[]): number {
-    return items.reduce((total, item) => total + item.totalPrice, 0);
+    return items.reduce((total, item) => total + item.totalPrice().amount, 0);
   }
 
   /**
@@ -220,7 +220,7 @@ export class Order extends AggregateRoot {
       id: this._orderId.value,
       customerId: this._customerId,
       items: this._items.map((item) => item.toJSON()),
-      status: this._status,
+      status: this._status.value,
       totalAmount: this._totalAmount,
       currency: this._currency,
       createdAt: this.createdAt,

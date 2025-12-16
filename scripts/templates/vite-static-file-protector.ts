@@ -90,7 +90,6 @@ export class ViteStaticFileProtector {
         'pnpm-lock.yaml',
         'webpack.config.js',
       ],
-      allowHtmlFiles: false,
       allowDotFiles: false,
       ...config,
     };
@@ -101,7 +100,7 @@ export class ViteStaticFileProtector {
    */
   async protect(
     request: ViteStaticFileRequest,
-    context: string = 'vite-static'
+    context: string = 'vite-static',
   ): Promise<{
     allowed: boolean;
     response?: ViteStaticFileResponse;
@@ -116,35 +115,36 @@ export class ViteStaticFileProtector {
         allowed: true,
         validation: {
           isValid: true,
-          riskLevel: 'low',
-          issues: [],
-          recommendations: [],
-          normalizedPath: request.url,
-          isSensitive: false,
+          sanitizedPath: request.url,
         },
       };
     }
 
     // Extract path from URL
     const path = this.extractPathFromUrl(request.url);
-    const validation = ViteStaticPathValidator.validatePath(path, this.config);
+    const validator = new ViteStaticPathValidator(this.config);
+    const validation = validator.validate(path);
 
-    if (!validation.isValid || validation.isSensitive) {
+    if (!validation.isValid) {
       this.stats.blockedRequests++;
       this.stats.lastBlockedPath = path;
       this.stats.lastBlockedTime = Date.now();
 
-      if (validation.isSensitive) {
+      if (
+        validation.blockedReason === 'sensitive_file' ||
+        validation.blockedReason === 'sensitive_directory'
+      ) {
         this.stats.sensitiveFileBlocks++;
       }
 
-      if (validation.issues.some(issue => issue.includes('directory traversal'))) {
+      if (validation.blockedReason === 'path_traversal') {
         this.stats.traversalAttempts++;
       }
 
       logger.warn(`Blocked static file access attempt in ${context}`, {
         path,
-        validation,
+        error: validation.error,
+        blockedReason: validation.blockedReason,
         userAgent: request.headers['user-agent'],
         referer: request.headers.referer,
       });
@@ -155,7 +155,7 @@ export class ViteStaticFileProtector {
           status: 403,
           headers: {
             'Content-Type': 'text/plain',
-            'X-Blocked-Reason': validation.issues[0] || 'Access denied',
+            'X-Blocked-Reason': validation.error || 'Access denied',
           },
           body: 'Access denied',
         },
@@ -164,15 +164,6 @@ export class ViteStaticFileProtector {
     }
 
     this.stats.allowedRequests++;
-
-    // Log suspicious but allowed requests
-    if (validation.riskLevel === 'medium' || validation.riskLevel === 'high') {
-      logger.info(`Allowed suspicious static file access in ${context}`, {
-        path,
-        riskLevel: validation.riskLevel,
-        issues: validation.issues,
-      });
-    }
 
     return {
       allowed: true,

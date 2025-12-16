@@ -80,7 +80,6 @@ export class SafeViteStaticServer {
         'pnpm-lock.yaml',
         'webpack.config.js',
       ],
-      allowHtmlFiles: false,
       allowDotFiles: false,
       ...options,
     };
@@ -95,7 +94,7 @@ export class SafeViteStaticServer {
   async serveFile(
     url: string,
     method: string = 'GET',
-    headers: Record<string, string> = {}
+    headers: Record<string, string> = {},
   ): Promise<FileServeResult> {
     if (!this.options.enableProtection) {
       return {
@@ -104,22 +103,21 @@ export class SafeViteStaticServer {
       };
     }
 
-    const request = { url, method, headers };
-    const result = await this.protector.protect(request, 'safe-server');
+    const result = this.protector.validateAccess(url);
 
-    if (!result.allowed) {
+    if (!result.isValid) {
       if (this.options.logAccess) {
         logger.warn('Static file access blocked', {
           url,
-          reason: result.validation.issues[0],
-          riskLevel: result.validation.riskLevel,
+          reason: result.blockedReason,
+          error: result.error,
         });
       }
 
       return {
         allowed: false,
-        error: 'Access denied',
-        blockedReason: result.validation.issues[0],
+        error: result.error || 'Access denied',
+        blockedReason: result.blockedReason,
       };
     }
 
@@ -138,7 +136,6 @@ export class SafeViteStaticServer {
       logger.info('Static file served', {
         url,
         path: resolvedPath,
-        riskLevel: result.validation.riskLevel,
       });
     }
 
@@ -152,14 +149,15 @@ export class SafeViteStaticServer {
    * Checks if a path is safe to serve
    */
   isPathSafe(path: string): boolean {
-    return !ViteStaticPathValidator.shouldBlockPath(path, this.options);
+    return ViteStaticPathValidator.isSafePath(path);
   }
 
   /**
    * Validates a path and returns detailed result
    */
   validatePath(path: string) {
-    return ViteStaticPathValidator.validatePath(path, this.options);
+    const validator = new ViteStaticPathValidator(this.options);
+    return validator.validate(path);
   }
 
   /**
@@ -189,7 +187,15 @@ export class SafeViteStaticServer {
    * Creates Express middleware for secure static file serving
    */
   createExpressMiddleware() {
-    return this.protector.expressMiddleware();
+    const self = this;
+    return (req: any, res: any, next: any) => {
+      const result = self.protector.validateAccess(req.url);
+      if (!result.isValid) {
+        res.status(403).json({ error: result.error, reason: result.blockedReason });
+        return;
+      }
+      next();
+    };
   }
 
   /**
@@ -202,7 +208,15 @@ export class SafeViteStaticServer {
       name: 'vite-static-security',
       configureServer(server: any) {
         // Add middleware to Vite dev server
-        server.middlewares.use(self.protector.middleware());
+        server.middlewares.use((req: any, res: any, next: any) => {
+          const result = self.protector.validateAccess(req.url);
+          if (!result.isValid) {
+            res.statusCode = 403;
+            res.end(JSON.stringify({ error: result.error, reason: result.blockedReason }));
+            return;
+          }
+          next();
+        });
       },
       config() {
         return self.getViteConfig();
@@ -222,7 +236,8 @@ export class SafeViteStaticServer {
    */
   updateConfig(newOptions: Partial<ViteStaticServerOptions>) {
     this.options = { ...this.options, ...newOptions };
-    this.protector.updateConfig(newOptions);
+    // Recreate protector with new options
+    this.protector = new ViteStaticFileProtector(this.options);
   }
 
   /**
@@ -240,7 +255,7 @@ export class SafeViteStaticServer {
 
 // Factory functions for convenience
 export function createSafeViteStaticServer(
-  options?: ViteStaticServerOptions
+  options?: ViteStaticServerOptions,
 ): SafeViteStaticServer {
   return new SafeViteStaticServer(options);
 }

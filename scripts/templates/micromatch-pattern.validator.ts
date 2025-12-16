@@ -1,4 +1,15 @@
-import { logger } from '@a4co/observability';
+// Import opcional para observabilidad (fallback a console si no está disponible)
+let logger: any;
+try {
+  const observability = require('@a4co/observability');
+  logger = observability.logger;
+} catch {
+  logger = {
+    info: console.info,
+    warn: console.warn,
+    error: console.error,
+  };
+}
 
 /**
  * Micromatch Pattern Validator
@@ -62,7 +73,7 @@ export class MicromatchPatternValidator {
    * Validates multiple patterns
    */
   static validatePatterns(patterns: string[]): PatternValidationResult[] {
-    return patterns.map(pattern => this.validatePattern(pattern));
+    return patterns.map((pattern) => this.validatePattern(pattern));
   }
 
   /**
@@ -75,7 +86,7 @@ export class MicromatchPatternValidator {
     let sanitized = pattern
       .replace(/\*\*\*+/g, '**') // Multiple *** -> **
       .replace(/\*\*\/\*\*+/g, '**/') // **/*** -> **/
-      .replace(/\*+/g, match => (match.length > 2 ? '**' : match)); // More than 2 * -> **
+      .replace(/\*+/g, (match) => (match.length > 2 ? '**' : match)); // More than 2 * -> **
 
     // Limit brace expansions
     const braceMatches = sanitized.match(/\{[^}]*\}/g);
@@ -163,7 +174,7 @@ export class MicromatchPatternValidator {
    * Assesses the risk level based on complexity
    */
   private static assessRiskLevel(
-    metrics: PatternComplexityMetrics
+    metrics: PatternComplexityMetrics,
   ): 'low' | 'medium' | 'high' | 'critical' {
     const complexity = metrics.totalComplexity;
 
@@ -189,19 +200,19 @@ export class MicromatchPatternValidator {
       recommendations.push('Consider using a safer alternative pattern');
     }
 
-    if (issues.some(issue => issue.includes('wildcard'))) {
+    if (issues.some((issue) => issue.includes('wildcard'))) {
       recommendations.push('Reduce wildcard usage or use more specific patterns');
     }
 
-    if (issues.some(issue => issue.includes('brace'))) {
+    if (issues.some((issue) => issue.includes('brace'))) {
       recommendations.push('Limit brace expansions to essential cases only');
     }
 
-    if (issues.some(issue => issue.includes('alternation'))) {
+    if (issues.some((issue) => issue.includes('alternation'))) {
       recommendations.push('Minimize alternation usage in patterns');
     }
 
-    if (issues.some(issue => issue.includes('nested'))) {
+    if (issues.some((issue) => issue.includes('nested'))) {
       recommendations.push('Avoid nested groups when possible');
     }
 

@@ -54,8 +54,8 @@ export class Payment extends AggregateRoot {
       throw new Error('Customer ID cannot be empty');
     }
 
-    const id = paymentId || PaymentId.create();
-    const status = PaymentStatus.create(PaymentStatusValue.PENDING);
+    const id = paymentId || PaymentId.generate();
+    const status = PaymentStatus.pending();
 
     return new Payment(
       id,
@@ -130,7 +130,7 @@ export class Payment extends AggregateRoot {
       return; // Idempotent
     }
 
-    this._status = this._status.transitionTo(PaymentStatusValue.PROCESSING);
+    this._status = this._status.transitionTo(PaymentStatus.create(PaymentStatusValue.PROCESSING));
     this.touch();
   }
 
@@ -142,7 +142,7 @@ export class Payment extends AggregateRoot {
       return; // Idempotent
     }
 
-    this._status = this._status.transitionTo(PaymentStatusValue.SUCCEEDED);
+    this._status = this._status.transitionTo(PaymentStatus.create(PaymentStatusValue.SUCCEEDED));
     this._stripePaymentIntentId = stripePaymentIntentId;
     this.touch();
   }
@@ -155,7 +155,7 @@ export class Payment extends AggregateRoot {
       return; // Idempotent for final states
     }
 
-    this._status = this._status.transitionTo(PaymentStatusValue.FAILED);
+    this._status = this._status.transitionTo(PaymentStatus.create(PaymentStatusValue.FAILED));
     this._metadata = { ...this._metadata, failureReason: reason };
     this.touch();
   }
@@ -168,7 +168,7 @@ export class Payment extends AggregateRoot {
       return; // Idempotent
     }
 
-    this._status = this._status.transitionTo(PaymentStatusValue.REFUNDED);
+    this._status = this._status.transitionTo(PaymentStatus.create(PaymentStatusValue.REFUNDED));
     if (reason) {
       this._metadata = { ...this._metadata, refundReason: reason };
     }

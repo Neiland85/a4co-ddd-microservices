@@ -84,6 +84,13 @@ export class PaymentStatus {
   }
 
   /**
+   * Check if payment is processing
+   */
+  isProcessing(): boolean {
+    return this.value === PaymentStatusValue.PROCESSING;
+  }
+
+  /**
    * Check if payment can be refunded
    */
   canBeRefunded(): boolean {

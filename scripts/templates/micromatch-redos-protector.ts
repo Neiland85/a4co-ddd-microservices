@@ -1,4 +1,16 @@
-import { logger } from '@a4co/observability';
+// Import opcional para observabilidad (fallback a console si no está disponible)
+let logger: any;
+try {
+  const observability = require('@a4co/observability');
+  logger = observability.logger;
+} catch {
+  logger = {
+    info: console.info,
+    warn: console.warn,
+    error: console.error,
+  };
+}
+
 import {
   MicromatchPatternValidator,
   PatternValidationResult,
@@ -51,10 +63,10 @@ export class MicromatchReDoSProtector {
       timeout?: number;
       context?: string;
       allowRiskyPatterns?: boolean;
-    } = {}
+    } = {},
   ): Promise<MicromatchOperationResult<T>> {
     const startTime = Date.now();
-    const timeout = options.timeout || this.constructor.DEFAULT_TIMEOUT;
+    const timeout = options.timeout || MicromatchReDoSProtector.DEFAULT_TIMEOUT;
     const context = options.context || 'unknown';
 
     // Check circuit breaker
@@ -75,8 +87,8 @@ export class MicromatchReDoSProtector {
 
     // Validate patterns
     const patternValidations = MicromatchPatternValidator.validatePatterns(patterns);
-    const hasCriticalPatterns = patternValidations.some(v => v.riskLevel === 'critical');
-    const hasHighRiskPatterns = patternValidations.some(v => v.riskLevel === 'high');
+    const hasCriticalPatterns = patternValidations.some((v) => v.riskLevel === 'critical');
+    const hasHighRiskPatterns = patternValidations.some((v) => v.riskLevel === 'high');
 
     if (hasCriticalPatterns && !options.allowRiskyPatterns) {
       this.recordFailure();
@@ -139,7 +151,7 @@ export class MicromatchReDoSProtector {
    */
   private async executeWithTimeout<T>(
     operation: () => Promise<T> | T,
-    timeoutMs: number
+    timeoutMs: number,
   ): Promise<T> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
@@ -174,7 +186,7 @@ export class MicromatchReDoSProtector {
 
     if (this.circuitBreaker.state === 'open') {
       const timeSinceLastFailure = Date.now() - this.circuitBreaker.lastFailureTime;
-      if (timeSinceLastFailure > this.constructor.CIRCUIT_BREAKER_TIMEOUT) {
+      if (timeSinceLastFailure > MicromatchReDoSProtector.CIRCUIT_BREAKER_TIMEOUT) {
         // Transition to half-open
         this.circuitBreaker.state = 'half-open';
         return false;
@@ -203,11 +215,11 @@ export class MicromatchReDoSProtector {
     this.circuitBreaker.failures++;
     this.circuitBreaker.lastFailureTime = Date.now();
 
-    if (this.circuitBreaker.failures >= this.constructor.CIRCUIT_BREAKER_THRESHOLD) {
+    if (this.circuitBreaker.failures >= MicromatchReDoSProtector.CIRCUIT_BREAKER_THRESHOLD) {
       this.circuitBreaker.state = 'open';
       logger.warn('Circuit breaker opened due to excessive failures', {
         failures: this.circuitBreaker.failures,
-        threshold: this.constructor.CIRCUIT_BREAKER_THRESHOLD,
+        threshold: MicromatchReDoSProtector.CIRCUIT_BREAKER_THRESHOLD,
       });
     }
   }

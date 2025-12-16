@@ -7,8 +7,8 @@
     "emitDecoratorMetadata": true,
 
     /* Modules */
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]

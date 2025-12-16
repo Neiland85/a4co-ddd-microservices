@@ -1,10 +1,22 @@
 /**
- * Common Kernel - Shared domain primitives
+ * Common/Shared Kernel exports
  * 
- * Single source of truth for value objects, errors, and base types
- * used across all bounded contexts.
+ * This module exports shared domain primitives, value objects, and base types
+ * used across multiple bounded contexts.
+ * 
+ * @package @a4co/domain
+ * @module common
  */
 
-export * from './errors/index.js';
+// Value Objects
 export * from './value-objects/index.js';
+
+// Base Types & Interfaces
+export * from './types/index.js';
+
+// Domain Errors
+export * from './errors/index.js';
+
+// Domain Services (if any)
+// export * from './services/index.js';
 

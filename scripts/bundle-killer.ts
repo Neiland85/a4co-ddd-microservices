@@ -2,6 +2,19 @@ import { execSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import * as path from 'path';
 
+interface WebpackModule {
+  name: string;
+  size: number;
+  chunks?: string[];
+  id?: string | number;
+}
+
+interface WebpackChunk {
+  modules: WebpackModule[];
+  size?: number;
+  names?: string[];
+}
+
 interface ChunkInfo {
   name: string;
   size: number;
@@ -19,7 +32,7 @@ interface BundleAnalysis {
 const THRESHOLD_KB = 50;
 const LARGE_MODULE_KB = 10;
 
-export const analyzeBundle = async(): Promise<BundleAnalysis> => {
+export const analyzeBundle = async (): Promise<BundleAnalysis> => {
   console.log('🔍 Iniciando análisis de bundle...\n');
 
   try {
@@ -39,7 +52,7 @@ export const analyzeBundle = async(): Promise<BundleAnalysis> => {
     const statsPath = path.join('apps/dashboard-web/.next/analyze/client.json');
     if (!existsSync(statsPath)) {
       throw new Error(
-        'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.'
+        'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.',
       );
     }
 
@@ -131,7 +144,7 @@ function generateRecommendations(
   }
 
   // Recomendaciones por chunks grandes
-  chunks.forEach(chunk => {
+  chunks.forEach((chunk) => {
     if (chunk.size > 200 * 1024) {
       // > 200KB
       recommendations.push(`🔴 Chunk "${chunk.name}" es muy grande (${chunk.sizeKB}). Acciones:`);
@@ -217,11 +230,11 @@ function displayResults(analysis: BundleAnalysis): void {
     console.log('🚨 CHUNKS PROBLEMÁTICOS (> 50KB):');
     console.log('-'.repeat(60));
 
-    analysis.problematicChunks.forEach(chunk => {
+    analysis.problematicChunks.forEach((chunk) => {
       console.log(`\n📌 ${chunk.name}: ${chunk.sizeKB}`);
       if (chunk.modules.length > 0) {
         console.log('   Módulos más grandes:');
-        chunk.modules.forEach(m => console.log(`   - ${m}`));
+        chunk.modules.forEach((m) => console.log(`   - ${m}`));
       }
     });
   }
@@ -246,7 +259,7 @@ function displayResults(analysis: BundleAnalysis): void {
   if (analysis.recommendations.length > 0) {
     console.log('\n\n💡 RECOMENDACIONES:');
     console.log('-'.repeat(60));
-    analysis.recommendations.forEach(rec => console.log(rec));
+    analysis.recommendations.forEach((rec) => console.log(rec));
   }
 
   console.log('\n' + '='.repeat(60) + '\n');
