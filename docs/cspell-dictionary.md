@@ -1,28 +1,35 @@
 # Diccionario del Proyecto
 
-Última sincronización: 16/12/2025, 5:51:05
+Última sincronización: 16/12/2025, 6:00:51
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (3)
-- problem
-- separate
-- succeeds
+### Workspace (proyecto local) (5)
+- available
+- because
+- devdependencies
+- during
+- wasn
 
-### Commits recientes detectados (115)
+### Commits recientes detectados (128)
 - acceso
 - actualizado
+- added
 - agregado
 - ahora
+- already
 - archivos
 - authored
+- available
+- because
 - build
 - bundle
 - causing
 - change
-- code
+- client
+- command
 - common
 - compilan
 - completo
@@ -31,18 +38,20 @@ Sin nuevas palabras.
 - configuration
 - conflicts
 - console
-- const
 - corregidas
 - corregido
 - corregir
 - creados
+- dependencies
 - dependency
+- devdependencies
 - devdependency
-- dictionary
 - disable
 - domain
 - duplicate
+- during
 - eliminadas
+- error
 - errores
 - errors
 - eslint
@@ -50,15 +59,19 @@ Sin nuevas palabras.
 - estáticos
 - event
 - events
+- exec
+- failing
 - fallback
 - file
 - files
+- fixes
+- found
 - from
+- generate
+- generation
 - github
-- globaltracerprovider
 - have
 - imports
-- index
 - inexistentes
 - interfaces
 - issue
@@ -66,9 +79,11 @@ Sin nuevas palabras.
 - json
 - kernel
 - killer
+- level
 - libs
 - lint
 - lock
+- matches
 - micromatchredosprotector
 - middleware
 - module
@@ -76,7 +91,6 @@ Sin nuevas palabras.
 - move
 - neiland
 - nestjs
-- never
 - node
 - nodenext
 - noreply
@@ -87,25 +101,23 @@ Sin nuevas palabras.
 - para
 - pathvalidationresult
 - pnpm
+- prisma
 - problem
 - propiedades
 - protectores
-- reassigned
-- reduces
 - referencias
 - remove
 - require
 - required
-- resolve
+- root
+- runs
 - script
 - scripts
 - separate
-- settings
 - shared
 - size
 - space
 - spec
-- spell
 - statement
 - still
 - succeeds
@@ -122,9 +134,12 @@ Sin nuevas palabras.
 - value
 - versions
 - vite
+- wasn
 - webpackchunk
 - webpackmodule
 - when
 - with
+- workflow
+- workspace
 - yaml
 
