@@ -1,137 +1,18 @@
 # Diccionario del Proyecto
 
-Última sincronización: 16/12/2025, 1:27:49
+Última sincronización: 16/12/2025, 1:32:58
 
 ---
 ### User (global VSCode)
 Sin nuevas palabras.
 
-### Workspace (proyecto local) (123)
-- access
-- accessible
-- always
-- automatically
-- benefits
-- block
-- blocked
-- bounded
-- breaking
-- business
-- categories
-- cause
-- clarification
-- completely
-- condition
-- consistently
-- contents
-- contexts
-- conversation
-- curl
-- delays
-- depends
-- developers
-- differences
-- display
-- documents
-- doesn
-- down
-- email
-- endpoint
-- enhancements
-- even
-- eventnamev
-- expected
-- explains
-- explanation
-- extract
-- fail
-- failures
-- faster
-- fewer
-- flakiness
-- following
-- gate
-- granted
-- healthcheck
-- healthchecks
-- healthy
-- healthz
-- increase
-- indicator
-- interval
-- intervals
-- invariants
-- known
-- lacks
-- latency
-- level
-- logging
-- logic
-- logs
-- magic
-- mergeable
-- money
-- negatives
-- network
-- numbers
-- objects
-- ordercreated
-- orderstatus
-- parameters
-- pass
-- period
-- permissions
-- polling
-- ports
-- prerequisites
-- primitives
-- product
-- progress
-- provides
-- prune
-- quickly
-- refinements
-- reliability
-- reliable
-- rely
-- reordered
-- requests
-- resource
-- result
-- retries
-- reviewer
-- robustness
-- runs
-- show
-- shows
-- simpler
-- simplified
-- sleep
-- solutions
-- stability
-- standard
-- starts
-- statements
-- stopped
-- sufficient
-- then
-- throttling
-- timing
-- token
-- tolerance
-- tried
-- unhealthy
-- unreliable
-- uploads
-- wait
-- waitfortimeout
-- waits
-- warn
-- wget
-- write
-- wrong
+### Workspace (proyecto local) (4)
+- adopting
+- migrated
+- shouldn
+- what
 
-### Commits recientes detectados (347)
+### Commits recientes detectados (354)
 - access
 - accessible
 - across
@@ -140,6 +21,8 @@ Sin nuevas palabras.
 - added
 - address
 - addresses
+- adds
+- adopting
 - after
 - agent
 - alpine
@@ -293,6 +176,7 @@ Sin nuevas palabras.
 - improvements
 - include
 - included
+- includes
 - increase
 - indicator
 - infrastructure
@@ -327,6 +211,8 @@ Sin nuevas palabras.
 - mergeable
 - messages
 - metrics
+- migrated
+- migration
 - mismatch
 - modified
 - money
@@ -413,6 +299,7 @@ Sin nuevas palabras.
 - setup
 - shipment
 - should
+- shouldn
 - show
 - shows
 - simple
@@ -471,6 +358,7 @@ Sin nuevas palabras.
 - waits
 - warn
 - wget
+- what
 - when
 - which
 - will
