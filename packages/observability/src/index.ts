@@ -10,15 +10,9 @@ import type {
 import { context, SpanStatusCode, trace } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import {
-  CompositePropagator,
-  W3CBaggagePropagator,
-  W3CTraceContextPropagator,
+  W3CTraceContextPropagator
 } from '@opentelemetry/core';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { registerInstrumentations } from '@opentelemetry/instrumentation';
-import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { KoaInstrumentation } from '@opentelemetry/instrumentation-koa';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { getLogger } from './logger';
@@ -30,7 +24,7 @@ import type {
 } from './types';
 
 // Global tracer provider
-let globalTracerProvider: NodeTracerProvider | null = null;
+const globalTracerProvider: NodeTracerProvider | null = null;
 let globalSDK: NodeSDK | null = null;
 
 // Custom propagator for NATS and other messaging systems
@@ -155,9 +149,9 @@ export function initializeTracing(
   const logger = getLogger();
 
   // Determine OTLP endpoint (prefer config, fallback to env var)
-  const otlpEndpoint = 
-    config.otlpEndpoint || 
-    process.env['OTEL_EXPORTER_OTLP_ENDPOINT'] || 
+  const otlpEndpoint =
+    config.otlpEndpoint ||
+    process.env['OTEL_EXPORTER_OTLP_ENDPOINT'] ||
     'http://localhost:4318';
 
   // Create exporter based on configuration
@@ -167,7 +161,7 @@ export function initializeTracing(
   if (otlpEndpoint) {
     try {
       // Use OTLP HTTP exporter as primary
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
       const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
       traceExporter = new OTLPTraceExporter({
         url: `${otlpEndpoint}/v1/traces`,
@@ -331,15 +325,16 @@ export type { ObservabilityLogger } from './ObservabilityLogger';
 export * from './utils/async-context';
 export * from './utils/trace-id.generator';
 // Re-export specific items from trace-context.types to avoid conflicts
-export { TracedRequest, TRACE_CONTEXT_HEADERS, type TraceContextOptions } from './types/trace-context.types';
 export * from './types/log-payload.types';
+export { TRACE_CONTEXT_HEADERS, TracedRequest, type TraceContextOptions } from './types/trace-context.types';
 
 // Export NestJS middleware
-export { TraceContextMiddleware, createTraceContextMiddleware } from './middleware/trace-context.middleware';
+export { createTraceContextMiddleware, TraceContextMiddleware } from './middleware/trace-context.middleware';
 
 // Export simple logger
-export { SimpleLogger, createSimpleLogger } from './logger/simple-logger';
+export { createSimpleLogger, SimpleLogger } from './logger/simple-logger';
 
 // Export decorators
-export { Tracing, TraceDDD, Log, LogDDD } from './decorators';
-export type { TracingOptions, LogOptions } from './decorators';
+export { Log, LogDDD, TraceDDD, Tracing } from './decorators';
+export type { LogOptions, TracingOptions } from './decorators';
+
