@@ -1,7 +1,9 @@
 {
   "json.schemas": [
     {
-      "fileMatch": ["**/package.json"]
+      "fileMatch": [
+        "**/package.json"
+      ]
     }
   ],
   "json.schemaDownload.enable": true,
@@ -223,6 +225,7 @@
     "confiable",
     "config",
     "configs",
+    "configuraciones",
     "configuración",
     "configuration",
     "configurations",
@@ -700,6 +703,7 @@
     "maturity",
     "measures",
     "mejora",
+    "mejorar",
     "memory",
     "mensaje",
     "mergeable",
@@ -1280,7 +1284,11 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.validate": ["typescript", "javascript", "json"],
+  "eslint.validate": [
+    "typescript",
+    "javascript",
+    "json"
+  ],
   "editor.codeActionsOnSave": {
     "editor.formatOnSave": "explicit",
     "prettier.useEditorConfig": "explicit",
@@ -1292,13 +1300,33 @@
     "typescriptreact": "javascript"
   },
   "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ],
+    [
+      "cx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "cn\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "clsx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "tv\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ]
   ],
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "classList"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "classList"
+  ],
   "files.associations": {
     "*.css": "tailwindcss"
   },
