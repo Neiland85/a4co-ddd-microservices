@@ -13,6 +13,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        border: 'oklch(var(--border) / <alpha-value>)',
+        input: 'oklch(var(--input) / <alpha-value>)',
+        ring: 'oklch(var(--ring) / <alpha-value>)',
+        background: 'oklch(var(--background) / <alpha-value>)',
+        foreground: 'oklch(var(--foreground) / <alpha-value>)',
         primary: colors.emerald,
         secondary: colors.slate,
         accent: colors.amber,

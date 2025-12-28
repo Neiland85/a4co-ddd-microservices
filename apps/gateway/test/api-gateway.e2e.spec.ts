@@ -4,10 +4,10 @@
  */
 
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as jwt from 'jsonwebtoken';
-import * as request from 'supertest';
+import request = require('supertest');
 import { AppModule } from '../src/app.module';
 
 describe('API Gateway (e2e)', () => {
@@ -32,6 +32,9 @@ describe('API Gateway (e2e)', () => {
 
         app = moduleFixture.createNestApplication();
 
+        const configService = app.get(ConfigService);
+        const corsOrigins = configService.get<string>('CORS_ORIGIN', 'http://localhost:3000');
+
         app.useGlobalPipes(
             new ValidationPipe({
                 whitelist: true,
@@ -39,6 +42,15 @@ describe('API Gateway (e2e)', () => {
                 transform: true,
             }),
         );
+
+        app.enableCors({
+            origin: corsOrigins.split(',').map((origin) => origin.trim()),
+            methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID', 'X-Correlation-ID'],
+            credentials: true,
+        });
+
+        app.setGlobalPrefix('api/v1');
 
         await app.init();
     });
@@ -216,23 +228,22 @@ describe('API Gateway (e2e)', () => {
 
     describe('Rate Limiting', () => {
         it('should enforce rate limits', async () => {
-            const requests = [];
+            let rateLimitedCount = 0;
 
             // Make 110 requests (rate limit is 100)
             for (let i = 0; i < 110; i++) {
-                requests.push(
-                    request(app.getHttpServer())
-                        .get('/api/v1/health')
-                        .expect((res) => {
-                            // First 100 should succeed, next 10 should be rate limited
-                            if (i < 100) {
-                                expect([HttpStatus.OK, HttpStatus.TOO_MANY_REQUESTS]).toContain(res.statusCode);
-                            }
-                        }),
-                );
+                const response = await request(app.getHttpServer()).get('/api/v1/health');
+
+                if (response.statusCode === HttpStatus.TOO_MANY_REQUESTS) {
+                    rateLimitedCount += 1;
+                }
+
+                if (i < 100) {
+                    expect([HttpStatus.OK, HttpStatus.TOO_MANY_REQUESTS]).toContain(response.statusCode);
+                }
             }
 
-            await Promise.all(requests);
+            expect(rateLimitedCount).toBeGreaterThan(0);
         }, 30000); // Increase timeout for this test
     });
 });

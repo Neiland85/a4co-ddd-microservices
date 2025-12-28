@@ -20,7 +20,7 @@ export interface JwtPayload {
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
     namespace Express {
-        interface User extends JwtPayload {}
+        type User = JwtPayload;
         interface Request {
             userId?: string;
         }
@@ -58,10 +58,11 @@ export class JwtAuthMiddleware implements NestMiddleware {
 
     use(req: Request, res: Response, next: NextFunction): void {
         const requestId = req.headers['x-request-id'] as string || 'unknown';
+        const path = (req.originalUrl || req.url || req.path).split('?')[0];
 
         // Skip authentication for public paths
-        if (this.shouldSkipAuth(req.path)) {
-            this.logger.debug(`[${requestId}] Skipping auth for public path: ${req.path}`);
+        if (this.shouldSkipAuth(path)) {
+            this.logger.debug(`[${requestId}] Skipping auth for public path: ${path}`);
             return next();
         }
 
@@ -124,7 +125,10 @@ export class JwtAuthMiddleware implements NestMiddleware {
         // Prefix match for certain paths
         const skipPrefixes = [
             '/api/docs',
+            '/api/v1/health',
+            '/health',
             '/api/v1/products', // Products are public for browsing
+            '/products',
         ];
 
         return skipPrefixes.some(prefix => path.startsWith(prefix));
