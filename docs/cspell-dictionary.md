@@ -1,6 +1,10 @@
 # Diccionario del Proyecto
 
+<<<<<<< Updated upstream
 Última sincronización: 16/12/2025, 1:29:46
+=======
+Última sincronización: 16/12/2025, 5:40:46
+>>>>>>> Stashed changes
 
 ---
 ### User (global VSCode)

@@ -171,3 +171,4 @@ dmypy.json
 .nx/workspace-data
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md.env.observability
+docs/cspell-dictionary.md
