@@ -22,8 +22,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
+      "@a4co/shared-utils": ["../../packages/shared-utils/src/index.ts"],
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
+      "@a4co/shared-events": ["../../packages/shared-events/dist"],
+      "@a4co/shared-events/*": ["../../packages/shared-events/dist/*"],
+      "@a4co/observability": ["../../packages/observability/src"],
+      "@a4co/observability/*": ["../../packages/observability/src/*"]
     }
   },
   "include": ["src/**/*.ts"],

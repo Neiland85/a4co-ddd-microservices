@@ -46,6 +46,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@nestjs/common": "^11.1.8",
     "@types/express": "^4.17.23",
     "@types/koa": "^3.0.0",
     "@types/node": "^20.11.24",
@@ -60,12 +61,16 @@
     "winston": "^3.18.3"
   },
   "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
     "express": "*",
     "koa": "^3.1.1",
     "nats": "*",
     "react": ">=17.0.0"
   },
   "peerDependenciesMeta": {
+    "@nestjs/common": {
+      "optional": true
+    },
     "express": {
       "optional": true
     },

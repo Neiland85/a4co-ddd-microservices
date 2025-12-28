@@ -1,5 +1,5 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
-import { ClientProxy, EventPattern, Payload, Controller } from '@nestjs/microservices';
+import { Controller, Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 import { ReserveStockUseCase } from '../use-cases/reserve-stock.use-case';
 import { ReleaseStockUseCase } from '../use-cases/release-stock.use-case';
 import { IStockReservationRepository } from '../../infrastructure/repositories/stock-reservation.repository';

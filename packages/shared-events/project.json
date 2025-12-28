@@ -1,0 +1,29 @@
+{
+  "name": "@a4co/shared-events-package",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/shared-events/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/shared-events",
+        "main": "packages/shared-events/src/index.ts",
+        "tsConfig": "packages/shared-events/tsconfig.lib.json",
+        "assets": ["packages/shared-events/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/shared-events/jest.config.ts"
+      }
+    }
+  },
+  "tags": ["type:library", "scope:shared"]
+}

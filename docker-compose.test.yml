@@ -65,8 +65,8 @@ services:
 
   auth-service-test:
     build:
-      context: ./apps/auth-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/auth-service/Dockerfile
     container_name: auth-service-test
     ports:
       - "4001:4000"
@@ -85,8 +85,8 @@ services:
 
   order-service-test:
     build:
-      context: ./apps/order-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/order-service/Dockerfile
     container_name: order-service-test
     ports:
       - "3100:3000"
@@ -103,8 +103,8 @@ services:
 
   payment-service-test:
     build:
-      context: ./apps/payment-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/payment-service/Dockerfile
     container_name: payment-service-test
     ports:
       - "3101:3001"
@@ -123,8 +123,8 @@ services:
 
   inventory-service-test:
     build:
-      context: ./apps/inventory-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/inventory-service/Dockerfile
     container_name: inventory-service-test
     ports:
       - "3102:3002"
@@ -141,8 +141,8 @@ services:
 
   gateway-test:
     build:
-      context: ./apps/gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/gateway/Dockerfile
     container_name: gateway-test
     ports:
       - "8081:3000"
@@ -176,8 +176,8 @@ services:
 
   dashboard-client-test:
     build:
-      context: ./apps/dashboard-client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/dashboard-client/Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=http://gateway-test:3000
     container_name: dashboard-client-test

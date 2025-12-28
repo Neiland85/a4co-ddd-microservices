@@ -49,8 +49,8 @@ services:
 
   auth-service:
     build:
-      context: ./apps/auth-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/auth-service/Dockerfile
     container_name: auth-service
     ports:
       - "4000:4000"
@@ -69,8 +69,8 @@ services:
 
   order-service:
     build:
-      context: ./apps/order-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/order-service/Dockerfile
     container_name: order-service
     ports:
       - "3000:3000"
@@ -89,8 +89,8 @@ services:
 
   payment-service:
     build:
-      context: ./apps/payment-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/payment-service/Dockerfile
     container_name: payment-service
     ports:
       - "3001:3001"
@@ -115,8 +115,8 @@ services:
 
   inventory-service:
     build:
-      context: ./apps/inventory-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/inventory-service/Dockerfile
     container_name: inventory-service
     ports:
       - "3002:3002"
@@ -139,8 +139,8 @@ services:
 
   api-gateway:
     build:
-      context: ./apps/gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/gateway/Dockerfile
     container_name: api-gateway
     ports:
       - "8080:3000"  # Expose gateway on host port 8080 to avoid conflict with order-service
