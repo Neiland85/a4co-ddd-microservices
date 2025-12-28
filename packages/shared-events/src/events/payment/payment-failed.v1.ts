@@ -15,6 +15,8 @@ export interface PaymentFailedV1Data {
   metadata?: Record<string, any>;
 }
 
+export type PaymentFailedV1Payload = PaymentFailedV1Data;
+
 /**
  * Event emitted when a payment fails.
  * This triggers saga compensation to rollback the order.

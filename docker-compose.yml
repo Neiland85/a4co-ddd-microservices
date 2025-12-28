@@ -27,7 +27,7 @@ services:
       POSTGRES_USER: postgres
       # Database password - use environment variables in production
       # Set via: export POSTGRES_PASSWORD="your-secure-password"
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME_IN_PRODUCTION}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME}
       # La DB por defecto. Las otras se crean con el script init.sql
       POSTGRES_DB: microservices_db
     ports:
@@ -56,8 +56,7 @@ services:
       - "4000:4000"
     environment:
       - NODE_ENV=development
-      # Use env vars: export AUTH_DB_PASSWORD="secure-password"
-      - DATABASE_URL=postgresql://postgres:${AUTH_DB_PASSWORD:-CHANGE_ME}@postgres:5432/auth_db?schema=public
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/auth_db?schema=public
       - NATS_URL=nats://nats:4222
     depends_on:
       postgres:
@@ -76,8 +75,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      # Use env vars: export ORDER_DB_PASSWORD="secure-password"
-      - DATABASE_URL=postgresql://postgres:${ORDER_DB_PASSWORD:-CHANGE_ME}@postgres:5432/order_db?schema=public
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/order_db?schema=public
       - NATS_URL=nats://nats:4222
     depends_on:
       postgres:
@@ -96,8 +94,7 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=development
-      # Use env vars: export PAYMENT_DB_PASSWORD="secure-password"
-      - DATABASE_URL=postgresql://postgres:${PAYMENT_DB_PASSWORD:-CHANGE_ME}@postgres:5432/payment_db?schema=public
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/payment_db?schema=public
       - NATS_URL=nats://nats:4222
       # Simulated payment for testing (90% success rate)
       - USE_SIMULATED_PAYMENT=${USE_SIMULATED_PAYMENT:-true}
@@ -122,8 +119,26 @@ services:
       - "3002:3002"
     environment:
       - NODE_ENV=development
-      # Use env vars: export INVENTORY_DB_PASSWORD="secure-password"
-      - DATABASE_URL=postgresql://postgres:${INVENTORY_DB_PASSWORD:-CHANGE_ME}@postgres:5432/inventory_db?schema=public
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/inventory_db?schema=public
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  product-service:
+    build:
+      context: .
+      dockerfile: apps/product-service/Dockerfile
+    container_name: product-service
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/product_db?schema=public
       - NATS_URL=nats://nats:4222
     depends_on:
       postgres:
@@ -152,7 +167,7 @@ services:
       - JWT_REFRESH_EXPIRES_IN=7d
       # Service URLs (internal Docker network using service names)
       - AUTH_SERVICE_URL=http://auth-service:4000
-      - PRODUCTS_SERVICE_URL=http://product-service:3002
+      - PRODUCTS_SERVICE_URL=http://product-service:3003
       - ORDERS_SERVICE_URL=http://order-service:3000
       - INVENTORY_SERVICE_URL=http://inventory-service:3002
       - PAYMENTS_SERVICE_URL=http://payment-service:3001
@@ -172,6 +187,7 @@ services:
       - payment-service
       - inventory-service
       - auth-service
+      - product-service
     networks:
       - microservices-net
     healthcheck:

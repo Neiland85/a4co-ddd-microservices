@@ -98,3 +98,8 @@ export const EventTypes = {
 } as const;
 
 export type EventType = (typeof EventTypes)[keyof typeof EventTypes];
+
+// Backwards-compatible named exports (used by some services)
+export const ORDER_CREATED_V1 = EventTypes.ORDER_CREATED_V1;
+export const PAYMENT_CONFIRMED_V1 = EventTypes.PAYMENT_CONFIRMED_V1;
+export const PAYMENT_FAILED_V1 = EventTypes.PAYMENT_FAILED_V1;

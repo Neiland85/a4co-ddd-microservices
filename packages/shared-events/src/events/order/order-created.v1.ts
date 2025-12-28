@@ -20,6 +20,8 @@ export interface OrderCreatedV1Data {
   currency?: string;
 }
 
+export type OrderCreatedV1Payload = OrderCreatedV1Data;
+
 /**
  * Event emitted when a new order is created.
  * This event triggers the saga orchestration process.

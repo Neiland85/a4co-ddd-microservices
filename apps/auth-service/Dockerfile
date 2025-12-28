@@ -20,6 +20,7 @@ WORKDIR /usr/src/app
 
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY tsconfig.base.json nest-cli.json ./
 COPY apps/auth-service/package.json ./apps/auth-service/
 COPY packages ./packages
 

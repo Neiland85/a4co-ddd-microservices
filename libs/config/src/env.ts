@@ -30,7 +30,7 @@ const envSchema = z.object({
       message: 'Must be "true" or "false"',
     })
     .transform((val) => val === 'true')
-    .default('true')
+    .default(true)
     .describe('Whether to use simulated payment gateway instead of Stripe'),
 
   // Node Environment

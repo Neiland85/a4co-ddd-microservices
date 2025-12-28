@@ -14,6 +14,8 @@ export interface PaymentConfirmedV1Data {
   metadata?: Record<string, any>;
 }
 
+export type PaymentConfirmedV1Payload = PaymentConfirmedV1Data;
+
 /**
  * Event emitted when a payment is successfully confirmed.
  * This allows the order saga to proceed to completion.

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
-    "prebuild": "pnpm -w --filter @a4co/shared-utils --filter @a4co/shared-events --filter @a4co/observability build",
+    "prebuild": "pnpm --filter @a4co/shared-utils --filter @a4co/shared-events --filter @a4co/observability run build",
     "build": "nest build",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --config jest.config.cjs --passWithNoTests",

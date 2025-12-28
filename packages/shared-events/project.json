@@ -5,13 +5,10 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "executor": "nx:run-script",
+      "outputs": ["{projectRoot}/dist/**"],
       "options": {
-        "outputPath": "dist/packages/shared-events",
-        "main": "packages/shared-events/src/index.ts",
-        "tsConfig": "packages/shared-events/tsconfig.lib.json",
-        "assets": ["packages/shared-events/*.md"]
+        "script": "build"
       }
     },
     "lint": {
