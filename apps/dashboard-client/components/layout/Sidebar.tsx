@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Home, Factory, FileBarChart2, Leaf, Settings } from 'lucide-react';
 import { Home, Settings, Users, Package, ShoppingCart, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '@dashboard/lib/auth-context';
