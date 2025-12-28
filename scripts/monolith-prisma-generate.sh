@@ -20,8 +20,13 @@ if [ ! -f "$BACKEND_DIR/package.json" ]; then
   exit 1
 fi
 
-export DATABASE_URL="${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/artesanos_dev?schema=public}"
+if [ -z "${DATABASE_URL:-}" ]; then
+  echo "❌ La variable de entorno DATABASE_URL no está configurada. Configúrala antes de ejecutar este script." >&2
+  echo "   Ejemplo: export DATABASE_URL=\"postgresql://usuario:password@localhost:5432/base_de_datos?schema=public\"" >&2
+  exit 1
+fi
 
+export DATABASE_URL
 echo "ℹ️  Usando DATABASE_URL=${DATABASE_URL}"
 
 cd "$BACKEND_DIR"
