@@ -11,7 +11,25 @@ coverage/
 # Build outputs
 dist/
 build/
+.next/
 *.tsbuildinfo
+
+# TypeScript compiled output in source directories
+# These should only be in dist/ directories
+**/src/**/*.js
+**/src/**/*.js.map
+**/src/**/*.d.ts
+**/src/**/*.d.ts.map
+!**/src/**/generated/**
+!**/src/**/*.config.js
+!**/src/**/*.setup.js
+
+# Compiled files at package roots (should be in dist/)
+packages/**/index.js
+packages/**/index.d.ts
+packages/**/index.js.map
+packages/**/index.d.ts.map
+!packages/**/dist/**
 
 # Environment variables
 .env
@@ -130,14 +148,7 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+
 
 # Spyder project settings
 .spyderproject
@@ -153,3 +164,11 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+
+
+.nx/cache
+.nx/workspace-data
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md.env.observability
+docs/cspell-dictionary.md

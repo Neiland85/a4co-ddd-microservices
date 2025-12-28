@@ -10,13 +10,8 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [pgcrypto]
 }
-
-// ──────────────────────────────────────────────
-// PostgreSQL extensions (Supabase defaults)
-// ──────────────────────────────────────────────
-extension pgcrypto;
-extension "uuid-ossp";
 
 // ──────────────────────────────────────────────
 // Core tables
@@ -60,14 +55,5 @@ model RefreshToken {
 model notes {
   id    BigInt @id @default(autoincrement())
   title String
-}
-
-// ──────────────────────────────────────────────
-// Optional view for monitoring / analytics
-// ──────────────────────────────────────────────
-
-view _UserCount {
-  count Int
-  @@ignore
 }
 

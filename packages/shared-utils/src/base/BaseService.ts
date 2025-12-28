@@ -1,64 +1,83 @@
+import { Logger } from '@nestjs/common';
+
 /**
- * BaseService - Clase abstracta que encapsula la lógica común de todos los servicios
- * Implementa el patrón DRY para reducir duplicación de código detectada por SonarQube
+ * Base service class for all services
+ * Provides common functionality like logging, validation, error handling
  */
 export abstract class BaseService {
-  protected readonly serviceName: string;
+  protected logger: Logger;
 
-  constructor(serviceName: string) {
-    this.serviceName = serviceName;
+  constructor(private serviceName: string) {
+    this.logger = new Logger(serviceName);
   }
 
   /**
-   * Loguea operaciones de forma consistente
+   * Logs a message with optional context
+   * @param message - The message to log
+   * @param context - Optional context data
    */
-  protected log(operation: string, data?: unknown): void {
-    console.log(`[${this.serviceName}] ${operation}`, data ? JSON.stringify(data) : '');
+  protected log(message: string, context?: any): void {
+    this.logger.log(message, context);
   }
 
   /**
-   * Valida datos de entrada comunes
+   * Validates that a value is present (not null, undefined, or empty)
+   * @param value - The value to validate
+   * @param fieldName - The name of the field being validated
+   * @returns The validated value
+   * @throws Error if the value is missing
    */
-  protected validateId(id: string | undefined, entityName: string): string {
-    if (!id || id.trim() === '') {
-      throw new Error(`Invalid ${entityName} ID`);
-    }
-    return id.trim();
-  }
-
-  /**
-   * Valida que un valor no sea null o undefined
-   */
-  protected validateRequired<T>(value: T | null | undefined, fieldName: string): T {
-    if (value === null || value === undefined) {
+  protected validateRequired(value: any, fieldName: string): any {
+    if (value === null || value === undefined || value === '') {
       throw new Error(`${fieldName} is required`);
     }
     return value;
   }
 
   /**
-   * Simula una operación asíncrona con retraso (para desarrollo)
+   * Validates an ID field (must be a non-empty string or number)
+   * @param value - The ID value to validate
+   * @param fieldName - The name of the field being validated
+   * @returns The validated ID value
+   * @throws Error if the ID is invalid
    */
-  protected async simulateDelay(ms = 100): Promise<void> {
-    if (process.env['NODE_ENV'] === 'development') {
-      await new Promise(resolve => setTimeout(resolve, ms));
+  protected validateId(value: any, fieldName: string): string {
+    if (value === null || value === undefined || value === '') {
+      throw new Error(`${fieldName} is required`);
     }
+    
+    // Convert to string if it's a number
+    const id = typeof value === 'number' ? String(value) : value;
+    
+    if (typeof id !== 'string' || id.trim() === '') {
+      throw new Error(`${fieldName} must be a valid ID`);
+    }
+    
+    return id.trim();
   }
 
   /**
-   * Maneja errores del servicio de forma consistente
+   * Creates a standardized success message
+   * @param entity - The entity type (e.g., 'User', 'Product')
+   * @param action - The action performed (e.g., 'created', 'updated')
+   * @param id - Optional ID or additional information
+   * @returns Formatted success message
    */
-  protected handleServiceError(error: unknown, operation: string): never {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    this.log(`Error in ${operation}: ${message}`);
-    throw new Error(`${this.serviceName} - ${operation} failed: ${message}`);
+  protected createSuccessMessage(entity: string, action: string, id?: string): string {
+    if (id) {
+      return `${entity} ${id} ${action}.`;
+    }
+    return `${entity} ${action}.`;
   }
 
   /**
-   * Crea una respuesta exitosa estándar
+   * Handles service errors with logging
+   * @param error - The error to handle
+   * @param context - The context where the error occurred
+   * @throws The original error after logging
    */
-  protected createSuccessMessage(entity: string, action: string, details?: string): string {
-    const baseMessage = `${entity} ${action} successfully`;
-    return details ? `${baseMessage}: ${details}` : `${baseMessage}.`;
+  protected handleServiceError(error: any, context: string): never {
+    this.logger.error(`Error in ${context}:`, error);
+    throw error;
   }
 }

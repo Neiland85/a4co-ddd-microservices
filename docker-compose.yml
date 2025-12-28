@@ -1,24 +1,182 @@
 version: '3.9'
+
+networks:
+  microservices-net:
+    driver: bridge
+
 services:
-  auth-service:
-    build:
-      context: ./apps/auth-service
+  # ----------------------------------------------------------------
+  # INFRAESTRUCTURA (Base de Datos y Mensajería)
+  # ----------------------------------------------------------------
+
+  # NATS Server con JetStream habilitado (CRÍTICO para Sagas)
+  nats:
+    image: nats:2.10-alpine
+    container_name: nats-server
+    command: "-js -m 8222" # -js habilita JetStream, -m habilita monitoreo HTTP
     ports:
-      - "4000:4000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://user:password@postgres:5432/auth_db
-    depends_on:
-      - postgres
+      - "4222:4222" # Puerto cliente
+      - "8222:8222" # Puerto monitoreo (http://localhost:8222)
+    networks:
+      - microservices-net
 
   postgres:
     image: postgres:16-alpine
+    container_name: microservices-postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: auth_db
+      # Database password - use environment variables in production
+      # Set via: export POSTGRES_PASSWORD="your-secure-password"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME_IN_PRODUCTION}
+      # La DB por defecto. Las otras se crean con el script init.sql
+      POSTGRES_DB: microservices_db
     ports:
       - "5432:5432"
     volumes:
+      # Script para crear las DBs de cada microservicio al iniciar
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # ----------------------------------------------------------------
+  # MICROSERVICIOS
+  # ----------------------------------------------------------------
+
+  auth-service:
+    build:
+      context: ./apps/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      # Use env vars: export AUTH_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${AUTH_DB_PASSWORD:-CHANGE_ME}@postgres:5432/auth_db?schema=public
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  order-service:
+    build:
+      context: ./apps/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      # Use env vars: export ORDER_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${ORDER_DB_PASSWORD:-CHANGE_ME}@postgres:5432/order_db?schema=public
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  payment-service:
+    build:
+      context: ./apps/payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      # Use env vars: export PAYMENT_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${PAYMENT_DB_PASSWORD:-CHANGE_ME}@postgres:5432/payment_db?schema=public
+      - NATS_URL=nats://nats:4222
+      # Simulated payment for testing (90% success rate)
+      - USE_SIMULATED_PAYMENT=${USE_SIMULATED_PAYMENT:-true}
+      - PAYMENT_SUCCESS_RATE=${PAYMENT_SUCCESS_RATE:-0.9}
+      # Real Stripe credentials (when USE_SIMULATED_PAYMENT=false)
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_mock}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_mock}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  inventory-service:
+    build:
+      context: ./apps/inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      # Use env vars: export INVENTORY_DB_PASSWORD="secure-password"
+      - DATABASE_URL=postgresql://postgres:${INVENTORY_DB_PASSWORD:-CHANGE_ME}@postgres:5432/inventory_db?schema=public
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  # ----------------------------------------------------------------
+  # API GATEWAY (Punto de entrada único)
+  # ----------------------------------------------------------------
+
+  api-gateway:
+    build:
+      context: ./apps/gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:3000"  # Expose gateway on host port 8080 to avoid conflict with order-service
+    environment:
+      - NODE_ENV=development
+      # JWT Configuration
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      - JWT_EXPIRES_IN=24h
+      - JWT_REFRESH_EXPIRES_IN=7d
+      # Service URLs (internal Docker network using service names)
+      - AUTH_SERVICE_URL=http://auth-service:4000
+      - PRODUCTS_SERVICE_URL=http://product-service:3002
+      - ORDERS_SERVICE_URL=http://order-service:3000
+      - INVENTORY_SERVICE_URL=http://inventory-service:3002
+      - PAYMENTS_SERVICE_URL=http://payment-service:3001
+      - SAGAS_SERVICE_URL=http://saga-service:3006
+      # Proxy settings
+      - PROXY_TIMEOUT=30000
+      - PROXY_CHANGE_ORIGIN=true
+      # Rate limiting
+      - RATE_LIMIT_TTL=60
+      - RATE_LIMIT_MAX=100
+      # CORS (Allow frontend - update ports as needed)
+      - CORS_ORIGIN=http://localhost:3000,http://localhost:4200,http://localhost:8080
+      # Logging
+      - LOG_LEVEL=debug
+    depends_on:
+      - order-service
+      - payment-service
+      - inventory-service
+      - auth-service
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

@@ -1,7 +1,20 @@
 packages:
-  - "apps/*"
-  - "packages/*"
-  - "infra"
-  - "frontend"
-  - "backend"
-  - "frontend-monolith"
+  - apps/*
+  - packages/*
+  - libs/*
+
+onlyBuiltDependencies:
+  - '@firebase/util'
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@scarf/scarf'
+  - '@sentry/profiling-node'
+  - bcrypt
+  - esbuild
+  - nx
+  - prisma
+  - protobufjs
+  - sharp
+  - simple-git-hooks
+  - unrs-resolver

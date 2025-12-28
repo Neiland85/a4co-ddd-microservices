@@ -3,16 +3,17 @@ import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport, ClientProxy } from '@nestjs/microservices';
 
 // Application Layer
-import { OrderSaga } from './application/sagas/order.saga';
-import { CreateOrderUseCase } from './application/use-cases/create-order.use-case';
-import { OrderService } from './application/services/service';
+import { OrderSaga } from './application/sagas/order.saga.js';
+import { CreateOrderUseCase } from './application/use-cases/create-order.use-case.js';
+import { OrderService } from './application/services/service.js';
 
 // Infrastructure Layer
-import { InMemoryOrderRepository } from './infrastructure/repositories/order.repository';
-import { OrderController } from './presentation/controllers/controller';
+import { InMemoryOrderRepository } from './infrastructure/repositories/order.repository.js';
+import { OrderController } from './presentation/controllers/controller.js';
+import { PaymentEventsHandler } from './infrastructure/event-handlers/payment-events.handler.js';
 
 // Metrics & Observability
-import { OrderMetricsService } from './infrastructure/metrics/order-metrics.service';
+import { OrderMetricsService } from './infrastructure/metrics/order-metrics.service.js';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { OrderMetricsService } from './infrastructure/metrics/order-metrics.serv
     ]),
   ],
 
-  controllers: [OrderController],
+  controllers: [OrderController, PaymentEventsHandler],
 
   providers: [
     // Application Services
@@ -60,11 +61,6 @@ import { OrderMetricsService } from './infrastructure/metrics/order-metrics.serv
     },
   ],
 
-  exports: [
-    OrderService,
-    OrderSaga,
-    'OrderRepository',
-    OrderMetricsService,
-  ],
+  exports: [OrderService, OrderSaga, 'OrderRepository', OrderMetricsService],
 })
 export class OrderModule {}

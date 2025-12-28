@@ -8,11 +8,24 @@ datasource db {
 }
 
 model Notification {
-  id        String   @id @default(uuid())
-  userId    String
-  type      String   // e.g., "email", "push"
-  content   String
-  status    String   // e.g., "sent", "pending"
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  orderId       String
+  customerId    String
+  correlationId String   @unique // For idempotency
+  eventType     String   // e.g., "order.confirmed.v1", "shipment.delivered.v1"
+  channel       String   // e.g., "email", "sms", "push"
+  recipient     String   // Email address or phone number
+  subject       String?  // For emails
+  content       String   // Message content
+  status        String   // "pending", "sent", "failed"
+  errorMessage  String?  // Error details if failed
+  attempts      Int      @default(0)
+  sentAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([correlationId])
+  @@index([status])
+  @@index([createdAt])
 }

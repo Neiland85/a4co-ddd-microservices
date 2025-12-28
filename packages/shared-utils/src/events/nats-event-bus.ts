@@ -1,5 +1,5 @@
-import { connect, NatsConnection, Subscription, StringCodec, ConnectionOptions } from 'nats';
 import { EventEmitter } from 'events';
+import { connect, ConnectionOptions, NatsConnection, StringCodec, Subscription } from 'nats';
 
 export interface EventMessage {
   eventId: string;
@@ -45,10 +45,10 @@ export class NatsEventBus extends EventEmitter {
       const options: ConnectionOptions = {
         servers: this.config.servers,
         name: this.config.name || `a4co-event-bus-${Date.now()}`,
-        timeout: this.config.timeout,
-        reconnect: this.config.reconnect,
-        maxReconnectAttempts: this.config.maxReconnectAttempts,
-        reconnectTimeWait: this.config.reconnectTimeWait,
+        ...(this.config.timeout !== undefined && { timeout: this.config.timeout }),
+        ...(this.config.reconnect !== undefined && { reconnect: this.config.reconnect }),
+        ...(this.config.maxReconnectAttempts !== undefined && { maxReconnectAttempts: this.config.maxReconnectAttempts }),
+        ...(this.config.reconnectTimeWait !== undefined && { reconnectTimeWait: this.config.reconnectTimeWait }),
       };
 
       this.connection = await connect(options);
@@ -56,8 +56,7 @@ export class NatsEventBus extends EventEmitter {
       this.setupConnectionListeners();
 
       console.log(
-        `✅ Conectado a NATS en ${
-          Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers
+        `✅ Conectado a NATS en ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers
         }`
       );
     } catch (error) {

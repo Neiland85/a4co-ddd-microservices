@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../prisma/generated';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { InventoryController } from './inventory.controller';
@@ -19,7 +19,7 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // NATS Client for Event Bus
+    // NATS Client: Habilitado para escuchar eventos de Order
     ClientsModule.register([
       {
         name: 'NATS_CLIENT',
@@ -33,14 +33,14 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
   ],
   controllers: [InventoryController, ReserveStockHandler],
   providers: [
+    // Database Provider (Prisma with PG Adapter)
     {
       provide: 'PRISMA_CLIENT',
       useFactory: () => {
         const connectionString = process.env['DATABASE_URL'];
         const pool = new Pool({ connectionString });
         const adapter = new PrismaPg(pool);
-        const prisma = new PrismaClient({ adapter });
-        return prisma;
+        return new PrismaClient();
       },
     },
     // Repositories

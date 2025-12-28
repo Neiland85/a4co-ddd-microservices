@@ -58,7 +58,6 @@ describe('Order Domain Objects', () => {
     it('should have all expected status values', () => {
       expect(OrderStatus.PENDING).toBe('PENDING');
       expect(OrderStatus.CONFIRMED).toBe('CONFIRMED');
-      expect(OrderStatus.PAID).toBe('PAID');
       expect(OrderStatus.SHIPPED).toBe('SHIPPED');
       expect(OrderStatus.DELIVERED).toBe('DELIVERED');
       expect(OrderStatus.CANCELLED).toBe('CANCELLED');

@@ -1,20 +1,15 @@
 import '@/app/globals.css';
 import { Header, Sidebar } from '@/components/layout';
 import { AuthProvider } from '@dashboard/lib/auth-context';
+import { ToastProvider } from '@dashboard/lib/context/ToastContext';
+import { ToastContainer } from '@/components/common/Toast';
 import clsx from 'clsx';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 
-// 🧠 Carga de fuentes corporativas
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
   subsets: ['latin'],
-  display: 'swap',
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  variable: '--font-sans',
   display: 'swap',
 });
 
@@ -30,22 +25,46 @@ export const metadata: Metadata = {
 
 // 🌍 Layout principal
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Skip AuthProvider during static generation/prerendering
+  const isPrerendering = typeof window === 'undefined';
+
+  if (isPrerendering) {
+    return (
+      <html lang="es" suppressHydrationWarning>
+        <body
+          className={clsx(
+            inter.variable,
+            'font-sans',
+            'bg-background text-foreground flex min-h-screen antialiased',
+          )}
+        >
+          <main className="flex flex-1 flex-col overflow-y-auto">
+            <div className="p-8">{children}</div>
+          </main>
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="es" suppressHydrationWarning>
       <body
         className={clsx(
-          geistSans.variable,
-          geistMono.variable,
+          inter.variable,
+          'font-sans',
           'bg-background text-foreground flex min-h-screen antialiased',
         )}
       >
-        <AuthProvider>
-          <Sidebar />
-          <main className="flex flex-1 flex-col overflow-y-auto">
-            <Header />
-            <div className="p-8">{children}</div>
-          </main>
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <Sidebar />
+            <main className="flex flex-1 flex-col overflow-y-auto">
+              <Header />
+              <div className="p-8">{children}</div>
+            </main>
+          </AuthProvider>
+          <ToastContainer />
+        </ToastProvider>
       </body>
     </html>
   );

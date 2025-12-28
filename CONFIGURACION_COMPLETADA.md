@@ -3,7 +3,9 @@
 ## ✅ Archivos de Configuración Generados
 
 ### 1️⃣ .eslintrc.js
+
 **Características:**
+
 - ✅ Parser TypeScript con soporte ES2021
 - ✅ Reglas optimizadas para NestJS
 - ✅ Integración con Prettier
@@ -12,6 +14,7 @@
 - ✅ Enforce semicolons, single quotes, trailing commas
 
 **Uso:**
+
 ```bash
 npm run lint          # Verificar código
 npm run lint --fix    # Auto-corregir
@@ -20,7 +23,9 @@ npm run lint --fix    # Auto-corregir
 ---
 
 ### 2️⃣ .prettierrc
+
 **Características:**
+
 - ✅ 100 caracteres por línea (no 80)
 - ✅ Single quotes + semicolons
 - ✅ Trailing commas siempre
@@ -28,6 +33,7 @@ npm run lint --fix    # Auto-corregir
 - ✅ Line endings LF (Unix)
 
 **Uso:**
+
 ```bash
 npm run format        # Formatear todo
 ```
@@ -35,7 +41,9 @@ npm run format        # Formatear todo
 ---
 
 ### 3️⃣ nest-cli.json
+
 **Características:**
+
 - ✅ Builder: webpack (para mejor performance)
 - ✅ Watch assets habilitado
 - ✅ Prisma schema copiado a dist
@@ -43,6 +51,7 @@ npm run format        # Formatear todo
 - ✅ Flat: false (crea carpetas por módulo)
 
 **Uso:**
+
 ```bash
 nest generate module users
 nest generate controller products
@@ -52,7 +61,9 @@ nest generate service orders
 ---
 
 ### 4️⃣ .env.example
+
 **Características:**
+
 - ✅ Variables organizadas por categorías
 - ✅ Comentarios explicativos
 - ✅ Configuración completa (DB, JWT, CORS, Logging, Email, Upload)
@@ -60,12 +71,14 @@ nest generate service orders
 - ✅ Instrucciones para generar secrets
 
 **Crear tu .env:**
+
 ```bash
 cp .env.example .env
 # Editar valores según tu entorno
 ```
 
 **Generar JWT_SECRET seguro:**
+
 ```bash
 openssl rand -base64 32
 ```
@@ -73,7 +86,9 @@ openssl rand -base64 32
 ---
 
 ### 5️⃣ docker-compose.yml
+
 **Características:**
+
 - ✅ PostgreSQL 16 Alpine (ligero)
 - ✅ pgAdmin 4 (interfaz gráfica - profile: tools)
 - ✅ Redis 7 (caché - profile: cache)
@@ -83,6 +98,7 @@ openssl rand -base64 32
 - ✅ Script de inicialización de DB
 
 **Uso:**
+
 ```bash
 # Solo PostgreSQL
 docker-compose up -d postgres
@@ -107,7 +123,9 @@ open http://localhost:5050
 ## 📦 Archivos Bonus Generados
 
 ### scripts/setup-dev.sh
+
 Script de setup automático que:
+
 1. Verifica Node.js y npm
 2. Copia .env.example a .env
 3. Instala dependencias
@@ -116,12 +134,15 @@ Script de setup automático que:
 6. Ejecuta migraciones
 
 **Uso:**
+
 ```bash
 ./scripts/setup-dev.sh
 ```
 
 ### README-SIMPLE.md
+
 README completo y actualizado con:
+
 - Badges de tecnologías
 - Instrucciones de instalación
 - Todos los scripts disponibles

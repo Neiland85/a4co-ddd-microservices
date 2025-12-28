@@ -1,48 +1,175 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_call:
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '10.14.0'
 
 jobs:
-  build:
-    name: Build and Test
+  # =============================================================
+  #  Lint - Verifica errores de estilo
+  # =============================================================
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: Setup Node 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.14.0
-      
-      - name: Install
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
-      - name: Verify json5
-        run: node -e "require('json5'); console.log('OK')"
-      
-      - name: Lint
-        run: pnpm run lint || true
-      
-      - name: Test
-        run: pnpm run test || true
-      
-      - name: Build
-        run: pnpm run build || true
-      
-      - name: Success
-        run: echo "✅ CI passed!"
+
+      - name: Run ESLint on packages
+        run: pnpm --filter "./packages/*" run lint
+
+      - name: Run ESLint on apps (continue on error)
+        run: pnpm exec eslint "apps/**/src/**/*.ts" --no-error-on-unmatched-pattern --max-warnings=500 || true
+        # TODO: Fix eslint in individual apps - running from root for now
+
+  # =============================================================
+  #  Test - Ejecuta pruebas unitarias
+  # =============================================================
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm --filter "./packages/*" run build
+
+      - name: Generate Prisma clients
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm -w exec prisma generate
+            pnpm --filter "@a4co/*" exec prisma generate || true
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
+        run: pnpm --filter "./apps/*" run db:generate --if-present || true
+
+      - name: Run tests
+        run: |
+          pnpm --filter @a4co/auth-service test --passWithNoTests
+          pnpm --filter @a4co/payment-service test --passWithNoTests
+          pnpm --filter @a4co/order-service test --passWithNoTests
+          pnpm --filter @a4co/inventory-service test --passWithNoTests
+          pnpm --filter @a4co/product-service test --passWithNoTests
+
+  # =============================================================
+  #  Build - Compila todos los servicios
+  # =============================================================
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma clients
+        run: |
+          if find . -name "schema.prisma" | grep -q .; then
+            pnpm -w exec prisma generate
+            pnpm --filter "@a4co/*" exec prisma generate || true
+          else
+            echo "No Prisma schema found, skipping generate."
+          fi
+        run: pnpm --filter "./apps/*" run db:generate --if-present || true
+
+      - name: Type check
+        run: pnpm -w run type-check
+
+      - name: Build packages
+        run: pnpm --filter "./packages/*" run build
+
+      - name: Build apps
+        run: pnpm -r --ignore @a4co/auth-service run build
+
+  # =============================================================
+  #  Deploy Auth a Vercel
+  # =============================================================
+  deploy_auth_service:
+    name: Deploy Auth Service
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build auth-service
+        run: pnpm --filter @a4co/auth-service build
+
+      - name: Deploy to Vercel
+        run: |
+          npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+

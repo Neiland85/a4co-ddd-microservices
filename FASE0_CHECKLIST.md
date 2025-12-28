@@ -8,6 +8,7 @@
 ## 🔴 CRÍTICAS (BLOQUEANTES)
 
 ### 1. Gateway API
+
 - [ ] Crear `apps/gateway/src/main.ts` (NestJS bootstrap)
 - [ ] Crear `apps/gateway/src/gateway.module.ts`
 - [ ] Implementar routing a microservicios:
@@ -24,6 +25,7 @@
 ---
 
 ### 2. Integración Frontend-Backend
+
 - [ ] Configurar `apps/frontend/api.ts` con base URL gateway
 - [ ] Implementar interceptores JWT
 - [ ] Conectar AuthContext a `/api/v1/auth/login`
@@ -35,6 +37,7 @@
 ---
 
 ### 3. NATS Configuración
+
 - [ ] Verificar cliente NATS en `order-service`
 - [ ] Verificar cliente NATS en `payment-service`
 - [ ] Verificar cliente NATS en `inventory-service`
@@ -49,6 +52,7 @@
 ---
 
 ### 4. Prisma Migraciones
+
 - [ ] Ejecutar migraciones en `order-service`
 - [ ] Ejecutar migraciones en `payment-service`
 - [ ] Ejecutar migraciones en `inventory-service`
@@ -62,6 +66,7 @@
 ## 🟡 IMPORTANTES (RECOMENDADAS)
 
 ### 5. Testing Básico
+
 - [ ] Ejecutar `pnpm test:all`
 - [ ] Corregir tests fallando
 - [ ] Smoke test E2E: Login → Productos → Orden
@@ -72,6 +77,7 @@
 ---
 
 ### 6. Documentación APIs
+
 - [ ] Swagger en `order-service`
 - [ ] Swagger en `payment-service`
 - [ ] Swagger en `inventory-service`
@@ -83,6 +89,7 @@
 ---
 
 ### 7. Observabilidad
+
 - [ ] Verificar métricas Prometheus en servicios FASE1
 - [ ] Endpoints `/metrics` funcionando
 - [ ] Traces Jaeger configurados
@@ -92,6 +99,7 @@
 ---
 
 ### 8. CI/CD
+
 - [ ] Resolver workflows fallando
 - [ ] Pipeline básico: Lint → Test → Build
 - [ ] Verificar builds en CI
@@ -103,6 +111,7 @@
 ## 🟢 OPCIONALES
 
 ### 9. Variables de Entorno
+
 - [ ] Crear `.env.example` completo
 - [ ] Documentar variables requeridas
 
@@ -111,6 +120,7 @@
 ---
 
 ### 10. Scripts de Desarrollo
+
 - [ ] `scripts/dev-start.sh` - Levantar todo
 - [ ] `scripts/verify-setup.sh` - Health checks
 
@@ -159,6 +169,7 @@ curl http://localhost:5173
 ## 🎯 CRITERIOS DE ÉXITO
 
 FASE0 completa cuando:
+
 - ✅ Gateway funcionando en puerto 3000
 - ✅ Frontend puede hacer login y obtener productos
 - ✅ NATS configurado y eventos funcionando

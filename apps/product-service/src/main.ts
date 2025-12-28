@@ -1,91 +1,49 @@
-import { BracesSecurityMiddleware } from '@a4co/shared-utils';
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
+import { Logger } from '@nestjs/common';
+import {
+  createApp,
+  getPort,
+  setupSwagger,
+  createStandardSwaggerConfig,
+  logServiceStartup,
+  logServiceStartupError,
+} from '@a4co/shared-utils';
 import { ProductModule } from './product.module';
 
-// Simple logger for now until observability package is fixed
-import type { Request, Response, NextFunction } from 'express';
-
-const logger = {
-  log: (message: string) => console.log(`[LOG] ${message}`),
-  info: (message: string) => console.log(`[INFO] ${message}`),
-  warn: (message: string) => console.warn(`[WARN] ${message}`),
-  error: (message: string, err?: unknown) => console.error(`[ERROR] ${message}`, err),
-  debug: (message: string) => console.debug(`[DEBUG] ${message}`),
-  verbose: (message: string) => console.log(`[VERBOSE] ${message}`),
-  pinoHttpMiddleware: () => (req: Request, res: Response, next: NextFunction) => next(),
-};
+const logger = new Logger('ProductService');
 
 async function bootstrap() {
-  const app = await NestFactory.create(ProductModule, { logger });
-
-  // Use Pino HTTP middleware for request logging
-  app.use(logger.pinoHttpMiddleware());
-
-  // Security middleware
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-    })
-  );
-
-  // Global validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    })
-  );
-
-  // Braces security middleware
-  const bracesMiddleware = new BracesSecurityMiddleware({
-    maxExpansionSize: 50,
-    maxRangeSize: 10,
-    monitoringEnabled: true,
-  });
-  app.use(bracesMiddleware.validateRequestBody());
-  app.use(bracesMiddleware.validateQueryParams());
-
-  // CORS configuration
-  app.enableCors({
-    origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  // === APP (usando shared-utils) ===
+  const app = await createApp(ProductModule, {
+    serviceName: 'Product Service',
+    port: 3003,
+    enableSwagger: true,
+    corsConfig: {
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    },
   });
 
-  // Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('A4CO Product Service')
-    .setDescription('Servicio de gestión de productos para la plataforma A4CO')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('Products')
-    .build();
+  // === SWAGGER ===
+  setupSwagger(
+    app,
+    createStandardSwaggerConfig(
+      'Product Service',
+      'Servicio de gestión de productos para la plataforma A4CO',
+      '1.0',
+      ['Products']
+    )
+  );
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
-  const port = process.env['PORT'] || 3003;
-  logger.info(`🚀 Product Service iniciado en puerto ${port}`);
-  logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
-
+  const port = getPort({ serviceName: 'Product Service', port: 3003 });
   await app.listen(port);
+
+  logServiceStartup(logger, 'Product Service', port, {
+    swaggerPath: 'api',
+    environment: process.env['NODE_ENV'] ?? 'development',
+  });
 }
 
 bootstrap().catch(err => {
-  logger.error('Error al iniciar el servicio:', err);
-  console.error('Error al iniciar el servicio:', err);
+  logServiceStartupError(logger, 'Product Service', err);
   process.exit(1);
 });

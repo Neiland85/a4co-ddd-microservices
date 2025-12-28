@@ -19,10 +19,6 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
       },
-      globals: {
-        Buffer: 'readonly',
-        process: 'readonly',
-      },
     },
     plugins: {
       '@typescript-eslint': tseslint,
@@ -47,6 +43,21 @@ export default [
       '**/*.spec.ts',
       '**/*.test.ts',
     ],
+  },
+  {
+    files: ['**/__tests__/**/*.ts', '**/*.spec.ts'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        jest: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
   },
   {
     files: ['**/__tests__/**/*.ts', '**/*.spec.ts'],

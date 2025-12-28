@@ -18,14 +18,29 @@ export const createUser = (overrides: Partial<User> = {}): User => {
   const hashedPassword = overrides.hashedPassword ?? 'hashed-password';
   const status = overrides.status ?? UserStatus.ACTIVE;
   const emailVerified = overrides.emailVerified ?? false;
-  const lastLoginAt = overrides.lastLoginAt ?? undefined;
+  const lastLoginAt = overrides.lastLoginAt;
   const createdAt = overrides.createdAt ?? new Date();
   const updatedAt = overrides.updatedAt ?? new Date();
+
+  const timestamps: any = { createdAt, updatedAt };
+  if (lastLoginAt !== undefined) {
+    timestamps.lastLoginAt = lastLoginAt;
+  }
 
   return User.reconstruct(
     { id, email, name },
     { hashedPassword, status, emailVerified },
-    { lastLoginAt, createdAt, updatedAt },
-    { id, email, name, hashedPassword, status, emailVerified, lastLoginAt, createdAt, updatedAt },
+    timestamps,
+    {
+      id,
+      email,
+      name,
+      hashedPassword,
+      status,
+      emailVerified,
+      ...(lastLoginAt && { lastLoginAt }),
+      createdAt,
+      updatedAt,
+    },
   );
 };

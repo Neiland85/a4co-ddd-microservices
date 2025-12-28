@@ -10,27 +10,32 @@ Este documento detalla cómo configurar correctamente las variables de entorno p
 
 Se eliminaron los siguientes secretos hardcodeados del código:
 
-### PR #224:
+### PR #224
+
 1. ✅ Contraseñas de prueba en `apps/auth-service/test/test.config.ts`
 2. ✅ Credenciales de PostgreSQL en `compose.dev.yaml`
 
-### PR #220:
+### PR #220
+
 3. ✅ Contraseña hardcodeada en `setup-docker-secrets.sh`
-4. ✅ Credenciales de PostgreSQL en `.devcontainer/docker-compose.dev.yml`
-5. ✅ JWT Secret hardcodeado en `.devcontainer/docker-compose.dev.yml`
-6. ✅ Contraseña de Grafana en `.devcontainer/docker-compose.dev.yml`
+2. ✅ Credenciales de PostgreSQL en `.devcontainer/docker-compose.dev.yml`
+3. ✅ JWT Secret hardcodeado en `.devcontainer/docker-compose.dev.yml`
+4. ✅ Contraseña de Grafana en `.devcontainer/docker-compose.dev.yml`
 
 ## � Required Environment Variables
 
 ### Database
+
 - `DB_PASSWORD`: Database password (generate securely, do not hardcode)
 
 ### Observability
+
 - `JAEGER_ENDPOINT`: Jaeger tracing endpoint (default: http://localhost:14268/api/traces)
 - `GRAFANA_ADMIN_PASSWORD`: Grafana admin password (generate securely)
 - `PROMETHEUS_ADMIN_PASSWORD`: Prometheus admin password (generate securely)
 
 ### Security Notes
+
 - Never commit real values to `.env` or `.env.example`.
 - Use GitHub Secrets for CI/CD (e.g., `${{ secrets.DB_PASSWORD }}`).
 - OpenTelemetry configuration uses `process.env.JAEGER_ENDPOINT`.

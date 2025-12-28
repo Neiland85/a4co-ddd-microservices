@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated"
 }
 
 datasource db {
@@ -7,11 +8,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Transporter {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  status    String   // e.g., "available", "busy"
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Transportista {
+  id                   String     @id @default(uuid())
+  name                 String
+  email                String     @unique
+  phone                String
+  serviceAreas         String[]   // Array of area codes or regions
+  totalShipments       Int        @default(0)
+  successfulShipments  Int        @default(0)
+  averageDeliveryTime  Float?     // in hours
+  rating               Float?     @default(5.0)
+  isActive             Boolean    @default(true)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  shipments            Shipment[]
+
+  @@index([isActive, serviceAreas], name: "idx_active_areas")
+  @@index([email], name: "idx_transportista_email")
+}
+
+model Shipment {
+  id                String      @id @default(uuid())
+  orderId           String      @unique
+  transportistaId   String?
+  status            String      // PENDING, ASSIGNED, IN_TRANSIT, DELIVERED, FAILED
+  shippingCost      Decimal     @db.Decimal(10, 2)
+  pickupAddress     String
+  deliveryAddress   String
+  estimatedDeliveryTime DateTime?
+  actualDeliveryTime DateTime?
+  failureReason     String?
+  metadata          Json?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  transportista     Transportista? @relation(fields: [transportistaId], references: [id])
+
+  @@index([orderId], name: "idx_shipment_order")
+  @@index([transportistaId], name: "idx_shipment_transportista")
+  @@index([status], name: "idx_shipment_status")
 }

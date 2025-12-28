@@ -47,6 +47,7 @@
 ## Monitoreo y Alertas
 
 Todos los nuevos feature flags incluyen:
+
 - Monitoreo automático de errores y performance
 - Alertas configuradas para umbrales críticos
 - Dashboard de control en tiempo real

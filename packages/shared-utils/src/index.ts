@@ -1,32 +1,38 @@
-import { connect, JSONCodec, NatsConnection } from 'nats';
-import { Logger } from '@nestjs/common';
+// Base classes - exported individually to avoid conflicts
+export { AggregateRoot } from "./aggregate-root";
+export { BaseAggregateRoot } from "./base-aggregate-root";
+export { BaseEntity } from "./base-entity";
+export { BaseService } from "./base-service";
+export { BaseValueObject } from "./base-value-object";
+export { DomainEvent } from "./domain-event";
+export { AbstractUseCase, UseCase } from "./use-case";
+export { ValueObject } from "./value-object";
 
-export * from './domain';
-export * from './security';
-export * from './types';
-export class NatsEventBus {
-  private nc: NatsConnection;
-  private logger = new Logger('NatsEventBus');
-  private codec = JSONCodec();
+// Base patterns (new consolidated base classes)
+export * from "./base";
 
-  async connect(url: string = 'nats://localhost:4222') {
-    this.nc = await connect({ servers: url });
-    this.logger.log(`✅ Conectado a NATS en ${url}`);
-  }
+// Configuration utilities
+export * from "./config";
 
-  async publish<T>(subject: string, data: T) {
-    if (!this.nc) await this.connect();
-    this.nc.publish(subject, this.codec.encode(data));
-    this.logger.log(`📤 Evento publicado → ${subject}`);
-  }
+// Filters
+export * from "./filters";
 
-  async subscribe<T>(subject: string, handler: (data: T) => Promise<void>) {
-    if (!this.nc) await this.connect();
-    const sub = this.nc.subscribe(subject);
-    for await (const msg of sub) {
-      const decoded = this.codec.decode(msg.data) as T;
-      this.logger.log(`📥 Evento recibido → ${subject}`);
-      await handler(decoded);
-    }
-  }
-}
+// Decorators
+export * from "./decorators";
+
+// Validators
+export * from "./validators";
+
+// DTOs
+export * from "./dto";
+
+// Events
+export { NatsEventBus } from "./events/nats-event-bus";
+
+// Types
+export type { ApiError, ApiRequest, HealthCheckResponse, ServiceResponse } from "./types/api-types";
+export type { Address } from "./types/common-types";
+export type { EventBus, EventMessage, EventPublisher, EventSubscriber, IEventHandler } from "./types/event-types";
+
+// Security
+export { BracesSecurityMiddleware, type SecurityOptions } from "./security/braces-security.middleware";

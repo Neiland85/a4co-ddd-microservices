@@ -25,7 +25,7 @@ export interface UseCase<TRequest, TResponse> {
   execute(request: TRequest): Promise<TResponse>;
 }
 
-export type Constructor<T = {}> = new (...args: any[]) => T;
+export type Constructor<T = Record<string, unknown>> = new (...args: any[]) => T;
 
 export interface DomainService {
   readonly name: string;

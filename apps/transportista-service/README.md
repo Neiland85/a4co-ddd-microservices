@@ -1,146 +1,307 @@
 # Transportista Service
 
-FastAPI microservice para la gestión de transportistas en el ecosistema A4CO DDD Microservices.
+NestJS microservice for managing shipments and transportistas in the A4CO DDD platform.
 
-## 🚀 Características
+## 🏗️ Architecture
 
-- **Validación robusta**: Validación completa de datos usando Pydantic
-- **Códigos HTTP apropiados**: 201, 400, 422, 500
-- **Documentación automática**: Swagger/OpenAPI en `/docs`
-- **Manejo de errores**: Manejo consistente de errores y logging
-- **Headers de respuesta**: Headers estándar para tracing y debugging
-- **Tests completos**: Suite de tests con pytest
+This service follows hexagonal architecture (ports and adapters) with clear separation of concerns:
 
-## 📋 Modelo de Datos
-
-### Transportista
-- **nombre**: Nombre completo (2-100 caracteres)
-- **rut**: RUT chileno válido (formato: 12345678-9)
-- **telefono**: Teléfono chileno válido
-- **email**: Email válido
-- **direccion**: Dirección completa (10-200 caracteres)  
-- **tipo_vehiculo**: Tipo de vehículo (camion, furgon, motocicleta, bicicleta)
-- **capacidad_kg**: Capacidad de carga en kg (> 0, <= 50000)
-- **activo**: Estado activo (default: true)
-
-## 🛠️ Instalación y Ejecución
-
-### Requisitos
-- Python 3.11+
-- pip
-
-### Instalación
-```bash
-cd apps/transportista-service
-pip install -r requirements.txt
+```
+src/
+├── domain/              # Business logic
+│   ├── aggregates/      # Shipment, Transportista entities
+│   ├── events/          # Domain events (versioned)
+│   └── repositories/    # Repository interfaces (ports)
+├── application/         # Use cases
+│   ├── use-cases/       # CreateShipment, AssignShipment, UpdateStatus
+│   └── strategies/      # Assignment strategies
+├── infrastructure/      # External concerns
+│   ├── prisma/          # Database access
+│   ├── repositories/    # Prisma implementations
+│   └── event-handlers/  # NATS event listeners
+└── presentation/        # API layer
+    ├── controllers/     # REST endpoints
+    └── dto/             # Request/response DTOs
 ```
 
-### Ejecución en desarrollo
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+## 🚛 Domain Model
+
+### Shipment Aggregate
+
+State machine: `PENDING → ASSIGNED → IN_TRANSIT → DELIVERED / FAILED`
+
+**Invariants:**
+- Cannot assign transportista to non-PENDING shipment
+- Cannot mark as in-transit without transportista
+- Cannot mark as delivered without being in-transit
+- Can mark as failed from any status except DELIVERED
+
+### Transportista Entity
+
+Manages delivery personnel with metrics:
+- Total shipments
+- Successful deliveries
+- Average delivery time
+- Rating (0-5)
+- Service areas
+
+## 📡 Events
+
+### Published Events (v1)
+
+- `shipment.created.v1` - New shipment created
+- `shipment.assigned.v1` - Transportista assigned
+- `shipment.in_transit.v1` - Shipment picked up
+- `shipment.delivered.v1` - Delivery completed
+- `shipment.failed.v1` - Assignment/delivery failed
+
+### Consumed Events (v1)
+
+- `order.confirmed.v1` - Triggers shipment creation and auto-assignment
+
+## 🔌 REST API (v1)
+
+Base path: `/api/v1/shipments`
+
+### Endpoints
+
+```
+POST   /                    Create shipment
+GET    /:id                 Get shipment by ID
+GET    /order/:orderId      Get shipment by order ID
+PATCH  /:id/assign          Assign transportista
+PATCH  /:id/status          Update status
 ```
 
-### Ejecución con Docker
+### Example: Create Shipment
+
 ```bash
-docker build -t transportista-service .
-docker run -p 8000:8000 transportista-service
+curl -X POST http://localhost:3008/api/v1/shipments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderId": "order-123",
+    "pickupAddress": "Warehouse A, Málaga",
+    "deliveryAddress": "Customer St 123, Sevilla",
+    "shippingCost": 15.50,
+    "metadata": {
+      "weight": 5.2,
+      "notes": "Handle with care"
+    }
+  }'
 ```
 
-## 📚 API Endpoints
+### Example: Update Status
 
-### `POST /transportistas`
-Crear un nuevo transportista
+```bash
+curl -X PATCH http://localhost:3008/api/v1/shipments/{id}/status \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "IN_TRANSIT"
+  }'
+```
 
-**Request Body:**
-```json
-{
-  "nombre": "Juan Pérez",
-  "rut": "12345678-9",
-  "telefono": "+56912345678",
-  "email": "juan.perez@example.com",
-  "direccion": "Av. Libertador 1234, Santiago",
-  "tipo_vehiculo": "camion",
-  "capacidad_kg": 5000.0,
-  "activo": true
+## 🗄️ Database Schema
+
+### Shipment Table
+
+```prisma
+model Shipment {
+  id                    String
+  orderId               String   @unique
+  transportistaId       String?
+  status                String   // PENDING, ASSIGNED, IN_TRANSIT, DELIVERED, FAILED
+  shippingCost          Decimal
+  pickupAddress         String
+  deliveryAddress       String
+  estimatedDeliveryTime DateTime?
+  actualDeliveryTime    DateTime?
+  failureReason         String?
+  metadata              Json?
+  createdAt             DateTime
+  updatedAt             DateTime
 }
 ```
 
-**Responses:**
-- `201`: Transportista creado exitosamente
-- `400`: Error de lógica de negocio (RUT o email duplicado)
-- `422`: Datos de entrada inválidos
-- `500`: Error interno del servidor
+### Transportista Table
 
-### `GET /transportistas/{id}`
-Obtener transportista por ID
+```prisma
+model Transportista {
+  id                   String
+  name                 String
+  email                String   @unique
+  phone                String
+  serviceAreas         String[]
+  totalShipments       Int
+  successfulShipments  Int
+  averageDeliveryTime  Float?
+  rating               Float?
+  isActive             Boolean
+  createdAt            DateTime
+  updatedAt            DateTime
+}
+```
 
-**Responses:**
-- `200`: Transportista encontrado
-- `404`: Transportista no encontrado
+## 🚀 Getting Started
 
-### `GET /transportistas`
-Listar transportistas
+### Prerequisites
 
-**Query Parameters:**
-- `activo` (opcional): Filtrar por estado activo
+- Node.js 20+
+- PostgreSQL 14+
+- NATS server
+- pnpm
 
-### `GET /health`
-Health check del servicio
+### Installation
+
+```bash
+# Install dependencies (from root)
+pnpm install
+
+# Generate Prisma client
+cd apps/transportista-service
+pnpm prisma:generate
+
+# Run database migrations
+pnpm prisma migrate dev
+```
+
+### Environment Variables
+
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/transportista_db
+NATS_URL=nats://localhost:4222
+PORT=3008
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:3000
+```
+
+### Running the Service
+
+```bash
+# Development mode
+pnpm start:dev
+
+# Production mode
+pnpm build
+pnpm start
+
+# Tests
+pnpm test
+pnpm test:cov
+```
 
 ## 🧪 Testing
 
-```bash
-# Ejecutar tests
-pytest tests/
+### Unit Tests
 
-# Ejecutar tests con coverage
-pytest tests/ --cov=. --cov-report=html
+```bash
+# Run unit tests
+pnpm test
+
+# With coverage
+pnpm test:cov
 ```
+
+### Integration Tests
+
+Test the full flow: Create → Assign → Transit → Deliver
+
+```bash
+pnpm test:e2e
+```
+
+### Key Test Scenarios
+
+1. **State Machine Tests**: Validate all state transitions
+2. **Domain Events Tests**: Verify events are emitted correctly
+3. **Business Rules Tests**: Test delayed detection, cancellation rules
+4. **Integration Tests**: End-to-end shipment lifecycle
+5. **Event Handler Tests**: OrderConfirmed triggers shipment creation
 
 ## 🐳 Docker
 
-El servicio incluye un Dockerfile multi-stage optimizado para desarrollo y producción.
+### Build Image
 
-### Desarrollo
 ```bash
-docker build --target development -t transportista-service:dev .
+docker build -t a4co/transportista-service:latest .
 ```
 
-### Producción
+### Run Container
+
 ```bash
-docker build --target production -t transportista-service:prod .
+docker run -p 3008:3008 \
+  -e DATABASE_URL="postgresql://..." \
+  -e NATS_URL="nats://nats:4222" \
+  a4co/transportista-service:latest
 ```
 
-## 🔍 Monitoreo
+### Docker Compose
 
-- **Health Check**: `/health`
-- **Documentation**: `/docs` (Swagger UI)
-- **Alternative Docs**: `/redoc`
-- **OpenAPI Schema**: `/openapi.json`
+```yaml
+transportista-service:
+  build: ./apps/transportista-service
+  ports:
+    - "3008:3008"
+  environment:
+    DATABASE_URL: postgresql://postgres:password@postgres:5432/transportista_db
+    NATS_URL: nats://nats:4222
+    PORT: 3008
+  depends_on:
+    - postgres
+    - nats
+```
 
-## 🏗️ Arquitectura
+## 🔍 Monitoring
 
-El servicio sigue los patrones establecidos en el proyecto:
-- Separación clara entre modelos, servicios y controladores
-- Validación usando Pydantic
-- Manejo de errores consistente
-- Headers de respuesta estándar
-- Logging estructurado
+- **Swagger**: http://localhost:3008/api/docs
+- **Health**: http://localhost:3008/health (to be implemented)
+- **Metrics**: Prometheus metrics via @a4co/observability
 
-## 🔐 Validaciones Implementadas
+## 🎯 Assignment Strategies
 
-1. **RUT Chileno**: Formato válido con dígito verificador
-2. **Email**: Formato RFC compliant
-3. **Teléfono**: Formato chileno válido
-4. **Tipo de Vehículo**: Lista de valores permitidos
-5. **Capacidad**: Rango válido para vehículos
-6. **Unicidad**: RUT y email únicos en el sistema
+### Current: Random Assignment
 
-## 🚦 Códigos de Respuesta HTTP
+Randomly selects an active transportista.
 
-- `200 OK`: Operación exitosa
-- `201 Created`: Recurso creado exitosamente
-- `400 Bad Request`: Error de lógica de negocio
-- `404 Not Found`: Recurso no encontrado
-- `422 Unprocessable Entity`: Datos de entrada inválidos
-- `500 Internal Server Error`: Error interno del servidor
+### Future Strategies
+
+- **LoadBalanced**: Distribute based on current workload
+- **Geolocation**: Select nearest transportista to pickup
+- **Performance**: Prioritize high-rated transportistas
+- **ServiceArea**: Match by service area coverage
+
+## 📊 Key Metrics
+
+- Shipments created/assigned/delivered
+- Average assignment time
+- Average delivery time
+- Failure rate
+- Transportista utilization
+
+## 🔐 Security
+
+- Input validation via class-validator
+- CORS configuration
+- Helmet middleware for HTTP headers
+- Database connection encryption (TLS)
+
+## 🤝 Integration with Other Services
+
+- **Order Service**: Listens to `order.confirmed.v1`
+- **Notification Service**: Emits events for customer notifications
+- **Saga Orchestrator**: Participates in order fulfillment saga
+
+## 📝 Notes
+
+- Shipments are automatically assigned on order confirmation
+- Failed assignments leave shipment in PENDING for manual retry
+- Transportista metrics updated on successful delivery
+- Events follow versioning pattern (v1, v2, etc.)
+
+## 🔮 Future Enhancements
+
+- Real-time tracking integration
+- Route optimization
+- Multi-package shipments
+- Return shipments handling
+- SLA monitoring and alerts
+- Advanced assignment algorithms

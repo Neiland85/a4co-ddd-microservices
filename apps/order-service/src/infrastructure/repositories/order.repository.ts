@@ -1,17 +1,17 @@
-import { Order, OrderId, IOrderRepository } from '../../domain';
+import { Order, OrderId, IOrderRepository } from '../../domain/index.js';
 
 export class InMemoryOrderRepository implements IOrderRepository {
-    private orders = new Map<string, Order>();
+  private orders = new Map<string, Order>();
 
-    async save(order: Order): Promise<void> {
-        this.orders.set(order.id, order);
-    }
+  async save(order: Order): Promise<void> {
+    this.orders.set(order.id, order);
+  }
 
-    async findById(orderId: OrderId): Promise<Order | null> {
-        return this.orders.get(orderId.value) || null;
-    }
+  async findById(orderId: OrderId): Promise<Order | null> {
+    return this.orders.get(orderId.value) || null;
+  }
 
-    async findAll(): Promise<Order[]> {
-        return Array.from(this.orders.values());
-    }
+  async findAll(): Promise<Order[]> {
+    return Array.from(this.orders.values());
+  }
 }

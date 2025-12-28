@@ -1,95 +1,51 @@
-// Sentry y Uptrace deben inicializarse antes de NestJS
 import '../instrument';
-
 import { getLogger, initializeTracing } from '@a4co/observability';
-import { BracesSecurityMiddleware } from '@a4co/shared-utils';
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
+import {
+  createApp,
+  getPort,
+  setupSwagger,
+  createStandardSwaggerConfig,
+  logServiceStartup,
+  logServiceStartupError,
+} from '@a4co/shared-utils';
 import { AuthModule } from './auth.module';
-import * as Sentry from '@sentry/node';
+
+initializeTracing({
+  serviceName: 'auth-service',
+  serviceVersion: '1.0.0',
+  environment: process.env['NODE_ENV'] ?? 'development',
+});
+
+const logger = getLogger();
 
 async function bootstrap() {
-  // --- Uptrace (OpenTelemetry) ---
-  initializeTracing({
-    serviceName: 'auth-service',
-    serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
+  // === APP (usando shared-utils) ===
+  const app = await createApp(AuthModule, {
+    serviceName: 'Auth Service',
+    port: 3001,
+    globalPrefix: 'api/v1',
+    enableSwagger: true,
   });
 
-  const logger = getLogger();
-  const app = await NestFactory.create(AuthModule);
-
-  // --- Sentry Handlers (after NestFactory.create) ---
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
-
-  // --- Security middleware ---
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-    })
+  // === SWAGGER ===
+  setupSwagger(
+    app,
+    {
+      ...createStandardSwaggerConfig('Auth Service', 'Servicio de autenticación', '1.0'),
+      path: 'api/docs',
+    }
   );
 
-  // --- Braces security middleware ---
-  const bracesMiddleware = new BracesSecurityMiddleware({
-    maxExpansionSize: 50,
-    maxRangeSize: 10,
-    monitoringEnabled: true,
-  });
-  app.use(bracesMiddleware.validateRequestBody());
-  app.use(bracesMiddleware.validateQueryParams());
-
-  // --- Global validation pipe ---
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    })
-  );
-
-  // --- CORS configuration ---
-  app.enableCors({
-    origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  });
-
-  // --- Swagger documentation ---
-  const config = new DocumentBuilder()
-    .setTitle('A4CO Auth Service')
-    .setDescription('Servicio de autenticación para la plataforma A4CO')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('Authentication')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
-  // --- Global prefix ---
-  app.setGlobalPrefix('api/v1');
-
-  // --- Sentry Error Handler (must be after routes) ---
-  app.use(Sentry.Handlers.errorHandler());
-
-  const port = process.env['PORT'] || 3001;
+  const port = getPort({ serviceName: 'Auth Service', port: 3001 });
   await app.listen(port);
-
-  logger.info(`Auth Service running on: http://localhost:${port}`);
-  logger.info(`API Docs: http://localhost:${port}/api/docs`);
+  
+  logServiceStartup(logger, 'Auth Service', port, {
+    swaggerPath: 'api/docs',
+    environment: process.env['NODE_ENV'] ?? 'development',
+  });
 }
 
-bootstrap();
-
+bootstrap().catch((err) => {
+  logServiceStartupError(logger, 'Auth Service', err);
+  process.exit(1);
+});

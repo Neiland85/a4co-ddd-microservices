@@ -383,5 +383,5 @@ docker-compose restart monitoring-dashboard
 
 ---
 
-*Configuración del Dashboard - A4CO Monitoring Dashboard v1.0*</content>
+_Configuración del Dashboard - A4CO Monitoring Dashboard v1.0_</content>
 <parameter name="filePath">/Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices/docs/MONITORING_DASHBOARD_CONFIG.md

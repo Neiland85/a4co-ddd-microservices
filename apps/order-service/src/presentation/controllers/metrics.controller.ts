@@ -1,6 +1,6 @@
 import { Controller, Get, Header } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { SagaMetricsService } from '../../infrastructure/metrics/saga-metrics.service';
+import { SagaMetricsService } from '../../infrastructure/metrics/saga-metrics.service.js';
 
 @ApiTags('metrics')
 @Controller('metrics')

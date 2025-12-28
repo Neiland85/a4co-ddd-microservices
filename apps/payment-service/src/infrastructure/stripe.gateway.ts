@@ -23,19 +23,21 @@ export class StripeGateway {
   private readonly webhookSecret?: string;
 
   constructor() {
-    const secretKey = process.env.STRIPE_SECRET_KEY ?? process.env.STRIPE_KEY;
+    const secretKey = process.env['STRIPE_SECRET_KEY'] ?? process.env['STRIPE_KEY'];
 
     if (!secretKey) {
       throw new Error('Stripe secret key is not configured');
     }
 
-    this.webhookSecret = process.env["STRIPE_WEBHOOK_SECRET"] ?? '';
+    this.webhookSecret = process.env['STRIPE_WEBHOOK_SECRET'] ?? '';
     this.stripe = new Stripe(secretKey, {
       apiVersion: '2023-10-16',
     });
   }
 
-  public async createPaymentIntent(params: CreatePaymentIntentParams): Promise<Stripe.PaymentIntent> {
+  public async createPaymentIntent(
+    params: CreatePaymentIntentParams,
+  ): Promise<Stripe.PaymentIntent> {
     const amountInMinorUnits = this.toMinorUnits(params.amount);
 
     const metadata = {
@@ -71,7 +73,10 @@ export class StripeGateway {
       this.logger.log(`Stripe payment intent ${intent.id} created for order ${params.orderId}`);
       return intent;
     } catch (error) {
-      this.logger.error(`Failed to create Stripe payment intent for order ${params.orderId}`, error as Error);
+      this.logger.error(
+        `Failed to create Stripe payment intent for order ${params.orderId}`,
+        error as Error,
+      );
       throw error;
     }
   }
@@ -82,7 +87,10 @@ export class StripeGateway {
       this.logger.log(`Stripe payment intent ${paymentIntentId} confirmed`);
       return intent;
     } catch (error) {
-      this.logger.error(`Failed to confirm Stripe payment intent ${paymentIntentId}`, error as Error);
+      this.logger.error(
+        `Failed to confirm Stripe payment intent ${paymentIntentId}`,
+        error as Error,
+      );
       throw error;
     }
   }
@@ -91,7 +99,10 @@ export class StripeGateway {
     try {
       return await this.stripe.paymentIntents.retrieve(paymentIntentId);
     } catch (error) {
-      this.logger.error(`Failed to retrieve Stripe payment intent ${paymentIntentId}`, error as Error);
+      this.logger.error(
+        `Failed to retrieve Stripe payment intent ${paymentIntentId}`,
+        error as Error,
+      );
       throw error;
     }
   }
@@ -110,7 +121,10 @@ export class StripeGateway {
       this.logger.log(`Stripe refund ${refund.id} created for payment intent ${paymentIntentId}`);
       return refund;
     } catch (error) {
-      this.logger.error(`Failed to refund Stripe payment intent ${paymentIntentId}`, error as Error);
+      this.logger.error(
+        `Failed to refund Stripe payment intent ${paymentIntentId}`,
+        error as Error,
+      );
       throw error;
     }
   }
@@ -124,7 +138,7 @@ export class StripeGateway {
       return this.stripe.webhooks.constructEvent(
         JSON.stringify(payload),
         signature,
-        this.webhookSecret
+        this.webhookSecret,
       );
     } catch (error) {
       this.logger.error('Failed to construct Stripe webhook event', error as Error);

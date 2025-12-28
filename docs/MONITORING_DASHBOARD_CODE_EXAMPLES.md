@@ -877,5 +877,5 @@ jobs:
 
 ---
 
-*Ejemplos de Código - A4CO Monitoring Dashboard v1.0*</content>
+_Ejemplos de Código - A4CO Monitoring Dashboard v1.0_</content>
 <parameter name="filePath">/Users/estudio/Projects/GitHub/MICROSERVICIOS/a4co-ddd-microservices/docs/MONITORING_DASHBOARD_CODE_EXAMPLES.md

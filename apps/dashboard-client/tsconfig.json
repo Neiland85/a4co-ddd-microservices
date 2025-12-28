@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "jsx": "react-jsx",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "jsx": "preserve",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowJs": true,
@@ -16,11 +20,21 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@dashboard/lib/*": ["./lib/*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
-      "@a4co/design-system": ["../../packages/design-system/src"]
+      "@/*": [
+        "./*"
+      ],
+      "@dashboard/lib/*": [
+        "./lib/*"
+      ],
+      "@a4co/shared-utils": [
+        "../../packages/shared-utils/src"
+      ],
+      "@a4co/shared-utils/*": [
+        "../../packages/shared-utils/src/*"
+      ],
+      "@a4co/design-system": [
+        "../../packages/design-system/src"
+      ]
     },
     "plugins": [
       {
@@ -28,6 +42,16 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "dist", "coverage"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage"
+  ]
 }

@@ -1,89 +1,57 @@
+// apps/user-service/src/main.ts
+
 import { getLogger, initializeTracing } from '@a4co/observability';
-import { BracesSecurityMiddleware } from '@a4co/shared-utils';
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
-import * as process from 'process';
+import {
+  createApp,
+  getPort,
+  setupSwagger,
+  createStandardSwaggerConfig,
+  logServiceStartup,
+  logServiceStartupError,
+} from '@a4co/shared-utils';
 import { UserModule } from './user.module';
 
 async function bootstrap() {
-  // Initialize observability
+  // === OBSERVABILIDAD ===
   initializeTracing({
     serviceName: 'user-service',
     serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
+    environment: process.env['NODE_ENV'] ?? 'development',
   });
 
-  // Get logger instance
   const logger = getLogger();
 
-  const app = await NestFactory.create(UserModule, {
-    logger: false, // Disable default NestJS logger
+  // === APP ===
+  const app = await createApp(UserModule, {
+    serviceName: 'User Service',
+    port: 3005,
+    disableLogger: false,
+    enableSwagger: true,
   });
 
-  // Security middleware
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-    })
+  // === SWAGGER ===
+  setupSwagger(
+    app,
+    createStandardSwaggerConfig(
+      'User Service',
+      'Servicio de gestión de usuarios para la plataforma A4CO',
+      '1.0',
+      ['Users']
+    )
   );
 
-  // Global validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    })
-  );
-
-  // Braces security middleware
-  const bracesMiddleware = new BracesSecurityMiddleware({
-    maxExpansionSize: 50,
-    maxRangeSize: 10,
-    monitoringEnabled: true,
-  });
-  app.use(bracesMiddleware.validateRequestBody());
-  app.use(bracesMiddleware.validateQueryParams());
-
-  // CORS configuration
-  app.enableCors({
-    origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  });
-
-  // Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('A4CO User Service')
-    .setDescription('Servicio de gestión de usuarios para la plataforma A4CO')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('Users')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
-  const port = process.env['PORT'] || 3005;
-  logger.info(`🚀 User Service iniciado en puerto ${port}`);
-  logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
-
+  // === ARRANQUE ===
+  const port = getPort({ serviceName: 'User Service', port: 3005 });
   await app.listen(port);
+
+  logServiceStartup(logger, 'User Service', port, {
+    swaggerPath: 'api',
+    environment: process.env['NODE_ENV'] ?? 'development',
+  });
 }
 
 bootstrap().catch(err => {
   const logger = getLogger();
-  logger.error('Error al iniciar el servicio:', err);
+  logServiceStartupError(logger, 'User Service', err);
   process.exit(1);
 });

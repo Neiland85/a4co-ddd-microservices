@@ -1,0 +1,175 @@
+# ================================================================
+# Grafana Datasources Configuration for A4CO Microservices
+# PR4: Observability Infrastructure
+# ================================================================
+
+apiVersion: 1
+
+# List of datasources to insert/update depending on what's available in the database
+datasources:
+  # ================================================================
+  # PROMETHEUS - Metrics
+  # ================================================================
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    uid: prometheus-a4co
+    version: 1
+    jsonData:
+      httpMethod: POST
+      timeInterval: 15s
+      queryTimeout: 60s
+      defaultRegion: eu-west-1
+      customQueryParameters: ''
+      manageAlerts: true
+      prometheusType: Prometheus
+      prometheusVersion: 2.48.1
+      cacheLevel: High
+      incrementalQuerying: true
+      disableRecordingRules: false
+      exemplarTraceIdDestinations:
+        # Connect Prometheus exemplars to Jaeger traces (future PR6)
+        - name: trace_id
+          datasourceUid: jaeger-a4co
+          urlDisplayLabel: View in Jaeger
+
+  # ================================================================
+  # LOKI - Logs
+  # ================================================================
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    isDefault: false
+    editable: true
+    uid: loki-a4co
+    version: 1
+    jsonData:
+      maxLines: 1000
+      timeout: 60
+      derivedFields:
+        # Extract trace_id from logs and link to Jaeger (future PR6)
+        - datasourceUid: jaeger-a4co
+          matcherRegex: '"trace_id":"(\w+)"'
+          name: trace_id
+          url: '$${__value.raw}'
+          urlDisplayLabel: View Trace
+        # Extract correlation_id from logs
+        - matcherRegex: '"correlation_id":"([^"]+)"'
+          name: correlation_id
+          url: ''
+        # Extract aggregate_id from logs
+        - matcherRegex: '"aggregate_id":"([^"]+)"'
+          name: aggregate_id
+          url: ''
+
+  # ================================================================
+  # ALERTMANAGER - Alerts
+  # ================================================================
+  - name: AlertManager
+    type: alertmanager
+    access: proxy
+    url: http://alertmanager:9093
+    isDefault: false
+    editable: true
+    uid: alertmanager-a4co
+    version: 1
+    jsonData:
+      implementation: prometheus
+      handleGrafanaManagedAlerts: false
+
+  # ================================================================
+  # PROMETHEUS - Events (Separate instance for event metrics)
+  # ================================================================
+  - name: Prometheus Events
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: false
+    editable: true
+    uid: prometheus-events-a4co
+    version: 1
+    jsonData:
+      httpMethod: POST
+      timeInterval: 10s
+      queryTimeout: 30s
+      customQueryParameters: 'service_type=microservice'
+      manageAlerts: false
+
+  # ================================================================
+  # PROMETHEUS - NATS (Separate instance for NATS metrics)
+  # ================================================================
+  - name: Prometheus NATS
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: false
+    editable: true
+    uid: prometheus-nats-a4co
+    version: 1
+    jsonData:
+      httpMethod: POST
+      timeInterval: 15s
+      queryTimeout: 30s
+      customQueryParameters: 'service=nats-server'
+      manageAlerts: false
+
+# ================================================================
+# FUTURE DATASOURCES (PR6 - Distributed Tracing)
+# ================================================================
+# Uncomment when implementing PR6
+
+# - name: Jaeger
+#   type: jaeger
+#   access: proxy
+#   url: http://jaeger:16686
+#   isDefault: false
+#   editable: true
+#   uid: jaeger-a4co
+#   version: 1
+#   jsonData:
+#     tracesToLogs:
+#       # Connect Jaeger traces to Loki logs
+#       datasourceUid: loki-a4co
+#       tags: ['trace_id', 'span_id']
+#       mappedTags: [{ key: 'service', value: 'service' }]
+#       mapTagNamesEnabled: true
+#       spanStartTimeShift: -1h
+#       spanEndTimeShift: 1h
+#       filterByTraceID: true
+#       filterBySpanID: true
+#     tracesToMetrics:
+#       # Connect Jaeger traces to Prometheus metrics
+#       datasourceUid: prometheus-a4co
+#       tags: [{ key: 'service', value: 'service' }]
+#       queries:
+#         - name: Request Rate
+#           query: 'rate(http_requests_total{service="$service"}[5m])'
+
+# - name: Tempo
+#   type: tempo
+#   access: proxy
+#   url: http://tempo:3200
+#   isDefault: false
+#   editable: true
+#   uid: tempo-a4co
+#   version: 1
+#   jsonData:
+#     httpMethod: GET
+#     tracesToLogs:
+#       datasourceUid: loki-a4co
+#       tags: ['trace_id']
+#       mappedTags: [{ key: 'service', value: 'service_name' }]
+#       mapTagNamesEnabled: true
+#       spanStartTimeShift: -1h
+#       spanEndTimeShift: 1h
+#     tracesToMetrics:
+#       datasourceUid: prometheus-a4co
+#       tags: [{ key: 'service', value: 'service' }]
+#     serviceMap:
+#       datasourceUid: prometheus-a4co
+#     nodeGraph:
+#       enabled: true

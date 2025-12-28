@@ -10,7 +10,7 @@
 
 **Ya tienes el 70% del e-commerce implementado!**
 
-### ✅ SERVICIOS E-COMMERCE QUE YA FUNCIONAN:
+### ✅ SERVICIOS E-COMMERCE QUE YA FUNCIONAN
 
 1. **order-service** (88% completo) ✅
    - Gestión de pedidos
@@ -45,7 +45,8 @@
 
 ## 📊 COMPARACIÓN ACTUALIZADA
 
-### ANTES (Arquitectura sobredimensionada):
+### ANTES (Arquitectura sobredimensionada)
+
 ```
 ❌ 16 microservicios
 ❌ Jaeger + OpenTelemetry + Prometheus
@@ -54,7 +55,8 @@
 ❌ Costo servidor: $250-450/mes
 ```
 
-### AHORA (Monolito E-commerce):
+### AHORA (Monolito E-commerce)
+
 ```
 ✅ 1 monolito con 10 módulos
 ✅ Logs simples (Winston)
@@ -92,7 +94,7 @@
 
 ## 📈 DESGLOSE SEMANAL
 
-### Full-Time (40h/semana):
+### Full-Time (40h/semana)
 
 | Semana | Tareas | Horas | Milestone |
 |--------|--------|-------|-----------|
@@ -105,7 +107,7 @@
 | **7** | Testing + Deploy + Ajustes | 45h | MVP en producción 🚀 |
 | **TOTAL** | | **280h** | **E-commerce live!** |
 
-### Part-Time (20h/semana):
+### Part-Time (20h/semana)
 
 | Semanas | Tareas | Horas |
 |---------|--------|-------|
@@ -161,7 +163,7 @@
 
 ## 💰 AHORRO REAL
 
-### Desarrollo:
+### Desarrollo
 
 | Concepto | Original | E-commerce Monolito | Ahorro |
 |----------|----------|---------------------|--------|
@@ -169,7 +171,7 @@
 | Costo (@€50/h) | €38,500 | €14,500 | **€24,000** |
 | Costo (@€100/h) | €77,000 | €29,000 | **€48,000** |
 
-### Infraestructura (mensual):
+### Infraestructura (mensual)
 
 | Servicio | Original | Simplificado | Ahorro |
 |----------|----------|--------------|--------|
@@ -184,9 +186,10 @@
 
 ## 🎯 FUNCIONALIDADES E-COMMERCE
 
-### ✅ INCLUIDAS:
+### ✅ INCLUIDAS
 
-#### Para Usuarios:
+#### Para Usuarios
+
 - [x] Buscar artesanos por ubicación/especialidad
 - [x] Ver catálogo de productos
 - [x] Carrito de compra
@@ -198,7 +201,8 @@
 - [x] Historial de pedidos
 - [x] Sistema de valoraciones
 
-#### Para Artesanos:
+#### Para Artesanos
+
 - [x] Perfil completo con galería
 - [x] Publicar productos
 - [x] Gestionar inventario
@@ -207,14 +211,16 @@
 - [x] Ver pagos recibidos
 - [x] Dashboard con métricas
 
-#### Técnicas:
+#### Técnicas
+
 - [x] Stripe Webhooks configurados
 - [x] Notificaciones automáticas (email/SMS)
 - [x] Reserva de stock en checkout
 - [x] Tracking en tiempo real
 - [x] Panel de administración
 
-### ⚠️ OPCIONALES (V2):
+### ⚠️ OPCIONALES (V2)
+
 - [ ] Split payments (varios artesanos en 1 pedido)
 - [ ] Programa de fidelización
 - [ ] Chat en vivo
@@ -225,32 +231,38 @@
 
 ## 🔥 VENTAJAS DEL MONOLITO E-COMMERCE
 
-### vs Microservicios:
+### vs Microservicios
 
 ✅ **Desarrollo más rápido:**
+
 - 290h vs 770h (62% menos)
 - 7 semanas vs 4-6 meses
 
 ✅ **Más fácil de debugear:**
+
 - Todo el flow en un solo servicio
 - Stack traces completos
 - No hay network latency
 
 ✅ **Transacciones ACID:**
+
 - PostgreSQL transactions nativas
 - No necesitas Saga distribuido complejo
 - Rollback automático si falla
 
 ✅ **Despliegue simple:**
+
 - 1 container vs 16
 - docker-compose simple
 - Menos moving parts
 
 ✅ **Costos reducidos:**
+
 - $30-50/mes vs $245-465/mes
 - 85% ahorro en infraestructura
 
 ✅ **Testing más simple:**
+
 - E2E tests en 1 proceso
 - No mocks de servicios externos
 - Más rápido de ejecutar
@@ -259,7 +271,8 @@
 
 ## 🚀 FLUJO E-COMMERCE COMPLETO
 
-### 1. Usuario Compra:
+### 1. Usuario Compra
+
 ```
 1. Busca artesano → GET /artisans?province=jaen
 2. Ve productos → GET /artisans/:id/products
@@ -285,7 +298,8 @@
    - Notifica artesano
 ```
 
-### 2. Artesano Prepara:
+### 2. Artesano Prepara
+
 ```
 1. Ve pedido → GET /artisan/orders
 2. Actualiza estado → PATCH /orders/:id
@@ -295,7 +309,8 @@
 4. Actualiza tracking → PATCH /shipments/:id
 ```
 
-### 3. Usuario Rastrea:
+### 3. Usuario Rastrea
+
 ```
 GET /orders/:id
   ↓ Devuelve:
@@ -312,7 +327,7 @@ GET /orders/:id
 
 ## 📋 PRÓXIMOS PASOS CONCRETOS
 
-### HOY (1 hora):
+### HOY (1 hora)
 
 ```bash
 # 1. Confirmar decisión
@@ -331,7 +346,7 @@ git checkout -b feature/monolith-ecommerce
 open PLAN_MONOLITO_ECOMMERCE.md
 ```
 
-### ESTA SEMANA (40-45 horas):
+### ESTA SEMANA (40-45 horas)
 
 ```bash
 1. Setup monolito (5h)
@@ -339,7 +354,7 @@ open PLAN_MONOLITO_ECOMMERCE.md
 3. Empezar Artisan Module (30h)
 ```
 
-### SEMANAS 2-3 (80 horas):
+### SEMANAS 2-3 (80 horas)
 
 ```bash
 1. Completar Artisan (20h)
@@ -349,7 +364,7 @@ open PLAN_MONOLITO_ECOMMERCE.md
 5. Completar Inventory (10h)
 ```
 
-### SEMANAS 4-5 (80 horas):
+### SEMANAS 4-5 (80 horas)
 
 ```bash
 1. Migrar Shipping (20h)
@@ -359,7 +374,7 @@ open PLAN_MONOLITO_ECOMMERCE.md
 5. Frontend checkout (15h)
 ```
 
-### SEMANAS 6-7 (70 horas):
+### SEMANAS 6-7 (70 horas)
 
 ```bash
 1. Dashboards (25h)
@@ -372,9 +387,10 @@ open PLAN_MONOLITO_ECOMMERCE.md
 
 ## ✅ CRITERIOS DE ÉXITO
 
-### MVP E-commerce listo cuando:
+### MVP E-commerce listo cuando
 
-#### Funcional:
+#### Funcional
+
 - [ ] Usuario puede buscar artesanos
 - [ ] Usuario puede ver productos
 - [ ] Usuario puede agregar al carrito
@@ -387,7 +403,8 @@ open PLAN_MONOLITO_ECOMMERCE.md
 - [ ] Artesano puede gestionar productos
 - [ ] Artesano puede ver pagos
 
-#### Técnico:
+#### Técnico
+
 - [ ] Tests e2e passing (>80% cobertura crítica)
 - [ ] Stripe webhooks funcionando
 - [ ] Notifications enviándose
@@ -423,16 +440,18 @@ open PLAN_MONOLITO_ECOMMERCE.md
 
 ## 🔮 ESCALADO FUTURO
 
-### Cuándo migrar a microservicios:
+### Cuándo migrar a microservicios
 
-#### Señales:
+#### Señales
+
 - [ ] >50,000 pedidos/mes
 - [ ] >100,000 usuarios activos
 - [ ] >€500K facturación/año
 - [ ] Equipo >5 desarrolladores
 - [ ] Latencia consistente >500ms
 
-#### Estrategia:
+#### Estrategia
+
 ```
 1. Extraer Payment Module primero (más crítico)
    - Razón: PCI compliance, escala independiente
@@ -454,23 +473,27 @@ Total migración: ~60-80h cuando sea necesario
 
 ## 💪 MOTIVACIÓN
 
-### Recuerda:
+### Recuerda
 
 ✅ **Ya tienes 70% del e-commerce funcionando**
+
 - 5 servicios implementados (215h invertidas)
 - Solo necesitas integrarlos y crear Artisan
 
 ✅ **Monolito es la decisión CORRECTA**
+
 - Desarrollo 62% más rápido
 - Infraestructura 85% más barata
 - Mantenimiento mucho más simple
 
 ✅ **Puedes escalar después**
+
 - Si el negocio crece
 - Si el cliente paga
 - Si realmente lo necesitas
 
 ✅ **KISS: Keep It Simple, Stupid**
+
 - Portal regional, no Amazon
 - 1,000-10,000 usuarios/mes
 - Monolito maneja esto sin problemas
@@ -482,6 +505,7 @@ Total migración: ~60-80h cuando sea necesario
 ### Tu Decisión: E-commerce Completo ✅
 
 **Incluye:**
+
 - ✅ Portal de artesanos (directorio)
 - ✅ Catálogo de productos
 - ✅ Carrito + Checkout

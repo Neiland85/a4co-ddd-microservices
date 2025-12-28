@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { StockReservation, ReservationStatus } from '../../domain/entities/stock-reservation.entity';
+import {
+  StockReservation,
+  ReservationStatus,
+} from '../../domain/entities/stock-reservation.entity';
 import { InventoryReservedEvent, InventoryOutOfStockEvent } from '../../domain/events';
 
 export interface ReserveStockCommand {
   orderId: string;
+  customerId: string;
   items: Array<{
     productId: string;
     quantity: number;
@@ -37,10 +41,10 @@ export class ReserveStockUseCase {
     try {
       // Paso 1: Verificar disponibilidad de todos los productos
       const unavailableItems = [];
-      
+
       for (const item of command.items) {
         const available = await this.inventoryRepository.getAvailableStock(item.productId);
-        
+
         if (available < item.quantity) {
           unavailableItems.push({
             productId: item.productId,
@@ -53,7 +57,7 @@ export class ReserveStockUseCase {
       // Si algún producto no tiene stock suficiente, fallar toda la reserva
       if (unavailableItems.length > 0) {
         this.logger.warn(`⚠️ Stock insuficiente para orden ${command.orderId}`);
-        
+
         // Publicar evento de stock insuficiente
         const event = new InventoryOutOfStockEvent(command.orderId, unavailableItems);
         await this.eventBus.publish('inventory.out_of_stock', event.toJSON());
@@ -67,6 +71,7 @@ export class ReserveStockUseCase {
       // Paso 2: Crear la reserva
       const reservation = new StockReservation({
         orderId: command.orderId,
+        customerId: command.customerId,
         items: command.items,
         ttlMinutes: command.ttlMinutes || 15,
       });
@@ -88,7 +93,6 @@ export class ReserveStockUseCase {
         command.orderId,
         reservation.reservationId,
         command.items,
-        reservation.expiresAt,
       );
 
       await this.eventBus.publish('inventory.reserved', event.toJSON());

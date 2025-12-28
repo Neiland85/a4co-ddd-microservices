@@ -6,9 +6,7 @@
     "rootDir": "./src",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": [
-      "node",
-      "vitest/globals",
-      "uuid"
+      "node"
     ],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -18,5 +16,5 @@
     "noPropertyAccessFromIndexSignature": false
   },
   "include": ["src/**/*", "src/global.d.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.js"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.js", "__tests__"]
 }

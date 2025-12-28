@@ -3,6 +3,7 @@
 ## 📋 Contexto
 
 Este agente implementa un **API Gateway completo** usando **Kong** para proporcionar:
+
 - Punto de entrada único a todos los microservicios
 - Autenticación y autorización centralizada (JWT, OAuth2)
 - Rate limiting y throttling
@@ -1099,16 +1100,19 @@ curl http://localhost:8100/metrics
 ## 🎓 Conceptos Clave
 
 ### API Gateway Pattern
+
 - **Single Entry Point**: Punto de entrada único
 - **Request Routing**: Enrutamiento inteligente
 - **Protocol Translation**: REST → gRPC, etc.
 
 ### Security
+
 - **JWT**: Autenticación stateless
 - **Rate Limiting**: Protección contra abuso
 - **CORS**: Control de acceso cross-origin
 
 ### Performance
+
 - **Caching**: Reducción de carga en backends
 - **Connection Pooling**: Reutilización de conexiones
 - **Load Balancing**: Distribución de carga

@@ -16,34 +16,49 @@ const buildArtifactPatterns = [
 const transitionalIgnores = [
   '**/packages/observability/src/**',
   '**/packages/design-system/.storybook/**',
-  '**/packages/design-system/d-user-registration/**',
-  '**/packages/design-system/e-gamified-dashboard/**',
   '**/tests/visual/**',
-  '**/f-modern-backoffice/**',
-  '**/h-modern-dashboard/**',
   '**/feature-flags/**',
   '**/eslint-rules/**',
+
+  // Tailwind configs que NO se deben lintar nunca
+  '**/tailwind.config.js',
+  '**/tailwind.preset.js'
 ];
 
 export default tseslint.config(
+  // --------------------------------------
+  //  BLOQUE 1: GLOBAL IGNORES (NUEVO ESTÁNDAR)
+  // --------------------------------------
   {
     ignores: [...buildArtifactPatterns, ...transitionalIgnores],
   },
+
+  // --------------------------------------
+  //  BLOQUE 2: ARCHIVOS PRINCIPALES DEL PROYECTO
+  // --------------------------------------
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    extends: [
+      js.configs.recommended,
+      ...tseslint.configs.recommended,
+    ],
+
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: process.cwd(),
         ecmaVersion: 2022,
         sourceType: 'module',
+
+        // IMPRESCINDIBLE para JSX puro en design-system
+        ecmaFeatures: { jsx: true }
       },
       globals: {
         ...globals.browser,
         ...globals.node,
       },
     },
+
     rules: {
       'no-console': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
@@ -53,11 +68,14 @@ export default tseslint.config(
       '@typescript-eslint/require-await': 'off',
     },
   },
+
+  // --------------------------------------
+  //  BLOQUE 3: TESTS
+  // --------------------------------------
   {
     files: [
-      '**/*.test.{ts,tsx,js,jsx}',
-      '**/*.spec.{ts,tsx,js,jsx}',
-      '**/__tests__/**/*.{ts,tsx,js,jsx}',
+      '**/*.{test,spec}.{ts,tsx,js,jsx}',
+      '**/__tests__/**/*.{ts,tsx,js,jsx}'
     ],
     languageOptions: {
       globals: {
@@ -66,9 +84,13 @@ export default tseslint.config(
       },
     },
     rules: {
-      'no-console': 'off',
-    },
+      'no-console': 'off'
+    }
   },
+
+  // --------------------------------------
+  //  BLOQUE 4: CONFIG / SCRIPTS
+  // --------------------------------------
   {
     files: [
       '**/*.config.{ts,js,mjs,cjs}',
@@ -79,6 +101,7 @@ export default tseslint.config(
     rules: {
       'no-console': 'off',
       '@typescript-eslint/no-var-requires': 'off',
-    },
-  },
+    }
+  }
 );
+

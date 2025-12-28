@@ -1,49 +1,68 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import helmet from 'helmet';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import {
+  applySecurityMiddleware,
+  applyValidationPipe,
+  applyCorsConfiguration,
+  setupSwagger,
+  createStandardSwaggerConfig,
+  getPort,
+} from '@a4co/shared-utils';
 import { NotificationModule } from './notification.module';
 
+const logger = new Logger('NotificationService');
+
 async function bootstrap() {
+  // === APP HÍBRIDA (HTTP + NATS) ===
   const app = await NestFactory.create(NotificationModule, {
     logger: ['log', 'error', 'warn', 'debug'],
   });
 
-  // Security
-  app.use(helmet());
-
-  // CORS
-  app.enableCors({
-    origin: process.env.CORS_ORIGIN || '*',
-    credentials: true,
+  // === CONEXIÓN NATS ===
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env['NATS_SERVERS'] || 'nats://localhost:4222'],
+      queue: 'notification-service-queue',
+    },
   });
 
-  // Validation
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
+  // === SEGURIDAD, VALIDACIÓN Y CORS ===
+  applySecurityMiddleware(app, { serviceName: 'Notification Service' });
+  applyValidationPipe(app);
+  applyCorsConfiguration(app, {
+    serviceName: 'Notification Service',
+    corsConfig: {
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    },
+  });
 
-  // API prefix
+  // Set global prefix
   app.setGlobalPrefix('api/notifications');
 
-  // Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('Notification Service API')
-    .setDescription('Multi-channel notification service for a4co-ddd-microservices')
-    .setVersion('1.0')
-    .addTag('notifications')
-    .addBearerAuth()
-    .build();
+  // === SWAGGER ===
+  setupSwagger(
+    app,
+    {
+      ...createStandardSwaggerConfig(
+        'Notification Service',
+        'Multi-channel notification service for a4co-ddd-microservices',
+        '1.0',
+        ['notifications']
+      ),
+      path: 'api/notifications/docs',
+    }
+  );
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/notifications/docs', app, document);
+  const port = getPort({ serviceName: 'Notification Service', port: 3007 });
 
-  const port = process.env.PORT || 3007;
+  // Start all microservices
+  await app.startAllMicroservices();
   await app.listen(port);
+
+  logger.log('NATS microservice connected (notification-service-queue)');
 
   console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -56,15 +75,17 @@ async function bootstrap() {
 📊 Stats:      http://localhost:${port}/api/notifications/stats
 
 Channels:
-  📧 Email:    ${process.env.SENDGRID_API_KEY ? '✅ SendGrid' : '⚠️  Mock'}
-  📱 SMS:      ${process.env.TWILIO_ACCOUNT_SID ? '✅ Twilio' : '⚠️  Mock'}
+  📧 Email:    ${process.env['SENDGRID_API_KEY'] ? '✅ SendGrid' : '⚠️  Mock'}
+  📱 SMS:      ${process.env['TWILIO_ACCOUNT_SID'] ? '✅ Twilio' : '⚠️  Mock'}
   🔔 Push:     ⚠️  Mock (Firebase not configured)
 
-Environment:  ${process.env.NODE_ENV || 'development'}
+Environment:  ${process.env['NODE_ENV'] || 'development'}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `);
 }
 
-bootstrap();
-
+bootstrap().catch((err) => {
+  logger.error('Error al iniciar Notification Service:', err);
+  process.exit(1);
+});

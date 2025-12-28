@@ -7,54 +7,66 @@ El **A4CO Monitoring Dashboard** es una aplicación web en tiempo real diseñada
 ## 🎯 Casos de Uso Principales
 
 ### 1. **Monitoreo de Rollout en Tiempo Real**
+
 **Actor**: Equipo de Operaciones / DevOps
 **Descripción**: Supervisar el progreso del rollout del 25% external beta con métricas actualizadas cada 30 segundos.
 **Flujo**:
+
 1. Acceder al dashboard principal
 2. Visualizar métricas clave (adopción, error rate, satisfacción)
 3. Monitorear estado de servicios críticos
 4. Revisar alertas activas y actividad reciente
 
 ### 2. **Análisis de Métricas Detalladas**
+
 **Actor**: Analista de Producto / Data Analyst
 **Descripción**: Profundizar en métricas específicas del rollout para identificar tendencias y patrones.
 **Flujo**:
+
 1. Navegar a la página de métricas detalladas
 2. Analizar tendencias de adopción vs errores
 3. Comparar datos de Phase 1 vs Phase 2
 4. Exportar insights para reportes
 
 ### 3. **Revisión de Resultados de Phase 1**
+
 **Actor**: Product Manager / Engineering Lead
 **Descripción**: Evaluar los resultados del rollout interno (Phase 1) antes de proceder con Phase 2.
 **Flujo**:
+
 1. Acceder a la sección Phase 1
 2. Revisar configuración del rollout
 3. Analizar reporte final y recomendaciones
 4. Validar criterios de éxito cumplidos
 
 ### 4. **Planificación de Phase 2**
+
 **Actor**: Engineering Team / Release Manager
 **Descripción**: Preparar y validar la planificación del rollout externo (Phase 2).
 **Flujo**:
+
 1. Explorar la sección Phase 2
 2. Revisar plan de features y criterios de éxito
 3. Validar configuración de monitoreo
 4. Confirmar preparación de infraestructura
 
 ### 5. **Monitoreo de Salud del Sistema**
+
 **Actor**: Site Reliability Engineer (SRE)
 **Descripción**: Monitorear la salud general del sistema durante el rollout.
 **Flujo**:
+
 1. Verificar estado de servicios en el dashboard principal
 2. Monitorear uptime y performance
 3. Revisar alertas de sistema
 4. Identificar cuellos de botella
 
 ### 6. **Toma de Decisiones Operativas**
+
 **Actor**: Engineering Manager / CTO
 **Descripción**: Tomar decisiones informadas sobre el progreso del rollout basado en datos en tiempo real.
 **Flujo**:
+
 1. Revisar métricas clave en el dashboard
 2. Evaluar impacto de alertas activas
 3. Comparar con benchmarks establecidos
@@ -65,22 +77,26 @@ El **A4CO Monitoring Dashboard** es una aplicación web en tiempo real diseñada
 ### **Componentes Principales**
 
 #### **1. Servidor Web Express.js**
+
 - **Framework**: Express.js con Node.js
 - **Puerto**: 3003 (configurable)
 - **Endpoints**: RESTful API para datos y páginas
 - **Middleware**: JSON parsing, static files, error handling
 
 #### **2. Sistema de Templates**
+
 - **Tecnología**: HTML puro con Tailwind CSS
 - **Ventajas**: Sin dependencias complejas, rápido renderizado
 - **Estilo**: Diseño moderno y responsive
 
 #### **3. Gestión de Datos**
+
 - **Formato**: JSON files estructurados
 - **Ubicación**: Directorio raíz del proyecto
 - **Actualización**: En tiempo real desde archivos
 
 #### **4. Auto-refresh**
+
 - **Intervalo**: 30 segundos
 - **Alcance**: Todas las páginas principales
 - **Implementación**: JavaScript nativo
@@ -126,6 +142,7 @@ start-monitoring-server.sh        # Script de inicio
 ## 🔄 Flujos de Trabajo
 
 ### **Flujo de Monitoreo Continuo**
+
 ```mermaid
 graph TD
     A[Inicio del Día] --> B[Verificar Dashboard]
@@ -138,6 +155,7 @@ graph TD
 ```
 
 ### **Flujo de Toma de Decisiones**
+
 ```mermaid
 graph TD
     A[Revisar Métricas] --> B{Evaluar KPIs}
@@ -154,12 +172,14 @@ graph TD
 ## 🛡️ Consideraciones de Seguridad
 
 ### **Medidas Implementadas**
+
 - ✅ **No exposición de datos sensibles**: Solo métricas agregadas
 - ✅ **Validación de entrada**: Sanitización de datos JSON
 - ✅ **HTTPS recomendado**: Para producción
 - ✅ **Autenticación**: Recomendada para acceso restringido
 
 ### **Recomendaciones de Producción**
+
 - Implementar autenticación OAuth/JWT
 - Usar HTTPS obligatorio
 - Configurar CORS apropiadamente
@@ -167,7 +187,7 @@ graph TD
 
 ## 📊 Diagramas Técnicos
 
-*(Los 12 diagramas se presentan a continuación)*
+_(Los 12 diagramas se presentan a continuación)_
 
 ---
 
@@ -176,6 +196,7 @@ graph TD
 El A4CO Monitoring Dashboard representa una solución completa para el monitoreo de rollouts de features en entornos de microservicios. Su arquitectura simple pero efectiva permite una visibilidad total del proceso, facilitando la toma de decisiones informadas y el mantenimiento de altos estándares de calidad.
 
 **Características destacadas:**
+
 - ✅ Interfaz intuitiva y responsive
 - ✅ Actualización en tiempo real
 - ✅ Cobertura completa de fases del rollout
@@ -183,6 +204,7 @@ El A4CO Monitoring Dashboard representa una solución completa para el monitoreo
 - ✅ Sin dependencias complejas
 
 **Próximos pasos recomendados:**
+
 1. Implementar autenticación para acceso seguro
 2. Agregar notificaciones push para alertas críticas
 3. Integrar con sistemas de monitoreo existentes

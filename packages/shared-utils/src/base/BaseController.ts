@@ -1,58 +1,68 @@
 /**
- * BaseController - Clase abstracta que encapsula la lógica común de todos los controllers
- * Implementa el patrón DRY para reducir duplicación de código detectada por SonarQube
+ * Base controller class providing common functionality
+ * for all controllers in the application.
+ * 
+ * @template TService - The service type this controller uses
  */
 export abstract class BaseController<TService> {
   protected service: TService;
 
+  /**
+   * Creates an instance of BaseController
+   * @param ServiceClass - The service class constructor
+   */
   constructor(ServiceClass: new () => TService) {
     this.service = new ServiceClass();
   }
 
   /**
-   * Maneja errores de forma consistente en todos los controllers
+   * Validates a request object ensuring all required fields are present
+   * @template T - The request type
+   * @param request - The request object to validate
+   * @param requiredFields - Array of field names that must be present
+   * @returns The validated request object
+   * @throws Error if any required field is missing or invalid
    */
-  protected handleError(error: unknown): { error: string; code: number } {
-    if (error instanceof Error) {
-      return { error: error.message, code: 400 };
-    }
-    return { error: 'Internal server error', code: 500 };
-  }
-
-  /**
-   * Valida parámetros de entrada de forma consistente
-   */
-  protected validateRequest<T>(request: unknown, requiredFields: (keyof T)[]): T {
+  protected validateRequest<T extends Record<string, any>>(
+    request: T,
+    requiredFields: (keyof T)[],
+  ): T {
     if (!request || typeof request !== 'object') {
-      throw new Error('Invalid request format');
+      throw new Error('Invalid request: request must be an object');
     }
-
-    const req = request as Record<string, unknown>;
 
     for (const field of requiredFields) {
-      if (!((field as string) in req)) {
-        throw new Error(`Missing required field: ${String(field)}`);
+      if (request[field] === undefined || request[field] === null || request[field] === '') {
+        throw new Error(`Invalid request: ${String(field)} is required`);
       }
     }
 
-    return request as T;
+    return request;
   }
 
   /**
-   * Envuelve las respuestas en un formato consistente
+   * Formats a successful response
+   * @template T - The response data type
+   * @param data - The data to return
+   * @returns Formatted response object
    */
-  protected formatResponse<T>(
-    data: T,
-    status = 'success'
-  ): {
-    status: string;
-    data: T;
-    timestamp: string;
-  } {
+  protected formatResponse<T>(data: T): { success: boolean; data: T } {
     return {
-      status,
+      success: true,
       data,
-      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Handles errors and returns a formatted error response
+   * @param error - The error to handle
+   * @returns Formatted error response
+   */
+  protected handleError(error: unknown): { success: boolean; error: string } {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return {
+      success: false,
+      error: errorMessage,
     };
   }
 }

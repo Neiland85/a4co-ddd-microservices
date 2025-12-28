@@ -1,0 +1,25 @@
+{
+  "name": "@a4co/shared-events",
+  "version": "1.0.0",
+  "description": "Shared event types and constants for event-driven architecture",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "events",
+    "nats",
+    "microservices",
+    "event-driven"
+  ],
+  "author": "A4CO",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,106 +1,81 @@
 /// <reference types="node" />
 
 import { getLogger, initializeTracing } from '@a4co/observability';
-import { BracesSecurityMiddleware } from '@a4co/shared-utils';
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
-import * as process from 'process';
+import {
+  applySecurityMiddleware,
+  applyValidationPipe,
+  applyCorsConfiguration,
+  setupSwagger,
+  createStandardSwaggerConfig,
+  logServiceStartup,
+  logServiceStartupError,
+  getPort,
+} from '@a4co/shared-utils';
 import { PaymentModule } from './payment.module';
 
 async function bootstrap() {
-  // Initialize observability
+  // === OBSERVABILIDAD ===
   initializeTracing({
     serviceName: 'payment-service',
     serviceVersion: '1.0.0',
-    environment: process.env['NODE_ENV'] || 'development',
+    environment: process.env['NODE_ENV'] ?? 'development',
   });
 
-  // Get logger instance
   const logger = getLogger();
 
+  // === APP HÍBRIDA (HTTP + NATS) ===
   const app = await NestFactory.create(PaymentModule, {
-    logger: false, // Disable default NestJS logger
+    logger: false,
   });
 
-  // Configure NATS microservice
+  // === CONEXIÓN NATS ===
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,
     options: {
-      servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
+      servers: [process.env['NATS_URL'] ?? 'nats://localhost:4222'],
       queue: 'payment_queue',
     },
   });
 
-  // Security middleware
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-    })
-  );
-
-  // Global validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    })
-  );
-
-  // Braces security middleware
-  const bracesMiddleware = new BracesSecurityMiddleware({
-    maxExpansionSize: 50,
-    maxRangeSize: 10,
-    monitoringEnabled: true,
-  });
-  app.use(bracesMiddleware.validateRequestBody());
-  app.use(bracesMiddleware.validateQueryParams());
-
-  // CORS configuration
-  app.enableCors({
-    origin: process.env['ALLOWED_ORIGINS']?.split(',') || ['http://localhost:3000'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  // === SEGURIDAD, VALIDACIÓN Y CORS (usando shared-utils) ===
+  applySecurityMiddleware(app, { serviceName: 'Payment Service' });
+  applyValidationPipe(app);
+  applyCorsConfiguration(app, {
+    serviceName: 'Payment Service',
+    corsConfig: {
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    },
   });
 
-  // Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('A4CO Payment Service')
-    .setDescription('Servicio de procesamiento de pagos para la plataforma A4CO')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('Payments')
-    .build();
+  // === SWAGGER ===
+  setupSwagger(
+    app,
+    createStandardSwaggerConfig(
+      'Payment Service',
+      'Servicio de procesamiento de pagos para la plataforma A4CO',
+      '1.0',
+      ['Payments']
+    )
+  );
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  // === PUERTO Y ARRANQUE ===
+  const port = getPort({ serviceName: 'Payment Service', port: 3006 });
 
-  const port = process.env['PORT'] ? Number(process.env['PORT']) : 3006;
-
-  // Start all microservices
   await app.startAllMicroservices();
-  logger.info('🔌 NATS microservice conectado');
-
-  // Start HTTP server
   await app.listen(port);
-  logger.info(`🚀 Payment Service iniciado en puerto ${port}`);
-  logger.info(`📚 Documentación Swagger: http://localhost:${port}/api`);
+
+  logger.info('NATS microservice conectado (payment_queue)');
+  logServiceStartup(logger, 'Payment Service', port, {
+    swaggerPath: 'api',
+    environment: process.env['NODE_ENV'] ?? 'development',
+  });
 }
 
 bootstrap().catch(err => {
   const logger = getLogger();
-  logger.error('Error al iniciar el servicio:', err);
+  logServiceStartupError(logger, 'Payment Service', err);
   process.exit(1);
 });

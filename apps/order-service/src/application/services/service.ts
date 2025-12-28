@@ -1,4 +1,4 @@
-import { Order, OrderItem, OrderId, IOrderRepository } from '../../domain';
+import { Order, OrderItem, OrderId, IOrderRepository } from '../../domain/index.js';
 
 // DTOs (Data Transfer Objects)
 
@@ -24,9 +24,7 @@ export interface GetOrderDTO {
 // APPLICATION SERVICE
 
 export class OrderService {
-  constructor(
-    private readonly orderRepository: IOrderRepository,
-  ) { }
+  constructor(private readonly orderRepository: IOrderRepository) {}
 
   async createOrder(dto: CreateOrderDTO): Promise<Order> {
     const orderId = new OrderId(dto.orderId);
@@ -38,13 +36,9 @@ export class OrderService {
     }
 
     // Create order items
-    const items = dto.items.map(item =>
-      new OrderItem(
-        item.productId,
-        item.quantity,
-        item.unitPrice,
-        item.currency || 'EUR',
-      ),
+    const items = dto.items.map(
+      (item) =>
+        new OrderItem(item.productId, item.quantity, item.unitPrice, item.currency || 'EUR'),
     );
 
     // Create order aggregate
