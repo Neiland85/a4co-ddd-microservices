@@ -1,4 +1,4 @@
-pnpm run # Auth Service
+# Auth Service
 
 ## Overview
 
