@@ -22,19 +22,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup monorepo
+        uses: ./.github/actions/setup-monorepo
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Run ESLint on packages
         run: pnpm --filter "./packages/*" run lint
@@ -54,32 +46,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup monorepo
+        uses: ./.github/actions/setup-monorepo
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build shared packages
-        run: pnpm --filter "./packages/*" run build
-
-      - name: Generate Prisma clients
-        run: |
-          if find . -name "schema.prisma" | grep -q .; then
-            pnpm -w exec prisma generate
-            pnpm --filter "@a4co/*" exec prisma generate || true
-          else
-            echo "No Prisma schema found, skipping generate."
-          fi
-        run: pnpm --filter "./apps/*" run db:generate --if-present || true
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          generate-prisma: 'true'
+          build-packages: 'true'
 
       - name: Run tests
         run: |
@@ -100,35 +73,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup monorepo
+        uses: ./.github/actions/setup-monorepo
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Generate Prisma clients
-        run: |
-          if find . -name "schema.prisma" | grep -q .; then
-            pnpm -w exec prisma generate
-            pnpm --filter "@a4co/*" exec prisma generate || true
-          else
-            echo "No Prisma schema found, skipping generate."
-          fi
-        run: pnpm --filter "./apps/*" run db:generate --if-present || true
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          generate-prisma: 'true'
+          build-packages: 'true'
 
       - name: Type check
         run: pnpm -w run type-check
-
-      - name: Build packages
-        run: pnpm --filter "./packages/*" run build
 
       - name: Build apps
         run: pnpm -r --ignore @a4co/auth-service run build
@@ -147,21 +101,14 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup monorepo
+        uses: ./.github/actions/setup-monorepo
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Build auth-service
         run: pnpm --filter @a4co/auth-service build

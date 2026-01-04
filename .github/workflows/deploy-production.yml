@@ -47,28 +47,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: ⚙️ Setup Node.js 22
-        uses: actions/setup-node@v4
+      - name: Setup monorepo
+        uses: ./.github/actions/setup-monorepo
         with:
           node-version: "22"
-          cache: 'pnpm'
-
-      - name: ⚙️ Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "10.14.0"
-
-      - name: 📦 Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: "10.14.0"
+          build-packages: 'true'
 
       - name: 🔍 Lint code
         run: pnpm run lint || true
 
       - name: 🧪 Run tests
         run: pnpm run test || echo "Some tests failed but continuing..."
-
-      - name: 🏗️ Build packages
-        run: pnpm --filter "./packages/*" run build
 
       - name: ✅ Validate build
         run: |
