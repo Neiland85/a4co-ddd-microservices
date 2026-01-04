@@ -13,35 +13,11 @@ env:
 
 jobs:
   # =============================================================
-  #  Lint - Verifica errores de estilo
+  #  CI - Lint, Test & Build in single job
   # =============================================================
-  lint:
-    name: Lint
+  ci:
+    name: CI (Lint → Test → Build)
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup monorepo
-        uses: ./.github/actions/setup-monorepo
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
-
-      - name: Run ESLint on packages
-        run: pnpm --filter "./packages/*" run lint
-
-      - name: Run ESLint on apps (continue on error)
-        run: pnpm exec eslint "apps/**/src/**/*.ts" --no-error-on-unmatched-pattern --max-warnings=500 || true
-        # TODO: Fix eslint in individual apps - running from root for now
-
-  # =============================================================
-  #  Test - Ejecuta pruebas unitarias
-  # =============================================================
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    needs: [lint]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -54,32 +30,18 @@ jobs:
           generate-prisma: 'true'
           build-packages: 'true'
 
-      - name: Run tests
+      - name: Lint
+        run: |
+          pnpm --filter "./packages/*" run lint
+          pnpm exec eslint "apps/**/src/**/*.ts" --no-error-on-unmatched-pattern --max-warnings=500 || true
+
+      - name: Test
         run: |
           pnpm --filter @a4co/auth-service test --passWithNoTests
           pnpm --filter @a4co/payment-service test --passWithNoTests
           pnpm --filter @a4co/order-service test --passWithNoTests
           pnpm --filter @a4co/inventory-service test --passWithNoTests
           pnpm --filter @a4co/product-service test --passWithNoTests
-
-  # =============================================================
-  #  Build - Compila todos los servicios
-  # =============================================================
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: [test]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup monorepo
-        uses: ./.github/actions/setup-monorepo
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
-          generate-prisma: 'true'
-          build-packages: 'true'
 
       - name: Type check
         run: pnpm -w run type-check
@@ -92,7 +54,7 @@ jobs:
   # =============================================================
   deploy_auth_service:
     name: Deploy Auth Service
-    needs: [build]
+    needs: [ci]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     env:
@@ -118,5 +80,3 @@ jobs:
           npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-

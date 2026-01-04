@@ -137,7 +137,7 @@ jobs:
       - name: 🧾 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🚀 Start services for testing
+      - name: 🚀 Start and test services
         run: |
           # Create minimal .env for testing
           cat > .env.test <<EOF
@@ -148,16 +148,12 @@ jobs:
           STRIPE_WEBHOOK_SECRET=whsec_mock
           EOF
           
-          # Start minimal services for smoke test
+          # Start services
           docker compose -f docker-compose.prod.yml up -d postgres nats
           sleep 10
-
-      - name: 🧪 Test database connectivity
-        run: |
+          
+          # Test connectivity
           docker compose -f docker-compose.prod.yml exec -T postgres pg_isready -U postgres || exit 1
-
-      - name: 🧪 Test NATS connectivity
-        run: |
           curl -f http://localhost:8222/healthz || exit 1
 
       - name: 🧹 Cleanup test environment
@@ -215,12 +211,9 @@ jobs:
             docker compose -f docker-compose.prod.yml up -d --no-deps --remove-orphans
             docker system prune -f
           ENDSSH
-
-      - name: ✅ Verify deployment
-        if: secrets.PRODUCTION_SERVER_SSH_KEY != ''
-        run: |
+          
+          # Wait and verify
           sleep 30
-          # Add health check verification here
           echo "✅ Deployment completed successfully"
 
       - name: 📊 Deployment Summary

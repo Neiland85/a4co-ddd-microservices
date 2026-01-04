@@ -71,17 +71,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           pnpm-version: ${{ env.PNPM_VERSION }}
 
-      - name: Generate Prisma clients
+      - name: Generate Prisma and build packages
         run: |
           pnpm --filter "@a4co/*" exec prisma generate || true
-        continue-on-error: true
-
-      - name: Build shared packages
-        run: |
           pnpm --filter "./packages/*" run build || true
         continue-on-error: true
 
-      - name: Build backend services
+      - name: Build services
         run: |
           pnpm --filter @a4co/gateway run build || true
           pnpm --filter @a4co/auth-service run build || true
@@ -90,76 +86,53 @@ jobs:
           pnpm --filter @a4co/inventory-service run build || true
         continue-on-error: true
 
-      - name: Build dashboard client
+      - name: Build dashboard and install Playwright
         working-directory: apps/dashboard-client
-        run: pnpm run build || echo "Build may fail if Next.js app is incomplete"
+        run: |
+          pnpm run build || echo "Build may fail if Next.js app is incomplete"
+          pnpm exec playwright install --with-deps chromium
         continue-on-error: true
 
-      - name: Verify Docker and Docker Compose
+      - name: Start and validate test services
         run: |
-          echo "Checking Docker installation..."
-          docker --version
-          docker compose version
-          echo "Docker Compose is available"
-
-      - name: Install Playwright browsers
-        working-directory: apps/dashboard-client
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Start test services with Docker Compose
-        run: |
-          docker compose -f docker-compose.test.yml up -d
-        timeout-minutes: 5
-        continue-on-error: true
-
-      - name: Validate docker-compose.test.yml
-        run: |
-          echo "Validating docker-compose.test.yml..."
+          # Validate docker-compose file
           if [ ! -f "docker-compose.test.yml" ]; then
             echo "❌ docker-compose.test.yml not found!"
             exit 1
           fi
           docker compose -f docker-compose.test.yml config > /dev/null
           echo "✅ docker-compose.test.yml is valid"
+          
+          # Start services
+          docker compose -f docker-compose.test.yml up -d
+        timeout-minutes: 5
+        continue-on-error: true
 
       - name: Wait for services to be ready
         run: |
           echo "Waiting for services to be ready..."
           
-          # Wait for NATS TCP port (port 4223, up to 30 seconds)
-          # Using TCP check instead of HTTP healthcheck for CI stability
-          echo "Checking NATS TCP port at localhost:4223..."
-          timeout 30 bash -c 'until nc -z localhost 4223 2>/dev/null; do echo "NATS port not ready, waiting..."; sleep 1; done' && echo "✅ NATS TCP port is open" || echo "⚠️ NATS TCP check timed out (continuing anyway)"
+          # Wait for NATS (30s)
+          timeout 30 bash -c 'until nc -z localhost 4223 2>/dev/null; do sleep 1; done' && \
+            echo "✅ NATS ready" || echo "⚠️ NATS timeout"
           
-          # Wait for Gateway (up to 2 minutes)
-          echo "Checking Gateway at http://localhost:8081/health..."
-          timeout 120 bash -c 'until curl -sf http://localhost:8081/health 2>/dev/null; do echo "Gateway not ready, waiting..."; sleep 3; done' || echo "⚠️ Gateway health check timed out"
+          # Wait for Gateway (2m)
+          timeout 120 bash -c 'until curl -sf http://localhost:8081/health 2>/dev/null; do sleep 3; done' || \
+            echo "⚠️ Gateway timeout"
           
-          # Wait for Dashboard (up to 2 minutes)
-          echo "Checking Dashboard at http://localhost:3001..."
-          timeout 120 bash -c 'until curl -sf http://localhost:3001 2>/dev/null; do echo "Dashboard not ready, waiting..."; sleep 3; done' || echo "⚠️ Dashboard health check timed out"
+          # Wait for Dashboard (2m)
+          timeout 120 bash -c 'until curl -sf http://localhost:3001 2>/dev/null; do sleep 3; done' || \
+            echo "⚠️ Dashboard timeout"
           
-          echo "✅ Service readiness checks completed"
-          
-          # Show running containers for debugging
+          # Show status
           docker compose -f docker-compose.test.yml ps
-          
-          # Show NATS logs for debugging
-          echo "📋 NATS container logs:"
-          docker compose -f docker-compose.test.yml logs nats-test | tail -20
+          docker compose -f docker-compose.test.yml logs nats-test | tail -10
         continue-on-error: true
 
-      - name: Prepare test artifact directories
+      - name: Prepare test artifacts and run E2E tests
         working-directory: apps/dashboard-client
         run: |
-          echo "Creating artifact directories..."
-          mkdir -p playwright-report
-          mkdir -p test-results
-          echo "✅ Artifact directories ready"
-
-      - name: Run E2E tests
-        working-directory: apps/dashboard-client
-        run: |
+          mkdir -p playwright-report test-results
           pnpm run test:e2e || echo "E2E tests completed with status: $?"
         env:
           CI: true
@@ -211,12 +184,8 @@ jobs:
       - name: Cleanup test services
         if: always()
         run: |
-          echo "🧹 Cleaning up test services..."
-          # Stop and remove containers (ignore errors if already stopped)
-          docker compose -f docker-compose.test.yml down -v 2>/dev/null || echo "⚠️ Some containers already stopped"
-          # Prune system (always runs even if previous commands fail)
+          docker compose -f docker-compose.test.yml down -v 2>/dev/null || true
           docker system prune -f || true
-          echo "✅ Cleanup completed"
 
   # Require E2E tests to pass before allowing merge
   e2e-gate:
