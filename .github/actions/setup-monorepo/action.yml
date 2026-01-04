@@ -1,0 +1,61 @@
+name: 'Setup Monorepo'
+description: 'Complete setup for A4CO DDD Microservices monorepo including Node.js, pnpm, dependencies, and Prisma'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '22'
+  pnpm-version:
+    description: 'pnpm version to use'
+    required: false
+    default: '10.14.0'
+  install-dependencies:
+    description: 'Install dependencies with pnpm'
+    required: false
+    default: 'true'
+  generate-prisma:
+    description: 'Generate Prisma clients'
+    required: false
+    default: 'false'
+  build-packages:
+    description: 'Build shared packages'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ inputs.pnpm-version }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      if: inputs.install-dependencies == 'true'
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Generate Prisma clients
+      if: inputs.generate-prisma == 'true'
+      shell: bash
+      run: |
+        if find . -name "schema.prisma" | grep -q .; then
+          echo "Generating Prisma clients..."
+          pnpm -w exec prisma generate || true
+          pnpm --filter "@a4co/*" exec prisma generate || true
+          pnpm --filter "./apps/*" run db:generate --if-present || true
+        else
+          echo "No Prisma schema found, skipping generate."
+        fi
+
+    - name: Build shared packages
+      if: inputs.build-packages == 'true'
+      shell: bash
+      run: pnpm --filter "./packages/*" run build
