@@ -1,13 +1,17 @@
 import { apiClient } from '../api-client';
 import type { Product } from '../types';
 
+const isProductsEnvelope = (value: unknown): value is { products: Product[] } => {
+  return Array.isArray((value as { products?: unknown })?.products);
+};
+
 export const productsService = {
   async getProducts(): Promise<Product[]> {
-    const response = await apiClient.getProducts();
+    const response = (await apiClient.getProducts()) as Product[] | { products?: Product[] };
     // Handle both array response and object with products array
-    if (Array.isArray(response)) return response as Product[];
-    const products = (response as { products?: Product[] }).products ?? [];
-    return products;
+    if (Array.isArray(response)) return response;
+    if (isProductsEnvelope(response)) return response.products;
+    return [];
   },
 
   async getProduct(id: string): Promise<Product> {

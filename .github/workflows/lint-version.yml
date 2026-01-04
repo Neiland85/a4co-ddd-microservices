@@ -9,7 +9,6 @@ on:
   push:
     branches:
       - main
-      - copilot/fix-dependabot-alerts-nextjs
 
 jobs:
   guard-versions:
@@ -37,10 +36,11 @@ jobs:
             }
             return 0;
           };
+          // This comparison covers stable semver (major.minor.patch) for the guarded packages.
 
           const extractVersion = (spec) => {
             if (!spec || typeof spec !== 'string') return null;
-            const match = spec.match(/(\\d+\\.\\d+\\.\\d+)/);
+            const match = spec.match(/(\d+\.\d+\.\d+)/);
             return match ? match[1] : null;
           };
 
@@ -79,7 +79,8 @@ jobs:
           if (fs.existsSync(lockPath)) {
             const content = fs.readFileSync(lockPath, 'utf8');
             for (const [pkg, min] of Object.entries(MIN)) {
-              const versions = Array.from(content.matchAll(new RegExp(`${pkg}@(\\d+\\.\\d+\\.\\d+)`, 'g'))).map(m => m[1]);
+              const escaped = pkg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              const versions = Array.from(content.matchAll(new RegExp(`${escaped}@(\\d+\\.\\d+\\.\\d+)`, 'g'))).map(m => m[1]);
               for (const v of versions) {
                 if (cmp(v, min) < 0) {
                   errors.push(`${pkg} ${v} in pnpm-lock.yaml is below ${min}`);

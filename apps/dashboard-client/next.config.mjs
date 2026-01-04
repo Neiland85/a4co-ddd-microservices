@@ -8,6 +8,7 @@ const nextConfig = {
   outputFileTracingRoot: path.resolve(__dirname, '../../'),
   trailingSlash: true,
   eslint: {
+    // Lint is handled by dedicated workflows (see .github/workflows/lint-version.yml); keep build focused on type/output validation.
     ignoreDuringBuilds: true,
   },
   images: {

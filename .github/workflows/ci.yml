@@ -8,7 +8,6 @@ on:
   push:
     branches:
       - main
-      - copilot/fix-dependabot-alerts-nextjs
 
 jobs:
   security-verification:
@@ -35,16 +34,36 @@ jobs:
 
       - name: Verify Next.js and qs versions
         run: |
-          pnpm why next
-          pnpm why qs
-          if ! pnpm why next | grep -q "15.5.9"; then
-            echo "Expected Next.js 15.5.9 to be installed"
-            exit 1
-          fi
-          if ! pnpm why qs | grep -Eq "6\\.14\\.1|6\\.1[5-9]\\.|7\\.|8\\.|9\\."; then
-            echo "Expected qs >= 6.14.1 to be installed via override"
-            exit 1
-          fi
+          node <<'NODE'
+          const { execSync } = require('node:child_process');
+
+          const MIN = { next: '15.5.9', qs: '6.14.1' };
+
+          const cmp = (a, b) => {
+            const pa = a.split('.').map(Number);
+            const pb = b.split('.').map(Number);
+            for (let i = 0; i < 3; i += 1) {
+              const diff = (pa[i] || 0) - (pb[i] || 0);
+              if (diff !== 0) return diff;
+            }
+            return 0;
+          };
+
+          const check = (pkg) => {
+            const output = execSync(`pnpm ls ${pkg} --depth -1 --json`, { encoding: 'utf8' });
+            const info = JSON.parse(output)[0];
+            const version = info?.dependencies?.[pkg]?.version;
+            if (!version) {
+              throw new Error(`Missing ${pkg} in dependency graph`);
+            }
+            if (cmp(version, MIN[pkg]) < 0) {
+              throw new Error(`${pkg}@${version} is below ${MIN[pkg]}`);
+            }
+            console.log(`${pkg}@${version} verified (>= ${MIN[pkg]})`);
+          };
+
+          Object.keys(MIN).forEach(check);
+          NODE
 
       - name: Build dashboard-client
         run: pnpm --filter dashboard-client build

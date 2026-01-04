@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={clsx('font-sans', 'bg-background text-foreground flex min-h-screen antialiased')}>
+      <body className={clsx('font-sans bg-background text-foreground flex min-h-screen antialiased')}>
         <ToastProvider>
           <AuthProvider>
             <Sidebar />
