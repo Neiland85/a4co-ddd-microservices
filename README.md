@@ -46,6 +46,26 @@ pnpm run dev:backend  # Backend services only
 pnpm run dev:frontend # Frontend only
 ```
 
+### Preview/Staging Environment
+
+For testing before production:
+
+```bash
+# Quick start with automated script
+./start-preview.sh
+
+# Or manually
+cp .env.preview.example .env.preview
+docker compose -f docker-compose.preview.yml --env-file .env.preview up -d
+
+# Access points:
+# - Dashboard: http://localhost:3001
+# - API Gateway: http://localhost:8080
+# - API Docs: http://localhost:8080/api/docs
+```
+
+**See [PREVIEW_TESTING_GUIDE.md](./PREVIEW_TESTING_GUIDE.md) for complete testing procedures.**
+
 ### Production Deployment
 
 #### Quick Deploy with Docker Compose
@@ -56,26 +76,31 @@ cp .env.production.template .env.production
 # Edit .env.production with secure values
 
 # Build and start all services
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml --env-file .env.production up -d
 
 # View logs
-docker-compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml --env-file .env.production logs -f
 ```
 
 For detailed production deployment instructions, see:
-- **[Production Deployment Guide](docs/PRODUCTION_DEPLOY.md)** - Complete deployment walkthrough
-- **[Production Checklist](docs/PRODUCTION_CHECKLIST.md)** - Pre-deployment verification
-- **[Security Guidelines](docs/SECURITY.md)** - Security best practices
+- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete deployment walkthrough
+- **[Production Readiness Checklist](./PRODUCTION_READINESS_CHECKLIST.md)** - Pre-deployment verification
+- **[Quick Reference](./QUICK_REFERENCE.md)** - Command quick reference
 
-#### CI/CD Automated Deployment
+#### NPM Scripts for Deployment
 
-Automated deployment via GitHub Actions:
-1. Push to `main` branch triggers build
-2. Docker images are built and pushed to GHCR
-3. Manual deployment via workflow dispatch
-4. Smoke tests verify deployment
+```bash
+# Preview environment
+pnpm run preview:start    # Automated setup and start
+pnpm run preview:up       # Start services
+pnpm run preview:down     # Stop services
+pnpm run preview:logs     # View logs
 
-See `.github/workflows/deploy-production.yml` for configuration.
+# Production environment
+pnpm run prod:up          # Start services
+pnpm run prod:down        # Stop services
+pnpm run prod:logs        # View logs
+```
 
 ## 📁 Estructura del Proyecto
 
