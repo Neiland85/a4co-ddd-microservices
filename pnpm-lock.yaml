@@ -341,7 +341,7 @@ importers:
         specifier: 0.552.0
         version: 0.552.0(react@19.2.0)
       next:
-        specifier: ^15.5.7
+        specifier: ^15.5.9
         version: 15.5.9(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react:
         specifier: 19.2.0
@@ -375,7 +375,7 @@ importers:
         specifier: 9.39.1
         version: 9.39.1(jiti@1.21.7)
       eslint-config-next:
-        specifier: ^15.5.7
+        specifier: ^15.5.9
         version: 15.5.9(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3)
       postcss:
         specifier: 8.5.6
