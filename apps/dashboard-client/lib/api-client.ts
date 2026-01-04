@@ -1,3 +1,5 @@
+import type { LoginRequest, RegisterRequest } from './types/auth';
+
 const API_BASE_URL = process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:4000';
 
 export class ApiError extends Error {
@@ -70,14 +72,14 @@ class ApiClient {
   }
 
   // Auth endpoints
-  async login(credentials: { username: string; password: string }) {
+  async login(credentials: LoginRequest) {
     return this.request<{ access_token: string; user: any }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   }
 
-  async register(data: { username: string; email: string; password: string }) {
+  async register(data: RegisterRequest) {
     return this.request<{ access_token: string; user: any }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),

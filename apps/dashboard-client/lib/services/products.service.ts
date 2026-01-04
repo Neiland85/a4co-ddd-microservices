@@ -5,7 +5,9 @@ export const productsService = {
   async getProducts(): Promise<Product[]> {
     const response = await apiClient.getProducts();
     // Handle both array response and object with products array
-    return Array.isArray(response) ? response : response.products || [];
+    if (Array.isArray(response)) return response as Product[];
+    const products = (response as { products?: Product[] }).products ?? [];
+    return products;
   },
 
   async getProduct(id: string): Promise<Product> {

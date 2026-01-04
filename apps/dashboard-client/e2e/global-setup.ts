@@ -17,7 +17,10 @@ const RETRY_DELAY_MS = 2000;
 async function globalSetup(config: FullConfig) {
   console.log('🚀 Starting E2E test global setup...');
 
-  const baseURL = config.use?.baseURL || 'http://localhost:3001';
+  const baseURL =
+    (config as any)?.projects?.[0]?.use?.baseURL ||
+    process.env.BASE_URL ||
+    'http://localhost:3001';
   const gatewayURL = process.env.GATEWAY_URL || 'http://localhost:8081';
   
   console.log(`📍 Dashboard URL: ${baseURL}`);

@@ -4,14 +4,17 @@ import type { Order, CreateOrderRequest, CreateOrderResponse } from '../types';
 export const ordersService = {
   async getOrders(): Promise<Order[]> {
     const response = await apiClient.getOrders();
-    // Handle both array response and object with orders array
-    return Array.isArray(response) ? response : response.orders || [];
+    if (Array.isArray(response)) return response as Order[];
+    const orders = (response as { orders?: Order[] }).orders ?? [];
+    return orders;
   },
 
   async getMyOrders(): Promise<Order[]> {
     const response = await apiClient.getMyOrders();
     // Handle both array response and object with orders array
-    return Array.isArray(response) ? response : response.orders || [];
+    if (Array.isArray(response)) return response as Order[];
+    const orders = (response as { orders?: Order[] }).orders ?? [];
+    return orders;
   },
 
   async getOrder(id: string): Promise<Order> {
