@@ -1,13 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
 import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
-import { Payment } from '../../domain/entities/payment.entity';
-import { PaymentDomainService } from '../../domain/services/payment-domain.service';
-import { PaymentStatusValue } from '../../domain/value-objects/payment-status.vo';
-import { PaymentId } from '../../domain/value-objects/payment-id.vo';
-import { Money } from '../../domain/value-objects/money.vo';
 import { StripeGateway } from '../../infrastructure/stripe.gateway';
 import { PaymentEventPublisher } from '../services/payment-event.publisher';
+import {
+  PaymentRepository,
+  Payment,
+  PaymentDomainService,
+  PaymentStatusValue,
+  PaymentId,
+  Money,
+} from '@a4co/domain-payment';
 
 @Injectable()
 export class RefundPaymentUseCase {

@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Payment as PrismaPaymentModel } from '../../../prisma/generated';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
-import { Payment } from '../../domain/entities/payment.entity';
-import { PaymentId } from '../../domain/value-objects/payment-id.vo';
+import { PaymentRepository, Payment, PaymentId, PaymentStatusValue } from '@a4co/domain-payment';
 import { PrismaService } from '../prisma/prisma.service';
-import { PaymentStatusValue } from '../../domain/value-objects/payment-status.vo';
 
 @Injectable()
 export class PrismaPaymentRepository implements PaymentRepository {

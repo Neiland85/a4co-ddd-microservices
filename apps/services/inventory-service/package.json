@@ -17,6 +17,7 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
+    "@a4co/domain-inventory": "workspace:*",
     "@a4co/observability": "workspace:*",
     "@a4co/shared-events": "workspace:*",
     "@a4co/shared-utils": "workspace:*",

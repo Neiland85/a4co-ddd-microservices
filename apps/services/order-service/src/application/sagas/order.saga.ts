@@ -1,7 +1,7 @@
 import { Injectable, Logger, Inject, OnModuleInit } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateOrderCommand } from '../commands/create-order.command.js';
-import { OrderRepository } from '../../domain/repositories/order.repository.js';
+import { IOrderRepository as OrderRepository } from '@a4co/domain-order';
 
 export interface EventMessage<T = any> {
   data: T;

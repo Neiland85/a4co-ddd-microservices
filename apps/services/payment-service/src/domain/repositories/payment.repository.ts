@@ -7,4 +7,3 @@ export interface PaymentRepository {
   findByOrderId(orderId: string): Promise<Payment | null>;
   findByStripeIntentId(intentId: string): Promise<Payment | null>;
 }
-

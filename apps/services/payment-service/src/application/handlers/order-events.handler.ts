@@ -1,10 +1,8 @@
 import { Controller, Inject, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import { PaymentRepository } from '../../domain/repositories/payment.repository.js';
+import { PaymentRepository } from '@a4co/domain-payment';
 import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants.js';
-import {
-  ProcessPaymentUseCase,
-} from '../use-cases/process-payment.use-case.js';
+import { ProcessPaymentUseCase } from '../use-cases/process-payment.use-case.js';
 import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case.js';
 import {
   ORDER_CREATED_V1,
@@ -22,7 +20,7 @@ export class OrderEventsHandler {
     private readonly refundPaymentUseCase: RefundPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_TOKEN)
     private readonly paymentRepository: PaymentRepository,
-  ) { }
+  ) {}
 
   @EventPattern(ORDER_CREATED_V1)
   public async handleOrderCreated(@Payload() data: any): Promise<void> {

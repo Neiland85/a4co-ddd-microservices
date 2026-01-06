@@ -3,8 +3,7 @@ import { PAYMENT_REPOSITORY_TOKEN } from './application/application.constants';
 import { PaymentService } from './application/services/payment.service';
 import { ProcessPaymentUseCase } from './application/use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from './application/use-cases/refund-payment.use-case';
-import { Payment } from './domain/entities/payment.entity';
-import { PaymentRepository } from './domain/repositories/payment.repository';
+import { Payment, PaymentRepository } from '@a4co/domain-payment';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -50,7 +49,9 @@ describe('PaymentService', () => {
     service = module.get<PaymentService>(PaymentService);
     processPaymentUseCase = module.get<ProcessPaymentUseCase>(ProcessPaymentUseCase);
     refundPaymentUseCase = module.get<RefundPaymentUseCase>(RefundPaymentUseCase);
-    paymentRepository = module.get<PaymentRepository>(PAYMENT_REPOSITORY_TOKEN) as jest.Mocked<PaymentRepository>;
+    paymentRepository = module.get<PaymentRepository>(
+      PAYMENT_REPOSITORY_TOKEN,
+    ) as jest.Mocked<PaymentRepository>;
   });
 
   afterEach(() => {

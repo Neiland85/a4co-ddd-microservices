@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { getLogger, ObservabilityLogger } from '@a4co/observability';
-import {
-  OrderCreatedEvent,
-  OrderConfirmedEvent,
-  OrderCancelledEvent,
-} from '../../domain/events/index.js';
+import { OrderCreatedEvent, OrderConfirmedEvent, OrderCancelledEvent } from '@a4co/domain-order';
 
 // Tipos para el Saga
 export enum SagaStatus {

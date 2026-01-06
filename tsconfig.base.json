@@ -33,6 +33,8 @@
       "@a4co/shared-events/*": ["../packages/shared-events/dist/*"],
       "@a4co/domain-order": ["packages/domain/order/src/index.ts"],
       "@a4co/domain-order/*": ["packages/domain/order/src/*"],
+      "@a4co/domain-shared": ["packages/domain/shared/src/index.ts"],
+      "@a4co/domain-shared/*": ["packages/domain/shared/src/*"],
       "@a4co/domain-payment": ["packages/domain/payment/src/index.ts"],
       "@a4co/domain-payment/*": ["packages/domain/payment/src/*"],
       "@a4co/domain-inventory": ["packages/domain/inventory/src/index.ts"],

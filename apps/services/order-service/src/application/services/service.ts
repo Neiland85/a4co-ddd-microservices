@@ -1,4 +1,4 @@
-import { Order, OrderItem, OrderId, IOrderRepository } from '../../domain/index.js';
+import { Order, OrderItem, OrderId, IOrderRepository } from '@a4co/domain-order';
 
 // DTOs (Data Transfer Objects)
 
@@ -30,7 +30,7 @@ export class OrderService {
     const orderId = new OrderId(dto.orderId);
 
     // Check if order already exists
-    const existingOrder = await this.orderRepository.findById(orderId);
+    const existingOrder = await this.orderRepository.findById(orderId.value);
     if (existingOrder) {
       throw new Error(`Order with id ${dto.orderId} already exists`);
     }
@@ -52,7 +52,7 @@ export class OrderService {
 
   async getOrder(dto: GetOrderDTO): Promise<Order> {
     const orderId = new OrderId(dto.orderId);
-    const order = await this.orderRepository.findById(orderId);
+    const order = await this.orderRepository.findById(orderId.value);
 
     if (!order) {
       throw new Error(`Order with id ${dto.orderId} not found`);

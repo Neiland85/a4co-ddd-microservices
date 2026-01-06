@@ -8,7 +8,9 @@
     "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
+      "@a4co/domain-payment": ["../../../packages/domain/payment/src/index.ts"],
+      "@a4co/domain-payment/*": ["../../../packages/domain/payment/src/*"]
     }
   },
   "include": ["src/**/*"],

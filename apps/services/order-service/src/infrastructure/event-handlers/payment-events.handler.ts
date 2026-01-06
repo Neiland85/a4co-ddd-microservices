@@ -6,7 +6,7 @@ import {
   PaymentConfirmedV1Payload,
   PaymentFailedV1Payload,
 } from '@a4co/shared-events';
-import { OrderRepository } from '../../domain/repositories/order.repository.js';
+import { IOrderRepository as OrderRepository } from '@a4co/domain-order';
 
 /**
  * Payment Events Handler
@@ -78,7 +78,9 @@ export class PaymentEventsHandler {
       order.cancel(payload.reason);
       await this.orderRepository.save(order);
 
-      this.logger.log(`❌ Order ${payload.orderId} cancelled due to payment failure: ${payload.reason}`);
+      this.logger.log(
+        `❌ Order ${payload.orderId} cancelled due to payment failure: ${payload.reason}`,
+      );
     } catch (error) {
       this.logger.error(`❌ Error handling payment failed for order ${payload.orderId}`, error);
       throw error;
