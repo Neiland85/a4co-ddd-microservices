@@ -1,0 +1,27 @@
+# Workflows disabled for ultimate simplification - Saturday, 4 de January de 2026, 06:38 UTC
+
+All GitHub Actions workflows have been disabled to achieve maximum simplification of CI/CD runners.
+
+Workflows moved to: .github/workflows-disabled/
+- ci.yml → ci.yml.disabled
+- e2e.yml → e2e.yml.disabled  
+- deploy-production.yml → deploy-production.yml.disabled
+
+Replacement: Local cleanup and setup scripts
+- scripts/cleanup.sh - Clean build artifacts
+- scripts/cleanup-deep.sh - Deep cleanup including node_modules
+- scripts/setup-complete.sh - Complete setup from scratch
+
+Package.json commands added:
+- pnpm run clean - Run cleanup script
+- pnpm run clean:deep - Run deep cleanup script
+- pnpm run setup - Run complete setup script
+
+Benefits:
+- Zero GitHub Actions runner costs
+- Faster local development
+- Complete control over build/test/deploy
+- Simpler architecture
+- Local-first workflow
+
+To re-enable workflows, copy files from .github/workflows-disabled/ back to .github/workflows/
