@@ -31,8 +31,8 @@
     "schema": "prisma/schema.prisma"
   },
   "dependencies": {
-    "@a4co/observability": "file:../../../packages/observability",
-    "@a4co/shared-utils": "file:../../../packages/shared-utils",
+    "@a4co/observability": "workspace:*",
+    "@a4co/shared-utils": "workspace:*",
     "@nestjs/common": "^11.1.8",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^11.1.8",
