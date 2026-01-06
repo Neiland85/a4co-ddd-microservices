@@ -20,7 +20,13 @@ function findAllPackageJson(rootDir) {
   return results;
 }
 
-function load(file){ try { return JSON.parse(fs.readFileSync(file,'utf8')); } catch(e){ return null } }
+function load(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (e) {
+    return null;
+  }
+}
 
 const packageFiles = findAllPackageJson(root);
 const nameToPath = new Map();
@@ -36,7 +42,12 @@ for (const f of packageFiles) {
   const pkg = load(f);
   if (!pkg) continue;
   let modified = false;
-  for (const sec of ['dependencies','devDependencies','optionalDependencies','peerDependencies']) {
+  for (const sec of [
+    'dependencies',
+    'devDependencies',
+    'optionalDependencies',
+    'peerDependencies',
+  ]) {
     if (!pkg[sec]) continue;
     for (const [dep, ver] of Object.entries(pkg[sec])) {
       if (typeof ver === 'string' && ver.startsWith('file:')) {
@@ -46,7 +57,7 @@ for (const f of packageFiles) {
           // try to find target by name
           const target = nameToPath.get(dep);
           if (target) {
-            const newRel = path.relative(path.dirname(f), target).replace(/\\/g,'/');
+            const newRel = path.relative(path.dirname(f), target).replace(/\\/g, '/');
             pkg[sec][dep] = `file:${newRel}`;
             modified = true;
             console.log(`${f}: fixed ${dep} -> file:${newRel}`);
@@ -58,7 +69,7 @@ for (const f of packageFiles) {
     }
   }
   if (modified) {
-    fs.writeFileSync(f, JSON.stringify(pkg,null,2)+'\n','utf8');
+    fs.writeFileSync(f, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
     changed++;
   }
 }

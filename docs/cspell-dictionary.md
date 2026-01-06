@@ -1,81 +1,57 @@
 # Diccionario del Proyecto
 
-Última sincronización: 6/1/2026, 8:48:22
+Última sincronización: 6/1/2026, 9:09:16
 
 ---
-### User (global VSCode)
-Sin nuevas palabras.
+### User (global VSCode) (1)
+- tsconfig
 
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (68)
-- agent
+### Commits recientes detectados (44)
 - apps
-- authored
-- automated
-- branch
+- avoid
+- build
 - codacy
-- code
-- complete
-- compliance
-- comprehensive
-- configuration
-- copilot
-- deployment
 - deps
-- directory
-- documentation
-- dpia
+- domain
+- duplicate
 - enable
-- environment
 - events
+- exclude
 - file
-- files
-- gateway
-- gdpr
-- github
-- gitignore
-- graph
-- guides
-- html
-- https
+- from
+- globs
 - improved
+- include
 - indentation
-- infrastructure
-- initial
 - install
 - instead
 - instructions
+- inventory
+- json
+- libs
 - local
-- lopdgdd
-- main
 - make
-- matrix
 - microservices
-- move
-- neiland
-- noreply
+- nested
+- normalize
 - packages
 - payment
 - peerdependencies
-- plan
-- preview
-- production
+- pnpm
+- recursive
 - references
+- robust
+- root
 - safety
+- script
 - service
-- setup
 - shared
-- static
 - strictnullchecks
-- summary
-- temporary
-- testing
-- traceability
+- tsconfig
 - type
-- users
-- with
 - workspace
 - yaml
 

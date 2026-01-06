@@ -1,8 +1,8 @@
 packages:
-  - "apps/**"
-  - "packages/**"
-  - "!libs/**"
-  - "!a4co-ddd-microservices/**"
+  - 'apps/**'
+  - 'packages/**'
+  - '!libs/**'
+  - '!a4co-ddd-microservices/**'
 
 onlyBuiltDependencies:
   - '@firebase/util'

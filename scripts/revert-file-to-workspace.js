@@ -25,7 +25,12 @@ let changed = 0;
 for (const f of files) {
   const j = JSON.parse(fs.readFileSync(f, 'utf8'));
   let mod = false;
-  for (const sec of ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']) {
+  for (const sec of [
+    'dependencies',
+    'devDependencies',
+    'peerDependencies',
+    'optionalDependencies',
+  ]) {
     if (!j[sec]) continue;
     for (const [k, v] of Object.entries(j[sec])) {
       if (k.startsWith('@a4co/') && typeof v === 'string' && v.startsWith('file:')) {
