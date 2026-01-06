@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "strict": false,
+    "strictNullChecks": true,
     "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {
