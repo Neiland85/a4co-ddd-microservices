@@ -1,9 +1,7 @@
 {
   "json.schemas": [
     {
-      "fileMatch": [
-        "**/package.json"
-      ]
+      "fileMatch": ["**/package.json"]
     }
   ],
   "json.schemaDownload.enable": true,
@@ -1284,11 +1282,7 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.validate": [
-    "typescript",
-    "javascript",
-    "json"
-  ],
+  "eslint.validate": ["typescript", "javascript", "json"],
   "editor.codeActionsOnSave": {
     "editor.formatOnSave": "explicit",
     "prettier.useEditorConfig": "explicit",
@@ -1300,33 +1294,13 @@
     "typescriptreact": "javascript"
   },
   "tailwindCSS.experimental.classRegex": [
-    [
-      "cva\\(([^)]*)\\)",
-      "[\"'`]([^\"'`]*).*?[\"'`]"
-    ],
-    [
-      "cx\\(([^)]*)\\)",
-      "(?:'|\"|`)([^']*)(?:'|\"|`)"
-    ],
-    [
-      "cn\\(([^)]*)\\)",
-      "(?:'|\"|`)([^']*)(?:'|\"|`)"
-    ],
-    [
-      "clsx\\(([^)]*)\\)",
-      "(?:'|\"|`)([^']*)(?:'|\"|`)"
-    ],
-    [
-      "tv\\(([^)]*)\\)",
-      "[\"'`]([^\"'`]*).*?[\"'`]"
-    ]
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
-  "tailwindCSS.classAttributes": [
-    "class",
-    "className",
-    "ngClass",
-    "classList"
-  ],
+  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "classList"],
   "files.associations": {
     "*.css": "tailwindcss"
   },
@@ -1363,5 +1337,6 @@
   "files.autoSave": "onFocusChange",
   "editor.wordWrap": "on",
   "editor.formatOnPaste": true,
-  "editor.codeActions.triggerOnFocusChange": false
+  "editor.codeActions.triggerOnFocusChange": false,
+  "prisma.pinToPrisma6": true
 }

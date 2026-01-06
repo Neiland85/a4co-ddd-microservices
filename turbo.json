@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build", "generate"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "prisma/generated/**"],
       "inputs": ["src/**", "package.json", "tsconfig.json", "tsconfig.*.json"]
     },
     "generate": {
