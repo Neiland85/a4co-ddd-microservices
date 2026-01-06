@@ -1,29 +1,29 @@
 # Diccionario del Proyecto
 
-Última sincronización: 6/1/2026, 9:09:16
+Última sincronización: 6/1/2026, 9:09:45
 
 ---
-### User (global VSCode) (1)
-- tsconfig
+### User (global VSCode)
+Sin nuevas palabras.
 
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (44)
+### Commits recientes detectados (40)
 - apps
 - avoid
 - build
 - codacy
+- complete
+- configuration
 - deps
 - domain
 - duplicate
-- enable
 - events
 - exclude
 - file
 - from
 - globs
-- improved
 - include
 - indentation
 - install
@@ -33,25 +33,21 @@ Sin nuevas palabras.
 - json
 - libs
 - local
+- lockfile
 - make
 - microservices
 - nested
 - normalize
 - packages
-- payment
 - peerdependencies
 - pnpm
 - recursive
 - references
 - robust
 - root
-- safety
 - script
-- service
 - shared
-- strictnullchecks
 - tsconfig
-- type
 - workspace
 - yaml
 
