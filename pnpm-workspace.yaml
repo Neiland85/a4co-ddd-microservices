@@ -1,7 +1,7 @@
 packages:
   - "apps/**"
   - "packages/**"
-  - "libs/**"
+  - "!libs/**"
   - "!a4co-ddd-microservices/**"
 
 onlyBuiltDependencies:
