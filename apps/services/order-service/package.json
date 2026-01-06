@@ -16,11 +16,11 @@
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
-    "@a4co/domain": "workspace:*",
-    "@a4co/observability": "workspace:*",
-    "@a4co/shared-events": "workspace:*",
-    "@a4co/shared-utils": "workspace:*",
-    "@a4co/domain-order": "workspace:*",
+    "@a4co/domain": "file:../../../packages/domain",
+    "@a4co/observability": "file:../../../packages/observability",
+    "@a4co/shared-events": "file:../../../packages/shared-events",
+    "@a4co/shared-utils": "file:../../../packages/shared-utils",
+    "@a4co/domain-order": "file:../../../packages/domain/order",
     "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",
     "@nestjs/microservices": "^11.1.8",

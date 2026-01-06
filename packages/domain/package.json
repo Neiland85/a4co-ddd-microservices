@@ -32,6 +32,6 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@a4co/shared-utils": "workspace:*"
+    "@a4co/shared-utils": "file:../shared-utils"
   }
 }

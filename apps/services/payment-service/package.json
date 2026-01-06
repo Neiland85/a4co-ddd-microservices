@@ -16,10 +16,10 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@a4co/observability": "workspace:*",
-    "@a4co/shared-events": "workspace:*",
-    "@a4co/shared-utils": "workspace:*",
-    "@a4co/domain-payment": "workspace:*",
+    "@a4co/observability": "file:../../../packages/observability",
+    "@a4co/shared-events": "file:../../../packages/shared-events",
+    "@a4co/shared-utils": "file:../../../packages/shared-utils",
+    "@a4co/domain-payment": "file:../../../packages/domain/payment",
     "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",
     "@nestjs/microservices": "^11.1.8",
