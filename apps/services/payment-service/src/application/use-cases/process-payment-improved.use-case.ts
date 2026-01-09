@@ -1,9 +1,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
 import { StripeGateway } from '../../infrastructure/stripe.gateway';
 import { PaymentEventPublisher } from '../services/payment-event.publisher';
-import { Payment } from '../../domain/entities/payment.entity';
-import { Money } from '../../domain/value-objects/money.vo';
+import { PaymentRepository, Payment, Money } from '@a4co/domain-payment';
 
 export interface ProcessPaymentCommand {
   orderId: string;

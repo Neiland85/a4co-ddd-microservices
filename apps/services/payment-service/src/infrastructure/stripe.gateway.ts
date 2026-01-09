@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
-import { Money } from '../domain/value-objects/money.vo';
+import { Money } from '@a4co/domain-payment';
 
 export interface CreatePaymentIntentParams {
   amount: Money;

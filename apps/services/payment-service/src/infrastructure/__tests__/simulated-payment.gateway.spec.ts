@@ -1,5 +1,5 @@
 import { SimulatedPaymentGateway } from '../simulated-payment.gateway';
-import { Money } from '../../domain/value-objects/money.vo';
+import { Money } from '@a4co/domain-payment';
 
 describe('SimulatedPaymentGateway', () => {
   let gateway: SimulatedPaymentGateway;
@@ -78,7 +78,7 @@ describe('SimulatedPaymentGateway', () => {
       }
 
       // Assert - Approximately 90% should succeed (with some variance)
-      const successCount = results.filter(s => s === 'succeeded').length;
+      const successCount = results.filter((s) => s === 'succeeded').length;
       const successRate = successCount / 20;
 
       // Allow for statistical variance (70-100% success is acceptable for 20 samples)
@@ -192,7 +192,7 @@ describe('SimulatedPaymentGateway', () => {
 
       // Act & Assert
       await expect(gateway.createPaymentIntent(params)).rejects.toThrow(
-        'Unsupported currency: JPY. Supported currencies: EUR, USD, GBP'
+        'Unsupported currency: JPY. Supported currencies: EUR, USD, GBP',
       );
     });
   });
@@ -204,7 +204,7 @@ describe('SimulatedPaymentGateway', () => {
 
       // Act & Assert
       expect(() => new SimulatedPaymentGateway()).toThrow(
-        'PAYMENT_SUCCESS_RATE must be between 0 and 1, got: -0.1'
+        'PAYMENT_SUCCESS_RATE must be between 0 and 1, got: -0.1',
       );
     });
 
@@ -214,7 +214,7 @@ describe('SimulatedPaymentGateway', () => {
 
       // Act & Assert
       expect(() => new SimulatedPaymentGateway()).toThrow(
-        'PAYMENT_SUCCESS_RATE must be between 0 and 1, got: 1.5'
+        'PAYMENT_SUCCESS_RATE must be between 0 and 1, got: 1.5',
       );
     });
 

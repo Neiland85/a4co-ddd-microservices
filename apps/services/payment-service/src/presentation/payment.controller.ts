@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Headers, Inject, Logger, NotFoundException, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Inject,
+  Logger,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { PAYMENT_REPOSITORY_TOKEN } from '../application/application.constants';
 import { PaymentEventPublisher } from '../application/services/payment-event.publisher';
 import { PaymentService } from '../application/services/payment.service';
 import { ProcessPaymentUseCase } from '../application/use-cases/process-payment.use-case';
-import { PaymentRepository } from '../domain/repositories/payment.repository';
+import { PaymentRepository } from '@a4co/domain-payment';
 import { StripeGateway } from '../infrastructure/stripe.gateway';
 
 @Controller('payments')
@@ -17,7 +27,7 @@ export class PaymentController {
     @Inject(PAYMENT_REPOSITORY_TOKEN)
     private readonly paymentRepository: PaymentRepository,
     private readonly processPaymentUseCase: ProcessPaymentUseCase, // Inyectamos el caso de uso
-  ) { }
+  ) {}
 
   @Get('health')
   getHealth() {
@@ -26,10 +36,7 @@ export class PaymentController {
 
   // --- REST API: Handle Webhook ---
   @Post('webhook')
-  async handleWebhook(
-    @Body() body: any,
-    @Headers('stripe-signature') signature: string,
-  ) {
+  async handleWebhook(@Body() body: any, @Headers('stripe-signature') signature: string) {
     this.logger.log('📥 Recibiendo webhook de Stripe');
 
     if (!signature) {
@@ -96,11 +103,7 @@ export class PaymentController {
   @Post(':paymentId/refund')
   async refundPayment(@Param('paymentId') paymentId: string, @Body() dto: any) {
     this.logger.log(`💰 Processing refund for payment ${paymentId}`);
-    const refunded = await this.paymentService.refundPayment(
-      paymentId,
-      dto.amount,
-      dto.reason,
-    );
+    const refunded = await this.paymentService.refundPayment(paymentId, dto.amount, dto.reason);
     return refunded;
   }
 

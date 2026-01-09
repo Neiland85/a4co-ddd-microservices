@@ -1,4 +1,26 @@
-// Minimal exports for domain-inventory bounded context
+// Domain Entities
+export {
+  Product,
+  ProductProps,
+  StockReservation,
+  ReservationStatus,
+  ReservationItem,
+} from './entities/index.js';
+
+// Domain Events
+export {
+  InventoryReservedEvent,
+  InventoryReservedEventPayload,
+  InventoryReleasedEvent,
+  InventoryReleasedEventPayload,
+  InventoryOutOfStockEvent,
+  InventoryOutOfStockEventPayload,
+} from './events/index.js';
+
+// Domain Repositories (Ports)
+export { ProductRepository } from './repositories/index.js';
+
+// Legacy exports for backward compatibility
 export type SKU = string;
 
 export interface StockItem {

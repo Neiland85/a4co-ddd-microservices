@@ -17,7 +17,15 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"],
-      "inputs": ["src/**", "test/**", "tests/**", "__tests__/**", "*.test.*", "*.spec.*", "jest.config.*"]
+      "inputs": [
+        "src/**",
+        "test/**",
+        "tests/**",
+        "__tests__/**",
+        "*.test.*",
+        "*.spec.*",
+        "jest.config.*"
+      ]
     },
     "dev": {
       "cache": false,

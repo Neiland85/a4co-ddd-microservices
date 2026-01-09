@@ -1,15 +1,5 @@
-// Minimal exports for domain-order bounded context
-export type OrderId = string;
-
-export interface OrderItem {
-  productId: string;
-  quantity: number;
-}
-
-export interface Order {
-  id: OrderId;
-  items: OrderItem[];
-  total: number;
-}
-
-export const createEmptyOrder = (id: OrderId): Order => ({ id, items: [], total: 0 });
+// Public exports for domain-order bounded context
+export * from './entities/order.aggregate';
+export * from './value-objects/money.vo';
+export * from './events/index';
+export * from './ports/order.repository';

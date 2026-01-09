@@ -1,6 +1,5 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { Order, OrderItem } from '../../domain/aggregates/order.aggregate.js';
-import { IOrderRepository } from '../../domain/index.js';
+import { Order, OrderItem, IOrderRepository } from '@a4co/domain-order';
 import { CreateOrderCommand } from '../commands/create-order.command.js';
 import { ClientProxy } from '@nestjs/microservices';
 import { OrderCreatedV1Event, ORDER_CREATED_V1 } from '@a4co/shared-events';

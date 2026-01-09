@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Money } from '../domain/value-objects/money.vo';
+import { Money } from '@a4co/domain-payment';
 import { PaymentMetadata } from './payment-metadata';
 
 export interface CreatePaymentIntentParams {
@@ -23,10 +23,10 @@ export interface SimulatedPaymentIntent {
 
 /**
  * Simulated Payment Gateway for Testing
- * 
+ *
  * This gateway simulates payment processing with a configurable success rate.
  * Default is 90% success rate for testing saga compensations.
- * 
+ *
  * Usage: Set SIMULATED_PAYMENT=true in environment to use this instead of Stripe
  */
 @Injectable()
@@ -39,14 +39,16 @@ export class SimulatedPaymentGateway {
     // Read success rate from environment, default to 90%
     const envSuccessRate = process.env['PAYMENT_SUCCESS_RATE'];
     const parsedSuccessRate = envSuccessRate ? parseFloat(envSuccessRate) : 0.9;
-    
+
     // Validate success rate is between 0 and 1
     if (parsedSuccessRate < 0 || parsedSuccessRate > 1) {
       throw new Error(`PAYMENT_SUCCESS_RATE must be between 0 and 1, got: ${parsedSuccessRate}`);
     }
-    
+
     this.successRate = parsedSuccessRate;
-    this.logger.log(`💳 Simulated Payment Gateway initialized with ${this.successRate * 100}% success rate`);
+    this.logger.log(
+      `💳 Simulated Payment Gateway initialized with ${this.successRate * 100}% success rate`,
+    );
   }
 
   public async createPaymentIntent(
@@ -54,13 +56,17 @@ export class SimulatedPaymentGateway {
   ): Promise<SimulatedPaymentIntent> {
     // Validate currency is supported
     const currency = params.amount.currency.toUpperCase();
-    const isSupportedCurrency = (curr: string): curr is typeof SimulatedPaymentGateway.SUPPORTED_CURRENCIES[number] => {
-      return SimulatedPaymentGateway.SUPPORTED_CURRENCIES.includes(curr as typeof SimulatedPaymentGateway.SUPPORTED_CURRENCIES[number]);
+    const isSupportedCurrency = (
+      curr: string,
+    ): curr is (typeof SimulatedPaymentGateway.SUPPORTED_CURRENCIES)[number] => {
+      return SimulatedPaymentGateway.SUPPORTED_CURRENCIES.includes(
+        curr as (typeof SimulatedPaymentGateway.SUPPORTED_CURRENCIES)[number],
+      );
     };
-    
+
     if (!isSupportedCurrency(currency)) {
       throw new Error(
-        `Unsupported currency: ${currency}. Supported currencies: ${SimulatedPaymentGateway.SUPPORTED_CURRENCIES.join(', ')}`
+        `Unsupported currency: ${currency}. Supported currencies: ${SimulatedPaymentGateway.SUPPORTED_CURRENCIES.join(', ')}`,
       );
     }
 
@@ -85,18 +91,21 @@ export class SimulatedPaymentGateway {
 
     if (isSuccess) {
       this.logger.log(
-        `✅ Simulated payment intent ${intent.id} SUCCEEDED for order ${params.orderId} (${random.toFixed(3)} < ${this.successRate})`
+        `✅ Simulated payment intent ${intent.id} SUCCEEDED for order ${params.orderId} (${random.toFixed(3)} < ${this.successRate})`,
       );
     } else {
       this.logger.warn(
-        `❌ Simulated payment intent ${intent.id} FAILED for order ${params.orderId} (${random.toFixed(3)} >= ${this.successRate})`
+        `❌ Simulated payment intent ${intent.id} FAILED for order ${params.orderId} (${random.toFixed(3)} >= ${this.successRate})`,
       );
     }
 
     return intent;
   }
 
-  public async refundPayment(paymentIntentId: string, amount?: Money): Promise<{
+  public async refundPayment(
+    paymentIntentId: string,
+    amount?: Money,
+  ): Promise<{
     id: string;
     payment_intent: string;
     amount?: number;
@@ -121,6 +130,6 @@ export class SimulatedPaymentGateway {
 
   private async simulateDelay(minMs: number, maxMs: number): Promise<void> {
     const delay = Math.random() * (maxMs - minMs) + minMs;
-    return new Promise(resolve => setTimeout(resolve, delay));
+    return new Promise((resolve) => setTimeout(resolve, delay));
   }
 }

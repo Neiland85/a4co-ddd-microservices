@@ -1,12 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PaymentDomainService } from '../../domain/services/payment-domain.service';
-import { Payment } from '../../domain/entities/payment.entity';
-import { Money } from '../../domain/value-objects/money.vo';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
-import { PaymentStatusValue } from '../../domain/value-objects/payment-status.vo';
 import { StripeGateway } from '../../infrastructure/stripe.gateway';
 import { PaymentEventPublisher } from '../services/payment-event.publisher';
 import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
+import {
+  PaymentDomainService,
+  Payment,
+  Money,
+  PaymentRepository,
+  PaymentStatusValue,
+  PaymentId,
+} from '@a4co/domain-payment';
 
 export interface ProcessPaymentCommand {
   orderId: string;

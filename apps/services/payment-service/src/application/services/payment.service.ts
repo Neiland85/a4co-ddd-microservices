@@ -1,9 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ProcessPaymentUseCase, ProcessPaymentCommand } from '../use-cases/process-payment.use-case';
+import {
+  ProcessPaymentUseCase,
+  ProcessPaymentCommand,
+} from '../use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case';
 import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
-import { PaymentId } from '../../domain/value-objects/payment-id.vo';
+import { PaymentRepository, PaymentId } from '@a4co/domain-payment';
 
 @Injectable()
 export class PaymentService {
@@ -32,15 +34,15 @@ export class PaymentService {
   }
 
   getHealth() {
-    return { 
-      status: 'ok', 
+    return {
+      status: 'ok',
       service: 'payment-service',
       version: '1.0.0',
       dependencies: {
         database: 'connected',
         stripe: 'configured',
-        nats: 'connected'
-      }
+        nats: 'connected',
+      },
     };
   }
 }

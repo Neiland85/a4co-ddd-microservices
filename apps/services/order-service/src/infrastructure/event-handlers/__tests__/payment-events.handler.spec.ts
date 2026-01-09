@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentEventsHandler } from '../payment-events.handler';
-import { OrderRepository } from '../../../domain/repositories/order.repository';
-import { Order, OrderItem, OrderStatus } from '../../../domain/aggregates/order.aggregate';
+import {
+  IOrderRepository as OrderRepository,
+  Order,
+  OrderItem,
+  OrderStatus,
+} from '@a4co/domain-order';
 import { PaymentConfirmedV1Payload, PaymentFailedV1Payload } from '@a4co/shared-events';
 
 describe('PaymentEventsHandler', () => {
@@ -36,12 +40,12 @@ describe('PaymentEventsHandler', () => {
       // Arrange
       const orderId = 'order-123';
       const paymentId = 'payment-456';
-      
+
       const mockOrder = new Order(
         orderId,
         'customer-123',
         [new OrderItem('product-1', 2, 10.0, 'EUR')],
-        OrderStatus.PENDING
+        OrderStatus.PENDING,
       );
 
       mockOrderRepository.findById.mockResolvedValue(mockOrder);
@@ -105,12 +109,12 @@ describe('PaymentEventsHandler', () => {
       // Arrange
       const orderId = 'order-123';
       const reason = 'Insufficient funds';
-      
+
       const mockOrder = new Order(
         orderId,
         'customer-123',
         [new OrderItem('product-1', 2, 10.0, 'EUR')],
-        OrderStatus.PENDING
+        OrderStatus.PENDING,
       );
 
       mockOrderRepository.findById.mockResolvedValue(mockOrder);

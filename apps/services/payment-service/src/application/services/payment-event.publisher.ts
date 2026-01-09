@@ -1,8 +1,8 @@
 import { DomainEvent } from '@a4co/shared-utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Payment } from '../../domain/entities/payment.entity';
 import {
+  Payment,
   PaymentCreatedEvent,
   PaymentDomainEvent,
   PaymentEventPayload,
@@ -10,7 +10,7 @@ import {
   PaymentProcessingEvent,
   PaymentRefundedEvent,
   PaymentSucceededEvent,
-} from '../../domain/events';
+} from '@a4co/domain-payment';
 import {
   PaymentConfirmedV1Event,
   PaymentFailedV1Event,
@@ -35,7 +35,7 @@ export class PaymentEventPublisher {
   constructor(
     @Inject('NATS_CLIENT')
     private readonly natsClient: ClientProxy,
-  ) { }
+  ) {}
 
   public async publishPaymentEvents(payment: Payment): Promise<void> {
     const events = payment.getUncommittedEvents();

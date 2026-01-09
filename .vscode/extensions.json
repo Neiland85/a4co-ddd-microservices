@@ -1,18 +1,9 @@
 {
   "recommendations": [
-    "esbenp.prettier-vscode", // Formateo automático de código con Prettier
-    "dbaeumer.vscode-eslint", // Integración con ESLint para linting en TS/JS
-    "prisma.prisma", // Soporte para Prisma ORM (schema highlighting, autocompletado)
-    "ms-azuretools.vscode-docker", // Soporte para Dockerfiles y Compose (build, run, debug)
-    "redhat.vscode-yaml", // Validación y autocompletado para YAML (e.g., docker-compose.yml)
-    "editorconfig.editorconfig", // Soporte para .editorconfig (consistencia de estilo)
-    "orta.vscode-jest", // Runner y debugger para tests Jest
-    "github.copilot", // GitHub Copilot para autocompletado AI
-    "github.copilot-chat", // Chat integrado con Copilot Pro+ para prompts
-    "eamodio.gitlens", // GitLens para historia de commits y blame avanzado
-    "rangav.vscode-thunder-client", // Thunder Client para testing de APIs (alternativa a Postman)
-    "christian-kohler.npm-intellisense", // Autocompletado para imports npm/pnpm
-    "mikestead.dotenv",
-    "anthropic.claude-code" // Soporte para archivos .env (highlighting y autocompletado)
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-docker",
+    "prisma.prisma",
+    "editorconfig.editorconfig"
   ]
 }

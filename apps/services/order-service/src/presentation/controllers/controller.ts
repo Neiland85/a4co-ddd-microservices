@@ -8,7 +8,7 @@ import {
   GetOrderRequestV1,
   OrderResponseV1,
 } from '../../contracts/api/v1/dto.js';
-import { OrderItem } from '../../domain/aggregates/order.aggregate.js';
+import { OrderItem } from '@a4co/domain-order';
 
 @ApiTags('orders')
 @Controller('orders')

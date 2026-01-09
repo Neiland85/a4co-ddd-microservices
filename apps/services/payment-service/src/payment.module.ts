@@ -7,7 +7,7 @@ import { PaymentEventPublisher } from './application/services/payment-event.publ
 import { PaymentService } from './application/services/payment.service';
 import { ProcessPaymentUseCase } from './application/use-cases/process-payment.use-case';
 import { RefundPaymentUseCase } from './application/use-cases/refund-payment.use-case';
-import { PaymentDomainService } from './domain/services/payment-domain.service';
+import { PaymentDomainService } from '@a4co/domain-payment';
 import { PrismaService } from './infrastructure/prisma/prisma.service';
 import { PrismaPaymentRepository } from './infrastructure/repositories/prisma-payment.repository';
 import { StripeGateway } from './infrastructure/stripe.gateway';
@@ -86,4 +86,4 @@ import { validateEnv } from './config/env.validation';
   ],
   exports: [PaymentService, ProcessPaymentUseCase, RefundPaymentUseCase, ClientsModule],
 })
-export class PaymentModule { }
+export class PaymentModule {}
