@@ -1,53 +1,167 @@
 # Diccionario del Proyecto
 
-Última sincronización: 6/1/2026, 9:09:45
+Última sincronización: 9/1/2026, 8:56:44
 
 ---
-### User (global VSCode)
-Sin nuevas palabras.
-
-### Workspace (proyecto local)
-Sin nuevas palabras.
-
-### Commits recientes detectados (40)
+### User (global VSCode) (62)
+- DDD
+- DTO
+- Grafana
+- Prometheus
+- TypeORM
+- a4co
+- agregar
 - apps
 - avoid
 - build
-- codacy
+- compatible
 - complete
+- configuración
 - configuration
 - deps
 - domain
 - duplicate
+- eslint
+- eslintrc
+- esquema
 - events
 - exclude
 - file
+- formato
 - from
 - globs
+- herramientas
 - include
-- indentation
 - install
 - instead
-- instructions
 - inventory
 - json
+- legado
 - libs
 - local
 - lockfile
-- make
+- loguear
 - microservices
+- microservicios
+- middleware
+- monorepo
 - nested
+- nestjs
 - normalize
+- observabilidad
+- only
+- package
 - packages
 - peerdependencies
 - pnpm
+- prisma
 - recursive
-- references
+- repositorio
+- requieren
 - robust
 - root
 - script
 - shared
 - tsconfig
+- uses
+- workspace
+- yaml
+
+### Workspace (proyecto local) (47)
+- agregar
+- apps
+- avoid
+- build
+- compatible
+- complete
+- configuración
+- configuration
+- deps
+- domain
+- duplicate
+- eslint
+- eslintrc
+- events
+- exclude
+- file
+- formato
+- from
+- globs
+- herramientas
+- include
+- install
+- instead
+- inventory
+- json
+- legado
+- libs
+- local
+- lockfile
+- nested
+- normalize
+- observabilidad
+- only
+- package
+- packages
+- peerdependencies
+- pnpm
+- recursive
+- requieren
+- robust
+- root
+- script
+- shared
+- tsconfig
+- uses
+- workspace
+- yaml
+
+### Commits recientes detectados (47)
+- agregar
+- apps
+- avoid
+- build
+- compatible
+- complete
+- configuración
+- configuration
+- deps
+- domain
+- duplicate
+- eslint
+- eslintrc
+- events
+- exclude
+- file
+- formato
+- from
+- globs
+- herramientas
+- include
+- install
+- instead
+- inventory
+- json
+- legado
+- libs
+- local
+- lockfile
+- microservices
+- nested
+- normalize
+- only
+- package
+- packages
+- peerdependencies
+- pnpm
+- recursive
+- requieren
+- robust
+- root
+- script
+- shared
+- tsconfig
+- uses
 - workspace
 - yaml
 

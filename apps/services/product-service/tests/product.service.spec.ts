@@ -1,3 +1,42 @@
+// Mock para BaseService usando el nombre del paquete npm
+jest.mock('@a4co/shared-utils', () => ({
+  BaseService: jest.fn().mockImplementation(function (serviceName: string) {
+    this.serviceName = serviceName;
+    this.validateRequired = jest.fn((value, field) => {
+      if (value === undefined || value === null || value === '') {
+        throw new Error(`${field} is required`);
+      }
+      return value;
+    });
+    this.validateId = jest.fn((value, field) => {
+      if (value === undefined || value === null || value === '') {
+        throw new Error(`${field} is required`);
+      }
+      return value;
+    });
+    this.log = jest.fn();
+    this.createSuccessMessage = jest.fn(
+      (entity, action, details) => `${entity} ${action} successfully ${details}`,
+    );
+    this.handleServiceError = jest.fn((error, method) => `Error in ${method}: ${error.message}`);
+  }),
+  BaseController: jest.fn().mockImplementation(function (service: any) {
+    this.service = new service();
+    this.validateRequest = jest.fn((req, fields) => {
+      const validated: any = {};
+      fields.forEach((field: string) => {
+        if (req[field] === undefined || req[field] === null) {
+          throw new Error(`${field} is required`);
+        }
+        validated[field] = req[field];
+      });
+      return validated;
+    });
+    this.formatResponse = jest.fn((data) => ({ data }));
+    this.handleError = jest.fn((error) => ({ error: error.message }));
+  }),
+}));
+
 import {
   Price,
   ProductDescription,
@@ -102,44 +141,6 @@ describe('Product Value Objects', () => {
     });
   });
 });
-
-// Mock para BaseService
-jest.mock('../../../packages/shared-utils/src/base', () => ({
-  BaseService: jest.fn().mockImplementation(() => ({
-    validateRequired: jest.fn((value, field) => {
-      if (value === undefined || value === null || value === '') {
-        throw new Error(`${field} is required`);
-      }
-      return value;
-    }),
-    validateId: jest.fn((value, field) => {
-      if (value === undefined || value === null || value === '') {
-        throw new Error(`${field} is required`);
-      }
-      return value;
-    }),
-    log: jest.fn(),
-    createSuccessMessage: jest.fn(
-      (entity, action, details) => `${entity} ${action} successfully ${details}`
-    ),
-    handleServiceError: jest.fn((error, method) => `Error in ${method}: ${error.message}`),
-  })),
-  BaseController: jest.fn().mockImplementation(() => ({
-    validateRequest: jest.fn((req, fields) => {
-      const validated: any = {};
-      fields.forEach((field: string) => {
-        if (req[field] === undefined || req[field] === null) {
-          throw new Error(`${field} is required`);
-        }
-        validated[field] = req[field];
-      });
-      return validated;
-    }),
-    formatResponse: jest.fn(data => ({ data })),
-    handleError: jest.fn(error => ({ error: error.message })),
-    service: null,
-  })),
-}));
 
 describe('ProductService - Casos de Uso Principales', () => {
   let productService: ProductService;

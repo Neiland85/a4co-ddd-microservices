@@ -5,11 +5,8 @@
     "types": ["jest", "node"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false
+    "isolatedModules": true
   },
-  "include": ["**/*.ts", "tests/**/*.ts", "*.test.ts", "*.spec.ts"],
+  "include": ["**/*.ts", "tests/**/*.ts", "src/**/*.ts", "*.test.ts", "*.spec.ts"],
   "exclude": ["node_modules", "dist"]
 }
