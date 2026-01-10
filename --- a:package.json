@@ -1,0 +1,10 @@
+--- a/package.json
++++ b/package.json
+@@ -32,6 +32,7 @@
+     "update:dicts": "ts-node scripts/update-cspell-dicts.ts",
+     "prepare": "simple-git-hooks",
+     "metrics": "curl http://localhost:3004/orders/metrics | grep saga || true",
++    "affected:graph": "nx affected:graph --exclude=*-e2e",
+     "observability:up": "docker-compose -f docker-compose.observability.yml up -d",
+     "observability:down": "docker-compose -f docker-compose.observability.yml down",
+     "observability:logs": "docker-compose -f docker-compose.observability.yml logs -f",

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PrismaClient } from '../prisma/generated';
+import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { InventoryController } from './inventory.controller';
@@ -20,14 +20,17 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
       isGlobal: true,
     }),
     // NATS Client: Habilitado para escuchar eventos de Order
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'NATS_CLIENT',
-        transport: Transport.NATS,
-        options: {
-          servers: [process.env['NATS_URL'] || 'nats://localhost:4222'],
-          queue: 'inventory-service-queue',
-        },
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.NATS,
+          options: {
+            servers: [configService.get<string>('NATS_URL') || 'nats://localhost:4222'],
+            queue: 'inventory-service-queue',
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
   ],
@@ -36,12 +39,13 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
     // Database Provider (Prisma with PG Adapter)
     {
       provide: 'PRISMA_CLIENT',
-      useFactory: () => {
-        const connectionString = process.env['DATABASE_URL'];
+      useFactory: (configService: ConfigService) => {
+        const connectionString = configService.get<string>('DATABASE_URL');
         const pool = new Pool({ connectionString });
         const adapter = new PrismaPg(pool);
-        return new PrismaClient();
+        return new PrismaClient({ adapter });
       },
+      inject: [ConfigService],
     },
     // Repositories
     {
