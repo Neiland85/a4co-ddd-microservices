@@ -40,21 +40,6 @@ scrape_configs:
   # ================================================================
   # MICROSERVICES - A4CO DDD
   # ================================================================
-  
-  - job_name: 'auth-service'
-    static_configs:
-      - targets: ['auth-service:4000']
-    metrics_path: '/metrics'
-    scrape_interval: 10s
-    scrape_timeout: 5s
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
-        replacement: 'auth-service'
-      - target_label: service
-        replacement: 'auth-service'
-      - target_label: service_type
-        replacement: 'microservice'
 
   - job_name: 'order-service'
     static_configs:
@@ -134,7 +119,7 @@ scrape_configs:
   # ================================================================
   # NATS MESSAGE BROKER MONITORING
   # ================================================================
-  
+
   - job_name: 'nats-server'
     static_configs:
       - targets: ['nats:8222']
@@ -162,7 +147,7 @@ scrape_configs:
   # ================================================================
   # INFRASTRUCTURE SERVICES
   # ================================================================
-  
+
   - job_name: 'postgres-exporter'
     static_configs:
       - targets: ['postgres-exporter:9187']
@@ -192,7 +177,7 @@ scrape_configs:
   # ================================================================
   # OBSERVABILITY STACK SELF-MONITORING
   # ================================================================
-  
+
   - job_name: 'grafana'
     static_configs:
       - targets: ['grafana:3000']
@@ -240,7 +225,7 @@ scrape_configs:
   # ================================================================
   # NODE EXPORTER (Optional - for host metrics)
   # ================================================================
-  
+
   # - job_name: 'node-exporter'
   #   static_configs:
   #     - targets: ['node-exporter:9100']

@@ -17,12 +17,12 @@ NC='\033[0m' # No Color
 create_env_file() {
     local source_file=$1
     local target_file=$2
-    
+
     if [ -f "$target_file" ]; then
         echo -e "${YELLOW}⚠️  El archivo $target_file ya existe. Saltando...${NC}"
         return
     fi
-    
+
     if [ -f "$source_file" ]; then
         cp "$source_file" "$target_file"
         echo -e "${GREEN}✅ Creado $target_file${NC}"
@@ -41,11 +41,7 @@ echo "📍 Directorio del proyecto: $PROJECT_ROOT"
 echo -e "\n📁 Creando archivo .env.local en el directorio raíz..."
 create_env_file "env.config.example" ".env.local"
 
-# 2. Crear .env para auth-service
-echo -e "\n🔐 Creando archivo .env para auth-service..."
-create_env_file "apps/auth-service/env.config.example" "apps/auth-service/.env"
-
-# 3. Crear .env para product-service
+# 2. Crear .env para product-service
 echo -e "\n📦 Creando archivo .env para product-service..."
 create_env_file "apps/product-service/env.config.example" "apps/product-service/.env"
 

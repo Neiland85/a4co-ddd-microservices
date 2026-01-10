@@ -26,7 +26,6 @@ services=(
   "apps/order-service"
   "apps/payment-service"
   "apps/inventory-service"
-  "apps/auth-service"
   "apps/product-service"
   "apps/user-service"
   "apps/notification-service"

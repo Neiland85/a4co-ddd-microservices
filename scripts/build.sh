@@ -96,7 +96,6 @@ build_backend_services() {
     log "Compilando servicios backend..."
 
     local backend_services=(
-        "auth-service"
         "user-service"
         "product-service"
         "order-service"

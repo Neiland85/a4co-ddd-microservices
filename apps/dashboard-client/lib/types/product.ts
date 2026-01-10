@@ -4,9 +4,13 @@ export interface Product {
   description: string;
   price: number;
   stock: number;
+
+  // Opcionales / proyección UI
   category?: string;
   imageUrl?: string;
   sku?: string;
+
+  // Metadata backend
   createdAt?: string;
   updatedAt?: string;
 }

@@ -37,7 +37,6 @@ scrape_configs:
           - 'payment-service:3004'
           - 'notification-service:3005'
           - 'inventory-service:3006'
-          - 'auth-service:3007'
         labels:
           group: 'backend'
     relabel_configs:

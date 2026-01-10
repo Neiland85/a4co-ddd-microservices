@@ -47,25 +47,6 @@ services:
   # MICROSERVICIOS
   # ----------------------------------------------------------------
 
-  auth-service:
-    build:
-      context: .
-      dockerfile: apps/auth-service/Dockerfile
-    container_name: auth-service
-    ports:
-      - "4000:4000"
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-CHANGE_ME}@postgres:5432/auth_db?schema=public
-      - NATS_URL=nats://nats:4222
-    depends_on:
-      postgres:
-        condition: service_healthy
-      nats:
-        condition: service_started
-    networks:
-      - microservices-net
-
   order-service:
     build:
       context: .
@@ -166,7 +147,6 @@ services:
       - JWT_EXPIRES_IN=24h
       - JWT_REFRESH_EXPIRES_IN=7d
       # Service URLs (internal Docker network using service names)
-      - AUTH_SERVICE_URL=http://auth-service:4000
       - PRODUCTS_SERVICE_URL=http://product-service:3003
       - ORDERS_SERVICE_URL=http://order-service:3000
       - INVENTORY_SERVICE_URL=http://inventory-service:3002
@@ -186,7 +166,6 @@ services:
       - order-service
       - payment-service
       - inventory-service
-      - auth-service
       - product-service
     networks:
       - microservices-net

@@ -38,7 +38,6 @@ info() {
 
 # Lista de servicios disponibles
 SERVICES=(
-    "auth-service"
     "user-service"
     "product-service"
     "order-service"

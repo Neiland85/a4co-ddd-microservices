@@ -34,11 +34,11 @@ info() {
 # Banner
 echo -e "${BLUE}"
 cat << "EOF"
-    _  _   ____  ____  ___  
-   / )( \ / ___)/ ___)/ _ \ 
+    _  _   ____  ____  ___
+   / )( \ / ___)/ ___)/ _ \
    \ (/ /      ) (__ ) __ (
     \__/ \____)\___)\__)(__)
-                            
+
    Marketplace Local de Jaén
    Starting All Services...
 EOF
@@ -61,13 +61,13 @@ cleanup() {
             kill "${PIDS[$i]}" 2>/dev/null || true
         fi
     done
-    
+
     # Detener infraestructura Docker
     if [[ "$DOCKER_STARTED" == "true" ]]; then
         echo -e "${YELLOW}Deteniendo infraestructura Docker...${NC}"
         docker-compose -f docker-compose.messaging.yml down
     fi
-    
+
     exit 0
 }
 
@@ -76,9 +76,9 @@ trap cleanup EXIT INT TERM
 # Verificar dependencias
 check_dependencies() {
     log "🔍 Verificando dependencias..."
-    
+
     local missing=0
-    
+
     # Node.js
     if ! command -v node &> /dev/null; then
         error "Node.js no está instalado"
@@ -86,7 +86,7 @@ check_dependencies() {
     else
         info "Node.js: $(node --version)"
     fi
-    
+
     # pnpm
     if ! command -v pnpm &> /dev/null; then
         error "pnpm no está instalado"
@@ -94,7 +94,7 @@ check_dependencies() {
     else
         info "pnpm: $(pnpm --version)"
     fi
-    
+
     # Docker
     if ! command -v docker &> /dev/null; then
         error "Docker no está instalado"
@@ -102,7 +102,7 @@ check_dependencies() {
     else
         info "Docker: $(docker --version)"
     fi
-    
+
     if [ $missing -eq 1 ]; then
         error "Faltan dependencias necesarias"
         exit 1
@@ -120,7 +120,7 @@ install_dependencies() {
 # Iniciar infraestructura Docker
 start_docker_infrastructure() {
     log "🐳 Iniciando infraestructura Docker..."
-    
+
     # Iniciar mensajería y bases de datos
     if [ -f "docker-compose.messaging.yml" ]; then
         docker-compose -f docker-compose.messaging.yml up -d
@@ -141,22 +141,22 @@ start_service() {
     local dir=$2
     local port=$3
     local command=$4
-    
+
     echo -e "${CYAN}🚀 Iniciando $name en puerto $port...${NC}"
-    
+
     cd "$dir"
     if [ ! -d "node_modules" ]; then
         pnpm install
     fi
     cd - > /dev/null
-    
+
     # Ejecutar comando y guardar logs
     (cd "$dir" && "$command") > "$LOGS_DIR/${name}.log" 2>&1 &
     local pid=$!
-    
+
     PIDS+=($pid)
     SERVICE_NAMES+=("$name")
-    
+
     # Verificar que el proceso se inició
     sleep 2
     if kill -0 $pid 2>/dev/null; then
@@ -194,9 +194,9 @@ start_service "web-frontend" "apps/web/v0dev/a-head" "3000" "pnpm dev"
 start_service "dashboard-web" "apps/dashboard-web" "3001" "pnpm dev"
 
 # 4. Backend Microservicios
-# Auth Service
-if [ -d "apps/auth-service" ]; then
-    start_service "auth-service" "apps/auth-service" "4001" "pnpm start:dev"
+# User Service
+if [ -d "apps/user-service" ]; then
+    start_service "user-service" "apps/user-service" "4002" "pnpm start:dev"
 fi
 
 # Product Service
@@ -261,7 +261,7 @@ if command -v docker &> /dev/null; then
     if docker ps | grep -q jaeger; then
         echo -e "${CYAN}🔍 Jaeger UI:${NC} http://localhost:16686"
     fi
-    
+
     # Verificar si Prometheus está corriendo
     if docker ps | grep -q prometheus; then
         echo -e "${CYAN}📊 Prometheus:${NC} http://localhost:9090"

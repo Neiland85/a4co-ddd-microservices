@@ -4,5 +4,5 @@
     "composite": true
   },
   "files": [],
-  "references": [{ "path": "./auth-service" }]
+  "references": []
 }

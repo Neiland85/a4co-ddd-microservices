@@ -35,8 +35,5 @@ cd apps/admin-service && npm run build 2>&1 | tail -5 && cd ../..
 echo "🛍️ Compilando product-service..."
 cd apps/product-service && npm run build 2>&1 | tail -5 && cd ../..
 
-echo "🔐 Compilando auth-service..."
-cd apps/auth-service && npm run build 2>&1 | tail -5 && cd ../..
-
 echo "✨ Proceso de optimización y compilación completado."
 echo "🎉 Todos los componentes han sido optimizados para máximo rendimiento."

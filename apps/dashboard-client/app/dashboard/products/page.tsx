@@ -1,74 +1,135 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { BuyModal } from '@/components/products/BuyModal';
-import { LoadingPage } from '@/components/common/LoadingSpinner';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@dashboard/lib/context/ToastContext';
 import { productsService } from '@dashboard/lib/services';
 import type { Product } from '@dashboard/lib/types';
 
+/* -------------------------------------------------
+   Feature flag: backend on/off
+-------------------------------------------------- */
+const BACKEND_ENABLED = process.env.NEXT_PUBLIC_BACKEND_ENABLED === 'true';
+
+/* -------------------------------------------------
+   Mock temporal de productos
+-------------------------------------------------- */
+const MOCK_PRODUCTS: Product[] = [
+  {
+    id: 'mock-1',
+    name: 'Producto Demo A',
+    description: 'Producto de ejemplo para desarrollo UI',
+    price: 29.99,
+    stock: 12,
+  },
+  {
+    id: 'mock-2',
+    name: 'Producto Demo B',
+    description: 'Otro producto mock',
+    price: 49.99,
+    stock: 0,
+  },
+  {
+    id: 'mock-3',
+    name: 'Producto Demo C',
+    description: 'Mock con stock',
+    price: 19.99,
+    stock: 5,
+  },
+];
+
+type PageState = 'loading' | 'error' | 'empty' | 'success';
+
 export default function ProductsPage() {
   const { showToast } = useToast();
+
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+  const [state, setState] = useState<PageState>('loading');
+
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
 
+  /* -------------------------------------------------
+     Load products
+  -------------------------------------------------- */
   useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setState('loading');
+
+        let data: Product[];
+
+        if (BACKEND_ENABLED) {
+          data = await productsService.getProducts();
+        } else {
+          data = MOCK_PRODUCTS;
+        }
+
+        if (data.length === 0) {
+          setState('empty');
+        } else {
+          setProducts(data);
+          setState('success');
+        }
+      } catch (error) {
+        console.error('Error loading products:', error);
+        showToast('No se pudieron cargar los productos', 'error');
+        setState('error');
+      }
+    };
+
     loadProducts();
-  }, []);
+  }, [showToast]);
 
-  useEffect(() => {
-    filterProducts();
-  }, [products, searchQuery, showAvailableOnly]);
-
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      const data = await productsService.getProducts();
-      setProducts(data);
-    } catch (error) {
-      console.error('Error loading products:', error);
-      showToast('Error al cargar productos', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterProducts = () => {
-    let filtered = [...products];
+  /* -------------------------------------------------
+     Optimización filtros
+  -------------------------------------------------- */
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
 
     if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query) ||
-          p.description.toLowerCase().includes(query),
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q),
       );
     }
 
     if (showAvailableOnly) {
-      filtered = filtered.filter((p) => p.stock > 0);
+      result = result.filter((p) => p.stock > 0);
     }
 
-    setFilteredProducts(filtered);
-  };
+    return result;
+  }, [products, searchQuery, showAvailableOnly]);
 
-  const handleBuy = (product: Product) => {
-    setSelectedProduct(product);
-    setIsBuyModalOpen(true);
-  };
-
-  if (loading) {
-    return <LoadingPage />;
+  /* -------------------------------------------------
+     UX states
+  -------------------------------------------------- */
+  if (state === 'loading') {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-48 rounded-lg bg-slate-200 dark:bg-slate-800 animate-pulse" />
+        ))}
+      </div>
+    );
   }
 
+  if (state === 'error') {
+    return <div className="text-center py-20 text-slate-500">Error al cargar productos.</div>;
+  }
+
+  if (state === 'empty') {
+    return <div className="text-center py-20 text-slate-500">No hay productos disponibles.</div>;
+  }
+
+  /* -------------------------------------------------
+     Success
+  -------------------------------------------------- */
   return (
     <div className="space-y-8">
       <div>
@@ -81,7 +142,7 @@ export default function ProductsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 z-10" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
           <Input
             type="text"
             placeholder="Buscar productos..."
@@ -90,24 +151,25 @@ export default function ProductsPage() {
             className="pl-10"
           />
         </div>
-        
+
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
             checked={showAvailableOnly}
             onChange={(e) => setShowAvailableOnly(e.target.checked)}
-            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
           />
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Solo disponibles
-          </span>
+          <span className="text-sm">Solo disponibles</span>
         </label>
       </div>
 
-      {/* Products Grid */}
-      <ProductGrid products={filteredProducts} onBuy={handleBuy} />
+      <ProductGrid
+        products={filteredProducts}
+        onBuy={(p) => {
+          setSelectedProduct(p);
+          setIsBuyModalOpen(true);
+        }}
+      />
 
-      {/* Buy Modal */}
       <BuyModal
         product={selectedProduct}
         isOpen={isBuyModalOpen}

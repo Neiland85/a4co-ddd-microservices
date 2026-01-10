@@ -1,14 +1,30 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+
+    "strict": true,
+    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": true,
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "outDir": "./dist",
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
+      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
+      "@a4co/shared-events": ["../../packages/shared-events/src"]
     }
   },
-  "include": ["src/**/*.ts", "../../packages/shared-utils/src/**/*.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "test"]
 }

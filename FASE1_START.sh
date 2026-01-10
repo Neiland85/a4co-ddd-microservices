@@ -21,7 +21,7 @@ pnpm run build > /dev/null 2>&1 && echo "✓ Build completado" || echo "✗ Buil
 
 # 3. Prisma DB Push
 echo "✅ Prisma schema sync..."
-cd apps/auth-service && npx prisma db push --skip-generate > /dev/null 2>&1 && echo "✓ Prisma sincronizado" || echo "✗ Prisma falló"
+echo "⚠️  Note: Prisma sync moved to individual services"
 cd "$ROOT_DIR"
 
 # 4. Environment check

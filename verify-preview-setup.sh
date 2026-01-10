@@ -50,7 +50,7 @@ FAILED=0
 test_file() {
     local file=$1
     local description=$2
-    
+
     if [ -f "$file" ]; then
         print_success "$description exists"
         ((PASSED++))
@@ -66,7 +66,7 @@ test_file() {
 test_dir() {
     local dir=$1
     local description=$2
-    
+
     if [ -d "$dir" ]; then
         print_success "$description exists"
         ((PASSED++))
@@ -82,7 +82,7 @@ test_dir() {
 test_command() {
     local cmd=$1
     local description=$2
-    
+
     if command -v $cmd &> /dev/null; then
         print_success "$description is available"
         ((PASSED++))
@@ -98,7 +98,7 @@ test_command() {
 test_compose_syntax() {
     local compose_file=$1
     local description=$2
-    
+
     if docker compose -f "$compose_file" config > /dev/null 2>&1; then
         print_success "$description syntax is valid"
         ((PASSED++))
@@ -163,7 +163,6 @@ test_file "README.md" "Project README"
 
 # Check Dockerfiles
 print_header "5. Service Dockerfiles"
-test_file "apps/auth-service/Dockerfile" "Auth Service Dockerfile"
 test_file "apps/order-service/Dockerfile" "Order Service Dockerfile"
 test_file "apps/payment-service/Dockerfile" "Payment Service Dockerfile"
 test_file "apps/inventory-service/Dockerfile" "Inventory Service Dockerfile"
@@ -174,7 +173,6 @@ test_file "apps/frontend/Dockerfile" "Frontend Dockerfile"
 
 # Check service directories
 print_header "6. Service Directories"
-test_dir "apps/auth-service" "Auth Service"
 test_dir "apps/order-service" "Order Service"
 test_dir "apps/payment-service" "Payment Service"
 test_dir "apps/inventory-service" "Inventory Service"
@@ -193,7 +191,7 @@ if [ -f "package.json" ]; then
         print_error "preview:start script NOT defined"
         ((FAILED++))
     fi
-    
+
     if grep -q "preview:up" package.json; then
         print_success "preview:up script defined"
         ((PASSED++))
@@ -201,7 +199,7 @@ if [ -f "package.json" ]; then
         print_error "preview:up script NOT defined"
         ((FAILED++))
     fi
-    
+
     if grep -q "prod:up" package.json; then
         print_success "prod:up script defined"
         ((PASSED++))

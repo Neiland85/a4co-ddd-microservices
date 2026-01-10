@@ -1,29 +1,15 @@
 {
   "json.schemas": [
     {
-      "fileMatch": [
-        "**/package.json"
-      ]
+      "fileMatch": ["**/package.json"]
     }
   ],
   "json.schemaDownload.enable": true,
   "cSpell.language": "en,es",
   "cSpell.words": [
-    "CQRS",
-    "DDD",
-    "Grafana",
-    "Hexagonal",
-    "Jaeger",
-    "JetStream",
-    "Loki",
-    "NATS",
-    "NestJS",
-    "PostgreSQL",
-    "Prisma",
-    "Prometheus",
-    "Saga",
     "a4co",
     "agregar",
+    "animejs",
     "apps",
     "avoid",
     "bounded",
@@ -33,6 +19,8 @@
     "configuración",
     "configuration",
     "correlationid",
+    "CQRS",
+    "DDD",
     "deps",
     "domain",
     "duplicate",
@@ -45,22 +33,29 @@
     "formato",
     "from",
     "globs",
+    "Grafana",
     "herramientas",
     "hexagonal",
+    "Hexagonal",
     "idempotency",
     "include",
     "install",
     "instead",
     "inventory",
+    "Jaeger",
+    "JetStream",
     "json",
     "legado",
     "libs",
     "local",
     "lockfile",
+    "Loki",
     "microservices",
     "microservicios",
     "monorepo",
+    "NATS",
     "nested",
+    "NestJS",
     "normalize",
     "observabilidad",
     "observability",
@@ -69,10 +64,14 @@
     "packages",
     "peerdependencies",
     "pnpm",
+    "PostgreSQL",
+    "Prisma",
+    "Prometheus",
     "recursive",
     "requieren",
     "robust",
     "root",
+    "Saga",
     "script",
     "shared",
     "tsconfig",
@@ -84,11 +83,7 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.validate": [
-    "typescript",
-    "javascript",
-    "json"
-  ],
+  "eslint.validate": ["typescript", "javascript", "json"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
@@ -102,12 +97,7 @@
     "typescript": "javascript",
     "typescriptreact": "javascript"
   },
-  "tailwindCSS.classAttributes": [
-    "class",
-    "className",
-    "ngClass",
-    "classList"
-  ],
+  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "classList"],
   "files.associations": {
     "*.css": "tailwindcss"
   },
@@ -117,10 +107,7 @@
   "terminal.integrated.profiles.osx": {
     "zsh-vscode": {
       "path": "/bin/zsh",
-      "args": [
-        "--rcs",
-        "--no-globalrcs"
-      ]
+      "args": ["--rcs", "--no-globalrcs"]
     }
   },
   "terminal.integrated.defaultProfile.osx": "zsh-vscode",

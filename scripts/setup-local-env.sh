@@ -27,8 +27,6 @@ REDIS_URL=redis://localhost:6379
 
 # JWT
 JWT_SECRET=dev-secret-key-CHANGE-IN-PRODUCTION-minimum-32-chars
-JWT_ISSUER=a4co-auth-service
-JWT_AUDIENCE=a4co-platform
 JWT_EXPIRATION=3600
 
 # Services Ports

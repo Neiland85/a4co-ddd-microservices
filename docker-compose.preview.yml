@@ -32,7 +32,7 @@ services:
   # ================================================================================
   # INFRASTRUCTURE LAYER
   # ================================================================================
-  
+
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
@@ -104,39 +104,6 @@ services:
   # ================================================================================
   # BACKEND MICROSERVICES
   # ================================================================================
-  
-  # Authentication Service
-  auth-service:
-    build:
-      context: .
-      dockerfile: apps/auth-service/Dockerfile
-      target: production
-    container_name: a4co-preview-auth-service
-    restart: unless-stopped
-    environment:
-      NODE_ENV: preview
-      PORT: 4000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-preview_password_change_me}@postgres:5432/auth_db?schema=public
-      NATS_URL: nats://nats:4222
-      JWT_SECRET: ${JWT_SECRET:-preview_jwt_secret_change_in_production}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
-      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
-      LOG_LEVEL: ${LOG_LEVEL:-debug}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      nats:
-        condition: service_healthy
-    networks:
-      - preview-net
-    ports:
-      - "4000:4000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
   # Order Service
   order-service:
@@ -276,7 +243,6 @@ services:
       JWT_SECRET: ${JWT_SECRET:-preview_jwt_secret_change_in_production}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
       JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
-      AUTH_SERVICE_URL: http://auth-service:4000
       PRODUCTS_SERVICE_URL: http://product-service:3003
       ORDERS_SERVICE_URL: http://order-service:3000
       INVENTORY_SERVICE_URL: http://inventory-service:3002
@@ -288,7 +254,6 @@ services:
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001,http://localhost:5173,http://localhost:8080}
       LOG_LEVEL: ${LOG_LEVEL:-debug}
     depends_on:
-      - auth-service
       - order-service
       - payment-service
       - inventory-service
@@ -307,7 +272,7 @@ services:
   # ================================================================================
   # FRONTEND APPLICATIONS
   # ================================================================================
-  
+
   # Main Frontend (Vite/React)
   frontend:
     build:

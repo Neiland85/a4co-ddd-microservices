@@ -72,43 +72,6 @@ services:
   # CORE MICROSERVICES
   # ========================================
 
-  auth-service:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      target: development
-    container_name: a4co-auth-service
-    ports:
-      - '3001:3001'
-    volumes:
-      - .:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - PORT=3001
-      - DATABASE_URL=${DATABASE_URL}
-      - NATS_URL=${NATS_URL}
-      - REDIS_URL=${REDIS_URL}
-      - JWT_SECRET=a4co_dev_jwt_secret_key_change_in_production
-      - JWT_EXPIRES_IN=24h
-      - JWT_REFRESH_EXPIRES_IN=7d
-    depends_on:
-      postgres:
-        condition: service_healthy
-      nats:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - a4co-network
-    restart: unless-stopped
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    command: ['pnpm', 'run', 'dev:auth']
-
   user-service:
     build:
       context: .
@@ -126,15 +89,12 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NATS_URL=${NATS_URL}
       - REDIS_URL=${REDIS_URL}
-      - AUTH_SERVICE_URL=http://auth-service:3001
     depends_on:
       postgres:
         condition: service_healthy
       nats:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      auth-service:
         condition: service_healthy
     networks:
       - a4co-network
@@ -163,15 +123,12 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NATS_URL=${NATS_URL}
       - REDIS_URL=${REDIS_URL}
-      - AUTH_SERVICE_URL=http://auth-service:3001
     depends_on:
       postgres:
         condition: service_healthy
       nats:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      auth-service:
         condition: service_healthy
     networks:
       - a4co-network
@@ -200,7 +157,6 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NATS_URL=${NATS_URL}
       - REDIS_URL=${REDIS_URL}
-      - AUTH_SERVICE_URL=http://auth-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - USER_SERVICE_URL=http://user-service:3003
     depends_on:
@@ -209,8 +165,6 @@ services:
       nats:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      auth-service:
         condition: service_healthy
       product-service:
         condition: service_healthy
@@ -243,7 +197,6 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NATS_URL=${NATS_URL}
       - REDIS_URL=${REDIS_URL}
-      - AUTH_SERVICE_URL=http://auth-service:3001
       - ORDER_SERVICE_URL=http://order-service:3004
       - USER_SERVICE_URL=http://user-service:3003
       - STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
@@ -254,8 +207,6 @@ services:
       nats:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      auth-service:
         condition: service_healthy
       order-service:
         condition: service_healthy
