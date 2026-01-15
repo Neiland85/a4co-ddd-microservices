@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": ".",
@@ -9,10 +9,6 @@
       "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "../../packages/shared-utils/src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts", "../../packages/shared-utils/src/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }
-

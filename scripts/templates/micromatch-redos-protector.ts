@@ -51,10 +51,10 @@ export class MicromatchReDoSProtector {
       timeout?: number;
       context?: string;
       allowRiskyPatterns?: boolean;
-    } = {}
+    } = {},
   ): Promise<MicromatchOperationResult<T>> {
     const startTime = Date.now();
-    const timeout = options.timeout || this.constructor.DEFAULT_TIMEOUT;
+    const timeout = options.timeout || (this.constructor as any).DEFAULT_TIMEOUT;
     const context = options.context || 'unknown';
 
     // Check circuit breaker
@@ -75,8 +75,8 @@ export class MicromatchReDoSProtector {
 
     // Validate patterns
     const patternValidations = MicromatchPatternValidator.validatePatterns(patterns);
-    const hasCriticalPatterns = patternValidations.some(v => v.riskLevel === 'critical');
-    const hasHighRiskPatterns = patternValidations.some(v => v.riskLevel === 'high');
+    const hasCriticalPatterns = patternValidations.some((v) => v.riskLevel === 'critical');
+    const hasHighRiskPatterns = patternValidations.some((v) => v.riskLevel === 'high');
 
     if (hasCriticalPatterns && !options.allowRiskyPatterns) {
       this.recordFailure();
@@ -139,7 +139,7 @@ export class MicromatchReDoSProtector {
    */
   private async executeWithTimeout<T>(
     operation: () => Promise<T> | T,
-    timeoutMs: number
+    timeoutMs: number,
   ): Promise<T> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
@@ -174,7 +174,7 @@ export class MicromatchReDoSProtector {
 
     if (this.circuitBreaker.state === 'open') {
       const timeSinceLastFailure = Date.now() - this.circuitBreaker.lastFailureTime;
-      if (timeSinceLastFailure > this.constructor.CIRCUIT_BREAKER_TIMEOUT) {
+      if (timeSinceLastFailure > (this.constructor as any).CIRCUIT_BREAKER_TIMEOUT) {
         // Transition to half-open
         this.circuitBreaker.state = 'half-open';
         return false;
@@ -203,11 +203,11 @@ export class MicromatchReDoSProtector {
     this.circuitBreaker.failures++;
     this.circuitBreaker.lastFailureTime = Date.now();
 
-    if (this.circuitBreaker.failures >= this.constructor.CIRCUIT_BREAKER_THRESHOLD) {
+    if (this.circuitBreaker.failures >= (this.constructor as any).CIRCUIT_BREAKER_THRESHOLD) {
       this.circuitBreaker.state = 'open';
       logger.warn('Circuit breaker opened due to excessive failures', {
         failures: this.circuitBreaker.failures,
-        threshold: this.constructor.CIRCUIT_BREAKER_THRESHOLD,
+        threshold: (this.constructor as any).CIRCUIT_BREAKER_THRESHOLD,
       });
     }
   }

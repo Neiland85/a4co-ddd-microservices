@@ -1,375 +1,153 @@
-# 🛍️ A4CO - DDD Microservices Platform
+# A4CO — Distributed Commerce Platform (Preview)
 
-A Domain-Driven Design (DDD) microservices platform built with **NestJS**, **Next.js**, and **NATS** for Andalusian small commerce collaboration.
+A4CO is a distributed, event-driven commerce platform designed with **Domain-Driven Design (DDD)** principles and a strong focus on **scalability, auditability, and production readiness**.
 
-## 🏗️ Architecture
+This repository represents **real delivered work**, developed under real-world constraints, and intentionally evolved beyond the original scope to meet **modern architectural and investment-grade standards**.
 
-This project follows a **hexagonal architecture** with **DDD principles**:
-- Domain-driven microservices (Order, Payment, Inventory, Auth, Product)
-- Event-driven communication via NATS JetStream
-- API Gateway for unified access
-- Observability stack (Prometheus, Grafana, Loki)
-- Production-ready Docker infrastructure
+---
 
-## 🚀 Quick Start
+## Project Status (January 2026)
 
-### Development Environment
+**Current phase:** Architectural stabilization & MVP finalization  
+**Delivery target (Preview):** February 2026  
+**Status:** Core architecture defined, critical services stabilized, final execution phase in progress
 
-#### Prerequisites
+This project began in **late May / early June 2025**.  
+A **strategic pivot in late June 2025** introduced significant architectural improvements, increasing overall quality, scalability, and long-term value.
 
-- Node.js 22+
-- pnpm 10.14.0+
-- Docker & Docker Compose 2.20+
-- PostgreSQL 16+
+---
 
-#### Installation
+## Why This Project Matters
 
-```bash
-# Install dependencies
-pnpm install
+A4CO is not a prototype built to “just work”.
 
-# Configure environment
-cp .env.example .env
-# Edit .env with your credentials
+It is a **foundation** designed to be:
+- Auditable by third-party technical reviewers
+- Attractive to future investors and partners
+- Scalable beyond a single deployment or market
+- Aligned with modern distributed-systems best practices
 
-# Generate Prisma clients
-pnpm run db:generate
+Several architectural decisions were deliberately taken to **prioritize quality over speed**, even when this exceeded the initial commercial scope.
 
-# Run migrations
-pnpm run db:migrate
+---
 
-# Start all services in development
-pnpm run dev:all
+## High-Level Architecture
 
-# Or start specific services
-pnpm run dev:backend  # Backend services only
-pnpm run dev:frontend # Frontend only
-```
+**Core characteristics:**
+- Monorepo with strict domain boundaries
+- Event-driven orchestration (Saga pattern)
+- Clear separation between deployable services and shared libraries
+- Infrastructure-aware from day one
 
-### Preview/Staging Environment
+**Technology stack:**
+- **Backend:** NestJS (Node.js)
+- **Architecture:** DDD + Hexagonal Architecture
+- **Messaging:** NATS / JetStream
+- **Database:** PostgreSQL + Prisma
+- **API Gateway:** Backend-for-Frontend (BFF)
+- **Observability:** Structured logging, tracing, metrics
+- **CI/CD:** GitHub Actions
+- **Infrastructure:** Docker Compose (Preview), cloud-ready
 
-For testing before production:
+---
 
-```bash
-# Quick start with automated script
-./start-preview.sh
+## Target Service Topology (MVP)
 
-# Or manually
-cp .env.preview.example .env.preview
-docker compose -f docker-compose.preview.yml --env-file .env.preview up -d
+api-gateway
+auth-service
+order-service
+inventory-service
+payment-service
 
-# Access points:
-# - Dashboard: http://localhost:3001
-# - API Gateway: http://localhost:8080
-# - API Docs: http://localhost:8080/api/docs
-```
 
-**See [PREVIEW_TESTING_GUIDE.md](./PREVIEW_TESTING_GUIDE.md) for complete testing procedures.**
+**Key principles:**
+- `api-gateway` is the **only public entry point**
+- `order-service` orchestrates business flows (Saga)
+- `auth`, `inventory`, and `payment` are isolated bounded contexts
+- No mixed frameworks (NestJS only)
+- No shared “base classes” anti-patterns
 
-### Production Deployment
+---
 
-#### Quick Deploy with Docker Compose
+## Current Focus (Execution Phase)
 
-```bash
-# Create production environment file
-cp .env.production.template .env.production
-# Edit .env.production with secure values
+- Finalizing the **critical order flow (happy path + compensation)**
+- Consolidating observability into a single shared package
+- Removing non-essential legacy or placeholder services
+- Hardening CI/CD to enforce fail-fast guarantees
+- Preparing the codebase for **external technical audit**
 
-# Build and start all services
-docker compose -f docker-compose.prod.yml --env-file .env.production up -d
-
-# View logs
-docker compose -f docker-compose.prod.yml --env-file .env.production logs -f
-```
-
-For detailed production deployment instructions, see:
-- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete deployment walkthrough
-- **[Production Readiness Checklist](./PRODUCTION_READINESS_CHECKLIST.md)** - Pre-deployment verification
-- **[Quick Reference](./QUICK_REFERENCE.md)** - Command quick reference
+---
 
-#### NPM Scripts for Deployment
+## Estimated Effort & Context (for Reviewers)
 
-```bash
-# Preview environment
-pnpm run preview:start    # Automated setup and start
-pnpm run preview:up       # Start services
-pnpm run preview:down     # Stop services
-pnpm run preview:logs     # View logs
-
-# Production environment
-pnpm run prod:up          # Start services
-pnpm run prod:down        # Stop services
-pnpm run prod:logs        # View logs
-```
-
-## 📁 Estructura del Proyecto
-
-```
-src/
-├── modules/           # Módulos de negocio
-│   ├── auth/         # Autenticación
-│   ├── products/     # Gestión de productos
-│   ├── orders/       # Pedidos
-│   ├── users/        # Usuarios
-│   └── artisans/     # Artesanos
-├── common/           # Utilidades compartidas
-├── config/           # Configuración
-└── main.ts           # Punto de entrada
-```
-
-## 🛠️ Scripts Disponibles
-
-- `npm run start:dev` - Inicia en modo desarrollo
-- `npm run build` - Construye para producción
-- `npm run start:prod` - Inicia en modo producción
-- `npm run test` - Ejecuta tests
-- `npm run lint` - Ejecuta linter
-
-## 🗄️ Base de Datos
-
-### Prisma ORM
-
-- Schema: `prisma/schema.prisma`
-- Migraciones: `npm run prisma:migrate`
-- Studio: `npm run prisma:studio`
-
-### Variables de Entorno
+This repository reflects **several months of cumulative work** by a senior engineer, including:
+- Architecture design
+- Infrastructure setup
+- CI/CD pipelines
+- Distributed flow orchestration
+- Observability foundations
+- Refactors triggered by mid-project scope changes
 
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/artisan_portal"
-JWT_SECRET="your-secret-key"
-```
-
-## 📦 Technology Stack
-
-### Backend
-- **Framework**: NestJS with TypeScript
-- **Architecture**: Hexagonal (Ports & Adapters) + DDD
-- **Database**: PostgreSQL 16 with Prisma ORM
-- **Message Broker**: NATS 2.10 with JetStream
-- **Authentication**: JWT with refresh tokens
-- **Validation**: class-validator + class-transformer
-- **Testing**: Jest + Supertest
-- **E2E Testing**: Playwright + Testcontainers
-
-### Frontend
-- **Dashboard**: Next.js 15 + React 19
-- **Main App**: Vite + React
-- **UI Components**: shadcn/ui + Tailwind CSS
-- **State**: Zustand
-- **Animation**: Framer Motion
-
-### Infrastructure
-- **Containerization**: Docker with multi-stage builds
-- **Orchestration**: Docker Compose (production-ready)
-- **Reverse Proxy**: Nginx with SSL/TLS + rate limiting
-- **Caching**: Redis 7
-- **CI/CD**: GitHub Actions
-- **Registry**: GitHub Container Registry (GHCR)
-
-### Observability
-- **Metrics**: Prometheus + prom-client
-- **Visualization**: Grafana
-- **Logging**: Loki + Promtail
-- **Tracing**: OpenTelemetry (optional)
-- **Alerting**: AlertManager
-
-### Security
-- **Network Isolation**: Segregated Docker networks
-- **Secrets Management**: Environment variables + GitHub Secrets
-- **Container Security**: Non-root users, minimal base images
-- **API Security**: Rate limiting, CORS, security headers
-- **Database**: SSL/TLS connections, encrypted passwords
-
-## 📊 Observabilidad (PR4)
-
-El proyecto incluye una infraestructura completa de observabilidad para monitoreo, logging y alertas.
-
-### Stack de Observabilidad
-
-- **Grafana**: Dashboards y visualización
-- **Prometheus**: Recolección de métricas
-- **Loki**: Agregación de logs
-- **Promtail**: Recolección de logs
-- **AlertManager**: Gestión de alertas
-- **NATS Exporter**: Métricas de NATS
-
-### Inicio Rápido
-
-```bash
-# Iniciar stack de observabilidad
-./scripts/start-observability.sh
-
-# Acceder a Grafana
-# URL: http://localhost:3000 (admin/admin)
-```
-
-### Dashboards Disponibles
-
-- **Main Dashboard**: Métricas HTTP, latencia, disponibilidad
-- **Events Dashboard**: Eventos publicados/consumidos, errores, latencia
-- **NATS Dashboard**: Clientes, throughput, JetStream, consumer lag
-
-### Documentación
-
-- **Guía Rápida**: `infra/observability/README.md`
-- **Documentación Completa**: `docs/PR4-OBSERVABILITY-SETUP.md` (50KB)
-
-### Comandos Útiles
-
-```bash
-# Ver logs
-docker-compose -f docker-compose.observability.yml logs -f
-
-# Detener stack
-./scripts/stop-observability.sh
-
-# Detener y eliminar datos
-./scripts/stop-observability.sh --remove-volumes
-```
-
-## 🧪 Testing
-
-### E2E Testing Suite
-
-Comprehensive End-to-End tests for the complete order flow using Playwright and Testcontainers.
-
-**Prerequisites:**
-- Docker & Docker Compose v2 installed and running
-- Node.js 22+ and pnpm 10.14.0+
-- Ports available: 8081, 3001, 4223, 8222, 5433, 6380
-- File `docker-compose.test.yml` in project root
-
-**Quick Start:**
-```bash
-# Run E2E tests (automated setup)
-./scripts/run-e2e-tests.sh
-
-# Run with UI mode (interactive)
-./scripts/run-e2e-tests.sh --ui
-
-# Run in headed mode (see browser)
-./scripts/run-e2e-tests.sh --headed
-
-# View test report
-cd apps/dashboard-client
-pnpm run test:e2e:report
-```
-
-**Common Issues:**
-- **NATS healthcheck fails**: Check port 8222 is accessible, view logs with `docker compose -f docker-compose.test.yml logs nats-test`
-- **Missing artifacts**: Directories are auto-created by the test runner script
-- **Services not starting**: Ensure Docker Compose v2 is installed (`docker compose version`)
-
-**Test Coverage (14 tests):**
-- ✅ User Authentication (JWT)
-- ✅ Product Catalog Browsing
-- ✅ Order Creation via Gateway
-- ✅ Payment Processing & NATS Events
-- ✅ Order Confirmation
-- ✅ Happy Path Flow (successful order)
-- ✅ Saga Rollback (payment failure)
-- ✅ Event Traceability & Correlation
-
-**Documentation:**
-- [E2E Testing Guide](docs/e2e-tests.md) - Complete documentation
-- [Quick Start Guide](docs/e2e-quick-start.md) - Get started in 3 steps
-- [Dashboard E2E README](apps/dashboard-client/e2e/README.md) - Test structure
-
-**CI/CD Integration:**
-- Automated tests on every PR to `main`/`develop`
-- Blocks merge on test failures
-- Artifacts: HTML reports, videos, screenshots
-
-### Unit & Integration Tests
-
-```bash
-# Run all tests
-pnpm run test
-
-# Run tests for specific service
-pnpm --filter @a4co/order-service test
-pnpm --filter @a4co/payment-service test
-pnpm --filter @a4co/inventory-service test
-
-# Run with coverage
-pnpm run test:coverage
-```
-
-## 🔒 Security
-
-### Production Security Recommendations
-
-**Before deploying to production**, ensure you:
-
-1. **Secrets Management**
-   - Never commit `.env.production` to version control
-   - Use strong passwords (20+ characters with mixed case, numbers, symbols)
-   - Generate JWT secret with: `openssl rand -base64 64`
-   - Store secrets in secure vault (GitHub Secrets, AWS Secrets Manager, HashiCorp Vault)
-   - Rotate secrets every 90 days
-
-2. **SSL/TLS Configuration**
-   - Obtain valid SSL certificates (Let's Encrypt recommended)
-   - Enable HSTS after testing
-   - Use TLS 1.2+ only
-   - Configure strong cipher suites
-
-3. **Network Security**
-   - Configure firewall (allow only ports 80, 443, 22)
-   - Enable rate limiting (configured in nginx)
-   - Use DDoS protection (Cloudflare or equivalent)
-   - Restrict CORS origins to your domain only
-
-4. **Database Security**
-   - Use strong database passwords
-   - Enable SSL connections
-   - Configure regular automated backups
-   - Test backup restoration
-   - Limit database access to backend network only
-
-5. **Container Security**
-   - All containers run as non-root users
-   - Use minimal base images (alpine)
-   - Regular security scanning (Trivy, Snyk)
-   - Keep base images updated
-
-For detailed security guidelines, see **[docs/SECURITY.md](docs/SECURITY.md)**
-
-### Secrets Management Options
-
-- **GitHub Secrets**: For CI/CD workflows
-- **AWS Secrets Manager**: For AWS deployments
-- **HashiCorp Vault**: For enterprise deployments
-- **Azure Key Vault**: For Azure deployments
-- **1Password/LastPass**: For team secret sharing
-
-## 🤝 Contributing
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow DDD principles and hexagonal architecture
-- Write tests for new features
-- Update documentation
-- Follow existing code style (ESLint + Prettier)
-- Keep commits atomic and well-described
-
-## 📄 License
-
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-## 📞 Support & Documentation
-
-- **Production Guide**: [docs/PRODUCTION_DEPLOY.md](docs/PRODUCTION_DEPLOY.md)
-- **Security Guide**: [docs/SECURITY.md](docs/SECURITY.md)
-- **Architecture**: [docs/architecture/](docs/architecture/)
-- **API Docs**: [docs/REST_ENDPOINTS_DOCUMENTATION.md](docs/REST_ENDPOINTS_DOCUMENTATION.md)
-- **Observability**: [docs/PR4-OBSERVABILITY-SETUP.md](docs/PR4-OBSERVABILITY-SETUP.md)
-- **Issues**: [GitHub Issues](https://github.com/Neiland85/a4co-ddd-microservices/issues)
+Comparable work typically requires:
+- **3–5 engineers**
+- **6–10 weeks**
+- Dedicated DevOps and QA support
 
+---
+
+## Ownership & Roles
+
+**Project Co-Owners:**
+- **Neil Muñoz Lago** — Lead Architect & Principal Developer
+- **Jesús Campos Sánchez** — Product Owner & Business Lead
+
+### Roles & Responsibilities
+
+**Neil Muñoz Lago**
+- System architecture & technical leadership
+- Backend & infrastructure development
+- CI/CD, observability, and scalability strategy
+- Long-term technical vision and audit readiness
+
+**Jesús Campos Sánchez**
+- Product vision and functional direction
+- Business requirements and prioritization
+- Strategic alignment with market and future investment goals
+
+This project has been developed collaboratively, with aligned technical and business ownership.
+
+> Intellectual property ownership, exploitation rights, and future licensing or investment structures will be formally defined between the co-owners prior to production release or external investment.
+
+---
+
+## Investor & Auditor Notes
+
+- This repository is intentionally **public during the preview phase**
+- Dependency upgrades and non-critical refactors are deferred
+- Architectural decisions are prioritized over cosmetic changes
+
+> Dependency updates will be applied after architectural audit and MVP freeze.
+
+The goal is **clarity, traceability, and confidence**, not superficial completeness.
+
+---
+
+## Next Milestones
+
+- MVP Preview freeze
+- External technical audit
+- Final delivery
+- Investment / partnership readiness
+
+---
+
+## Repository
+
+🔗 https://github.com/Neiland85/a4co-ddd-microservices
+
+This repository can be independently audited to estimate:
+- Technical complexity
+- Architectural quality
+- Approximate development effort
+- Long-term scalability potential

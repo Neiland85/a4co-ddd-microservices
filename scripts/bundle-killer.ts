@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import * as path from 'path';
+// Use relaxed typings for webpack chunks/modules in these scripts to avoid strict @types/webpack mismatches
 
 interface ChunkInfo {
   name: string;
@@ -19,7 +20,7 @@ interface BundleAnalysis {
 const THRESHOLD_KB = 50;
 const LARGE_MODULE_KB = 10;
 
-export const analyzeBundle = async(): Promise<BundleAnalysis> => {
+export const analyzeBundle = async (): Promise<BundleAnalysis> => {
   console.log('🔍 Iniciando análisis de bundle...\n');
 
   try {
@@ -39,7 +40,7 @@ export const analyzeBundle = async(): Promise<BundleAnalysis> => {
     const statsPath = path.join('apps/dashboard-web/.next/analyze/client.json');
     if (!existsSync(statsPath)) {
       throw new Error(
-        'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.'
+        'No se encontró el archivo de análisis. Asegúrate de tener @next/bundle-analyzer configurado.',
       );
     }
 
@@ -50,14 +51,14 @@ export const analyzeBundle = async(): Promise<BundleAnalysis> => {
     const moduleOccurrences = new Map<string, string[]>();
     let totalSize = 0;
 
-    Object.entries(stats.chunks || {}).forEach(([name, chunk]: [string, WebpackChunk]) => {
-      const size = chunk.size || 0;
-      totalSize += size;
+    Object.entries(stats.chunks || {}).forEach(([name, chunk]: [string, any]) => {
+      const size = (typeof chunk.size === 'function' ? chunk.size() : chunk.size) || 0;
+      totalSize += typeof size === 'number' ? size : 0;
 
-      if (size > THRESHOLD_KB * 1024) {
+      if ((typeof size === 'number' ? size : 0) > THRESHOLD_KB * 1024) {
         const largeModules = (chunk.modules || [])
-          .filter((m: WebpackModule) => m.size > LARGE_MODULE_KB * 1024)
-          .map((m: WebpackModule) => `${m.name} (${(m.size / 1024).toFixed(1)}KB)`)
+          .filter((m: any) => (m.size || 0) > LARGE_MODULE_KB * 1024)
+          .map((m: any) => `${m.name || 'unknown'} (${((m.size || 0) / 1024).toFixed(1)}KB)`)
           .slice(0, 5); // Top 5 módulos más grandes
 
         problematicChunks.push({
@@ -131,7 +132,7 @@ function generateRecommendations(
   }
 
   // Recomendaciones por chunks grandes
-  chunks.forEach(chunk => {
+  chunks.forEach((chunk) => {
     if (chunk.size > 200 * 1024) {
       // > 200KB
       recommendations.push(`🔴 Chunk "${chunk.name}" es muy grande (${chunk.sizeKB}). Acciones:`);
@@ -217,11 +218,11 @@ function displayResults(analysis: BundleAnalysis): void {
     console.log('🚨 CHUNKS PROBLEMÁTICOS (> 50KB):');
     console.log('-'.repeat(60));
 
-    analysis.problematicChunks.forEach(chunk => {
+    analysis.problematicChunks.forEach((chunk) => {
       console.log(`\n📌 ${chunk.name}: ${chunk.sizeKB}`);
       if (chunk.modules.length > 0) {
         console.log('   Módulos más grandes:');
-        chunk.modules.forEach(m => console.log(`   - ${m}`));
+        chunk.modules.forEach((m) => console.log(`   - ${m}`));
       }
     });
   }
@@ -246,7 +247,7 @@ function displayResults(analysis: BundleAnalysis): void {
   if (analysis.recommendations.length > 0) {
     console.log('\n\n💡 RECOMENDACIONES:');
     console.log('-'.repeat(60));
-    analysis.recommendations.forEach(rec => console.log(rec));
+    analysis.recommendations.forEach((rec) => console.log(rec));
   }
 
   console.log('\n' + '='.repeat(60) + '\n');

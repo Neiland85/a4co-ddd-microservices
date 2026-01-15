@@ -2,6 +2,8 @@
  * Base Jest Configuration for A4CO Monorepo
  * All services should extend this configuration
  */
+const path = require('path');
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
@@ -29,14 +31,14 @@ module.exports = {
 
   // Module resolution
   moduleNameMapper: {
-    // Mock uuid with a simple CommonJS implementation
-    '^uuid$': '<rootDir>/../../__mocks__/uuid.cjs',
-    // Handle @a4co/shared-utils imports
-    '^@a4co/shared-utils$': '<rootDir>/../../packages/shared-utils/src/index.ts',
-    '^@a4co/shared-utils/(.*)$': '<rootDir>/../../packages/shared-utils/src/$1',
+    // Mock uuid with a simple CommonJS implementation (absolute path)
+    '^uuid$': path.resolve(__dirname, '__mocks__/uuid.cjs'),
+    // Handle @a4co/shared-utils imports (absolute paths)
+    '^@a4co/shared-utils$': path.resolve(__dirname, 'packages/shared-utils/src/index.ts'),
+    '^@a4co/shared-utils/(.*)$': path.resolve(__dirname, 'packages/shared-utils/src/$1'),
     // Handle @a4co/observability imports
-    '^@a4co/observability$': '<rootDir>/../../packages/observability/src/index.ts',
-    '^@a4co/observability/(.*)$': '<rootDir>/../../packages/observability/src/$1',
+    '^@a4co/observability$': path.resolve(__dirname, 'packages/observability/src/index.ts'),
+    '^@a4co/observability/(.*)$': path.resolve(__dirname, 'packages/observability/src/$1'),
   },
 
   // File extensions

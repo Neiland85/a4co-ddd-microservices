@@ -28,14 +28,14 @@ export class SafeMicromatch {
   async match(
     list: string[],
     patterns: string | string[],
-    options?: micromatch.Options
+    options?: micromatch.Options,
   ): Promise<string[]> {
     const patternArray = Array.isArray(patterns) ? patterns : [patterns];
 
     const result = await this.protector.safeMatch(
       () => micromatch.match(list, patterns, options),
       patternArray,
-      { context: 'SafeMicromatch.match' }
+      { context: 'SafeMicromatch.match' },
     );
 
     if (!result.success) {
@@ -49,7 +49,8 @@ export class SafeMicromatch {
       return [];
     }
 
-    return result.result || [];
+    const res: any = result;
+    return res.result || [];
   }
 
   /**
@@ -58,14 +59,14 @@ export class SafeMicromatch {
   async isMatch(
     str: string,
     patterns: string | string[],
-    options?: micromatch.Options
+    options?: micromatch.Options,
   ): Promise<boolean> {
     const patternArray = Array.isArray(patterns) ? patterns : [patterns];
 
     const result = await this.protector.safeMatch(
       () => micromatch.isMatch(str, patterns, options),
       patternArray,
-      { context: 'SafeMicromatch.isMatch' }
+      { context: 'SafeMicromatch.isMatch' },
     );
 
     if (!result.success) {
@@ -80,7 +81,7 @@ export class SafeMicromatch {
       return false;
     }
 
-    return result.result || false;
+    return (result.result as boolean) || false;
   }
 
   /**
@@ -90,7 +91,7 @@ export class SafeMicromatch {
     const result = await this.protector.safeMatch(
       () => micromatch.makeRe(pattern, options),
       [pattern],
-      { context: 'SafeMicromatch.makeRe' }
+      { context: 'SafeMicromatch.makeRe' },
     );
 
     if (!result.success) {
@@ -103,7 +104,7 @@ export class SafeMicromatch {
       return null;
     }
 
-    return result.result || null;
+    return (result.result as RegExp) || null;
   }
 
   /**
@@ -112,14 +113,14 @@ export class SafeMicromatch {
   async some(
     list: string[],
     patterns: string | string[],
-    options?: micromatch.Options
+    options?: micromatch.Options,
   ): Promise<boolean> {
     const patternArray = Array.isArray(patterns) ? patterns : [patterns];
 
     const result = await this.protector.safeMatch(
       () => micromatch.some(list, patterns, options),
       patternArray,
-      { context: 'SafeMicromatch.some' }
+      { context: 'SafeMicromatch.some' },
     );
 
     if (!result.success) {
@@ -132,7 +133,7 @@ export class SafeMicromatch {
       return false;
     }
 
-    return result.result || false;
+    return (result.result as boolean) || false;
   }
 
   /**
@@ -141,14 +142,14 @@ export class SafeMicromatch {
   async every(
     list: string[],
     patterns: string | string[],
-    options?: micromatch.Options
+    options?: micromatch.Options,
   ): Promise<boolean> {
     const patternArray = Array.isArray(patterns) ? patterns : [patterns];
 
     const result = await this.protector.safeMatch(
       () => micromatch.every(list, patterns, options),
       patternArray,
-      { context: 'SafeMicromatch.every' }
+      { context: 'SafeMicromatch.every' },
     );
 
     if (!result.success) {
@@ -161,7 +162,7 @@ export class SafeMicromatch {
       return false;
     }
 
-    return result.result || false;
+    return (result.result as boolean) || false;
   }
 
   /**
@@ -170,14 +171,14 @@ export class SafeMicromatch {
   async all(
     list: string[],
     patterns: string | string[],
-    options?: micromatch.Options
+    options?: micromatch.Options,
   ): Promise<string[]> {
     const patternArray = Array.isArray(patterns) ? patterns : [patterns];
 
     const result = await this.protector.safeMatch(
       () => micromatch.all(list, patterns, options),
       patternArray,
-      { context: 'SafeMicromatch.all' }
+      { context: 'SafeMicromatch.all' },
     );
 
     if (!result.success) {
@@ -190,7 +191,8 @@ export class SafeMicromatch {
       return [];
     }
 
-    return result.result || [];
+    const res: any = result;
+    return res.result || [];
   }
 
   /**
@@ -199,14 +201,14 @@ export class SafeMicromatch {
   async not(
     list: string[],
     patterns: string | string[],
-    options?: micromatch.Options
+    options?: micromatch.Options,
   ): Promise<string[]> {
     const patternArray = Array.isArray(patterns) ? patterns : [patterns];
 
     const result = await this.protector.safeMatch(
       () => micromatch.not(list, patterns, options),
       patternArray,
-      { context: 'SafeMicromatch.not' }
+      { context: 'SafeMicromatch.not' },
     );
 
     if (!result.success) {
@@ -219,7 +221,8 @@ export class SafeMicromatch {
       return list; // Return original list on failure
     }
 
-    return result.result || list;
+    const res: any = result;
+    return res.result || list;
   }
 
   /**
@@ -233,7 +236,7 @@ export class SafeMicromatch {
    * Validates patterns without executing them
    */
   validatePatterns(
-    patterns: string[]
+    patterns: string[],
   ): import('./micromatch-pattern.validator').PatternValidationResult[] {
     return MicromatchPatternValidator.validatePatterns(patterns);
   }
@@ -254,7 +257,7 @@ export function createSafeMicromatch(options?: SafeMicromatchOptions): SafeMicro
 export async function safeMatch(
   list: string[],
   patterns: string | string[],
-  options?: micromatch.Options & SafeMicromatchOptions
+  options?: micromatch.Options & SafeMicromatchOptions,
 ): Promise<string[]> {
   const safe = new SafeMicromatch(options);
   return safe.match(list, patterns, options);
@@ -263,7 +266,7 @@ export async function safeMatch(
 export async function safeIsMatch(
   str: string,
   patterns: string | string[],
-  options?: micromatch.Options & SafeMicromatchOptions
+  options?: micromatch.Options & SafeMicromatchOptions,
 ): Promise<boolean> {
   const safe = new SafeMicromatch(options);
   return safe.isMatch(str, patterns, options);
@@ -271,7 +274,7 @@ export async function safeIsMatch(
 
 export async function safeMakeRe(
   pattern: string,
-  options?: micromatch.Options & SafeMicromatchOptions
+  options?: micromatch.Options & SafeMicromatchOptions,
 ): Promise<RegExp | null> {
   const safe = new SafeMicromatch(options);
   return safe.makeRe(pattern, options);
