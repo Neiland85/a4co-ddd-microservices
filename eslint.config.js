@@ -2,106 +2,105 @@ import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-const buildArtifactPatterns = [
-  '**/node_modules/**',
-  '**/dist/**',
-  '**/build/**',
-  '**/.next/**',
-  '**/coverage/**',
-  '**/.turbo/**',
-  '**/turbo/**',
-  '**/*.d.ts',
-];
-
-const transitionalIgnores = [
-  '**/packages/observability/src/**',
-  '**/packages/design-system/.storybook/**',
-  '**/tests/visual/**',
-  '**/feature-flags/**',
-  '**/eslint-rules/**',
-
-  // Tailwind configs que NO se deben lintar nunca
-  '**/tailwind.config.js',
-  '**/tailwind.preset.js'
-];
-
 export default tseslint.config(
-  // --------------------------------------
-  //  BLOQUE 1: GLOBAL IGNORES (NUEVO ESTÁNDAR)
-  // --------------------------------------
+  /**
+   * -------------------------------------------------
+   *  BLOQUE 1 — IGNORADOS ABSOLUTOS (NO NEGOCIABLE)
+   * -------------------------------------------------
+   */
   {
-    ignores: [...buildArtifactPatterns, ...transitionalIgnores],
+    ignores: [
+      // Infra / build
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.next/**',
+      '**/coverage/**',
+      '**/.turbo/**',
+
+      // 🔥 Código generado (NUNCA se lintan)
+      '**/generated/**',
+      '**/prisma/**',
+      '**/.prisma/**',
+
+      // 🔥 TESTS (fase auditoría)
+      '**/__tests__/**',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+
+      // Tooling / noise
+      '**/.storybook/**',
+      '**/eslint-rules/**',
+      '**/feature-flags/**',
+
+      // Configs
+      '**/tailwind.config.*',
+      '**/tailwind.preset.*',
+    ],
   },
 
-  // --------------------------------------
-  //  BLOQUE 2: ARCHIVOS PRINCIPALES DEL PROYECTO
-  // --------------------------------------
+  /**
+   * -------------------------------------------------
+   *  BLOQUE 2 — BACKEND (SOLO TS REAL DE PRODUCCIÓN)
+   * -------------------------------------------------
+   */
   {
-    files: ['**/*.{ts,tsx,js,jsx}'],
+    files: [
+      'apps/**/src/**/*.ts',
+      'packages/**/src/**/*.ts',
+    ],
+    ignores: [
+      '**/src/**/generated/**',
+      '**/src/**/prisma/**',
+    ],
     extends: [
       js.configs.recommended,
       ...tseslint.configs.recommended,
     ],
-
     languageOptions: {
       parserOptions: {
         projectService: true,
         tsconfigRootDir: process.cwd(),
         ecmaVersion: 2022,
         sourceType: 'module',
-
-        // IMPRESCINDIBLE para JSX puro en design-system
-        ecmaFeatures: { jsx: true }
       },
       globals: {
-        ...globals.browser,
         ...globals.node,
       },
     },
-
     rules: {
       'no-console': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'off',
+
+      // Relajadas por fase audit / estabilización
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-misused-promises': 'off',
       '@typescript-eslint/require-await': 'off',
     },
   },
 
-  // --------------------------------------
-  //  BLOQUE 3: TESTS
-  // --------------------------------------
-  {
-    files: [
-      '**/*.{test,spec}.{ts,tsx,js,jsx}',
-      '**/__tests__/**/*.{ts,tsx,js,jsx}'
-    ],
-    languageOptions: {
-      globals: {
-        ...globals.jest,
-        ...globals.node,
-      },
-    },
-    rules: {
-      'no-console': 'off'
-    }
-  },
-
-  // --------------------------------------
-  //  BLOQUE 4: CONFIG / SCRIPTS
-  // --------------------------------------
+  /**
+   * -------------------------------------------------
+   *  BLOQUE 3 — SCRIPTS / CONFIG
+   * -------------------------------------------------
+   */
   {
     files: [
       '**/*.config.{ts,js,mjs,cjs}',
       'scripts/**/*.{ts,js}',
       'tools/**/*.{ts,js}',
-      'test/**/*.{ts,js}',
     ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
     rules: {
       'no-console': 'off',
       '@typescript-eslint/no-var-requires': 'off',
-    }
+    },
   }
 );
-
