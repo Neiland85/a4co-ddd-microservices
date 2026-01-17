@@ -1,16 +1,21 @@
 # Diccionario del Proyecto
 
 Última sincronización: 18/1/2026, 1:16:51
+Última sincronización: 18/1/2026, 1:16:51
 
 ---
+
 ### User (global VSCode) (2)
+
 - final
 - forzar
 
 ### Workspace (proyecto local) (1)
+
 - forzar
 
 ### Commits recientes detectados (471)
+
 - abstraccion
 - abstracción
 - accelerate
@@ -20,6 +25,7 @@
 - added
 - aggregateroot
 - agrega
+- agregar
 - aislados
 - aislar
 - ajustan
@@ -136,7 +142,72 @@
 - declarar
 - decoupling
 - deduplicación
-- defaults
+- # defaults
+  Última sincronización: 18/1/2026, 0:39:17
+
+---
+
+### User (global VSCode) (5)
+
+- before
+- modules
+- outbox
+- save
+- session
+
+### Workspace (proyecto local) (7)
+
+- accelerate
+- aggregateroot
+- allowed
+- outbox
+- productcacheport
+- save
+- session
+
+### Commits recientes detectados (181)
+
+- about
+- accelerate
+- additional
+- aggregateroot
+- agregar
+- align
+- allowed
+- anthropic
+- apps
+- architectural
+- architecture
+- artifacts
+- assistant
+- assistants
+- audit
+- authored
+- avoid
+- before
+- best
+- build
+- cache
+- clarify
+- claude
+- codacy
+- code
+- codebase
+- commit
+- common
+- compatible
+- complete
+- comprehensive
+- configuración
+- configuration
+- conflicts
+- content
+- context
+- conventions
+- create
+- created
+- database
+  > > > > > > > 5986b741 (chore: save WIP before session end (outbox, modules, prisma accelerate, docs))
 - define
 - defines
 - definir
@@ -164,6 +235,7 @@
 - documentar
 - documento
 - domain
+  <<<<<<< HEAD
 - dominio
 - dominios
 - donde
@@ -272,7 +344,48 @@
 - latencia
 - layered
 - lead
-- linters
+- # linters
+- duplicate
+- enable
+- environment
+- errors
+- eslint
+- eslintrc
+- events
+- example
+- exclude
+- existing
+- explicitly
+- facing
+- file
+- files
+- formato
+- from
+- gitignore
+- globs
+- graph
+- guide
+- guidelines
+- herramientas
+- hexagonal
+- html
+- ignore
+- improved
+- include
+- indentation
+- install
+- instead
+- instructions
+- integration
+- inventory
+- investment
+- investor
+- json
+- keep
+- legado
+- libs
+- links
+  > > > > > > > 5986b741 (chore: save WIP before session end (outbox, modules, prisma accelerate, docs))
 - local
 - locales
 - login
@@ -290,6 +403,7 @@
 - meses
 - microservice
 - microservices
+  <<<<<<< HEAD
 - mitigaciones
 - mitigación
 - mitigations
@@ -305,7 +419,13 @@
 - necesario
 - negocio
 - neiland
-- next
+- # next
+- modules
+- monorepo
+- necessary
+- nested
+- noreply
+  > > > > > > > 5986b741 (chore: save WIP before session end (outbox, modules, prisma accelerate, docs))
 - normalize
 - north
 - nota
@@ -317,6 +437,7 @@
 - observabilidad
 - oculta
 - only
+  <<<<<<< HEAD
 - opentelemetry
 - operacional
 - operación
@@ -435,7 +556,57 @@
 - snapshot
 - solicita
 - solo
-- sostenido
+- # sostenido
+- operations
+- outbox
+- overview
+- owners
+- ownership
+- package
+- packages
+- payment
+- peerdependencies
+- pivot
+- platform
+- pnpm
+- positioning
+- practices
+- preserved
+- prettier
+- principles
+- prisma
+- processes
+- product
+- productcacheport
+- project
+- providing
+- quality
+- readiness
+- readme
+- recursive
+- references
+- replace
+- repo
+- requieren
+- resolve
+- resources
+- robust
+- roles
+- root
+- safety
+- save
+- scope
+- script
+- serves
+- service
+- session
+- setup
+- shared
+- single
+- source
+- stabilize
+- stabilized
+  > > > > > > > 5986b741 (chore: save WIP before session end (outbox, modules, prisma accelerate, docs))
 - stack
 - staging
 - star
@@ -452,6 +623,7 @@
 - templates
 - testing
 - that
+  <<<<<<< HEAD
 - tickets
 - tiempo
 - time
@@ -477,9 +649,22 @@
 - verdad
 - verificación
 - versionado
-- versionados
+- # versionados
+- this
+- timeline
+- tooling
+- troubleshooting
+- truth
+- tsconfig
+- turbo
+- type
+- typescript
+- unit
+- uses
+- vscode
+- warnings
+  > > > > > > > 5986b741 (chore: save WIP before session end (outbox, modules, prisma accelerate, docs))
 - with
 - workspace
 - épicas
 - órdenes
-
