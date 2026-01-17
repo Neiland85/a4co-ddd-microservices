@@ -25,14 +25,15 @@ export class ProductUniquenessService {
   }
 
   async generateUniqueSlug(baseName: string, excludeProductId?: string): Promise<Slug> {
-    let slug = Slug.generateFromName(baseName);
+    const baseSlug = Slug.generateFromName(baseName).value;
+    let candidate = baseSlug;
     let counter = 1;
 
-    while (!(await this.uniquenessChecker.isSlugUnique(slug.value, excludeProductId))) {
-      slug = new Slug(`${slug.value}-${counter}`);
+    while (!(await this.uniquenessChecker.isSlugUnique(candidate, excludeProductId))) {
+      candidate = `${baseSlug}-${counter}`;
       counter++;
     }
 
-    return slug;
+    return Slug.create(candidate);
   }
 }

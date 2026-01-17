@@ -11,6 +11,7 @@ export const EventSubjects = {
   PRODUCT_DELETED: 'product.deleted',
   PRODUCT_PUBLISHED: 'product.published',
   PRODUCT_PRICE_CHANGED: 'product.price.changed',
+  PRODUCT_ARCHIVED: 'product.archived',
   PRODUCT_DISCONTINUED: 'product.discontinued',
 } as const;
 

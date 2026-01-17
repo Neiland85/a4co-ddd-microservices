@@ -5,7 +5,7 @@ import {
   ProductCreatedEvent,
   ProductPriceChangedEvent,
   ProductPublishedEvent,
-} from '../events/product-events';
+} from '../../events/product-domain-events';
 import {
   CategoryId,
   Price,
@@ -15,7 +15,8 @@ import {
   SKU,
   Slug,
   Stock,
-} from '../value-objects/product-value-objects';
+} from '../../value-objects/product-value-objects';
+import { Product } from '../../aggregates/product/product.entity';
 
 // ========================================
 // ENUMS
@@ -377,11 +378,26 @@ export class Product extends AggregateRoot {
     return this._isDigital;
   }
 
-  public get requiresShipping(): boolean {
-    return this._requiresShipping;
-  }
-
   public get featured(): boolean {
     return this._featured;
+  }
+
+  /**
+   * Indica si el producto está activo/publicado.
+   */
+  public isActive(): boolean {
+    return this._status === ProductStatus.PUBLISHED;
+  }
+
+  public get isActive(): boolean {
+    return this.isActive();
+  }
+}
+
+export class PricingPolicy {
+  static assertHasValidPrice(product: Product): void {
+    if (!product.price || product.price.amount <= 0) {
+      throw new Error('Product price must be greater than zero');
+    }
   }
 }
