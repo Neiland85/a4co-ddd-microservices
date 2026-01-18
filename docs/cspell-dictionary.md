@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 18/1/2026, 1:13:08
+Última sincronización: 18/1/2026, 1:14:33
 
 ---
 ### User (global VSCode)
@@ -9,8 +9,7 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (553)
-- about
+### Commits recientes detectados (495)
 - abstraccion
 - abstracción
 - accelerate
@@ -18,7 +17,6 @@ Sin nuevas palabras.
 - acoplar
 - activaciones
 - added
-- additional
 - aggregateroot
 - agrega
 - aislados
@@ -32,24 +30,19 @@ Sin nuevas palabras.
 - allowed
 - almacena
 - ampliar
-- anthropic
 - apis
 - architectural
-- architecture
 - archivar
 - archivo
 - arquitectura
 - artifacts
 - asegura
-- assistant
-- assistants
 - asíncronos
 - atrás
 - audit
 - auditoría
 - autenticación
 - auth
-- authored
 - autoconfigurate
 - autorización
 - autónomos
@@ -58,12 +51,10 @@ Sin nuevas palabras.
 - backward
 - base
 - baso
-- best
 - bloquea
 - bounded
 - breakers
 - budget
-- build
 - cache
 - caché
 - cada
@@ -93,16 +84,12 @@ Sin nuevas palabras.
 - clarify
 - claro
 - claros
-- claude
 - clave
 - claves
 - cobro
-- code
-- codebase
 - cognitiva
 - comandos
 - comités
-- common
 - como
 - compartir
 - compatibilidad
@@ -110,7 +97,6 @@ Sin nuevas palabras.
 - complejidad
 - completed
 - compra
-- comprehensive
 - comun
 - comunicaciones
 - común
@@ -123,18 +109,17 @@ Sin nuevas palabras.
 - consulta
 - consumen
 - consumidores
-- content
 - context
 - contexto
 - contextos
 - contexts
 - continua
+- continúa
 - contracts
 - contractuales
 - contratos
 - contribuye
 - controlada
-- conventions
 - copiar
 - correcto
 - correlación
@@ -142,15 +127,12 @@ Sin nuevas palabras.
 - costo
 - creación
 - crear
-- create
-- created
 - crecimiento
 - criterios
 - crítico
 - cuando
 - cómo
 - dashboards
-- database
 - datos
 - debe
 - decidir
@@ -166,13 +148,11 @@ Sin nuevas palabras.
 - delimitados
 - dependencia
 - dependencias
-- deployment
 - deployments
 - deriva
 - desacoplar
 - desacople
 - desacoples
-- design
 - despliegues
 - deuda
 - development
@@ -188,9 +168,7 @@ Sin nuevas palabras.
 - document
 - documenta
 - documentar
-- documentation
 - documento
-- documents
 - domain
 - dominio
 - dominios
@@ -248,7 +226,6 @@ Sin nuevas palabras.
 - evolución
 - example
 - excesiva
-- existing
 - experiencia
 - experimentos
 - expiración
@@ -262,7 +239,6 @@ Sin nuevas palabras.
 - fase
 - feature
 - feedback
-- file
 - financiero
 - flag
 - flags
@@ -274,13 +250,10 @@ Sin nuevas palabras.
 - gobernanza
 - gobierna
 - guardrails
-- guide
-- guidelines
 - hacia
 - hagamos
 - hardening
 - herramienta
-- hexagonal
 - idempotencia
 - identidad
 - identifica
@@ -297,7 +270,6 @@ Sin nuevas palabras.
 - inspección
 - integración
 - integrarlos
-- integration
 - inteligentes
 - internos
 - introspección
@@ -310,7 +282,6 @@ Sin nuevas palabras.
 - latencia
 - layered
 - lead
-- links
 - linters
 - local
 - locales
@@ -335,7 +306,6 @@ Sin nuevas palabras.
 - mitigations
 - modelo
 - momento
-- monorepo
 - motivo
 - mscp
 - mscps
@@ -344,11 +314,9 @@ Sin nuevas palabras.
 - mínimo
 - múltiples
 - necesario
-- necessary
 - negocio
 - neiland
 - next
-- noreply
 - normalize
 - north
 - nota
@@ -363,7 +331,6 @@ Sin nuevas palabras.
 - opentelemetry
 - operacional
 - operación
-- operations
 - operativa
 - operativos
 - optimización
@@ -371,7 +338,6 @@ Sin nuevas palabras.
 - order
 - organizacional
 - outbox
-- overview
 - owners
 - ownership
 - pagos
@@ -387,25 +353,19 @@ Sin nuevas palabras.
 - planning
 - plans
 - plataforma
-- platform
 - plus
 - política
 - políticas
 - positioning
 - postmortems
-- practices
 - precio
 - precios
 - preferencias
-- preserved
 - presupuesto
-- prettier
 - pricing
 - primero
-- principles
 - prioridades
 - procesamiento
-- processes
 - prod
 - produccion
 - producción
@@ -421,14 +381,12 @@ Sin nuevas palabras.
 - proponer
 - propósito
 - proveedor
-- providing
 - pruebas
 - próximos
 - psps
 - publica
 - puedo
 - push
-- quality
 - quieres
 - readiness
 - readme
@@ -449,13 +407,13 @@ Sin nuevas palabras.
 - requested
 - resiliencia
 - resolve
-- resources
 - responsabilidad
 - responsables
 - respuesta
 - rest
 - resto
 - resueltos
+- resuelve
 - retención
 - retroalimenta
 - revisan
@@ -482,15 +440,12 @@ Sin nuevas palabras.
 - separada
 - separar
 - separation
-- serves
 - service
 - servicio
 - servicios
 - sesión
-- setup
 - siguiente
 - sincroniza
-- single
 - sistema
 - slas
 - slos
@@ -498,7 +453,6 @@ Sin nuevas palabras.
 - solicita
 - solo
 - sostenido
-- source
 - stabilize
 - stabilized
 - stack
@@ -507,22 +461,17 @@ Sin nuevas palabras.
 - star
 - status
 - steps
-- strategy
-- structure
 - subir
 - sugeridos
 - summary
 - síncronas
 - síncronos
 - tasa
-- tasks
-- tech
 - tecnológica
 - telemetría
 - templates
 - testing
 - that
-- this
 - tickets
 - tiempo
 - time
@@ -537,13 +486,9 @@ Sin nuevas palabras.
 - transformarlos
 - trazas
 - trimestrales
-- troubleshooting
-- truth
 - turbo
-- typescript
 - técnica
 - técnicos
-- unit
 - updated
 - usar
 - usuario
@@ -557,9 +502,6 @@ Sin nuevas palabras.
 - versionados
 - warnings
 - with
-- workflow
-- workflows
-- working
 - workspace
 - épicas
 - órdenes
