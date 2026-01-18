@@ -1,19 +1,15 @@
 # Diccionario del Proyecto
 
-Última sincronización: 18/1/2026, 1:11:25
+Última sincronización: 18/1/2026, 1:11:49
 
 ---
-### User (global VSCode) (4)
-- conflicto
-- cspell
-- durante
-- resuelto
+### User (global VSCode)
+Sin nuevas palabras.
 
-### Workspace (proyecto local) (2)
-- durante
-- resuelto
+### Workspace (proyecto local)
+Sin nuevas palabras.
 
-### Commits recientes detectados (611)
+### Commits recientes detectados (553)
 - about
 - abstraccion
 - abstracción
@@ -25,7 +21,6 @@
 - additional
 - aggregateroot
 - agrega
-- agregar
 - aislados
 - aislar
 - ajustan
@@ -39,7 +34,6 @@
 - ampliar
 - anthropic
 - apis
-- apps
 - architectural
 - architecture
 - archivar
@@ -59,7 +53,6 @@
 - autoconfigurate
 - autorización
 - autónomos
-- avoid
 - añade
 - backlog
 - backward
@@ -104,21 +97,17 @@
 - clave
 - claves
 - cobro
-- codacy
 - code
 - codebase
 - cognitiva
 - comandos
 - comités
-- commit
 - common
 - como
 - compartir
 - compatibilidad
 - compatibility
-- compatible
 - complejidad
-- complete
 - completed
 - compra
 - comprehensive
@@ -128,9 +117,8 @@
 - conciliación
 - confiabilidad
 - configuracion
-- configuración
 - configuration
-- conflicto
+- conflictos
 - conflicts
 - consulta
 - consumen
@@ -159,7 +147,6 @@
 - crecimiento
 - criterios
 - crítico
-- cspell
 - cuando
 - cómo
 - dashboards
@@ -181,7 +168,6 @@
 - dependencias
 - deployment
 - deployments
-- deps
 - deriva
 - desacoplar
 - desacople
@@ -212,13 +198,10 @@
 - dora
 - duplicación
 - duplicados
-- duplicate
-- durante
 - ejecutado
 - elige
 - email
 - emite
-- enable
 - encontrar
 - endpoints
 - entender
@@ -226,7 +209,6 @@
 - entrar
 - entre
 - entrega
-- environment
 - envía
 - envío
 - equipo
@@ -241,7 +223,6 @@
 - escalar
 - escale
 - eslint
-- eslintrc
 - específicos
 - esquema
 - esquemas
@@ -267,7 +248,6 @@
 - evolución
 - example
 - excesiva
-- exclude
 - existing
 - experiencia
 - experimentos
@@ -283,22 +263,16 @@
 - feature
 - feedback
 - file
-- files
 - financiero
 - flag
 - flags
-- formato
 - fragmentación
-- from
 - fuente
 - gates
 - general
-- gitignore
 - globales
-- globs
 - gobernanza
 - gobierna
-- graph
 - guardrails
 - guide
 - guidelines
@@ -306,9 +280,7 @@
 - hagamos
 - hardening
 - herramienta
-- herramientas
 - hexagonal
-- html
 - idempotencia
 - identidad
 - identifica
@@ -316,19 +288,13 @@
 - ignore
 - impacto
 - impactos
-- improved
 - inbox
 - incidentes
-- include
 - inconsistencia
 - increment
-- indentation
 - indicadores
 - informan
 - inspección
-- install
-- instead
-- instructions
 - integración
 - integrarlos
 - integration
@@ -336,36 +302,29 @@
 - internos
 - introspección
 - inventario
-- inventory
 - investment
 - investor
-- json
 - jwks
 - keep
 - kpis
 - latencia
 - layered
 - lead
-- legado
-- libs
 - links
 - linters
 - local
 - locales
-- lockfile
 - login
 - logs
 - loops
 - límites
 - lógica
 - main
-- make
 - maneja
 - mapear
 - mecanismo
 - mecanismos
 - mejoras
-- mensaje
 - mensual
 - mensualmente
 - meses
@@ -388,7 +347,6 @@
 - necessary
 - negocio
 - neiland
-- nested
 - next
 - noreply
 - normalize
@@ -416,13 +374,10 @@
 - overview
 - owners
 - ownership
-- package
-- packages
 - pagos
 - para
 - pasos
 - payment
-- peerdependencies
 - periódica
 - pero
 - pipeline
@@ -434,7 +389,6 @@
 - plataforma
 - platform
 - plus
-- pnpm
 - política
 - políticas
 - positioning
@@ -484,9 +438,7 @@
 - rechazo
 - rechazos
 - reconciliación
-- recursive
 - reembolsos
-- references
 - registros
 - reintentos
 - releases
@@ -495,7 +447,6 @@
 - reporta
 - reportan
 - requested
-- requieren
 - resiliencia
 - resolve
 - resources
@@ -504,7 +455,7 @@
 - respuesta
 - rest
 - resto
-- resuelto
+- resueltos
 - retención
 - retroalimenta
 - revisan
@@ -514,20 +465,16 @@
 - riesgos
 - risks
 - roadmap
-- robust
 - roles
 - rollback
 - rollout
-- root
 - rotación
 - ruido
 - runbooks
 - ruta
-- safety
 - salida
 - sampling
 - scope
-- script
 - segmentación
 - seguro
 - semana
@@ -541,7 +488,6 @@
 - servicios
 - sesión
 - setup
-- shared
 - siguiente
 - sincroniza
 - single
@@ -559,11 +505,9 @@
 - staging
 - standards
 - star
-- static
 - status
 - steps
 - strategy
-- strictnullchecks
 - structure
 - subir
 - sugeridos
@@ -576,7 +520,6 @@
 - tecnológica
 - telemetría
 - templates
-- temporary
 - testing
 - that
 - this
@@ -596,16 +539,13 @@
 - trimestrales
 - troubleshooting
 - truth
-- tsconfig
 - turbo
-- type
 - typescript
 - técnica
 - técnicos
 - unit
 - updated
 - usar
-- uses
 - usuario
 - usuarios
 - validar
@@ -615,14 +555,12 @@
 - verificación
 - versionado
 - versionados
-- vscode
 - warnings
 - with
 - workflow
 - workflows
 - working
 - workspace
-- yaml
 - épicas
 - órdenes
 
