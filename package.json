@@ -29,7 +29,6 @@
     "setup": "bash scripts/setup-complete.sh",
     "ci:prepare": "pnpm -w run clean && pnpm install && pnpm build",
     "ci:test": "pnpm run test && pnpm run lint",
-    "update:dicts": "ts-node scripts/update-cspell-dicts.ts",
     "prepare": "simple-git-hooks",
     "metrics": "curl http://localhost:3004/orders/metrics | grep saga || true",
     "observability:up": "docker-compose -f docker-compose.observability.yml up -d",

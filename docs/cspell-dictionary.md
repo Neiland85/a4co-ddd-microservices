@@ -1,15 +1,16 @@
 # Diccionario del Proyecto
 
-Última sincronización: 18/1/2026, 1:16:19
+Última sincronización: 18/1/2026, 1:16:51
 
 ---
-### User (global VSCode)
-Sin nuevas palabras.
+### User (global VSCode) (2)
+- final
+- forzar
 
-### Workspace (proyecto local)
-Sin nuevas palabras.
+### Workspace (proyecto local) (1)
+- forzar
 
-### Commits recientes detectados (475)
+### Commits recientes detectados (471)
 - abstraccion
 - abstracción
 - accelerate
@@ -26,7 +27,6 @@ Sin nuevas palabras.
 - alertas
 - alimenta
 - alineados
-- allowed
 - almacena
 - ampliar
 - apis
@@ -187,14 +187,12 @@ Sin nuevas palabras.
 - equipos
 - error
 - errores
-- errors
 - escala
 - escalabilidad
 - escalable
 - escalado
 - escalar
 - escale
-- eslint
 - específicos
 - esquema
 - esquemas
@@ -231,10 +229,12 @@ Sin nuevas palabras.
 - fase
 - feature
 - feedback
+- final
 - finalizada
 - financiero
 - flag
 - flags
+- forzar
 - fragmentación
 - fuente
 - gates
@@ -423,7 +423,6 @@ Sin nuevas palabras.
 - separada
 - separar
 - separation
-- service
 - servicio
 - servicios
 - sesión
@@ -437,7 +436,6 @@ Sin nuevas palabras.
 - solicita
 - solo
 - sostenido
-- stabilize
 - stack
 - staging
 - star
@@ -480,7 +478,6 @@ Sin nuevas palabras.
 - verificación
 - versionado
 - versionados
-- warnings
 - with
 - workspace
 - épicas
