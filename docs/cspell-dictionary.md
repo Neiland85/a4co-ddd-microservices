@@ -1,5 +1,6 @@
 # Diccionario del Proyecto
 
+<<<<<<< HEAD
 Última sincronización: 18/1/2026, 1:16:51
 Última sincronización: 18/1/2026, 1:16:51
 
@@ -164,6 +165,16 @@
 - productcacheport
 - save
 - session
+=======
+Última sincronización: 18/1/2026, 0:54:52
+
+---
+### User (global VSCode)
+Sin nuevas palabras.
+
+### Workspace (proyecto local)
+Sin nuevas palabras.
+>>>>>>> 1d1b7309 (Guarda tus cambios antes de rebase)
 
 ### Commits recientes detectados (181)
 
