@@ -1,6 +1,6 @@
 # Diccionario del Proyecto
 
-Última sincronización: 18/1/2026, 1:14:33
+Última sincronización: 18/1/2026, 1:15:59
 
 ---
 ### User (global VSCode)
@@ -9,7 +9,7 @@ Sin nuevas palabras.
 ### Workspace (proyecto local)
 Sin nuevas palabras.
 
-### Commits recientes detectados (495)
+### Commits recientes detectados (475)
 - abstraccion
 - abstracción
 - accelerate
@@ -24,14 +24,12 @@ Sin nuevas palabras.
 - ajustan
 - ajustes
 - alertas
-- align
 - alimenta
 - alineados
 - allowed
 - almacena
 - ampliar
 - apis
-- architectural
 - archivar
 - archivo
 - arquitectura
@@ -39,7 +37,6 @@ Sin nuevas palabras.
 - asegura
 - asíncronos
 - atrás
-- audit
 - auditoría
 - autenticación
 - auth
@@ -81,7 +78,6 @@ Sin nuevas palabras.
 - ciclo
 - circuit
 - claims
-- clarify
 - claro
 - claros
 - clave
@@ -104,8 +100,8 @@ Sin nuevas palabras.
 - confiabilidad
 - configuracion
 - configuration
+- conflicto
 - conflictos
-- conflicts
 - consulta
 - consumen
 - consumidores
@@ -155,9 +151,7 @@ Sin nuevas palabras.
 - desacoples
 - despliegues
 - deuda
-- development
 - devops
-- dictionary
 - diferencia
 - dinámico
 - diseño
@@ -229,9 +223,7 @@ Sin nuevas palabras.
 - experiencia
 - experimentos
 - expiración
-- explicitly
 - explícitos
-- facing
 - fallback
 - fallidas
 - fallo
@@ -239,6 +231,7 @@ Sin nuevas palabras.
 - fase
 - feature
 - feedback
+- finalizada
 - financiero
 - flag
 - flags
@@ -274,10 +267,7 @@ Sin nuevas palabras.
 - internos
 - introspección
 - inventario
-- investment
-- investor
 - jwks
-- keep
 - kpis
 - latencia
 - layered
@@ -290,7 +280,6 @@ Sin nuevas palabras.
 - loops
 - límites
 - lógica
-- main
 - maneja
 - mapear
 - mecanismo
@@ -338,7 +327,6 @@ Sin nuevas palabras.
 - order
 - organizacional
 - outbox
-- owners
 - ownership
 - pagos
 - para
@@ -347,7 +335,6 @@ Sin nuevas palabras.
 - periódica
 - pero
 - pipeline
-- pivot
 - plan
 - planes
 - planning
@@ -356,7 +343,6 @@ Sin nuevas palabras.
 - plus
 - política
 - políticas
-- positioning
 - postmortems
 - precio
 - precios
@@ -374,7 +360,6 @@ Sin nuevas palabras.
 - productos
 - program
 - progresivos
-- project
 - promociones
 - propiedad
 - propios
@@ -388,8 +373,6 @@ Sin nuevas palabras.
 - puedo
 - push
 - quieres
-- readiness
-- readme
 - realimentación
 - realimentarse
 - rebase
@@ -406,12 +389,12 @@ Sin nuevas palabras.
 - reportan
 - requested
 - resiliencia
-- resolve
 - responsabilidad
 - responsables
 - respuesta
 - rest
 - resto
+- resuelto
 - resueltos
 - resuelve
 - retención
@@ -446,6 +429,7 @@ Sin nuevas palabras.
 - sesión
 - siguiente
 - sincroniza
+- sincronización
 - sistema
 - slas
 - slos
@@ -454,10 +438,8 @@ Sin nuevas palabras.
 - solo
 - sostenido
 - stabilize
-- stabilized
 - stack
 - staging
-- standards
 - star
 - status
 - steps
@@ -475,11 +457,9 @@ Sin nuevas palabras.
 - tickets
 - tiempo
 - time
-- timeline
 - timing
 - todo
 - tokens
-- tooling
 - tracing
 - transaccional
 - transacciones
