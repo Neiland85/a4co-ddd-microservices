@@ -1,1 +1,2 @@
-// Domain exports (vacío por ahora)
+export * from '../aggregate-root';
+export * from '../value-object';

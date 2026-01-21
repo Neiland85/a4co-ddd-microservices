@@ -4,9 +4,7 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*.ts", "../../packages/shared-utils/src/**/*.ts"],
