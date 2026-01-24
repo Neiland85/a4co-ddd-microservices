@@ -1,5 +1,4 @@
-import { Product } from '../domain/entities/product.entity';
-
+// Ajusta aquí la interfaz según la nueva estructura, por ejemplo:
 export interface ProductRepositoryPort {
-  save(product: Product): Promise<void>;
+  save(product: any): Promise<void>;
 }

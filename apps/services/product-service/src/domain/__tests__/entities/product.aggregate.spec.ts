@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Product } from '../../entities/product.entity';
+// import { Product } from '../../entities/product.entity';
 import { ProductId } from '../../value-objects/product-id.vo';
 
 describe('Product Aggregate', () => {

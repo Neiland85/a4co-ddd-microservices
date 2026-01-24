@@ -1,42 +1,25 @@
 import { PaymentDomainEvent, PaymentEventPayload } from './payment-event.base';
-import { MoneyPrimitives } from '../value-objects/money.vo';
-import { PaymentStatusValue } from '../value-objects/payment-status.vo';
+import type { MoneyPrimitives } from '../value-objects/money.vo';
+import type { PaymentStatusValue } from '../value-objects/payment-status.vo';
 
-export interface PaymentSucceededEventPayload extends PaymentEventPayload {
-  status: PaymentStatusValue.SUCCEEDED;
+export interface PaymentSucceededPayload extends PaymentEventPayload {
+  orderId: string;
+  customerId: string;
+  amount: MoneyPrimitives;
+  currency?: string;
+  metadata: Record<string, any>;
   stripePaymentIntentId: string;
+  status?: PaymentStatusValue;
+  timestamp: Date;
 }
 
-export class PaymentSucceededEvent extends PaymentDomainEvent<PaymentSucceededEventPayload> {
-  constructor(params: {
-    paymentId: string;
-    orderId: string;
-    customerId: string;
-    amount: MoneyPrimitives;
-    metadata?: Record<string, any>;
-    stripePaymentIntentId: string;
-    timestamp?: Date;
-    sagaId?: string;
-  }) {
-    if (!params.stripePaymentIntentId) {
-      throw new Error('PaymentSucceededEvent requires a Stripe payment intent id');
-    }
+export class PaymentSucceededEvent extends PaymentDomainEvent<PaymentSucceededPayload> {
+  constructor(params: Omit<PaymentSucceededPayload, 'timestamp'> & { timestamp?: Date }) {
+    const payload: PaymentSucceededPayload = {
+      ...params,
+      timestamp: params.timestamp ?? new Date(),
+    };
 
-    super(
-      params.paymentId,
-      {
-        paymentId: params.paymentId,
-        orderId: params.orderId,
-        customerId: params.customerId,
-        amount: params.amount,
-        currency: params.amount.currency,
-        metadata: params.metadata ?? {},
-        stripePaymentIntentId: params.stripePaymentIntentId,
-        status: PaymentStatusValue.SUCCEEDED,
-        timestamp: params.timestamp ?? new Date(),
-      },
-      1,
-      params.sagaId,
-    );
+    super(payload.paymentId, 'payment.succeeded.v1', payload, 1);
   }
 }

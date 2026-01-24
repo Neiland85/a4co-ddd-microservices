@@ -1,4 +1,11 @@
-
+// Domain
 export * from './domain';
-export * from './types';
+
+// Events
 export * from './events';
+
+// Security
+export * from './security';
+
+// Types
+export * from './types';

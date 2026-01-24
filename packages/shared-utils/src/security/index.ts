@@ -1,1 +1,1 @@
-// Security utils placeholder
+export * from './braces-security.middleware';

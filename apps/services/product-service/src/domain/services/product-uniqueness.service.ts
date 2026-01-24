@@ -11,16 +11,20 @@ export class ProductUniquenessService {
   constructor(private readonly uniquenessChecker: IProductUniquenessChecker) {}
 
   async ensureSkuIsUnique(sku: SKU, excludeProductId?: string): Promise<void> {
-    const isUnique = await this.uniquenessChecker.isSkuUnique(sku.value, excludeProductId);
+    const value = sku.value; // público en VO
+    const isUnique = await this.uniquenessChecker.isSkuUnique(value, excludeProductId);
+
     if (!isUnique) {
-      throw new Error(`Product with SKU ${sku.value} already exists`);
+      throw new Error(`Product with SKU ${value} already exists`);
     }
   }
 
   async ensureSlugIsUnique(slug: Slug, excludeProductId?: string): Promise<void> {
-    const isUnique = await this.uniquenessChecker.isSlugUnique(slug.value, excludeProductId);
+    const value = slug.value;
+    const isUnique = await this.uniquenessChecker.isSlugUnique(value, excludeProductId);
+
     if (!isUnique) {
-      throw new Error(`Product with slug ${slug.value} already exists`);
+      throw new Error(`Product with slug ${value} already exists`);
     }
   }
 
@@ -30,8 +34,7 @@ export class ProductUniquenessService {
     let counter = 1;
 
     while (!(await this.uniquenessChecker.isSlugUnique(candidate, excludeProductId))) {
-      candidate = `${baseSlug}-${counter}`;
-      counter++;
+      candidate = `${baseSlug}-${counter++}`;
     }
 
     return Slug.create(candidate);

@@ -1,120 +1,32 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { StripeGateway } from '../../infrastructure/stripe.gateway';
-import { PaymentEventPublisher } from '../services/payment-event.publisher';
-import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
-import {
-  PaymentDomainService,
-  Payment,
-  Money,
-  PaymentRepository,
-  PaymentStatusValue,
-  PaymentId,
-} from '@a4co/domain-payment';
-
-export interface ProcessPaymentCommand {
-  orderId: string;
-  amount: number;
-  currency: string;
-  customerId: string;
-  description?: string;
-  metadata?: Record<string, any>;
-  paymentMethodId?: string;
-  idempotencyKey?: string;
-  sagaId?: string;
-}
+import { Injectable } from '@nestjs/common';
+import { PaymentRepository, Payment, Money } from '@a4co/domain-payment';
 
 @Injectable()
 export class ProcessPaymentUseCase {
-  private readonly logger = new Logger(ProcessPaymentUseCase.name);
+  constructor(private readonly paymentRepository: PaymentRepository) {}
 
-  constructor(
-    @Inject(PAYMENT_REPOSITORY_TOKEN)
-    private readonly paymentRepository: PaymentRepository,
-    private readonly paymentDomainService: PaymentDomainService,
-    private readonly stripeGateway: StripeGateway,
-    private readonly eventPublisher: PaymentEventPublisher,
-  ) {}
+  async execute(command: {
+    orderId: string;
+    amount: number;
+    currency: string;
+    customerId: string;
+    metadata?: Record<string, any>;
+    stripePaymentIntentId?: string | null;
+  }): Promise<Payment> {
+    const amount = Money.fromPrimitives({
+      amount: command.amount,
+      currency: command.currency,
+    } as any);
 
-  public async execute(command: ProcessPaymentCommand): Promise<Payment> {
-    const money = Money.create(command.amount / 100, command.currency);
-    this.paymentDomainService.validatePaymentLimits(money);
+    const payment = Payment.create({
+      orderId: command.orderId,
+      amount,
+      customerId: command.customerId,
+      metadata: command.metadata ?? {},
+      stripePaymentIntentId: command.stripePaymentIntentId ?? null,
+    } as any);
 
-    const existingPayment = await this.paymentRepository.findByOrderId(command.orderId);
-
-    if (existingPayment) {
-      // Idempotent behavior: if already succeeded or refunded, return existing state
-      const statusValue = existingPayment.status.value;
-      if ([PaymentStatusValue.SUCCEEDED, PaymentStatusValue.REFUNDED].includes(statusValue)) {
-        this.logger.log(
-          `Payment for order ${command.orderId} already processed with status ${statusValue}`,
-        );
-        return existingPayment;
-      }
-
-      if (statusValue === PaymentStatusValue.PROCESSING) {
-        this.logger.log(`Payment for order ${command.orderId} is already processing`);
-        return existingPayment;
-      }
-    }
-
-    const payment =
-      existingPayment ??
-      Payment.create({
-        orderId: command.orderId,
-        amount: money,
-        customerId: command.customerId,
-        metadata: command.metadata ?? {},
-      });
-
-    if (!this.paymentDomainService.canProcessPayment(payment)) {
-      throw new Error(
-        `Payment ${payment.paymentId.value} cannot be processed from status ${payment.status.value}`,
-      );
-    }
-
-    payment.process();
-    await this.persist(payment);
-
-    try {
-      const stripeParams: any = {
-        amount: money,
-        orderId: command.orderId,
-        customerId: command.customerId,
-        metadata: command.metadata ?? {},
-      };
-
-      if (command.paymentMethodId) {
-        stripeParams.paymentMethodId = command.paymentMethodId;
-      }
-
-      if (command.idempotencyKey) {
-        stripeParams.idempotencyKey = command.idempotencyKey;
-      }
-
-      const intent = await this.stripeGateway.createPaymentIntent(stripeParams);
-
-      if (intent.status === 'succeeded') {
-        payment.markAsSucceeded(intent.id);
-      } else if (intent.status === 'processing') {
-        this.logger.log(
-          `Stripe payment intent ${intent.id} is processing for order ${command.orderId}`,
-        );
-      } else {
-        payment.markAsFailed(`Stripe payment intent status: ${intent.status}`);
-      }
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : 'Unknown payment processing error';
-      payment.markAsFailed(reason);
-      await this.persist(payment);
-      throw error;
-    }
-
-    await this.persist(payment);
-    return payment;
-  }
-
-  private async persist(payment: Payment): Promise<void> {
     await this.paymentRepository.save(payment);
-    await this.eventPublisher.publishPaymentEvents(payment);
+    return payment;
   }
 }

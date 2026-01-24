@@ -5,48 +5,15 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "outDir": "./dist",
-    "removeComments": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "strictNullChecks": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "exactOptionalPropertyTypes": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@test/*": ["test/*"],
-      "@a4co/shared-utils": ["../packages/shared-utils/src/index.ts"],
-      "@a4co/shared-utils/*": ["../packages/shared-utils/src/*"],
-      "@a4co/design-system": ["../packages/design-system/src"],
-      "@a4co/observability": ["../packages/observability/src"],
-      "@a4co/observability/*": ["../packages/observability/src/*"],
-      "@a4co/shared-events": ["../packages/shared-events/dist"],
-      "@a4co/shared-events/*": ["../packages/shared-events/dist/*"],
-      "@a4co/domain-order": ["packages/domain/order/src/index.ts"],
-      "@a4co/domain-order/*": ["packages/domain/order/src/*"],
-      "@a4co/domain-shared": ["packages/domain/shared/src/index.ts"],
-      "@a4co/domain-shared/*": ["packages/domain/shared/src/*"],
-      "@a4co/domain-payment": ["packages/domain/payment/src/index.ts"],
-      "@a4co/domain-payment/*": ["packages/domain/payment/src/*"],
-      "@a4co/domain-inventory": ["packages/domain/inventory/src/index.ts"],
-      "@a4co/domain-inventory/*": ["packages/domain/inventory/src/*"]
-    },
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": false,
-    "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo"
-  },
-  "include": ["src", "test"],
-  "exclude": ["node_modules", "dist", ".next", "coverage"]
+      "@a4co/*": ["packages/*/src/index.ts"]
+    }
+  }
 }
+

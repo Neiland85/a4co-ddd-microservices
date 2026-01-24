@@ -5,8 +5,8 @@ import { UserService } from '../application/services/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('health')
-  getHealth() {
-    return this.userService.getHealth();
+  @Get()
+  async findAll(): Promise<any[]> {
+    return this.userService.findAll();
   }
 }

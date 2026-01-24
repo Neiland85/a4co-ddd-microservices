@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { UseCase } from '@a4co/shared-utils';
+import type { UseCase } from './use-case';
 import { UserRepositoryPort } from '../ports/user-repository.port';
 import { CryptographyServicePort } from '../ports/cryptography-service.port';
 import { EventBusPort } from '../ports/event-bus.port';
