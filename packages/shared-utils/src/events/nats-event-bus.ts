@@ -47,8 +47,12 @@ export class NatsEventBus extends EventEmitter {
         name: this.config.name || `a4co-event-bus-${Date.now()}`,
         ...(this.config.timeout !== undefined && { timeout: this.config.timeout }),
         ...(this.config.reconnect !== undefined && { reconnect: this.config.reconnect }),
-        ...(this.config.maxReconnectAttempts !== undefined && { maxReconnectAttempts: this.config.maxReconnectAttempts }),
-        ...(this.config.reconnectTimeWait !== undefined && { reconnectTimeWait: this.config.reconnectTimeWait }),
+        ...(this.config.maxReconnectAttempts !== undefined && {
+          maxReconnectAttempts: this.config.maxReconnectAttempts,
+        }),
+        ...(this.config.reconnectTimeWait !== undefined && {
+          reconnectTimeWait: this.config.reconnectTimeWait,
+        }),
       };
 
       this.connection = await connect(options);
@@ -56,13 +60,14 @@ export class NatsEventBus extends EventEmitter {
       this.setupConnectionListeners();
 
       console.log(
-        `✅ Conectado a NATS en ${Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers
-        }`
+        `✅ Conectado a NATS en ${
+          Array.isArray(this.config.servers) ? this.config.servers.join(', ') : this.config.servers
+        }`,
       );
     } catch (error) {
       this.emit('error', error);
       throw new Error(
-        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : String(error)}`
+        `❌ Error conectando a NATS: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

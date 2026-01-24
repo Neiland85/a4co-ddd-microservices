@@ -1,4 +1,3 @@
-import { Product } from '../../domain/entities/product.entity';
 import {
   CategoryId,
   Price,
@@ -9,14 +8,9 @@ import {
   Slug,
   Stock,
 } from '../../domain/value-objects/product-value-objects';
-import {
-  ProductArchivedEvent,
-  ProductCreatedEvent,
-  ProductPriceChangedEvent,
-  ProductPublishedEvent,
-} from '../../domain/events/product-events';
 import { EventSubjects, IEventBus } from '../../domain/event-bus';
 import { IProductRepository } from '../../infrastructure/repositories/product.repository';
+import { Product } from '../../domain/entities/product.entity';
 
 // ========================================
 // DTOs (Data Transfer Objects)

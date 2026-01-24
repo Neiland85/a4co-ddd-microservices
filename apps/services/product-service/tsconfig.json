@@ -2,13 +2,31 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
+    "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"]
-    }
+      "@a4co/shared-utils": [
+        "../../packages/shared-utils/dist"
+      ],
+      "@a4co/shared-utils/*": [
+        "../../packages/shared-utils/dist/*"
+      ],
+      "@a4co/observability": [
+        "../../packages/observability/dist"
+      ],
+      "@a4co/observability/*": [
+        "../../packages/observability/dist/*"
+      ]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false
   },
-  "include": ["src/**/*.ts", "../../packages/shared-utils/src/**/*.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

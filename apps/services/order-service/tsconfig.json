@@ -18,29 +18,56 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
-    "types": ["node"],
-    "lib": ["ES2022", "DOM"],
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@a4co/shared-utils": ["../../packages/shared-utils/src/index.ts"],
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
-      "@a4co/shared-events": ["../../packages/shared-events/dist"],
-      "@a4co/shared-events/*": ["../../packages/shared-events/dist/*"],
-      "@a4co/domain-order": ["../../../packages/domain/order/src/index.ts"],
-      "@a4co/domain-order/*": ["../../../packages/domain/order/src/*"],
-      "@a4co/domain-shared": ["../../../packages/domain/shared/src/index.ts"],
-      "@a4co/domain-shared/*": ["../../../packages/domain/shared/src/*"],
-      "@a4co/observability": ["../../packages/observability/src"],
-      "@a4co/observability/*": ["../../packages/observability/src/*"]
-    }
+      "@/*": [
+        "src/*"
+      ],
+      "@a4co/shared-utils": [
+        "../../packages/shared-utils/dist"
+      ],
+      "@a4co/shared-utils/*": [
+        "../../packages/shared-utils/dist/*"
+      ],
+      "@a4co/shared-events": [
+        "../../packages/shared-events/dist"
+      ],
+      "@a4co/shared-events/*": [
+        "../../packages/shared-events/dist/*"
+      ],
+      "@a4co/domain-order": [
+        "../../../packages/domain/order/src/index.ts"
+      ],
+      "@a4co/domain-order/*": [
+        "../../../packages/domain/order/src/*"
+      ],
+      "@a4co/domain-shared": [
+        "../../../packages/domain/shared/src/index.ts"
+      ],
+      "@a4co/domain-shared/*": [
+        "../../../packages/domain/shared/src/*"
+      ],
+      "@a4co/observability": [
+        "../../packages/observability/dist"
+      ],
+      "@a4co/observability/*": [
+        "../../packages/observability/dist/*"
+      ]
+    },
+    "rootDir": "."
   },
   "include": [
-    "src/**/*.ts",
-    "tests/**/*.ts",
-    "**/__tests__/**/*.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts"
+    "src/**/*.ts"
   ],
-  "exclude": ["dist", "node_modules"]
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

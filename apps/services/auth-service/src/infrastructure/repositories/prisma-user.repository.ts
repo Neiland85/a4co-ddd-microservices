@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { UserRepositoryPort } from '../../application/ports/user-repository.port';
 import { User, UserStatus } from '../../domain/aggregates/user.aggregate';
 
-// Interface simple para el cliente Prisma
+/**
+ * Interface mínima del cliente Prisma.
+ * Evita acoplar el dominio o el repositorio a Prisma directamente.
+ */
 interface PrismaClientInterface {
   user: {
     findUnique: (args: any) => Promise<any>;
@@ -23,11 +26,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       where: { id },
     });
 
-    if (!userData) {
-      return null;
-    }
-
-    return this.mapToDomain(userData);
+    return userData ? this.mapToDomain(userData) : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -35,27 +34,23 @@ export class PrismaUserRepository implements UserRepositoryPort {
       where: { email },
     });
 
-    if (!userData) {
-      return null;
-    }
-
-    return this.mapToDomain(userData);
+    return userData ? this.mapToDomain(userData) : null;
   }
 
   async save(user: User): Promise<User> {
-    const userData = user.toPersistence();
+    const data = user.toPersistence();
 
     const savedUser = await this.prisma.user.create({
       data: {
-        id: userData.id,
-        email: userData.email,
-        name: userData.name,
-        hashedPassword: userData.hashedPassword,
-        status: userData.status,
-        emailVerified: userData.emailVerified,
-        lastLoginAt: userData.lastLoginAt,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt,
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        hashedPassword: data.hashedPassword,
+        status: data.status,
+        emailVerified: data.emailVerified,
+        lastLoginAt: data.lastLoginAt,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
       },
     });
 
@@ -63,18 +58,18 @@ export class PrismaUserRepository implements UserRepositoryPort {
   }
 
   async update(user: User): Promise<User> {
-    const userData = user.toPersistence();
+    const data = user.toPersistence();
 
     const updatedUser = await this.prisma.user.update({
-      where: { id: userData.id },
+      where: { id: data.id },
       data: {
-        email: userData.email,
-        name: userData.name,
-        hashedPassword: userData.hashedPassword,
-        status: userData.status,
-        emailVerified: userData.emailVerified,
-        lastLoginAt: userData.lastLoginAt,
-        updatedAt: userData.updatedAt,
+        email: data.email,
+        name: data.name,
+        hashedPassword: data.hashedPassword,
+        status: data.status,
+        emailVerified: data.emailVerified,
+        lastLoginAt: data.lastLoginAt,
+        updatedAt: data.updatedAt,
       },
     });
 
@@ -91,6 +86,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
     const count = await this.prisma.user.count({
       where: { email },
     });
+
     return count > 0;
   }
 
@@ -104,7 +100,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       orderBy: { createdAt: 'desc' },
     });
 
-    return users.map((user: any) => this.mapToDomain(user));
+    return users.map((u: any) => this.mapToDomain(u));
   }
 
   async findPaginated(
@@ -127,13 +123,11 @@ export class PrismaUserRepository implements UserRepositoryPort {
       this.prisma.user.count(),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
     return {
-      users: users.map((user: any) => this.mapToDomain(user)),
+      users: users.map((u: any) => this.mapToDomain(u)),
       total,
       page,
-      totalPages,
+      totalPages: Math.ceil(total / limit),
     };
   }
 
@@ -144,41 +138,28 @@ export class PrismaUserRepository implements UserRepositoryPort {
       orderBy: { createdAt: 'desc' },
     });
 
-    return users.map((user: any) => this.mapToDomain(user));
+    return users.map((u: any) => this.mapToDomain(u));
   }
 
   async count(): Promise<number> {
-    return await this.prisma.user.count();
+    return this.prisma.user.count();
   }
 
+  /**
+   * 🔑 ÚNICO punto de reconstrucción del aggregate desde persistencia
+   * Alineado con User.reconstruct(data)
+   */
   private mapToDomain(userData: any): User {
-    return User.reconstruct(
-      {
-        id: userData.id,
-        email: userData.email,
-        name: userData.name,
-      },
-      {
-        hashedPassword: userData.hashedPassword,
-        status: userData.status as UserStatus,
-        emailVerified: userData.emailVerified,
-      },
-      {
-        lastLoginAt: userData.lastLoginAt,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt,
-      },
-      {
-        id: userData.id,
-        email: userData.email,
-        name: userData.name,
-        hashedPassword: userData.hashedPassword,
-        status: userData.status as UserStatus,
-        emailVerified: userData.emailVerified,
-        lastLoginAt: userData.lastLoginAt,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt,
-      },
-    );
+    return User.reconstruct({
+      id: userData.id,
+      email: userData.email,
+      name: userData.name,
+      hashedPassword: userData.hashedPassword,
+      status: userData.status as UserStatus,
+      emailVerified: userData.emailVerified,
+      lastLoginAt: userData.lastLoginAt ?? undefined,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
+    });
   }
 }

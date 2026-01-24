@@ -1,57 +1,57 @@
-import { DomainEvent } from '@a4co/shared-utils';
+import type { DomainEvent } from '@a4co/shared-utils';
 
-export class UserRegisteredEvent extends DomainEvent {
+export class UserRegisteredEvent implements DomainEvent {
+  readonly eventName = 'UserRegistered';
+  readonly occurredOn = new Date();
+
   constructor(
-    aggregateId: string,
-    public readonly userData: {
+    public readonly aggregateId: string,
+    public readonly payload: {
       email: string;
       name: string;
       registeredAt: Date;
     },
-    eventVersion?: number,
-  ) {
-    super(aggregateId, userData, eventVersion);
-  }
+  ) {}
 }
 
-export class UserLoginEvent extends DomainEvent {
+export class UserLoginEvent implements DomainEvent {
+  readonly eventName = 'UserLogin';
+  readonly occurredOn = new Date();
+
   constructor(
-    aggregateId: string,
-    public readonly loginData: {
+    public readonly aggregateId: string,
+    public readonly payload: {
       email: string;
       loginAt: Date;
       ip?: string;
       userAgent?: string;
     },
-    eventVersion?: number,
-  ) {
-    super(aggregateId, loginData, eventVersion);
-  }
+  ) {}
 }
 
-export class UserPasswordChangedEvent extends DomainEvent {
+export class UserPasswordChangedEvent implements DomainEvent {
+  readonly eventName = 'UserPasswordChanged';
+  readonly occurredOn = new Date();
+
   constructor(
-    aggregateId: string,
-    public readonly passwordData: {
+    public readonly aggregateId: string,
+    public readonly payload: {
       changedAt: Date;
       changedBy: string;
     },
-    eventVersion?: number,
-  ) {
-    super(aggregateId, passwordData, eventVersion);
-  }
+  ) {}
 }
 
-export class UserDeactivatedEvent extends DomainEvent {
+export class UserDeactivatedEvent implements DomainEvent {
+  readonly eventName = 'UserDeactivated';
+  readonly occurredOn = new Date();
+
   constructor(
-    aggregateId: string,
-    public readonly deactivationData: {
+    public readonly aggregateId: string,
+    public readonly payload: {
       deactivatedAt: Date;
       reason?: string;
-      deactivatedBy?: string;
+      deactivatedBy: string;
     },
-    eventVersion?: number,
-  ) {
-    super(aggregateId, deactivationData, eventVersion);
-  }
+  ) {}
 }

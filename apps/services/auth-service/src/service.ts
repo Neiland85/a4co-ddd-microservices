@@ -1,25 +1,21 @@
-import { BaseService } from '@a4co/shared-utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { UserRepositoryPort } from './application/ports/user-repository.port';
 
-export class AuthService extends BaseService {
-  constructor() {
-    super('AuthService');
+@Injectable()
+export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
+  constructor(
+    private readonly userRepository: UserRepositoryPort,
+  ) {}
+
+  async login(username: string, password: string): Promise<any> {
+    this.logger.log('User authenticated', { username });
+    throw new Error('Not implemented');
   }
 
-  login(username: string, password: string): string {
-    try {
-      this.log('User authenticated', { username });
-      return `Usuario ${username} autenticado.`;
-    } catch (error) {
-      return this.handleServiceError(error, 'login');
-    }
-  }
-
-  register(username: string, password: string): string {
-    try {
-      this.log('User registration', { username });
-      return `Usuario ${username} registrado.`;
-    } catch (error) {
-      return this.handleServiceError(error, 'register');
-    }
+  async register(username: string, password: string): Promise<any> {
+    this.logger.log('User registration', { username });
+    throw new Error('Not implemented');
   }
 }

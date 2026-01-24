@@ -1,35 +1,17 @@
-import { DomainEvent } from '@a4co/shared-utils';
-import { MoneyPrimitives } from '../value-objects/money.vo';
-import { PaymentStatusValue } from '../value-objects/payment-status.vo';
+import type { DomainEvent } from '@a4co/shared-utils';
 
 export interface PaymentEventPayload {
   paymentId: string;
-  orderId: string;
-  customerId: string;
-  amount: MoneyPrimitives;
-  currency: string;
-  status: PaymentStatusValue;
-  metadata: Record<string, any>;
-  stripePaymentIntentId: string | null;
-  timestamp: Date;
-  reason?: string;
 }
 
-export abstract class PaymentDomainEvent<TPayload extends PaymentEventPayload> extends DomainEvent {
-  public readonly payload: TPayload;
+export abstract class PaymentDomainEvent<
+  TPayload extends PaymentEventPayload,
+> implements DomainEvent {
+  readonly occurredOn: Date = new Date();
 
   protected constructor(
-    paymentId: string,
-    payload: TPayload,
-    eventVersion?: number,
-    sagaId?: string,
-  ) {
-    super(
-      paymentId,
-      { ...payload, timestamp: payload.timestamp.toISOString() },
-      eventVersion,
-      sagaId,
-    );
-    this.payload = payload;
-  }
+    public readonly aggregateId: string,
+    public readonly eventName: string,
+    public readonly payload: TPayload,
+  ) {}
 }
