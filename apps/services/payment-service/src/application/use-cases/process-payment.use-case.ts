@@ -1,3 +1,32 @@
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { PaymentRepository, Payment, Money } from '@a4co/domain-payment';
+import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
+
+export interface ProcessPaymentCommand {
+  orderId: string;
+  amount: number;
+  currency: string;
+  customerId: string;
+  metadata?: Record<string, unknown>;
+  stripePaymentIntentId?: string | null;
+}
+
+@Injectable()
+export class ProcessPaymentUseCase {
+  private readonly logger = new Logger(ProcessPaymentUseCase.name);
+
+  constructor(
+    @Inject(PAYMENT_REPOSITORY_TOKEN)
+    private readonly paymentRepository: PaymentRepository,
+  ) {}
+
+  async execute(command: ProcessPaymentCommand): Promise<Payment> {
+    this.logger.log(`Processing payment for order ${command.orderId}`);
+
+    // 1️⃣ Crear VO Money
+    const amount = Money.create(command.amount, command.currency);
+
+    // 2️⃣ Crear agregado Payment
 import { Injectable } from '@nestjs/common';
 import { PaymentRepository, Payment, Money } from '@a4co/domain-payment';
 
@@ -24,6 +53,11 @@ export class ProcessPaymentUseCase {
       customerId: command.customerId,
       metadata: command.metadata ?? {},
       stripePaymentIntentId: command.stripePaymentIntentId ?? null,
+    });
+
+    // 3️⃣ Persistir
+    await this.paymentRepository.save(payment);
+
     } as any);
 
     await this.paymentRepository.save(payment);
