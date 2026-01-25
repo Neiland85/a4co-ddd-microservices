@@ -1,43 +1,25 @@
 import type { DomainEvent } from './domain-event';
 
 export abstract class AggregateRoot {
-  protected readonly _id: string;
-  protected _createdAt: Date;
-  protected _updatedAt: Date;
+  private readonly _domainEvents: DomainEvent[] = [];
 
-  private _domainEvents: DomainEvent[] = [];
-
-  protected constructor(id: string, createdAt: Date = new Date(), updatedAt: Date = new Date()) {
-    this._id = id;
-    this._createdAt = createdAt;
-    this._updatedAt = updatedAt;
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  get createdAt(): Date {
-    return this._createdAt;
-  }
-
-  get updatedAt(): Date {
-    return this._updatedAt;
-  }
-
-  protected touch(): void {
-    this._updatedAt = new Date();
-  }
+  constructor(protected readonly _aggregateId: string) {}
 
   protected addDomainEvent(event: DomainEvent): void {
     this._domainEvents.push(event);
   }
 
-  getUncommittedEvents(): DomainEvent[] {
-    return [...this._domainEvents];
+  /**
+   * Devuelve y limpia los eventos del agregado.
+   * Es el punto oficial de salida hacia el mundo exterior.
+   */
+  public pullDomainEvents(): DomainEvent[] {
+    const events = [...this._domainEvents];
+    this._domainEvents.length = 0;
+    return events;
   }
 
-  clearEvents(): void {
-    this._domainEvents = [];
+  public get aggregateId(): string {
+    return this._aggregateId;
   }
 }

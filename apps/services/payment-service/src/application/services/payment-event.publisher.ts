@@ -6,30 +6,18 @@ import type { Payment } from '@a4co/domain-payment';
 export class PaymentEventPublisher {
   private readonly logger = new Logger(PaymentEventPublisher.name);
 
-  /**
-   * Estabilización: publica (o deja listo para publicar) eventos del agregado.
-   * No asumimos API específica del AggregateRoot: usamos any + fallback.
-   */
   async publishPaymentEvents(payment: Payment): Promise<void> {
-    const anyPayment = payment as any;
-
-    const events: DomainEvent[] =
-      (anyPayment.getUncommittedEvents?.() as DomainEvent[]) ??
-      (anyPayment._domainEvents as DomainEvent[]) ??
-      [];
+    const events: DomainEvent[] = payment.pullDomainEvents();
 
     if (!events.length) return;
 
     for (const event of events) {
-      this.logger.log(`📤 Domain event ready: ${event.eventName} (${event.aggregateId})`);
-      // Aquí irá el bus real (NATS/Kafka). Por ahora, stabilización.
-    }
+      this.logger.log(
+        `📤 Publishing domain event ${event.eventName} for aggregate ${event.aggregateId}`,
+      );
 
-    // limpieza
-    if (typeof anyPayment.clearEvents === 'function') {
-      anyPayment.clearEvents();
-    } else {
-      anyPayment._domainEvents = [];
+      // Aquí irá NATS / Kafka / EventBridge
+      // await this.eventBus.publish(event);
     }
   }
 }
