@@ -7,17 +7,13 @@ export class PaymentEventPublisher {
   private readonly logger = new Logger(PaymentEventPublisher.name);
 
   async publishPaymentEvents(payment: Payment): Promise<void> {
-    const events: DomainEvent[] = payment.pullDomainEvents();
+    const events = payment.pullDomainEvents();
 
     if (!events.length) return;
 
     for (const event of events) {
-      this.logger.log(
-        `📤 Publishing domain event ${event.eventName} for aggregate ${event.aggregateId}`,
-      );
-
-      // Aquí irá NATS / Kafka / EventBridge
-      // await this.eventBus.publish(event);
+      this.logger.log(`📤 Domain event ready: ${event.eventName} (${event.aggregateId})`);
+      // aquí irá NATS / Kafka / EventBridge
     }
   }
 }
