@@ -42,7 +42,7 @@ export class OrderController {
     this.metricsService.recordOrderCreated(order.totalAmount);
 
     return {
-      orderId: order.id,
+      orderId: order.aggregateId,
       customerId: order.customerId,
       items: order.items.map((item: OrderItem) => ({
         productId: item.productId,
@@ -53,8 +53,8 @@ export class OrderController {
       })),
       status: order.status,
       totalAmount: order.totalAmount,
-      createdAt: order.createdAt.toISOString(),
-      updatedAt: order.updatedAt.toISOString(),
+      createdAt: order.getCreatedAt().toISOString(),
+      updatedAt: order.getUpdatedAt().toISOString(),
     };
   }
 
@@ -81,7 +81,7 @@ export class OrderController {
   async getOrder(@Param('orderId') orderId: string): Promise<OrderResponseV1> {
     const result = await this.orderService.getOrder({ orderId });
     return {
-      orderId: result.id,
+      orderId: result.aggregateId,
       customerId: result.customerId,
       items: result.items.map((item: OrderItem) => ({
         productId: item.productId,
@@ -92,8 +92,8 @@ export class OrderController {
       })),
       status: result.status,
       totalAmount: result.totalAmount,
-      createdAt: result.createdAt.toISOString(),
-      updatedAt: result.updatedAt.toISOString(),
+      createdAt: result.getCreatedAt().toISOString(),
+      updatedAt: result.getUpdatedAt().toISOString(),
     };
   }
 }

@@ -29,15 +29,14 @@ export class RegisterUserUseCase implements UseCase<RegisterUserDto, UserRespons
 
       // Crear el usuario con contraseña ya hasheada
       const name = (request.name ?? request.fullName ?? '').trim();
-    const user = await User.createWithHashedPassword(request.email, name, hashedPassword);
+      const user = User.createWithHashedPassword(request.email, name, hashedPassword);
 
       // Persistir el usuario usando el adapter
       const savedUser = await this.userRepository.save(user);
 
       // Publicar eventos de dominio
-      const domainEvents = savedUser.getUncommittedEvents();
+      const domainEvents = savedUser.pullDomainEvents();
       await this.eventBus.publishAll(domainEvents);
-      savedUser.clearEvents();
 
       // Mapear a DTO de respuesta
       return this.mapToDto(savedUser);
@@ -58,8 +57,8 @@ export class RegisterUserUseCase implements UseCase<RegisterUserDto, UserRespons
     if (user.lastLoginAt !== undefined) {
     dto.lastLoginAt = user.lastLoginAt;
     }
-    dto.createdAt = user.createdAt;
-    dto.updatedAt = user.updatedAt;
+    dto.createdAt = user.getCreatedAt();
+    dto.updatedAt = user.getUpdatedAt();
     return dto;
   }
 }

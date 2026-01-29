@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateProductDTO,
+  type ProductRecord,
   ProductService,
   UpdateProductDTO,
 } from './application/services/product.service';
@@ -15,31 +16,43 @@ export class ProductController {
   @ApiOperation({ summary: 'Obtener producto por ID' })
   @ApiResponse({ status: 200, description: 'Producto encontrado' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  async getProductById(@Param('id') id: string): Promise<any> {
-    return await this.productService.findById(id);
+  async getProductById(@Param('id') id: string): Promise<ProductRecord> {
+    const product = await this.productService.findById(id);
+    if (!product) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+    return product;
   }
 
   @Get('sku/:sku')
   @ApiOperation({ summary: 'Obtener producto por SKU' })
   @ApiResponse({ status: 200, description: 'Producto encontrado' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  async getProductBySku(@Param('sku') sku: string): Promise<any> {
-    return await this.productService.findBySku(sku);
+  async getProductBySku(@Param('sku') sku: string): Promise<ProductRecord> {
+    const product = await this.productService.findBySku(sku);
+    if (!product) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+    return product;
   }
 
   @Get('slug/:slug')
   @ApiOperation({ summary: 'Obtener producto por slug' })
   @ApiResponse({ status: 200, description: 'Producto encontrado' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  async getProductBySlug(@Param('slug') slug: string): Promise<any> {
-    return await this.productService.findBySlug(slug);
+  async getProductBySlug(@Param('slug') slug: string): Promise<ProductRecord> {
+    const product = await this.productService.findBySlug(slug);
+    if (!product) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+    return product;
   }
 
   @Post()
   @ApiOperation({ summary: 'Crear nuevo producto' })
   @ApiResponse({ status: 201, description: 'Producto creado exitosamente' })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
-  async createProduct(@Body() productData: CreateProductDTO): Promise<any> {
+  async createProduct(@Body() productData: CreateProductDTO): Promise<ProductRecord> {
     return await this.productService.createProduct(productData);
   }
 
@@ -50,7 +63,7 @@ export class ProductController {
   async updateProduct(
     @Param('id') id: string,
     @Body() productData: UpdateProductDTO
-  ): Promise<any> {
+  ): Promise<ProductRecord> {
     return await this.productService.updateProduct({ ...productData, id });
   }
 
@@ -68,7 +81,10 @@ export class ProductController {
   @ApiOperation({ summary: 'Agregar stock a producto' })
   @ApiResponse({ status: 200, description: 'Stock agregado exitosamente' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  async addStock(@Param('id') id: string, @Body() body: { quantity: number }): Promise<any> {
+  async addStock(
+    @Param('id') id: string,
+    @Body() body: { quantity: number }
+  ): Promise<ProductRecord> {
     return await this.productService.addStockToProduct(id, body.quantity);
   }
 
@@ -76,7 +92,10 @@ export class ProductController {
   @ApiOperation({ summary: 'Remover stock de producto' })
   @ApiResponse({ status: 200, description: 'Stock removido exitosamente' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
-  async removeStock(@Param('id') id: string, @Body() body: { quantity: number }): Promise<any> {
+  async removeStock(
+    @Param('id') id: string,
+    @Body() body: { quantity: number }
+  ): Promise<ProductRecord> {
     return await this.productService.removeStockFromProduct(id, body.quantity);
   }
 
@@ -93,14 +112,14 @@ export class ProductController {
   @Post(':id/publish')
   @ApiOperation({ summary: 'Publicar producto' })
   @ApiResponse({ status: 200, description: 'Producto publicado exitosamente' })
-  async publishProduct(@Param('id') id: string): Promise<any> {
+  async publishProduct(@Param('id') id: string): Promise<ProductRecord> {
     return await this.productService.publishProduct(id);
   }
 
   @Post(':id/archive')
   @ApiOperation({ summary: 'Archivar producto' })
   @ApiResponse({ status: 200, description: 'Producto archivado exitosamente' })
-  async archiveProduct(@Param('id') id: string): Promise<any> {
+  async archiveProduct(@Param('id') id: string): Promise<ProductRecord> {
     return await this.productService.archiveProduct(id);
   }
 }

@@ -15,6 +15,6 @@ export class PaymentCreatedV1Event extends DomainEvent {
   public readonly eventType = PAYMENT_CREATED_V1;
 
   constructor(public readonly data: PaymentCreatedV1Data) {
-    super(data.paymentId, data);
+    super();
   }
 }

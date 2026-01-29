@@ -1,26 +1,24 @@
+import { DomainEvent } from '@a4co/shared-utils';
+
 export interface OrderStatusChangedEventPayload {
   orderId: string;
   previousStatus: string;
   newStatus: string;
-  timestamp: Date;
 }
 
-export class OrderStatusChangedEvent {
+export class OrderStatusChangedEvent extends DomainEvent {
   public readonly eventType = 'orders.status_changed';
-  
-  constructor(
-    public readonly orderId: string,
-    public readonly previousStatus: string,
-    public readonly newStatus: string,
-    public readonly timestamp: Date = new Date(),
-  ) {}
 
-  toJSON(): OrderStatusChangedEventPayload {
-    return {
-      orderId: this.orderId,
-      previousStatus: this.previousStatus,
-      newStatus: this.newStatus,
-      timestamp: this.timestamp,
+  constructor(orderId: string, previousStatus: string, newStatus: string) {
+    const payload: OrderStatusChangedEventPayload = {
+      orderId,
+      previousStatus,
+      newStatus,
     };
+
+    super();
+    this.payload = payload;
   }
+
+  public readonly payload: OrderStatusChangedEventPayload;
 }

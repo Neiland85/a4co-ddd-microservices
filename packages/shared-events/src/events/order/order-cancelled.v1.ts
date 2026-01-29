@@ -10,6 +10,8 @@ export interface OrderCancelledV1Data {
   cancelledAt: string; // ISO timestamp
 }
 
+export type OrderCancelledV1Payload = OrderCancelledV1Data;
+
 /**
  * Event emitted when an order is cancelled.
  * This can happen due to payment failure, inventory shortage, or user cancellation.

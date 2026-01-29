@@ -7,10 +7,10 @@ import { ProductController } from './product.controller';
 import { ProductService } from './application/services/product.service';
 
 // Ports
-import { ProductCachePort } from './application/ports/product-cache.port';
+import { PRODUCT_CACHE_PORT } from './application/ports/product-cache.port';
 
 // Infrastructure
-import { PrismaService } from '../common/prisma/prisma.service';
+import { PrismaService } from './common/prisma/prisma.service';
 import { ProductCachePrismaRepository } from './infrastructure/cache/product-cache.prisma.repository';
 
 @Module({
@@ -29,7 +29,7 @@ import { ProductCachePrismaRepository } from './infrastructure/cache/product-cac
 
     // Port → Adapter binding
     {
-      provide: ProductCachePort,
+      provide: PRODUCT_CACHE_PORT,
       useExisting: ProductCachePrismaRepository,
     },
 

@@ -1,38 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { ProductCachePort } from '../../application/ports/product-cache.port';
-import { Product } from '../../domain/entities/product.entity';
+
+type ProductRecord = Record<string, unknown> & { id: string };
+
+type ProductDelegate = {
+  findMany(args: Record<string, unknown>): Promise<ProductRecord[]>;
+  findUnique(args: { where: Record<string, unknown> }): Promise<ProductRecord | null>;
+};
 
 @Injectable()
 export class ProductCachePrismaRepository implements ProductCachePort {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getCachedProducts(): Promise<Product[]> {
-    const rows = await this.prisma.product.findMany({
-      where: { deletedAt: null },
-      orderBy: { createdAt: 'desc' },
+  private get product(): ProductDelegate {
+    return (this.prisma as unknown as { product: ProductDelegate }).product;
+  }
+
+  async getCachedProducts(): Promise<unknown[]> {
+    const rows = await this.product.findMany({
       take: 100, // límite defensivo
     });
 
-    // ⚠️ Aquí NO se hace lógica de dominio compleja
-    // Si Product tiene factory → úsala aquí
-    return rows.map((row) =>
-      Product.restore({
-        id: row.id,
-        name: row.name,
-        price: row.price,
-        stock: row.stock,
-        sku: row.sku,
-      }),
-    );
+    return rows;
   }
 
-  async getProductFromCache(productId: string): Promise<any> {
-    // TODO: Implementar lógica de obtención desde Prisma/Redis
-    return null;
+  async getProductFromCache(productId: string): Promise<unknown> {
+    return await this.product.findUnique({ where: { id: productId } });
   }
 
-  async setProductInCache(productId: string, productData: any): Promise<void> {
+  async setProductInCache(productId: string, productData: unknown): Promise<void> {
     // TODO: Implementar lógica de guardado en Prisma/Redis
   }
 

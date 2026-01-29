@@ -1,12 +1,8 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import {
-  createApp,
-  getPort,
-  setupSwagger,
-  createStandardSwaggerConfig,
-} from '@a4co/shared-utils';
 import { TraceContextMiddleware } from '@a4co/observability';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as process from 'process';
 import { OrderModule } from './order.module.js';
 
@@ -15,19 +11,22 @@ const bootstrapLogger = new Logger('OrderServiceBootstrap');
 async function bootstrap() {
   const logger = bootstrapLogger;
 
-  // === APP (usando shared-utils) ===
-  const app = await createApp(OrderModule, {
-    serviceName: 'Order Service',
-    port: 3004,
-    disableLogger: false,
-    enableSwagger: true,
-    allowedOrigins: [process.env['CORS_ORIGIN'] || 'http://localhost:3000'],
+  const port = Number(process.env['PORT'] ?? 3004);
+  const app = await NestFactory.create(OrderModule);
+
+  app.enableCors({
+    origin: [process.env['CORS_ORIGIN'] || 'http://localhost:3000'],
+    credentials: true,
   });
 
   // === OBSERVABILITY: Apply trace context middleware ===
-  app.use((req: any, res: any, next: any) => {
+  type TraceReq = Parameters<TraceContextMiddleware['use']>[0];
+  type TraceRes = Parameters<TraceContextMiddleware['use']>[1];
+  type TraceNext = Parameters<TraceContextMiddleware['use']>[2];
+
+  app.use((req: unknown, res: unknown, next: unknown) => {
     const middleware = new TraceContextMiddleware();
-    middleware.use(req, res, next);
+    middleware.use(req as TraceReq, res as TraceRes, next as TraceNext);
   });
 
   // === NATS Microservice (for event listening) ===
@@ -39,22 +38,23 @@ async function bootstrap() {
     },
   });
 
-  // === SWAGGER ===
-  setupSwagger(
-    app,
-    createStandardSwaggerConfig(
-      'Order Service',
-      'API for order management in A4CO platform',
-      '1.0',
-      ['orders', 'health']
-    )
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Order Service')
+    .setDescription('API for order management in A4CO platform')
+    .setVersion('1.0')
+    .addTag('orders')
+    .addTag('health')
+    .build();
+  const document = SwaggerModule.createDocument(
+    app as unknown as Parameters<typeof SwaggerModule.createDocument>[0],
+    swaggerConfig,
   );
+  SwaggerModule.setup('api', app as unknown as Parameters<typeof SwaggerModule.setup>[1], document);
 
   // Start all microservices
   await app.startAllMicroservices();
   logger.log('🔌 NATS microservice connected and listening for events');
 
-  const port = getPort({ serviceName: 'Order Service', port: 3004 });
   logger.log(`🚀 Order Service iniciado en puerto ${port}`);
   logger.log(`📚 Documentación Swagger: http://localhost:${port}/api`);
   console.log(`🚀 Order Service iniciado en puerto ${port}`);

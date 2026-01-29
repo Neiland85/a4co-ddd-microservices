@@ -1,19 +1,59 @@
 {
   "compilerOptions": {
+    /* ===============================
+     * Target & Runtime
+     * =============================== */
     "target": "ES2022",
     "lib": ["ES2022"],
     "module": "commonjs",
     "moduleResolution": "node",
+
+    /* ===============================
+     * Decorators (CRÍTICO para Nest)
+     * =============================== */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
+
+    /* ===============================
+     * Interop & Imports
+     * =============================== */
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+
+    /* ===============================
+     * Strictness & Safety
+     * =============================== */
     "strict": true,
-    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* ===============================
+     * Build & Output
+     * =============================== */
     "declaration": true,
+    "sourceMap": true,
+    "removeComments": true,
     "outDir": "./dist",
+    "incremental": true,
+
+    /* ===============================
+     * Monorepo / Paths
+     * =============================== */
     "baseUrl": ".",
     "paths": {
-      "@a4co/*": ["packages/*/src/index.ts"]
-    }
+      "@a4co/*": ["packages/*/src"],
+      "@/*": ["src/*"]
+    },
+
+    /* ===============================
+     * Performance / Stability
+     * =============================== */
+    "skipLibCheck": true
   }
 }
 

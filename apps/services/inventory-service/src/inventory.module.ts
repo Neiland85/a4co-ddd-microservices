@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PrismaClient } from '../prisma/generated';
+import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { InventoryController } from './inventory.controller';
@@ -40,7 +40,7 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
         const connectionString = process.env['DATABASE_URL'];
         const pool = new Pool({ connectionString });
         const adapter = new PrismaPg(pool);
-        return new PrismaClient();
+        return new PrismaClient({ adapter });
       },
     },
     // Repositories

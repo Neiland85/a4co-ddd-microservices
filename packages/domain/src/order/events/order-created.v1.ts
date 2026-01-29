@@ -39,7 +39,7 @@ export class OrderCreatedV1Event extends DomainEvent {
   public readonly eventType = ORDER_CREATED_V1;
 
   constructor(public readonly data: OrderCreatedV1Data) {
-    super(data.orderId, data);
+    super();
   }
 
   public toJSON() {

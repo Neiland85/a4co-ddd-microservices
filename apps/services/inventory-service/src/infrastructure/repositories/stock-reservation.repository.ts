@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { PrismaClient, StockReservation as PrismaReservation } from '../../../prisma/generated';
+import { PrismaClient, StockReservation as PrismaReservation } from '@prisma/client';
 import { StockReservation } from '../../domain/entities/stock-reservation.entity';
+import { ReservationStatus } from '../../domain/entities/stock-reservation.entity';
 
 // Definimos la interfaz aquí o la importamos si ya existe en domain
 export interface IStockReservationRepository {
@@ -95,14 +96,14 @@ export class PrismaStockReservationRepository implements IStockReservationReposi
     return new StockReservation({
       reservationId: record.id,
       orderId: record.orderId,
-      customerId: record.customerId,
+      customerId: record.customerId ?? '',
       items: [
         {
           productId: record.productId,
           quantity: record.quantity,
         },
       ],
-      status: record.status as any, // Cast simple si los enums coinciden
+      status: record.status as ReservationStatus, // Cast simple si los enums coinciden
       createdAt: record.createdAt,
       ttlMinutes: 0, // No necesitamos TTL adicional, expiresAt viene de DB
     });

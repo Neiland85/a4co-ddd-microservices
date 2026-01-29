@@ -50,7 +50,7 @@ export class CreateOrderUseCase {
 
     // 5. Publicar OrderCreated event usando shared-events
     const orderCreatedEvent = new OrderCreatedV1Event({
-      orderId: order.id,
+      orderId,
       customerId: order.customerId,
       items: dto.items,
       totalAmount: order.totalAmount,
@@ -61,7 +61,7 @@ export class CreateOrderUseCase {
     this.logger.log(`📤 Emitted ${ORDER_CREATED_V1} for order ${orderId}`);
 
     // 6. Limpiar eventos de dominio si hay
-    order.clearDomainEvents();
+    order.pullDomainEvents();
 
     return orderId;
   }

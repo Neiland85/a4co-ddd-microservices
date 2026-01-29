@@ -1,16 +1,11 @@
+import { Injectable, Inject } from '@nestjs/common';
+import { PrismaService } from '../../common/prisma/prisma.service';
 import {
-  CategoryId,
-  Price,
-  ProductDescription,
-  ProductId,
-  ProductName,
-  SKU,
-  Slug,
-  Stock,
-} from '../../domain/value-objects/product-value-objects';
-import { EventSubjects, IEventBus } from '../../domain/event-bus';
-import { IProductRepository } from '../../infrastructure/repositories/product.repository';
-import { Product } from '../../domain/entities/product.entity';
+  PRODUCT_CACHE_PORT,
+  type ProductCachePort,
+} from '../ports/product-cache.port';
+
+export type ProductRecord = Record<string, unknown> & { id: string };
 
 // ========================================
 // DTOs (Data Transfer Objects)
@@ -19,23 +14,14 @@ import { Product } from '../../domain/entities/product.entity';
 export interface CreateProductDTO {
   name: string;
   description: string;
-  sku?: string;
   price: number;
-  originalPrice?: number;
-  currency?: string;
   artisanId: string;
-  categoryId: string;
-  category?: string;
+  category: string;
+  currency?: string;
   stock?: number;
   slug?: string;
-  isHandmade?: boolean;
-  isCustomizable?: boolean;
-  isDigital?: boolean;
-  requiresShipping?: boolean;
-  featured?: boolean;
-  keywords?: string[];
-  metaTitle?: string;
-  metaDescription?: string;
+  lowStockThreshold?: number;
+  status?: string;
 }
 
 export interface UpdateProductDTO {
@@ -43,229 +29,180 @@ export interface UpdateProductDTO {
   name?: string;
   description?: string;
   price?: number;
-  originalPrice?: number;
   currency?: string;
   slug?: string;
-  isCustomizable?: boolean;
-  isDigital?: boolean;
-  requiresShipping?: boolean;
-  featured?: boolean;
   category?: string;
-  keywords?: string[];
-  metaTitle?: string;
-  metaDescription?: string;
+  stock?: number;
+  lowStockThreshold?: number;
+  status?: string;
 }
 
-// ========================================
-// PRODUCT APPLICATION SERVICE
-// ========================================
+type ProductDelegate = {
+  create(args: { data: Record<string, unknown> }): Promise<ProductRecord>;
+  update(args: {
+    where: Record<string, unknown>;
+    data: Record<string, unknown>;
+  }): Promise<ProductRecord>;
+  findUnique(args: {
+    where: Record<string, unknown>;
+    select?: Record<string, boolean>;
+  }): Promise<ProductRecord | null>;
+  delete(args: { where: Record<string, unknown> }): Promise<ProductRecord>;
+};
 
+@Injectable()
 export class ProductService {
   constructor(
-    private readonly productRepository: IProductRepository,
-    private readonly eventBus: IEventBus,
+    private readonly prisma: PrismaService,
+    @Inject(PRODUCT_CACHE_PORT) private readonly productCache: ProductCachePort,
   ) {}
 
-  async createProduct(dto: CreateProductDTO): Promise<Product> {
-    const productId = ProductId.create();
-    const price = Price.create(dto.price, dto.currency ?? 'EUR');
-    const stock = Stock.create(dto.stock ?? 0);
-    const sku = dto.sku ? SKU.create(dto.sku) : SKU.generate(productId.value);
-    const slug = dto.slug ? Slug.create(dto.slug) : Slug.generateFromName(dto.name);
+  private get product(): ProductDelegate {
+    return (this.prisma as unknown as { product: ProductDelegate }).product;
+  }
 
-    const product = Product.create({
-      id: productId,
-      name: ProductName.create(dto.name),
-      description: ProductDescription.create(dto.description),
-      price,
-      stock,
-      sku,
-      slug,
-      artisanId: dto.artisanId,
-      categoryId: CategoryId.create(dto.categoryId),
-      isCustomizable: dto.isCustomizable ?? false,
-      isDigital: dto.isDigital ?? false,
-      requiresShipping: dto.requiresShipping ?? true,
-      featured: dto.featured ?? false,
+  async createProduct(dto: CreateProductDTO): Promise<ProductRecord> {
+    const slug = dto.slug ?? this.slugify(dto.name);
+
+    const created = await this.product.create({
+      data: {
+        artisanId: dto.artisanId,
+        name: dto.name,
+        slug,
+        description: dto.description,
+        price: dto.price,
+        currency: dto.currency ?? 'EUR',
+        category: dto.category,
+        stock: dto.stock ?? 0,
+        lowStockThreshold: dto.lowStockThreshold ?? 10,
+        status: dto.status,
+      },
     });
 
-    await this.productRepository.save(product);
-    await this.publishDomainEvents(product);
-
-    return product;
+    await this.productCache.invalidateProductCache(created.id);
+    return created;
   }
 
-  async updateProduct(dto: UpdateProductDTO): Promise<Product> {
-    const product = await this.productRepository.findById(dto.id);
-    if (!product) {
+  async updateProduct(dto: UpdateProductDTO): Promise<ProductRecord> {
+    try {
+      const updated = await this.product.update({
+        where: { id: dto.id },
+        data: {
+          name: dto.name,
+          description: dto.description,
+          slug: dto.slug,
+          price: dto.price,
+          currency: dto.currency,
+          category: dto.category,
+          stock: dto.stock,
+          lowStockThreshold: dto.lowStockThreshold,
+          status: dto.status,
+        },
+      });
+
+      await this.productCache.invalidateProductCache(updated.id);
+      return updated;
+    } catch {
       throw new Error(`Product with id ${dto.id} not found`);
     }
+  }
 
-    if (dto.name) {
-      product.rename(ProductName.create(dto.name));
+  async findById(id: string): Promise<ProductRecord | null> {
+    const cached = await this.productCache.getProductFromCache(id);
+    if (cached && typeof cached === 'object') {
+      return cached as ProductRecord;
     }
 
-    if (dto.description) {
-      product.updateDescription(ProductDescription.create(dto.description));
+    const product = await this.product.findUnique({ where: { id } });
+    if (product) {
+      await this.productCache.setProductInCache(id, product);
     }
-
-    if (dto.slug) {
-      product.changeSlug(Slug.create(dto.slug));
-    }
-
-    if (dto.price !== undefined) {
-      const currency = dto.currency ?? product.price.currency;
-      product.changePrice(Price.create(dto.price, currency));
-    }
-
-    if (dto.isCustomizable !== undefined) {
-      product.setCustomization(dto.isCustomizable);
-    }
-
-    if (dto.isDigital !== undefined) {
-      product.setDigital(dto.isDigital);
-    }
-
-    if (dto.requiresShipping !== undefined) {
-      product.setRequiresShipping(dto.requiresShipping);
-    }
-
-    if (dto.featured !== undefined) {
-      product.setFeatured(dto.featured);
-    }
-
-    await this.productRepository.update(product);
-    await this.publishDomainEvents(product);
 
     return product;
   }
 
-  async findById(id: string): Promise<Product | null> {
-    return await this.productRepository.findById(id);
+  async findBySku(sku: string): Promise<ProductRecord | null> {
+    // Nota: el esquema actual no tiene campo `sku`; usamos `slug` como alias.
+    return await this.product.findUnique({ where: { slug: sku } });
   }
 
-  async findBySku(sku: string): Promise<Product | null> {
-    return await this.productRepository.findBySku(sku);
-  }
-
-  async findBySlug(slug: string): Promise<Product | null> {
-    return await this.productRepository.findBySlug(slug);
+  async findBySlug(slug: string): Promise<ProductRecord | null> {
+    return await this.product.findUnique({ where: { slug } });
   }
 
   async deleteProduct(id: string): Promise<void> {
-    const product = await this.productRepository.findById(id);
-    if (!product) {
-      throw new Error(`Product with id ${id} not found`);
-    }
-
-    await this.productRepository.delete(id);
+    await this.product.delete({ where: { id } });
+    await this.productCache.invalidateProductCache(id);
   }
 
-  // ========================================
-  // STOCK MANAGEMENT METHODS
-  // ========================================
+  async addStockToProduct(productId: string, quantity: number): Promise<ProductRecord> {
+    const updated = await this.product.update({
+      where: { id: productId },
+      data: { stock: { increment: quantity } },
+    });
 
-  async addStockToProduct(productId: string, quantity: number): Promise<Product> {
-    const product = await this.productRepository.findById(productId);
-    if (!product) {
-      throw new Error(`Product with id ${productId} not found`);
-    }
-
-    product.increaseStock(quantity);
-    await this.productRepository.update(product);
-    await this.publishDomainEvents(product);
-
-    return product;
+    await this.productCache.invalidateProductCache(productId);
+    return updated;
   }
 
-  async removeStockFromProduct(productId: string, quantity: number): Promise<Product> {
-    const product = await this.productRepository.findById(productId);
-    if (!product) {
-      throw new Error(`Product with id ${productId} not found`);
-    }
+  async removeStockFromProduct(productId: string, quantity: number): Promise<ProductRecord> {
+    const updated = await this.product.update({
+      where: { id: productId },
+      data: { stock: { decrement: quantity } },
+    });
 
-    product.decreaseStock(quantity);
-    await this.productRepository.update(product);
-    await this.publishDomainEvents(product);
-
-    return product;
+    await this.productCache.invalidateProductCache(productId);
+    return updated;
   }
 
   async getProductStock(
     productId: string,
   ): Promise<{ stock: number; isInStock: boolean; isLowStock: boolean }> {
-    const product = await this.productRepository.findById(productId);
+    const product = await this.product.findUnique({
+      where: { id: productId },
+      select: { stock: true, lowStockThreshold: true },
+    });
+
     if (!product) {
       throw new Error(`Product with id ${productId} not found`);
     }
 
+    const stock = typeof product.stock === 'number' ? product.stock : 0;
+    const lowStockThreshold =
+      typeof product.lowStockThreshold === 'number' ? product.lowStockThreshold : 10;
+
     return {
-      stock: product.stock,
-      isInStock: product.stock > 0,
-      isLowStock: product.stock < 10,
+      stock,
+      isInStock: stock > 0,
+      isLowStock: stock < lowStockThreshold,
     };
   }
 
-  // ========================================
-  // PRODUCT STATUS MANAGEMENT
-  // ========================================
+  async publishProduct(id: string): Promise<ProductRecord> {
+    const updated = await this.product.update({
+      where: { id },
+      data: { status: 'PUBLISHED' },
+    });
 
-  async publishProduct(id: string): Promise<Product> {
-    const product = await this.productRepository.findById(id);
-    if (!product) {
-      throw new Error(`Product with id ${id} not found`);
-    }
-
-    product.publish();
-
-    await this.productRepository.update(product);
-    await this.publishDomainEvents(product);
-
-    return product;
+    await this.productCache.invalidateProductCache(id);
+    return updated;
   }
 
-  async archiveProduct(id: string): Promise<Product> {
-    const product = await this.productRepository.findById(id);
-    if (!product) {
-      throw new Error(`Product with id ${id} not found`);
-    }
+  async archiveProduct(id: string): Promise<ProductRecord> {
+    const updated = await this.product.update({
+      where: { id },
+      data: { status: 'ARCHIVED' },
+    });
 
-    product.archive();
-
-    await this.productRepository.update(product);
-    await this.publishDomainEvents(product);
-
-    return product;
+    await this.productCache.invalidateProductCache(id);
+    return updated;
   }
 
-  private async publishDomainEvents(product: Product): Promise<void> {
-    const events = product.domainEvents;
-
-    for (const event of events) {
-      let subject: string | null = null;
-
-      if (event instanceof ProductCreatedEvent) {
-        subject = EventSubjects.PRODUCT_CREATED;
-      } else if (event instanceof ProductPublishedEvent) {
-        subject = EventSubjects.PRODUCT_PUBLISHED;
-      } else if (event instanceof ProductPriceChangedEvent) {
-        subject = EventSubjects.PRODUCT_PRICE_CHANGED;
-      } else if (event instanceof ProductArchivedEvent) {
-        subject = EventSubjects.PRODUCT_ARCHIVED;
-      }
-
-      if (!subject) {
-        continue;
-      }
-
-      await this.eventBus.publish(subject, {
-        aggregateId: event.aggregateId,
-        eventId: event.eventId,
-        occurredOn: event.occurredOn.toISOString(),
-        payload: event.eventData,
-      });
-    }
-
-    product.clearDomainEvents();
+  private slugify(value: string): string {
+    return value
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
   }
 }

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "prisma generate --schema ../../prisma/schema.prisma && tsc -p tsconfig.json"
   },
   "dependencies": {
     "nats": "^2.29.3",

@@ -1,8 +1,15 @@
 import { DomainEvent } from '@a4co/shared-utils';
 
-export class ProductCreatedEvent implements DomainEvent {
-  readonly eventName = 'product.created';
-  readonly occurredOn = new Date();
+export type ProductCreatedPayloadV1 = Record<string, never>;
 
-  constructor(public readonly aggregateId: string) {}
+export class ProductCreatedEvent extends DomainEvent {
+  readonly eventName = 'product.created.v1';
+
+  constructor(
+    public readonly aggregateId: string,
+    public readonly payload: ProductCreatedPayloadV1 = {},
+    occurredOn?: Date,
+  ) {
+    super(undefined, occurredOn);
+  }
 }
