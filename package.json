@@ -12,7 +12,7 @@
     "dev:inventory": "turbo run start:dev --filter=@a4co/inventory-service",
     "build": "pnpm -r run build",
     "build:all": "turbo run build",
-    "test": "NODE_OPTIONS='--max-old-space-size=4096' pnpm -r --ignore=backend run test -- --runInBand",
+    "test": "NODE_OPTIONS='--max-old-space-size=4096' pnpm -r --ignore=backend --if-present run test -- --runInBand",
     "test:all": "NODE_OPTIONS='--max-old-space-size=4096' turbo run test -- --runInBand",
     "lint": "turbo run lint -- --max-old-space-size=4096",
     "lint:fix": "pnpm -r run lint:fix",
@@ -49,6 +49,8 @@
     "prod:ps": "docker-compose -f docker-compose.prod.yml --env-file .env.production ps",
     "prod:restart": "docker-compose -f docker-compose.prod.yml --env-file .env.production restart",
     "prod:build": "docker-compose -f docker-compose.prod.yml --env-file .env.production build"
+    ,
+    "update:dicts": "ts-node --project tsconfig.scripts.json scripts/update-cspell-dicts.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.11",
@@ -115,7 +117,7 @@
     "vitest": "^4.0.15"
   },
   "simple-git-hooks": {
-    "post-commit": "pnpm run update:dicts"
+    "post-commit": "bash scripts/update-dicts-safe.sh"
   },
   "engines": {
     "node": ">=18"

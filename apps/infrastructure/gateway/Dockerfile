@@ -36,7 +36,7 @@ COPY apps/gateway ./apps/gateway
 
 # Build the application
 WORKDIR /usr/src/app/apps/gateway
-RUN pnpm run build
+RUN pnpm exec nest build --config nest-cli.json --path tsconfig.build.json --builder tsc
 
 # -------- PRODUCTION --------
 FROM base AS production

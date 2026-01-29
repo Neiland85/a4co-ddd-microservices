@@ -121,7 +121,7 @@ else
   
   # Poll health endpoints for up to 60 seconds
   GATEWAY_URL="http://localhost:8081/health"
-  NATS_URL="http://localhost:8223/healthz"
+  NATS_URL="http://localhost:8222/healthz"
   MAX_WAIT=60
   INTERVAL=2
   waited=0
