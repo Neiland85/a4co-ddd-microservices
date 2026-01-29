@@ -1,15 +1,18 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "src",
+    "outDir": "dist",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "baseUrl": ".",
     "paths": {
       "@a4co/shared-utils": [
-        "./src"
+        "src"
       ],
       "@a4co/shared-utils/*": [
-        "./src/*"
+        "src/*"
       ]
     },
     "experimentalDecorators": true,
@@ -17,7 +20,7 @@
     "useDefineForClassFields": false
   },
   "include": [
-    "src/**/*"
+    "src/**/*.ts"
   ],
   "exclude": [
     "dist",

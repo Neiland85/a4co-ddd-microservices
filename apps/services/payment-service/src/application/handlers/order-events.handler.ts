@@ -66,11 +66,6 @@ export class OrderEventsHandler {
       return;
     }
 
-    await this.refundPaymentUseCase.execute(
-      payment.id,
-      payment.paymentId.value,
-      undefined,
-      payload.reason ?? 'Order cancelled',
-    );
+    await this.refundPaymentUseCase.execute(payment.id, undefined, payload.reason ?? 'Order cancelled');
   }
 }

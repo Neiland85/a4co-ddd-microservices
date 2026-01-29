@@ -1,3 +1,28 @@
+/**
+ * @deprecated
+ * ------------------------------------------------------------------
+ * This orchestrator is kept for reference only.
+ *
+ * ❗ NOT USED IN PHASE 1 ❗
+ *
+ * The active saga implementation for Phase 1 is:
+ *   → OrderSaga (order.saga.ts)
+ *
+ * This file represents an alternative / experimental orchestrator
+ * that is intentionally NOT wired into the NestJS module.
+ *
+ * Reasons:
+ * - Duplicate saga responsibility with OrderSaga
+ * - Separate state machine and timeout logic
+ * - Not covered by active E2E tests in Phase 1
+ *
+ * Status:
+ * - Read-only
+ * - No imports allowed
+ * - No providers registration
+ *
+ * ------------------------------------------------------------------
+ */
 import { Injectable } from '@nestjs/common';
 import { getLogger, ObservabilityLogger } from '@a4co/observability';
 import { OrderCreatedEvent, OrderConfirmedEvent, OrderCancelledEvent } from '@a4co/domain-order';

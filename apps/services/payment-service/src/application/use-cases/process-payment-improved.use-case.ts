@@ -44,8 +44,9 @@ export class ProcessPaymentImprovedUseCase {
 
     try {
       const intent = await this.stripeGateway.createPaymentIntent({
-        amount: command.amount,
-        currency: command.currency,
+        amount,
+        orderId: command.orderId,
+        customerId: command.customerId,
         paymentMethodId: command.paymentMethodId,
         idempotencyKey: command.idempotencyKey,
         metadata: { orderId: command.orderId },

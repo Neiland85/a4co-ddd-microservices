@@ -3,6 +3,19 @@ import { PrismaClient } from '@prisma/client';
 import { SendGridService } from './sendgrid.service';
 import { TwilioService } from './twilio.service';
 
+type NotificationRecord = Record<string, unknown> & { id: string };
+
+type NotificationDelegate = {
+  findUnique(args: { where: Record<string, unknown> }): Promise<NotificationRecord | null>;
+  create(args: { data: Record<string, unknown> }): Promise<NotificationRecord>;
+  update(args: {
+    where: Record<string, unknown>;
+    data: Record<string, unknown>;
+  }): Promise<NotificationRecord>;
+  findMany(args: Record<string, unknown>): Promise<NotificationRecord[]>;
+  count(args?: { where?: Record<string, unknown> }): Promise<number>;
+};
+
 export interface SendNotificationParams {
   orderId: string;
   customerId: string;
@@ -26,6 +39,10 @@ export class NotificationService {
     this.prisma = new PrismaClient();
   }
 
+  private get notification(): NotificationDelegate {
+    return (this.prisma as unknown as { notification: NotificationDelegate }).notification;
+  }
+
   async onModuleInit() {
     await this.prisma.$connect();
     this.logger.log('✅ Prisma connected');
@@ -43,7 +60,7 @@ export class NotificationService {
     const { orderId, customerId, correlationId, eventType, channel, recipient, subject, content } = params;
 
     // Check for duplicate by correlationId
-    const existing = await this.prisma.notification.findUnique({
+    const existing = await this.notification.findUnique({
       where: { correlationId },
     });
 
@@ -53,7 +70,7 @@ export class NotificationService {
     }
 
     // Create notification record
-    const notification = await this.prisma.notification.create({
+    const notification = await this.notification.create({
       data: {
         orderId,
         customerId,
@@ -87,7 +104,7 @@ export class NotificationService {
       }
 
       // Update status to sent
-      await this.prisma.notification.update({
+      await this.notification.update({
         where: { id: notification.id },
         data: {
           status: 'sent',
@@ -100,7 +117,7 @@ export class NotificationService {
       return true;
     } catch (error) {
       // Update status to failed
-      await this.prisma.notification.update({
+      await this.notification.update({
         where: { id: notification.id },
         data: {
           status: 'failed',
@@ -125,8 +142,8 @@ export class NotificationService {
       limit?: number;
       offset?: number;
     },
-  ) {
-    const where: any = { orderId };
+  ): Promise<{ data: NotificationRecord[]; total: number; limit: number; offset: number }> {
+    const where: Record<string, unknown> = { orderId };
 
     if (filters?.channel) {
       where.channel = filters.channel;
@@ -137,13 +154,13 @@ export class NotificationService {
     }
 
     const [notifications, total] = await Promise.all([
-      this.prisma.notification.findMany({
+      this.notification.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         take: filters?.limit || 10,
         skip: filters?.offset || 0,
       }),
-      this.prisma.notification.count({ where }),
+      this.notification.count({ where }),
     ]);
 
     return {
@@ -159,10 +176,10 @@ export class NotificationService {
    */
   async getStats() {
     const [total, sent, failed, pending] = await Promise.all([
-      this.prisma.notification.count(),
-      this.prisma.notification.count({ where: { status: 'sent' } }),
-      this.prisma.notification.count({ where: { status: 'failed' } }),
-      this.prisma.notification.count({ where: { status: 'pending' } }),
+      this.notification.count(),
+      this.notification.count({ where: { status: 'sent' } }),
+      this.notification.count({ where: { status: 'failed' } }),
+      this.notification.count({ where: { status: 'pending' } }),
     ]);
 
     return {

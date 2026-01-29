@@ -27,7 +27,7 @@ export class OrderCancelledV1Event extends DomainEvent {
   public readonly eventType = ORDER_CANCELLED_V1;
 
   constructor(public readonly data: OrderCancelledV1Data) {
-    super(data.orderId, data);
+    super();
   }
 
   public toJSON() {

@@ -12,14 +12,9 @@ export class RefundPaymentUseCase {
       throw new Error('Payment not found');
     }
 
-    const refundAmount = amount
-      ? Money.fromPrimitives({
-          amount,
-          currency: (payment as any).amount.currency,
-        } as any)
-      : undefined;
+    const refundAmount = amount ? Money.create(amount, payment.amount.currency) : undefined;
 
-    (payment as any).refund(refundAmount, reason);
+    payment.refund(refundAmount, reason);
 
     await this.paymentRepository.save(payment);
     return payment;

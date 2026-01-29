@@ -6,8 +6,6 @@ import { NotificationService as LegacyNotificationService } from './service';
 import { NotificationService } from './services/notification.service';
 import { SendGridService } from './services/sendgrid.service';
 import { TwilioService } from './services/twilio.service';
-import { OrderConfirmedListener } from './listeners/order-confirmed.listener';
-import { ShipmentDeliveredListener } from './listeners/shipment-delivered.listener';
 import { createEmailProvider } from './providers/email.provider';
 import { createSMSProvider } from './providers/sms.provider';
 import { createPushProvider } from './providers/push.provider';
@@ -31,9 +29,6 @@ import { createPushProvider } from './providers/push.provider';
   ],
   controllers: [
     NotificationController,
-    // Event listeners (must be controllers for @EventPattern to work)
-    OrderConfirmedListener,
-    ShipmentDeliveredListener,
   ],
   providers: [
     // Legacy notification service

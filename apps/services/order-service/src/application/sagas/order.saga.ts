@@ -26,13 +26,14 @@ export interface SagaContext {
   error?: string;
   startedAt: Date;
   updatedAt: Date;
+  processedEvents: Set<string>;
 }
 
 @Injectable()
 export class OrderSaga implements OnModuleInit {
   private readonly logger = new Logger(OrderSaga.name);
   private readonly sagaContexts = new Map<string, SagaContext>();
-  private readonly SAGA_TIMEOUT = 30000; // 30 segundos
+  private readonly SAGA_TIMEOUT = 30_000; // 30s
 
   constructor(
     @Inject('OrderRepository')
@@ -41,15 +42,52 @@ export class OrderSaga implements OnModuleInit {
     private readonly natsClient: ClientProxy,
   ) {}
 
-  // Conectamos los listeners manualmente al iniciar el módulo
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     this.setupEventHandlers();
   }
 
-  private setupEventHandlers() {
-    // Nota: En una arquitectura ideal, estos eventos llegarían a un Controller
-    // que delegaría en este servicio.
+  private setupEventHandlers(): void {
+    // En Fase 1 los handlers llegan desde controllers / listeners externos
   }
+
+  /* ------------------------------------------------------------------
+   * Guards y helpers de hardening
+   * ------------------------------------------------------------------ */
+
+  private assertState(
+    context: SagaContext,
+    allowed: SagaState[],
+    action: string,
+  ): void {
+    if (!allowed.includes(context.state)) {
+      throw new Error(
+        `Invalid saga transition on ${action}. Current=${context.state}, Allowed=${allowed.join(
+          ', ',
+        )}`,
+      );
+    }
+  }
+
+  private isFinalState(state: SagaState): boolean {
+    return (
+      state === SagaState.COMPLETED ||
+      state === SagaState.COMPENSATED ||
+      state === SagaState.FAILED
+    );
+  }
+
+  private isDuplicateEvent(context: SagaContext, eventKey: string): boolean {
+    if (context.processedEvents.has(eventKey)) {
+      this.logger.warn(`🔁 Evento duplicado ignorado: ${eventKey}`);
+      return true;
+    }
+    context.processedEvents.add(eventKey);
+    return false;
+  }
+
+  /* ------------------------------------------------------------------
+   * Ejecución principal
+   * ------------------------------------------------------------------ */
 
   async execute(command: CreateOrderCommand): Promise<string> {
     const orderId = command.orderId;
@@ -59,21 +97,18 @@ export class OrderSaga implements OnModuleInit {
       state: SagaState.STARTED,
       startedAt: new Date(),
       updatedAt: new Date(),
+      processedEvents: new Set(),
     };
 
     this.sagaContexts.set(orderId, sagaContext);
     this.logger.log(`🚀 Iniciando Saga para orden ${orderId}`);
 
     try {
-      // 1. Verificar orden
-      // CORRECCIÓN: Pasamos el string directo, no 'new OrderId(orderId)'
       const order = await this.orderRepository.findById(orderId);
-
       if (!order) {
         throw new Error(`Order ${orderId} not found`);
       }
 
-      // 2. Publicar evento OrderCreated para que Inventory reserve stock
       this.natsClient.emit('order.created.v1', {
         orderId,
         customerId: order.customerId,
@@ -86,41 +121,40 @@ export class OrderSaga implements OnModuleInit {
         timestamp: new Date().toISOString(),
       });
 
-      // 3. Configurar timeout de seguridad
       setTimeout(() => {
         const ctx = this.sagaContexts.get(orderId);
-        if (ctx && ctx.state !== SagaState.COMPLETED && ctx.state !== SagaState.COMPENSATED) {
+        if (ctx && !this.isFinalState(ctx.state)) {
           this.logger.error(`⏰ Timeout de Saga para orden ${orderId}`);
           this.compensate(orderId, 'Saga Timeout');
         }
       }, this.SAGA_TIMEOUT);
 
-      this.logger.log(`✅ Saga iniciada para orden ${orderId} -> Esperando Reserva`);
       return orderId;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`❌ Error iniciando saga para orden ${orderId}:`, errorMessage);
-      await this.compensate(orderId, errorMessage);
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`❌ Error iniciando saga ${orderId}`, msg);
+      await this.compensate(orderId, msg);
       throw error;
     }
   }
 
-  // Llamado cuando Inventory Service responde con éxito
+  /* ------------------------------------------------------------------
+   * Handlers de eventos
+   * ------------------------------------------------------------------ */
+
   async handleInventoryReserved(event: EventMessage): Promise<void> {
     const { orderId, reservationId } = event.data;
     const context = this.sagaContexts.get(orderId);
+    if (!context || this.isFinalState(context.state)) return;
 
-    if (!context) {
-      this.logger.warn(`⚠️ Contexto no encontrado para orden ${orderId}`);
-      return;
-    }
+    this.assertState(context, [SagaState.STARTED], 'handleInventoryReserved');
+
+    if (this.isDuplicateEvent(context, `inventory.reserved:${reservationId}`)) return;
 
     context.state = SagaState.STOCK_RESERVED;
     context.reservationId = reservationId;
     context.updatedAt = new Date();
-    this.logger.log(`📦 Stock reservado (${reservationId}). Iniciando pago...`);
 
-    // Publicar evento para que Payment Service procese el pago
     this.natsClient.emit('payment.initiate', {
       orderId,
       amount: event.data.totalAmount,
@@ -131,77 +165,56 @@ export class OrderSaga implements OnModuleInit {
     context.state = SagaState.PAYMENT_PENDING;
   }
 
-  // Llamado cuando Inventory Service falla
   async handleInventoryOutOfStock(event: EventMessage): Promise<void> {
     const { orderId } = event.data;
-    this.logger.error(`❌ Stock insuficiente para orden ${orderId}`);
     await this.compensate(orderId, 'Stock insuficiente');
   }
 
-  // Llamado cuando Payment Service responde con éxito
   async handlePaymentSucceeded(event: EventMessage): Promise<void> {
     const { orderId, paymentIntentId } = event.data;
     const context = this.sagaContexts.get(orderId);
+    if (!context || this.isFinalState(context.state)) return;
 
-    if (!context) return;
+    this.assertState(context, [SagaState.PAYMENT_PENDING], 'handlePaymentSucceeded');
 
-    try {
-      // CORRECCIÓN: Pasamos el string directo
-      const order = await this.orderRepository.findById(orderId);
+    if (this.isDuplicateEvent(context, `payment.succeeded:${paymentIntentId}`)) return;
 
-      if (order) {
-        order.confirmPayment(); // Método de dominio
-        await this.orderRepository.save(order);
-      }
-
-      context.state = SagaState.COMPLETED;
-      context.paymentIntentId = paymentIntentId;
-
-      this.logger.log(`✅ SAGA COMPLETADA EXITOSAMENTE para orden ${orderId}`);
-
-      // Publicar evento final
-      this.natsClient.emit('order.completed.v1', {
-        orderId,
-        paymentIntentId,
-        status: 'COMPLETED',
-      });
-
-      // Limpieza
-      this.sagaContexts.delete(orderId);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`❌ Error finalizando orden ${orderId}`, errorMessage);
+    const order = await this.orderRepository.findById(orderId);
+    if (order) {
+      order.confirmPayment();
+      await this.orderRepository.save(order);
     }
+
+    context.state = SagaState.COMPLETED;
+    context.paymentIntentId = paymentIntentId;
+
+    this.natsClient.emit('order.completed.v1', {
+      orderId,
+      paymentIntentId,
+      status: 'COMPLETED',
+    });
+
+    this.sagaContexts.delete(orderId);
   }
 
-  // Llamado cuando Payment Service falla
   async handlePaymentFailed(event: EventMessage): Promise<void> {
     const { orderId, reason } = event.data;
-    this.logger.error(`❌ Pago fallido para orden ${orderId}: ${reason}`);
     await this.compensate(orderId, `Pago fallido: ${reason}`);
   }
 
-  // Lógica de Compensación (Rollback)
+  /* ------------------------------------------------------------------
+   * Compensación
+   * ------------------------------------------------------------------ */
+
   private async compensate(orderId: string, reason: string): Promise<void> {
     const context = this.sagaContexts.get(orderId);
-
-    if (!context) {
-      this.logger.warn(`⚠️ No se puede compensar orden ${orderId}: Contexto perdido`);
-      return;
-    }
-
-    if (context.state === SagaState.COMPENSATING || context.state === SagaState.COMPENSATED) {
-      return;
-    }
+    if (!context || this.isFinalState(context.state)) return;
 
     context.state = SagaState.COMPENSATING;
     context.error = reason;
-    this.logger.log(`🔄 EJECUTANDO COMPENSACIÓN para orden ${orderId}. Razón: ${reason}`);
 
     try {
-      // 1. Si se reservó stock, hay que liberarlo
       if (context.reservationId) {
-        this.logger.log(`🔄 Liberando stock ${context.reservationId}...`);
         this.natsClient.emit('inventory.release', {
           orderId,
           reservationId: context.reservationId,
@@ -209,9 +222,7 @@ export class OrderSaga implements OnModuleInit {
         });
       }
 
-      // 2. Si se hizo un pago (caso raro de fallo posterior), reembolsar
       if (context.paymentIntentId) {
-        this.logger.log(`🔄 Reembolsando pago ${context.paymentIntentId}...`);
         this.natsClient.emit('payment.refund', {
           orderId,
           paymentIntentId: context.paymentIntentId,
@@ -219,29 +230,20 @@ export class OrderSaga implements OnModuleInit {
         });
       }
 
-      // 3. Marcar orden como cancelada en DB local
-      // CORRECCIÓN: Pasamos el string directo
       const order = await this.orderRepository.findById(orderId);
-
       if (order) {
-        order.cancel(reason); // Método de dominio
+        order.cancel(reason);
         await this.orderRepository.save(order);
       }
 
-      // 4. Notificar cancelación global
-      this.natsClient.emit('order.cancelled.v1', {
-        orderId,
-        reason,
-      });
+      this.natsClient.emit('order.cancelled.v1', { orderId, reason });
 
       context.state = SagaState.COMPENSATED;
-      this.logger.log(`🏁 Compensación finalizada para orden ${orderId}`);
-
-      // Limpieza final
+    } catch (error) {
+      context.state = SagaState.FAILED;
+      context.error = error instanceof Error ? error.message : String(error);
+    } finally {
       this.sagaContexts.delete(orderId);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`�� ERROR CRÍTICO EN COMPENSACIÓN orden ${orderId}`, errorMessage);
     }
   }
 }

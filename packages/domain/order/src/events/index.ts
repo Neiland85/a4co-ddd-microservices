@@ -1,3 +1,9 @@
+// Public exports for order bounded context
+import { DomainEvent } from '@a4co/shared-utils';
+
+export * from '../entities/order.aggregate';
+export * from '../value-objects/money.vo';
+export * from '../ports/order.repository';
 export interface OrderCreatedEventPayload {
   orderId: string;
   customerId: string;
@@ -10,7 +16,7 @@ export interface OrderCreatedEventPayload {
   timestamp: Date;
 }
 
-export class OrderCreatedEvent {
+export class OrderCreatedEvent extends DomainEvent {
   public readonly eventType = 'orders.created';
 
   constructor(
@@ -19,7 +25,9 @@ export class OrderCreatedEvent {
     public readonly items: Array<{ productId: string; quantity: number; price: number }>,
     public readonly totalAmount: number,
     public readonly timestamp: Date = new Date(),
-  ) {}
+  ) {
+    super();
+  }
 
   toJSON(): OrderCreatedEventPayload {
     return {
@@ -38,14 +46,16 @@ export interface OrderCancelledEventPayload {
   timestamp: Date;
 }
 
-export class OrderCancelledEvent {
+export class OrderCancelledEvent extends DomainEvent {
   public readonly eventType = 'orders.cancelled';
 
   constructor(
     public readonly orderId: string,
     public readonly reason: string,
     public readonly timestamp: Date = new Date(),
-  ) {}
+  ) {
+    super();
+  }
 
   toJSON(): OrderCancelledEventPayload {
     return {
@@ -56,6 +66,6 @@ export class OrderCancelledEvent {
   }
 }
 
-export * from './order-confirmed.event.js';
-export * from './order-failed.event.js';
-export * from './order-status-changed.event.js';
+export * from './order-confirmed.event';
+export * from './order-failed.event';
+export * from './order-status-changed.event';

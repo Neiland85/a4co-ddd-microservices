@@ -100,6 +100,10 @@ export class User extends AggregateRoot {
     return this._email.value;
   }
 
+  get id(): string {
+    return this.aggregateId;
+  }
+
   get name(): string {
     return this._name.value;
   }
@@ -118,6 +122,14 @@ export class User extends AggregateRoot {
 
   get hashedPassword(): string {
     return this._hashedPassword;
+  }
+
+  getCreatedAt(): Date {
+    return this.createdAt;
+  }
+
+  getUpdatedAt(): Date {
+    return this.updatedAt;
   }
 
   /* =========================

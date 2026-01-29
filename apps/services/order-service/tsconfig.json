@@ -2,8 +2,6 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "declaration": true,
     "declarationMap": true,
     "emitDecoratorMetadata": true,
@@ -22,8 +20,7 @@
       "node"
     ],
     "lib": [
-      "ES2022",
-      "DOM"
+      "ES2022"
     ],
     "baseUrl": ".",
     "paths": {
@@ -31,22 +28,22 @@
         "src/*"
       ],
       "@a4co/shared-utils": [
-        "../../packages/shared-utils/dist"
+        "../../../packages/shared-utils/dist"
       ],
       "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/dist/*"
+        "../../../packages/shared-utils/dist/*"
       ],
       "@a4co/shared-events": [
-        "../../packages/shared-events/dist"
+        "../../../packages/shared-events/dist"
       ],
       "@a4co/shared-events/*": [
-        "../../packages/shared-events/dist/*"
+        "../../../packages/shared-events/dist/*"
       ],
       "@a4co/domain-order": [
-        "../../../packages/domain/order/src/index.ts"
+        "../../../packages/domain/order/dist"
       ],
       "@a4co/domain-order/*": [
-        "../../../packages/domain/order/src/*"
+        "../../../packages/domain/order/dist/*"
       ],
       "@a4co/domain-shared": [
         "../../../packages/domain/shared/src/index.ts"
@@ -55,10 +52,10 @@
         "../../../packages/domain/shared/src/*"
       ],
       "@a4co/observability": [
-        "../../packages/observability/dist"
+        "../../../packages/observability/dist"
       ],
       "@a4co/observability/*": [
-        "../../packages/observability/dist/*"
+        "../../../packages/observability/dist/*"
       ]
     },
     "rootDir": "."
@@ -67,6 +64,8 @@
     "src/**/*.ts"
   ],
   "exclude": [
+    "src/__tests__",
+    "src/**/__tests__",
     "dist",
     "node_modules"
   ]

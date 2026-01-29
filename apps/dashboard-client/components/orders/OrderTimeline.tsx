@@ -72,7 +72,7 @@ function TimelineEvent({ event, isLast }: { event: OrderEvent; isLast: boolean }
             minute: '2-digit',
           })}
         </p>
-        {event.data && (
+        {event.data != null && (
           <pre className="mt-2 text-xs text-slate-500 dark:text-slate-500 overflow-x-auto">
             {JSON.stringify(event.data, null, 2)}
           </pre>

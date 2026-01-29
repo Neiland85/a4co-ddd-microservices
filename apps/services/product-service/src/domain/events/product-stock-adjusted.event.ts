@@ -1,11 +1,17 @@
 import { DomainEvent } from '@a4co/shared-utils';
 
-export class ProductStockAdjustedEvent implements DomainEvent {
-  readonly eventName = 'product.stock.adjusted';
-  readonly occurredOn = new Date();
+export interface ProductStockAdjustedPayloadV1 {
+  quantity: number;
+}
+
+export class ProductStockAdjustedEvent extends DomainEvent {
+  readonly eventName = 'product.stock.adjusted.v1';
 
   constructor(
     public readonly aggregateId: string,
-    public readonly quantity: number
-  ) {}
+    public readonly payload: ProductStockAdjustedPayloadV1,
+    occurredOn?: Date,
+  ) {
+    super(undefined, occurredOn);
+  }
 }

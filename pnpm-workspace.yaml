@@ -1,5 +1,12 @@
 packages:
   - 'apps/**'
+  # Exclude legacy duplicate services in apps/* (canonical location is apps/services/*)
+  - '!apps/auth-service/**'
+  - '!apps/inventory-service/**'
+  - '!apps/order-service/**'
+  - '!apps/payment-service/**'
+  - '!apps/product-service/**'
+  - '!apps/user-service/**'
   - 'packages/**'
   - '!libs/**'
   - '!a4co-ddd-microservices/**'

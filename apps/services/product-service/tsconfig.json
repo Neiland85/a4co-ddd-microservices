@@ -27,6 +27,16 @@
   ],
   "exclude": [
     "dist",
-    "node_modules"
+    "node_modules",
+    "src/__tests__/**",
+    "tests/**",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "src/application/__tests__/**",
+    "src/domain/__tests__/**",
+    "src/infrastructure/repositories/**",
+    "src/infrastructure/outbox/**",
+    "src/infrastructure/event-bus/**",
+    "src/application/services/**/*.tx.service.ts"
   ]
 }
