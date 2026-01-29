@@ -11,8 +11,8 @@ if ! node -e "require('json5')" 2>/dev/null; then
   exit 0
 fi
 
-# Run the dictionary update using the package.json script which points to ts-node with the scripts tsconfig
-pnpm run update:dicts >/dev/null 2>&1
+# Run the dictionary update (non-blocking). Avoid touching tracked markdown from the hook.
+A4CO_UPDATE_DICTS_WRITE_MD=false pnpm run update:dicts >/dev/null 2>&1
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -ne 0 ]; then

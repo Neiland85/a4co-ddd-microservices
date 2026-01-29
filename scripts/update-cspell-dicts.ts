@@ -64,6 +64,10 @@ function exportMarkdownSummary(groups: {
   workspace: string[];
   commits: string[];
 }) {
+  if (process.env.A4CO_UPDATE_DICTS_WRITE_MD === "false") {
+    return;
+  }
+
   const didChange =
     groups.user.length > 0 || groups.workspace.length > 0 || groups.commits.length > 0;
 
