@@ -12,7 +12,7 @@
     "dev:inventory": "turbo run start:dev --filter=@a4co/inventory-service",
     "build": "pnpm -r run build",
     "build:all": "turbo run build",
-    "test": "NODE_OPTIONS='--max-old-space-size=4096' pnpm -r --ignore=backend run test -- --runInBand",
+    "test": "NODE_OPTIONS='--max-old-space-size=4096' pnpm -r --ignore=backend --if-present run test -- --runInBand",
     "test:all": "NODE_OPTIONS='--max-old-space-size=4096' turbo run test -- --runInBand",
     "lint": "turbo run lint -- --max-old-space-size=4096",
     "lint:fix": "pnpm -r run lint:fix",
