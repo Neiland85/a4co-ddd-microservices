@@ -24,6 +24,12 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true
+    ,
+    "baseUrl": "../..",
+    "paths": {
+      "@a4co/shared-utils": ["packages/shared-utils/dist"],
+      "@a4co/shared-utils/*": ["packages/shared-utils/dist/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

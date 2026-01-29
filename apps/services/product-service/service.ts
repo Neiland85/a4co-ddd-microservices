@@ -5,6 +5,13 @@ export class ProductService extends BaseService {
     super('ProductService');
   }
 
+  protected log(message: string, meta?: any): void {
+    if (typeof super['log'] === 'function') {
+      super['log'](message, meta);
+    }
+    // Si BaseService no tiene log, no hacer nada
+  }
+
   addProduct(name: string, price: number): string {
     try {
       const validatedName = this.validateRequired(name, 'name');

@@ -56,14 +56,3 @@ export interface ValidationError {
   message: string;
   value?: any;
 }
-
-export interface DomainEvent {
-  id: string;
-  aggregateId: string;
-  eventType: string;
-  timestamp: Date;
-  data: any;
-  sagaId?: string; // Añadido para soporte de sagas
-  version?: number;
-  correlationId?: string;
-}

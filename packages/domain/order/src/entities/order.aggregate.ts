@@ -1,4 +1,4 @@
-import { AggregateRoot, DomainEvent, ValueObject } from '@a4co/domain-shared';
+import { AggregateRoot, ValueObject } from '@a4co/shared-utils';
 import { OrderCreatedEvent, OrderStatusChangedEvent } from '../events/index.js';
 
 // VALUE OBJECTS
@@ -111,7 +111,7 @@ export class Order extends AggregateRoot {
     this._status = newStatus;
     this.touch();
 
-    this.addDomainEvent(new OrderStatusChangedEvent(this._id, oldStatus, newStatus));
+    this.addDomainEvent(new OrderStatusChangedEvent(this.aggregateId, oldStatus, newStatus));
   }
   addItem(item: OrderItem): void {
     this._items.push(item);
@@ -159,13 +159,4 @@ export class Order extends AggregateRoot {
     this.changeStatus(OrderStatus.CANCELLED);
   }
 
-  // Domain event methods
-  protected addDomainEvent(event: any): void {
-    // For now, just log the event. In a real implementation, this would store events.
-    console.log('Domain event:', event);
-  }
-
-  protected touch(): void {
-    this._updatedAt = new Date();
-  }
 }

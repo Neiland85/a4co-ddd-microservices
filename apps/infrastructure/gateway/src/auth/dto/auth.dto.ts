@@ -13,7 +13,7 @@ export class LoginDto {
     })
     @IsEmail()
     @IsNotEmpty()
-    email: string;
+    email!: string;
 
     @ApiProperty({
         description: 'User password',
@@ -23,7 +23,7 @@ export class LoginDto {
     @IsString()
     @IsNotEmpty()
     @MinLength(8)
-    password: string;
+    password!: string;
 }
 
 export class AuthResponseDto {
@@ -31,7 +31,7 @@ export class AuthResponseDto {
         description: 'JWT access token',
         example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     })
-    accessToken: string;
+    accessToken: string | undefined;
 
     @ApiProperty({
         description: 'Refresh token for obtaining new access tokens',

@@ -13,7 +13,10 @@ import {
   type FieldValues,
 } from "react-hook-form"
 
-import { cn } from "@dashboard/lib/utils"
+// Utility function to join class names conditionally
+function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(" ");
+}
 import { Label } from "@dashboard/components/ui/label"
 
 const Form = FormProvider

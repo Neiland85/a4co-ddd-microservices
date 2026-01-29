@@ -1,13 +1,13 @@
-import { AuthService } from '../../application/services/auth.service';
+import { Controller, Get } from '@nestjs/common';
+import { AuthHealthUseCase } from '../../application/use-cases/auth-health.usecase';
+import { AuthHealthResponseDto } from '../../contracts/api/v1/auth-health-response.dto';
 
+@Controller('auth')
 export class AuthController {
-  private authService = new AuthService();
+  constructor(private readonly healthUseCase: AuthHealthUseCase) {}
 
-  login(req: { username: string; password: string }): string {
-    return this.authService.login(req.username, req.password);
-  }
-
-  register(req: { username: string; password: string }): string {
-    return this.authService.register(req.username, req.password);
+  @Get('health')
+  healthCheck(): AuthHealthResponseDto {
+    return this.healthUseCase.execute();
   }
 }

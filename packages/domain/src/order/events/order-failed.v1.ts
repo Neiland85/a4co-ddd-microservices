@@ -27,7 +27,7 @@ export class OrderFailedV1Event extends DomainEvent {
   public readonly eventType = ORDER_FAILED_V1;
 
   constructor(public readonly data: OrderFailedV1Data) {
-    super(data.orderId, data);
+    super();
   }
 
   public toJSON() {

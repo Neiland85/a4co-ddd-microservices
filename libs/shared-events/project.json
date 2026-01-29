@@ -1,5 +1,5 @@
 {
-  "name": "@a4co/shared-events",
+  "name": "shared-events-lib",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared-events/src",
   "projectType": "library",
