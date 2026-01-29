@@ -36,8 +36,8 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           pnpm-version: ${{ env.PNPM_VERSION }}
-          generate-prisma: 'true'
-          build-packages: 'true'
+          generate-prisma: 'false'
+          build-packages: 'false'
 
       - name: Validate docker-compose.test.yml
         run: docker compose -f docker-compose.test.yml config
