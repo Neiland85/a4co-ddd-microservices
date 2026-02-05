@@ -1,5 +1,13 @@
 packages:
   - 'apps/**'
+  # Exclude non-runtime skeleton services (frozen outside critical subset)
+  - '!apps/chat-service/**'
+  - '!apps/analytics-service/**'
+  - '!apps/artisan-service/**'
+  - '!apps/cms-service/**'
+  - '!apps/event-service/**'
+  - '!apps/geo-service/**'
+  - '!apps/loyalty-service/**'
   # Exclude legacy duplicate services in apps/* (canonical location is apps/services/*)
   - '!apps/auth-service/**'
   - '!apps/inventory-service/**'
@@ -7,6 +15,7 @@ packages:
   - '!apps/payment-service/**'
   - '!apps/product-service/**'
   - '!apps/user-service/**'
+  - '!apps/gateway/**'
   - 'packages/**'
   - '!libs/**'
   - '!a4co-ddd-microservices/**'

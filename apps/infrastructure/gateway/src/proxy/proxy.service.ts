@@ -5,7 +5,7 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AxiosError, AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
 
@@ -65,7 +65,7 @@ export class ProxyService {
         };
 
         try {
-            const response = await firstValueFrom(this.httpService.request<T>(config));
+            const response: AxiosResponse<T> = await firstValueFrom(this.httpService.request<T>(config));
 
             this.logger.debug(
                 `[${requestId}] Response from ${service}: ${response.status}`,
