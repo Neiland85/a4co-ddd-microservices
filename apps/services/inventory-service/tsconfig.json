@@ -31,35 +31,34 @@
         "src/*"
       ],
       "@a4co/domain-inventory": [
-        "../../packages/domain/inventory/src/index.ts"
+        "../../../packages/domain/inventory/dist"
       ],
       "@a4co/domain-inventory/*": [
-        "../../packages/domain/inventory/src/*"
+        "../../../packages/domain/inventory/dist/*"
       ],
       "@a4co/shared-utils": [
-        "../../packages/shared-utils/src/index.ts"
+        "../../../packages/shared-utils/dist"
       ],
       "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/src/*"
+        "../../../packages/shared-utils/dist/*"
       ],
       "@a4co/shared-events": [
-        "../../packages/shared-events/dist"
+        "../../../packages/shared-events/dist"
       ],
       "@a4co/shared-events/*": [
-        "../../packages/shared-events/dist/*"
+        "../../../packages/shared-events/dist/*"
       ],
       "@a4co/observability": [
-        "../../packages/observability/src"
+        "../../../packages/observability/dist"
       ],
       "@a4co/observability/*": [
-        "../../packages/observability/src/*"
+        "../../../packages/observability/dist/*"
       ]
     },
     "rootDir": "."
   },
   "include": [
-    "src/**/*.ts",
-    "../../packages/**/src/**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "**/__tests__/**",

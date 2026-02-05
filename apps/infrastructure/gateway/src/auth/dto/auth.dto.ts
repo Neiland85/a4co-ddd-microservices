@@ -37,19 +37,19 @@ export class AuthResponseDto {
         description: 'Refresh token for obtaining new access tokens',
         example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     })
-    refreshToken: string;
+    refreshToken!: string;
 
     @ApiProperty({
         description: 'Token type',
         example: 'Bearer',
     })
-    tokenType: string;
+    tokenType!: string;
 
     @ApiProperty({
         description: 'Token expiration time in seconds',
         example: 86400,
     })
-    expiresIn: number;
+    expiresIn!: number;
 
     @ApiProperty({
         description: 'User information',
@@ -59,7 +59,7 @@ export class AuthResponseDto {
             role: 'user',
         },
     })
-    user: {
+    user!: {
         id: string;
         email: string;
         role: string;
@@ -73,5 +73,5 @@ export class RefreshTokenDto {
     })
     @IsString()
     @IsNotEmpty()
-    refreshToken: string;
+    refreshToken!: string;
 }

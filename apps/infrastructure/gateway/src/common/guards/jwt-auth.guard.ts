@@ -59,7 +59,6 @@ export class JwtAuthGuard implements CanActivate {
 
             // Attach to request
             request.user = payload;
-            request.userId = payload.sub;
 
             // Propagate to headers for downstream services
             request.headers['x-user-id'] = payload.sub;
