@@ -12,7 +12,7 @@ import {
 import { PAYMENT_REPOSITORY_TOKEN } from '../application/application.constants';
 import { PaymentEventPublisher } from '../application/services/payment-event.publisher';
 import { PaymentService } from '../application/services/payment.service';
-import { PaymentRepository, PaymentId } from '@a4co/domain-payment';
+import { PaymentRepository } from '@a4co/domain-payment';
 import { StripeGateway } from '../infrastructure/stripe.gateway';
 
 @Controller('payments')
