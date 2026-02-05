@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 
 // Extender la interfaz Request para incluir la propiedad user
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: {
@@ -198,7 +199,7 @@ export class InputValidationMiddleware implements NestMiddleware {
     if (!obj || typeof obj !== 'object') return;
 
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         if (typeof obj[key] === 'string') {
           // Remover caracteres peligrosos
           obj[key] = obj[key]
