@@ -10,11 +10,11 @@
     "dev:order": "turbo run start:dev --filter=@a4co/order-service",
     "dev:payment": "turbo run start:dev --filter=@a4co/payment-service",
     "dev:inventory": "turbo run start:dev --filter=@a4co/inventory-service",
-    "build": "pnpm -r run build",
+    "build": "pnpm --filter @a4co/shared-utils run build && pnpm --filter @a4co/shared-events run build && pnpm --filter @a4co/observability run build && pnpm --filter @a4co/domain-order run build && pnpm --filter @a4co/domain-payment run build && pnpm --filter @a4co/domain-inventory run build && pnpm --filter @a4co/gateway run build && pnpm --filter @a4co/auth-service run build && pnpm --filter @a4co/order-service run build && pnpm --filter @a4co/product-service run build && pnpm --filter @a4co/inventory-service run build && pnpm --filter @a4co/payment-service run build && pnpm --filter @a4co/user-service run build",
     "build:all": "turbo run build",
-    "test": "NODE_OPTIONS='--max-old-space-size=4096' pnpm -r --ignore=backend run test -- --runInBand",
+    "test": "pnpm --filter @a4co/gateway run test -- --runInBand && pnpm --filter @a4co/auth-service run test -- --runInBand && pnpm --filter @a4co/order-service run test -- --runInBand && pnpm --filter @a4co/product-service run test -- --runInBand && pnpm --filter @a4co/inventory-service run test -- --runInBand && pnpm --filter @a4co/payment-service run test -- --runInBand && pnpm --filter @a4co/user-service run test -- --runInBand",
     "test:all": "NODE_OPTIONS='--max-old-space-size=4096' turbo run test -- --runInBand",
-    "lint": "turbo run lint -- --max-old-space-size=4096",
+    "lint": "pnpm --filter @a4co/gateway run lint && pnpm --filter @a4co/auth-service run lint && pnpm --filter @a4co/order-service run lint && pnpm --filter @a4co/product-service run lint && pnpm --filter @a4co/inventory-service run lint && pnpm --filter @a4co/payment-service run lint && pnpm --filter @a4co/user-service run lint",
     "lint:fix": "pnpm -r run lint:fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules --ignore .git",
     "lint:md:fix": "markdownlint --fix \"**/*.md\" --ignore node_modules --ignore .git",
@@ -48,23 +48,31 @@
     "prod:logs": "docker-compose -f docker-compose.prod.yml --env-file .env.production logs -f",
     "prod:ps": "docker-compose -f docker-compose.prod.yml --env-file .env.production ps",
     "prod:restart": "docker-compose -f docker-compose.prod.yml --env-file .env.production restart",
-    "prod:build": "docker-compose -f docker-compose.prod.yml --env-file .env.production build"
+    "prod:build": "docker-compose -f docker-compose.prod.yml --env-file .env.production build",
+    "update:dicts": "ts-node --project tsconfig.scripts.json scripts/update-cspell-dicts.ts",
+    "pre-release": "pnpm run lint"
   },
   "dependencies": {
+    "@nestjs/common": "^11.1.11",
     "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.1.11",
     "@nestjs/swagger": "^11.2.1",
     "@prisma/adapter-pg": "^7.0.0",
-    "@prisma/client": "6.19.0",
+    "@prisma/client": "7.4.0",
     "@sentry/node": "10.29.0",
     "@sentry/profiling-node": "10.29.0",
     "cors": "^2.8.5",
     "helmet": "^8.1.0",
     "morgan": "^1.10.1",
     "pnpm": "^10.14.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
     "turbo": "^2.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
+    "@nestjs/cli": "^11.0.14",
+    "@nestjs/testing": "^11.1.11",
     "@prisma/config": "^6.19.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.10",
@@ -74,9 +82,11 @@
     "@types/glob": "^9.0.0",
     "@types/jest": "^30.0.0",
     "@types/jsdom": "^27.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/micromatch": "^4.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.10.0",
+    "@types/node": "^24.10.1",
+    "@types/passport-jwt": "^4.0.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/uuid": "^10.0.0",
@@ -84,13 +94,12 @@
     "@types/webpack": "^5.28.5",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "@nestjs/cli": "^11.0.0",
     "autoprefixer": "^10.4.21",
     "axios": "^1.13.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "express": "^5.1.0",
-    "glob": "^10.5.0",
+    "glob": "^13.0.0",
     "globals": "^16.5.0",
     "jest-environment-jsdom": "^30.2.0",
     "jsdom": "^27.1.0",
@@ -104,13 +113,14 @@
     "tailwindcss": "^3.4.18",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^4.0.15"
   },
   "simple-git-hooks": {
     "post-commit": "pnpm run update:dicts"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "packageManager": "pnpm@10.14.0"
 }

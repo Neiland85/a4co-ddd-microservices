@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { Payment } from '../entities/payment.entity';
-import { Money } from '../value-objects/money.vo';
-import { PaymentStatusValue } from '../value-objects/payment-status.vo';
+// packages/domain/payment/src/services/payment-domain.service.ts
 
+import { Injectable } from '@nestjs/common';
+import { Payment, Money, PaymentStatusValue } from '../index';
 export interface PaymentLimitsConfig {
   minAmount: number;
   maxAmount: number;
-  supportedCurrencies?: string[];
+  supportedCurrencies: string[];
 }
 
 const DEFAULT_LIMITS: PaymentLimitsConfig = {
@@ -20,11 +19,10 @@ export class PaymentDomainService {
   constructor(private readonly limits: PaymentLimitsConfig = DEFAULT_LIMITS) {}
 
   public canProcessPayment(payment: Payment): boolean {
-    return payment.status.value === PaymentStatusValue.PENDING;
+    return payment.status === PaymentStatusValue.PENDING;
   }
 
   public calculateRefundAmount(payment: Payment): Money {
-    // En esta versión asumimos reembolso completo. En el futuro se podrá agregar lógica parcial.
     return payment.amount;
   }
 
@@ -34,13 +32,10 @@ export class PaymentDomainService {
     }
 
     if (amount.amount > this.limits.maxAmount) {
-      throw new Error(`Payment amount exceeds the maximum limit of ${this.limits.maxAmount}`);
+      throw new Error(`Payment amount exceeds maximum limit of ${this.limits.maxAmount}`);
     }
 
-    if (
-      this.limits.supportedCurrencies &&
-      !this.limits.supportedCurrencies.includes(amount.currency)
-    ) {
+    if (!this.limits.supportedCurrencies.includes(amount.currency)) {
       throw new Error(`Unsupported currency: ${amount.currency}`);
     }
   }

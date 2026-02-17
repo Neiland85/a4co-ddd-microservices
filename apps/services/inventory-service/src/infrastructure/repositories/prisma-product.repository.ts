@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { PrismaClient, Product as PrismaProduct, Prisma } from '../../../prisma/generated';
+import { PrismaClient, Product as PrismaProduct, Prisma } from '@prisma/client';
 import { ProductRepository } from '../../domain/repositories/product.repository';
 import { Product, ProductProps } from '../../domain/entities/product.entity';
 
@@ -99,6 +99,6 @@ export class PrismaProductRepository implements ProductRepository {
       category: product.category,
       // price: product.unitPrice, // Ajusta según el campo real en Prisma
       // artisan: product.artisanId, // Ajusta según el campo real en Prisma
-    } as any; // Temporal hasta verificar el esquema
+    } as unknown as Prisma.ProductCreateInput; // Temporal hasta verificar el esquema
   }
 }

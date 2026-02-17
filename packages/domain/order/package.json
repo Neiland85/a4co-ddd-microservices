@@ -1,15 +1,23 @@
 {
   "name": "@a4co/domain-order",
   "version": "0.1.0",
-  "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "typescript": "^5.9.3"
+  "dependencies": {
+    "@a4co/shared-utils": "workspace:*"
   }
 }

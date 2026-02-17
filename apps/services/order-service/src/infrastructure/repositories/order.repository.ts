@@ -4,7 +4,7 @@ export class InMemoryOrderRepository implements IOrderRepository {
   private orders = new Map<string, Order>();
 
   async save(order: Order): Promise<void> {
-    this.orders.set(order.id, order);
+    this.orders.set(order.aggregateId, order);
   }
 
   async findById(id: string): Promise<Order | null> {
@@ -16,7 +16,7 @@ export class InMemoryOrderRepository implements IOrderRepository {
   }
 
   async update(order: Order): Promise<void> {
-    this.orders.set(order.id, order);
+    this.orders.set(order.aggregateId, order);
   }
 
   async delete(id: string): Promise<void> {

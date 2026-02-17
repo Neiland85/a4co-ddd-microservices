@@ -1,20 +1,39 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@a4co/shared-utils": [
+        "../../../packages/shared-utils/dist"
+      ],
+      "@a4co/shared-utils/*": [
+        "../../../packages/shared-utils/dist/*"
+      ],
+      "@a4co/observability": [
+        "../../../packages/observability/dist"
+      ],
+      "@a4co/observability/*": [
+        "../../../packages/observability/dist/*"
+      ]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false
   },
   "include": [
-    "src/**/*",
-    "src/@types/**/*"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "src/__tests__/_disabled/**",
+    "src/__tests__/_disabled/**",
+    "src/__tests__/**"
   ]
 }

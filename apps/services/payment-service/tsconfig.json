@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -7,13 +7,46 @@
     "strict": false,
     "strictNullChecks": true,
     "skipLibCheck": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "@a4co/shared-utils/*": ["../../packages/shared-utils/src/*"],
-      "@a4co/domain-payment": ["../../../packages/domain/payment/src/index.ts"],
-      "@a4co/domain-payment/*": ["../../../packages/domain/payment/src/*"]
-    }
+      "@a4co/shared-utils/*": [
+        "../../../packages/shared-utils/dist/*"
+      ],
+      "@a4co/domain-payment": [
+        "../../../../packages/domain/payment/dist"
+      ],
+      "@a4co/domain-payment/*": [
+        "../../../../packages/domain/payment/dist/*"
+      ],
+      "@a4co/shared-utils": [
+        "../../../packages/shared-utils/dist"
+      ],
+      "@a4co/observability": [
+        "../../../packages/observability/dist"
+      ],
+      "@a4co/observability/*": [
+        "../../../packages/observability/dist/*"
+      ]
+    },
+    "rootDir": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "src/**/*.spec.ts",
+    "src/**/__tests__/**",
+    "src/__tests__/**",
+    "src/domain/**",
+    "src/infrastructure/__tests__/**",
+    "src/infrastructure/prisma/**",
+    "src/infrastructure/repositories/prisma-payment.repository.ts",
+    "src/payment.controller.spec.ts",
+    "src/payment.service.spec.ts"
+  ]
 }

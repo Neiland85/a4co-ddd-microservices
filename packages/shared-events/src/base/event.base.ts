@@ -101,5 +101,11 @@ export type EventType = (typeof EventTypes)[keyof typeof EventTypes];
 
 // Backwards-compatible named exports (used by some services)
 export const ORDER_CREATED_V1 = EventTypes.ORDER_CREATED_V1;
+export const ORDER_CANCELLED_V1 = EventTypes.ORDER_CANCELLED_V1;
 export const PAYMENT_CONFIRMED_V1 = EventTypes.PAYMENT_CONFIRMED_V1;
 export const PAYMENT_FAILED_V1 = EventTypes.PAYMENT_FAILED_V1;
+
+export const INVENTORY_RESERVED_V1 = EventTypes.INVENTORY_RESERVED_V1;
+export const INVENTORY_RELEASED_V1 = EventTypes.INVENTORY_RELEASED_V1;
+// Legacy alias used by some services
+export const INVENTORY_FAILED_V1 = EventTypes.INVENTORY_OUT_OF_STOCK_V1;

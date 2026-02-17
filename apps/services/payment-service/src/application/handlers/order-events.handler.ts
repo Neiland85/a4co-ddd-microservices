@@ -1,16 +1,14 @@
 import { Controller, Inject, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { PaymentRepository } from '@a4co/domain-payment';
-import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants.js';
-import { ProcessPaymentUseCase } from '../use-cases/process-payment.use-case.js';
-import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case.js';
-import {
-  ORDER_CREATED_V1,
-  ORDER_CANCELLED_V1,
-  OrderCreatedV1Payload,
-  OrderCancelledV1Payload,
-} from '@a4co/shared-events';
+import { PAYMENT_REPOSITORY_TOKEN } from '../application.constants';
+import { ProcessPaymentUseCase } from '../use-cases/process-payment.use-case';
+import { RefundPaymentUseCase } from '../use-cases/refund-payment.use-case';
 
+/**
+ * 🔒 Anti-corruption handler
+ * No depende de shared-events ni de DomainEvent shape externo
+ */
 @Controller()
 export class OrderEventsHandler {
   private readonly logger = new Logger(OrderEventsHandler.name);
@@ -22,50 +20,52 @@ export class OrderEventsHandler {
     private readonly paymentRepository: PaymentRepository,
   ) {}
 
-  @EventPattern(ORDER_CREATED_V1)
-  public async handleOrderCreated(@Payload() data: any): Promise<void> {
-    const event = data.payload as OrderCreatedV1Payload;
-    this.logger.log(`📥 Received ${ORDER_CREATED_V1} for order ${event.orderId}`);
+  /**
+   * ORDER CREATED
+   */
+  @EventPattern('order.created.v1')
+  async handleOrderCreated(@Payload() data: any): Promise<void> {
+    const payload = data?.payload ?? data;
 
-    try {
-      const command: any = {
-        orderId: event.orderId,
-        amount: event.totalAmount,
-        currency: event.currency,
-        customerId: event.customerId,
-        metadata: {},
-      };
-
-      await this.processPaymentUseCase.execute(command);
-    } catch (error) {
-      this.logger.error(`Failed to process payment for order ${event.orderId}:`, error);
-      throw error;
+    if (!payload?.orderId) {
+      this.logger.warn('Received order.created.v1 without orderId');
+      return;
     }
+
+    this.logger.log(`📥 Received order.created.v1 for order ${payload.orderId}`);
+
+    const command = {
+      orderId: payload.orderId,
+      amount: payload.totalAmount,
+      currency: payload.currency,
+      customerId: payload.customerId,
+      metadata: {},
+    };
+
+    await this.processPaymentUseCase.execute(command);
   }
 
-  @EventPattern(ORDER_CANCELLED_V1)
-  public async handleOrderCancelled(@Payload() data: any): Promise<void> {
-    const event = data.payload as OrderCancelledV1Payload;
-    this.logger.log(`📥 Received ${ORDER_CANCELLED_V1} for order ${event.orderId}`);
+  /**
+   * ORDER CANCELLED
+   */
+  @EventPattern('order.cancelled.v1')
+  async handleOrderCancelled(@Payload() data: any): Promise<void> {
+    const payload = data?.payload ?? data;
 
-    try {
-      // Buscar el pago por orderId
-      const payment = await this.paymentRepository.findByOrderId(event.orderId);
-
-      if (!payment) {
-        this.logger.warn(`No payment found for order ${event.orderId}`);
-        return;
-      }
-
-      // Procesar reembolso
-      await this.refundPaymentUseCase.execute(
-        payment.paymentId.value,
-        undefined,
-        event.reason || 'Order cancelled',
-      );
-    } catch (error) {
-      this.logger.error(`Failed to refund payment for order ${event.orderId}:`, error);
-      throw error;
+    if (!payload?.orderId) {
+      this.logger.warn('Received order.cancelled.v1 without orderId');
+      return;
     }
+
+    this.logger.log(`📥 Received order.cancelled.v1 for order ${payload.orderId}`);
+
+    const payment = await this.paymentRepository.findByOrderId(payload.orderId);
+
+    if (!payment) {
+      this.logger.warn(`No payment found for order ${payload.orderId}`);
+      return;
+    }
+
+    await this.refundPaymentUseCase.execute(payment.id, undefined, payload.reason ?? 'Order cancelled');
   }
 }

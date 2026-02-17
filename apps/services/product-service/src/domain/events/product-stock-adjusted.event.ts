@@ -1,12 +1,17 @@
 import { DomainEvent } from '@a4co/shared-utils';
-import { ProductId } from '../value-objects/product-id.vo';
+
+export interface ProductStockAdjustedPayloadV1 {
+  quantity: number;
+}
 
 export class ProductStockAdjustedEvent extends DomainEvent {
+  readonly eventName = 'product.stock.adjusted.v1';
+
   constructor(
-    public readonly productId: ProductId,
-    public readonly oldStock: number,
-    public readonly newStock: number
+    public readonly aggregateId: string,
+    public readonly payload: ProductStockAdjustedPayloadV1,
+    occurredOn?: Date,
   ) {
-    super();
+    super(undefined, occurredOn);
   }
 }

@@ -1,4 +1,3 @@
-// prompt: ✦ gen-service
 import { ValueObject } from '@a4co/shared-utils';
 
 export class Email extends ValueObject<string> {
@@ -43,7 +42,6 @@ export class Password extends ValueObject<string> {
       throw new Error('Password demasiado largo');
     }
 
-    // Al menos una letra minúscula, una mayúscula, un número
     const hasLowerCase = /[a-z]/.test(password);
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumbers = /\d/.test(password);
@@ -73,7 +71,6 @@ export class UserName extends ValueObject<string> {
       throw new Error('Nombre demasiado largo');
     }
 
-    // Solo letras, espacios y algunos caracteres especiales
     const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/;
     if (!nameRegex.test(name)) {
       throw new Error('Nombre contiene caracteres inválidos');

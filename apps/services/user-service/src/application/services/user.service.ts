@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
-  getHealth() {
-    return { status: 'ok', service: 'user-service' };
+  private readonly logger = new Logger(UserService.name);
+
+  async findAll(): Promise<any[]> {
+    this.logger.log('Fetching all users');
+    return [];
   }
 }

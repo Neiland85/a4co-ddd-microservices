@@ -45,5 +45,6 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["scripts/**/*.ts", "scripts/**/*.tsx", "tools/**/*.ts", "tools/**/*.tsx"],
-  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts", "**/*.test.ts"],
+  "types": ["vitest"]
 }

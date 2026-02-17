@@ -1,46 +1,34 @@
-/**
- * JWT Strategy
- * Passport strategy for JWT authentication
- */
+import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+import { verify, JwtPayload } from 'jsonwebtoken';
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-
-export interface JwtPayload {
-    sub: string;        // userId
-    email?: string;
-    role?: string;
-    iat?: number;
-    exp?: number;
-}
+export type AuthenticatedUser = JwtPayload;
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(private readonly configService: ConfigService) {
-        const jwtSecret = configService.get<string>('JWT_SECRET');
+export class JwtAuthMiddleware implements NestMiddleware {
+  use(req: Request, _res: Response, next: NextFunction): void {
+    const authHeader = req.headers['authorization'];
 
-        if (!jwtSecret) {
-            throw new Error('JWT_SECRET environment variable must be set');
-        }
-
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ignoreExpiration: false,
-            secretOrKey: jwtSecret,
-        });
+    if (!authHeader) {
+      throw new UnauthorizedException('Missing Authorization header');
     }
 
-    async validate(payload: JwtPayload) {
-        if (!payload.sub) {
-            throw new UnauthorizedException('Invalid token payload');
-        }
+    const [, token] = authHeader.split(' ');
 
-        return {
-            userId: payload.sub,
-            email: payload.email,
-            role: payload.role,
-        };
+    if (!token) {
+      throw new UnauthorizedException('Invalid Authorization header');
     }
+
+    try {
+      const decoded = verify(
+        token,
+        process.env.JWT_SECRET || 'dev-secret',
+      ) as AuthenticatedUser;
+
+      (req as any).user = decoded;
+      next();
+    } catch {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
 }

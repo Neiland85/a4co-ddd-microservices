@@ -1,3 +1,1 @@
-export * from './aggregates';
-export * from './events';
-export * from './value-objects';
+export * from './value-objects/product-value-objects';

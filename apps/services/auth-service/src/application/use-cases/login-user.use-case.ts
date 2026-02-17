@@ -1,4 +1,4 @@
-import { UseCase } from '@a4co/shared-utils';
+import type { UseCase } from './use-case';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from '../dto/user.dto';
 import { UserRepositoryPort } from '../ports/user-repository.port';
