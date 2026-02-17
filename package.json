@@ -48,7 +48,9 @@
     "prod:logs": "docker-compose -f docker-compose.prod.yml --env-file .env.production logs -f",
     "prod:ps": "docker-compose -f docker-compose.prod.yml --env-file .env.production ps",
     "prod:restart": "docker-compose -f docker-compose.prod.yml --env-file .env.production restart",
-    "prod:build": "docker-compose -f docker-compose.prod.yml --env-file .env.production build"
+    "prod:build": "docker-compose -f docker-compose.prod.yml --env-file .env.production build",
+    "update:dicts": "ts-node --project tsconfig.scripts.json scripts/update-cspell-dicts.ts",
+    "pre-release": "pnpm run lint"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.11",
