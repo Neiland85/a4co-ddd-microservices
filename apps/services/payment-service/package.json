@@ -22,7 +22,7 @@
     "@a4co/domain-payment": "workspace:*",
     "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",
-    "@nestjs/microservices": "^11.1.8",
+    "@nestjs/microservices": "^11.1.13",
     "@nestjs/platform-express": "^11.1.8",
     "@prisma/client": "7.4.0",
     "nats": "^2.15.0",

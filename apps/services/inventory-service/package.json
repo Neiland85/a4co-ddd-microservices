@@ -23,7 +23,7 @@
     "@a4co/shared-utils": "workspace:*",
     "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.8",
-    "@nestjs/microservices": "^11.1.8",
+    "@nestjs/microservices": "^11.1.13",
     "@nestjs/platform-express": "^11.1.8",
     "@prisma/client": "7.4.0",
     "@types/pg": "^8.15.6",
