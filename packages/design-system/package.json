@@ -17,7 +17,7 @@
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
-    "@prisma/client": "6.19.0",
+    "@prisma/client": "7.4.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.15",
