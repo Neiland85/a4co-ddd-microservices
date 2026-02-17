@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@prisma/client": "6.19.0",
+    "firebase": "^12.9.0",
     "@prisma/client": "7.3.0",
     "firebase": "^12.4.0",
     "prisma": "6.19.0",
