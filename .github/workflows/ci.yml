@@ -36,3 +36,45 @@ jobs:
 
       - name: Test critical subset
         run: pnpm -w run test
+
+      - name: Lint critical subset
+        run: pnpm -w run lint
+
+  security_and_compliance_visibility:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate production audit report (non-blocking)
+        run: pnpm audit --prod --json > audit-prod.json || true
+
+      - name: Fail if Next.js advisories remain
+        run: |
+          node -e "const fs=require('fs');const report=JSON.parse(fs.readFileSync('audit-prod.json','utf8'));const advisories=Object.values(report.advisories||{});const nextVulns=advisories.filter((a)=>a.module_name==='next');if(nextVulns.length){console.error('Next.js advisories still present:');for(const v of nextVulns){console.error(`- [${v.severity}] ${v.title} (${v.github_advisory_id||v.id})`);}process.exit(1);}console.log('No Next.js advisories detected in production audit.');"
+
+      - name: Generate licenses report (non-blocking)
+        run: pnpm licenses list --json > licenses.json || true
+
+      - name: Upload security/compliance artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-compliance-reports
+          path: |
+            audit-prod.json
+            licenses.json
