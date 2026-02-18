@@ -31,7 +31,7 @@ export class AuthResponseDto {
         description: 'JWT access token',
         example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     })
-    accessToken: string | undefined;
+    accessToken!: string;
 
     @ApiProperty({
         description: 'Refresh token for obtaining new access tokens',

@@ -1,3 +1,28 @@
+name: CI (Build)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '10.14.0'
+
+jobs:
+  build:
+    name: Build (monorepo)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
 name: CI
 
 on:
@@ -17,6 +42,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup monorepo
+        uses: ./.github/actions/setup-monorepo
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          generate-prisma: 'true'
+          build-packages: 'true'
+
+      - name: Build
+        run: pnpm -w run build
+
+      - name: Tests (if present)
+        run: pnpm -w run test
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:

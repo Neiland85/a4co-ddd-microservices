@@ -1,4 +1,14 @@
 {
+	"extends": "../../../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"skipLibCheck": true,
+		"types": ["node", "express", "jsonwebtoken", "passport-jwt"],
+		"baseUrl": "./"
+	},
+	"include": ["src/**/*.ts", "src/**/*.d.ts"],
+	"exclude": ["node_modules", "dist", "test"]
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "types": [

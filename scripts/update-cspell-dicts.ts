@@ -64,6 +64,17 @@ function exportMarkdownSummary(groups: {
   workspace: string[];
   commits: string[];
 }) {
+  if (process.env.A4CO_UPDATE_DICTS_WRITE_MD === "false") {
+    return;
+  }
+
+  const didChange =
+    groups.user.length > 0 || groups.workspace.length > 0 || groups.commits.length > 0;
+
+  if (!didChange && fs.existsSync(mdOutputPath)) {
+    return;
+  }
+
   const date = new Date().toLocaleString("es-ES", { timeZone: "Europe/Madrid" });
   const header = `# Diccionario del Proyecto\n\nÚltima sincronización: ${date}\n\n---\n`;
   const formatGroup = (title: string, words: string[]) => {
@@ -84,10 +95,19 @@ function exportMarkdownSummary(groups: {
   const commitWords = extractNewWordsFromCommits();
   const addedUser = mergeWords(userPath, [...userDict, ...commitWords]);
   const addedWorkspace = mergeWords(workspacePath, [...workspaceDict, ...commitWords]);
+
+  const addedFromCommits = Array.from(
+    new Set(
+      [...addedUser, ...addedWorkspace].filter((word) =>
+        commitWords.map((w) => w.toLowerCase()).includes(word.toLowerCase())
+      )
+    )
+  );
+
   exportMarkdownSummary({
     user: addedUser.sort(),
     workspace: addedWorkspace.sort(),
-    commits: commitWords.sort(),
+    commits: addedFromCommits.sort(),
   });
 })();
 
