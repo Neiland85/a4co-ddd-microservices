@@ -12,5 +12,26 @@
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts"],
 	"exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/gateway",
+    "rootDir": "./src",
+
+    "target": "ES2022",
+    "module": "commonjs",
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
+
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*.spec.ts"
+  ]
 }
 

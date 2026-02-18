@@ -6,16 +6,16 @@
     "baseUrl": ".",
     "paths": {
       "@a4co/shared-utils": [
-        "../../packages/shared-utils/dist"
+        "../../../packages/shared-utils/dist"
       ],
       "@a4co/shared-utils/*": [
-        "../../packages/shared-utils/dist/*"
+        "../../../packages/shared-utils/dist/*"
       ],
       "@a4co/observability": [
-        "../../packages/observability/dist"
+        "../../../packages/observability/dist"
       ],
       "@a4co/observability/*": [
-        "../../packages/observability/dist/*"
+        "../../../packages/observability/dist/*"
       ]
     },
     "experimentalDecorators": true,

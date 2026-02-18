@@ -1,15 +1,30 @@
 packages:
-  - 'apps/**'
-  # Exclude legacy duplicate services in apps/* (canonical location is apps/services/*)
-  - '!apps/auth-service/**'
-  - '!apps/inventory-service/**'
-  - '!apps/order-service/**'
-  - '!apps/payment-service/**'
-  - '!apps/product-service/**'
-  - '!apps/user-service/**'
+  # Frontend applications
+  - 'apps/frontend'
+  - 'apps/dashboard-client'
+  - 'apps/dashboard-web'
+
+  # Canonical backend services
+  - 'apps/services/*'
+  - 'apps/infrastructure/*'
+
+  # Auxiliary services still under active development
+  - 'apps/transportista-service'
+
+  # Shared packages
   - 'packages/**'
-  - '!libs/**'
-  - '!a4co-ddd-microservices/**'
+
+  # Explicitly exclude legacy/duplicate service locations
+  - '!apps/notification-service/**'
+
+  # Exclude frozen skeleton services from workspace resolution
+  - '!apps/chat-service/**'
+  - '!apps/analytics-service/**'
+  - '!apps/artisan-service/**'
+  - '!apps/cms-service/**'
+  - '!apps/event-service/**'
+  - '!apps/geo-service/**'
+  - '!apps/loyalty-service/**'
 
 onlyBuiltDependencies:
   - '@firebase/util'
