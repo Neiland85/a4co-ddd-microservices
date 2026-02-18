@@ -72,6 +72,12 @@ jobs:
       - name: Enforce advisory policy (block critical + Next.js)
         run: |
           node -e "const fs=require('fs');const report=JSON.parse(fs.readFileSync('audit-prod.json','utf8'));const advisories=Object.values(report.advisories||{});const nextVulns=advisories.filter((a)=>a.module_name==='next');const critical=advisories.filter((a)=>a.severity==='critical');const high=advisories.filter((a)=>a.severity==='high').length;const moderate=advisories.filter((a)=>a.severity==='moderate').length;console.log(`Advisory summary -> critical:${critical.length} high:${high} moderate:${moderate}`);if(nextVulns.length){console.error('Next.js advisories still present:');for(const v of nextVulns){console.error(`- [${v.severity}] ${v.title} (${v.github_advisory_id||v.id})`);}process.exit(1);}if(critical.length){console.error('Critical advisories present:');for(const v of critical){console.error(`- [critical] ${v.module_name}: ${v.title} (${v.github_advisory_id||v.id})`);}process.exit(1);}console.log('Advisory policy passed (no critical and no Next.js advisories).');"
+      - name: Generate production audit report (non-blocking)
+        run: pnpm audit --prod --json > audit-prod.json || true
+
+      - name: Fail if Next.js advisories remain
+        run: |
+          node -e "const fs=require('fs');const report=JSON.parse(fs.readFileSync('audit-prod.json','utf8'));const advisories=Object.values(report.advisories||{});const nextVulns=advisories.filter((a)=>a.module_name==='next');if(nextVulns.length){console.error('Next.js advisories still present:');for(const v of nextVulns){console.error(`- [${v.severity}] ${v.title} (${v.github_advisory_id||v.id})`);}process.exit(1);}console.log('No Next.js advisories detected in production audit.');"
 
       - name: Generate licenses report (non-blocking)
         run: pnpm licenses list --json > licenses.json || true
