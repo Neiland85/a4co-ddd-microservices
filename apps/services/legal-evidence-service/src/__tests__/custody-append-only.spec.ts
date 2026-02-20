@@ -13,6 +13,8 @@ describe('CustodyEvent – append-only integrity', () => {
         'File uploaded',
         'system',
         CustodyEventType.EVIDENCE_FILE_UPLOADED,
+        new Date(),
+        'tenant-1',
       );
 
       expect(event.id).toBe('evt-1');
@@ -32,6 +34,8 @@ describe('CustodyEvent – append-only integrity', () => {
         'Hash computed',
         'system',
         CustodyEventType.EVIDENCE_HASHED,
+        new Date(),
+        'tenant-1',
       );
 
       expect(() => {
@@ -51,6 +55,8 @@ describe('CustodyEvent – append-only integrity', () => {
         'Test reason',
         'system',
         CustodyEventType.CUSTODY_TRANSFER,
+        new Date(),
+        'tenant-1',
       );
       const after = new Date();
 
@@ -61,7 +67,7 @@ describe('CustodyEvent – append-only integrity', () => {
 
   describe('Evidence.uploadFile – automatic custody events', () => {
     function createEvidence(): Evidence {
-      return Evidence.create('evid-1', 'Test Evidence', 'desc', EvidenceType.DOCUMENT, 'case-1', 'user-1');
+      return Evidence.create('evid-1', 'Test Evidence', 'desc', EvidenceType.DOCUMENT, 'case-1', 'user-1', 'tenant-1');
     }
 
     function createFile(id: string): EvidenceFile {

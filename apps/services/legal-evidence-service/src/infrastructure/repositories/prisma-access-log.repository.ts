@@ -9,7 +9,7 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
     await this.prisma.accessLog.create({
       data: {
         id: log.id,
-        tenantId: log.tenantId,
+        tenantId: log.tenantId!,
         resourceId: log.resourceId,
         resourceType: log.resourceType,
         userId: log.userId,

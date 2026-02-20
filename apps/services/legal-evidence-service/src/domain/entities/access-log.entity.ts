@@ -16,13 +16,16 @@ export class AccessLog {
     public readonly action: AccessAction,
     public readonly ipAddress: string | null,
     public readonly occurredAt: Date = new Date(),
-    public readonly tenantId: string = 'default',
+    public readonly tenantId?: string,
   ) {
     if (!id || id.trim().length === 0) {
       throw new Error('AccessLog id cannot be empty');
     }
     if (!userId || userId.trim().length === 0) {
       throw new Error('userId cannot be empty');
+    }
+    if (!tenantId || tenantId.trim().length === 0) {
+      throw new Error('tenantId cannot be empty');
     }
   }
 }

@@ -29,11 +29,14 @@ export class LegalCase extends AggregateRoot {
     reports: GeneratedReport[] = [],
     createdAt?: Date,
     updatedAt?: Date,
-    tenantId = 'default',
+    tenantId?: string,
   ) {
     super(id, createdAt, updatedAt);
     if (!title || title.trim().length === 0) {
       throw new Error('Case title cannot be empty');
+    }
+    if (!tenantId || tenantId.trim().length === 0) {
+      throw new Error('Case tenantId cannot be empty');
     }
     this._title = title;
     this._description = description;
@@ -129,7 +132,7 @@ export class LegalCase extends AggregateRoot {
     title: string,
     description: string,
     openedBy: string,
-    tenantId = 'default',
+    tenantId: string,
   ): LegalCase {
     return new LegalCase(id, title, description, openedBy, CaseStatus.OPEN, [], [], undefined, undefined, tenantId);
   }

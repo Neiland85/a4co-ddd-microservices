@@ -50,7 +50,7 @@ export class Evidence extends AggregateRoot {
     custodyChain: ChainOfCustodyEvent[] = [],
     createdAt?: Date,
     updatedAt?: Date,
-    tenantId = 'default',
+    tenantId?: string,
   ) {
     super(id, createdAt, updatedAt);
     if (!title || title.trim().length === 0) {
@@ -58,6 +58,9 @@ export class Evidence extends AggregateRoot {
     }
     if (!caseId || caseId.trim().length === 0) {
       throw new Error('Evidence caseId cannot be empty');
+    }
+    if (!tenantId || tenantId.trim().length === 0) {
+      throw new Error('Evidence tenantId cannot be empty');
     }
     this._title = title;
     this._description = description;
@@ -161,6 +164,7 @@ export class Evidence extends AggregateRoot {
         uploadedBy,
         CustodyEventType.EVIDENCE_FILE_UPLOADED,
         now,
+        this._tenantId,
       ),
     );
 
@@ -174,6 +178,7 @@ export class Evidence extends AggregateRoot {
         uploadedBy,
         CustodyEventType.EVIDENCE_HASHED,
         now,
+        this._tenantId,
       ),
     );
 
@@ -218,7 +223,7 @@ export class Evidence extends AggregateRoot {
     evidenceType: EvidenceType,
     caseId: string,
     submittedBy: string,
-    tenantId = 'default',
+    tenantId: string,
   ): Evidence {
     return new Evidence(
       id,
@@ -243,8 +248,10 @@ export class Evidence extends AggregateRoot {
       this.currentCustodian,
       exportedBy,
       'EVIDENCE_EXPORTED',
-      new Date(),
       exportedBy,
+      CustodyEventType.CUSTODY_TRANSFER,
+      new Date(),
+      this._tenantId,
     );
     this._custodyChain.push(custodyEvent);
     this.touch();

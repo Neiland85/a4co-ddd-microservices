@@ -34,6 +34,7 @@ const mockEvidence = new Evidence(
   [],
   new Date('2024-01-02'),
   new Date('2024-01-02'),
+  'tenant-1',
 );
 
 function buildUseCase(overrides: {
