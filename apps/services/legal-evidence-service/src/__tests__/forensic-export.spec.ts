@@ -5,7 +5,7 @@ import {
   EvidenceStatus,
 } from '../domain/aggregates/evidence.aggregate';
 import { EvidenceFile, EvidenceFileStatus } from '../domain/entities/evidence-file.entity';
-import { ChainOfCustodyEvent } from '../domain/entities/chain-of-custody-event.entity';
+import { ChainOfCustodyEvent, CustodyEventType } from '../domain/entities/chain-of-custody-event.entity';
 import { HashRecord } from '../domain/value-objects/hash-record.vo';
 import {
   ForensicManifestService,
@@ -39,6 +39,7 @@ describe('ForensicManifestService', () => {
       [],
       new Date('2025-01-10T10:00:00Z'),
       new Date('2025-01-15T12:00:00Z'),
+      'tenant-1',
     );
 
     caseMetadata = {
@@ -137,8 +138,10 @@ describe('ForensicManifestService', () => {
         null,
         'user-juan',
         'Initial custody assignment',
-        new Date('2025-01-10T10:00:00Z'),
         'user-juan',
+        CustodyEventType.CUSTODY_TRANSFER,
+        new Date('2025-01-10T10:00:00Z'),
+        'tenant-1',
       );
       evidence.transferCustody(custodyEvent);
       evidence.clearDomainEvents();
@@ -176,6 +179,7 @@ describe('ForensicManifestService', () => {
         [],
         new Date('2025-06-01T00:00:00Z'),
         new Date('2025-06-01T00:00:00Z'),
+        'tenant-1',
       );
       const fixedCase: CaseMetadata = { id: 'case-001', title: 'Test Case' };
 
@@ -198,6 +202,7 @@ describe('ForensicManifestService', () => {
         [],
         new Date('2025-06-01T00:00:00Z'),
         new Date('2025-06-01T00:00:00Z'),
+        'tenant-1',
       );
       const evidenceB = new Evidence(
         'ev-B',
@@ -211,6 +216,7 @@ describe('ForensicManifestService', () => {
         [],
         new Date('2025-06-01T00:00:00Z'),
         new Date('2025-06-01T00:00:00Z'),
+        'tenant-1',
       );
       const fixedCase: CaseMetadata = { id: 'case-001' };
 
@@ -247,8 +253,10 @@ describe('ForensicManifestService', () => {
           i === 0 ? null : custodians[i - 1],
           custodians[i],
           `Transfer ${i}`,
-          new Date(),
           'admin',
+          CustodyEventType.CUSTODY_TRANSFER,
+          new Date(),
+          'tenant-1',
         );
         evidence.transferCustody(event);
       }
@@ -311,6 +319,7 @@ describe('Evidence.recordExport', () => {
       [],
       new Date('2025-01-01T00:00:00Z'),
       new Date('2025-01-02T00:00:00Z'),
+      'tenant-1',
     );
     evidence.clearDomainEvents();
   });

@@ -17,6 +17,7 @@ export class ChainOfCustodyEvent {
     public readonly recordedBy: string,
     public readonly eventType: CustodyEventType = CustodyEventType.CUSTODY_TRANSFER,
     public readonly occurredAt: Date = new Date(),
+    public readonly tenantId?: string,
   ) {
     if (!id || id.trim().length === 0) {
       throw new Error('ChainOfCustodyEvent id cannot be empty');
@@ -29,6 +30,9 @@ export class ChainOfCustodyEvent {
     }
     if (!recordedBy || recordedBy.trim().length === 0) {
       throw new Error('recordedBy cannot be empty');
+    }
+    if (!tenantId || tenantId.trim().length === 0) {
+      throw new Error('tenantId cannot be empty');
     }
     Object.freeze(this);
   }

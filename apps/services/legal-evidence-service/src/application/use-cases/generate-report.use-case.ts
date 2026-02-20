@@ -14,6 +14,7 @@ import { StructuredLogger } from '../../shared/structured-logger.js';
 export interface GenerateReportCommand {
   caseId: string;
   requestedBy: string;
+  tenantId: string;
   correlationId?: string;
 }
 
@@ -32,14 +33,18 @@ export class GenerateReportUseCase {
   ) {}
 
   async execute(command: GenerateReportCommand): Promise<GenerateReportResult> {
+    const { caseId, requestedBy, tenantId } = command;
     const { caseId, requestedBy, correlationId } = command;
 
-    const legalCase: LegalCase | null = await this.caseRepository.findById(caseId);
+    const legalCase: LegalCase | null = await this.caseRepository.findById(caseId, tenantId);
     if (!legalCase) {
       throw new Error(`Case ${caseId} not found`);
     }
+    if (legalCase.tenantId !== tenantId) {
+      throw new Error(`Tenant access denied for case ${caseId}`);
+    }
 
-    const evidences: Evidence[] = await this.evidenceRepository.findByCaseId(caseId);
+    const evidences: Evidence[] = await this.evidenceRepository.findByCaseId(caseId, tenantId);
 
     const reportContent: ReportContent = {
       legalCase,
@@ -74,6 +79,8 @@ export class GenerateReportUseCase {
       null,
       AccessAction.REPORT_GENERATED,
       null,
+      new Date(),
+      tenantId,
       null,
     );
     await this.accessLogRepository.save(custodyLog);

@@ -10,6 +10,9 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
     await this.prisma.accessLog.create({
       data: {
         id: log.id,
+        tenantId: log.tenantId!,
+        resourceId: log.resourceId,
+        resourceType: log.resourceType,
         userId: log.userId,
         caseId: log.caseId,
         evidenceId: log.evidenceId,
@@ -40,6 +43,9 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
     }
   }
 
+  async findByResourceId(resourceId: string, tenantId?: string): Promise<AccessLog[]> {
+    const records = await this.prisma.accessLog.findMany({
+      where: { resourceId, ...(tenantId ? { tenantId } : {}) },
   async findByCaseId(caseId: string): Promise<AccessLog[]> {
     const records = await this.prisma.accessLog.findMany({
       where: { caseId },
@@ -54,6 +60,8 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
           r.evidenceId,
           r.action as AccessAction,
           r.ipAddress,
+          r.occurredAt,
+          r.tenantId,
           r.userAgent,
           r.timestampUtc,
         ),

@@ -13,6 +13,8 @@ export class AccessLog {
     public readonly evidenceId: string | null,
     public readonly action: AccessAction,
     public readonly ipAddress: string | null,
+    public readonly occurredAt: Date = new Date(),
+    public readonly tenantId?: string,
     public readonly userAgent: string | null,
     public readonly timestampUtc: Date = new Date(),
   ) {
@@ -22,6 +24,8 @@ export class AccessLog {
     if (!userId || userId.trim().length === 0) {
       throw new Error('userId cannot be empty');
     }
+    if (!tenantId || tenantId.trim().length === 0) {
+      throw new Error('tenantId cannot be empty');
     if (!caseId || caseId.trim().length === 0) {
       throw new Error('caseId cannot be empty');
     }

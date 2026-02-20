@@ -32,6 +32,7 @@ export class Evidence extends AggregateRoot {
   private _evidenceType: EvidenceType;
   private _status: EvidenceStatus;
   private _caseId: string;
+  private _tenantId: string;
   private _submittedBy: string;
   private _files: EvidenceFile[];
   private _custodyChain: ChainOfCustodyEvent[];
@@ -48,6 +49,7 @@ export class Evidence extends AggregateRoot {
     custodyChain: ChainOfCustodyEvent[] = [],
     createdAt?: Date,
     updatedAt?: Date,
+    tenantId?: string,
   ) {
     super(id, createdAt, updatedAt);
     if (!title || title.trim().length === 0) {
@@ -56,11 +58,15 @@ export class Evidence extends AggregateRoot {
     if (!caseId || caseId.trim().length === 0) {
       throw new Error('Evidence caseId cannot be empty');
     }
+    if (!tenantId || tenantId.trim().length === 0) {
+      throw new Error('Evidence tenantId cannot be empty');
+    }
     this._title = title;
     this._description = description;
     this._evidenceType = evidenceType;
     this._status = status;
     this._caseId = caseId;
+    this._tenantId = tenantId;
     this._submittedBy = submittedBy;
     this._files = [...files];
     this._custodyChain = [...custodyChain];
@@ -88,6 +94,10 @@ export class Evidence extends AggregateRoot {
 
   get caseId(): string {
     return this._caseId;
+  }
+
+  get tenantId(): string {
+    return this._tenantId;
   }
 
   get submittedBy(): string {
@@ -153,6 +163,7 @@ export class Evidence extends AggregateRoot {
         uploadedBy,
         CustodyEventType.EVIDENCE_FILE_UPLOADED,
         now,
+        this._tenantId,
       ),
     );
 
@@ -166,6 +177,7 @@ export class Evidence extends AggregateRoot {
         uploadedBy,
         CustodyEventType.EVIDENCE_HASHED,
         now,
+        this._tenantId,
       ),
     );
 
@@ -210,8 +222,22 @@ export class Evidence extends AggregateRoot {
     evidenceType: EvidenceType,
     caseId: string,
     submittedBy: string,
+    tenantId: string,
   ): Evidence {
-    return new Evidence(id, title, description, evidenceType, caseId, submittedBy);
+    return new Evidence(
+      id,
+      title,
+      description,
+      evidenceType,
+      caseId,
+      submittedBy,
+      EvidenceStatus.SUBMITTED,
+      [],
+      [],
+      undefined,
+      undefined,
+      tenantId,
+    );
   }
 
   recordExport(exportedBy: string, packageHash: string, correlationId?: string): void {
@@ -221,8 +247,10 @@ export class Evidence extends AggregateRoot {
       this.currentCustodian,
       exportedBy,
       'EVIDENCE_EXPORTED',
-      new Date(),
       exportedBy,
+      CustodyEventType.CUSTODY_TRANSFER,
+      new Date(),
+      this._tenantId,
     );
     this._custodyChain.push(custodyEvent);
     this.touch();

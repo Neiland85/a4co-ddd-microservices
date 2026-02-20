@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Headers,
   Get,
   HttpCode,
@@ -8,7 +9,9 @@ import {
   NotFoundException,
   Param,
   Post,
+  Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { GenerateReportUseCase } from '../../application/use-cases/generate-report.use-case.js';
 import { GetCaseAccessLogUseCase } from '../../application/use-cases/get-case-access-log.use-case.js';
 import { GenerateReportRequestDto } from '../dtos/generate-report-request.dto.js';
@@ -27,12 +30,17 @@ export class CasesController {
   async generateReport(
     @Param('id') caseId: string,
     @Body() dto: GenerateReportRequestDto,
+    @Req() req: Request & { tenantId?: string },
     @Headers('x-correlation-id') correlationId?: string,
   ): Promise<ReportResponseDto> {
     try {
+      if (!req.tenantId) {
+        throw new ForbiddenException('Tenant context is required');
+      }
       const result = await this.generateReportUseCase.execute({
         caseId,
         requestedBy: dto.requestedBy,
+        tenantId: req.tenantId,
         correlationId,
       });
 

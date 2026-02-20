@@ -10,6 +10,7 @@ export class PrismaCaseRepository implements ICaseRepository {
     await this.prisma.case.create({
       data: {
         id: legalCase.id,
+        tenantId: legalCase.tenantId,
         title: legalCase.title,
         description: legalCase.description,
         status: legalCase.status,
@@ -20,9 +21,9 @@ export class PrismaCaseRepository implements ICaseRepository {
     });
   }
 
-  async findById(id: string): Promise<LegalCase | null> {
-    const record = await this.prisma.case.findUnique({
-      where: { id },
+  async findById(id: string, tenantId?: string): Promise<LegalCase | null> {
+    const record = await this.prisma.case.findFirst({
+      where: { id, ...(tenantId ? { tenantId } : {}) },
       include: { reports: true },
     });
     if (!record) return null;
@@ -50,22 +51,47 @@ export class PrismaCaseRepository implements ICaseRepository {
       reports,
       record.createdAt,
       record.updatedAt,
+      record.tenantId,
     );
   }
 
-  async findAll(): Promise<LegalCase[]> {
-    const records = await this.prisma.case.findMany();
+  async findAll(tenantId?: string): Promise<LegalCase[]> {
+    const records = await this.prisma.case.findMany({ where: tenantId ? { tenantId } : undefined });
     return records.map(
       (r) =>
-        new LegalCase(r.id, r.title, r.description, r.openedBy, r.status as CaseStatus, [], [], r.createdAt, r.updatedAt),
+        new LegalCase(
+          r.id,
+          r.title,
+          r.description,
+          r.openedBy,
+          r.status as CaseStatus,
+          [],
+          [],
+          r.createdAt,
+          r.updatedAt,
+          r.tenantId,
+        ),
     );
   }
 
-  async findByStatus(status: CaseStatus): Promise<LegalCase[]> {
-    const records = await this.prisma.case.findMany({ where: { status } });
+  async findByStatus(status: CaseStatus, tenantId?: string): Promise<LegalCase[]> {
+    const records = await this.prisma.case.findMany({
+      where: { status, ...(tenantId ? { tenantId } : {}) },
+    });
     return records.map(
       (r) =>
-        new LegalCase(r.id, r.title, r.description, r.openedBy, r.status as CaseStatus, [], [], r.createdAt, r.updatedAt),
+        new LegalCase(
+          r.id,
+          r.title,
+          r.description,
+          r.openedBy,
+          r.status as CaseStatus,
+          [],
+          [],
+          r.createdAt,
+          r.updatedAt,
+          r.tenantId,
+        ),
     );
   }
 
