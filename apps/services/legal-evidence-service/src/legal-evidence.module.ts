@@ -7,8 +7,10 @@ import { PrismaAccessLogRepository } from './infrastructure/repositories/prisma-
 import { PrismaCaseRepository } from './infrastructure/repositories/prisma-case.repository.js';
 import { PrismaEvidenceRepository } from './infrastructure/repositories/prisma-evidence.repository.js';
 import { CasesController } from './presentation/controllers/cases.controller.js';
+import { custodyEventImmutabilityMiddleware } from './infrastructure/prisma/custody-event-immutability.middleware.js';
 
 const prisma = new PrismaClient();
+prisma.$use(custodyEventImmutabilityMiddleware);
 
 @Module({
   controllers: [CasesController],
