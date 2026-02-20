@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { GenerateReportUseCase } from './application/use-cases/generate-report.use-case.js';
+import { GetCaseAccessLogUseCase } from './application/use-cases/get-case-access-log.use-case.js';
 import { MinimalPdfGeneratorService } from './infrastructure/pdf/minimal-pdf-generator.service.js';
 import { PrismaReportRepository } from './infrastructure/repositories/prisma-report.repository.js';
 import { PrismaAccessLogRepository } from './infrastructure/repositories/prisma-access-log.repository.js';
 import { PrismaCaseRepository } from './infrastructure/repositories/prisma-case.repository.js';
 import { PrismaEvidenceRepository } from './infrastructure/repositories/prisma-evidence.repository.js';
 import { CasesController } from './presentation/controllers/cases.controller.js';
+import { EvidenceAccessMiddleware } from './presentation/middleware/evidence-access.middleware.js';
 import { EvidenceController } from './presentation/controllers/evidence.controller.js';
 import { VerifyEvidenceManifestUseCase } from './application/use-cases/verify-evidence-manifest.use-case.js';
 import { ForensicManifestService } from './domain/services/forensic-manifest.service.js';
@@ -24,6 +26,13 @@ prisma.$use(custodyEventImmutabilityMiddleware);
     { provide: 'IReportRepository', useFactory: () => new PrismaReportRepository(prisma) },
     { provide: 'IAccessLogRepository', useFactory: () => new PrismaAccessLogRepository(prisma) },
     { provide: 'IPdfGenerator', useClass: MinimalPdfGeneratorService },
+    EvidenceAccessMiddleware,
+    {
+      provide: GetCaseAccessLogUseCase,
+      useFactory: (accessLogRepo: InstanceType<typeof PrismaAccessLogRepository>) =>
+        new GetCaseAccessLogUseCase(accessLogRepo),
+      inject: ['IAccessLogRepository'],
+    },
     {
       provide: GenerateReportUseCase,
       useFactory: (
@@ -45,4 +54,8 @@ prisma.$use(custodyEventImmutabilityMiddleware);
     VerifyEvidenceManifestUseCase,
   ],
 })
-export class LegalEvidenceModule {}
+export class LegalEvidenceModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(EvidenceAccessMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

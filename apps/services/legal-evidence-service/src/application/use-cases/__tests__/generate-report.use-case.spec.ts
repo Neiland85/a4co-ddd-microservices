@@ -71,7 +71,7 @@ function buildUseCase(overrides: {
 
   const accessLogRepo: IAccessLogRepository = {
     save: jest.fn().mockResolvedValue(undefined),
-    findByResourceId: jest.fn().mockResolvedValue([]),
+    findByCaseId: jest.fn().mockResolvedValue([]),
     ...overrides.accessLogRepo,
   };
 
@@ -130,7 +130,7 @@ describe('GenerateReportUseCase', () => {
       expect(accessLogRepo.save).toHaveBeenCalledTimes(1);
       const savedLog = (accessLogRepo.save as jest.Mock).mock.calls[0][0];
       expect(savedLog.action).toBe(AccessAction.REPORT_GENERATED);
-      expect(savedLog.resourceId).toBe('case-001');
+      expect(savedLog.caseId).toBe('case-001');
       expect(savedLog.userId).toBe('user-01');
     });
 

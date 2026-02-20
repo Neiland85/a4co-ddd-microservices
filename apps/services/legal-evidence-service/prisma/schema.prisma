@@ -106,12 +106,16 @@ model ChainOfCustodyEvent {
 
 model AccessLog {
   id           String   @id @default(uuid())
-  resourceId   String
-  resourceType String
   userId       String
+  caseId       String
+  evidenceId   String?
   action       String
   ipAddress    String?
-  occurredAt   DateTime @default(now())
+  userAgent    String?
+  timestampUtc DateTime @default(now())
+
+  @@index([caseId])
+  @@index([evidenceId])
 
   @@map("access_logs")
 }
