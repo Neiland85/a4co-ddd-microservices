@@ -67,14 +67,30 @@ model EvidenceFile {
   fileStatus  String   @default("PENDING_VERIFICATION")
   uploadedAt  DateTime @default(now())
 
-  evidence Evidence @relation(fields: [evidenceId], references: [id])
+  evidence    Evidence      @relation(fields: [evidenceId], references: [id])
+  hashRecords HashRecord[]
 
+  @@index([evidenceId])
   @@map("evidence_files")
+}
+
+model HashRecord {
+  id             String   @id @default(uuid())
+  evidenceFileId String
+  algorithm      String   @default("SHA256")
+  hash           String
+  timestampUtc   DateTime @default(now())
+
+  evidenceFile EvidenceFile @relation(fields: [evidenceFileId], references: [id])
+
+  @@index([evidenceFileId])
+  @@map("hash_records")
 }
 
 model ChainOfCustodyEvent {
   id            String   @id @default(uuid())
   evidenceId    String
+  eventType     String   @default("CUSTODY_TRANSFER")
   fromCustodian String?
   toCustodian   String
   reason        String
@@ -83,6 +99,8 @@ model ChainOfCustodyEvent {
 
   evidence Evidence @relation(fields: [evidenceId], references: [id])
 
+  @@index([evidenceId])
+  @@index([occurredAt])
   @@map("chain_of_custody_events")
 }
 

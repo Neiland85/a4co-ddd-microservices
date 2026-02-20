@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Servicio de evidencia legal con integridad de archivos (SHA-256) para a4co-ddd-microservices",
+  "main": "dist/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint src",
@@ -11,28 +12,7 @@
     "test:watch": "jest --config jest.config.cjs --watch",
     "test:cov": "jest --config jest.config.cjs --coverage",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf dist"
-  },
-  "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "@types/node": "^24.10.13",
-    "jest": "^30.2.0",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
-  },
-  "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=10.0.0"
-  },
-  "license": "Apache-2.0"
-  "type": "module",
-  "main": "dist/main.js",
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "lint": "echo \"lint skipped: legal-evidence-service domain-only skeleton\"",
-    "test": "jest --config jest.config.cjs --passWithNoTests",
-    "test:watch": "jest --config jest.config.cjs --watch",
-    "test:cov": "jest --config jest.config.cjs --coverage",
+    "clean": "rm -rf dist",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
@@ -41,11 +21,17 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/uuid": "^9.0.8",
     "jest": "^30.2.0",
     "prisma": "6.19.0",
     "ts-jest": "^29.4.5",
-    "typescript": "^5.6.3"
-  }
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "license": "Apache-2.0"
 }
