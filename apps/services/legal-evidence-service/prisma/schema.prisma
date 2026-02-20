@@ -101,7 +101,7 @@ model ChainOfCustodyEvent {
 
   @@index([evidenceId])
   @@index([occurredAt])
-  @@map("chain_of_custody_events")
+  @@map("custody_events")
 }
 
 model AccessLog {
