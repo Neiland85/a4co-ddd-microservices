@@ -80,18 +80,13 @@ export class MinimalPdfGeneratorService implements IPdfGenerator {
     const safeLines = lines.map((l) => this.escapeForPdf(l));
     const safeTitle = this.escapeForPdf(title);
 
-    // Build PDF text stream content
+    // Build PDF text stream content using relative Td positioning
     const streamLines: string[] = [`BT`];
     streamLines.push(`/F1 10 Tf`);
-    let y = 780;
+    streamLines.push(`72 780 Td`); // absolute start position
     for (const line of safeLines) {
-      if (y < 40) {
-        break; // single-page limit for minimal implementation
-      }
-      streamLines.push(`72 ${y} Td`);
       streamLines.push(`(${line}) Tj`);
-      streamLines.push(`72 ${y - 14} Td`); // reset x after Td moves cursor
-      y -= 14;
+      streamLines.push(`0 -14 Td`); // move down 14 units for next line
     }
     streamLines.push(`ET`);
 
