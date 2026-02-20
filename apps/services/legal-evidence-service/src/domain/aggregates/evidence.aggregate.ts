@@ -214,7 +214,7 @@ export class Evidence extends AggregateRoot {
     return new Evidence(id, title, description, evidenceType, caseId, submittedBy);
   }
 
-  recordExport(exportedBy: string, packageHash: string): void {
+  recordExport(exportedBy: string, packageHash: string, correlationId?: string): void {
     const custodyEvent = new ChainOfCustodyEvent(
       randomUUID(),
       this._id,
@@ -231,6 +231,7 @@ export class Evidence extends AggregateRoot {
     );
     StructuredLogger.info({
       event: 'legal-evidence.evidence.exported',
+      correlationId,
       evidenceId: this._id,
       caseId: this._caseId,
       exportedBy,

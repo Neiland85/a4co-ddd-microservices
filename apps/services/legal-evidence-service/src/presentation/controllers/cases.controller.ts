@@ -21,7 +21,7 @@ export class CasesController {
   async generateReport(
     @Param('id') caseId: string,
     @Body() dto: GenerateReportRequestDto,
-    @Headers('x-correlation-id') correlationId: string,
+    @Headers('x-correlation-id') correlationId?: string,
   ): Promise<ReportResponseDto> {
     try {
       const result = await this.generateReportUseCase.execute({
