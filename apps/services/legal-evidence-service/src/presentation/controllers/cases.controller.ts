@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Headers,
+  Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -9,12 +10,17 @@ import {
   Post,
 } from '@nestjs/common';
 import { GenerateReportUseCase } from '../../application/use-cases/generate-report.use-case.js';
+import { GetCaseAccessLogUseCase } from '../../application/use-cases/get-case-access-log.use-case.js';
 import { GenerateReportRequestDto } from '../dtos/generate-report-request.dto.js';
 import { ReportResponseDto } from '../dtos/report-response.dto.js';
+import { AccessLogResponseDto } from '../dtos/access-log-response.dto.js';
 
 @Controller('cases')
 export class CasesController {
-  constructor(private readonly generateReportUseCase: GenerateReportUseCase) {}
+  constructor(
+    private readonly generateReportUseCase: GenerateReportUseCase,
+    private readonly getCaseAccessLogUseCase: GetCaseAccessLogUseCase,
+  ) {}
 
   @Post(':id/report')
   @HttpCode(HttpStatus.CREATED)
@@ -48,5 +54,20 @@ export class CasesController {
       }
       throw error;
     }
+  }
+
+  @Get(':id/access-log')
+  @HttpCode(HttpStatus.OK)
+  async getAccessLog(@Param('id') caseId: string): Promise<AccessLogResponseDto[]> {
+    const logs = await this.getCaseAccessLogUseCase.execute(caseId);
+    return logs.map((log) => ({
+      userId: log.userId,
+      caseId: log.caseId,
+      evidenceId: log.evidenceId,
+      action: log.action,
+      ipAddress: log.ipAddress,
+      userAgent: log.userAgent,
+      timestampUtc: log.timestampUtc.toISOString(),
+    }));
   }
 }

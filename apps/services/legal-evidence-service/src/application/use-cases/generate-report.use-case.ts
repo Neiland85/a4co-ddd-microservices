@@ -69,10 +69,11 @@ export class GenerateReportUseCase {
 
     const custodyLog = new AccessLog(
       randomUUID(),
-      caseId,
-      'CASE',
       requestedBy,
+      caseId,
+      null,
       AccessAction.REPORT_GENERATED,
+      null,
       null,
     );
     await this.accessLogRepository.save(custodyLog);

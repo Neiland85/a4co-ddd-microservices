@@ -177,6 +177,12 @@ This document outlines security best practices and requirements for deploying an
   - Configuration changes documented
   - Log retention policy (90+ days)
 
+#### Chain of Custody Immutability Model
+
+- `custody_events` is an append-only audit table (no mutable timestamp or update fields).
+- Repository and Prisma middleware guards reject mutation attempts for custody events.
+- Global Prisma middleware blocks `updateMany` and `deleteMany` on custody events to prevent bulk tampering.
+
 #### 8. Security Headers
 
 ```nginx
