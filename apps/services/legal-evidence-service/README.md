@@ -137,6 +137,7 @@ npm run type-check     # TypeScript type check
    - `FORENSIC_MANIFEST_PRIVATE_KEY_PEM`
    - `FORENSIC_MANIFEST_PUBLIC_KEY_PEM`
    - Optional: `FORENSIC_MANIFEST_PUBLIC_KEY_ID`
+   - Note: `FORENSIC_MANIFEST_PRIVATE_KEY_PEM` is required for signing.
 2. Save the manifest payload (without `manifestSignature` and `publicKeyId`) as `manifest.payload.json`.
 3. Save `manifestSignature` value (base64) into `manifest.sig.b64`.
 4. Run:

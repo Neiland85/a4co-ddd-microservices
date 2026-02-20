@@ -1,5 +1,9 @@
 import { Controller, Get, HttpCode, HttpStatus, NotFoundException, Param } from '@nestjs/common';
-import { VerifyEvidenceManifestUseCase } from '../../application/use-cases/verify-evidence-manifest.use-case.js';
+import {
+  CaseNotFoundError,
+  EvidenceNotFoundError,
+  VerifyEvidenceManifestUseCase,
+} from '../../application/use-cases/verify-evidence-manifest.use-case.js';
 
 @Controller('evidence')
 export class EvidenceController {
@@ -11,7 +15,7 @@ export class EvidenceController {
     try {
       return await this.verifyEvidenceManifestUseCase.execute(evidenceId);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
+      if (error instanceof EvidenceNotFoundError || error instanceof CaseNotFoundError) {
         throw new NotFoundException(error.message);
       }
       throw error;

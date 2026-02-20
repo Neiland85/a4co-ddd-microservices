@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash, generateKeyPairSync } from 'crypto';
 import {
   Evidence,
   EvidenceType,
@@ -20,7 +20,12 @@ describe('ForensicManifestService', () => {
   let caseMetadata: CaseMetadata;
 
   beforeEach(() => {
-    manifestService = new ForensicManifestService();
+    const generatedKeyPair = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    });
+    manifestService = new ForensicManifestService(generatedKeyPair.privateKey, generatedKeyPair.publicKey);
 
     evidence = new Evidence(
       'evidence-001',

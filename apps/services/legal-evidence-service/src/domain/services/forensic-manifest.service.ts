@@ -4,9 +4,10 @@ import {
   createPublicKey,
   createSign,
   createVerify,
-  generateKeyPairSync,
 } from 'crypto';
 import { Evidence } from '../aggregates/evidence.aggregate.js';
+
+const PUBLIC_KEY_ID_LENGTH = 16;
 
 export interface CaseMetadata {
   id: string;
@@ -63,26 +64,26 @@ export class ForensicManifestService {
   private readonly publicKeyId: string;
 
   constructor(
-    privateKeyPem = process.env['FORENSIC_MANIFEST_PRIVATE_KEY_PEM'],
-    publicKeyPem = process.env['FORENSIC_MANIFEST_PUBLIC_KEY_PEM'],
-    publicKeyId = process.env['FORENSIC_MANIFEST_PUBLIC_KEY_ID'],
+    privateKeyPem?: string,
+    publicKeyPem?: string,
+    publicKeyId?: string,
   ) {
-    if (privateKeyPem) {
-      this.privateKeyPem = privateKeyPem;
-      this.publicKeyPem =
-        publicKeyPem ??
-        createPublicKey(createPrivateKey(privateKeyPem)).export({ type: 'spki', format: 'pem' }).toString();
-    } else {
-      const generated = generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-        publicKeyEncoding: { type: 'spki', format: 'pem' },
-        privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-      });
-      this.privateKeyPem = generated.privateKey;
-      this.publicKeyPem = generated.publicKey;
+    const resolvedPrivateKeyPem = privateKeyPem ?? process.env['FORENSIC_MANIFEST_PRIVATE_KEY_PEM'];
+    const resolvedPublicKeyPem = publicKeyPem ?? process.env['FORENSIC_MANIFEST_PUBLIC_KEY_PEM'];
+    const resolvedPublicKeyId = publicKeyId ?? process.env['FORENSIC_MANIFEST_PUBLIC_KEY_ID'];
+
+    if (!resolvedPrivateKeyPem) {
+      throw new Error('FORENSIC_MANIFEST_PRIVATE_KEY_PEM is required');
     }
 
-    this.publicKeyId = publicKeyId ?? createHash('sha256').update(this.publicKeyPem).digest('hex').slice(0, 16);
+    this.privateKeyPem = resolvedPrivateKeyPem;
+    this.publicKeyPem =
+      resolvedPublicKeyPem ??
+      createPublicKey(createPrivateKey(resolvedPrivateKeyPem)).export({ type: 'spki', format: 'pem' }).toString();
+
+    this.publicKeyId =
+      resolvedPublicKeyId ??
+      createHash('sha256').update(this.publicKeyPem).digest('hex').slice(0, PUBLIC_KEY_ID_LENGTH);
   }
 
   buildManifest(evidence: Evidence, caseMetadata: CaseMetadata): ForensicManifest {
@@ -134,13 +135,14 @@ export class ForensicManifestService {
   }
 
   verifyManifestSignature(manifest: ForensicManifest): boolean {
-    if (!manifest.manifestSignature || manifest.publicKeyId !== this.publicKeyId) {
+    if (!manifest.manifestSignature) {
       return false;
     }
 
-    const { manifestSignature, ...payloadWithKeyId } = manifest;
-    const { publicKeyId, ...payload } = payloadWithKeyId;
-    void publicKeyId;
+    const { manifestSignature, publicKeyId, ...payload } = manifest;
+    if (publicKeyId !== this.publicKeyId) {
+      return false;
+    }
     const verifier = createVerify('RSA-SHA256');
     verifier.update(JSON.stringify(payload), 'utf8');
     verifier.end();

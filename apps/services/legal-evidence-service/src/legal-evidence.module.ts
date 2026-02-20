@@ -9,6 +9,7 @@ import { PrismaEvidenceRepository } from './infrastructure/repositories/prisma-e
 import { CasesController } from './presentation/controllers/cases.controller.js';
 import { EvidenceController } from './presentation/controllers/evidence.controller.js';
 import { VerifyEvidenceManifestUseCase } from './application/use-cases/verify-evidence-manifest.use-case.js';
+import { ForensicManifestService } from './domain/services/forensic-manifest.service.js';
 
 const prisma = new PrismaClient();
 
@@ -38,6 +39,7 @@ const prisma = new PrismaClient();
         'IPdfGenerator',
       ],
     },
+    { provide: ForensicManifestService, useFactory: () => new ForensicManifestService() },
     VerifyEvidenceManifestUseCase,
   ],
 })
