@@ -1,0 +1,28 @@
+{
+  "name": "@a4co/legal-evidence-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "echo \"lint skipped: legal-evidence-service domain-only skeleton\"",
+    "test": "jest --config jest.config.cjs --passWithNoTests",
+    "test:watch": "jest --config jest.config.cjs --watch",
+    "test:cov": "jest --config jest.config.cjs --coverage",
+    "prisma:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "7.4.0",
+    "reflect-metadata": "^0.2.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/uuid": "^9.0.8",
+    "jest": "^30.2.0",
+    "prisma": "6.19.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.6.3"
+  }
+}
