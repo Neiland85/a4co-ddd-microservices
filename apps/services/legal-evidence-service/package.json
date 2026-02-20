@@ -5,7 +5,12 @@
   "type": "module",
   "main": "dist/main.js",
   "description": "Servicio de evidencia legal con integridad de archivos (SHA-256) para a4co-ddd-microservices",
+  "type": "module",
+  "main": "dist/main.js",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "echo \"lint skipped: legal-evidence-service domain-only skeleton\"",
+    "lint:fix": "echo \"lint skipped: legal-evidence-service domain-only skeleton\"",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
     "build": "nest build",
@@ -15,6 +20,17 @@
     "test:watch": "jest --config jest.config.cjs --watch",
     "test:cov": "jest --config jest.config.cjs --coverage",
     "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prisma:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "7.4.0",
+    "reflect-metadata": "^0.2.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.13",
     "prisma:generate": "prisma generate",
     "clean": "rm -rf dist"
   },
@@ -37,6 +53,7 @@
     "jest": "^30.2.0",
     "prisma": "6.19.0",
     "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
     "typescript": "^5.6.3"
   },
   "engines": {
