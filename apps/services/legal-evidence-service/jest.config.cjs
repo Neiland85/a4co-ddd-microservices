@@ -21,5 +21,7 @@ module.exports = {
   moduleNameMapper: {
     ...baseConfig.moduleNameMapper,
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    // Resolve ESM-style .js imports to .ts source files for Jest/CommonJS
+    '^(\\.\\.?/.*)\\.js$': '$1',
   },
 };

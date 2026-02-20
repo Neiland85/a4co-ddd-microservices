@@ -17,6 +17,8 @@ export class HashService {
     return randomUUID();
   }
 
+  computeSha256(content: string): HashRecord {
+    return new HashRecord('SHA-256', this.calculateSha256(content), new Date());
   generateHashRecord(content: string): HashRecord {
     return new HashRecord('SHA-256', this.calculateSha256(content));
   }
