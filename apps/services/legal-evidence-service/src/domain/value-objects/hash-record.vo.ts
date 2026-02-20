@@ -28,6 +28,10 @@ export class HashRecord extends ValueObject<HashRecordProps> {
     return this._value.computedAt;
   }
 
+  get timestampUtc(): string {
+    return this._value.computedAt.toISOString();
+  }
+
   verify(other: HashRecord): boolean {
     return this._value.algorithm === other.algorithm && this._value.value === other.hashValue;
   }

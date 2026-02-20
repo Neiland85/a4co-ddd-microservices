@@ -1,3 +1,11 @@
+export enum CustodyEventType {
+  CUSTODY_TRANSFER = 'CUSTODY_TRANSFER',
+  EVIDENCE_FILE_UPLOADED = 'EVIDENCE_FILE_UPLOADED',
+  EVIDENCE_HASHED = 'EVIDENCE_HASHED',
+  EVIDENCE_REVIEWED = 'EVIDENCE_REVIEWED',
+  EVIDENCE_SEALED = 'EVIDENCE_SEALED',
+}
+
 export class ChainOfCustodyEvent {
   constructor(
     public readonly id: string,
@@ -5,8 +13,9 @@ export class ChainOfCustodyEvent {
     public readonly fromCustodian: string | null,
     public readonly toCustodian: string,
     public readonly reason: string,
-    public readonly occurredAt: Date = new Date(),
     public readonly recordedBy: string,
+    public readonly eventType: CustodyEventType = CustodyEventType.CUSTODY_TRANSFER,
+    public readonly occurredAt: Date = new Date(),
   ) {
     if (!id || id.trim().length === 0) {
       throw new Error('ChainOfCustodyEvent id cannot be empty');
@@ -17,5 +26,9 @@ export class ChainOfCustodyEvent {
     if (!reason || reason.trim().length === 0) {
       throw new Error('reason cannot be empty');
     }
+    if (!recordedBy || recordedBy.trim().length === 0) {
+      throw new Error('recordedBy cannot be empty');
+    }
+    Object.freeze(this);
   }
 }

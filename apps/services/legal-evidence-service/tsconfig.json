@@ -8,6 +8,16 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "strictPropertyInitialization": false
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test/**"
+  ]
     "strictPropertyInitialization": false,
     "skipLibCheck": true
   },

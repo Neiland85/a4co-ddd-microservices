@@ -1,6 +1,9 @@
 import { randomUUID } from 'crypto';
 import { AggregateRoot } from '../base-classes.js';
 import { EvidenceFile } from '../entities/evidence-file.entity.js';
+import { ChainOfCustodyEvent, CustodyEventType } from '../entities/chain-of-custody-event.entity.js';
+import { EvidenceSubmittedEvent, CustodyTransferredEvent } from '../events/index.js';
+import { HashRecord } from '../value-objects/hash-record.vo.js';
 import { ChainOfCustodyEvent } from '../entities/chain-of-custody-event.entity.js';
 import {
   EvidenceSubmittedEvent,
@@ -124,6 +127,50 @@ export class Evidence extends AggregateRoot {
         event.reason,
       ),
     );
+  }
+
+  uploadFile(file: EvidenceFile, sha256Hash: string, uploadedBy: string): void {
+    if (this._status === EvidenceStatus.REJECTED) {
+      throw new Error('Cannot add files to rejected evidence');
+    }
+    const exists = this._files.some((f) => f.id === file.id);
+    if (exists) {
+      throw new Error(`File ${file.id} is already attached to this evidence`);
+    }
+
+    const hashRecord = new HashRecord('SHA-256', sha256Hash);
+    file.attachHash(hashRecord);
+    this._files.push(file);
+
+    const now = new Date();
+
+    this._custodyChain.push(
+      new ChainOfCustodyEvent(
+        randomUUID(),
+        this._id,
+        null,
+        uploadedBy,
+        `File ${file.fileName} uploaded`,
+        uploadedBy,
+        CustodyEventType.EVIDENCE_FILE_UPLOADED,
+        now,
+      ),
+    );
+
+    this._custodyChain.push(
+      new ChainOfCustodyEvent(
+        randomUUID(),
+        this._id,
+        null,
+        uploadedBy,
+        `SHA-256 hash computed for ${file.fileName}: ${sha256Hash}`,
+        uploadedBy,
+        CustodyEventType.EVIDENCE_HASHED,
+        now,
+      ),
+    );
+
+    this.touch();
   }
 
   get currentCustodian(): string | null {

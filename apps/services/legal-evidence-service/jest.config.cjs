@@ -20,6 +20,7 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   moduleNameMapper: {
     ...baseConfig.moduleNameMapper,
+    '^(\\.{1,2}/.*)\\.js$': '$1',
     // Resolve ESM-style .js imports to .ts source files for Jest/CommonJS
     '^(\\.\\.?/.*)\\.js$': '$1',
   },
