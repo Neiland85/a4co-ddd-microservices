@@ -13,4 +13,13 @@ module.exports = {
   testMatch: ['<rootDir>/test/**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  roots: ['<rootDir>/src'],
+  testMatch: [
+    '<rootDir>/src/**/__tests__/**/*.spec.ts',
+    '<rootDir>/src/**/*.spec.ts',
+    '<rootDir>/src/**/*.test.ts',
+  ],
+  moduleNameMapper: {
+    ...baseConfig.moduleNameMapper,
+  },
 };

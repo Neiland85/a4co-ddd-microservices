@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LEGAL_EVIDENCE_DATABASE_URL")
+}
+
+model Case {
+  id          String     @id @default(uuid())
+  title       String
+  description String     @default("")
+  status      String     @default("OPEN")
+  openedBy    String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  parties   Party[]
+  evidences Evidence[]
+  reports   GeneratedReport[]
+
+  @@map("cases")
+}
+
+model Party {
+  id           String   @id @default(uuid())
+  caseId       String
+  name         String
+  role         String
+  contactEmail String?
+  createdAt    DateTime @default(now())
+
+  case Case @relation(fields: [caseId], references: [id])
+
+  @@map("parties")
+}
+
+model Evidence {
+  id           String   @id @default(uuid())
+  caseId       String
+  title        String
+  description  String   @default("")
+  evidenceType String
+  status       String   @default("SUBMITTED")
+  submittedBy  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  case          Case                   @relation(fields: [caseId], references: [id])
+  files         EvidenceFile[]
+  custodyEvents ChainOfCustodyEvent[]
+
+  @@map("evidences")
+}
+
+model EvidenceFile {
+  id          String   @id @default(uuid())
+  evidenceId  String
+  fileName    String
+  mimeType    String
+  sizeBytes   Int
+  storageUrl  String
+  hashAlgo    String?
+  hashValue   String?
+  hashDate    DateTime?
+  fileStatus  String   @default("PENDING_VERIFICATION")
+  uploadedAt  DateTime @default(now())
+
+  evidence Evidence @relation(fields: [evidenceId], references: [id])
+
+  @@map("evidence_files")
+}
+
+model ChainOfCustodyEvent {
+  id            String   @id @default(uuid())
+  evidenceId    String
+  fromCustodian String?
+  toCustodian   String
+  reason        String
+  recordedBy    String
+  occurredAt    DateTime @default(now())
+
+  evidence Evidence @relation(fields: [evidenceId], references: [id])
+
+  @@map("chain_of_custody_events")
+}
+
+model AccessLog {
+  id           String   @id @default(uuid())
+  resourceId   String
+  resourceType String
+  userId       String
+  action       String
+  ipAddress    String?
+  occurredAt   DateTime @default(now())
+
+  @@map("access_logs")
+}
+
+model GeneratedReport {
+  id          String   @id @default(uuid())
+  caseId      String
+  reportType  String
+  requestedBy String
+  status      String   @default("PENDING")
+  storageUrl  String?
+  requestedAt DateTime @default(now())
+
+  case Case @relation(fields: [caseId], references: [id])
+
+  @@map("generated_reports")
+}
