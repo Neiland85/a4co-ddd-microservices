@@ -4,6 +4,7 @@ export enum AccessAction {
   UPLOAD = 'UPLOAD',
   DELETE = 'DELETE',
   EXPORT = 'EXPORT',
+  REPORT_GENERATED = 'REPORT_GENERATED',
 }
 
 export class AccessLog {

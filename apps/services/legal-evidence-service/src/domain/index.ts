@@ -24,3 +24,5 @@ export * from './repositories/evidence.repository.js';
 
 // Domain services
 export * from './services/forensic-manifest.service.js';
+export * from './repositories/report.repository.js';
+export * from './repositories/access-log.repository.js';
