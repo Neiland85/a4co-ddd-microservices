@@ -2,14 +2,13 @@ import { randomUUID } from 'crypto';
 import { AggregateRoot } from '../base-classes.js';
 import { EvidenceFile } from '../entities/evidence-file.entity.js';
 import { ChainOfCustodyEvent, CustodyEventType } from '../entities/chain-of-custody-event.entity.js';
-import { EvidenceSubmittedEvent, CustodyTransferredEvent } from '../events/index.js';
 import { HashRecord } from '../value-objects/hash-record.vo.js';
-import { ChainOfCustodyEvent } from '../entities/chain-of-custody-event.entity.js';
 import {
   EvidenceSubmittedEvent,
   CustodyTransferredEvent,
   EvidenceExportedEvent,
 } from '../events/index.js';
+import { StructuredLogger } from '../../shared/structured-logger.js';
 
 export enum EvidenceType {
   DOCUMENT = 'DOCUMENT',
@@ -230,5 +229,12 @@ export class Evidence extends AggregateRoot {
     this.addDomainEvent(
       new EvidenceExportedEvent(this._id, this._caseId, exportedBy, packageHash),
     );
+    StructuredLogger.info({
+      event: 'legal-evidence.evidence.exported',
+      evidenceId: this._id,
+      caseId: this._caseId,
+      exportedBy,
+      packageHash,
+    });
   }
 }

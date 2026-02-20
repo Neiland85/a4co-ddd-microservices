@@ -143,6 +143,26 @@ describe('GenerateReportUseCase', () => {
       expect(result.domainEvents[0].eventType).toBe('legal-evidence.report.generated.v1');
     });
 
+    it('should write structured logs with correlationId for access and report events', async () => {
+      const { useCase } = buildUseCase({});
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+
+      await useCase.execute({
+        caseId: 'case-001',
+        requestedBy: 'user-01',
+        correlationId: 'corr-123',
+      });
+
+      const logMessages = consoleSpy.mock.calls.map((call) => JSON.parse(String(call[0])));
+      const accessLog = logMessages.find((entry) => entry.event === 'legal-evidence.access.logged');
+      const reportLog = logMessages.find((entry) => entry.event === 'legal-evidence.report.generated');
+
+      expect(accessLog?.correlationId).toBe('corr-123');
+      expect(reportLog?.correlationId).toBe('corr-123');
+
+      consoleSpy.mockRestore();
+    });
+
     it('should throw an error if the case is not found', async () => {
       const { useCase } = buildUseCase({
         caseRepo: { findById: jest.fn().mockResolvedValue(null) },
