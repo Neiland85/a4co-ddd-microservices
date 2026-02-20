@@ -7,11 +7,13 @@ import { PrismaAccessLogRepository } from './infrastructure/repositories/prisma-
 import { PrismaCaseRepository } from './infrastructure/repositories/prisma-case.repository.js';
 import { PrismaEvidenceRepository } from './infrastructure/repositories/prisma-evidence.repository.js';
 import { CasesController } from './presentation/controllers/cases.controller.js';
+import { EvidenceController } from './presentation/controllers/evidence.controller.js';
+import { VerifyEvidenceManifestUseCase } from './application/use-cases/verify-evidence-manifest.use-case.js';
 
 const prisma = new PrismaClient();
 
 @Module({
-  controllers: [CasesController],
+  controllers: [CasesController, EvidenceController],
   providers: [
     { provide: 'PRISMA', useValue: prisma },
     { provide: 'ICaseRepository', useFactory: () => new PrismaCaseRepository(prisma) },
@@ -36,6 +38,7 @@ const prisma = new PrismaClient();
         'IPdfGenerator',
       ],
     },
+    VerifyEvidenceManifestUseCase,
   ],
 })
 export class LegalEvidenceModule {}

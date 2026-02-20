@@ -154,6 +154,8 @@ describe('ForensicManifestService', () => {
       const manifest = manifestService.buildManifest(evidence, caseMetadata);
       expect(manifest.packageHash).toBeTruthy();
       expect(manifest.packageHash).toMatch(/^[a-f0-9]{64}$/);
+      expect(manifest.manifestSignature).toBeTruthy();
+      expect(manifest.publicKeyId).toBeTruthy();
     });
 
     it('should produce a deterministic packageHash for the same input', () => {
@@ -268,6 +270,22 @@ describe('ForensicManifestService', () => {
     it('should return the SHA-256 of the empty string correctly', () => {
       const emptyHash = manifestService.computePackageHash('');
       expect(emptyHash).toBe('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+    });
+  });
+
+  describe('verifyManifestSignature', () => {
+    it('should return true for a generated manifest', () => {
+      const manifest = manifestService.buildManifest(evidence, caseMetadata);
+      expect(manifestService.verifyManifestSignature(manifest)).toBe(true);
+    });
+
+    it('should return false when manifest payload is tampered', () => {
+      const manifest = manifestService.buildManifest(evidence, caseMetadata);
+      const tamperedManifest: ForensicManifest = {
+        ...manifest,
+        evidence: { ...manifest.evidence, title: 'tampered-title' },
+      };
+      expect(manifestService.verifyManifestSignature(tamperedManifest)).toBe(false);
     });
   });
 });

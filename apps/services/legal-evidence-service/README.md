@@ -123,6 +123,33 @@ npm run type-check     # TypeScript type check
 
 ---
 
+## Manifest Signature Verification
+
+- Every generated forensic manifest now includes:
+  - `manifestSignature` (RSA-SHA256, base64)
+  - `publicKeyId`
+- Service endpoint:
+  - `GET /evidence/:id/verify` → returns `true` / `false`
+
+### External verification with OpenSSL
+
+1. Configure key material in the service:
+   - `FORENSIC_MANIFEST_PRIVATE_KEY_PEM`
+   - `FORENSIC_MANIFEST_PUBLIC_KEY_PEM`
+   - Optional: `FORENSIC_MANIFEST_PUBLIC_KEY_ID`
+2. Save the manifest payload (without `manifestSignature` and `publicKeyId`) as `manifest.payload.json`.
+3. Save `manifestSignature` value (base64) into `manifest.sig.b64`.
+4. Run:
+
+```bash
+base64 -d manifest.sig.b64 > manifest.sig
+openssl dgst -sha256 -verify public.pem -signature manifest.sig manifest.payload.json
+```
+
+If OpenSSL returns `Verified OK`, the manifest signature is valid.
+
+---
+
 ## Current Limitations
 
 - Hash is computed from in-memory content; large file streaming is not yet implemented.
