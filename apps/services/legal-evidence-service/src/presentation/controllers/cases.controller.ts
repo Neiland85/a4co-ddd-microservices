@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -25,10 +26,13 @@ export class CasesController {
     @Req() req: Request & { tenantId?: string },
   ): Promise<ReportResponseDto> {
     try {
+      if (!req.tenantId) {
+        throw new ForbiddenException('Tenant context is required');
+      }
       const result = await this.generateReportUseCase.execute({
         caseId,
         requestedBy: dto.requestedBy,
-        tenantId: req.tenantId ?? 'default',
+        tenantId: req.tenantId,
       });
 
       const { report } = result;
