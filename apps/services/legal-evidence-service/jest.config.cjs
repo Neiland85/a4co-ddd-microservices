@@ -10,6 +10,9 @@ module.exports = {
   ...baseConfig,
   displayName: 'legal-evidence-service',
   rootDir: '.',
+  testMatch: ['<rootDir>/test/**/*.spec.ts'],
+  moduleFileExtensions: ['ts', 'js', 'json'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   roots: ['<rootDir>/src'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.spec.ts',
