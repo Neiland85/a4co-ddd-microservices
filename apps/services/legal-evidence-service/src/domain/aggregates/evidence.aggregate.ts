@@ -1,7 +1,12 @@
+import { randomUUID } from 'crypto';
 import { AggregateRoot } from '../base-classes.js';
 import { EvidenceFile } from '../entities/evidence-file.entity.js';
 import { ChainOfCustodyEvent } from '../entities/chain-of-custody-event.entity.js';
-import { EvidenceSubmittedEvent, CustodyTransferredEvent } from '../events/index.js';
+import {
+  EvidenceSubmittedEvent,
+  CustodyTransferredEvent,
+  EvidenceExportedEvent,
+} from '../events/index.js';
 
 export enum EvidenceType {
   DOCUMENT = 'DOCUMENT',
@@ -161,5 +166,22 @@ export class Evidence extends AggregateRoot {
     submittedBy: string,
   ): Evidence {
     return new Evidence(id, title, description, evidenceType, caseId, submittedBy);
+  }
+
+  recordExport(exportedBy: string, packageHash: string): void {
+    const custodyEvent = new ChainOfCustodyEvent(
+      randomUUID(),
+      this._id,
+      this.currentCustodian,
+      exportedBy,
+      'EVIDENCE_EXPORTED',
+      new Date(),
+      exportedBy,
+    );
+    this._custodyChain.push(custodyEvent);
+    this.touch();
+    this.addDomainEvent(
+      new EvidenceExportedEvent(this._id, this._caseId, exportedBy, packageHash),
+    );
   }
 }

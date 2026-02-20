@@ -10,16 +10,17 @@ module.exports = {
   ...baseConfig,
   displayName: 'legal-evidence-service',
   rootDir: '.',
-  testMatch: ['<rootDir>/test/**/*.spec.ts'],
-  moduleFileExtensions: ['ts', 'js', 'json'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   roots: ['<rootDir>/src'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.spec.ts',
     '<rootDir>/src/**/*.spec.ts',
     '<rootDir>/src/**/*.test.ts',
   ],
+  moduleFileExtensions: ['ts', 'js', 'json'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   moduleNameMapper: {
     ...baseConfig.moduleNameMapper,
+    // Resolve ESM-style .js imports to .ts source files for Jest/CommonJS
+    '^(\\.\\.?/.*)\\.js$': '$1',
   },
 };

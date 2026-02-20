@@ -21,3 +21,6 @@ export * from './events/index.js';
 // Repository interfaces
 export * from './repositories/case.repository.js';
 export * from './repositories/evidence.repository.js';
+
+// Domain services
+export * from './services/forensic-manifest.service.js';
