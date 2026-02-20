@@ -97,3 +97,15 @@ packages/**/build/
 ############################################
 packages/observability_broken/
 
+############################################
+# Generated reports (large, auto-generated)
+############################################
+jscpd-report.json
+.jscpd-report.json
+technical-debt-report.json
+markdownlint-report.txt
+phase1-*.json
+phase2-*.json
+devops-excellence-*.json
+post-implementation-*.json
+

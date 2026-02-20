@@ -1,9 +1,0 @@
-{
-  "configuration_deployed": true,
-  "feature_flags_updated": true,
-  "targeting_rules_applied": true,
-  "cache_invalidated": true,
-  "deployment_time": "2025-09-29T13:01:46.068Z",
-  "affected_users": "~25% of user base",
-  "rollback_available": true
-}
