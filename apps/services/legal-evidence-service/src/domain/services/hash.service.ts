@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'crypto';
-import { HashRecord } from '../value-objects/hash-record.vo';
+import { HashRecord } from '../value-objects/hash-record.vo.js';
 
 export class HashService {
   calculateSha256(content: string): string {
@@ -15,10 +15,6 @@ export class HashService {
   }
 
   generateHashRecord(content: string): HashRecord {
-    return new HashRecord({
-      id: this.generateId(),
-      hash: this.calculateSha256(content),
-      timestamp: this.generateTimestamp(),
-    });
+    return new HashRecord('SHA-256', this.calculateSha256(content));
   }
 }

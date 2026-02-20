@@ -7,35 +7,10 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test/**"
-  ]
-    "target": "ES2022",
-    "declaration": true,
-    "declarationMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "strictNullChecks": true,
+    "sourceMap": true,
     "strictPropertyInitialization": false,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "outDir": "dist",
-    "lib": ["ES2022"],
-    "baseUrl": ".",
-    "rootDir": "."
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/__tests__", "src/**/__tests__", "dist", "node_modules"]
+  "exclude": ["node_modules", "dist", "test/**", "src/**/__tests__", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }
