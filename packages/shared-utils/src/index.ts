@@ -12,3 +12,6 @@ export * from './config';
 
 // Types
 export * from './types';
+
+// Chain of Custody
+export * from './chain-of-custody';
