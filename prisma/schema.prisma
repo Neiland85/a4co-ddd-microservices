@@ -107,3 +107,21 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
 }
+
+enum ChainOfCustodyEventType {
+  EVIDENCE_UPLOADED
+  EVIDENCE_HASHED
+  EVIDENCE_ACCESSED
+  EVIDENCE_EXPORTED
+  REPORT_GENERATED
+}
+
+model ChainOfCustodyEvent {
+  id        String                  @id @default(uuid())
+  eventType ChainOfCustodyEventType
+  userId    String
+  metadata  Json?
+  timestamp DateTime                @default(now())
+
+  @@map("chain_of_custody_events")
+}
