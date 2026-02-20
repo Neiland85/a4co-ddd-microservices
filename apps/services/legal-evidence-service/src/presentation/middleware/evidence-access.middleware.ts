@@ -32,7 +32,7 @@ export class EvidenceAccessMiddleware implements NestMiddleware {
     }
 
     const evidence = await this.evidenceRepository.findById(evidenceId);
-    if (!evidence) {
+    if (!evidence || !evidence.caseId) {
       next();
       return;
     }

@@ -69,7 +69,7 @@ export class GenerateReportUseCase {
       randomUUID(),
       requestedBy,
       caseId,
-      caseId,
+      null,
       AccessAction.REPORT_GENERATED,
       null,
       null,

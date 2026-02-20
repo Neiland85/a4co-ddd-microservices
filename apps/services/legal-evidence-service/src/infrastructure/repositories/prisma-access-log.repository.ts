@@ -21,9 +21,10 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
     });
 
     if (
-      log.action === AccessAction.VIEW ||
-      log.action === AccessAction.DOWNLOAD ||
-      log.action === AccessAction.EXPORT
+      log.evidenceId &&
+      (log.action === AccessAction.VIEW ||
+        log.action === AccessAction.DOWNLOAD ||
+        log.action === AccessAction.EXPORT)
     ) {
       await this.prisma.chainOfCustodyEvent.create({
         data: {
@@ -31,7 +32,7 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
           eventType: CustodyEventType.EVIDENCE_ACCESSED,
           fromCustodian: null,
           toCustodian: log.userId,
-          reason: 'EVIDENCE_ACCESSED',
+          reason: CustodyEventType.EVIDENCE_ACCESSED,
           recordedBy: log.userId,
           occurredAt: log.timestampUtc,
         },

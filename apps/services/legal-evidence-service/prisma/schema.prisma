@@ -108,7 +108,7 @@ model AccessLog {
   id           String   @id @default(uuid())
   userId       String
   caseId       String
-  evidenceId   String
+  evidenceId   String?
   action       String
   ipAddress    String?
   userAgent    String?

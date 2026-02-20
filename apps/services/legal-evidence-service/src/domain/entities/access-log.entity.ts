@@ -10,7 +10,7 @@ export class AccessLog {
     public readonly id: string,
     public readonly userId: string,
     public readonly caseId: string,
-    public readonly evidenceId: string,
+    public readonly evidenceId: string | null,
     public readonly action: AccessAction,
     public readonly ipAddress: string | null,
     public readonly userAgent: string | null,
@@ -24,9 +24,6 @@ export class AccessLog {
     }
     if (!caseId || caseId.trim().length === 0) {
       throw new Error('caseId cannot be empty');
-    }
-    if (!evidenceId || evidenceId.trim().length === 0) {
-      throw new Error('evidenceId cannot be empty');
     }
   }
 }
