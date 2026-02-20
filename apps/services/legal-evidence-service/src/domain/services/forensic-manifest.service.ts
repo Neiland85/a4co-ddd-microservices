@@ -1,5 +1,13 @@
-import { createHash } from 'crypto';
+import {
+  createHash,
+  createPrivateKey,
+  createPublicKey,
+  createSign,
+  createVerify,
+} from 'crypto';
 import { Evidence } from '../aggregates/evidence.aggregate.js';
+
+const PUBLIC_KEY_ID_LENGTH = 16;
 
 export interface CaseMetadata {
   id: string;
@@ -46,9 +54,38 @@ export interface ForensicManifest {
     custodyTimeline: CustodyEventEntry[];
   };
   packageHash: string;
+  manifestSignature: string;
+  publicKeyId: string;
 }
 
 export class ForensicManifestService {
+  private readonly privateKeyPem: string;
+  private readonly publicKeyPem: string;
+  private readonly publicKeyId: string;
+
+  constructor(
+    privateKeyPem?: string,
+    publicKeyPem?: string,
+    publicKeyId?: string,
+  ) {
+    const resolvedPrivateKeyPem = privateKeyPem ?? process.env['FORENSIC_MANIFEST_PRIVATE_KEY_PEM'];
+    const resolvedPublicKeyPem = publicKeyPem ?? process.env['FORENSIC_MANIFEST_PUBLIC_KEY_PEM'];
+    const resolvedPublicKeyId = publicKeyId ?? process.env['FORENSIC_MANIFEST_PUBLIC_KEY_ID'];
+
+    if (!resolvedPrivateKeyPem) {
+      throw new Error('FORENSIC_MANIFEST_PRIVATE_KEY_PEM is required');
+    }
+
+    this.privateKeyPem = resolvedPrivateKeyPem;
+    this.publicKeyPem =
+      resolvedPublicKeyPem ??
+      createPublicKey(createPrivateKey(resolvedPrivateKeyPem)).export({ type: 'spki', format: 'pem' }).toString();
+
+    this.publicKeyId =
+      resolvedPublicKeyId ??
+      createHash('sha256').update(this.publicKeyPem).digest('hex').slice(0, PUBLIC_KEY_ID_LENGTH);
+  }
+
   buildManifest(evidence: Evidence, caseMetadata: CaseMetadata): ForensicManifest {
     const manifestBody = {
       version: '1.0',
@@ -87,11 +124,35 @@ export class ForensicManifestService {
     };
 
     const packageHash = this.computePackageHash(JSON.stringify(manifestBody));
+    const payload = { ...manifestBody, packageHash };
+    const manifestSignature = this.signPayload(JSON.stringify(payload));
 
-    return { ...manifestBody, packageHash };
+    return { ...payload, manifestSignature, publicKeyId: this.publicKeyId };
   }
 
   computePackageHash(content: string): string {
     return createHash('sha256').update(content, 'utf8').digest('hex');
+  }
+
+  verifyManifestSignature(manifest: ForensicManifest): boolean {
+    if (!manifest.manifestSignature) {
+      return false;
+    }
+
+    const { manifestSignature, publicKeyId, ...payload } = manifest;
+    if (publicKeyId !== this.publicKeyId) {
+      return false;
+    }
+    const verifier = createVerify('RSA-SHA256');
+    verifier.update(JSON.stringify(payload), 'utf8');
+    verifier.end();
+    return verifier.verify(this.publicKeyPem, manifestSignature, 'base64');
+  }
+
+  private signPayload(payload: string): string {
+    const signer = createSign('RSA-SHA256');
+    signer.update(payload, 'utf8');
+    signer.end();
+    return signer.sign(this.privateKeyPem, 'base64');
   }
 }
