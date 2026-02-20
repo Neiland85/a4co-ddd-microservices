@@ -2,10 +2,14 @@
   "name": "@a4co/legal-evidence-service",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "main": "dist/main.js",
   "description": "Servicio de evidencia legal con integridad de archivos (SHA-256) para a4co-ddd-microservices",
   "main": "dist/main.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
+    "build": "nest build",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "test": "jest --config jest.config.cjs --passWithNoTests",
@@ -14,13 +18,22 @@
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist",
     "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
     "@prisma/client": "7.4.0",
     "reflect-metadata": "^0.2.1",
+    "rxjs": "^7.8.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/uuid": "^9.0.8",
@@ -28,6 +41,8 @@
     "prisma": "6.19.0",
     "ts-jest": "^29.4.5",
     "typescript": "^5.9.3"
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.6.3"
   },
   "engines": {
     "node": ">=20.0.0",
