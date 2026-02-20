@@ -13,6 +13,7 @@ import { IPdfGenerator, ReportContent } from '../ports/pdf-generator.port.js';
 export interface GenerateReportCommand {
   caseId: string;
   requestedBy: string;
+  tenantId: string;
 }
 
 export interface GenerateReportResult {
@@ -30,14 +31,17 @@ export class GenerateReportUseCase {
   ) {}
 
   async execute(command: GenerateReportCommand): Promise<GenerateReportResult> {
-    const { caseId, requestedBy } = command;
+    const { caseId, requestedBy, tenantId } = command;
 
-    const legalCase: LegalCase | null = await this.caseRepository.findById(caseId);
+    const legalCase: LegalCase | null = await this.caseRepository.findById(caseId, tenantId);
     if (!legalCase) {
       throw new Error(`Case ${caseId} not found`);
     }
+    if (legalCase.tenantId !== tenantId) {
+      throw new Error(`Tenant access denied for case ${caseId}`);
+    }
 
-    const evidences: Evidence[] = await this.evidenceRepository.findByCaseId(caseId);
+    const evidences: Evidence[] = await this.evidenceRepository.findByCaseId(caseId, tenantId);
 
     const reportContent: ReportContent = {
       legalCase,
@@ -72,6 +76,8 @@ export class GenerateReportUseCase {
       requestedBy,
       AccessAction.REPORT_GENERATED,
       null,
+      new Date(),
+      tenantId,
     );
     await this.accessLogRepository.save(custodyLog);
 

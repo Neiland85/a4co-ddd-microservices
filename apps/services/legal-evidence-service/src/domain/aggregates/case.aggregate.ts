@@ -14,6 +14,7 @@ export class LegalCase extends AggregateRoot {
   private _title: string;
   private _description: string;
   private _status: CaseStatus;
+  private _tenantId: string;
   private _parties: Party[];
   private _reports: GeneratedReport[];
   private _openedBy: string;
@@ -28,6 +29,7 @@ export class LegalCase extends AggregateRoot {
     reports: GeneratedReport[] = [],
     createdAt?: Date,
     updatedAt?: Date,
+    tenantId = 'default',
   ) {
     super(id, createdAt, updatedAt);
     if (!title || title.trim().length === 0) {
@@ -37,6 +39,7 @@ export class LegalCase extends AggregateRoot {
     this._description = description;
     this._status = status;
     this._openedBy = openedBy;
+    this._tenantId = tenantId;
     this._parties = [...parties];
     this._reports = [...reports];
 
@@ -55,6 +58,10 @@ export class LegalCase extends AggregateRoot {
 
   get status(): CaseStatus {
     return this._status;
+  }
+
+  get tenantId(): string {
+    return this._tenantId;
   }
 
   get openedBy(): string {
@@ -122,8 +129,9 @@ export class LegalCase extends AggregateRoot {
     title: string,
     description: string,
     openedBy: string,
+    tenantId = 'default',
   ): LegalCase {
-    return new LegalCase(id, title, description, openedBy);
+    return new LegalCase(id, title, description, openedBy, CaseStatus.OPEN, [], [], undefined, undefined, tenantId);
   }
 }
 

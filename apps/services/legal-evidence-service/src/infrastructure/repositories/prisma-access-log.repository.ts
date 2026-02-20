@@ -9,6 +9,7 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
     await this.prisma.accessLog.create({
       data: {
         id: log.id,
+        tenantId: log.tenantId,
         resourceId: log.resourceId,
         resourceType: log.resourceType,
         userId: log.userId,
@@ -19,8 +20,10 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
     });
   }
 
-  async findByResourceId(resourceId: string): Promise<AccessLog[]> {
-    const records = await this.prisma.accessLog.findMany({ where: { resourceId } });
+  async findByResourceId(resourceId: string, tenantId?: string): Promise<AccessLog[]> {
+    const records = await this.prisma.accessLog.findMany({
+      where: { resourceId, ...(tenantId ? { tenantId } : {}) },
+    });
     return records.map(
       (r) =>
         new AccessLog(
@@ -31,6 +34,7 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
           r.action as AccessAction,
           r.ipAddress,
           r.occurredAt,
+          r.tenantId,
         ),
     );
   }

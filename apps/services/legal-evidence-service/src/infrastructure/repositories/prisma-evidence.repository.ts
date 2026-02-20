@@ -9,6 +9,7 @@ export class PrismaEvidenceRepository implements IEvidenceRepository {
     await this.prisma.evidence.create({
       data: {
         id: evidence.id,
+        tenantId: evidence.tenantId,
         caseId: evidence.caseId,
         title: evidence.title,
         description: evidence.description,
@@ -21,8 +22,10 @@ export class PrismaEvidenceRepository implements IEvidenceRepository {
     });
   }
 
-  async findById(id: string): Promise<Evidence | null> {
-    const record = await this.prisma.evidence.findUnique({ where: { id } });
+  async findById(id: string, tenantId?: string): Promise<Evidence | null> {
+    const record = await this.prisma.evidence.findFirst({
+      where: { id, ...(tenantId ? { tenantId } : {}) },
+    });
     if (!record) return null;
     return new Evidence(
       record.id,
@@ -36,11 +39,14 @@ export class PrismaEvidenceRepository implements IEvidenceRepository {
       [],
       record.createdAt,
       record.updatedAt,
+      record.tenantId,
     );
   }
 
-  async findByCaseId(caseId: string): Promise<Evidence[]> {
-    const records = await this.prisma.evidence.findMany({ where: { caseId } });
+  async findByCaseId(caseId: string, tenantId?: string): Promise<Evidence[]> {
+    const records = await this.prisma.evidence.findMany({
+      where: { caseId, ...(tenantId ? { tenantId } : {}) },
+    });
     return records.map(
       (r) =>
         new Evidence(
@@ -55,12 +61,15 @@ export class PrismaEvidenceRepository implements IEvidenceRepository {
           [],
           r.createdAt,
           r.updatedAt,
+          r.tenantId,
         ),
     );
   }
 
-  async findByStatus(status: EvidenceStatus): Promise<Evidence[]> {
-    const records = await this.prisma.evidence.findMany({ where: { status } });
+  async findByStatus(status: EvidenceStatus, tenantId?: string): Promise<Evidence[]> {
+    const records = await this.prisma.evidence.findMany({
+      where: { status, ...(tenantId ? { tenantId } : {}) },
+    });
     return records.map(
       (r) =>
         new Evidence(
@@ -75,6 +84,7 @@ export class PrismaEvidenceRepository implements IEvidenceRepository {
           [],
           r.createdAt,
           r.updatedAt,
+          r.tenantId,
         ),
     );
   }

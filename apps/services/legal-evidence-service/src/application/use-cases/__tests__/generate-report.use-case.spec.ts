@@ -19,6 +19,7 @@ const mockCase = new LegalCase(
   [],
   new Date('2024-01-01'),
   new Date('2024-01-01'),
+  'tenant-1',
 );
 
 const mockEvidence = new Evidence(
@@ -95,7 +96,7 @@ describe('GenerateReportUseCase', () => {
     it('should return a GENERATED report on success', async () => {
       const { useCase } = buildUseCase({});
 
-      const result = await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01' });
+      const result = await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' });
 
       expect(result.report).toBeInstanceOf(GeneratedReport);
       expect(result.report.status).toBe(ReportStatus.GENERATED);
@@ -107,7 +108,7 @@ describe('GenerateReportUseCase', () => {
     it('should persist the report via reportRepository', async () => {
       const { useCase, reportRepo } = buildUseCase({});
 
-      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01' });
+      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' });
 
       expect(reportRepo.save).toHaveBeenCalledTimes(1);
       const savedReport = (reportRepo.save as jest.Mock).mock.calls[0][0] as GeneratedReport;
@@ -117,7 +118,7 @@ describe('GenerateReportUseCase', () => {
     it('should update the case with the new report', async () => {
       const { useCase, caseRepo } = buildUseCase({});
 
-      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01' });
+      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' });
 
       expect(caseRepo.update).toHaveBeenCalledTimes(1);
     });
@@ -125,19 +126,20 @@ describe('GenerateReportUseCase', () => {
     it('should register a REPORT_GENERATED access log (custody event)', async () => {
       const { useCase, accessLogRepo } = buildUseCase({});
 
-      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01' });
+      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' });
 
       expect(accessLogRepo.save).toHaveBeenCalledTimes(1);
       const savedLog = (accessLogRepo.save as jest.Mock).mock.calls[0][0];
       expect(savedLog.action).toBe(AccessAction.REPORT_GENERATED);
       expect(savedLog.resourceId).toBe('case-001');
       expect(savedLog.userId).toBe('user-01');
+      expect(savedLog.tenantId).toBe('tenant-1');
     });
 
     it('should emit a ReportGeneratedEvent in the result', async () => {
       const { useCase } = buildUseCase({});
 
-      const result = await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01' });
+      const result = await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' });
 
       expect(result.domainEvents).toHaveLength(1);
       expect(result.domainEvents[0].eventType).toBe('legal-evidence.report.generated.v1');
@@ -148,7 +150,7 @@ describe('GenerateReportUseCase', () => {
         caseRepo: { findById: jest.fn().mockResolvedValue(null) },
       });
 
-      await expect(useCase.execute({ caseId: 'missing-case', requestedBy: 'user-01' })).rejects.toThrow(
+      await expect(useCase.execute({ caseId: 'missing-case', requestedBy: 'user-01', tenantId: 'tenant-1' })).rejects.toThrow(
         'Case missing-case not found',
       );
     });
@@ -156,7 +158,7 @@ describe('GenerateReportUseCase', () => {
     it('should call pdfGenerator.generate with the case and evidences', async () => {
       const { useCase, pdfGen } = buildUseCase({});
 
-      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01' });
+      await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' });
 
       expect(pdfGen.generate).toHaveBeenCalledTimes(1);
       const content = (pdfGen.generate as jest.Mock).mock.calls[0][0];
@@ -169,9 +171,32 @@ describe('GenerateReportUseCase', () => {
         evidenceRepo: { findByCaseId: jest.fn().mockResolvedValue([]) },
       });
 
-      const result = await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01' });
+      const result = await useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' });
 
       expect(result.report.status).toBe(ReportStatus.GENERATED);
+    });
+
+    it('should reject access when case tenant differs from command tenant', async () => {
+      const otherTenantCase = new LegalCase(
+        'case-001',
+        'Test Case',
+        'A test legal case',
+        'judge-01',
+        CaseStatus.OPEN,
+        [],
+        [],
+        new Date('2024-01-01'),
+        new Date('2024-01-01'),
+        'tenant-2',
+      );
+      const { useCase, evidenceRepo } = buildUseCase({
+        caseRepo: { findById: jest.fn().mockResolvedValue(otherTenantCase) },
+      });
+
+      await expect(useCase.execute({ caseId: 'case-001', requestedBy: 'user-01', tenantId: 'tenant-1' })).rejects.toThrow(
+        'Tenant access denied for case case-001',
+      );
+      expect(evidenceRepo.findByCaseId).not.toHaveBeenCalled();
     });
   });
 });

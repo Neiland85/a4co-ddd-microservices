@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { GenerateReportUseCase } from './application/use-cases/generate-report.use-case.js';
 import { MinimalPdfGeneratorService } from './infrastructure/pdf/minimal-pdf-generator.service.js';
@@ -7,6 +7,7 @@ import { PrismaAccessLogRepository } from './infrastructure/repositories/prisma-
 import { PrismaCaseRepository } from './infrastructure/repositories/prisma-case.repository.js';
 import { PrismaEvidenceRepository } from './infrastructure/repositories/prisma-evidence.repository.js';
 import { CasesController } from './presentation/controllers/cases.controller.js';
+import { TenantValidationMiddleware } from './presentation/middleware/tenant-validation.middleware.js';
 
 const prisma = new PrismaClient();
 
@@ -38,4 +39,8 @@ const prisma = new PrismaClient();
     },
   ],
 })
-export class LegalEvidenceModule {}
+export class LegalEvidenceModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(TenantValidationMiddleware).forRoutes(CasesController);
+  }
+}

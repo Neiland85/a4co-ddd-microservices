@@ -33,6 +33,7 @@ export class Evidence extends AggregateRoot {
   private _evidenceType: EvidenceType;
   private _status: EvidenceStatus;
   private _caseId: string;
+  private _tenantId: string;
   private _submittedBy: string;
   private _files: EvidenceFile[];
   private _custodyChain: ChainOfCustodyEvent[];
@@ -49,6 +50,7 @@ export class Evidence extends AggregateRoot {
     custodyChain: ChainOfCustodyEvent[] = [],
     createdAt?: Date,
     updatedAt?: Date,
+    tenantId = 'default',
   ) {
     super(id, createdAt, updatedAt);
     if (!title || title.trim().length === 0) {
@@ -62,6 +64,7 @@ export class Evidence extends AggregateRoot {
     this._evidenceType = evidenceType;
     this._status = status;
     this._caseId = caseId;
+    this._tenantId = tenantId;
     this._submittedBy = submittedBy;
     this._files = [...files];
     this._custodyChain = [...custodyChain];
@@ -89,6 +92,10 @@ export class Evidence extends AggregateRoot {
 
   get caseId(): string {
     return this._caseId;
+  }
+
+  get tenantId(): string {
+    return this._tenantId;
   }
 
   get submittedBy(): string {
@@ -211,8 +218,22 @@ export class Evidence extends AggregateRoot {
     evidenceType: EvidenceType,
     caseId: string,
     submittedBy: string,
+    tenantId = 'default',
   ): Evidence {
-    return new Evidence(id, title, description, evidenceType, caseId, submittedBy);
+    return new Evidence(
+      id,
+      title,
+      description,
+      evidenceType,
+      caseId,
+      submittedBy,
+      EvidenceStatus.SUBMITTED,
+      [],
+      [],
+      undefined,
+      undefined,
+      tenantId,
+    );
   }
 
   recordExport(exportedBy: string, packageHash: string): void {

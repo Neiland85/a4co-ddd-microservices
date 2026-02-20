@@ -6,7 +6,9 @@ import {
   NotFoundException,
   Param,
   Post,
+  Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { GenerateReportUseCase } from '../../application/use-cases/generate-report.use-case.js';
 import { GenerateReportRequestDto } from '../dtos/generate-report-request.dto.js';
 import { ReportResponseDto } from '../dtos/report-response.dto.js';
@@ -20,11 +22,13 @@ export class CasesController {
   async generateReport(
     @Param('id') caseId: string,
     @Body() dto: GenerateReportRequestDto,
+    @Req() req: Request & { tenantId?: string },
   ): Promise<ReportResponseDto> {
     try {
       const result = await this.generateReportUseCase.execute({
         caseId,
         requestedBy: dto.requestedBy,
+        tenantId: req.tenantId ?? 'default',
       });
 
       const { report } = result;
