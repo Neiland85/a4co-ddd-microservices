@@ -10,8 +10,10 @@ import { CasesController } from './presentation/controllers/cases.controller.js'
 import { EvidenceController } from './presentation/controllers/evidence.controller.js';
 import { VerifyEvidenceManifestUseCase } from './application/use-cases/verify-evidence-manifest.use-case.js';
 import { ForensicManifestService } from './domain/services/forensic-manifest.service.js';
+import { custodyEventImmutabilityMiddleware } from './infrastructure/prisma/custody-event-immutability.middleware.js';
 
 const prisma = new PrismaClient();
+prisma.$use(custodyEventImmutabilityMiddleware);
 
 @Module({
   controllers: [CasesController, EvidenceController],
