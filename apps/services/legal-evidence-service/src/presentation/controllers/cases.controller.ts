@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  Headers,
   Get,
   HttpCode,
   HttpStatus,
@@ -30,6 +31,7 @@ export class CasesController {
     @Param('id') caseId: string,
     @Body() dto: GenerateReportRequestDto,
     @Req() req: Request & { tenantId?: string },
+    @Headers('x-correlation-id') correlationId?: string,
   ): Promise<ReportResponseDto> {
     try {
       if (!req.tenantId) {
@@ -39,6 +41,7 @@ export class CasesController {
         caseId,
         requestedBy: dto.requestedBy,
         tenantId: req.tenantId,
+        correlationId,
       });
 
       const { report } = result;

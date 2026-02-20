@@ -2,6 +2,7 @@ import { HashService } from '../../domain/services/hash.service.js';
 import { IEvidenceRepository } from '../../domain/repositories/evidence.repository.js';
 import { EvidenceFile } from '../../domain/entities/evidence-file.entity.js';
 import { ChainOfCustodyEvent } from '../../domain/entities/chain-of-custody-event.entity.js';
+import { StructuredLogger } from '../../shared/structured-logger.js';
 
 export interface UploadFileCommand {
   evidenceId: string;
@@ -12,6 +13,7 @@ export interface UploadFileCommand {
   storageUrl: string;
   content: Buffer | string;
   uploadedBy: string;
+  correlationId?: string;
 }
 
 export class EvidenceService {
@@ -40,6 +42,14 @@ export class EvidenceService {
     evidence.uploadFile(file, sha256Hash, command.uploadedBy);
 
     await this.evidenceRepository.update(evidence);
+    StructuredLogger.info({
+      event: 'legal-evidence.evidence.created',
+      correlationId: command.correlationId,
+      evidenceId: command.evidenceId,
+      fileId: command.fileId,
+      uploadedBy: command.uploadedBy,
+      sha256Hash,
+    });
 
     return { sha256Hash };
   }

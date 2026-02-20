@@ -9,11 +9,13 @@ import { IReportRepository } from '../../domain/repositories/report.repository.j
 import { IAccessLogRepository } from '../../domain/repositories/access-log.repository.js';
 import { ReportGeneratedEvent } from '../../domain/events/report-generated.event.js';
 import { IPdfGenerator, ReportContent } from '../ports/pdf-generator.port.js';
+import { StructuredLogger } from '../../shared/structured-logger.js';
 
 export interface GenerateReportCommand {
   caseId: string;
   requestedBy: string;
   tenantId: string;
+  correlationId?: string;
 }
 
 export interface GenerateReportResult {
@@ -32,6 +34,7 @@ export class GenerateReportUseCase {
 
   async execute(command: GenerateReportCommand): Promise<GenerateReportResult> {
     const { caseId, requestedBy, tenantId } = command;
+    const { caseId, requestedBy, correlationId } = command;
 
     const legalCase: LegalCase | null = await this.caseRepository.findById(caseId, tenantId);
     if (!legalCase) {
@@ -81,6 +84,14 @@ export class GenerateReportUseCase {
       null,
     );
     await this.accessLogRepository.save(custodyLog);
+    StructuredLogger.info({
+      event: 'legal-evidence.access.logged',
+      correlationId,
+      resourceId: caseId,
+      resourceType: 'CASE',
+      action: AccessAction.REPORT_GENERATED,
+      userId: requestedBy,
+    });
 
     const reportGeneratedEvent = new ReportGeneratedEvent(
       reportId,
@@ -89,6 +100,13 @@ export class GenerateReportUseCase {
       requestedBy,
       storageUrl,
     );
+    StructuredLogger.info({
+      event: 'legal-evidence.report.generated',
+      correlationId,
+      reportId,
+      caseId,
+      requestedBy,
+    });
 
     return {
       report,
