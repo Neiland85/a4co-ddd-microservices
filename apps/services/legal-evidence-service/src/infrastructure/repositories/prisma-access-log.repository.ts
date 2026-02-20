@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { AccessLog, AccessAction } from '../../domain/entities/access-log.entity.js';
+import { CustodyEventType } from '../../domain/entities/chain-of-custody-event.entity.js';
 import { IAccessLogRepository } from '../../domain/repositories/access-log.repository.js';
 
 export class PrismaAccessLogRepository implements IAccessLogRepository {
@@ -13,28 +14,56 @@ export class PrismaAccessLogRepository implements IAccessLogRepository {
         resourceId: log.resourceId,
         resourceType: log.resourceType,
         userId: log.userId,
+        caseId: log.caseId,
+        evidenceId: log.evidenceId,
         action: log.action,
         ipAddress: log.ipAddress,
-        occurredAt: log.occurredAt,
+        userAgent: log.userAgent,
+        timestampUtc: log.timestampUtc,
       },
     });
+
+    if (
+      log.evidenceId &&
+      (log.action === AccessAction.VIEW ||
+        log.action === AccessAction.DOWNLOAD ||
+        log.action === AccessAction.EXPORT)
+    ) {
+      await this.prisma.chainOfCustodyEvent.create({
+        data: {
+          evidenceId: log.evidenceId,
+          eventType: CustodyEventType.EVIDENCE_ACCESSED,
+          fromCustodian: null,
+          toCustodian: log.userId,
+          reason: CustodyEventType.EVIDENCE_ACCESSED,
+          recordedBy: log.userId,
+          occurredAt: log.timestampUtc,
+        },
+      });
+    }
   }
 
   async findByResourceId(resourceId: string, tenantId?: string): Promise<AccessLog[]> {
     const records = await this.prisma.accessLog.findMany({
       where: { resourceId, ...(tenantId ? { tenantId } : {}) },
+  async findByCaseId(caseId: string): Promise<AccessLog[]> {
+    const records = await this.prisma.accessLog.findMany({
+      where: { caseId },
+      orderBy: { timestampUtc: 'desc' },
     });
     return records.map(
       (r) =>
         new AccessLog(
           r.id,
-          r.resourceId,
-          r.resourceType,
           r.userId,
+          r.caseId,
+          r.evidenceId,
           r.action as AccessAction,
           r.ipAddress,
           r.occurredAt,
           r.tenantId,
+          r.userAgent,
+          r.timestampUtc,
         ),
     );
   }

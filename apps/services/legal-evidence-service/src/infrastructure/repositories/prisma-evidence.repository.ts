@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { Evidence, EvidenceType, EvidenceStatus } from '../../domain/aggregates/evidence.aggregate.js';
 import { IEvidenceRepository } from '../../domain/repositories/evidence.repository.js';
+import { CUSTODY_EVENT_IMMUTABLE_ERROR } from '../prisma/custody-event-immutability.middleware.js';
 
 export class PrismaEvidenceRepository implements IEvidenceRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -103,5 +104,13 @@ export class PrismaEvidenceRepository implements IEvidenceRepository {
 
   async delete(id: string): Promise<void> {
     await this.prisma.evidence.delete({ where: { id } });
+  }
+
+  async updateCustodyEvent(): Promise<never> {
+    throw new Error(CUSTODY_EVENT_IMMUTABLE_ERROR);
+  }
+
+  async deleteCustodyEvent(): Promise<never> {
+    throw new Error(CUSTODY_EVENT_IMMUTABLE_ERROR);
   }
 }

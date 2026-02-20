@@ -71,13 +71,14 @@ export class GenerateReportUseCase {
 
     const custodyLog = new AccessLog(
       randomUUID(),
-      caseId,
-      'CASE',
       requestedBy,
+      caseId,
+      null,
       AccessAction.REPORT_GENERATED,
       null,
       new Date(),
       tenantId,
+      null,
     );
     await this.accessLogRepository.save(custodyLog);
 

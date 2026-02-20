@@ -108,7 +108,7 @@ model ChainOfCustodyEvent {
   @@index([tenantId])
   @@index([evidenceId])
   @@index([occurredAt])
-  @@map("chain_of_custody_events")
+  @@map("custody_events")
 }
 
 model AccessLog {
@@ -117,9 +117,15 @@ model AccessLog {
   resourceId   String
   resourceType String
   userId       String
+  caseId       String
+  evidenceId   String?
   action       String
   ipAddress    String?
-  occurredAt   DateTime @default(now())
+  userAgent    String?
+  timestampUtc DateTime @default(now())
+
+  @@index([caseId])
+  @@index([evidenceId])
 
   @@index([tenantId])
   @@map("access_logs")
