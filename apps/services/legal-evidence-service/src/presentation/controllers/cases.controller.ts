@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Headers,
   Get,
   HttpCode,
   HttpStatus,
@@ -26,11 +27,13 @@ export class CasesController {
   async generateReport(
     @Param('id') caseId: string,
     @Body() dto: GenerateReportRequestDto,
+    @Headers('x-correlation-id') correlationId?: string,
   ): Promise<ReportResponseDto> {
     try {
       const result = await this.generateReportUseCase.execute({
         caseId,
         requestedBy: dto.requestedBy,
+        correlationId,
       });
 
       const { report } = result;

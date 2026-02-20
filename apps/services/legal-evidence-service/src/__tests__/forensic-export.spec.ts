@@ -353,4 +353,17 @@ describe('Evidence.recordExport', () => {
     const secondId = evidence.custodyChain[1].id;
     expect(firstId).not.toBe(secondId);
   });
+
+  it('should log export with structured payload', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    evidence.recordExport('auditor-bob', 'hash-001');
+
+    const logEntry = JSON.parse(String(consoleSpy.mock.calls[0][0]));
+    expect(logEntry.event).toBe('legal-evidence.evidence.exported');
+    expect(logEntry.evidenceId).toBe('ev-001');
+    expect(logEntry.exportedBy).toBe('auditor-bob');
+
+    consoleSpy.mockRestore();
+  });
 });
