@@ -6,9 +6,9 @@ export const configuration = () => ({
     port: parseInt(process.env.PORT || '3000', 10),
     nodeEnv: process.env.NODE_ENV || 'development',
 
-    // JWT Configuration
+    // JWT Configuration (JWT_SECRET is required; validated at startup via JwtAuthMiddleware / JwtAuthGuard)
     jwt: {
-        secret: process.env.JWT_SECRET || '',
+        secret: process.env.JWT_SECRET,
         expiresIn: process.env.JWT_EXPIRES_IN || '24h',
         refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
     },

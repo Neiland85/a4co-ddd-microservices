@@ -7,6 +7,12 @@ export type AuthenticatedUser = JwtPayload;
 @Injectable()
 export class JwtAuthMiddleware implements NestMiddleware {
   use(req: Request, _res: Response, next: NextFunction): void {
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable must be set');
+    }
+
     const authHeader = req.headers['authorization'];
 
     if (!authHeader) {
@@ -22,7 +28,7 @@ export class JwtAuthMiddleware implements NestMiddleware {
     try {
       const decoded = verify(
         token,
-        process.env.JWT_SECRET || 'dev-secret',
+        secret,
       ) as AuthenticatedUser;
 
       (req as any).user = decoded;
