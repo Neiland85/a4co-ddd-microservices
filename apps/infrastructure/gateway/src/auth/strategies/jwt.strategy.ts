@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { verify, JwtPayload } from 'jsonwebtoken';
 
@@ -19,11 +19,13 @@ export class JwtAuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException('Invalid Authorization header');
     }
 
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new InternalServerErrorException('JWT secret is not configured');
+    }
+
     try {
-      const decoded = verify(
-        token,
-        process.env.JWT_SECRET || 'dev-secret',
-      ) as AuthenticatedUser;
+      const decoded = verify(token, jwtSecret) as AuthenticatedUser;
 
       (req as any).user = decoded;
       next();
