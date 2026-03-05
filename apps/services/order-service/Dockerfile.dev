@@ -1,5 +1,5 @@
 # Dockerfile para servicios NestJS
-FROM node:18-alpine
+FROM node:25.8.0-alpine
 
 WORKDIR /app
 
