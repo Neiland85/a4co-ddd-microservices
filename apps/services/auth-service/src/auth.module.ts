@@ -27,7 +27,7 @@ import { UserRepositoryPort } from './application/ports/user-repository.port';
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'super-secret-key'),
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
           issuer: configService.get<string>('JWT_ISSUER', 'a4co-auth-service'),
           audience: configService.get<string>('JWT_AUDIENCE', 'a4co-platform'),

@@ -106,7 +106,7 @@ export class SecurityMiddleware implements NestMiddleware {
 
       // Verificar y decodificar JWT
       const payload = this.jwtService.verify(token, {
-        secret: this.configService.get<string>('JWT_SECRET') || 'default-secret-key',
+        secret: this.configService.getOrThrow<string>('JWT_SECRET'),
         algorithms: ['HS256'],
       });
 
