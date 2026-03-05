@@ -12,7 +12,6 @@
     "dev:inventory": "turbo run start:dev --filter=@a4co/inventory-service",
     "build": "pnpm --filter @a4co/shared-utils run build && pnpm --filter @a4co/shared-events run build && pnpm --filter @a4co/observability run build && pnpm --filter @a4co/domain-order run build && pnpm --filter @a4co/domain-payment run build && pnpm --filter @a4co/domain-inventory run build && pnpm --filter @a4co/gateway run build && pnpm --filter @a4co/auth-service run build && pnpm --filter @a4co/order-service run build && pnpm --filter @a4co/product-service run build && pnpm --filter @a4co/inventory-service run build && pnpm --filter @a4co/payment-service run build && pnpm --filter @a4co/user-service run build",
     "build:all": "turbo run build",
-    "test": "NODE_OPTIONS='--max-old-space-size=4096' pnpm -r --ignore=backend --if-present run test -- --runInBand",
     "test": "pnpm --filter @a4co/gateway run test -- --runInBand && pnpm --filter @a4co/auth-service run test -- --runInBand && pnpm --filter @a4co/order-service run test -- --runInBand && pnpm --filter @a4co/product-service run test -- --runInBand && pnpm --filter @a4co/inventory-service run test -- --runInBand && pnpm --filter @a4co/payment-service run test -- --runInBand && pnpm --filter @a4co/user-service run test -- --runInBand",
     "test:all": "NODE_OPTIONS='--max-old-space-size=4096' turbo run test -- --runInBand",
     "lint": "pnpm --filter @a4co/gateway run lint && pnpm --filter @a4co/auth-service run lint && pnpm --filter @a4co/order-service run lint && pnpm --filter @a4co/product-service run lint && pnpm --filter @a4co/inventory-service run lint && pnpm --filter @a4co/payment-service run lint && pnpm --filter @a4co/user-service run lint",
@@ -49,9 +48,6 @@
     "prod:logs": "docker-compose -f docker-compose.prod.yml --env-file .env.production logs -f",
     "prod:ps": "docker-compose -f docker-compose.prod.yml --env-file .env.production ps",
     "prod:restart": "docker-compose -f docker-compose.prod.yml --env-file .env.production restart",
-    "prod:build": "docker-compose -f docker-compose.prod.yml --env-file .env.production build"
-    ,
-    "update:dicts": "ts-node --project tsconfig.scripts.json scripts/update-cspell-dicts.ts"
     "prod:build": "docker-compose -f docker-compose.prod.yml --env-file .env.production build",
     "update:dicts": "ts-node --project tsconfig.scripts.json scripts/update-cspell-dicts.ts",
     "pre-release": "pnpm run lint"
