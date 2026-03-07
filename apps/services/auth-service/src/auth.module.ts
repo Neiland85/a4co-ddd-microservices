@@ -39,6 +39,13 @@ import { UserRepositoryPort } from './application/ports/user-repository.port';
           },
         };
       },
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
+        signOptions: {
+          issuer: configService.get<string>('JWT_ISSUER', 'a4co-auth-service'),
+          audience: configService.get<string>('JWT_AUDIENCE', 'a4co-platform'),
+        },
+      }),
     }),
   ],
   controllers: [AuthController],

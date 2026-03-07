@@ -44,6 +44,14 @@ import { PrismaUserRepository } from './infrastructure/repositories';
           },
         };
       },
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: '15m',
+          issuer: 'artisan-portal',
+          audience: 'artisan-portal-users',
+        },
+      }),
     }),
   ],
   controllers: [AuthController],
