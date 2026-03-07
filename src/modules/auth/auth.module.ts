@@ -30,6 +30,20 @@ import { PrismaUserRepository } from './infrastructure/repositories';
     // JWT
     JwtModule.registerAsync({
       inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        if (!secret) {
+          throw new Error('JWT_SECRET environment variable is not configured');
+        }
+        return {
+          secret,
+          signOptions: {
+            expiresIn: '15m',
+            issuer: 'artisan-portal',
+            audience: 'artisan-portal-users',
+          },
+        };
+      },
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
