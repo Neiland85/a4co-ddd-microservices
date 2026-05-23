@@ -107,11 +107,7 @@ export const reducer = (state: State, action: Action): State => {
                 ...t,
                 open: false,
               }
-<<<<<<< HEAD
             : t,
-=======
-            : t
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
         ),
       };
     }
@@ -151,11 +147,7 @@ function toast({ ...props }: Toast) {
         type: 'UPDATE_TOAST',
         toast: { ...props, id },
       }),
-<<<<<<< HEAD
     [id],
-=======
-    [id]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   const dismiss = React.useCallback(() => dispatch({ type: 'DISMISS_TOAST', toastId: id }), [id]);
@@ -199,17 +191,10 @@ function useToast() {
       toast,
       dismiss: React.useCallback(
         (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
-<<<<<<< HEAD
         [],
       ),
     }),
     [state],
-=======
-        []
-      ),
-    }),
-    [state]
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
   );
 
   return toastState;
