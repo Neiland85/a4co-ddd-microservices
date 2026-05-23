@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "env -u NODE_ENV next build",
     "dev": "next dev",
     "lint": "echo \"lint skipped: h-modern-dashboard frozen in FASE 3\"",
-    "start": "next start"
+    "start": "next start",
+    "build:raw": "next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
