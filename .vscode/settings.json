@@ -2,17 +2,36 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifier": "non-relative",
-
-  "eslint.validate": ["typescript", "javascript"],
-  "eslint.workingDirectories": [
-    { "directory": "apps/infrastructure/gateway", "changeProcessCWD": true },
-    { "directory": "apps/services/order-service", "changeProcessCWD": true },
-    { "directory": "apps/services/inventory-service", "changeProcessCWD": true },
-    { "directory": "packages/shared-utils", "changeProcessCWD": true },
-    { "directory": "packages/shared-events", "changeProcessCWD": true },
-    { "directory": "packages/observability", "changeProcessCWD": true }
+  "eslint.validate": [
+    "typescript",
+    "javascript"
   ],
-
+  "eslint.workingDirectories": [
+    {
+      "directory": "apps/infrastructure/gateway",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "apps/services/order-service",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "apps/services/inventory-service",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "packages/shared-utils",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "packages/shared-events",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "packages/observability",
+      "changeProcessCWD": true
+    }
+  ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
@@ -21,7 +40,6 @@
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit"
   },
-
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -31,14 +49,14 @@
   "[markdown]": {
     "editor.wordWrap": "on"
   },
-
   "json.schemaDownload.enable": true,
   "json.schemas": [
     {
-      "fileMatch": ["**/package.json"]
+      "fileMatch": [
+        "**/package.json"
+      ]
     }
   ],
-
   "files.exclude": {
     "**/.git": true,
     "**/node_modules": true,
@@ -48,7 +66,6 @@
     "**/.turbo": true,
     "**/.next": true
   },
-
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
@@ -57,7 +74,6 @@
     "**/.next": true,
     "**/pnpm-lock.yaml": true
   },
-
   "files.watcherExclude": {
     "**/node_modules/**": true,
     "**/dist/**": true,
@@ -65,7 +81,6 @@
     "**/.turbo/**": true,
     "**/.next/**": true
   },
-
   "cSpell.language": "en,es",
   "cSpell.words": [
     "a4co",
@@ -84,14 +99,10 @@
     "Sagas",
     "TypeScript"
   ],
-
   "terminal.integrated.accessibleViewFocusOnCommandExecution": false,
   "terminal.integrated.inheritEnv": true,
-
   "telemetry.telemetryLevel": "off",
-
   "prisma.pinToPrisma6": true,
-
   "github.copilot.chat.generateTests.codeLens": false,
   "github.copilot.chat.codesearch.enabled": true
 }
