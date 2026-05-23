@@ -115,7 +115,7 @@ export class TracedHttpClient {
         if (span) {
           span.setAttributes({
             'http.response.status_code': response.status,
-            'http.response.size': response.headers['content-length'] || 0,
+            'http.response.size': Number(response.headers['content-length'] ?? 0) || 0,
           });
         }
         return response;

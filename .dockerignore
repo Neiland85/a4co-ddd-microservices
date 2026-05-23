@@ -27,3 +27,6 @@ test
 tests
 __tests__
 
+
+# TypeScript incremental build cache
+*.tsbuildinfo

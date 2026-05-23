@@ -4,15 +4,16 @@
   "description": "A4CO API Gateway - Proxy service for microservices",
   "main": "dist/main.js",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build -p tsconfig.build.json",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/main.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest --config jest.config.cjs --passWithNoTests",
     "test:watch": "jest --config jest.config.cjs --watch",
-    "test:cov": "jest --config jest.config.cjs --coverage"
+    "test:cov": "jest --config jest.config.cjs --coverage",
+    "start:preview": "node dist/main.js"
   },
   "dependencies": {
     "@nestjs/axios": "^3.1.3",

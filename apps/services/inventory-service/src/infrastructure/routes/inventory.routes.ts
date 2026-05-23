@@ -7,7 +7,8 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   // GET /api/inventory/check/:productId
   router.get('/check/:productId', async (req: Request, res: Response) => {
     try {
-      const { productId } = req.params;
+      const rawProductId = req.params.productId;
+      const productId = Array.isArray(rawProductId) ? rawProductId[0] : rawProductId;
       if (!productId) {
         return res.status(400).json({
           error: 'Bad Request',
@@ -152,7 +153,8 @@ export function inventoryRoutes(inventoryService: InventoryServicePort): Router 
   // GET /api/inventory/products/:id
   router.get('/products/:id', async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const rawId = req.params.id;
+      const id = Array.isArray(rawId) ? rawId[0] : rawId;
       if (!id) {
         return res.status(400).json({
           error: 'Bad Request',
