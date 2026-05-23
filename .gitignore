@@ -109,3 +109,15 @@ phase2-*.json
 devops-excellence-*.json
 post-implementation-*.json
 
+
+# Local generated Prisma client for inventory-service
+apps/services/inventory-service/prisma/generated/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Local preview runtime symlink
+apps/packages
+
+# Local backup files
+*.bak.*

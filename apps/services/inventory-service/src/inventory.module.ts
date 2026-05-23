@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../prisma/generated';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { InventoryController } from './inventory.controller';

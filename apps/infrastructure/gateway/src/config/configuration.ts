@@ -1,49 +1,51 @@
-/**
- * Gateway Configuration
- */
+export default () => ({
+  port: parseInt(process.env.PORT || '3000', 10),
 
-export const configuration = () => ({
-    port: parseInt(process.env.PORT || '3000', 10),
-    nodeEnv: process.env.NODE_ENV || 'development',
+  cors: {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  },
 
-    // JWT Configuration
-    jwt: {
-        secret: process.env.JWT_SECRET || '',
-        expiresIn: process.env.JWT_EXPIRES_IN || '24h',
-        refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-    },
+  proxy: {
+    timeout: parseInt(process.env.PROXY_TIMEOUT || '30000', 10),
+  },
 
-    // Service URLs (defaults for local development, use env vars in Docker)
-    services: {
-        auth: process.env.AUTH_SERVICE_URL || 'http://localhost:4000',
-        products: process.env.PRODUCTS_SERVICE_URL || 'http://localhost:3002',
-        orders: process.env.ORDERS_SERVICE_URL || 'http://localhost:3000',
-        inventory: process.env.INVENTORY_SERVICE_URL || 'http://localhost:3002',
-        payments: process.env.PAYMENTS_SERVICE_URL || 'http://localhost:3001',
-        sagas: process.env.SAGAS_SERVICE_URL || 'http://localhost:3006',
-    },
+  services: {
+    auth:
+      process.env.AUTH_SERVICE_URL ||
+      process.env.AUTH_URL ||
+      'http://localhost:3001',
 
-    // Proxy settings
-    proxy: {
-        timeout: parseInt(process.env.PROXY_TIMEOUT || '30000', 10),
-        changeOrigin: process.env.PROXY_CHANGE_ORIGIN === 'true',
-    },
+    products:
+      process.env.PRODUCTS_SERVICE_URL ||
+      process.env.PRODUCT_SERVICE_URL ||
+      process.env.PRODUCTS_URL ||
+      'http://localhost:3002',
 
-    // Rate limiting
-    rateLimit: {
-        ttl: parseInt(process.env.RATE_LIMIT_TTL || '60', 10),
-        max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
-    },
+    orders:
+      process.env.ORDERS_SERVICE_URL ||
+      process.env.ORDER_SERVICE_URL ||
+      process.env.ORDERS_URL ||
+      'http://localhost:3004',
 
-    // CORS (Allow both dashboard-client and local dev)
-    cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:4200',
-    },
+    inventory:
+      process.env.INVENTORY_SERVICE_URL ||
+      process.env.INVENTORY_URL ||
+      'http://localhost:3006',
 
-    // Logging
-    logging: {
-        level: process.env.LOG_LEVEL || 'debug',
-    },
+    payments:
+      process.env.PAYMENTS_SERVICE_URL ||
+      process.env.PAYMENT_SERVICE_URL ||
+      process.env.PAYMENTS_URL ||
+      'http://localhost:3005',
+
+    sagas:
+      process.env.SAGAS_SERVICE_URL ||
+      process.env.SAGA_SERVICE_URL ||
+      process.env.SAGAS_URL ||
+      'http://localhost:3006',
+  },
+
+  jwt: {
+    secret: process.env.JWT_SECRET || 'preview-local-jwt-secret',
+  },
 });
-
-export type GatewayConfig = ReturnType<typeof configuration>;

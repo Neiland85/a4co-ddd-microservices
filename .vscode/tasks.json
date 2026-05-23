@@ -2,46 +2,171 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
+      "label": "A4CO: 00 Validate Environment",
       "type": "shell",
-      "command": "pnpm",
-      "args": ["run", "build"],
-      "problemMatcher": []
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run env:check",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
     },
     {
-      "label": "dashboard-dev",
+      "label": "A4CO: 01 Validate package.json",
       "type": "shell",
-      "command": "pnpm",
-      "args": ["dev", "--port", "3001"],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "options": {
-        "cwd": "${workspaceFolder}/apps/dashboard-web"
-      },
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run validate:package",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 02 Git Status",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run git:status",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 03 Check Fast",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run check:fast",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 04 Install Dependencies",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm install --frozen-lockfile",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 05 Build Preview",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run build:preview",
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 06 Lint Preview",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run lint:preview",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 07 Test Preview",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run test:preview",
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 08 Check Preview",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run check:preview",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 09 Docker Preview Build",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run preview:build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 10 Docker Preview Up",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run preview:up",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 11 Preview Status",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run preview:ps",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 12 Preview Smoke Test",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run preview:smoke",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 13 Preview Logs",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run preview:logs",
+      "problemMatcher": [],
       "isBackground": true,
       "presentation": {
-        "echo": true,
         "reveal": "always",
-        "focus": false,
-        "panel": "new"
-      },
-      "problemMatcher": {
-        "owner": "nextjs",
-        "pattern": {
-          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "^- wait .*",
-          "endsPattern": "^- ready .*"
-        }
+        "panel": "new",
+        "clear": true
+      }
+    },
+    {
+      "label": "A4CO: 14 Docker Preview Down",
+      "type": "shell",
+      "command": "cd \"/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices\" && pnpm run preview:down",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
       }
     }
   ]

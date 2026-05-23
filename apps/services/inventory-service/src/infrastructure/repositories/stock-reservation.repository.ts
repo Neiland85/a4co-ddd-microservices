@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { PrismaClient, StockReservation as PrismaReservation } from '@prisma/client';
+import { PrismaClient, StockReservation as PrismaReservation } from '../../../prisma/generated';
 import { StockReservation } from '../../domain/entities/stock-reservation.entity';
 import { ReservationStatus } from '../../domain/entities/stock-reservation.entity';
 
