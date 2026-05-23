@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
-export PORT="${PORT:-3002}"
+export PORT="${PORT:-3006}"
 export NATS_URL="${NATS_URL:-nats://localhost:4222}"
 export DATABASE_URL="${DATABASE_URL:-postgresql://a4co_preview:a4co_preview_password@localhost:5433/inventory_db?schema=public}"
 
