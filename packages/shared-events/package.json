@@ -20,7 +20,7 @@
     "event-driven"
   ],
   "dependencies": {
-    "uuid": "^9.0.1"
+    "uuid": "^11.1.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
