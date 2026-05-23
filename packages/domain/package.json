@@ -33,5 +33,7 @@
   },
   "peerDependencies": {
     "@a4co/shared-utils": "workspace:*"
-  }
+  },
+  "private": true,
+  "license": "UNLICENSED"
 }
