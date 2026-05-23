@@ -1449,11 +1449,8 @@
     "sagafailedevent",
     "sagaid",
     "sagastartedevent",
-<<<<<<< HEAD
     "salida",
     "sampling",
-=======
->>>>>>> 5986b741 (chore: save WIP before session end (outbox, modules, prisma accelerate, docs))
     "save",
     "scan",
     "scanners",
@@ -1490,10 +1487,7 @@
     "services",
     "servicio",
     "servicios",
-<<<<<<< HEAD
     "sesión",
-=======
->>>>>>> 5986b741 (chore: save WIP before session end (outbox, modules, prisma accelerate, docs))
     "session",
     "settimeout",
     "setting",

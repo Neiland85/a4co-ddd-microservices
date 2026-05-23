@@ -207,11 +207,7 @@ export class ProductService extends EventDrivenService {
     }));
 
     const allItemsAvailable = validationResults.every(
-<<<<<<< HEAD
       result => result.isAvailable && result.availableQuantity >= result.requestedQuantity,
-=======
-      result => result.isAvailable && result.availableQuantity >= result.requestedQuantity
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
     );
 
     // Publicar respuesta de validación

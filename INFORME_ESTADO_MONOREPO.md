@@ -219,17 +219,10 @@ jobs:
 **Ramas en conflicto:** `main` vs `fix/pipeline-and-backend` vs `develop`
 
 ```yaml
-<<<<<<< HEAD
   - uses: actions/checkout@v4
   - uses: pnpm/action-setup@v4
   - uses: actions/setup-node@v4
 # ... configuración correcta para main
-=======
-  - uses: actions/checkout@v3
-  - uses: pnpm/action-setup@v2
-  - uses: actions/setup-node@v3
-# ... configuración antigua de ramas
->>>>>>> 71cbc2c58c860ff50f27fffbe7b249882f6413f6
 ```
 
 **Solución requerida:** Resolver el conflicto usando la versión de HEAD (actions@v4).
