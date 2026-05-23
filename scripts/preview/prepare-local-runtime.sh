@@ -28,6 +28,7 @@ echo "5) Marking runtime dist folders as CommonJS..."
 for d in \
   apps/services/order-service/dist \
   apps/services/inventory-service/dist \
+  apps/infrastructure/gateway/dist \
   packages/domain/order/dist \
   packages/domain/inventory/dist \
   packages/shared-utils/dist \
@@ -42,7 +43,17 @@ do
   fi
 done
 
-echo "6) Verifying key entrypoints..."
+echo "6) Linking inventory Prisma generated client for dist runtime..."
+if [ -d "apps/services/inventory-service/prisma/generated" ]; then
+  rm -rf apps/services/inventory-service/dist/prisma
+  ln -s ../prisma apps/services/inventory-service/dist/prisma
+  echo "inventory prisma runtime link -> apps/services/inventory-service/dist/prisma"
+else
+  echo "WARNING: inventory Prisma generated client not found"
+  echo "Run: pnpm --filter @a4co/inventory-service run prisma:generate"
+fi
+
+echo "7) Verifying key entrypoints..."
 find apps/services/order-service apps/services/inventory-service apps/infrastructure/gateway \
   -path "*/node_modules/*" -prune -o \
   -type f \
