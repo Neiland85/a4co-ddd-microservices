@@ -68,5 +68,7 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "private": true,
+  "license": "UNLICENSED"
 }
