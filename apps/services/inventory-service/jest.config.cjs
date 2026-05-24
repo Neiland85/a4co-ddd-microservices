@@ -10,7 +10,7 @@ module.exports = {
   ...baseConfig,
   displayName: 'inventory-service',
   rootDir: '.',
-  roots: ['<rootDir>/src', '<rootDir>/tests', '<rootDir>'],
+  roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.spec.ts',
     '<rootDir>/tests/**/*.spec.ts',
