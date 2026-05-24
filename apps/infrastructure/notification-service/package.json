@@ -46,7 +46,6 @@
     "cors": "^2.8.5",
     "firebase-admin": "^13.6.0",
     "helmet": "^7.1.0",
-    "prisma": "6.19.0",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.0",
@@ -69,7 +68,8 @@
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "prisma": "6.19.0"
   },
   "private": true,
   "license": "UNLICENSED"
