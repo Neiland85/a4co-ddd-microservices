@@ -1,0 +1,68 @@
+FROM node:20.20.0-alpine AS app
+
+WORKDIR /app
+
+ENV PNPM_HOME="/usr/local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV NODE_ENV=preview
+
+RUN corepack enable && apk add --no-cache curl bash openssl libc6-compat
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile
+
+# Force clean deterministic build inside Docker.
+RUN rm -rf \
+  packages/shared-utils/dist \
+  packages/shared-utils/tsconfig.tsbuildinfo \
+  packages/shared-utils/tsconfig.build.tsbuildinfo \
+  packages/shared-events/dist \
+  packages/shared-events/tsconfig.tsbuildinfo \
+  packages/shared-events/tsconfig.build.tsbuildinfo \
+  packages/domain/order/dist \
+  packages/domain/order/tsconfig.tsbuildinfo \
+  packages/domain/order/tsconfig.build.tsbuildinfo \
+  packages/domain/inventory/dist \
+  packages/domain/inventory/tsconfig.tsbuildinfo \
+  packages/domain/inventory/tsconfig.build.tsbuildinfo \
+  packages/observability/dist \
+  packages/observability/tsconfig.tsbuildinfo \
+  packages/observability/tsconfig.build.tsbuildinfo \
+  apps/infrastructure/gateway/dist \
+  apps/infrastructure/gateway/tsconfig.tsbuildinfo \
+  apps/infrastructure/gateway/tsconfig.build.tsbuildinfo \
+  apps/services/order-service/dist \
+  apps/services/order-service/tsconfig.tsbuildinfo \
+  apps/services/order-service/tsconfig.build.tsbuildinfo \
+  apps/services/inventory-service/dist \
+  apps/services/inventory-service/tsconfig.tsbuildinfo \
+  apps/services/inventory-service/tsconfig.build.tsbuildinfo
+
+RUN pnpm --filter @a4co/shared-utils run build
+RUN pnpm --filter @a4co/shared-events run build
+RUN pnpm --filter @a4co/observability run build
+RUN pnpm --filter @a4co/domain-order run build
+RUN pnpm --filter @a4co/domain-inventory run build
+
+# Use direct tsc for gateway to avoid declaration-only Nest CLI artifact issues.
+RUN pnpm --filter @a4co/gateway exec tsc -p tsconfig.build.json
+
+RUN pnpm --filter @a4co/order-service run build
+RUN pnpm --filter @a4co/inventory-service run build
+
+# Runtime package scopes: generated JS is CommonJS.
+RUN printf '{"type":"commonjs"}\n' > packages/shared-utils/dist/package.json && \
+    printf '{"type":"commonjs"}\n' > packages/shared-events/dist/package.json && \
+    printf '{"type":"commonjs"}\n' > packages/observability/dist/package.json && \
+    printf '{"type":"commonjs"}\n' > packages/domain/order/dist/package.json && \
+    printf '{"type":"commonjs"}\n' > packages/domain/inventory/dist/package.json && \
+    printf '{"type":"commonjs"}\n' > apps/infrastructure/gateway/dist/package.json && \
+    printf '{"type":"commonjs"}\n' > apps/services/order-service/dist/src/package.json && \
+    printf '{"type":"commonjs"}\n' > apps/services/inventory-service/dist/src/package.json
+
+RUN test -f apps/infrastructure/gateway/dist/main.js && \
+    test -f apps/services/order-service/dist/src/main.js && \
+    test -f apps/services/inventory-service/dist/src/main.js
+
+CMD ["node", "-e", "console.log('Set service command in docker-compose.beta.yml')"]

@@ -1,0 +1,118 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: a4co-beta-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: preview_password_change_me
+      POSTGRES_DB: microservices_db
+    ports:
+      - "55433:5432"
+    volumes:
+      - beta-postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  nats:
+    image: nats:2.10-alpine
+    container_name: a4co-beta-nats
+    command: ["-js", "-m", "8222"]
+    ports:
+      - "14222:4222"
+      - "18222:8222"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 20s
+
+  order-service:
+    image: a4co-ddd-microservices-beta-app:local
+    container_name: a4co-beta-order-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    environment:
+      NODE_ENV: preview
+      PORT: "3000"
+      DATABASE_URL: postgresql://postgres:preview_password_change_me@postgres:5432/order_db?schema=public
+      NATS_URL: nats://nats:4222
+      LOG_LEVEL: debug
+    command: >
+      sh -lc 'node apps/services/order-service/dist/src/main.js'
+    ports:
+      - "3004:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 20s
+      timeout: 8s
+      retries: 6
+      start_period: 60s
+
+  inventory-service:
+    image: a4co-ddd-microservices-beta-app:local
+    container_name: a4co-beta-inventory-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    environment:
+      NODE_ENV: preview
+      PORT: "3002"
+      DATABASE_URL: postgresql://postgres:preview_password_change_me@postgres:5432/inventory_db?schema=public
+      NATS_URL: nats://nats:4222
+      LOG_LEVEL: debug
+    command: >
+      sh -lc 'node apps/services/inventory-service/dist/src/main.js'
+    ports:
+      - "3006:3002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/api/inventory/health"]
+      interval: 20s
+      timeout: 8s
+      retries: 6
+      start_period: 60s
+
+  api-gateway:
+    image: a4co-ddd-microservices-beta-app:local
+    container_name: a4co-beta-api-gateway
+    depends_on:
+      order-service:
+        condition: service_started
+      inventory-service:
+        condition: service_started
+    environment:
+      NODE_ENV: preview
+      PORT: "3000"
+      ORDERS_SERVICE_URL: http://order-service:3000
+      INVENTORY_SERVICE_URL: http://inventory-service:3002
+      AUTH_SERVICE_URL: http://auth-service:4000
+      PRODUCTS_SERVICE_URL: http://product-service:3003
+      PAYMENTS_SERVICE_URL: http://payment-service:3001
+      SAGAS_SERVICE_URL: http://order-service:3000
+      JWT_SECRET: preview-local-jwt-secret
+      PROXY_TIMEOUT: "30000"
+      LOG_LEVEL: debug
+      CORS_ORIGIN: http://localhost:8088,http://localhost:3000
+    command: >
+      sh -lc 'node apps/infrastructure/gateway/dist/main.js'
+    ports:
+      - "8088:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 20s
+      timeout: 8s
+      retries: 6
+      start_period: 60s
+
+volumes:
+  beta-postgres-data:
