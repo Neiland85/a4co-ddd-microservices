@@ -3,14 +3,16 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "lib": ["ES2022"],
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": true,
+    "composite": false,
+    "incremental": false,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,8 +20,9 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noPropertyAccessFromIndexSignature": false,
-    "exactOptionalPropertyTypes": false
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/__tests__/**", "**/*.test.ts", "**/*.spec.ts"]
 }

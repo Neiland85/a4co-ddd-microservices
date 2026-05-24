@@ -70,7 +70,11 @@ import { ReserveStockHandler } from './application/handlers/reserve-stock.handle
       useFactory: (repository: ProductRepository) => new ReleaseStockUseCase(repository),
       inject: ['PRODUCT_REPOSITORY'],
     },
-    InventoryService,
+    {
+      provide: InventoryService,
+      useFactory: (repository: ProductRepository) => new InventoryService(repository),
+      inject: ['PRODUCT_REPOSITORY'],
+    },
   ],
 })
 export class InventoryModule {}
