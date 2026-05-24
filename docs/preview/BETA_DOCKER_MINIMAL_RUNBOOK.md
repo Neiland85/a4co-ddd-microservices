@@ -56,7 +56,7 @@ curl -i http://localhost:18222/healthz
 
 ## Estado validado en esta iteración
 
-Resultado: beta Docker mínima parcial.
+Resultado: beta Docker mínima validada.
 
 Validado correctamente:
 
@@ -82,9 +82,9 @@ Pendiente:
 
 ## Decisión
 
-No se considera beta Docker completa todavía.
+Se considera beta Docker mínima validada para gateway + order + inventory + nats + postgres.
 
-Sí se considera una baseline parcial demostrable para continuar hardening de runtime.
+No se considera todavía beta completa de producto porque quedan fuera frontend, dashboard, auth, product y payment.
 
 Esta baseline deja documentado:
 
@@ -92,3 +92,29 @@ Esta baseline deja documentado:
 - docker-compose.beta.yml define una beta canónica reducida.
 - Dockerfile.beta fuerza build determinista limpiando dist/tsbuildinfo.
 - El siguiente paso es validar runtime completo con el Dockerfile.beta actual.
+
+
+## Estado validado posterior
+
+En la validación posterior de healthchecks se confirmó:
+
+- API Gateway healthy.
+- Order Service healthy.
+- Inventory Service healthy.
+- NATS healthy.
+- Postgres healthy.
+
+Smoke HTTP validado:
+
+- `GET http://localhost:8088/api/v1/health` -> 200
+- `GET http://localhost:8088/api/v1/health/ready` -> 200
+- `GET http://localhost:8088/api/v1/health/live` -> 200
+- `GET http://localhost:3004/orders` -> 200
+- `GET http://localhost:3006/api/inventory/health` -> 200
+- `GET http://localhost:18222/healthz` -> 200
+
+Ajustes aplicados:
+
+- Healthcheck de order-service alineado a `/orders`.
+- Inventory Service alineado a puerto interno `3006`.
+- Gateway apunta a `inventory-service:3006`.
