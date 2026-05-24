@@ -1,0 +1,44 @@
+name: Beta Runtime Quality Gate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  beta-runtime:
+    name: Validate beta runtime baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.20.0'
+          cache: 'pnpm'
+
+      - name: Prepare pnpm
+        run: corepack prepare pnpm@10.14.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate package and environment
+        run: pnpm run check:fast
+
+      - name: Run beta preview tests
+        run: pnpm run test:preview
+
+      - name: Build beta preview
+        run: pnpm run build:preview
