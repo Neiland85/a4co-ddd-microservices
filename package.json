@@ -146,5 +146,10 @@
   },
   "simple-git-hooks": {
     "post-commit": "bash scripts/update-dicts-safe.sh"
+  },
+  "pnpm": {
+    "overrides": {
+      "@nestjs/config>lodash": "4.18.1"
+    }
   }
 }
