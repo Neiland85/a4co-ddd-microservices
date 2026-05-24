@@ -81,7 +81,13 @@
     "update:dicts": "ts-node --project tsconfig.scripts.json scripts/update-cspell-dicts.ts",
     "prepare": "simple-git-hooks",
     "pre-release": "pnpm run check:preview",
-    "lint:preview:fix": "pnpm --filter @a4co/gateway run lint && pnpm --filter @a4co/order-service run lint && pnpm --filter @a4co/inventory-service run lint"
+    "lint:preview:fix": "pnpm --filter @a4co/gateway run lint && pnpm --filter @a4co/order-service run lint && pnpm --filter @a4co/inventory-service run lint",
+    "beta:up": "docker compose -f docker-compose.beta.yml up -d --force-recreate",
+    "beta:down": "docker compose -f docker-compose.beta.yml down",
+    "beta:ps": "docker compose -f docker-compose.beta.yml ps -a",
+    "beta:logs": "docker compose -f docker-compose.beta.yml logs -f",
+    "beta:smoke": "bash scripts/beta-smoke.sh",
+    "beta:restart": "pnpm run beta:down && pnpm run beta:up"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.11",
