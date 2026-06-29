@@ -1,153 +1,135 @@
-# A4CO — Distributed Commerce Platform (Preview)
+# A4CO — Buyer-Ready Core Preview
 
-A4CO is a distributed, event-driven commerce platform designed with **Domain-Driven Design (DDD)** principles and a strong focus on **scalability, auditability, and production readiness**.
+A4CO is a TypeScript/NestJS microservices monorepo built to demonstrate a bounded-context commerce backend using DDD, a gateway entry point, shared contracts, PostgreSQL/Prisma foundations, event-driven messaging foundations and observable service boundaries.
 
-This repository represents **real delivered work**, developed under real-world constraints, and intentionally evolved beyond the original scope to meet **modern architectural and investment-grade standards**.
+This repository is **not presented as a finished production product**. It is a controlled technical preview intended for buyer, partner, license, integration or acquisition evaluation under appropriate access controls and, for full due diligence, preferably under NDA.
 
----
+## Current buyer-ready position
 
-## Project Status (January 2026)
+| Area | Status | Notes |
+| --- | --- | --- |
+| Core preview | Buyer-reviewable | Gateway, order-service, inventory-service and shared packages are the current validation baseline. |
+| Runtime baseline | Buyer-reviewable | `Dockerfile.beta`, `docker-compose.beta.yml` and `scripts/beta-smoke.sh` define the reproducible local runtime path. |
+| DDD / bounded contexts | Present | Domain packages and service separation show the intended architecture. |
+| Payments | Partial / simulated | Payment is part of the target topology, but it is not part of the current buyer validation baseline. |
+| Auth / product / user | Partial / non-core for this phase | Present in the repo, but not used as the buyer gate. |
+| Frontends | Non-core for this phase | Useful as context, not as the technical buyer proof. |
+| Production readiness | Not claimed | This is a core preview, not a production acceptance package. |
 
-**Current phase:** Architectural stabilization & MVP finalization  
-**Delivery target (Preview):** February 2026  
-**Status:** Core architecture defined, critical services stabilized, final execution phase in progress
+## 15-minute technical review path
 
-This project began in **late May / early June 2025**.  
-A **strategic pivot in late June 2025** introduced significant architectural improvements, increasing overall quality, scalability, and long-term value.
+A reviewer should start here:
 
----
+1. Read this README.
+2. Open `docs/buyer/SERVICE_MATRIX.md` to understand finished, partial, stub and experimental areas.
+3. Open `docs/buyer/ARCHITECTURE.md` to understand the bounded-context layout.
+4. Run the documented validation commands below.
+5. Check `VALIDATION_REPORT.md` for the latest recorded validation status.
 
-## Why This Project Matters
+## Core preview topology
 
-A4CO is not a prototype built to “just work”.
+```text
+HTTP client
+  |
+  v
+api-gateway (@a4co/gateway)
+  |-- orders route/proxy --> order-service (@a4co/order-service)
+  |-- inventory route/proxy --> inventory-service (@a4co/inventory-service)
 
-It is a **foundation** designed to be:
-- Auditable by third-party technical reviewers
-- Attractive to future investors and partners
-- Scalable beyond a single deployment or market
-- Aligned with modern distributed-systems best practices
+Shared packages used by the buyer baseline:
+  - @a4co/shared-utils
+  - @a4co/shared-events
+  - @a4co/observability
+  - @a4co/domain-order
+  - @a4co/domain-inventory
 
-Several architectural decisions were deliberately taken to **prioritize quality over speed**, even when this exceeded the initial commercial scope.
+Infrastructure used by the local preview:
+  - PostgreSQL
+  - NATS / JetStream
+```
 
----
+The current buyer baseline deliberately focuses on the stable core rather than presenting every folder as equally finished.
 
-## High-Level Architecture
+## Requirements
 
-**Core characteristics:**
-- Monorepo with strict domain boundaries
-- Event-driven orchestration (Saga pattern)
-- Clear separation between deployable services and shared libraries
-- Infrastructure-aware from day one
+- Node.js `>=20 <23`
+- pnpm `10.14.0`
+- Docker + Docker Compose v2
+- macOS/Linux shell environment for the provided scripts
 
-**Technology stack:**
-- **Backend:** NestJS (Node.js)
-- **Architecture:** DDD + Hexagonal Architecture
-- **Messaging:** NATS / JetStream
-- **Database:** PostgreSQL + Prisma
-- **API Gateway:** Backend-for-Frontend (BFF)
-- **Observability:** Structured logging, tracing, metrics
-- **CI/CD:** GitHub Actions
-- **Infrastructure:** Docker Compose (Preview), cloud-ready
+Recommended setup:
 
----
+```bash
+corepack enable
+corepack prepare pnpm@10.14.0 --activate
+pnpm install --frozen-lockfile
+```
 
-## Target Service Topology (MVP)
+## Validation commands
 
-api-gateway
-auth-service
-order-service
-inventory-service
-payment-service
+### Static/core validation
 
+```bash
+pnpm run buyer:check
+```
 
-**Key principles:**
-- `api-gateway` is the **only public entry point**
-- `order-service` orchestrates business flows (Saga)
-- `auth`, `inventory`, and `payment` are isolated bounded contexts
-- No mixed frameworks (NestJS only)
-- No shared “base classes” anti-patterns
+This runs the preview validation baseline: package validation, environment check, lint, tests and build for the current buyer scope.
 
----
+### Local runtime validation
 
-## Current Focus (Execution Phase)
+```bash
+pnpm run buyer:runtime:up
+pnpm run buyer:smoke
+pnpm run buyer:runtime:down
+```
 
-- Finalizing the **critical order flow (happy path + compensation)**
-- Consolidating observability into a single shared package
-- Removing non-essential legacy or placeholder services
-- Hardening CI/CD to enforce fail-fast guarantees
-- Preparing the codebase for **external technical audit**
+The runtime command builds the deterministic beta image and starts the gateway, order-service, inventory-service, PostgreSQL and NATS baseline. The smoke script checks gateway health, readiness/liveness, order endpoint, inventory health and NATS health.
 
----
+### Full local validation wrapper
 
-## Estimated Effort & Context (for Reviewers)
+```bash
+pnpm run buyer:validate
+```
 
-This repository reflects **several months of cumulative work** by a senior engineer, including:
-- Architecture design
-- Infrastructure setup
-- CI/CD pipelines
-- Distributed flow orchestration
-- Observability foundations
-- Refactors triggered by mid-project scope changes
+This wrapper runs the static/core validation, starts the runtime baseline, runs smoke checks and shuts the runtime down.
 
-Comparable work typically requires:
-- **3–5 engineers**
-- **6–10 weeks**
-- Dedicated DevOps and QA support
+## Repository map
 
----
+| Path | Purpose |
+| --- | --- |
+| `apps/infrastructure/gateway` | API gateway / public entry point for the buyer baseline. |
+| `apps/services/order-service` | Order bounded context and current order API baseline. |
+| `apps/services/inventory-service` | Inventory bounded context and current inventory API baseline. |
+| `packages/domain/order` | Order domain package. |
+| `packages/domain/inventory` | Inventory domain package. |
+| `packages/shared-events` | Shared event contracts / event-driven vocabulary. |
+| `packages/shared-utils` | Shared utilities used by the preview baseline. |
+| `packages/observability` | Logging/tracing/metrics foundation for services. |
+| `docker-compose.beta.yml` | Canonical buyer-reviewable local runtime baseline. |
+| `Dockerfile.beta` | Deterministic image build for the buyer runtime baseline. |
+| `docs/buyer` | Due-diligence documentation for technical buyers. |
+| `VALIDATION_REPORT.md` | Validation status, command matrix and latest recorded evidence. |
 
-## Ownership & Roles
+## Documentation for buyers
 
-**Project Co-Owners:**
-- **Neil Muñoz Lago** — Lead Architect & Principal Developer
-- **Jesús Campos Sánchez** — Product Owner & Business Lead
+- `docs/buyer/README.md` — due-diligence index.
+- `docs/buyer/ARCHITECTURE.md` — architecture, bounded contexts and runtime view.
+- `docs/buyer/SERVICE_MATRIX.md` — honest service maturity matrix.
+- `docs/buyer/VALIDATION_GUIDE.md` — exact validation procedure.
+- `docs/buyer/RISK_REGISTER.md` — known debt, risks and follow-up actions.
 
-### Roles & Responsibilities
+## What is intentionally not claimed
 
-**Neil Muñoz Lago**
-- System architecture & technical leadership
-- Backend & infrastructure development
-- CI/CD, observability, and scalability strategy
-- Long-term technical vision and audit readiness
+A4CO is not currently represented as:
 
-**Jesús Campos Sánchez**
-- Product vision and functional direction
-- Business requirements and prioritization
-- Strategic alignment with market and future investment goals
+- a final production deployment;
+- a complete commerce SaaS;
+- a fully implemented payment/auth/product platform;
+- a fully security-certified product;
+- a repository with zero technical debt.
 
-This project has been developed collaboratively, with aligned technical and business ownership.
+The buyer-ready claim is narrower and stronger: the repository contains a real, inspectable, executable and auditable core preview with documented boundaries.
 
-> Intellectual property ownership, exploitation rights, and future licensing or investment structures will be formally defined between the co-owners prior to production release or external investment.
+## Commercial access note
 
----
-
-## Investor & Auditor Notes
-
-- This repository is intentionally **public during the preview phase**
-- Dependency upgrades and non-critical refactors are deferred
-- Architectural decisions are prioritized over cosmetic changes
-
-> Dependency updates will be applied after architectural audit and MVP freeze.
-
-The goal is **clarity, traceability, and confidence**, not superficial completeness.
-
----
-
-## Next Milestones
-
-- MVP Preview freeze
-- External technical audit
-- Final delivery
-- Investment / partnership readiness
-
----
-
-## Repository
-
-🔗 https://github.com/Neiland85/a4co-ddd-microservices
-
-This repository can be independently audited to estimate:
-- Technical complexity
-- Architectural quality
-- Approximate development effort
-- Long-term scalability potential
+For full repository access, deeper architecture discussion, integration evaluation, licensing, acquisition or partnership review, access should be controlled and documented. Full due diligence is preferably performed under NDA, especially before exposing internal roadmap, valuation logic, non-public context or buyer-specific integration material.
