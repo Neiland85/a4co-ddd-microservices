@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+cleanup() {
+  local exit_code=$?
+
+  echo
+  echo "== Cleanup =="
+  pnpm run buyer:runtime:down || true
+
+  exit "$exit_code"
+}
+
+trap cleanup EXIT
+
 echo "== A4CO buyer-ready validation =="
 echo
 
@@ -22,10 +34,6 @@ echo "== Runtime baseline =="
 pnpm run buyer:runtime:up
 pnpm run buyer:runtime:ps
 pnpm run buyer:smoke
-echo
-
-echo "== Cleanup =="
-pnpm run buyer:runtime:down
 echo
 
 echo "A4CO buyer-ready validation completed"
