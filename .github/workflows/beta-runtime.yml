@@ -46,3 +46,6 @@ jobs:
 
       - name: Build beta preview
         run: pnpm run build:preview
+
+      - name: Lint beta preview
+        run: pnpm run lint:preview
