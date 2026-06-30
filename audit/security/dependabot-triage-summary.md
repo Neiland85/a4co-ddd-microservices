@@ -185,3 +185,21 @@ medium	927
 1	rust	rsa
 1	npm	tar-fs
 ```
+
+## Executive conclusion
+
+The large alert count is concentrated across multiple historical lockfiles, frontend workspaces, duplicated service locations and non-buyer-baseline manifests.
+
+The buyer-ready baseline should not be blocked by the raw global alert count alone. The next remediation phase should prioritize manifests used by:
+
+- root `pnpm-lock.yaml`
+- `apps/infrastructure/gateway`
+- `apps/services/order-service`
+- `apps/services/inventory-service`
+- `packages/shared-events`
+- `packages/shared-utils`
+- `packages/observability`
+- `packages/domain/order`
+- `packages/domain/inventory`
+
+Non-core frontend, design-system, legacy and duplicated service manifests should be handled in separate cleanup or archival phases.
