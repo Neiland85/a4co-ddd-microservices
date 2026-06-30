@@ -32,14 +32,17 @@ The current validation baseline is:
 
 ## Current recorded results
 
-| Command | Result | Notes |
-| --- | --- | --- |
-| Repository inspection | Pass | README, package scripts, buyer docs and runtime baseline reviewed. |
-| `pnpm install --frozen-lockfile` | Not run in this report | To be run by CI or local reviewer. |
-| `pnpm run buyer:check` | Not run in this report | To be run by CI or local reviewer. |
-| `pnpm run buyer:runtime:up` | Not run in this report | Requires Docker runtime. |
-| `pnpm run buyer:smoke` | Not run in this report | Requires running beta runtime. |
-| `pnpm run buyer:runtime:down` | Not run in this report | Cleanup command. |
+| Command                          | Result               | Notes                                                                             |
+| -------------------------------- | -------------------- | --------------------------------------------------------------------------------- |
+| Repository inspection            | Pass                 | README, package scripts, buyer docs and runtime baseline reviewed.                |
+| `pnpm install --frozen-lockfile` | Not run in this pass | `pnpm add -Dw eslint@^9.0.0` updated dependency state and lockfile.               |
+| `pnpm run lint:preview`          | Pass with warnings   | 0 errors; warnings are known preview technical debt.                              |
+| `pnpm run check:fast`            | Pass                 | Node v20.20.0, pnpm 10.14.0, Docker 29.4.0, Compose v5.1.1.                       |
+| `pnpm run test:preview`          | Pass                 | Gateway, order-service and inventory-service preview tests passed.                |
+| `pnpm run build:preview`         | Pass                 | Shared packages, gateway, order-service and inventory-service built successfully. |
+| `pnpm run buyer:runtime:up`      | Not run in this pass | Docker daemon was unavailable earlier in the session.                             |
+| `pnpm run buyer:smoke`           | Not run in this pass | Requires running beta runtime.                                                    |
+| `pnpm run buyer:runtime:down`    | Not run in this pass | Cleanup command.                                                                  |
 
 ## Buyer-readiness statement
 
