@@ -1,37 +1,28 @@
-name: Buyer Ready Preview CI
+name: CI Manual Validation
 
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: buyer-ready-preview-${{ github.ref }}
+  group: ci-manual-validation-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '20.20.0'
+  NODE_VERSION: '20'
   PNPM_VERSION: '10.14.0'
 
 jobs:
   validate:
-    name: Validate buyer preview baseline
+    name: Manual validation
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Enable Corepack
-        run: corepack enable
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
