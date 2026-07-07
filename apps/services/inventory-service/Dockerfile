@@ -21,7 +21,7 @@ WORKDIR /usr/src/app
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY tsconfig.base.json nest-cli.json ./
-COPY apps/inventory-service/package.json ./apps/inventory-service/
+COPY apps/services/inventory-service/package.json ./apps/services/inventory-service/
 COPY packages ./packages
 
 # Install dependencies
@@ -33,11 +33,11 @@ FROM deps AS builder
 WORKDIR /usr/src/app
 
 # Copy source code
-COPY apps/inventory-service ./apps/inventory-service
+COPY apps/services/inventory-service ./apps/services/inventory-service
 COPY packages ./packages
 
 # Generate Prisma client (if schema exists)
-WORKDIR /usr/src/app/apps/inventory-service
+WORKDIR /usr/src/app/apps/services/inventory-service
 RUN if [ -f "prisma/schema.prisma" ]; then pnpm exec prisma generate; fi
 
 # Build the application
@@ -49,14 +49,14 @@ WORKDIR /usr/src/app
 
 # Copy node_modules from deps stage
 COPY --from=deps --chown=nestjs:nodejs /usr/src/app/node_modules ./node_modules
-COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/inventory-service/node_modules ./apps/inventory-service/node_modules
+COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/services/inventory-service/node_modules ./apps/services/inventory-service/node_modules
 
 # Copy built application
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/inventory-service/dist ./apps/inventory-service/dist
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/inventory-service/package.json ./apps/inventory-service/
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/services/inventory-service/dist ./apps/services/inventory-service/dist
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/services/inventory-service/package.json ./apps/services/inventory-service/
 
 # Copy Prisma schema and generated client (if exists)
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/inventory-service/prisma ./apps/inventory-service/prisma
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/services/inventory-service/prisma ./apps/services/inventory-service/prisma
 COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 # Set environment variables
@@ -74,7 +74,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:3002/health || exit 1
 
 # Working directory
-WORKDIR /usr/src/app/apps/inventory-service
+WORKDIR /usr/src/app/apps/services/inventory-service
 
 # Start the application
 CMD ["node", "dist/main.js"]

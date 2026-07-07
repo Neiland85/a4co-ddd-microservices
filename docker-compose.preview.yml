@@ -109,7 +109,7 @@ services:
   auth-service:
     build:
       context: .
-      dockerfile: apps/auth-service/Dockerfile
+      dockerfile: apps/services/auth-service/Dockerfile
       target: production
     container_name: a4co-preview-auth-service
     restart: unless-stopped
@@ -142,7 +142,7 @@ services:
   order-service:
     build:
       context: .
-      dockerfile: apps/order-service/Dockerfile
+      dockerfile: apps/services/order-service/Dockerfile
       target: production
     container_name: a4co-preview-order-service
     restart: unless-stopped
@@ -172,7 +172,7 @@ services:
   payment-service:
     build:
       context: .
-      dockerfile: apps/payment-service/Dockerfile
+      dockerfile: apps/services/payment-service/Dockerfile
       target: production
     container_name: a4co-preview-payment-service
     restart: unless-stopped
@@ -206,7 +206,7 @@ services:
   inventory-service:
     build:
       context: .
-      dockerfile: apps/inventory-service/Dockerfile
+      dockerfile: apps/services/inventory-service/Dockerfile
       target: production
     container_name: a4co-preview-inventory-service
     restart: unless-stopped
@@ -236,7 +236,7 @@ services:
   product-service:
     build:
       context: .
-      dockerfile: apps/product-service/Dockerfile
+      dockerfile: apps/services/product-service/Dockerfile
       target: production
     container_name: a4co-preview-product-service
     restart: unless-stopped
@@ -266,7 +266,7 @@ services:
   api-gateway:
     build:
       context: .
-      dockerfile: apps/gateway/Dockerfile
+      dockerfile: apps/infrastructure/gateway/Dockerfile
       target: production
     container_name: a4co-preview-api-gateway
     restart: unless-stopped
