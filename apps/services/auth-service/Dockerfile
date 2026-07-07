@@ -21,7 +21,7 @@ WORKDIR /usr/src/app
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY tsconfig.base.json nest-cli.json ./
-COPY apps/auth-service/package.json ./apps/auth-service/
+COPY apps/services/auth-service/package.json ./apps/services/auth-service/
 COPY packages ./packages
 
 # Install dependencies
@@ -33,11 +33,11 @@ FROM deps AS builder
 WORKDIR /usr/src/app
 
 # Copy source code
-COPY apps/auth-service ./apps/auth-service
+COPY apps/services/auth-service ./apps/services/auth-service
 COPY packages ./packages
 
 # Generate Prisma client (if schema exists)
-WORKDIR /usr/src/app/apps/auth-service
+WORKDIR /usr/src/app/apps/services/auth-service
 RUN if [ -f "prisma/schema.prisma" ]; then pnpm exec prisma generate; fi
 
 # Build the application
@@ -49,14 +49,14 @@ WORKDIR /usr/src/app
 
 # Copy node_modules from deps stage
 COPY --from=deps --chown=nestjs:nodejs /usr/src/app/node_modules ./node_modules
-COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/auth-service/node_modules ./apps/auth-service/node_modules
+COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/services/auth-service/node_modules ./apps/services/auth-service/node_modules
 
 # Copy built application
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/auth-service/dist ./apps/auth-service/dist
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/auth-service/package.json ./apps/auth-service/
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/services/auth-service/dist ./apps/services/auth-service/dist
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/services/auth-service/package.json ./apps/services/auth-service/
 
 # Copy Prisma schema and generated client (if exists)
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/auth-service/prisma ./apps/auth-service/prisma
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/services/auth-service/prisma ./apps/services/auth-service/prisma
 COPY --from=builder --chown=nestjs:nodejs /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 # Set environment variables
@@ -74,7 +74,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:4000/health || exit 1
 
 # Working directory
-WORKDIR /usr/src/app/apps/auth-service
+WORKDIR /usr/src/app/apps/services/auth-service
 
 # Start the application
 CMD ["node", "dist/main.js"]

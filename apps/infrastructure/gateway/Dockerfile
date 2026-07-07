@@ -21,7 +21,7 @@ WORKDIR /usr/src/app
 # Copy workspace configuration
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY tsconfig.base.json nest-cli.json ./
-COPY apps/gateway/package.json ./apps/gateway/
+COPY apps/infrastructure/gateway/package.json ./apps/infrastructure/gateway/
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.pnpm-store \
@@ -32,10 +32,10 @@ FROM deps AS builder
 WORKDIR /usr/src/app
 
 # Copy source code
-COPY apps/gateway ./apps/gateway
+COPY apps/infrastructure/gateway ./apps/infrastructure/gateway
 
 # Build the application
-WORKDIR /usr/src/app/apps/gateway
+WORKDIR /usr/src/app/apps/infrastructure/gateway
 RUN pnpm exec nest build --config nest-cli.json --path tsconfig.build.json --builder tsc
 
 # -------- PRODUCTION --------
@@ -44,11 +44,11 @@ WORKDIR /usr/src/app
 
 # Copy node_modules from deps stage
 COPY --from=deps --chown=nestjs:nodejs /usr/src/app/node_modules ./node_modules
-COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/gateway/node_modules ./apps/gateway/node_modules
+COPY --from=deps --chown=nestjs:nodejs /usr/src/app/apps/infrastructure/gateway/node_modules ./apps/infrastructure/gateway/node_modules
 
 # Copy built application
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/gateway/dist ./apps/gateway/dist
-COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/gateway/package.json ./apps/gateway/
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/infrastructure/gateway/dist ./apps/infrastructure/gateway/dist
+COPY --from=builder --chown=nestjs:nodejs /usr/src/app/apps/infrastructure/gateway/package.json ./apps/infrastructure/gateway/
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -65,7 +65,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:3000/api/v1/health || exit 1
 
 # Working directory
-WORKDIR /usr/src/app/apps/gateway
+WORKDIR /usr/src/app/apps/infrastructure/gateway
 
 # Start the application
 CMD ["node", "dist/main.js"]
