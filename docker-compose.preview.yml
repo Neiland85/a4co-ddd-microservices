@@ -47,7 +47,7 @@ services:
       - preview-postgres-data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${A4CO_PREVIEW_POSTGRES_PORT:-15432}:5432"
     networks:
       - preview-net
     healthcheck:
