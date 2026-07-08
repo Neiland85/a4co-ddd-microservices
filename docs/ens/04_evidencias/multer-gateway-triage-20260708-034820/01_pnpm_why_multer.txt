@@ -1,0 +1,20 @@
+Legend: production dependency, optional only, dev only
+
+@a4co/root@1.0.0 /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices (PRIVATE)
+
+dependencies:
+@nestjs/core 11.1.23
+└─┬ @nestjs/platform-express 11.1.23 peer
+  └── multer 2.1.1
+@nestjs/swagger 11.4.4
+└─┬ @nestjs/core 11.1.23 peer
+  └─┬ @nestjs/platform-express 11.1.23 peer
+    └── multer 2.1.1
+
+devDependencies:
+@nestjs/testing 11.1.23
+├─┬ @nestjs/core 11.1.23 peer
+│ └─┬ @nestjs/platform-express 11.1.23 peer
+│   └── multer 2.1.1
+└─┬ @nestjs/platform-express 11.1.23 peer
+  └── multer 2.1.1
