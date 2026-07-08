@@ -1,0 +1,4 @@
+
+> @a4co/observability@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/packages/observability
+> tsc
+
