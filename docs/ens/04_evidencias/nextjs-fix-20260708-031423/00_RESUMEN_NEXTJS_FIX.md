@@ -79,3 +79,19 @@ Resultado:
 - Alias `@dashboard/lib/*` restaurado.
 - Alias `@/lib/useMicroAnimations` restaurado.
 - Pendiente de merge solo tras build OK.
+
+## Validación final
+
+Resultado final:
+
+- `dashboard-client` build OK con Next.js 15.5.16.
+- `h-modern-dashboard` build OK con Next.js 15.5.16.
+- Los módulos `apps/dashboard-client/lib` fueron añadidos con `git add -f` porque estaban ignorados por `.gitignore`.
+- La rama queda lista para revisión/PR o merge controlado.
+
+Estado:
+
+- Fix Next.js aplicado.
+- Alias internos restaurados.
+- Build frontend validado.
+- Merge a `main`: pendiente de aprobación explícita.
