@@ -1,0 +1,2 @@
+/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/dashboard-client/package.json	dashboard-client	next=^15.5.10
+/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/packages/design-system/h-modern-dashboard/package.json	@a4co/v0-modern-dashboard	next=^15.5.10
