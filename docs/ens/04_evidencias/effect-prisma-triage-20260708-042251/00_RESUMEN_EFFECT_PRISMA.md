@@ -60,3 +60,23 @@ Nota:
 - No se actualiza a Prisma 7.
 - No se aplica override directo de `effect`.
 - La remediación se hace alineando dependencias Prisma 6.x.
+
+## Corrección CI posterior
+
+El PR falló en CI porque `pnpm install --frozen-lockfile` detectó desalineación entre `packages/design-system/package.json` y `pnpm-lock.yaml`.
+
+Causa:
+
+- `packages/design-system/package.json` mantenía `@prisma/client` en `7.4.0`.
+- `pnpm-lock.yaml` ya resolvía `@prisma/client` en `6.19.3`.
+
+Corrección:
+
+- Se alinea `packages/design-system/package.json` a Prisma 6.19.3.
+- Se mantiene el criterio de no migrar a Prisma 7.
+- Se valida instalación con `pnpm install --frozen-lockfile`.
+
+Resultado esperado:
+
+- Beta Runtime Quality Gate deja de fallar en instalación.
+- Snyk deja de ver manifiesto/lockfile inconsistente.

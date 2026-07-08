@@ -1,0 +1,70 @@
+
+> @a4co/root@1.0.0 build:preview /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices
+> pnpm --filter @a4co/shared-utils run build && pnpm --filter @a4co/shared-events run build && pnpm --filter @a4co/observability run build && pnpm --filter @a4co/domain-order run build && pnpm --filter @a4co/domain-inventory run build && pnpm --filter @a4co/gateway run build && pnpm --filter @a4co/order-service run build && pnpm --filter @a4co/inventory-service run build
+
+
+> @a4co/shared-utils@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/packages/shared-utils
+> tsc -p tsconfig.build.json
+
+
+> @a4co/shared-events@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/packages/shared-events
+> tsc -p tsconfig.json
+
+
+> @a4co/observability@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/packages/observability
+> tsc
+
+
+> @a4co/domain-order@0.1.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/packages/domain/order
+> tsc -p tsconfig.build.json
+
+
+> @a4co/domain-inventory@0.1.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/packages/domain/inventory
+> tsc -p tsconfig.build.json
+
+
+> @a4co/gateway@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/infrastructure/gateway
+> nest build -p tsconfig.build.json
+
+
+> @a4co/order-service@1.0.0 prebuild /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/order-service
+> pnpm --filter @a4co/shared-utils --filter @a4co/shared-events --filter @a4co/observability run build
+
+Scope: 3 of 25 workspace projects
+../../../packages/shared-utils build$ tsc -p tsconfig.build.json
+../../../packages/observability build$ tsc
+../../../packages/shared-utils build: Done
+../../../packages/observability build: Done
+../../../packages/shared-events build$ tsc -p tsconfig.json
+../../../packages/shared-events build: Done
+
+> @a4co/order-service@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/order-service
+> nest build
+
+
+> @a4co/inventory-service@1.0.0 prebuild /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/inventory-service
+> pnpm --filter @a4co/shared-utils --filter @a4co/shared-events --filter @a4co/observability run build && pnpm run prisma:generate
+
+Scope: 3 of 25 workspace projects
+../../../packages/shared-utils build$ tsc -p tsconfig.build.json
+../../../packages/observability build$ tsc
+../../../packages/shared-utils build: Done
+../../../packages/observability build: Done
+../../../packages/shared-events build$ tsc -p tsconfig.json
+../../../packages/shared-events build: Done
+
+> @a4co/inventory-service@1.0.0 prisma:generate /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/inventory-service
+> prisma generate --schema=prisma/schema.prisma
+
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to ./prisma/generated in 743ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+
+> @a4co/inventory-service@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/inventory-service
+> nest build && rm -rf dist/prisma && mkdir -p dist/prisma && cp -R prisma/generated dist/prisma/generated
+
