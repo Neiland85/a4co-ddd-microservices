@@ -1,0 +1,17 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    80  100    80    0     0  20528      0 --:--:-- --:--:-- --:--:-- 26666
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+x-trace-id: d6d98ab9-d44b-4666-bd58-fcf653483298
+x-span-id: 85240fbb-cdc4-4434-8b13-919809c5ce68
+Content-Type: application/json; charset=utf-8
+Content-Length: 80
+ETag: W/"50-M5rkoZghx3jwliGBTUJGmfakYN8"
+Date: Wed, 08 Jul 2026 02:40:13 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"status":"ok","service":"order-service","timestamp":"2026-07-08T02:40:13.631Z"}

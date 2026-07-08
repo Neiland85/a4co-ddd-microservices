@@ -1,0 +1,70 @@
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +41ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[ProxyService] [39m[32mProxy service initialized with targets:[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[ProxyService] [39m[32m  - auth: http://auth-service:4000[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[ProxyService] [39m[32m  - products: http://product-service:3003[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[ProxyService] [39m[32m  - orders: http://order-service:3000[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[ProxyService] [39m[32m  - inventory: http://inventory-service:3006[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[ProxyService] [39m[32m  - payments: http://payment-service:3001[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[ProxyService] [39m[32m  - sagas: http://order-service:3000[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProxyModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/v1/health}:[39m[38;5;3m +256ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/services, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/ready, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/live, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthProxyController {/api/v1/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/register, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/verify, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/password/reset, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/password/change, ALL} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/*path, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsProxyController {/api/v1/products}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/search, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/categories, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/categories/:categoryId, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/featured, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/popular, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/:id, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/:id/reviews, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/:id/stock, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/products/*path, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrdersProxyController {/api/v1/orders}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/orders, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/orders/*path, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mInventoryProxyController {/api/v1/inventory}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/inventory, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/inventory/*path, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsProxyController {/api/v1/payments}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/process, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/verify, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/refund, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/methods, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/:id, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/:id/status, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/:id/cancel, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/:id/confirm, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/*path, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSagasProxyController {/api/v1/sagas}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/transactions, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/compensate, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/status, ALL} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/:id, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/:id/steps, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/:id/rollback, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/:id/retry, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sagas/*path, ALL} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +12ms[39m
+[32m[Nest] 1  - [39m07/08/2026, 2:34:55 AM [32m    LOG[39m [38;5;3m[Gateway] [39m[32m🚀 Gateway running on http://localhost:3000[39m

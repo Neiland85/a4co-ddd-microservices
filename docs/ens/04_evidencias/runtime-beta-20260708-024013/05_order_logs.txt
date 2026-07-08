@@ -1,0 +1,160 @@
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:38:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "08392845-434a-401a-8b6b-ef7896aa1fc3"
+    spanId: "8959c0a4-7ede-470e-a33b-0ed8dcf4f598"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:38:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "08392845-434a-401a-8b6b-ef7896aa1fc3"
+    spanId: "8959c0a4-7ede-470e-a33b-0ed8dcf4f598"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:38:58 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "861692a9-d510-446b-b18c-0fdd31b3dc02"
+    spanId: "6356367c-5cc9-4e60-aef8-a46d5d930add"
+    method: "GET"
+    url: "/orders"
+    path: "/orders"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:38:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "861692a9-d510-446b-b18c-0fdd31b3dc02"
+    spanId: "6356367c-5cc9-4e60-aef8-a46d5d930add"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:38:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "861692a9-d510-446b-b18c-0fdd31b3dc02"
+    spanId: "6356367c-5cc9-4e60-aef8-a46d5d930add"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:39:18 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "89e3e55c-65cc-46b1-b945-aed77ad034ad"
+    spanId: "f475cfb6-71a2-47cc-9b6a-59cccdf71395"
+    method: "GET"
+    url: "/orders"
+    path: "/orders"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:39:18 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "89e3e55c-65cc-46b1-b945-aed77ad034ad"
+    spanId: "f475cfb6-71a2-47cc-9b6a-59cccdf71395"
+    statusCode: 200
+    responseTime: 1
+    method: "GET"
+    url: "/orders"
+[02:39:18 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "89e3e55c-65cc-46b1-b945-aed77ad034ad"
+    spanId: "f475cfb6-71a2-47cc-9b6a-59cccdf71395"
+    statusCode: 200
+    responseTime: 1
+    method: "GET"
+    url: "/orders"
+[02:39:38 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "7f5a8391-7b73-4306-bb0b-1eeb00f7c332"
+    spanId: "b6bdf986-6e97-4e77-8254-0bf34b67d8a1"
+    method: "GET"
+    url: "/orders"
+    path: "/orders"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:39:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "7f5a8391-7b73-4306-bb0b-1eeb00f7c332"
+    spanId: "b6bdf986-6e97-4e77-8254-0bf34b67d8a1"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:39:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "7f5a8391-7b73-4306-bb0b-1eeb00f7c332"
+    spanId: "b6bdf986-6e97-4e77-8254-0bf34b67d8a1"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:39:58 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "298dbecf-aef4-4777-8719-25a1df2d937f"
+    spanId: "2921ef04-b849-431e-ad06-5f7458db8fcf"
+    method: "GET"
+    url: "/orders"
+    path: "/orders"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:39:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "298dbecf-aef4-4777-8719-25a1df2d937f"
+    spanId: "2921ef04-b849-431e-ad06-5f7458db8fcf"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:39:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "298dbecf-aef4-4777-8719-25a1df2d937f"
+    spanId: "2921ef04-b849-431e-ad06-5f7458db8fcf"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:40:01 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "0f3e30fc-181c-40c0-8c4b-a4e99bfef6a9"
+    spanId: "c8eb8f93-52da-4f90-96a7-23b00adc286a"
+    method: "GET"
+    url: "/orders"
+    path: "/orders"
+    ip: "::ffff:172.25.0.1"
+    userAgent: "curl/8.7.1"
+[02:40:01 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "0f3e30fc-181c-40c0-8c4b-a4e99bfef6a9"
+    spanId: "c8eb8f93-52da-4f90-96a7-23b00adc286a"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"
+[02:40:01 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "0f3e30fc-181c-40c0-8c4b-a4e99bfef6a9"
+    spanId: "c8eb8f93-52da-4f90-96a7-23b00adc286a"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/orders"

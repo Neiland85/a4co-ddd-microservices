@@ -1,0 +1,160 @@
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:38:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "0c214c5c-2701-4d75-88ff-ee0d0cc30289"
+    spanId: "d1b20e43-0732-41be-899f-e33dce078601"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:38:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "0c214c5c-2701-4d75-88ff-ee0d0cc30289"
+    spanId: "d1b20e43-0732-41be-899f-e33dce078601"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:38:58 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "14a7df6f-9bc2-4e7d-958f-e52835a4de48"
+    spanId: "80edf13e-2a42-4022-8c2b-fafa58ed099e"
+    method: "GET"
+    url: "/api/inventory/health"
+    path: "/api/inventory/health"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:38:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "14a7df6f-9bc2-4e7d-958f-e52835a4de48"
+    spanId: "80edf13e-2a42-4022-8c2b-fafa58ed099e"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:38:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "14a7df6f-9bc2-4e7d-958f-e52835a4de48"
+    spanId: "80edf13e-2a42-4022-8c2b-fafa58ed099e"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:39:18 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "4313ad1d-e372-4c76-8812-0896cee7e71f"
+    spanId: "1ab2fdd5-5667-42ca-8344-4ddaa2248414"
+    method: "GET"
+    url: "/api/inventory/health"
+    path: "/api/inventory/health"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:39:18 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "4313ad1d-e372-4c76-8812-0896cee7e71f"
+    spanId: "1ab2fdd5-5667-42ca-8344-4ddaa2248414"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:39:18 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "4313ad1d-e372-4c76-8812-0896cee7e71f"
+    spanId: "1ab2fdd5-5667-42ca-8344-4ddaa2248414"
+    statusCode: 200
+    responseTime: 1
+    method: "GET"
+    url: "/api/inventory/health"
+[02:39:38 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "75cd7ae5-64a9-4824-903f-3b16c124de35"
+    spanId: "bbb9a6de-c641-4ce4-b1c8-d0c77b8bbbf5"
+    method: "GET"
+    url: "/api/inventory/health"
+    path: "/api/inventory/health"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:39:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "75cd7ae5-64a9-4824-903f-3b16c124de35"
+    spanId: "bbb9a6de-c641-4ce4-b1c8-d0c77b8bbbf5"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:39:38 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "75cd7ae5-64a9-4824-903f-3b16c124de35"
+    spanId: "bbb9a6de-c641-4ce4-b1c8-d0c77b8bbbf5"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:39:58 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "48c06a52-22d2-4d67-a418-0dd89c4d8f81"
+    spanId: "a63ccd82-de00-4b17-83fa-b7ee347395f3"
+    method: "GET"
+    url: "/api/inventory/health"
+    path: "/api/inventory/health"
+    ip: "::1"
+    userAgent: "curl/8.19.0"
+[02:39:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "48c06a52-22d2-4d67-a418-0dd89c4d8f81"
+    spanId: "a63ccd82-de00-4b17-83fa-b7ee347395f3"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:39:58 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "48c06a52-22d2-4d67-a418-0dd89c4d8f81"
+    spanId: "a63ccd82-de00-4b17-83fa-b7ee347395f3"
+    statusCode: 200
+    responseTime: 0
+    method: "GET"
+    url: "/api/inventory/health"
+[02:40:01 UTC] [32mINFO[39m: [36mREQUEST_START[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "72c1ca81-90f1-42ad-81b2-0443294ac644"
+    spanId: "9f6edbb4-6236-4646-a2f0-b6fc92b1366b"
+    method: "GET"
+    url: "/api/inventory/health"
+    path: "/api/inventory/health"
+    ip: "::ffff:172.25.0.1"
+    userAgent: "curl/8.7.1"
+[02:40:01 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "72c1ca81-90f1-42ad-81b2-0443294ac644"
+    spanId: "9f6edbb4-6236-4646-a2f0-b6fc92b1366b"
+    statusCode: 200
+    responseTime: 1
+    method: "GET"
+    url: "/api/inventory/health"
+[02:40:01 UTC] [32mINFO[39m: [36mREQUEST_END[39m
+    service: "default-service"
+    environment: "preview"
+    traceId: "72c1ca81-90f1-42ad-81b2-0443294ac644"
+    spanId: "9f6edbb4-6236-4646-a2f0-b6fc92b1366b"
+    statusCode: 200
+    responseTime: 1
+    method: "GET"
+    url: "/api/inventory/health"
