@@ -19,3 +19,4 @@ Matriz preliminar de alineamiento. No equivale a certificación ENS.
 | ENS-013 | Calidad técnica | Warnings lint | Media | Lint sin errores, con warnings | Deuda TS | Backlog reducción warnings | Media | Pendiente |
 | ENS-014 | Operación | Runbook Docker | Alta | Limpieza manual documentada en logs | Falta procedimiento formal | Crear `PROCEDIMIENTO_OPERACION_SEGURA.md` completo | Alta | Pendiente |
 | ENS-015 | Comercial | Lenguaje cliente | Alta | Docs base creados | Falta versión vendible | Completar `LENGUAJE_COMERCIAL_SEGURO.md` | Alta | Pendiente |
+| ENS-016 | DevSecOps | Gestión de vulnerabilidades de dependencias | Alta | GitHub Dependabot reporta vulnerabilidades | Falta triage formal | Crear plan de remediación critical/high y auditoría reproducible | Alta | Pendiente |

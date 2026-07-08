@@ -64,3 +64,18 @@ Este análisis es preliminar. No sustituye a un análisis formal ENS ni a audito
 - Impacto: alto.
 - Evidencia actual: `NO_CERTIFICACION_ENS.md` creado.
 - Tratamiento: mantener lenguaje seguro: ENS-ready / alineable, no certificado.
+
+## R-008 — Vulnerabilidades en dependencias / supply chain
+
+- Activos afectados: monorepo, dependencias npm/pnpm, servicios Node.js, imagen beta.
+- Impacto: ejecución de código vulnerable, explotación de dependencias, exposición de servicios o degradación de confianza técnica.
+- Probabilidad: alta.
+- Impacto: alto/crítico.
+- Evidencia actual: GitHub Dependabot reporta vulnerabilidades en la rama por defecto.
+- Tratamiento:
+  - ejecutar auditoría de dependencias;
+  - clasificar por runtime real vs dev/test;
+  - priorizar critical/high explotables;
+  - evitar upgrades masivos sin tests;
+  - generar plan de remediación por paquetes;
+  - documentar excepciones temporales.
