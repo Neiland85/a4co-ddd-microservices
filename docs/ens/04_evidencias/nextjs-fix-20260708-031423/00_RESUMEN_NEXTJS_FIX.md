@@ -65,3 +65,17 @@ Resultado esperado:
 - `dashboard-client` build OK.
 - `h-modern-dashboard` build OK.
 - Fix de Next.js validado funcionalmente en rama.
+
+## Resolución adicional
+
+Se detectó que `apps/dashboard-client/lib` estaba ignorado por `.gitignore`, por lo que los módulos restaurados no habían quedado incluidos en el commit anterior.
+
+También se añadió:
+
+- `lib/useMicroAnimations.ts`
+
+Resultado:
+
+- Alias `@dashboard/lib/*` restaurado.
+- Alias `@/lib/useMicroAnimations` restaurado.
+- Pendiente de merge solo tras build OK.
