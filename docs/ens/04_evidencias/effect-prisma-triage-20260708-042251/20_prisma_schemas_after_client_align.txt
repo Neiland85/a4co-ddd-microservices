@@ -1,0 +1,11 @@
+apps/loyalty-service/prisma/schema.prisma
+apps/geo-service/prisma/schema.prisma
+apps/infrastructure/notification-service/prisma/schema.prisma
+apps/transportista-service/prisma/schema.prisma
+apps/services/product-service/prisma/schema.prisma
+apps/services/payment-service/prisma/schema.prisma
+apps/services/legal-evidence-service/prisma/schema.prisma
+apps/services/order-service/prisma/schema.prisma
+apps/services/user-service/prisma/schema.prisma
+apps/services/auth-service/prisma/schema.prisma
+apps/services/inventory-service/prisma/schema.prisma

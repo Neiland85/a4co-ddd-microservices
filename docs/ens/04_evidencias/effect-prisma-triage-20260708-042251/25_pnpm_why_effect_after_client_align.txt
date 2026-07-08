@@ -1,0 +1,7 @@
+Legend: production dependency, optional only, dev only
+
+@a4co/root@1.0.0 /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices (PRIVATE)
+
+devDependencies:
+@prisma/config 6.19.3
+└── effect 3.21.0

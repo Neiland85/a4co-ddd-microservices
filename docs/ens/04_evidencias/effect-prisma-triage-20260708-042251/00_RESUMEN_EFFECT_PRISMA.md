@@ -35,3 +35,28 @@ Criterio:
 - No se aplica override directo de `effect`.
 - No se actualiza a Prisma 7.
 - Se prioriza alinear paquetes Prisma 6.x a `6.19.3`.
+
+## Resultado final
+
+Se alinea Prisma dentro de la rama mayor 6.x:
+
+- `prisma`: `6.19.3`
+- `@prisma/client`: `6.19.3`
+- `@prisma/config`: `6.19.3`
+- `effect`: `3.21.0`
+
+Validación realizada:
+
+- `notification-service` build OK.
+- `inventory-service` build OK.
+- `h-modern-dashboard` build OK.
+- Prisma Client generado correctamente en `v6.19.3`.
+- `pnpm audit --prod` baja a 8 vulnerabilidades.
+- Severidad final prod: 8 moderate, 0 high.
+- La alerta high de `effect` desaparece.
+
+Nota:
+
+- No se actualiza a Prisma 7.
+- No se aplica override directo de `effect`.
+- La remediación se hace alineando dependencias Prisma 6.x.
