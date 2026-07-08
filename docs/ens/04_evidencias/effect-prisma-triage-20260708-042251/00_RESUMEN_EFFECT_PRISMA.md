@@ -107,3 +107,27 @@ Validación:
 - `notification-service` build validado.
 - `h-modern-dashboard` build validado.
 - `pnpm audit --prod` mantiene 0 high si `effect` no aparece.
+
+## Corrección Snyk posterior
+
+Snyk PR Check falló en `apps/services/user-service/package.json`.
+
+Hallazgo:
+
+- `user-service` seguía introduciendo `@prisma/client@6.19.0`.
+- Snyk detectó issues nuevas por `effect` y `defu`.
+
+Corrección:
+
+- Se alinea `apps/services/user-service` a Prisma 6.19.3.
+- Se mantiene el criterio de no migrar a Prisma 7.
+- No se aplica override directo de `effect`.
+- No se aplica override directo de `defu`.
+
+Validación:
+
+- `pnpm install --frozen-lockfile` OK.
+- Revisión de manifests activos sin Prisma 6.18.0, 6.19.0 ni 7.4.0 pendiente de quedar limpia.
+- `pnpm why effect` documentado.
+- `pnpm why defu` documentado.
+- `pnpm audit --prod` documentado.
