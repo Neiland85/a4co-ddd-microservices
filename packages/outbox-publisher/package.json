@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "nats": "^2.29.3",
-    "@prisma/client": "^7.4.0"
+    "@prisma/client": "6.19.3"
   },
   "license": "UNLICENSED"
 }

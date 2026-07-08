@@ -80,3 +80,30 @@ Resultado esperado:
 
 - Beta Runtime Quality Gate deja de fallar en instalación.
 - Snyk deja de ver manifiesto/lockfile inconsistente.
+
+## Corrección CI posterior
+
+El PR falló en CI porque quedaban manifests activos desalineados con el lockfile.
+
+Hallazgo:
+
+- Algunos `package.json` seguían declarando Prisma o @prisma/client en versiones antiguas o 7.x.
+- El lockfile ya resolvía Prisma 6.19.3.
+- `pnpm install --frozen-lockfile` y Snyk pueden fallar cuando manifest y lockfile no coinciden.
+
+Corrección:
+
+- Se alinean todos los manifests activos bajo `apps` y `packages`.
+- Se fijan paquetes Prisma relacionados a `6.19.3`:
+  - `prisma`
+  - `@prisma/client`
+  - `@prisma/adapter-pg`
+- Se mantiene el criterio de no migrar a Prisma 7.
+
+Validación:
+
+- `pnpm install --frozen-lockfile` OK.
+- `build:preview` validado.
+- `notification-service` build validado.
+- `h-modern-dashboard` build validado.
+- `pnpm audit --prod` mantiene 0 high si `effect` no aparece.
