@@ -38,3 +38,25 @@ Nota:
 - No se aplica override directo de `multer`.
 - No se modifica la arquitectura del gateway.
 - No se habilitan endpoints upload.
+
+## Corrección de criterio
+
+La actualización de `@nestjs/platform-express` a `11.1.27` no elimina la alerta, porque esa versión sigue declarando internamente `multer 2.1.1`.
+
+Se aplica override controlado mediante `pnpm.overrides`:
+
+- `multer`: `2.2.0`
+
+Justificación:
+
+- No se detectó uso real de endpoints multipart/upload en gateway.
+- El riesgo es transitivo por framework.
+- La vía upstream Nest todavía no arrastra `multer 2.2.0`.
+- El override queda documentado y validado con tests/build de gateway.
+
+Validación requerida:
+
+- `pnpm why multer` debe mostrar `multer 2.2.0`.
+- `pnpm audit --prod` no debe mostrar alerta de `multer`.
+- Gateway tests OK.
+- Gateway build OK.
