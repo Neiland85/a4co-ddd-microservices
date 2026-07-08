@@ -1,0 +1,54 @@
+apps/dashboard-client/e2e/helpers/auth.helper.ts:66: * Set authentication token in browser storage
+apps/dashboard-client/e2e/helpers/auth.helper.ts:78: * Get authentication token from browser storage
+packages/design-system/d-user-registration/components/a4co-signup-form.d.ts:1:import { type A4coSignupFormData } from '@/lib/validation';
+packages/design-system/d-user-registration/components/a4co-signup-form.d.ts:3:    onSuccess: (data: A4coSignupFormData) => void;
+packages/observability/examples/frontend-example.tsx:127:    const [formData, setFormData] = useState({
+packages/observability/examples/frontend-example.tsx:155:      setFormData(prev => ({ ...prev, [field]: value }));
+packages/observability/src/middleware.ts:2:import type { AxiosRequestConfig, AxiosResponse } from 'axios';
+packages/observability/src/middleware.ts:3:import axios from 'axios';
+packages/observability/src/middleware.ts:85:  private axiosInstance: any;
+packages/observability/src/middleware.ts:88:    this.axiosInstance = axios.create(baseConfig);
+packages/observability/src/middleware.ts:91:    this.axiosInstance.interceptors.request.use(
+packages/observability/src/middleware.ts:112:    this.axiosInstance.interceptors.response.use(
+packages/observability/src/middleware.ts:137:    return this.axiosInstance.get(url, config);
+packages/observability/src/middleware.ts:145:    return this.axiosInstance.post(url, data, config);
+packages/observability/src/middleware.ts:153:    return this.axiosInstance.put(url, data, config);
+packages/observability/src/middleware.ts:157:    return this.axiosInstance.delete(url, config);
+packages/observability/src/middleware.ts:165:    return this.axiosInstance.patch(url, data, config);
+packages/observability/examples/frontend-app.tsx:193:    const formData = new FormData(event.currentTarget);
+packages/observability/src/utils/index.ts:2:import type { AxiosInstance, AxiosRequestConfig } from 'axios';
+packages/observability/src/utils/index.ts:3:import axios from 'axios';
+packages/observability/src/utils/index.ts:63:  const client = axios.create(config);
+packages/observability/src/utils/async-context.ts:71:  // Exit the storage by entering with an empty context
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:39:          r.storageUrl,
+apps/services/legal-evidence-service/src/presentation/dtos/report-response.dto.ts:9:  storageUrl!: string | null;
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:16:  private _storageUrl: string | null;
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:24:    storageUrl: string | null = null,
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:34:    this._storageUrl = storageUrl;
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:41:  get storageUrl(): string | null {
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:42:    return this._storageUrl;
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:45:  markAsGenerated(storageUrl: string): void {
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:46:    if (!storageUrl || storageUrl.trim().length === 0) {
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:47:      throw new Error('storageUrl cannot be empty');
+apps/services/legal-evidence-service/src/domain/entities/generated-report.entity.ts:50:    this._storageUrl = storageUrl;
+apps/services/legal-evidence-service/src/presentation/controllers/cases.controller.ts:54:        storageUrl: report.storageUrl,
+apps/services/legal-evidence-service/src/domain/entities/evidence-file.entity.ts:19:    public readonly storageUrl: string,
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:16:        storageUrl: report.storageUrl,
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:31:      record.storageUrl,
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:46:          r.storageUrl,
+apps/services/legal-evidence-service/src/application/services/evidence.service.ts:13:  storageUrl: string;
+apps/services/legal-evidence-service/src/application/services/evidence.service.ts:39:      command.storageUrl,
+apps/services/legal-evidence-service/src/domain/events/report-generated.event.ts:9:  storageUrl: string;
+apps/services/legal-evidence-service/src/domain/events/report-generated.event.ts:21:    public readonly storageUrl: string,
+apps/services/legal-evidence-service/src/domain/events/report-generated.event.ts:33:      storageUrl: this.storageUrl,
+apps/services/legal-evidence-service/src/application/use-cases/__tests__/generate-report.use-case.spec.ts:106:      expect(result.report.storageUrl).toMatch(/^data:application\/pdf;base64,/);
+apps/services/legal-evidence-service/src/domain/services/forensic-manifest.service.ts:24:  storageUrl: string;
+apps/services/legal-evidence-service/src/domain/services/forensic-manifest.service.ts:109:          storageUrl: f.storageUrl,
+apps/services/legal-evidence-service/src/application/use-cases/generate-report.use-case.ts:57:    const storageUrl = `data:application/pdf;base64,${pdfBuffer.toString('base64')}`;
+apps/services/legal-evidence-service/src/application/use-cases/generate-report.use-case.ts:69:    report.markAsGenerated(storageUrl);
+apps/services/legal-evidence-service/src/application/use-cases/generate-report.use-case.ts:101:      storageUrl,
+apps/services/legal-evidence-service/src/__tests__/custody-append-only.spec.ts:74:      return new EvidenceFile(id, 'evid-1', 'contract.pdf', 'application/pdf', 1024, 'http://storage/file.pdf');
+apps/services/legal-evidence-service/src/__tests__/forensic-export.spec.ts:95:        'https://storage.example.com/files/file-001',
+apps/services/legal-evidence-service/src/__tests__/forensic-export.spec.ts:111:      expect(fileEntry.storageUrl).toBe('https://storage.example.com/files/file-001');
+apps/services/legal-evidence-service/src/__tests__/forensic-export.spec.ts:124:        'https://storage.example.com/files/file-002',
+apps/services/legal-evidence-service/src/__tests__/forensic-export.spec.ts:238:            `https://storage.example.com/files/file-${i}`,
