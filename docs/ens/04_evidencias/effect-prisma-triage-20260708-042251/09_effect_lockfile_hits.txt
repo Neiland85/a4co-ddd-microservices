@@ -1,0 +1,189 @@
+### ./pnpm-lock.yaml
+5668:  '@radix-ui/react-use-layout-effect@1.1.0':
+5677:  '@radix-ui/react-use-layout-effect@1.1.1':
+7952:  effect@3.18.4:
+7955:  effect@3.21.0:
+15748:      effect: 3.18.4
+15757:      effect: 3.18.4
+15766:      effect: 3.21.0
+17104:  '@radix-ui/react-use-layout-effect@1.1.0(@types/react@19.2.2)(react@19.2.0)':
+17110:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+19621:  effect@3.18.4:
+19626:  effect@3.21.0:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/pnpm-lock.yaml
+5644:  '@radix-ui/react-use-layout-effect@1.1.0':
+5653:  '@radix-ui/react-use-layout-effect@1.1.1':
+7925:  effect@3.18.4:
+7928:  effect@3.21.0:
+15656:      effect: 3.18.4
+15665:      effect: 3.18.4
+15674:      effect: 3.21.0
+17012:  '@radix-ui/react-use-layout-effect@1.1.0(@types/react@19.2.2)(react@19.2.0)':
+17018:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+19527:  effect@3.18.4:
+19532:  effect@3.21.0:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/packages/copilot-dashboard/package-lock.json
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/packages/shared-utils/package-lock.json
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/packages/design-system/f-modern-backoffice/package-lock.json
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/frontend/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/dashboard-client/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/infrastructure/notification-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/infrastructure/gateway/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/infrastructure/gateway/package-lock.json
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/services/payment-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/services/order-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/services/user-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/services/auth-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./dist/indra/a4co-ddd-microservices-indra-preview-clean/apps/services/inventory-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./package-lock.json
+3946:      "resolved": "https://registry.npmjs.org/effect/-/effect-3.18.4.tgz",
+
+### ./packages/copilot-dashboard/package-lock.json
+
+### ./packages/shared-utils/package-lock.json
+
+### ./packages/design-system/f-modern-backoffice/package-lock.json
+
+### ./apps/frontend/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/dashboard-client/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/infrastructure/notification-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/infrastructure/gateway/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/infrastructure/gateway/package-lock.json
+
+### ./apps/services/payment-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/services/order-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/services/user-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/services/auth-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+
+### ./apps/services/inventory-service/pnpm-lock.yaml
+5719:  '@radix-ui/react-use-layout-effect@1.1.1':
+7929:  effect@3.18.4:
+17254:      effect: 3.18.4
+17263:      effect: 3.18.4
+17942:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+20552:  effect@3.18.4:
+

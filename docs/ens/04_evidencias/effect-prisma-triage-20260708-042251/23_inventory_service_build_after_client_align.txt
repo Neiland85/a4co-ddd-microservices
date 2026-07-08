@@ -1,0 +1,27 @@
+
+> @a4co/inventory-service@1.0.0 prebuild /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/inventory-service
+> pnpm --filter @a4co/shared-utils --filter @a4co/shared-events --filter @a4co/observability run build && pnpm run prisma:generate
+
+Scope: 3 of 25 workspace projects
+../../../packages/shared-utils build$ tsc -p tsconfig.build.json
+../../../packages/observability build$ tsc
+../../../packages/shared-utils build: Done
+../../../packages/observability build: Done
+../../../packages/shared-events build$ tsc -p tsconfig.json
+../../../packages/shared-events build: Done
+
+> @a4co/inventory-service@1.0.0 prisma:generate /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/inventory-service
+> prisma generate --schema=prisma/schema.prisma
+
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to ./prisma/generated in 230ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+
+
+> @a4co/inventory-service@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/inventory-service
+> nest build && rm -rf dist/prisma && mkdir -p dist/prisma && cp -R prisma/generated dist/prisma/generated
+

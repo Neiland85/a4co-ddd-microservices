@@ -1,0 +1,8 @@
+
+> @a4co/notification-service@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/infrastructure/notification-service
+> tsc
+
+src/services/notification.service.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'PrismaClient'.
+/Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/infrastructure/notification-service:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @a4co/notification-service@1.0.0 build: `tsc`
+Exit status 2

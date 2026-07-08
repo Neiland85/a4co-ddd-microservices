@@ -1,0 +1,477 @@
+apps/services/inventory-service/src/inventory.module.ts:4:import { PrismaClient } from '../prisma/generated';
+apps/services/inventory-service/src/inventory.module.ts:5:import { PrismaPg } from '@prisma/adapter-pg';
+apps/services/inventory-service/src/inventory.module.ts:9:import { PrismaProductRepository } from './infrastructure/repositories/prisma-product.repository';
+apps/services/inventory-service/src/inventory.module.ts:43:        return new PrismaClient({ adapter });
+apps/services/inventory-service/src/inventory.module.ts:49:      useFactory: (prisma: PrismaClient) => new PrismaProductRepository(prisma),
+apps/services/inventory-service/src/inventory.module.ts:54:      useFactory: (prisma: PrismaClient) => new PrismaStockReservationRepository(prisma),
+apps/services/inventory-service/prisma/schema.prisma:2:  provider = "prisma-client-js"
+apps/services/inventory-service/prisma/generated/index.d.ts:38: * const prisma = new PrismaClient()
+apps/services/inventory-service/prisma/generated/index.d.ts:40: * const products = await prisma.product.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:44: * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+apps/services/inventory-service/prisma/generated/index.d.ts:46:export class PrismaClient<
+apps/services/inventory-service/prisma/generated/index.d.ts:47:  ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
+apps/services/inventory-service/prisma/generated/index.d.ts:59:   * const prisma = new PrismaClient()
+apps/services/inventory-service/prisma/generated/index.d.ts:61:   * const products = await prisma.product.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:65:   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+apps/services/inventory-service/prisma/generated/index.d.ts:68:  constructor(optionsArg ?: Prisma.Subset<ClientOptions, Prisma.PrismaClientOptions>);
+apps/services/inventory-service/prisma/generated/index.d.ts:69:  $on<V extends U>(eventType: V, callback: (event: V extends 'query' ? Prisma.QueryEvent : Prisma.LogEvent) => void): PrismaClient;
+apps/services/inventory-service/prisma/generated/index.d.ts:85:   * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
+apps/services/inventory-service/prisma/generated/index.d.ts:88:   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+apps/services/inventory-service/prisma/generated/index.d.ts:97:   * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
+apps/services/inventory-service/prisma/generated/index.d.ts:100:   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+apps/services/inventory-service/prisma/generated/index.d.ts:108:   * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
+apps/services/inventory-service/prisma/generated/index.d.ts:111:   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+apps/services/inventory-service/prisma/generated/index.d.ts:120:   * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
+apps/services/inventory-service/prisma/generated/index.d.ts:123:   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+apps/services/inventory-service/prisma/generated/index.d.ts:132:   * const [george, bob, alice] = await prisma.$transaction([
+apps/services/inventory-service/prisma/generated/index.d.ts:133:   *   prisma.user.create({ data: { name: 'George' } }),
+apps/services/inventory-service/prisma/generated/index.d.ts:134:   *   prisma.user.create({ data: { name: 'Bob' } }),
+apps/services/inventory-service/prisma/generated/index.d.ts:135:   *   prisma.user.create({ data: { name: 'Alice' } }),
+apps/services/inventory-service/prisma/generated/index.d.ts:139:   * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
+apps/services/inventory-service/prisma/generated/index.d.ts:143:  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
+apps/services/inventory-service/prisma/generated/index.d.ts:151:   * `prisma.product`: Exposes CRUD operations for the **Product** model.
+apps/services/inventory-service/prisma/generated/index.d.ts:155:    * const products = await prisma.product.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:161:   * `prisma.stockReservation`: Exposes CRUD operations for the **StockReservation** model.
+apps/services/inventory-service/prisma/generated/index.d.ts:165:    * const stockReservations = await prisma.stockReservation.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:171:   * `prisma.stockMovement`: Exposes CRUD operations for the **StockMovement** model.
+apps/services/inventory-service/prisma/generated/index.d.ts:175:    * const stockMovements = await prisma.stockMovement.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:194:  export import PrismaClientKnownRequestError = runtime.PrismaClientKnownRequestError
+apps/services/inventory-service/prisma/generated/index.d.ts:195:  export import PrismaClientUnknownRequestError = runtime.PrismaClientUnknownRequestError
+apps/services/inventory-service/prisma/generated/index.d.ts:196:  export import PrismaClientRustPanicError = runtime.PrismaClientRustPanicError
+apps/services/inventory-service/prisma/generated/index.d.ts:197:  export import PrismaClientInitializationError = runtime.PrismaClientInitializationError
+apps/services/inventory-service/prisma/generated/index.d.ts:198:  export import PrismaClientValidationError = runtime.PrismaClientValidationError
+apps/services/inventory-service/prisma/generated/index.d.ts:244:  export const prismaVersion: PrismaVersion
+apps/services/inventory-service/prisma/generated/index.d.ts:262:   * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+apps/services/inventory-service/prisma/generated/index.d.ts:270:    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+apps/services/inventory-service/prisma/generated/index.d.ts:282:    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+apps/services/inventory-service/prisma/generated/index.d.ts:294:    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+apps/services/inventory-service/prisma/generated/index.d.ts:305:   * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+apps/services/inventory-service/prisma/generated/index.d.ts:312:   * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+apps/services/inventory-service/prisma/generated/index.d.ts:319:   * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+apps/services/inventory-service/prisma/generated/index.d.ts:892:  export type DefaultPrismaClient = PrismaClient
+apps/services/inventory-service/prisma/generated/index.d.ts:894:  export interface PrismaClientOptions {
+apps/services/inventory-service/prisma/generated/index.d.ts:896:     * Overwrites the datasource url from your schema.prisma file
+apps/services/inventory-service/prisma/generated/index.d.ts:900:     * Overwrites the datasource url from your schema.prisma file
+apps/services/inventory-service/prisma/generated/index.d.ts:929:     * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
+apps/services/inventory-service/prisma/generated/index.d.ts:943:     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`
+apps/services/inventory-service/prisma/generated/index.d.ts:951:     * const prisma = new PrismaClient({
+apps/services/inventory-service/prisma/generated/index.d.ts:1028:   * `PrismaClient` proxy available in interactive transactions.
+apps/services/inventory-service/prisma/generated/index.d.ts:1030:  export type TransactionClient = Omit<Prisma.DefaultPrismaClient, runtime.ITXClientDenyList>
+apps/services/inventory-service/prisma/generated/index.d.ts:1213:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1219:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1225:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1231:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1237:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1243:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1249:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1255:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1261:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1447:     * const product = await prisma.product.findUnique({
+apps/services/inventory-service/prisma/generated/index.d.ts:1461:     * const product = await prisma.product.findUniqueOrThrow({
+apps/services/inventory-service/prisma/generated/index.d.ts:1476:     * const product = await prisma.product.findFirst({
+apps/services/inventory-service/prisma/generated/index.d.ts:1492:     * const product = await prisma.product.findFirstOrThrow({
+apps/services/inventory-service/prisma/generated/index.d.ts:1507:     * const products = await prisma.product.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:1510:     * const products = await prisma.product.findMany({ take: 10 })
+apps/services/inventory-service/prisma/generated/index.d.ts:1513:     * const productWithIdOnly = await prisma.product.findMany({ select: { id: true } })
+apps/services/inventory-service/prisma/generated/index.d.ts:1523:     * const Product = await prisma.product.create({
+apps/services/inventory-service/prisma/generated/index.d.ts:1537:     * const product = await prisma.product.createMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:1551:     * const product = await prisma.product.createManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:1558:     * const productWithIdOnly = await prisma.product.createManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:1575:     * const Product = await prisma.product.delete({
+apps/services/inventory-service/prisma/generated/index.d.ts:1589:     * const product = await prisma.product.update({
+apps/services/inventory-service/prisma/generated/index.d.ts:1606:     * const { count } = await prisma.product.deleteMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:1622:     * const product = await prisma.product.updateMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:1639:     * const product = await prisma.product.updateManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:1649:     * const productWithIdOnly = await prisma.product.updateManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:1669:     * const product = await prisma.product.upsert({
+apps/services/inventory-service/prisma/generated/index.d.ts:1691:     * const count = await prisma.product.count({
+apps/services/inventory-service/prisma/generated/index.d.ts:1714:     * // Where email contains prisma.io
+apps/services/inventory-service/prisma/generated/index.d.ts:1716:     * const aggregations = await prisma.user.aggregate({
+apps/services/inventory-service/prisma/generated/index.d.ts:1722:     *       contains: "prisma.io",
+apps/services/inventory-service/prisma/generated/index.d.ts:1740:     * const result = await prisma.user.groupBy({
+apps/services/inventory-service/prisma/generated/index.d.ts:1819:   * https://github.com/prisma/prisma-client-js/issues/707
+apps/services/inventory-service/prisma/generated/index.d.ts:1925:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1931:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1937:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1943:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1949:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1973:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1979:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1985:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1991:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:1997:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2021:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2027:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2033:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2039:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2343:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2349:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2355:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2361:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2367:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2373:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2379:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2385:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2391:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:2535:     * const stockReservation = await prisma.stockReservation.findUnique({
+apps/services/inventory-service/prisma/generated/index.d.ts:2549:     * const stockReservation = await prisma.stockReservation.findUniqueOrThrow({
+apps/services/inventory-service/prisma/generated/index.d.ts:2564:     * const stockReservation = await prisma.stockReservation.findFirst({
+apps/services/inventory-service/prisma/generated/index.d.ts:2580:     * const stockReservation = await prisma.stockReservation.findFirstOrThrow({
+apps/services/inventory-service/prisma/generated/index.d.ts:2595:     * const stockReservations = await prisma.stockReservation.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:2598:     * const stockReservations = await prisma.stockReservation.findMany({ take: 10 })
+apps/services/inventory-service/prisma/generated/index.d.ts:2601:     * const stockReservationWithIdOnly = await prisma.stockReservation.findMany({ select: { id: true } })
+apps/services/inventory-service/prisma/generated/index.d.ts:2611:     * const StockReservation = await prisma.stockReservation.create({
+apps/services/inventory-service/prisma/generated/index.d.ts:2625:     * const stockReservation = await prisma.stockReservation.createMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:2639:     * const stockReservation = await prisma.stockReservation.createManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:2646:     * const stockReservationWithIdOnly = await prisma.stockReservation.createManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:2663:     * const StockReservation = await prisma.stockReservation.delete({
+apps/services/inventory-service/prisma/generated/index.d.ts:2677:     * const stockReservation = await prisma.stockReservation.update({
+apps/services/inventory-service/prisma/generated/index.d.ts:2694:     * const { count } = await prisma.stockReservation.deleteMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:2710:     * const stockReservation = await prisma.stockReservation.updateMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:2727:     * const stockReservation = await prisma.stockReservation.updateManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:2737:     * const stockReservationWithIdOnly = await prisma.stockReservation.updateManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:2757:     * const stockReservation = await prisma.stockReservation.upsert({
+apps/services/inventory-service/prisma/generated/index.d.ts:2779:     * const count = await prisma.stockReservation.count({
+apps/services/inventory-service/prisma/generated/index.d.ts:2802:     * // Where email contains prisma.io
+apps/services/inventory-service/prisma/generated/index.d.ts:2804:     * const aggregations = await prisma.user.aggregate({
+apps/services/inventory-service/prisma/generated/index.d.ts:2810:     *       contains: "prisma.io",
+apps/services/inventory-service/prisma/generated/index.d.ts:2828:     * const result = await prisma.user.groupBy({
+apps/services/inventory-service/prisma/generated/index.d.ts:2907:   * https://github.com/prisma/prisma-client-js/issues/707
+apps/services/inventory-service/prisma/generated/index.d.ts:3006:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3012:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3018:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3024:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3030:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3054:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3060:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3066:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3072:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3078:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3102:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3108:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3114:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3120:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3438:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3444:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3450:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3456:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3462:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3468:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3474:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3480:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3486:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:3636:     * const stockMovement = await prisma.stockMovement.findUnique({
+apps/services/inventory-service/prisma/generated/index.d.ts:3650:     * const stockMovement = await prisma.stockMovement.findUniqueOrThrow({
+apps/services/inventory-service/prisma/generated/index.d.ts:3665:     * const stockMovement = await prisma.stockMovement.findFirst({
+apps/services/inventory-service/prisma/generated/index.d.ts:3681:     * const stockMovement = await prisma.stockMovement.findFirstOrThrow({
+apps/services/inventory-service/prisma/generated/index.d.ts:3696:     * const stockMovements = await prisma.stockMovement.findMany()
+apps/services/inventory-service/prisma/generated/index.d.ts:3699:     * const stockMovements = await prisma.stockMovement.findMany({ take: 10 })
+apps/services/inventory-service/prisma/generated/index.d.ts:3702:     * const stockMovementWithIdOnly = await prisma.stockMovement.findMany({ select: { id: true } })
+apps/services/inventory-service/prisma/generated/index.d.ts:3712:     * const StockMovement = await prisma.stockMovement.create({
+apps/services/inventory-service/prisma/generated/index.d.ts:3726:     * const stockMovement = await prisma.stockMovement.createMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:3740:     * const stockMovement = await prisma.stockMovement.createManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:3747:     * const stockMovementWithIdOnly = await prisma.stockMovement.createManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:3764:     * const StockMovement = await prisma.stockMovement.delete({
+apps/services/inventory-service/prisma/generated/index.d.ts:3778:     * const stockMovement = await prisma.stockMovement.update({
+apps/services/inventory-service/prisma/generated/index.d.ts:3795:     * const { count } = await prisma.stockMovement.deleteMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:3811:     * const stockMovement = await prisma.stockMovement.updateMany({
+apps/services/inventory-service/prisma/generated/index.d.ts:3828:     * const stockMovement = await prisma.stockMovement.updateManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:3838:     * const stockMovementWithIdOnly = await prisma.stockMovement.updateManyAndReturn({
+apps/services/inventory-service/prisma/generated/index.d.ts:3858:     * const stockMovement = await prisma.stockMovement.upsert({
+apps/services/inventory-service/prisma/generated/index.d.ts:3880:     * const count = await prisma.stockMovement.count({
+apps/services/inventory-service/prisma/generated/index.d.ts:3903:     * // Where email contains prisma.io
+apps/services/inventory-service/prisma/generated/index.d.ts:3905:     * const aggregations = await prisma.user.aggregate({
+apps/services/inventory-service/prisma/generated/index.d.ts:3911:     *       contains: "prisma.io",
+apps/services/inventory-service/prisma/generated/index.d.ts:3929:     * const result = await prisma.user.groupBy({
+apps/services/inventory-service/prisma/generated/index.d.ts:4008:   * https://github.com/prisma/prisma-client-js/issues/707
+apps/services/inventory-service/prisma/generated/index.d.ts:4108:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4114:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4120:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4126:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4132:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4156:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4162:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4168:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4174:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4180:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4204:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4210:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4216:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/inventory-service/prisma/generated/index.d.ts:4222:     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+apps/services/user-service/prisma/schema.prisma:2:  provider = "prisma-client-js"
+apps/services/inventory-service/prisma/generated/schema.prisma:2:  provider = "prisma-client-js"
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:7:const mockPrismaClient = {
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:19:jest.mock('@prisma/client', () => ({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:20:  PrismaClient: jest.fn(() => mockPrismaClient),
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:56:      mockPrismaClient.notification.findUnique.mockResolvedValue(null);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:57:      mockPrismaClient.notification.create.mockResolvedValue({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:70:      mockPrismaClient.notification.update.mockResolvedValue({});
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:85:      expect(mockPrismaClient.notification.create).toHaveBeenCalled();
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:86:      expect(mockPrismaClient.notification.update).toHaveBeenCalledWith({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:96:      mockPrismaClient.notification.findUnique.mockResolvedValue(null);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:97:      mockPrismaClient.notification.create.mockResolvedValue({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:109:      mockPrismaClient.notification.update.mockResolvedValue({});
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:123:      expect(mockPrismaClient.notification.update).toHaveBeenCalledWith({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:132:      mockPrismaClient.notification.findUnique.mockResolvedValue({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:148:      expect(mockPrismaClient.notification.create).not.toHaveBeenCalled();
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:153:      mockPrismaClient.notification.findUnique.mockResolvedValue(null);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:154:      mockPrismaClient.notification.create.mockResolvedValue({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:158:      mockPrismaClient.notification.update.mockResolvedValue({});
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:175:      expect(mockPrismaClient.notification.update).toHaveBeenCalledWith({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:192:      mockPrismaClient.notification.findMany.mockResolvedValue(mockNotifications);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:193:      mockPrismaClient.notification.count.mockResolvedValue(2);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:199:      expect(mockPrismaClient.notification.findMany).toHaveBeenCalledWith({
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:208:      mockPrismaClient.notification.findMany.mockResolvedValue([]);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:209:      mockPrismaClient.notification.count.mockResolvedValue(0);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:213:      expect(mockPrismaClient.notification.findMany).toHaveBeenCalledWith(
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:221:      mockPrismaClient.notification.findMany.mockResolvedValue([]);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:222:      mockPrismaClient.notification.count.mockResolvedValue(0);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:226:      expect(mockPrismaClient.notification.findMany).toHaveBeenCalledWith(
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:234:      mockPrismaClient.notification.findMany.mockResolvedValue([]);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:235:      mockPrismaClient.notification.count.mockResolvedValue(100);
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:239:      expect(mockPrismaClient.notification.findMany).toHaveBeenCalledWith(
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:250:      mockPrismaClient.notification.count
+apps/infrastructure/notification-service/src/services/__tests__/notification.service.spec.ts:268:      mockPrismaClient.notification.count.mockResolvedValue(0);
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:2:import { PrismaClient, Product as PrismaProduct, Prisma } from '../../../prisma/generated';
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:10:    private readonly prisma: PrismaClient,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:15:    await this.prisma.product.upsert({
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:23:    const product = await this.prisma.product.findUnique({
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:31:    const products = await this.prisma.product.findMany();
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:36:    const products = await this.prisma.product.findMany({
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:43:    const products = await this.prisma.product.findMany({
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:51:    const products = await this.prisma.product.findMany({
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:58:    const products = await this.prisma.product.findMany({
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:65:    await this.prisma.product.delete({
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:72:  private toDomain(prismaProduct: PrismaProduct): Product {
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:74:      id: prismaProduct.id,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:75:      name: prismaProduct.name,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:76:      description: prismaProduct.description || '',
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:77:      sku: prismaProduct.sku || '',
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:78:      category: prismaProduct.category,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:79:      unitPrice: prismaProduct.unitPrice || 0,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:81:      currentStock: prismaProduct.currentStock,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:82:      reservedStock: prismaProduct.reservedStock || 0,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:83:      minimumStock: prismaProduct.minimumStock || 5,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:84:      maximumStock: prismaProduct.maximumStock || 100,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:85:      isActive: prismaProduct.isActive !== false, // Asumimos true por defecto
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:86:      artisanId: prismaProduct.artisanId || '',
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:87:      createdAt: prismaProduct.createdAt,
+apps/services/inventory-service/src/infrastructure/repositories/prisma-product.repository.ts:88:      updatedAt: prismaProduct.updatedAt,
+apps/infrastructure/notification-service/src/services/notification.service.ts:2:import { PrismaClient } from '@prisma/client';
+apps/infrastructure/notification-service/src/services/notification.service.ts:33:  private readonly prisma: PrismaClient;
+apps/infrastructure/notification-service/src/services/notification.service.ts:39:    this.prisma = new PrismaClient();
+apps/infrastructure/notification-service/src/services/notification.service.ts:43:    return (this.prisma as unknown as { notification: NotificationDelegate }).notification;
+apps/infrastructure/notification-service/src/services/notification.service.ts:47:    await this.prisma.$connect();
+apps/infrastructure/notification-service/src/services/notification.service.ts:52:    await this.prisma.$disconnect();
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:25: * A stripped down interface of `fetch` that `@prisma/extension-accelerate`
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:51:declare type ActiveConnectorType = Exclude<ConnectorType, 'postgres' | 'prisma+postgres'>;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:179:declare type Client = ReturnType<typeof getPrismaClient> extends new () => infer T ? T : never;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:292:declare type ConnectorType = 'mysql' | 'mongodb' | 'sqlite' | 'postgresql' | 'postgres' | 'prisma+postgres' | 'sqlserver' | 'cockroachdb';
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:417: * import Debug from '@prisma/debug'
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:418: * const debug = Debug('prisma:client')
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1034:    prismaPath?: string;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1053:     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`.
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1068:    inlineDatasources: GetPrismaClientConfig['inlineDatasources'];
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1076:     * @remarks enabling is determined by the client and @prisma/instrumentation package
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1080:     * Information about whether we have not found a schema.prisma file in the
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1081:     * default location, and that we fell back to finding the schema.prisma file
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1097:        prismaGraphQLToJSError: typeof prismaGraphQLToJSError;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1098:        PrismaClientUnknownRequestError: typeof PrismaClientUnknownRequestError;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1099:        PrismaClientInitializationError: typeof PrismaClientInitializationError;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1100:        PrismaClientKnownRequestError: typeof PrismaClientKnownRequestError;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1378:declare type FieldNamespace = 'model' | 'prisma';
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1532:export declare function getPrismaClient(config: GetPrismaClientConfig): {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1533:    new (optionsArg?: PrismaClientOptions): {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1554:         * PrismaClient. This is used for Client extensions only.
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1570:         * @see https://github.com/prisma/prisma/issues/7142
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1579:         * @see https://github.com/prisma/prisma/issues/7142
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1599:         * @see https://github.com/prisma/prisma/issues/7142
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1613:         * @see https://github.com/prisma/prisma/issues/7142
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1669: * loaded, this same config is passed to {@link getPrismaClient} which creates a
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1670: * closure with that config around a non-instantiated [[PrismaClient]].
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1672:export declare type GetPrismaClientConfig = {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1714:     * A marker to indicate that the client was not generated via `prisma
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1728:     * Information about whether we have not found a schema.prisma file in the
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1729:     * default location, and that we fell back to finding the schema.prisma file
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:1871: * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2499:declare const officialPrismaAdapters: readonly ["@prisma/adapter-planetscale", "@prisma/adapter-neon", "@prisma/adapter-libsql", "@prisma/adapter-better-sqlite3", "@prisma/adapter-d1", "@prisma/adapter-pg", "@prisma/adapter-mssql", "@prisma/adapter-mariadb"];
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2618:export declare class PrismaClientInitializationError extends Error {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2626:export declare class PrismaClientKnownRequestError extends Error implements ErrorWithBatchIndex {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2635:export declare type PrismaClientOptions = {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2637:     * Overwrites the primary datasource url from your schema.prisma file
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2641:     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale.
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2645:     * Overwrites the datasource url from your schema.prisma file
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2671:     * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2688:        configOverride?: (config: GetPrismaClientConfig) => GetPrismaClientConfig;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2692:export declare class PrismaClientRustPanicError extends Error {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2698:export declare class PrismaClientUnknownRequestError extends Error implements ErrorWithBatchIndex {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2705:export declare class PrismaClientValidationError extends Error {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2712:declare function prismaGraphQLToJSError({ error, user_facing_error }: RequestError, clientVersion: string, activeProvider: string): PrismaClientKnownRequestError | PrismaClientUnknownRequestError;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2789:    prisma__type: 'generatorCall';
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2790:    prisma__value: {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2797:    prisma__type: 'param';
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:2798:    prisma__value: {
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:3098:    __prismaRawParameters__: true;
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:3209:    inlineDatasources: GetPrismaClientConfig['inlineDatasources'];
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:3312:        prisma?: InputType[];
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:3316:        prisma: OutputType[];
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:3320:        prisma: SchemaEnum[];
+apps/services/inventory-service/prisma/generated/runtime/library.d.ts:3323:        prisma?: FieldRefType[];
+apps/infrastructure/notification-service/prisma/schema.prisma:2:  provider = "prisma-client-js"
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:2:import { PrismaClient, StockReservation as PrismaReservation } from '../../../prisma/generated';
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:21:    private readonly prisma: PrismaClient,
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:25:    const record = await this.prisma.stockReservation.findFirst({
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:32:    const records = await this.prisma.stockReservation.findMany({
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:39:    await this.prisma.stockReservation.update({
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:46:    await this.prisma.stockReservation.delete({
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:53:    const records = await this.prisma.stockReservation.findMany({
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:64:    await this.prisma.stockReservation.updateMany({
+apps/services/inventory-service/src/infrastructure/repositories/stock-reservation.repository.ts:75:    await this.prisma.stockReservation.upsert({
+apps/services/order-service/prisma/schema.prisma:2:  provider = "prisma-client-js"
+apps/services/order-service/src/__tests__/integration/order-service.db.integration.spec.ts:3:import { PrismaClient } from '@prisma/client';
+apps/services/order-service/src/__tests__/integration/order-service.db.integration.spec.ts:7:  let prisma: PrismaClient;
+apps/services/order-service/src/__tests__/integration/order-service.db.integration.spec.ts:13:        { provide: PrismaClient, useValue: new PrismaClient(), },
+apps/services/order-service/src/__tests__/integration/order-service.db.integration.spec.ts:18:    prisma = module.get<PrismaClient>(PrismaClient);
+apps/services/order-service/src/__tests__/integration/order-service.db.integration.spec.ts:22:    const isConnected = await prisma.$connect();
+apps/services/order-service/src/__tests__/integration/order-service.db.integration.spec.ts:32:    await prisma.$disconnect();
+apps/services/product-service/src/__tests__/integration/product-service.db.integration.spec.ts:2:import { PrismaClient } from '@prisma/client';
+apps/services/product-service/src/__tests__/integration/product-service.db.integration.spec.ts:7:  let prisma: PrismaClient;
+apps/services/product-service/src/__tests__/integration/product-service.db.integration.spec.ts:11:      providers: [ProductService, { provide: PrismaClient, useValue: new PrismaClient() }],
+apps/services/product-service/src/__tests__/integration/product-service.db.integration.spec.ts:15:    prisma = module.get<PrismaClient>(PrismaClient);
+apps/services/product-service/src/__tests__/integration/product-service.db.integration.spec.ts:19:    const isConnected = await prisma.$connect();
+apps/services/product-service/src/__tests__/integration/product-service.db.integration.spec.ts:29:    await prisma.$disconnect();
+apps/services/product-service/src/common/prisma/prisma.service.ts:2:import { PrismaClient } from '@prisma/client';
+apps/services/product-service/src/common/prisma/prisma.service.ts:5:export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+apps/services/auth-service/src/__tests__/_disabled/integration/auth-service.db.integration.spec.ts:2:import { PrismaClient } from '@prisma/client';
+apps/services/auth-service/src/__tests__/_disabled/integration/auth-service.db.integration.spec.ts:7:  let prisma: PrismaClient;
+apps/services/auth-service/src/__tests__/_disabled/integration/auth-service.db.integration.spec.ts:14:          provide: PrismaClient,
+apps/services/auth-service/src/__tests__/_disabled/integration/auth-service.db.integration.spec.ts:15:          useValue: new PrismaClient(),
+apps/services/auth-service/src/__tests__/_disabled/integration/auth-service.db.integration.spec.ts:21:    prisma = module.get<PrismaClient>(PrismaClient);
+apps/services/auth-service/src/__tests__/_disabled/integration/auth-service.db.integration.spec.ts:25:    const isConnected = await prisma.$connect();
+apps/services/auth-service/src/__tests__/_disabled/integration/auth-service.db.integration.spec.ts:35:    await prisma.$disconnect();
+apps/services/product-service/src/product.module.ts:13:import { PrismaService } from './common/prisma/prisma.service';
+apps/services/product-service/src/product.module.ts:14:import { ProductCachePrismaRepository } from './infrastructure/cache/product-cache.prisma.repository';
+apps/services/product-service/src/product.module.ts:25:    PrismaService,
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:3:import { PrismaClient } from '@prisma/client';
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:7:import { PrismaReportRepository } from './infrastructure/repositories/prisma-report.repository.js';
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:8:import { PrismaAccessLogRepository } from './infrastructure/repositories/prisma-access-log.repository.js';
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:9:import { PrismaCaseRepository } from './infrastructure/repositories/prisma-case.repository.js';
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:10:import { PrismaEvidenceRepository } from './infrastructure/repositories/prisma-evidence.repository.js';
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:17:import { custodyEventImmutabilityMiddleware } from './infrastructure/prisma/custody-event-immutability.middleware.js';
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:19:const prisma = new PrismaClient();
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:20:prisma.$use(custodyEventImmutabilityMiddleware);
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:25:    { provide: 'PRISMA', useValue: prisma },
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:26:    { provide: 'ICaseRepository', useFactory: () => new PrismaCaseRepository(prisma) },
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:27:    { provide: 'IEvidenceRepository', useFactory: () => new PrismaEvidenceRepository(prisma) },
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:28:    { provide: 'IReportRepository', useFactory: () => new PrismaReportRepository(prisma) },
+apps/services/legal-evidence-service/src/legal-evidence.module.ts:29:    { provide: 'IAccessLogRepository', useFactory: () => new PrismaAccessLogRepository(prisma) },
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:9:interface PrismaClientInterface {
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:22:  constructor(private readonly prisma: PrismaClientInterface) {}
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:25:    const userData = await this.prisma.user.findUnique({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:33:    const userData = await this.prisma.user.findUnique({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:43:    const savedUser = await this.prisma.user.create({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:63:    const updatedUser = await this.prisma.user.update({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:80:    await this.prisma.user.delete({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:86:    const count = await this.prisma.user.count({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:98:    const users = await this.prisma.user.findMany({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:118:      this.prisma.user.findMany({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:123:      this.prisma.user.count(),
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:135:    const users = await this.prisma.user.findMany({
+apps/services/auth-service/src/infrastructure/repositories/prisma-user.repository.ts:145:    return this.prisma.user.count();
+apps/services/product-service/src/infrastructure/persistence/prisma-unit-of-work.ts:1:import { PrismaClient } from '@prisma/client';
+apps/services/product-service/src/infrastructure/persistence/prisma-unit-of-work.ts:5:  constructor(private readonly prisma: PrismaClient) {}
+apps/services/product-service/src/infrastructure/persistence/prisma-unit-of-work.ts:8:    return this.prisma.$transaction(async () => {
+apps/services/product-service/src/infrastructure/persistence/prisma.ts:1:import { PrismaClient } from '@prisma/client';
+apps/services/product-service/src/infrastructure/persistence/prisma.ts:3:export const prisma = new PrismaClient();
+apps/services/auth-service/prisma/schema.prisma:6:  provider        = "prisma-client-js"
+apps/services/product-service/prisma/schema.prisma:2:  provider = "prisma-client-js"
+apps/services/product-service/src/infrastructure/outbox/outbox.worker.ts:1:import { PrismaOutboxStore } from './prisma-outbox.store';
+apps/services/auth-service/src/auth.module.ts:16:import { PrismaUserRepository } from './infrastructure/repositories/prisma-user.repository';
+apps/services/auth-service/src/auth.module.ts:46:    // Database - Proveedor personalizado de PrismaClient
+apps/services/auth-service/src/auth.module.ts:48:      provide: 'PrismaClient',
+apps/services/auth-service/src/auth.module.ts:50:        // Simulamos PrismaClient por ahora para que compile
+apps/services/auth-service/src/auth.module.ts:67:      useFactory: (prismaClient: any) => {
+apps/services/auth-service/src/auth.module.ts:68:        return new PrismaUserRepository(prismaClient);
+apps/services/auth-service/src/auth.module.ts:70:      inject: ['PrismaClient'],
+apps/services/product-service/src/infrastructure/outbox/prisma-outbox.store.ts:1:import { prisma } from '../persistence/prisma';
+apps/services/product-service/src/infrastructure/outbox/prisma-outbox.store.ts:24:    await prisma.outboxEvent.create({
+apps/services/product-service/src/infrastructure/outbox/prisma-outbox.store.ts:45:    const candidates = await prisma.outboxEvent.findMany({
+apps/services/product-service/src/infrastructure/outbox/prisma-outbox.store.ts:63:      const res = await prisma.outboxEvent.updateMany({
+apps/services/product-service/src/infrastructure/outbox/prisma-outbox.store.ts:89:    await prisma.outboxEvent.update({
+apps/services/product-service/src/infrastructure/outbox/prisma-outbox.store.ts:102:    const current = await prisma.outboxEvent.findUnique({ where: { id: args.id } });
+apps/services/product-service/src/infrastructure/outbox/prisma-outbox.store.ts:105:    await prisma.outboxEvent.update({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:7:import { PrismaClient } from '../generated/prisma';
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:37:  constructor(private readonly prisma: PrismaClient) {}
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:40:    const productData = await this.prisma.product.findUnique({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:64:    const productsData = await this.prisma.product.findMany({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:84:    const productsData = await this.prisma.product.findMany({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:101:    const productsData = await this.prisma.product.findMany({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:138:    const productsData = await this.prisma.product.findMany({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:147:    await this.prisma.product.create({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:163:    await this.prisma.product.update({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:175:    await this.prisma.product.delete({
+apps/services/product-service/src/infrastructure/repositories/product.repository.ts:192:    return await this.prisma.product.count({ where });
+apps/services/product-service/src/infrastructure/cache/index.ts:1:export * from './product-cache.prisma.repository';
+apps/services/product-service/src/infrastructure/cache/product-cache.prisma.repository.ts:2:import { PrismaService } from '../../common/prisma/prisma.service';
+apps/services/product-service/src/infrastructure/cache/product-cache.prisma.repository.ts:14:  constructor(private readonly prisma: PrismaService) {}
+apps/services/product-service/src/infrastructure/cache/product-cache.prisma.repository.ts:17:    return (this.prisma as unknown as { product: ProductDelegate }).product;
+apps/services/payment-service/src/payment.module.ts:6:import { PrismaService } from './infrastructure/prisma/prisma.service';
+apps/services/payment-service/src/payment.module.ts:10:  providers: [PrismaService, ProcessPaymentUseCase, RefundPaymentUseCase, PaymentEventPublisher],
+apps/services/product-service/src/application/services/product.service.ts:2:import { PrismaService } from '../../common/prisma/prisma.service';
+apps/services/product-service/src/application/services/product.service.ts:56:    private readonly prisma: PrismaService,
+apps/services/product-service/src/application/services/product.service.ts:61:    return (this.prisma as unknown as { product: ProductDelegate }).product;
+apps/services/payment-service/prisma/schema.prisma:2:  provider = "prisma-client-js"
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:1:import { PrismaClient } from '@prisma/client';
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:7:  constructor(private readonly prisma: PrismaClient) {}
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:10:    await this.prisma.case.create({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:25:    const record = await this.prisma.case.findFirst({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:59:    const records = await this.prisma.case.findMany({ where: tenantId ? { tenantId } : undefined });
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:78:    const records = await this.prisma.case.findMany({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:99:    await this.prisma.case.update({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-case.repository.ts:111:    await this.prisma.case.delete({ where: { id } });
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-access-log.repository.ts:1:import { PrismaClient } from '@prisma/client';
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-access-log.repository.ts:7:  constructor(private readonly prisma: PrismaClient) {}
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-access-log.repository.ts:10:    await this.prisma.accessLog.create({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-access-log.repository.ts:32:      await this.prisma.chainOfCustodyEvent.create({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-access-log.repository.ts:47:    const records = await this.prisma.accessLog.findMany({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-access-log.repository.ts:50:    const records = await this.prisma.accessLog.findMany({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:1:import { PrismaClient } from '@prisma/client';
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:4:import { CUSTODY_EVENT_IMMUTABLE_ERROR } from '../prisma/custody-event-immutability.middleware.js';
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:7:  constructor(private readonly prisma: PrismaClient) {}
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:10:    await this.prisma.evidence.create({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:27:    const record = await this.prisma.evidence.findFirst({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:48:    const records = await this.prisma.evidence.findMany({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:71:    const records = await this.prisma.evidence.findMany({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:94:    await this.prisma.evidence.update({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-evidence.repository.ts:106:    await this.prisma.evidence.delete({ where: { id } });
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:1:import { PrismaClient } from '@prisma/client';
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:6:  constructor(private readonly prisma: PrismaClient) {}
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:9:    await this.prisma.generatedReport.create({
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:23:    const record = await this.prisma.generatedReport.findUnique({ where: { id } });
+apps/services/legal-evidence-service/src/infrastructure/repositories/prisma-report.repository.ts:37:    const records = await this.prisma.generatedReport.findMany({ where: { caseId } });
+apps/services/legal-evidence-service/src/infrastructure/prisma/custody-event-immutability.middleware.ts:1:import { Prisma } from '@prisma/client';
+packages/outbox-publisher/src/index.ts:2:import { PrismaClient } from "@prisma/client";
+packages/outbox-publisher/src/index.ts:19:  private prisma: PrismaClient;
+packages/outbox-publisher/src/index.ts:24:  constructor(prisma: PrismaClient, cfg: OutboxPublisherConfig) {
+packages/outbox-publisher/src/index.ts:25:    this.prisma = prisma;
+packages/outbox-publisher/src/index.ts:41:      const events = await this.prisma.outboxEvent.findMany({
+packages/outbox-publisher/src/index.ts:62:          await this.prisma.outboxEvent.update({
+packages/outbox-publisher/src/bin/run.ts:1:import { PrismaClient } from "@prisma/client";
+packages/outbox-publisher/src/bin/run.ts:4:const prisma = new PrismaClient();
+packages/outbox-publisher/src/bin/run.ts:17:  const pub = new OutboxPublisher(prisma, {
+packages/outbox-publisher/src/bin/run.ts:27:  await prisma.$disconnect();
+packages/outbox-publisher/src/bin/run.ts:33:  await prisma.$disconnect();
+apps/services/payment-service/src/infrastructure/prisma/prisma.module.ts:2:import { PrismaService } from './prisma.service';
+apps/services/payment-service/src/infrastructure/prisma/prisma.module.ts:6:  providers: [PrismaService],
+apps/services/payment-service/src/infrastructure/prisma/prisma.module.ts:7:  exports: [PrismaService],
+apps/services/payment-service/src/infrastructure/prisma/prisma.service.ts:8:export class PrismaService {
+apps/services/legal-evidence-service/src/__tests__/custody-event-immutability.middleware.spec.ts:1:import { PrismaEvidenceRepository } from '../infrastructure/repositories/prisma-evidence.repository';
+apps/services/legal-evidence-service/src/__tests__/custody-event-immutability.middleware.spec.ts:6:} from '../infrastructure/prisma/custody-event-immutability.middleware';
+apps/services/payment-service/src/infrastructure/repositories/prisma-payment.repository.ts:2:import { Prisma, Payment as PrismaPaymentModel } from '../../../prisma/generated';
+apps/services/payment-service/src/infrastructure/repositories/prisma-payment.repository.ts:4:import { PrismaService } from '../prisma/prisma.service';
+apps/services/payment-service/src/infrastructure/repositories/prisma-payment.repository.ts:8:  constructor(private readonly prisma: PrismaService) {}
+apps/services/payment-service/src/infrastructure/repositories/prisma-payment.repository.ts:13:    await this.prisma.payment.upsert({
+apps/services/payment-service/src/infrastructure/repositories/prisma-payment.repository.ts:30:    const record = await this.prisma.payment.findUnique({ where: { id: id.value } });
+apps/services/payment-service/src/infrastructure/repositories/prisma-payment.repository.ts:35:    const record = await this.prisma.payment.findUnique({ where: { orderId } });
+apps/services/payment-service/src/infrastructure/repositories/prisma-payment.repository.ts:40:    const record = await this.prisma.payment.findUnique({
+apps/services/legal-evidence-service/prisma/schema.prisma:2:  provider = "prisma-client-js"

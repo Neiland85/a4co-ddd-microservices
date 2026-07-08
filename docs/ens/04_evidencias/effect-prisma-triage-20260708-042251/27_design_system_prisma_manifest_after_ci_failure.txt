@@ -1,0 +1,11 @@
+{
+  "path": "packages/design-system/package.json",
+  "dependencies": {
+    "prisma": "6.19.3",
+    "prismaClient": "6.19.3"
+  },
+  "devDependencies": {
+    "prisma": null,
+    "prismaClient": null
+  }
+}

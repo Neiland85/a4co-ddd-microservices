@@ -1,0 +1,4 @@
+
+> @a4co/user-service@1.0.0 build /Users/estudio/Projects/GITHUB-PROJECTS-2026/GOVERNANZA_ORGANIZATIVA/Modular-Monolith/a4co-ddd-microservices/apps/services/user-service
+> tsc
+

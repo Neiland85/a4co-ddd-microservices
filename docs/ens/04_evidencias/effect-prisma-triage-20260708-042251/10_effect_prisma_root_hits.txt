@@ -1,0 +1,91 @@
+package.json:118:    "@prisma/config": "^6.19.0",
+apps/infrastructure/notification-service/package.json:42:    "@prisma/client": "7.4.0",
+pnpm-lock.yaml:63:      '@prisma/config':
+pnpm-lock.yaml:456:      '@prisma/client':
+pnpm-lock.yaml:458:        version: 7.4.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:577:      '@prisma/client':
+pnpm-lock.yaml:579:        version: 7.4.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:710:      '@prisma/client':
+pnpm-lock.yaml:712:        version: 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:768:      '@prisma/client':
+pnpm-lock.yaml:770:        version: 7.4.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:841:      '@prisma/client':
+pnpm-lock.yaml:843:        version: 7.4.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:911:      '@prisma/client':
+pnpm-lock.yaml:913:        version: 7.4.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:993:      '@prisma/client':
+pnpm-lock.yaml:995:        version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:1205:      '@prisma/client':
+pnpm-lock.yaml:1207:        version: 7.4.0(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:1315:      '@prisma/client':
+pnpm-lock.yaml:1317:        version: 7.4.0(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:1424:      '@prisma/client':
+pnpm-lock.yaml:1426:        version: 7.4.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3)
+pnpm-lock.yaml:4586:  '@prisma/client-runtime-utils@7.4.0':
+pnpm-lock.yaml:4589:  '@prisma/client@6.19.0':
+pnpm-lock.yaml:4601:  '@prisma/client@6.19.3':
+pnpm-lock.yaml:4613:  '@prisma/client@7.4.0':
+pnpm-lock.yaml:4625:  '@prisma/config@6.18.0':
+pnpm-lock.yaml:4628:  '@prisma/config@6.19.0':
+pnpm-lock.yaml:4631:  '@prisma/config@6.19.3':
+pnpm-lock.yaml:5632:  '@radix-ui/react-use-effect-event@0.0.2':
+pnpm-lock.yaml:5668:  '@radix-ui/react-use-layout-effect@1.1.0':
+pnpm-lock.yaml:5677:  '@radix-ui/react-use-layout-effect@1.1.1':
+pnpm-lock.yaml:7952:  effect@3.18.4:
+pnpm-lock.yaml:7955:  effect@3.21.0:
+pnpm-lock.yaml:10497:  prisma@6.18.0:
+pnpm-lock.yaml:10507:  prisma@6.19.0:
+pnpm-lock.yaml:10517:  prisma@6.19.3:
+pnpm-lock.yaml:15711:  '@prisma/client-runtime-utils@7.4.0': {}
+pnpm-lock.yaml:15713:  '@prisma/client@6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)':
+pnpm-lock.yaml:15718:  '@prisma/client@6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)':
+pnpm-lock.yaml:15723:  '@prisma/client@7.4.0(prisma@6.18.0(typescript@5.9.3))(typescript@5.9.3)':
+pnpm-lock.yaml:15725:      '@prisma/client-runtime-utils': 7.4.0
+pnpm-lock.yaml:15730:  '@prisma/client@7.4.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)':
+pnpm-lock.yaml:15732:      '@prisma/client-runtime-utils': 7.4.0
+pnpm-lock.yaml:15737:  '@prisma/client@7.4.0(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)':
+pnpm-lock.yaml:15739:      '@prisma/client-runtime-utils': 7.4.0
+pnpm-lock.yaml:15744:  '@prisma/config@6.18.0':
+pnpm-lock.yaml:15748:      effect: 3.18.4
+pnpm-lock.yaml:15753:  '@prisma/config@6.19.0':
+pnpm-lock.yaml:15757:      effect: 3.18.4
+pnpm-lock.yaml:15762:  '@prisma/config@6.19.3':
+pnpm-lock.yaml:15766:      effect: 3.21.0
+pnpm-lock.yaml:15965:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:15978:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:15990:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16022:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16038:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16351:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16358:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16499:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16539:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16557:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16575:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16588:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16598:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16608:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16618:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16628:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16638:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16789:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16814:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16843:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16891:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:16995:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:17070:      '@radix-ui/react-use-effect-event': 0.0.2(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:17071:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:17076:  '@radix-ui/react-use-effect-event@0.0.2(@types/react@19.2.2)(react@19.2.0)':
+pnpm-lock.yaml:17078:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:17104:  '@radix-ui/react-use-layout-effect@1.1.0(@types/react@19.2.2)(react@19.2.0)':
+pnpm-lock.yaml:17110:  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.2)(react@19.2.0)':
+pnpm-lock.yaml:17144:      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:17151:      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.2)(react@19.2.0)
+pnpm-lock.yaml:19621:  effect@3.18.4:
+pnpm-lock.yaml:19626:  effect@3.21.0:
+pnpm-lock.yaml:23381:  prisma@6.18.0(typescript@5.9.3):
+pnpm-lock.yaml:23383:      '@prisma/config': 6.18.0
+pnpm-lock.yaml:23390:  prisma@6.19.0(typescript@5.9.3):
+pnpm-lock.yaml:23392:      '@prisma/config': 6.19.0
+pnpm-lock.yaml:23399:  prisma@6.19.3(typescript@5.9.3):
+pnpm-lock.yaml:23401:      '@prisma/config': 6.19.3
