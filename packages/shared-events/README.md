@@ -112,4 +112,9 @@ pnpm test:cov
 
 ## License
 
-MIT
+The current controlled baseline is governed by the **Clarity Structures
+Commercial Source-Available License v1.1**. See
+[`../../LICENSE`](../../LICENSE) and [`../../NOTICE.md`](../../NOTICE.md).
+
+Specific historical copies that expressly carried an MIT notice retain the
+rights attached to those identified copies.

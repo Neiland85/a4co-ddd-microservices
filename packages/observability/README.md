@@ -32,4 +32,9 @@ See [OBSERVABILITY.md](../../OBSERVABILITY.md) for complete documentation.
 
 ## License
 
-Apache-2.0
+The current controlled baseline is governed by the **Clarity Structures
+Commercial Source-Available License v1.1**. See
+[`../../LICENSE`](../../LICENSE) and [`../../NOTICE.md`](../../NOTICE.md).
+
+Specific historical copies that expressly carried an Apache-2.0 notice retain
+the rights attached to those identified copies.
