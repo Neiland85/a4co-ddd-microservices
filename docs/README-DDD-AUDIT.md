@@ -290,7 +290,12 @@ chmod +x scripts/*.sh
 
 ## 📄 Licencia
 
-Este conjunto de herramientas es de código abierto y está disponible bajo la licencia MIT.
+La baseline controlada actual de estas herramientas está sujeta a la
+**Clarity Structures Commercial Source-Available License v1.1**. Consulta
+[`../LICENSE`](../LICENSE) y [`../NOTICE.md`](../NOTICE.md).
+
+Las copias históricas que hubieran incluido expresamente una declaración MIT
+conservan únicamente los derechos correspondientes a esas copias identificadas.
 
 ---
 
