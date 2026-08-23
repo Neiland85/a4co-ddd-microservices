@@ -54,7 +54,7 @@ export class OrderService extends EventDrivenService {
     }>;
     deliveryAddress: any;
   }): Promise<string> {
-    const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const orderId = crypto.randomUUID();
 
     // Crear evento de orden creada (solo datos del contexto Order)
     const orderCreatedEvent = new OrderCreatedEvent(orderId, {

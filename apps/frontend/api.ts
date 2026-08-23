@@ -445,7 +445,7 @@ export const addOrder = async (orderPayload: OrderPayload, userId: string, token
         await delay(1000);
         const newOrder: Order = {
             ...orderPayload,
-            id: `order-${Math.random().toString(36).substr(2, 9)}`,
+            id: crypto.randomUUID(),
             userId,
             date: new Date().toISOString(),
             status: 'Pendiente',
@@ -457,7 +457,7 @@ export const addOrder = async (orderPayload: OrderPayload, userId: string, token
         await delay(1000);
         const newOrder: Order = {
             ...orderPayload,
-            id: `order-${Math.random().toString(36).substr(2, 9)}`,
+            id: crypto.randomUUID(),
             userId,
             date: new Date().toISOString(),
             status: 'Pendiente',

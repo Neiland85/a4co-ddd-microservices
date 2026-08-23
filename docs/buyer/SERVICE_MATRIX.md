@@ -47,3 +47,5 @@ The current defensible claim is **not**:
 3. If yes, add payment to `Dockerfile.beta`, `docker-compose.beta.yml`, smoke checks and `VALIDATION_REPORT.md`.
 4. Only then present order/inventory/payment as a validated cross-service flow.
 5. Repeat the same process for auth/product/user rather than presenting them prematurely.
+
+auth: STUB — Prisma findUnique → null (no hay lookup real de usuario)

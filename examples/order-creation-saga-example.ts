@@ -47,7 +47,7 @@ export class OrderService extends EventDrivenService {
     }>;
     deliveryAddress: any;
   }): Promise<string> {
-    const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const orderId = crypto.randomUUID();
 
     // Calcular totales
     const totalAmount = orderData.items.reduce(
@@ -140,6 +140,7 @@ export class OrderService extends EventDrivenService {
 
 export class InventoryService extends EventDrivenService {
   // Simulamos un inventario en memoria
+// in-memory, no durable, no producción
   private inventory: Map<string, number> = new Map([
     ['product_aceite_picual', 50],
     ['product_queso_cabra', 25],

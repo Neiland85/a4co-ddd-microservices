@@ -84,6 +84,7 @@ export class OrderSagaOrchestrator {
   private readonly logger: ObservabilityLogger = getLogger().withContext({
     context: OrderSagaOrchestrator.name,
   });
+// in-memory, no durable, no producción
   private readonly sagas = new Map<string, SagaState>();
   private readonly SAGA_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutos
 

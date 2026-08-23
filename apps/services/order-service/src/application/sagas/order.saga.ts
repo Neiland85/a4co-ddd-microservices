@@ -32,6 +32,7 @@ export interface SagaContext {
 @Injectable()
 export class OrderSaga implements OnModuleInit {
   private readonly logger = new Logger(OrderSaga.name);
+// in-memory, no durable, no producción
   private readonly sagaContexts = new Map<string, SagaContext>();
   private readonly SAGA_TIMEOUT = 30_000; // 30s
 

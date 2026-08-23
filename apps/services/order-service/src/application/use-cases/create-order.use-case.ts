@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Order, OrderItem, IOrderRepository } from '@a4co/domain-order';
 import { CreateOrderCommand } from '../commands/create-order.command.js';
@@ -67,6 +68,6 @@ export class CreateOrderUseCase {
   }
 
   private generateOrderId(): string {
-    return `order-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    return randomUUID();
   }
 }
